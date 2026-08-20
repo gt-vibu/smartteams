@@ -29,8 +29,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Organizations
- * const organizations = await prisma.organization.findMany()
+ * // Fetch zero or more FederationIdempotencyRecords
+ * const federationIdempotencyRecords = await prisma.federationIdempotencyRecord.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -40,25 +40,260 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Organization
+ * Model FederationIdempotencyRecord
  * 
  */
-export type Organization = Prisma.OrganizationModel
+export type FederationIdempotencyRecord = Prisma.FederationIdempotencyRecordModel
 /**
- * Model Branch
+ * Model FederationRequestRecord
  * 
  */
-export type Branch = Prisma.BranchModel
+export type FederationRequestRecord = Prisma.FederationRequestRecordModel
+/**
+ * Model WebhookSigningKey
+ * 
+ */
+export type WebhookSigningKey = Prisma.WebhookSigningKeyModel
+/**
+ * Model WebhookSubscription
+ * 
+ */
+export type WebhookSubscription = Prisma.WebhookSubscriptionModel
+/**
+ * Model OutboxEvent
+ * 
+ */
+export type OutboxEvent = Prisma.OutboxEventModel
+/**
+ * Model WebhookDelivery
+ * 
+ */
+export type WebhookDelivery = Prisma.WebhookDeliveryModel
+/**
+ * Model WebhookDeliveryAttempt
+ * 
+ */
+export type WebhookDeliveryAttempt = Prisma.WebhookDeliveryAttemptModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model FederationClient
+ * 
+ */
+export type FederationClient = Prisma.FederationClientModel
+/**
+ * Model FederationClientCredential
+ * 
+ */
+export type FederationClientCredential = Prisma.FederationClientCredentialModel
+/**
+ * Model FederationScope
+ * 
+ */
+export type FederationScope = Prisma.FederationScopeModel
+/**
+ * Model FederationGrant
+ * 
+ */
+export type FederationGrant = Prisma.FederationGrantModel
+/**
+ * Model FederationGrantScope
+ * 
+ */
+export type FederationGrantScope = Prisma.FederationGrantScopeModel
+/**
+ * Model FederationGrantRoleMapping
+ * 
+ */
+export type FederationGrantRoleMapping = Prisma.FederationGrantRoleMappingModel
+/**
+ * Model FederationCapability
+ * 
+ */
+export type FederationCapability = Prisma.FederationCapabilityModel
+/**
+ * Model OrganizationFederationCapability
+ * 
+ */
+export type OrganizationFederationCapability = Prisma.OrganizationFederationCapabilityModel
+/**
+ * Model ExternalIdMapping
+ * 
+ */
+export type ExternalIdMapping = Prisma.ExternalIdMappingModel
+/**
+ * Model FileObject
+ * 
+ */
+export type FileObject = Prisma.FileObjectModel
+/**
+ * Model FileObjectVersion
+ * 
+ */
+export type FileObjectVersion = Prisma.FileObjectVersionModel
 /**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
 /**
+ * Model UserInvitation
+ * 
+ */
+export type UserInvitation = Prisma.UserInvitationModel
+/**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
  * Model UserOrganization
  * 
  */
 export type UserOrganization = Prisma.UserOrganizationModel
+/**
+ * Model AuthSession
+ * 
+ */
+export type AuthSession = Prisma.AuthSessionModel
+/**
+ * Model PlatformRole
+ * 
+ */
+export type PlatformRole = Prisma.PlatformRoleModel
+/**
+ * Model PlatformPermission
+ * 
+ */
+export type PlatformPermission = Prisma.PlatformPermissionModel
+/**
+ * Model PlatformRolePermission
+ * 
+ */
+export type PlatformRolePermission = Prisma.PlatformRolePermissionModel
+/**
+ * Model UserPlatformRole
+ * 
+ */
+export type UserPlatformRole = Prisma.UserPlatformRoleModel
+/**
+ * Model AttendanceRecord
+ * 
+ */
+export type AttendanceRecord = Prisma.AttendanceRecordModel
+/**
+ * Model AttendancePunch
+ * 
+ */
+export type AttendancePunch = Prisma.AttendancePunchModel
+/**
+ * Model AttendanceCorrection
+ * 
+ */
+export type AttendanceCorrection = Prisma.AttendanceCorrectionModel
+/**
+ * Model AttendanceApproval
+ * 
+ */
+export type AttendanceApproval = Prisma.AttendanceApprovalModel
+/**
+ * Model Holiday
+ * 
+ */
+export type Holiday = Prisma.HolidayModel
+/**
+ * Model LeaveType
+ * 
+ */
+export type LeaveType = Prisma.LeaveTypeModel
+/**
+ * Model LeaveBalance
+ * 
+ */
+export type LeaveBalance = Prisma.LeaveBalanceModel
+/**
+ * Model LeaveBalanceTransaction
+ * 
+ */
+export type LeaveBalanceTransaction = Prisma.LeaveBalanceTransactionModel
+/**
+ * Model LeaveRequest
+ * 
+ */
+export type LeaveRequest = Prisma.LeaveRequestModel
+/**
+ * Model LeaveApproval
+ * 
+ */
+export type LeaveApproval = Prisma.LeaveApprovalModel
+/**
+ * Model Shift
+ * 
+ */
+export type Shift = Prisma.ShiftModel
+/**
+ * Model ShiftBreakRule
+ * 
+ */
+export type ShiftBreakRule = Prisma.ShiftBreakRuleModel
+/**
+ * Model EmployeeShiftAssignment
+ * 
+ */
+export type EmployeeShiftAssignment = Prisma.EmployeeShiftAssignmentModel
+/**
+ * Model TimesheetPeriod
+ * 
+ */
+export type TimesheetPeriod = Prisma.TimesheetPeriodModel
+/**
+ * Model Timesheet
+ * 
+ */
+export type Timesheet = Prisma.TimesheetModel
+/**
+ * Model TimesheetEntry
+ * 
+ */
+export type TimesheetEntry = Prisma.TimesheetEntryModel
+/**
+ * Model TimesheetApproval
+ * 
+ */
+export type TimesheetApproval = Prisma.TimesheetApprovalModel
+/**
+ * Model PayrollRun
+ * 
+ */
+export type PayrollRun = Prisma.PayrollRunModel
+/**
+ * Model PayrollLineItem
+ * 
+ */
+export type PayrollLineItem = Prisma.PayrollLineItemModel
+/**
+ * Model PayrollLineItemComponent
+ * 
+ */
+export type PayrollLineItemComponent = Prisma.PayrollLineItemComponentModel
+/**
+ * Model PayrollAdjustment
+ * 
+ */
+export type PayrollAdjustment = Prisma.PayrollAdjustmentModel
+/**
+ * Model PayrollApproval
+ * 
+ */
+export type PayrollApproval = Prisma.PayrollApprovalModel
+/**
+ * Model Payslip
+ * 
+ */
+export type Payslip = Prisma.PayslipModel
 /**
  * Model Role
  * 
@@ -80,87 +315,97 @@ export type RolePermission = Prisma.RolePermissionModel
  */
 export type UserRole = Prisma.UserRoleModel
 /**
+ * Model Organization
+ * 
+ */
+export type Organization = Prisma.OrganizationModel
+/**
+ * Model OrganizationSettings
+ * 
+ */
+export type OrganizationSettings = Prisma.OrganizationSettingsModel
+/**
+ * Model ApprovalPolicy
+ * 
+ */
+export type ApprovalPolicy = Prisma.ApprovalPolicyModel
+/**
+ * Model ApprovalPolicyStep
+ * 
+ */
+export type ApprovalPolicyStep = Prisma.ApprovalPolicyStepModel
+/**
+ * Model Branch
+ * 
+ */
+export type Branch = Prisma.BranchModel
+/**
+ * Model WorkLocation
+ * 
+ */
+export type WorkLocation = Prisma.WorkLocationModel
+/**
+ * Model OrganizationSourceChange
+ * 
+ */
+export type OrganizationSourceChange = Prisma.OrganizationSourceChangeModel
+/**
  * Model Employee
  * 
  */
 export type Employee = Prisma.EmployeeModel
 /**
- * Model Attendance
+ * Model EmployeeEmergencyContact
  * 
  */
-export type Attendance = Prisma.AttendanceModel
+export type EmployeeEmergencyContact = Prisma.EmployeeEmergencyContactModel
 /**
- * Model LeaveType
+ * Model EmployeeBranchAssignment
  * 
  */
-export type LeaveType = Prisma.LeaveTypeModel
+export type EmployeeBranchAssignment = Prisma.EmployeeBranchAssignmentModel
 /**
- * Model LeaveBalance
+ * Model EmployeeFieldOwnership
  * 
  */
-export type LeaveBalance = Prisma.LeaveBalanceModel
+export type EmployeeFieldOwnership = Prisma.EmployeeFieldOwnershipModel
 /**
- * Model LeaveRequest
+ * Model EmployeeEmploymentRecord
  * 
  */
-export type LeaveRequest = Prisma.LeaveRequestModel
+export type EmployeeEmploymentRecord = Prisma.EmployeeEmploymentRecordModel
 /**
- * Model Timesheet
+ * Model EmployeeCompensation
  * 
  */
-export type Timesheet = Prisma.TimesheetModel
+export type EmployeeCompensation = Prisma.EmployeeCompensationModel
 /**
- * Model Shift
+ * Model PayComponent
  * 
  */
-export type Shift = Prisma.ShiftModel
+export type PayComponent = Prisma.PayComponentModel
 /**
- * Model EmployeeShift
+ * Model EmployeePayComponent
  * 
  */
-export type EmployeeShift = Prisma.EmployeeShiftModel
+export type EmployeePayComponent = Prisma.EmployeePayComponentModel
 /**
- * Model PayrollRun
+ * Model Team
  * 
  */
-export type PayrollRun = Prisma.PayrollRunModel
+export type Team = Prisma.TeamModel
 /**
- * Model PayrollLineItem
+ * Model TeamMember
  * 
  */
-export type PayrollLineItem = Prisma.PayrollLineItemModel
+export type TeamMember = Prisma.TeamMemberModel
 /**
- * Model FederationClient
+ * Model Project
  * 
  */
-export type FederationClient = Prisma.FederationClientModel
+export type Project = Prisma.ProjectModel
 /**
- * Model FederationGrant
+ * Model ProjectMember
  * 
  */
-export type FederationGrant = Prisma.FederationGrantModel
-/**
- * Model WebhookSubscription
- * 
- */
-export type WebhookSubscription = Prisma.WebhookSubscriptionModel
-/**
- * Model OutboxEvent
- * 
- */
-export type OutboxEvent = Prisma.OutboxEventModel
-/**
- * Model IdempotencyRecord
- * 
- */
-export type IdempotencyRecord = Prisma.IdempotencyRecordModel
-/**
- * Model AuditLog
- * 
- */
-export type AuditLog = Prisma.AuditLogModel
-/**
- * Model FileObject
- * 
- */
-export type FileObject = Prisma.FileObjectModel
+export type ProjectMember = Prisma.ProjectMemberModel

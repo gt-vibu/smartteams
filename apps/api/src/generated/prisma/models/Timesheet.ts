@@ -28,104 +28,152 @@ export type AggregateTimesheet = {
 
 export type TimesheetAvgAggregateOutputType = {
   totalMinutes: number | null
+  regularMinutes: number | null
+  overtimeMinutes: number | null
+  version: number | null
 }
 
 export type TimesheetSumAggregateOutputType = {
   totalMinutes: number | null
+  regularMinutes: number | null
+  overtimeMinutes: number | null
+  version: number | null
 }
 
 export type TimesheetMinAggregateOutputType = {
   id: string | null
   organizationId: string | null
-  branchId: string | null
+  timesheetPeriodId: string | null
   employeeId: string | null
-  periodStart: Date | null
-  periodEnd: Date | null
-  totalMinutes: number | null
+  approvalPolicyId: string | null
+  branchId: string | null
   status: $Enums.TimesheetStatus | null
-  source: $Enums.AccessMode | null
+  totalMinutes: number | null
+  regularMinutes: number | null
+  overtimeMinutes: number | null
+  sourceAccessMode: $Enums.AccessMode | null
+  externalId: string | null
+  submittedAt: Date | null
+  approvedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  version: number | null
 }
 
 export type TimesheetMaxAggregateOutputType = {
   id: string | null
   organizationId: string | null
-  branchId: string | null
+  timesheetPeriodId: string | null
   employeeId: string | null
-  periodStart: Date | null
-  periodEnd: Date | null
-  totalMinutes: number | null
+  approvalPolicyId: string | null
+  branchId: string | null
   status: $Enums.TimesheetStatus | null
-  source: $Enums.AccessMode | null
+  totalMinutes: number | null
+  regularMinutes: number | null
+  overtimeMinutes: number | null
+  sourceAccessMode: $Enums.AccessMode | null
+  externalId: string | null
+  submittedAt: Date | null
+  approvedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  version: number | null
 }
 
 export type TimesheetCountAggregateOutputType = {
   id: number
   organizationId: number
-  branchId: number
+  timesheetPeriodId: number
   employeeId: number
-  periodStart: number
-  periodEnd: number
-  totalMinutes: number
+  approvalPolicyId: number
+  branchId: number
   status: number
-  source: number
+  totalMinutes: number
+  regularMinutes: number
+  overtimeMinutes: number
+  sourceAccessMode: number
+  externalId: number
+  submittedAt: number
+  approvedAt: number
   createdAt: number
   updatedAt: number
+  version: number
   _all: number
 }
 
 
 export type TimesheetAvgAggregateInputType = {
   totalMinutes?: true
+  regularMinutes?: true
+  overtimeMinutes?: true
+  version?: true
 }
 
 export type TimesheetSumAggregateInputType = {
   totalMinutes?: true
+  regularMinutes?: true
+  overtimeMinutes?: true
+  version?: true
 }
 
 export type TimesheetMinAggregateInputType = {
   id?: true
   organizationId?: true
-  branchId?: true
+  timesheetPeriodId?: true
   employeeId?: true
-  periodStart?: true
-  periodEnd?: true
-  totalMinutes?: true
+  approvalPolicyId?: true
+  branchId?: true
   status?: true
-  source?: true
+  totalMinutes?: true
+  regularMinutes?: true
+  overtimeMinutes?: true
+  sourceAccessMode?: true
+  externalId?: true
+  submittedAt?: true
+  approvedAt?: true
   createdAt?: true
   updatedAt?: true
+  version?: true
 }
 
 export type TimesheetMaxAggregateInputType = {
   id?: true
   organizationId?: true
-  branchId?: true
+  timesheetPeriodId?: true
   employeeId?: true
-  periodStart?: true
-  periodEnd?: true
-  totalMinutes?: true
+  approvalPolicyId?: true
+  branchId?: true
   status?: true
-  source?: true
+  totalMinutes?: true
+  regularMinutes?: true
+  overtimeMinutes?: true
+  sourceAccessMode?: true
+  externalId?: true
+  submittedAt?: true
+  approvedAt?: true
   createdAt?: true
   updatedAt?: true
+  version?: true
 }
 
 export type TimesheetCountAggregateInputType = {
   id?: true
   organizationId?: true
-  branchId?: true
+  timesheetPeriodId?: true
   employeeId?: true
-  periodStart?: true
-  periodEnd?: true
-  totalMinutes?: true
+  approvalPolicyId?: true
+  branchId?: true
   status?: true
-  source?: true
+  totalMinutes?: true
+  regularMinutes?: true
+  overtimeMinutes?: true
+  sourceAccessMode?: true
+  externalId?: true
+  submittedAt?: true
+  approvedAt?: true
   createdAt?: true
   updatedAt?: true
+  version?: true
   _all?: true
 }
 
@@ -218,15 +266,21 @@ export type TimesheetGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type TimesheetGroupByOutputType = {
   id: string
   organizationId: string
-  branchId: string | null
+  timesheetPeriodId: string
   employeeId: string
-  periodStart: Date
-  periodEnd: Date
-  totalMinutes: number
+  approvalPolicyId: string | null
+  branchId: string | null
   status: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  totalMinutes: number
+  regularMinutes: number
+  overtimeMinutes: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId: string | null
+  submittedAt: Date | null
+  approvedAt: Date | null
   createdAt: Date
   updatedAt: Date
+  version: number
   _count: TimesheetCountAggregateOutputType | null
   _avg: TimesheetAvgAggregateOutputType | null
   _sum: TimesheetSumAggregateOutputType | null
@@ -255,70 +309,107 @@ export type TimesheetWhereInput = {
   NOT?: Prisma.TimesheetWhereInput | Prisma.TimesheetWhereInput[]
   id?: Prisma.UuidFilter<"Timesheet"> | string
   organizationId?: Prisma.UuidFilter<"Timesheet"> | string
-  branchId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
+  timesheetPeriodId?: Prisma.UuidFilter<"Timesheet"> | string
   employeeId?: Prisma.UuidFilter<"Timesheet"> | string
-  periodStart?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
-  periodEnd?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
-  totalMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  approvalPolicyId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
+  branchId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
   status?: Prisma.EnumTimesheetStatusFilter<"Timesheet"> | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFilter<"Timesheet"> | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  regularMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  overtimeMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  sourceAccessMode?: Prisma.EnumAccessModeFilter<"Timesheet"> | $Enums.AccessMode
+  externalId?: Prisma.StringNullableFilter<"Timesheet"> | string | null
+  submittedAt?: Prisma.DateTimeNullableFilter<"Timesheet"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableFilter<"Timesheet"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
+  version?: Prisma.IntFilter<"Timesheet"> | number
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
+  period?: Prisma.XOR<Prisma.TimesheetPeriodScalarRelationFilter, Prisma.TimesheetPeriodWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
+  approvalPolicy?: Prisma.XOR<Prisma.ApprovalPolicyNullableScalarRelationFilter, Prisma.ApprovalPolicyWhereInput> | null
+  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
+  entries?: Prisma.TimesheetEntryListRelationFilter
+  approvals?: Prisma.TimesheetApprovalListRelationFilter
 }
 
 export type TimesheetOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  timesheetPeriodId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
-  periodStart?: Prisma.SortOrder
-  periodEnd?: Prisma.SortOrder
-  totalMinutes?: Prisma.SortOrder
+  approvalPolicyId?: Prisma.SortOrderInput | Prisma.SortOrder
+  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  source?: Prisma.SortOrder
+  totalMinutes?: Prisma.SortOrder
+  regularMinutes?: Prisma.SortOrder
+  overtimeMinutes?: Prisma.SortOrder
+  sourceAccessMode?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
+  submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
-  branch?: Prisma.BranchOrderByWithRelationInput
+  period?: Prisma.TimesheetPeriodOrderByWithRelationInput
   employee?: Prisma.EmployeeOrderByWithRelationInput
+  approvalPolicy?: Prisma.ApprovalPolicyOrderByWithRelationInput
+  branch?: Prisma.BranchOrderByWithRelationInput
+  entries?: Prisma.TimesheetEntryOrderByRelationAggregateInput
+  approvals?: Prisma.TimesheetApprovalOrderByRelationAggregateInput
 }
 
 export type TimesheetWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  employeeId_periodStart_periodEnd?: Prisma.TimesheetEmployeeIdPeriodStartPeriodEndCompoundUniqueInput
+  employeeId_timesheetPeriodId?: Prisma.TimesheetEmployeeIdTimesheetPeriodIdCompoundUniqueInput
+  organizationId_externalId?: Prisma.TimesheetOrganizationIdExternalIdCompoundUniqueInput
   AND?: Prisma.TimesheetWhereInput | Prisma.TimesheetWhereInput[]
   OR?: Prisma.TimesheetWhereInput[]
   NOT?: Prisma.TimesheetWhereInput | Prisma.TimesheetWhereInput[]
   organizationId?: Prisma.UuidFilter<"Timesheet"> | string
-  branchId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
+  timesheetPeriodId?: Prisma.UuidFilter<"Timesheet"> | string
   employeeId?: Prisma.UuidFilter<"Timesheet"> | string
-  periodStart?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
-  periodEnd?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
-  totalMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  approvalPolicyId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
+  branchId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
   status?: Prisma.EnumTimesheetStatusFilter<"Timesheet"> | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFilter<"Timesheet"> | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  regularMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  overtimeMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  sourceAccessMode?: Prisma.EnumAccessModeFilter<"Timesheet"> | $Enums.AccessMode
+  externalId?: Prisma.StringNullableFilter<"Timesheet"> | string | null
+  submittedAt?: Prisma.DateTimeNullableFilter<"Timesheet"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableFilter<"Timesheet"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
+  version?: Prisma.IntFilter<"Timesheet"> | number
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
+  period?: Prisma.XOR<Prisma.TimesheetPeriodScalarRelationFilter, Prisma.TimesheetPeriodWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
-}, "id" | "employeeId_periodStart_periodEnd">
+  approvalPolicy?: Prisma.XOR<Prisma.ApprovalPolicyNullableScalarRelationFilter, Prisma.ApprovalPolicyWhereInput> | null
+  branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
+  entries?: Prisma.TimesheetEntryListRelationFilter
+  approvals?: Prisma.TimesheetApprovalListRelationFilter
+}, "id" | "employeeId_timesheetPeriodId" | "organizationId_externalId">
 
 export type TimesheetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  timesheetPeriodId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
-  periodStart?: Prisma.SortOrder
-  periodEnd?: Prisma.SortOrder
-  totalMinutes?: Prisma.SortOrder
+  approvalPolicyId?: Prisma.SortOrderInput | Prisma.SortOrder
+  branchId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
-  source?: Prisma.SortOrder
+  totalMinutes?: Prisma.SortOrder
+  regularMinutes?: Prisma.SortOrder
+  overtimeMinutes?: Prisma.SortOrder
+  sourceAccessMode?: Prisma.SortOrder
+  externalId?: Prisma.SortOrderInput | Prisma.SortOrder
+  submittedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
   _count?: Prisma.TimesheetCountOrderByAggregateInput
   _avg?: Prisma.TimesheetAvgOrderByAggregateInput
   _max?: Prisma.TimesheetMaxOrderByAggregateInput
@@ -332,110 +423,164 @@ export type TimesheetScalarWhereWithAggregatesInput = {
   NOT?: Prisma.TimesheetScalarWhereWithAggregatesInput | Prisma.TimesheetScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Timesheet"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"Timesheet"> | string
-  branchId?: Prisma.UuidNullableWithAggregatesFilter<"Timesheet"> | string | null
+  timesheetPeriodId?: Prisma.UuidWithAggregatesFilter<"Timesheet"> | string
   employeeId?: Prisma.UuidWithAggregatesFilter<"Timesheet"> | string
-  periodStart?: Prisma.DateTimeWithAggregatesFilter<"Timesheet"> | Date | string
-  periodEnd?: Prisma.DateTimeWithAggregatesFilter<"Timesheet"> | Date | string
-  totalMinutes?: Prisma.IntWithAggregatesFilter<"Timesheet"> | number
+  approvalPolicyId?: Prisma.UuidNullableWithAggregatesFilter<"Timesheet"> | string | null
+  branchId?: Prisma.UuidNullableWithAggregatesFilter<"Timesheet"> | string | null
   status?: Prisma.EnumTimesheetStatusWithAggregatesFilter<"Timesheet"> | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeWithAggregatesFilter<"Timesheet"> | $Enums.AccessMode
+  totalMinutes?: Prisma.IntWithAggregatesFilter<"Timesheet"> | number
+  regularMinutes?: Prisma.IntWithAggregatesFilter<"Timesheet"> | number
+  overtimeMinutes?: Prisma.IntWithAggregatesFilter<"Timesheet"> | number
+  sourceAccessMode?: Prisma.EnumAccessModeWithAggregatesFilter<"Timesheet"> | $Enums.AccessMode
+  externalId?: Prisma.StringNullableWithAggregatesFilter<"Timesheet"> | string | null
+  submittedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Timesheet"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Timesheet"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Timesheet"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Timesheet"> | Date | string
+  version?: Prisma.IntWithAggregatesFilter<"Timesheet"> | number
 }
 
 export type TimesheetCreateInput = {
   id?: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
   organization: Prisma.OrganizationCreateNestedOneWithoutTimesheetsInput
-  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  period: Prisma.TimesheetPeriodCreateNestedOneWithoutTimesheetsInput
   employee: Prisma.EmployeeCreateNestedOneWithoutTimesheetsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutTimesheetsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  entries?: Prisma.TimesheetEntryCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetUncheckedCreateInput = {
   id?: string
   organizationId: string
-  branchId?: string | null
+  timesheetPeriodId: string
   employeeId: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
+  entries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTimesheetsNestedInput
-  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  period?: Prisma.TimesheetPeriodUpdateOneRequiredWithoutTimesheetsNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutTimesheetsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutTimesheetsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  entries?: Prisma.TimesheetEntryUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  entries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetCreateManyInput = {
   id?: string
   organizationId: string
-  branchId?: string | null
+  timesheetPeriodId: string
   employeeId: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
 }
 
 export type TimesheetUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type TimesheetUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type TimesheetListRelationFilter = {
@@ -448,60 +593,163 @@ export type TimesheetOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type TimesheetEmployeeIdPeriodStartPeriodEndCompoundUniqueInput = {
+export type TimesheetEmployeeIdTimesheetPeriodIdCompoundUniqueInput = {
   employeeId: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  timesheetPeriodId: string
+}
+
+export type TimesheetOrganizationIdExternalIdCompoundUniqueInput = {
+  organizationId: string
+  externalId: string
 }
 
 export type TimesheetCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
+  timesheetPeriodId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
-  periodStart?: Prisma.SortOrder
-  periodEnd?: Prisma.SortOrder
-  totalMinutes?: Prisma.SortOrder
+  approvalPolicyId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  source?: Prisma.SortOrder
+  totalMinutes?: Prisma.SortOrder
+  regularMinutes?: Prisma.SortOrder
+  overtimeMinutes?: Prisma.SortOrder
+  sourceAccessMode?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
+  submittedAt?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type TimesheetAvgOrderByAggregateInput = {
   totalMinutes?: Prisma.SortOrder
+  regularMinutes?: Prisma.SortOrder
+  overtimeMinutes?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type TimesheetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
+  timesheetPeriodId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
-  periodStart?: Prisma.SortOrder
-  periodEnd?: Prisma.SortOrder
-  totalMinutes?: Prisma.SortOrder
+  approvalPolicyId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  source?: Prisma.SortOrder
+  totalMinutes?: Prisma.SortOrder
+  regularMinutes?: Prisma.SortOrder
+  overtimeMinutes?: Prisma.SortOrder
+  sourceAccessMode?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
+  submittedAt?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type TimesheetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
+  timesheetPeriodId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
-  periodStart?: Prisma.SortOrder
-  periodEnd?: Prisma.SortOrder
-  totalMinutes?: Prisma.SortOrder
+  approvalPolicyId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  source?: Prisma.SortOrder
+  totalMinutes?: Prisma.SortOrder
+  regularMinutes?: Prisma.SortOrder
+  overtimeMinutes?: Prisma.SortOrder
+  sourceAccessMode?: Prisma.SortOrder
+  externalId?: Prisma.SortOrder
+  submittedAt?: Prisma.SortOrder
+  approvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type TimesheetSumOrderByAggregateInput = {
   totalMinutes?: Prisma.SortOrder
+  regularMinutes?: Prisma.SortOrder
+  overtimeMinutes?: Prisma.SortOrder
+  version?: Prisma.SortOrder
+}
+
+export type TimesheetScalarRelationFilter = {
+  is?: Prisma.TimesheetWhereInput
+  isNot?: Prisma.TimesheetWhereInput
+}
+
+export type TimesheetCreateNestedManyWithoutPeriodInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutPeriodInput, Prisma.TimesheetUncheckedCreateWithoutPeriodInput> | Prisma.TimesheetCreateWithoutPeriodInput[] | Prisma.TimesheetUncheckedCreateWithoutPeriodInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutPeriodInput | Prisma.TimesheetCreateOrConnectWithoutPeriodInput[]
+  createMany?: Prisma.TimesheetCreateManyPeriodInputEnvelope
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+}
+
+export type TimesheetUncheckedCreateNestedManyWithoutPeriodInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutPeriodInput, Prisma.TimesheetUncheckedCreateWithoutPeriodInput> | Prisma.TimesheetCreateWithoutPeriodInput[] | Prisma.TimesheetUncheckedCreateWithoutPeriodInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutPeriodInput | Prisma.TimesheetCreateOrConnectWithoutPeriodInput[]
+  createMany?: Prisma.TimesheetCreateManyPeriodInputEnvelope
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+}
+
+export type TimesheetUpdateManyWithoutPeriodNestedInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutPeriodInput, Prisma.TimesheetUncheckedCreateWithoutPeriodInput> | Prisma.TimesheetCreateWithoutPeriodInput[] | Prisma.TimesheetUncheckedCreateWithoutPeriodInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutPeriodInput | Prisma.TimesheetCreateOrConnectWithoutPeriodInput[]
+  upsert?: Prisma.TimesheetUpsertWithWhereUniqueWithoutPeriodInput | Prisma.TimesheetUpsertWithWhereUniqueWithoutPeriodInput[]
+  createMany?: Prisma.TimesheetCreateManyPeriodInputEnvelope
+  set?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  disconnect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  delete?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  update?: Prisma.TimesheetUpdateWithWhereUniqueWithoutPeriodInput | Prisma.TimesheetUpdateWithWhereUniqueWithoutPeriodInput[]
+  updateMany?: Prisma.TimesheetUpdateManyWithWhereWithoutPeriodInput | Prisma.TimesheetUpdateManyWithWhereWithoutPeriodInput[]
+  deleteMany?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
+}
+
+export type TimesheetUncheckedUpdateManyWithoutPeriodNestedInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutPeriodInput, Prisma.TimesheetUncheckedCreateWithoutPeriodInput> | Prisma.TimesheetCreateWithoutPeriodInput[] | Prisma.TimesheetUncheckedCreateWithoutPeriodInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutPeriodInput | Prisma.TimesheetCreateOrConnectWithoutPeriodInput[]
+  upsert?: Prisma.TimesheetUpsertWithWhereUniqueWithoutPeriodInput | Prisma.TimesheetUpsertWithWhereUniqueWithoutPeriodInput[]
+  createMany?: Prisma.TimesheetCreateManyPeriodInputEnvelope
+  set?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  disconnect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  delete?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  update?: Prisma.TimesheetUpdateWithWhereUniqueWithoutPeriodInput | Prisma.TimesheetUpdateWithWhereUniqueWithoutPeriodInput[]
+  updateMany?: Prisma.TimesheetUpdateManyWithWhereWithoutPeriodInput | Prisma.TimesheetUpdateManyWithWhereWithoutPeriodInput[]
+  deleteMany?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
+}
+
+export type TimesheetCreateNestedOneWithoutEntriesInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutEntriesInput, Prisma.TimesheetUncheckedCreateWithoutEntriesInput>
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutEntriesInput
+  connect?: Prisma.TimesheetWhereUniqueInput
+}
+
+export type TimesheetUpdateOneRequiredWithoutEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutEntriesInput, Prisma.TimesheetUncheckedCreateWithoutEntriesInput>
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutEntriesInput
+  upsert?: Prisma.TimesheetUpsertWithoutEntriesInput
+  connect?: Prisma.TimesheetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TimesheetUpdateToOneWithWhereWithoutEntriesInput, Prisma.TimesheetUpdateWithoutEntriesInput>, Prisma.TimesheetUncheckedUpdateWithoutEntriesInput>
+}
+
+export type TimesheetCreateNestedOneWithoutApprovalsInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalsInput, Prisma.TimesheetUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutApprovalsInput
+  connect?: Prisma.TimesheetWhereUniqueInput
+}
+
+export type TimesheetUpdateOneRequiredWithoutApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalsInput, Prisma.TimesheetUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutApprovalsInput
+  upsert?: Prisma.TimesheetUpsertWithoutApprovalsInput
+  connect?: Prisma.TimesheetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TimesheetUpdateToOneWithWhereWithoutApprovalsInput, Prisma.TimesheetUpdateWithoutApprovalsInput>, Prisma.TimesheetUncheckedUpdateWithoutApprovalsInput>
 }
 
 export type TimesheetCreateNestedManyWithoutOrganizationInput = {
@@ -543,6 +791,48 @@ export type TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput = {
   connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
   update?: Prisma.TimesheetUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.TimesheetUpdateWithWhereUniqueWithoutOrganizationInput[]
   updateMany?: Prisma.TimesheetUpdateManyWithWhereWithoutOrganizationInput | Prisma.TimesheetUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
+}
+
+export type TimesheetCreateNestedManyWithoutApprovalPolicyInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput> | Prisma.TimesheetCreateWithoutApprovalPolicyInput[] | Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput | Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput[]
+  createMany?: Prisma.TimesheetCreateManyApprovalPolicyInputEnvelope
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+}
+
+export type TimesheetUncheckedCreateNestedManyWithoutApprovalPolicyInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput> | Prisma.TimesheetCreateWithoutApprovalPolicyInput[] | Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput | Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput[]
+  createMany?: Prisma.TimesheetCreateManyApprovalPolicyInputEnvelope
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+}
+
+export type TimesheetUpdateManyWithoutApprovalPolicyNestedInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput> | Prisma.TimesheetCreateWithoutApprovalPolicyInput[] | Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput | Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput[]
+  upsert?: Prisma.TimesheetUpsertWithWhereUniqueWithoutApprovalPolicyInput | Prisma.TimesheetUpsertWithWhereUniqueWithoutApprovalPolicyInput[]
+  createMany?: Prisma.TimesheetCreateManyApprovalPolicyInputEnvelope
+  set?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  disconnect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  delete?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  update?: Prisma.TimesheetUpdateWithWhereUniqueWithoutApprovalPolicyInput | Prisma.TimesheetUpdateWithWhereUniqueWithoutApprovalPolicyInput[]
+  updateMany?: Prisma.TimesheetUpdateManyWithWhereWithoutApprovalPolicyInput | Prisma.TimesheetUpdateManyWithWhereWithoutApprovalPolicyInput[]
+  deleteMany?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
+}
+
+export type TimesheetUncheckedUpdateManyWithoutApprovalPolicyNestedInput = {
+  create?: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput> | Prisma.TimesheetCreateWithoutApprovalPolicyInput[] | Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput[]
+  connectOrCreate?: Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput | Prisma.TimesheetCreateOrConnectWithoutApprovalPolicyInput[]
+  upsert?: Prisma.TimesheetUpsertWithWhereUniqueWithoutApprovalPolicyInput | Prisma.TimesheetUpsertWithWhereUniqueWithoutApprovalPolicyInput[]
+  createMany?: Prisma.TimesheetCreateManyApprovalPolicyInputEnvelope
+  set?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  disconnect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  delete?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  connect?: Prisma.TimesheetWhereUniqueInput | Prisma.TimesheetWhereUniqueInput[]
+  update?: Prisma.TimesheetUpdateWithWhereUniqueWithoutApprovalPolicyInput | Prisma.TimesheetUpdateWithWhereUniqueWithoutApprovalPolicyInput[]
+  updateMany?: Prisma.TimesheetUpdateManyWithWhereWithoutApprovalPolicyInput | Prisma.TimesheetUpdateManyWithWhereWithoutApprovalPolicyInput[]
   deleteMany?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
 }
 
@@ -630,34 +920,337 @@ export type TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput = {
   deleteMany?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
 }
 
-export type EnumTimesheetStatusFieldUpdateOperationsInput = {
-  set?: $Enums.TimesheetStatus
+export type TimesheetCreateWithoutPeriodInput = {
+  id?: string
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutTimesheetsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutTimesheetsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutTimesheetsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  entries?: Prisma.TimesheetEntryCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetUncheckedCreateWithoutPeriodInput = {
+  id?: string
+  organizationId: string
+  employeeId: string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  entries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetCreateOrConnectWithoutPeriodInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutPeriodInput, Prisma.TimesheetUncheckedCreateWithoutPeriodInput>
+}
+
+export type TimesheetCreateManyPeriodInputEnvelope = {
+  data: Prisma.TimesheetCreateManyPeriodInput | Prisma.TimesheetCreateManyPeriodInput[]
+  skipDuplicates?: boolean
+}
+
+export type TimesheetUpsertWithWhereUniqueWithoutPeriodInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  update: Prisma.XOR<Prisma.TimesheetUpdateWithoutPeriodInput, Prisma.TimesheetUncheckedUpdateWithoutPeriodInput>
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutPeriodInput, Prisma.TimesheetUncheckedCreateWithoutPeriodInput>
+}
+
+export type TimesheetUpdateWithWhereUniqueWithoutPeriodInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  data: Prisma.XOR<Prisma.TimesheetUpdateWithoutPeriodInput, Prisma.TimesheetUncheckedUpdateWithoutPeriodInput>
+}
+
+export type TimesheetUpdateManyWithWhereWithoutPeriodInput = {
+  where: Prisma.TimesheetScalarWhereInput
+  data: Prisma.XOR<Prisma.TimesheetUpdateManyMutationInput, Prisma.TimesheetUncheckedUpdateManyWithoutPeriodInput>
+}
+
+export type TimesheetScalarWhereInput = {
+  AND?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
+  OR?: Prisma.TimesheetScalarWhereInput[]
+  NOT?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
+  id?: Prisma.UuidFilter<"Timesheet"> | string
+  organizationId?: Prisma.UuidFilter<"Timesheet"> | string
+  timesheetPeriodId?: Prisma.UuidFilter<"Timesheet"> | string
+  employeeId?: Prisma.UuidFilter<"Timesheet"> | string
+  approvalPolicyId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
+  branchId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
+  status?: Prisma.EnumTimesheetStatusFilter<"Timesheet"> | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  regularMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  overtimeMinutes?: Prisma.IntFilter<"Timesheet"> | number
+  sourceAccessMode?: Prisma.EnumAccessModeFilter<"Timesheet"> | $Enums.AccessMode
+  externalId?: Prisma.StringNullableFilter<"Timesheet"> | string | null
+  submittedAt?: Prisma.DateTimeNullableFilter<"Timesheet"> | Date | string | null
+  approvedAt?: Prisma.DateTimeNullableFilter<"Timesheet"> | Date | string | null
+  createdAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
+  version?: Prisma.IntFilter<"Timesheet"> | number
+}
+
+export type TimesheetCreateWithoutEntriesInput = {
+  id?: string
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutTimesheetsInput
+  period: Prisma.TimesheetPeriodCreateNestedOneWithoutTimesheetsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutTimesheetsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutTimesheetsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  approvals?: Prisma.TimesheetApprovalCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetUncheckedCreateWithoutEntriesInput = {
+  id?: string
+  organizationId: string
+  timesheetPeriodId: string
+  employeeId: string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  approvals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetCreateOrConnectWithoutEntriesInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutEntriesInput, Prisma.TimesheetUncheckedCreateWithoutEntriesInput>
+}
+
+export type TimesheetUpsertWithoutEntriesInput = {
+  update: Prisma.XOR<Prisma.TimesheetUpdateWithoutEntriesInput, Prisma.TimesheetUncheckedUpdateWithoutEntriesInput>
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutEntriesInput, Prisma.TimesheetUncheckedCreateWithoutEntriesInput>
+  where?: Prisma.TimesheetWhereInput
+}
+
+export type TimesheetUpdateToOneWithWhereWithoutEntriesInput = {
+  where?: Prisma.TimesheetWhereInput
+  data: Prisma.XOR<Prisma.TimesheetUpdateWithoutEntriesInput, Prisma.TimesheetUncheckedUpdateWithoutEntriesInput>
+}
+
+export type TimesheetUpdateWithoutEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTimesheetsNestedInput
+  period?: Prisma.TimesheetPeriodUpdateOneRequiredWithoutTimesheetsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutTimesheetsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutTimesheetsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  approvals?: Prisma.TimesheetApprovalUpdateManyWithoutTimesheetNestedInput
+}
+
+export type TimesheetUncheckedUpdateWithoutEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  approvals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutTimesheetNestedInput
+}
+
+export type TimesheetCreateWithoutApprovalsInput = {
+  id?: string
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutTimesheetsInput
+  period: Prisma.TimesheetPeriodCreateNestedOneWithoutTimesheetsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutTimesheetsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutTimesheetsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  entries?: Prisma.TimesheetEntryCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetUncheckedCreateWithoutApprovalsInput = {
+  id?: string
+  organizationId: string
+  timesheetPeriodId: string
+  employeeId: string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  entries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetCreateOrConnectWithoutApprovalsInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalsInput, Prisma.TimesheetUncheckedCreateWithoutApprovalsInput>
+}
+
+export type TimesheetUpsertWithoutApprovalsInput = {
+  update: Prisma.XOR<Prisma.TimesheetUpdateWithoutApprovalsInput, Prisma.TimesheetUncheckedUpdateWithoutApprovalsInput>
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalsInput, Prisma.TimesheetUncheckedCreateWithoutApprovalsInput>
+  where?: Prisma.TimesheetWhereInput
+}
+
+export type TimesheetUpdateToOneWithWhereWithoutApprovalsInput = {
+  where?: Prisma.TimesheetWhereInput
+  data: Prisma.XOR<Prisma.TimesheetUpdateWithoutApprovalsInput, Prisma.TimesheetUncheckedUpdateWithoutApprovalsInput>
+}
+
+export type TimesheetUpdateWithoutApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTimesheetsNestedInput
+  period?: Prisma.TimesheetPeriodUpdateOneRequiredWithoutTimesheetsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutTimesheetsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutTimesheetsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  entries?: Prisma.TimesheetEntryUpdateManyWithoutTimesheetNestedInput
+}
+
+export type TimesheetUncheckedUpdateWithoutApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  entries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetCreateWithoutOrganizationInput = {
   id?: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  version?: number
+  period: Prisma.TimesheetPeriodCreateNestedOneWithoutTimesheetsInput
   employee: Prisma.EmployeeCreateNestedOneWithoutTimesheetsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutTimesheetsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  entries?: Prisma.TimesheetEntryCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetUncheckedCreateWithoutOrganizationInput = {
   id?: string
-  branchId?: string | null
+  timesheetPeriodId: string
   employeeId: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
+  entries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetCreateOrConnectWithoutOrganizationInput = {
@@ -686,47 +1279,114 @@ export type TimesheetUpdateManyWithWhereWithoutOrganizationInput = {
   data: Prisma.XOR<Prisma.TimesheetUpdateManyMutationInput, Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationInput>
 }
 
-export type TimesheetScalarWhereInput = {
-  AND?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
-  OR?: Prisma.TimesheetScalarWhereInput[]
-  NOT?: Prisma.TimesheetScalarWhereInput | Prisma.TimesheetScalarWhereInput[]
-  id?: Prisma.UuidFilter<"Timesheet"> | string
-  organizationId?: Prisma.UuidFilter<"Timesheet"> | string
-  branchId?: Prisma.UuidNullableFilter<"Timesheet"> | string | null
-  employeeId?: Prisma.UuidFilter<"Timesheet"> | string
-  periodStart?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
-  periodEnd?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
-  totalMinutes?: Prisma.IntFilter<"Timesheet"> | number
-  status?: Prisma.EnumTimesheetStatusFilter<"Timesheet"> | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFilter<"Timesheet"> | $Enums.AccessMode
-  createdAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Timesheet"> | Date | string
+export type TimesheetCreateWithoutApprovalPolicyInput = {
+  id?: string
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutTimesheetsInput
+  period: Prisma.TimesheetPeriodCreateNestedOneWithoutTimesheetsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutTimesheetsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  entries?: Prisma.TimesheetEntryCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetUncheckedCreateWithoutApprovalPolicyInput = {
+  id?: string
+  organizationId: string
+  timesheetPeriodId: string
+  employeeId: string
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  entries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutTimesheetInput
+}
+
+export type TimesheetCreateOrConnectWithoutApprovalPolicyInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput>
+}
+
+export type TimesheetCreateManyApprovalPolicyInputEnvelope = {
+  data: Prisma.TimesheetCreateManyApprovalPolicyInput | Prisma.TimesheetCreateManyApprovalPolicyInput[]
+  skipDuplicates?: boolean
+}
+
+export type TimesheetUpsertWithWhereUniqueWithoutApprovalPolicyInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  update: Prisma.XOR<Prisma.TimesheetUpdateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedUpdateWithoutApprovalPolicyInput>
+  create: Prisma.XOR<Prisma.TimesheetCreateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedCreateWithoutApprovalPolicyInput>
+}
+
+export type TimesheetUpdateWithWhereUniqueWithoutApprovalPolicyInput = {
+  where: Prisma.TimesheetWhereUniqueInput
+  data: Prisma.XOR<Prisma.TimesheetUpdateWithoutApprovalPolicyInput, Prisma.TimesheetUncheckedUpdateWithoutApprovalPolicyInput>
+}
+
+export type TimesheetUpdateManyWithWhereWithoutApprovalPolicyInput = {
+  where: Prisma.TimesheetScalarWhereInput
+  data: Prisma.XOR<Prisma.TimesheetUpdateManyMutationInput, Prisma.TimesheetUncheckedUpdateManyWithoutApprovalPolicyInput>
 }
 
 export type TimesheetCreateWithoutBranchInput = {
   id?: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
   organization: Prisma.OrganizationCreateNestedOneWithoutTimesheetsInput
+  period: Prisma.TimesheetPeriodCreateNestedOneWithoutTimesheetsInput
   employee: Prisma.EmployeeCreateNestedOneWithoutTimesheetsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutTimesheetsInput
+  entries?: Prisma.TimesheetEntryCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetUncheckedCreateWithoutBranchInput = {
   id?: string
   organizationId: string
+  timesheetPeriodId: string
   employeeId: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  approvalPolicyId?: string | null
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
+  entries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetCreateOrConnectWithoutBranchInput = {
@@ -757,28 +1417,44 @@ export type TimesheetUpdateManyWithWhereWithoutBranchInput = {
 
 export type TimesheetCreateWithoutEmployeeInput = {
   id?: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
   organization: Prisma.OrganizationCreateNestedOneWithoutTimesheetsInput
+  period: Prisma.TimesheetPeriodCreateNestedOneWithoutTimesheetsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutTimesheetsInput
   branch?: Prisma.BranchCreateNestedOneWithoutTimesheetsInput
+  entries?: Prisma.TimesheetEntryCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetUncheckedCreateWithoutEmployeeInput = {
   id?: string
   organizationId: string
+  timesheetPeriodId: string
+  approvalPolicyId?: string | null
   branchId?: string | null
-  periodStart: Date | string
-  periodEnd: Date | string
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
+  entries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutTimesheetInput
+  approvals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutTimesheetInput
 }
 
 export type TimesheetCreateOrConnectWithoutEmployeeInput = {
@@ -807,265 +1483,599 @@ export type TimesheetUpdateManyWithWhereWithoutEmployeeInput = {
   data: Prisma.XOR<Prisma.TimesheetUpdateManyMutationInput, Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeInput>
 }
 
-export type TimesheetCreateManyOrganizationInput = {
+export type TimesheetCreateManyPeriodInput = {
   id?: string
-  branchId?: string | null
+  organizationId: string
   employeeId: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
+}
+
+export type TimesheetUpdateWithoutPeriodInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTimesheetsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutTimesheetsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutTimesheetsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  entries?: Prisma.TimesheetEntryUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUpdateManyWithoutTimesheetNestedInput
+}
+
+export type TimesheetUncheckedUpdateWithoutPeriodInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  entries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutTimesheetNestedInput
+}
+
+export type TimesheetUncheckedUpdateManyWithoutPeriodInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type TimesheetCreateManyOrganizationInput = {
+  id?: string
+  timesheetPeriodId: string
+  employeeId: string
+  approvalPolicyId?: string | null
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
 }
 
 export type TimesheetUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  period?: Prisma.TimesheetPeriodUpdateOneRequiredWithoutTimesheetsNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutTimesheetsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutTimesheetsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  entries?: Prisma.TimesheetEntryUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  entries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type TimesheetCreateManyApprovalPolicyInput = {
+  id?: string
+  organizationId: string
+  timesheetPeriodId: string
+  employeeId: string
+  branchId?: string | null
+  status: $Enums.TimesheetStatus
+  totalMinutes?: number
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+}
+
+export type TimesheetUpdateWithoutApprovalPolicyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTimesheetsNestedInput
+  period?: Prisma.TimesheetPeriodUpdateOneRequiredWithoutTimesheetsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutTimesheetsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  entries?: Prisma.TimesheetEntryUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUpdateManyWithoutTimesheetNestedInput
+}
+
+export type TimesheetUncheckedUpdateWithoutApprovalPolicyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  entries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutTimesheetNestedInput
+}
+
+export type TimesheetUncheckedUpdateManyWithoutApprovalPolicyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type TimesheetCreateManyBranchInput = {
   id?: string
   organizationId: string
+  timesheetPeriodId: string
   employeeId: string
-  periodStart: Date | string
-  periodEnd: Date | string
+  approvalPolicyId?: string | null
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
 }
 
 export type TimesheetUpdateWithoutBranchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTimesheetsNestedInput
+  period?: Prisma.TimesheetPeriodUpdateOneRequiredWithoutTimesheetsNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutTimesheetsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutTimesheetsNestedInput
+  entries?: Prisma.TimesheetEntryUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetUncheckedUpdateWithoutBranchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  entries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetUncheckedUpdateManyWithoutBranchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type TimesheetCreateManyEmployeeInput = {
   id?: string
   organizationId: string
+  timesheetPeriodId: string
+  approvalPolicyId?: string | null
   branchId?: string | null
-  periodStart: Date | string
-  periodEnd: Date | string
+  status: $Enums.TimesheetStatus
   totalMinutes?: number
-  status?: $Enums.TimesheetStatus
-  source: $Enums.AccessMode
+  regularMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  approvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  version?: number
 }
 
 export type TimesheetUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTimesheetsNestedInput
+  period?: Prisma.TimesheetPeriodUpdateOneRequiredWithoutTimesheetsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutTimesheetsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutTimesheetsNestedInput
+  entries?: Prisma.TimesheetEntryUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetUncheckedUpdateWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  entries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutTimesheetNestedInput
+  approvals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutTimesheetNestedInput
 }
 
 export type TimesheetUncheckedUpdateManyWithoutEmployeeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  timesheetPeriodId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumTimesheetStatusFieldUpdateOperationsInput | $Enums.TimesheetStatus
-  source?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  totalMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  regularMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
+
+/**
+ * Count Type TimesheetCountOutputType
+ */
+
+export type TimesheetCountOutputType = {
+  entries: number
+  approvals: number
+}
+
+export type TimesheetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  entries?: boolean | TimesheetCountOutputTypeCountEntriesArgs
+  approvals?: boolean | TimesheetCountOutputTypeCountApprovalsArgs
+}
+
+/**
+ * TimesheetCountOutputType without action
+ */
+export type TimesheetCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TimesheetCountOutputType
+   */
+  select?: Prisma.TimesheetCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * TimesheetCountOutputType without action
+ */
+export type TimesheetCountOutputTypeCountEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TimesheetEntryWhereInput
+}
+
+/**
+ * TimesheetCountOutputType without action
+ */
+export type TimesheetCountOutputTypeCountApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TimesheetApprovalWhereInput
+}
 
 
 export type TimesheetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
-  branchId?: boolean
+  timesheetPeriodId?: boolean
   employeeId?: boolean
-  periodStart?: boolean
-  periodEnd?: boolean
-  totalMinutes?: boolean
+  approvalPolicyId?: boolean
+  branchId?: boolean
   status?: boolean
-  source?: boolean
+  totalMinutes?: boolean
+  regularMinutes?: boolean
+  overtimeMinutes?: boolean
+  sourceAccessMode?: boolean
+  externalId?: boolean
+  submittedAt?: boolean
+  approvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  version?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  period?: boolean | Prisma.TimesheetPeriodDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  approvalPolicy?: boolean | Prisma.Timesheet$approvalPolicyArgs<ExtArgs>
+  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  entries?: boolean | Prisma.Timesheet$entriesArgs<ExtArgs>
+  approvals?: boolean | Prisma.Timesheet$approvalsArgs<ExtArgs>
+  _count?: boolean | Prisma.TimesheetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["timesheet"]>
 
 export type TimesheetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
-  branchId?: boolean
+  timesheetPeriodId?: boolean
   employeeId?: boolean
-  periodStart?: boolean
-  periodEnd?: boolean
-  totalMinutes?: boolean
+  approvalPolicyId?: boolean
+  branchId?: boolean
   status?: boolean
-  source?: boolean
+  totalMinutes?: boolean
+  regularMinutes?: boolean
+  overtimeMinutes?: boolean
+  sourceAccessMode?: boolean
+  externalId?: boolean
+  submittedAt?: boolean
+  approvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  version?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  period?: boolean | Prisma.TimesheetPeriodDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  approvalPolicy?: boolean | Prisma.Timesheet$approvalPolicyArgs<ExtArgs>
+  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
 }, ExtArgs["result"]["timesheet"]>
 
 export type TimesheetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
-  branchId?: boolean
+  timesheetPeriodId?: boolean
   employeeId?: boolean
-  periodStart?: boolean
-  periodEnd?: boolean
-  totalMinutes?: boolean
+  approvalPolicyId?: boolean
+  branchId?: boolean
   status?: boolean
-  source?: boolean
+  totalMinutes?: boolean
+  regularMinutes?: boolean
+  overtimeMinutes?: boolean
+  sourceAccessMode?: boolean
+  externalId?: boolean
+  submittedAt?: boolean
+  approvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  version?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  period?: boolean | Prisma.TimesheetPeriodDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  approvalPolicy?: boolean | Prisma.Timesheet$approvalPolicyArgs<ExtArgs>
+  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
 }, ExtArgs["result"]["timesheet"]>
 
 export type TimesheetSelectScalar = {
   id?: boolean
   organizationId?: boolean
-  branchId?: boolean
+  timesheetPeriodId?: boolean
   employeeId?: boolean
-  periodStart?: boolean
-  periodEnd?: boolean
-  totalMinutes?: boolean
+  approvalPolicyId?: boolean
+  branchId?: boolean
   status?: boolean
-  source?: boolean
+  totalMinutes?: boolean
+  regularMinutes?: boolean
+  overtimeMinutes?: boolean
+  sourceAccessMode?: boolean
+  externalId?: boolean
+  submittedAt?: boolean
+  approvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  version?: boolean
 }
 
-export type TimesheetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "branchId" | "employeeId" | "periodStart" | "periodEnd" | "totalMinutes" | "status" | "source" | "createdAt" | "updatedAt", ExtArgs["result"]["timesheet"]>
+export type TimesheetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "timesheetPeriodId" | "employeeId" | "approvalPolicyId" | "branchId" | "status" | "totalMinutes" | "regularMinutes" | "overtimeMinutes" | "sourceAccessMode" | "externalId" | "submittedAt" | "approvedAt" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["timesheet"]>
 export type TimesheetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  period?: boolean | Prisma.TimesheetPeriodDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  approvalPolicy?: boolean | Prisma.Timesheet$approvalPolicyArgs<ExtArgs>
+  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  entries?: boolean | Prisma.Timesheet$entriesArgs<ExtArgs>
+  approvals?: boolean | Prisma.Timesheet$approvalsArgs<ExtArgs>
+  _count?: boolean | Prisma.TimesheetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TimesheetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  period?: boolean | Prisma.TimesheetPeriodDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  approvalPolicy?: boolean | Prisma.Timesheet$approvalPolicyArgs<ExtArgs>
+  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
 }
 export type TimesheetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
+  period?: boolean | Prisma.TimesheetPeriodDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  approvalPolicy?: boolean | Prisma.Timesheet$approvalPolicyArgs<ExtArgs>
+  branch?: boolean | Prisma.Timesheet$branchArgs<ExtArgs>
 }
 
 export type $TimesheetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Timesheet"
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
-    branch: Prisma.$BranchPayload<ExtArgs> | null
+    period: Prisma.$TimesheetPeriodPayload<ExtArgs>
     employee: Prisma.$EmployeePayload<ExtArgs>
+    approvalPolicy: Prisma.$ApprovalPolicyPayload<ExtArgs> | null
+    branch: Prisma.$BranchPayload<ExtArgs> | null
+    entries: Prisma.$TimesheetEntryPayload<ExtArgs>[]
+    approvals: Prisma.$TimesheetApprovalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
-    branchId: string | null
+    timesheetPeriodId: string
     employeeId: string
-    periodStart: Date
-    periodEnd: Date
-    totalMinutes: number
+    approvalPolicyId: string | null
+    branchId: string | null
     status: $Enums.TimesheetStatus
-    source: $Enums.AccessMode
+    totalMinutes: number
+    regularMinutes: number
+    overtimeMinutes: number
+    sourceAccessMode: $Enums.AccessMode
+    externalId: string | null
+    submittedAt: Date | null
+    approvedAt: Date | null
     createdAt: Date
     updatedAt: Date
+    version: number
   }, ExtArgs["result"]["timesheet"]>
   composites: {}
 }
@@ -1461,8 +2471,12 @@ readonly fields: TimesheetFieldRefs;
 export interface Prisma__TimesheetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  branch<T extends Prisma.Timesheet$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Timesheet$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  period<T extends Prisma.TimesheetPeriodDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TimesheetPeriodDefaultArgs<ExtArgs>>): Prisma.Prisma__TimesheetPeriodClient<runtime.Types.Result.GetResult<Prisma.$TimesheetPeriodPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   employee<T extends Prisma.EmployeeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmployeeDefaultArgs<ExtArgs>>): Prisma.Prisma__EmployeeClient<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  approvalPolicy<T extends Prisma.Timesheet$approvalPolicyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Timesheet$approvalPolicyArgs<ExtArgs>>): Prisma.Prisma__ApprovalPolicyClient<runtime.Types.Result.GetResult<Prisma.$ApprovalPolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  branch<T extends Prisma.Timesheet$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Timesheet$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  entries<T extends Prisma.Timesheet$entriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Timesheet$entriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimesheetEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvals<T extends Prisma.Timesheet$approvalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Timesheet$approvalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimesheetApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1494,15 +2508,21 @@ export interface Prisma__TimesheetClient<T, Null = never, ExtArgs extends runtim
 export interface TimesheetFieldRefs {
   readonly id: Prisma.FieldRef<"Timesheet", 'String'>
   readonly organizationId: Prisma.FieldRef<"Timesheet", 'String'>
-  readonly branchId: Prisma.FieldRef<"Timesheet", 'String'>
+  readonly timesheetPeriodId: Prisma.FieldRef<"Timesheet", 'String'>
   readonly employeeId: Prisma.FieldRef<"Timesheet", 'String'>
-  readonly periodStart: Prisma.FieldRef<"Timesheet", 'DateTime'>
-  readonly periodEnd: Prisma.FieldRef<"Timesheet", 'DateTime'>
-  readonly totalMinutes: Prisma.FieldRef<"Timesheet", 'Int'>
+  readonly approvalPolicyId: Prisma.FieldRef<"Timesheet", 'String'>
+  readonly branchId: Prisma.FieldRef<"Timesheet", 'String'>
   readonly status: Prisma.FieldRef<"Timesheet", 'TimesheetStatus'>
-  readonly source: Prisma.FieldRef<"Timesheet", 'AccessMode'>
+  readonly totalMinutes: Prisma.FieldRef<"Timesheet", 'Int'>
+  readonly regularMinutes: Prisma.FieldRef<"Timesheet", 'Int'>
+  readonly overtimeMinutes: Prisma.FieldRef<"Timesheet", 'Int'>
+  readonly sourceAccessMode: Prisma.FieldRef<"Timesheet", 'AccessMode'>
+  readonly externalId: Prisma.FieldRef<"Timesheet", 'String'>
+  readonly submittedAt: Prisma.FieldRef<"Timesheet", 'DateTime'>
+  readonly approvedAt: Prisma.FieldRef<"Timesheet", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Timesheet", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Timesheet", 'DateTime'>
+  readonly version: Prisma.FieldRef<"Timesheet", 'Int'>
 }
     
 
@@ -1904,6 +2924,25 @@ export type TimesheetDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * Timesheet.approvalPolicy
+ */
+export type Timesheet$approvalPolicyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApprovalPolicy
+   */
+  select?: Prisma.ApprovalPolicySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApprovalPolicy
+   */
+  omit?: Prisma.ApprovalPolicyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApprovalPolicyInclude<ExtArgs> | null
+  where?: Prisma.ApprovalPolicyWhereInput
+}
+
+/**
  * Timesheet.branch
  */
 export type Timesheet$branchArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1920,6 +2959,54 @@ export type Timesheet$branchArgs<ExtArgs extends runtime.Types.Extensions.Intern
    */
   include?: Prisma.BranchInclude<ExtArgs> | null
   where?: Prisma.BranchWhereInput
+}
+
+/**
+ * Timesheet.entries
+ */
+export type Timesheet$entriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TimesheetEntry
+   */
+  select?: Prisma.TimesheetEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TimesheetEntry
+   */
+  omit?: Prisma.TimesheetEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TimesheetEntryInclude<ExtArgs> | null
+  where?: Prisma.TimesheetEntryWhereInput
+  orderBy?: Prisma.TimesheetEntryOrderByWithRelationInput | Prisma.TimesheetEntryOrderByWithRelationInput[]
+  cursor?: Prisma.TimesheetEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TimesheetEntryScalarFieldEnum | Prisma.TimesheetEntryScalarFieldEnum[]
+}
+
+/**
+ * Timesheet.approvals
+ */
+export type Timesheet$approvalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TimesheetApproval
+   */
+  select?: Prisma.TimesheetApprovalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TimesheetApproval
+   */
+  omit?: Prisma.TimesheetApprovalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TimesheetApprovalInclude<ExtArgs> | null
+  where?: Prisma.TimesheetApprovalWhereInput
+  orderBy?: Prisma.TimesheetApprovalOrderByWithRelationInput | Prisma.TimesheetApprovalOrderByWithRelationInput[]
+  cursor?: Prisma.TimesheetApprovalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TimesheetApprovalScalarFieldEnum | Prisma.TimesheetApprovalScalarFieldEnum[]
 }
 
 /**

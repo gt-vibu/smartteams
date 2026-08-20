@@ -1,0 +1,293 @@
+model Employee {
+  id                String         @id @default(uuid()) @db.Uuid
+  organizationId    String         @map("organization_id") @db.Uuid
+  userId            String?        @unique @map("user_id") @db.Uuid
+  employeeNumber    String         @map("employee_number")
+  firstName         String         @map("first_name")
+  middleName        String?        @map("middle_name")
+  lastName          String         @map("last_name")
+  preferredName     String?        @map("preferred_name")
+  workEmail         String?        @map("work_email") @db.Citext
+  personalEmail     String?        @map("personal_email") @db.Citext
+  phone             String?
+  identitySource    IdentityType   @map("identity_source")
+  externalId        String?        @map("external_id")
+  status            EmployeeStatus @default(ACTIVE)
+  employmentType    EmploymentType @map("employment_type")
+  dateOfJoining     DateTime?      @map("date_of_joining") @db.Date
+  dateOfLeaving     DateTime?      @map("date_of_leaving") @db.Date
+  managerEmployeeId String?        @map("manager_employee_id") @db.Uuid
+  geofenceMode      GeofenceMode?  @map("geofence_mode")
+  primaryBranchId   String?        @map("primary_branch_id") @db.Uuid
+  ownedFields       Json           @default("{}") @map("owned_fields")
+  metadata          Json           @default("{}")
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deactivatedAt     DateTime?      @map("deactivated_at") @db.Timestamptz(6)
+  version           Int            @default(1)
+
+  organization             Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user                     User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  manager                  Employee?                  @relation("EmployeeManager", fields: [managerEmployeeId], references: [id], onDelete: Restrict)
+  reports                  Employee[]                 @relation("EmployeeManager")
+  primaryBranch            Branch?                    @relation("EmployeePrimaryBranch", fields: [primaryBranchId], references: [id], onDelete: Restrict)
+  emergencyContacts        EmployeeEmergencyContact[]
+  branchAssignments        EmployeeBranchAssignment[]
+  fieldOwnership           EmployeeFieldOwnership[]
+  employmentRecords        EmployeeEmploymentRecord[]
+  managedEmploymentRecords EmployeeEmploymentRecord[] @relation("EmploymentManager")
+  compensations            EmployeeCompensation[]
+  payComponents            EmployeePayComponent[]
+  teamMemberships          TeamMember[]
+  projectMemberships       ProjectMember[]
+  attendanceRecords        AttendanceRecord[]
+  attendancePunches        AttendancePunch[]
+  leaveBalances            LeaveBalance[]
+  leaveRequests            LeaveRequest[]
+  shifts                   EmployeeShiftAssignment[]
+  timesheets               Timesheet[]
+  payrollLines             PayrollLineItem[]
+  payslips                 Payslip[]
+  payrollAdjustments       PayrollAdjustment[]
+  files                    FileObject[]
+  teamLeadOf               Team[]
+
+  @@unique([organizationId, employeeNumber])
+  @@unique([organizationId, externalId])
+  @@index([organizationId, status])
+  @@index([organizationId, lastName, firstName])
+  @@map("employees")
+}
+
+model EmployeeEmergencyContact {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  employeeId     String   @map("employee_id") @db.Uuid
+  name           String
+  relationship   String
+  phone          String
+  email          String?  @db.Citext
+  isPrimary      Boolean  @default(false) @map("is_primary")
+  sortOrder      Int      @default(0) @map("sort_order") @db.SmallInt
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, employeeId, sortOrder])
+  @@map("employee_emergency_contacts")
+}
+
+model EmployeeBranchAssignment {
+  id               String     @id @default(uuid()) @db.Uuid
+  organizationId   String     @map("organization_id") @db.Uuid
+  employeeId       String     @map("employee_id") @db.Uuid
+  branchId         String     @map("branch_id") @db.Uuid
+  isPrimary        Boolean    @default(false) @map("is_primary")
+  startsOn         DateTime   @map("starts_on") @db.Date
+  endsOn           DateTime?  @map("ends_on") @db.Date
+  sourceAccessMode AccessMode @map("source_access_mode")
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  branch       Branch       @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, employeeId, startsOn])
+  @@index([organizationId, branchId, startsOn])
+  @@map("employee_branch_assignments")
+}
+
+model EmployeeFieldOwnership {
+  employeeId          String      @map("employee_id") @db.Uuid
+  organizationId      String      @map("organization_id") @db.Uuid
+  fieldName           String      @map("field_name")
+  ownerSource         OwnerSource @map("owner_source")
+  ownerClientId       String?     @map("owner_client_id") @db.Uuid
+  lastExternalVersion String?     @map("last_external_version")
+  updatedAt           DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  employee     Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  ownerClient  FederationClient? @relation(fields: [ownerClientId], references: [id], onDelete: SetNull)
+
+  @@id([employeeId, fieldName])
+  @@index([organizationId, employeeId])
+  @@map("employee_field_ownership")
+}
+
+model EmployeeEmploymentRecord {
+  id                String         @id @default(uuid()) @db.Uuid
+  organizationId    String         @map("organization_id") @db.Uuid
+  employeeId        String         @map("employee_id") @db.Uuid
+  jobTitle          String?        @map("job_title")
+  department        String?
+  managerEmployeeId String?        @map("manager_employee_id") @db.Uuid
+  employmentType    EmploymentType @map("employment_type")
+  status            EmployeeStatus
+  effectiveFrom     DateTime       @map("effective_from") @db.Date
+  effectiveTo       DateTime?      @map("effective_to") @db.Date
+  sourceAccessMode  AccessMode     @map("source_access_mode")
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  manager      Employee?    @relation("EmploymentManager", fields: [managerEmployeeId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, employeeId, effectiveFrom])
+  @@map("employee_employment_records")
+}
+
+model EmployeeCompensation {
+  id                 String       @id @default(uuid()) @db.Uuid
+  organizationId     String       @map("organization_id") @db.Uuid
+  employeeId         String       @map("employee_id") @db.Uuid
+  payType            PayType      @map("pay_type")
+  payFrequency       PayFrequency @map("pay_frequency")
+  baseAmount         Decimal      @map("base_amount") @db.Decimal(14, 2)
+  currencyCode       String       @map("currency_code") @db.Char(3)
+  overtimeMultiplier Decimal      @map("overtime_multiplier") @db.Decimal(6, 3)
+  effectiveFrom      DateTime     @map("effective_from") @db.Date
+  effectiveTo        DateTime?    @map("effective_to") @db.Date
+  metadata           Json         @default("{}")
+  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, employeeId, effectiveFrom])
+  @@map("employee_compensation")
+}
+
+model PayComponent {
+  id                String                      @id @default(uuid()) @db.Uuid
+  organizationId    String                      @map("organization_id") @db.Uuid
+  code              String
+  name              String
+  componentType     PayComponentType            @map("component_type")
+  calculationType   PayComponentCalculationType @map("calculation_type")
+  formulaDefinition Json?                       @map("formula_definition")
+  isTaxable         Boolean                     @map("is_taxable")
+  isActive          Boolean                     @default(true) @map("is_active")
+  displayOrder      Int                         @default(0) @map("display_order") @db.SmallInt
+  metadata          Json                        @default("{}")
+  createdAt         DateTime                    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime                    @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization        Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employeeAssignments EmployeePayComponent[]
+  payrollComponents   PayrollLineItemComponent[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, isActive, displayOrder])
+  @@map("pay_components")
+}
+
+model EmployeePayComponent {
+  id                String     @id @default(uuid()) @db.Uuid
+  organizationId    String     @map("organization_id") @db.Uuid
+  employeeId        String     @map("employee_id") @db.Uuid
+  payComponentId    String     @map("pay_component_id") @db.Uuid
+  amount            Decimal?   @db.Decimal(14, 2)
+  percentage        Decimal?   @db.Decimal(8, 4)
+  formulaParameters Json       @default("{}") @map("formula_parameters")
+  effectiveFrom     DateTime   @map("effective_from") @db.Date
+  effectiveTo       DateTime?  @map("effective_to") @db.Date
+  sourceAccessMode  AccessMode @map("source_access_mode")
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  payComponent PayComponent @relation(fields: [payComponentId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, employeeId, effectiveFrom])
+  @@index([organizationId, payComponentId, effectiveFrom])
+  @@map("employee_pay_components")
+}
+
+model Team {
+  id                 String     @id @default(uuid()) @db.Uuid
+  organizationId     String     @map("organization_id") @db.Uuid
+  branchId           String?    @map("branch_id") @db.Uuid
+  name               String
+  description        String?
+  teamLeadEmployeeId String?    @map("team_lead_employee_id") @db.Uuid
+  status             TeamStatus @default(ACTIVE)
+  createdAt          DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch?      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  teamLead     Employee?    @relation(fields: [teamLeadEmployeeId], references: [id], onDelete: SetNull)
+  members      TeamMember[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, status])
+  @@map("teams")
+}
+
+model TeamMember {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  teamId         String    @map("team_id") @db.Uuid
+  employeeId     String    @map("employee_id") @db.Uuid
+  joinedAt       DateTime  @map("joined_at") @db.Date
+  leftAt         DateTime? @map("left_at") @db.Date
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  team         Team         @relation(fields: [teamId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, teamId, joinedAt])
+  @@index([organizationId, employeeId, joinedAt])
+  @@map("team_members")
+}
+
+model Project {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @map("organization_id") @db.Uuid
+  branchId       String?       @map("branch_id") @db.Uuid
+  code           String
+  name           String
+  description    String?
+  status         ProjectStatus @default(PLANNED)
+  startDate      DateTime?     @map("start_date") @db.Date
+  endDate        DateTime?     @map("end_date") @db.Date
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch?         @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  members      ProjectMember[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, status, startDate])
+  @@map("projects")
+}
+
+model ProjectMember {
+  id                   String    @id @default(uuid()) @db.Uuid
+  organizationId       String    @map("organization_id") @db.Uuid
+  projectId            String    @map("project_id") @db.Uuid
+  employeeId           String    @map("employee_id") @db.Uuid
+  projectRole          String?   @map("project_role")
+  allocationPercentage Decimal?  @map("allocation_percentage") @db.Decimal(5, 2)
+  startsOn             DateTime  @map("starts_on") @db.Date
+  endsOn               DateTime? @map("ends_on") @db.Date
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, projectId, startsOn])
+  @@index([organizationId, employeeId, startsOn])
+  @@map("project_members")
+}

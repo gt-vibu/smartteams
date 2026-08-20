@@ -1,11 +1,13 @@
+import { resolve } from 'node:path';
+import { config as loadEnv } from 'dotenv';
 import { defineConfig } from 'prisma/config';
+
+loadEnv({ path: resolve(__dirname, '../../.env') });
 
 export default defineConfig({
   migrations: { path: 'prisma/migrations' },
-  schema: 'prisma/schema.prisma',
+  schema: 'prisma',
   datasource: {
-    url:
-      process.env.DATABASE_URL ??
-      'postgresql://invalid_user:invalid_password@invalid-postgres.invalid:5432/invalid_database?schema=public',
+    url: process.env.DATABASE_URL ?? '',
   },
 });

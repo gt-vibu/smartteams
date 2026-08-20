@@ -29,8 +29,16 @@ export type FederationGrantMinAggregateOutputType = {
   clientId: string | null
   organizationId: string | null
   branchId: string | null
-  scope: string | null
   effect: $Enums.GrantEffect | null
+  status: $Enums.GrantStatus | null
+  startsAt: Date | null
+  endsAt: Date | null
+  createdByUserId: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
+  revokedAt: Date | null
+  suspendedAt: Date | null
+  suspensionReason: string | null
 }
 
 export type FederationGrantMaxAggregateOutputType = {
@@ -38,8 +46,16 @@ export type FederationGrantMaxAggregateOutputType = {
   clientId: string | null
   organizationId: string | null
   branchId: string | null
-  scope: string | null
   effect: $Enums.GrantEffect | null
+  status: $Enums.GrantStatus | null
+  startsAt: Date | null
+  endsAt: Date | null
+  createdByUserId: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
+  revokedAt: Date | null
+  suspendedAt: Date | null
+  suspensionReason: string | null
 }
 
 export type FederationGrantCountAggregateOutputType = {
@@ -47,8 +63,16 @@ export type FederationGrantCountAggregateOutputType = {
   clientId: number
   organizationId: number
   branchId: number
-  scope: number
   effect: number
+  status: number
+  startsAt: number
+  endsAt: number
+  createdByUserId: number
+  createdAt: number
+  updatedAt: number
+  revokedAt: number
+  suspendedAt: number
+  suspensionReason: number
   _all: number
 }
 
@@ -58,8 +82,16 @@ export type FederationGrantMinAggregateInputType = {
   clientId?: true
   organizationId?: true
   branchId?: true
-  scope?: true
   effect?: true
+  status?: true
+  startsAt?: true
+  endsAt?: true
+  createdByUserId?: true
+  createdAt?: true
+  updatedAt?: true
+  revokedAt?: true
+  suspendedAt?: true
+  suspensionReason?: true
 }
 
 export type FederationGrantMaxAggregateInputType = {
@@ -67,8 +99,16 @@ export type FederationGrantMaxAggregateInputType = {
   clientId?: true
   organizationId?: true
   branchId?: true
-  scope?: true
   effect?: true
+  status?: true
+  startsAt?: true
+  endsAt?: true
+  createdByUserId?: true
+  createdAt?: true
+  updatedAt?: true
+  revokedAt?: true
+  suspendedAt?: true
+  suspensionReason?: true
 }
 
 export type FederationGrantCountAggregateInputType = {
@@ -76,8 +116,16 @@ export type FederationGrantCountAggregateInputType = {
   clientId?: true
   organizationId?: true
   branchId?: true
-  scope?: true
   effect?: true
+  status?: true
+  startsAt?: true
+  endsAt?: true
+  createdByUserId?: true
+  createdAt?: true
+  updatedAt?: true
+  revokedAt?: true
+  suspendedAt?: true
+  suspensionReason?: true
   _all?: true
 }
 
@@ -158,8 +206,16 @@ export type FederationGrantGroupByOutputType = {
   clientId: string
   organizationId: string
   branchId: string | null
-  scope: string
   effect: $Enums.GrantEffect
+  status: $Enums.GrantStatus
+  startsAt: Date
+  endsAt: Date | null
+  createdByUserId: string | null
+  createdAt: Date
+  updatedAt: Date
+  revokedAt: Date | null
+  suspendedAt: Date | null
+  suspensionReason: string | null
   _count: FederationGrantCountAggregateOutputType | null
   _min: FederationGrantMinAggregateOutputType | null
   _max: FederationGrantMaxAggregateOutputType | null
@@ -188,11 +244,23 @@ export type FederationGrantWhereInput = {
   clientId?: Prisma.UuidFilter<"FederationGrant"> | string
   organizationId?: Prisma.UuidFilter<"FederationGrant"> | string
   branchId?: Prisma.UuidNullableFilter<"FederationGrant"> | string | null
-  scope?: Prisma.StringFilter<"FederationGrant"> | string
   effect?: Prisma.EnumGrantEffectFilter<"FederationGrant"> | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFilter<"FederationGrant"> | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  endsAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableFilter<"FederationGrant"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  suspendedAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  suspensionReason?: Prisma.StringNullableFilter<"FederationGrant"> | string | null
   client?: Prisma.XOR<Prisma.FederationClientScalarRelationFilter, Prisma.FederationClientWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
+  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  scopes?: Prisma.FederationGrantScopeListRelationFilter
+  roleMappings?: Prisma.FederationGrantRoleMappingListRelationFilter
+  userRoles?: Prisma.UserRoleListRelationFilter
 }
 
 export type FederationGrantOrderByWithRelationInput = {
@@ -200,36 +268,67 @@ export type FederationGrantOrderByWithRelationInput = {
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   branchId?: Prisma.SortOrderInput | Prisma.SortOrder
-  scope?: Prisma.SortOrder
   effect?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   client?: Prisma.FederationClientOrderByWithRelationInput
   organization?: Prisma.OrganizationOrderByWithRelationInput
   branch?: Prisma.BranchOrderByWithRelationInput
+  createdBy?: Prisma.UserOrderByWithRelationInput
+  scopes?: Prisma.FederationGrantScopeOrderByRelationAggregateInput
+  roleMappings?: Prisma.FederationGrantRoleMappingOrderByRelationAggregateInput
+  userRoles?: Prisma.UserRoleOrderByRelationAggregateInput
 }
 
 export type FederationGrantWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  clientId_organizationId_branchId_scope?: Prisma.FederationGrantClientIdOrganizationIdBranchIdScopeCompoundUniqueInput
   AND?: Prisma.FederationGrantWhereInput | Prisma.FederationGrantWhereInput[]
   OR?: Prisma.FederationGrantWhereInput[]
   NOT?: Prisma.FederationGrantWhereInput | Prisma.FederationGrantWhereInput[]
   clientId?: Prisma.UuidFilter<"FederationGrant"> | string
   organizationId?: Prisma.UuidFilter<"FederationGrant"> | string
   branchId?: Prisma.UuidNullableFilter<"FederationGrant"> | string | null
-  scope?: Prisma.StringFilter<"FederationGrant"> | string
   effect?: Prisma.EnumGrantEffectFilter<"FederationGrant"> | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFilter<"FederationGrant"> | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  endsAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableFilter<"FederationGrant"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  suspendedAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  suspensionReason?: Prisma.StringNullableFilter<"FederationGrant"> | string | null
   client?: Prisma.XOR<Prisma.FederationClientScalarRelationFilter, Prisma.FederationClientWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
-}, "id" | "clientId_organizationId_branchId_scope">
+  createdBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  scopes?: Prisma.FederationGrantScopeListRelationFilter
+  roleMappings?: Prisma.FederationGrantRoleMappingListRelationFilter
+  userRoles?: Prisma.UserRoleListRelationFilter
+}, "id">
 
 export type FederationGrantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   branchId?: Prisma.SortOrderInput | Prisma.SortOrder
-  scope?: Prisma.SortOrder
   effect?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.FederationGrantCountOrderByAggregateInput
   _max?: Prisma.FederationGrantMaxOrderByAggregateInput
   _min?: Prisma.FederationGrantMinOrderByAggregateInput
@@ -243,17 +342,36 @@ export type FederationGrantScalarWhereWithAggregatesInput = {
   clientId?: Prisma.UuidWithAggregatesFilter<"FederationGrant"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"FederationGrant"> | string
   branchId?: Prisma.UuidNullableWithAggregatesFilter<"FederationGrant"> | string | null
-  scope?: Prisma.StringWithAggregatesFilter<"FederationGrant"> | string
   effect?: Prisma.EnumGrantEffectWithAggregatesFilter<"FederationGrant"> | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusWithAggregatesFilter<"FederationGrant"> | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeWithAggregatesFilter<"FederationGrant"> | Date | string
+  endsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FederationGrant"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableWithAggregatesFilter<"FederationGrant"> | string | null
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"FederationGrant"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"FederationGrant"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FederationGrant"> | Date | string | null
+  suspendedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FederationGrant"> | Date | string | null
+  suspensionReason?: Prisma.StringNullableWithAggregatesFilter<"FederationGrant"> | string | null
 }
 
 export type FederationGrantCreateInput = {
   id?: string
-  scope: string
-  effect?: $Enums.GrantEffect
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
   client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
   organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
   branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGrantsInput
+  scopes?: Prisma.FederationGrantScopeCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutSourceFederationGrantInput
 }
 
 export type FederationGrantUncheckedCreateInput = {
@@ -261,17 +379,39 @@ export type FederationGrantUncheckedCreateInput = {
   clientId: string
   organizationId: string
   branchId?: string | null
-  scope: string
-  effect?: $Enums.GrantEffect
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutSourceFederationGrantInput
 }
 
 export type FederationGrantUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutFederationGrantsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGrantsNestedInput
+  scopes?: Prisma.FederationGrantScopeUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutSourceFederationGrantNestedInput
 }
 
 export type FederationGrantUncheckedUpdateInput = {
@@ -279,8 +419,19 @@ export type FederationGrantUncheckedUpdateInput = {
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutSourceFederationGrantNestedInput
 }
 
 export type FederationGrantCreateManyInput = {
@@ -288,14 +439,29 @@ export type FederationGrantCreateManyInput = {
   clientId: string
   organizationId: string
   branchId?: string | null
-  scope: string
-  effect?: $Enums.GrantEffect
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
 }
 
 export type FederationGrantUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FederationGrantUncheckedUpdateManyInput = {
@@ -303,8 +469,16 @@ export type FederationGrantUncheckedUpdateManyInput = {
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type FederationGrantListRelationFilter = {
@@ -317,20 +491,21 @@ export type FederationGrantOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type FederationGrantClientIdOrganizationIdBranchIdScopeCompoundUniqueInput = {
-  clientId: string
-  organizationId: string
-  branchId: string
-  scope: string
-}
-
 export type FederationGrantCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
-  scope?: Prisma.SortOrder
   effect?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrder
 }
 
 export type FederationGrantMaxOrderByAggregateInput = {
@@ -338,8 +513,16 @@ export type FederationGrantMaxOrderByAggregateInput = {
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
-  scope?: Prisma.SortOrder
   effect?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrder
 }
 
 export type FederationGrantMinOrderByAggregateInput = {
@@ -347,8 +530,162 @@ export type FederationGrantMinOrderByAggregateInput = {
   clientId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   branchId?: Prisma.SortOrder
-  scope?: Prisma.SortOrder
   effect?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
+  suspendedAt?: Prisma.SortOrder
+  suspensionReason?: Prisma.SortOrder
+}
+
+export type FederationGrantScalarRelationFilter = {
+  is?: Prisma.FederationGrantWhereInput
+  isNot?: Prisma.FederationGrantWhereInput
+}
+
+export type FederationGrantNullableScalarRelationFilter = {
+  is?: Prisma.FederationGrantWhereInput | null
+  isNot?: Prisma.FederationGrantWhereInput | null
+}
+
+export type FederationGrantCreateNestedManyWithoutClientInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
+  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+}
+
+export type FederationGrantUncheckedCreateNestedManyWithoutClientInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
+  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+}
+
+export type FederationGrantUpdateManyWithoutClientNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
+  upsert?: Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput[]
+  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
+  set?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  disconnect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  delete?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  update?: Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput[]
+  updateMany?: Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput | Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput[]
+  deleteMany?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
+}
+
+export type FederationGrantUncheckedUpdateManyWithoutClientNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
+  upsert?: Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput[]
+  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
+  set?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  disconnect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  delete?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  update?: Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput[]
+  updateMany?: Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput | Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput[]
+  deleteMany?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
+}
+
+export type EnumGrantEffectFieldUpdateOperationsInput = {
+  set?: $Enums.GrantEffect
+}
+
+export type EnumGrantStatusFieldUpdateOperationsInput = {
+  set?: $Enums.GrantStatus
+}
+
+export type FederationGrantCreateNestedOneWithoutScopesInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutScopesInput, Prisma.FederationGrantUncheckedCreateWithoutScopesInput>
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutScopesInput
+  connect?: Prisma.FederationGrantWhereUniqueInput
+}
+
+export type FederationGrantUpdateOneRequiredWithoutScopesNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutScopesInput, Prisma.FederationGrantUncheckedCreateWithoutScopesInput>
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutScopesInput
+  upsert?: Prisma.FederationGrantUpsertWithoutScopesInput
+  connect?: Prisma.FederationGrantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FederationGrantUpdateToOneWithWhereWithoutScopesInput, Prisma.FederationGrantUpdateWithoutScopesInput>, Prisma.FederationGrantUncheckedUpdateWithoutScopesInput>
+}
+
+export type FederationGrantCreateNestedOneWithoutRoleMappingsInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutRoleMappingsInput, Prisma.FederationGrantUncheckedCreateWithoutRoleMappingsInput>
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutRoleMappingsInput
+  connect?: Prisma.FederationGrantWhereUniqueInput
+}
+
+export type FederationGrantUpdateOneRequiredWithoutRoleMappingsNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutRoleMappingsInput, Prisma.FederationGrantUncheckedCreateWithoutRoleMappingsInput>
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutRoleMappingsInput
+  upsert?: Prisma.FederationGrantUpsertWithoutRoleMappingsInput
+  connect?: Prisma.FederationGrantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FederationGrantUpdateToOneWithWhereWithoutRoleMappingsInput, Prisma.FederationGrantUpdateWithoutRoleMappingsInput>, Prisma.FederationGrantUncheckedUpdateWithoutRoleMappingsInput>
+}
+
+export type FederationGrantCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutCreatedByInput, Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput> | Prisma.FederationGrantCreateWithoutCreatedByInput[] | Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput | Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.FederationGrantCreateManyCreatedByInputEnvelope
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+}
+
+export type FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutCreatedByInput, Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput> | Prisma.FederationGrantCreateWithoutCreatedByInput[] | Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput | Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.FederationGrantCreateManyCreatedByInputEnvelope
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+}
+
+export type FederationGrantUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutCreatedByInput, Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput> | Prisma.FederationGrantCreateWithoutCreatedByInput[] | Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput | Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.FederationGrantUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.FederationGrantUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.FederationGrantCreateManyCreatedByInputEnvelope
+  set?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  disconnect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  delete?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  update?: Prisma.FederationGrantUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.FederationGrantUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.FederationGrantUpdateManyWithWhereWithoutCreatedByInput | Prisma.FederationGrantUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
+}
+
+export type FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutCreatedByInput, Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput> | Prisma.FederationGrantCreateWithoutCreatedByInput[] | Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput | Prisma.FederationGrantCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.FederationGrantUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.FederationGrantUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.FederationGrantCreateManyCreatedByInputEnvelope
+  set?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  disconnect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  delete?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
+  update?: Prisma.FederationGrantUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.FederationGrantUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.FederationGrantUpdateManyWithWhereWithoutCreatedByInput | Prisma.FederationGrantUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
+}
+
+export type FederationGrantCreateNestedOneWithoutUserRolesInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutUserRolesInput, Prisma.FederationGrantUncheckedCreateWithoutUserRolesInput>
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutUserRolesInput
+  connect?: Prisma.FederationGrantWhereUniqueInput
+}
+
+export type FederationGrantUpdateOneWithoutUserRolesNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutUserRolesInput, Prisma.FederationGrantUncheckedCreateWithoutUserRolesInput>
+  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutUserRolesInput
+  upsert?: Prisma.FederationGrantUpsertWithoutUserRolesInput
+  disconnect?: Prisma.FederationGrantWhereInput | boolean
+  delete?: Prisma.FederationGrantWhereInput | boolean
+  connect?: Prisma.FederationGrantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FederationGrantUpdateToOneWithWhereWithoutUserRolesInput, Prisma.FederationGrantUpdateWithoutUserRolesInput>, Prisma.FederationGrantUncheckedUpdateWithoutUserRolesInput>
 }
 
 export type FederationGrantCreateNestedManyWithoutOrganizationInput = {
@@ -435,162 +772,42 @@ export type FederationGrantUncheckedUpdateManyWithoutBranchNestedInput = {
   deleteMany?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
 }
 
-export type FederationGrantCreateNestedManyWithoutClientInput = {
-  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
-  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
-  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-}
-
-export type FederationGrantUncheckedCreateNestedManyWithoutClientInput = {
-  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
-  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
-  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-}
-
-export type FederationGrantUpdateManyWithoutClientNestedInput = {
-  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
-  upsert?: Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput[]
-  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
-  set?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  disconnect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  delete?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  update?: Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput[]
-  updateMany?: Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput | Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput[]
-  deleteMany?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
-}
-
-export type FederationGrantUncheckedUpdateManyWithoutClientNestedInput = {
-  create?: Prisma.XOR<Prisma.FederationGrantCreateWithoutClientInput, Prisma.FederationGrantUncheckedCreateWithoutClientInput> | Prisma.FederationGrantCreateWithoutClientInput[] | Prisma.FederationGrantUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.FederationGrantCreateOrConnectWithoutClientInput | Prisma.FederationGrantCreateOrConnectWithoutClientInput[]
-  upsert?: Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpsertWithWhereUniqueWithoutClientInput[]
-  createMany?: Prisma.FederationGrantCreateManyClientInputEnvelope
-  set?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  disconnect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  delete?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  connect?: Prisma.FederationGrantWhereUniqueInput | Prisma.FederationGrantWhereUniqueInput[]
-  update?: Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput | Prisma.FederationGrantUpdateWithWhereUniqueWithoutClientInput[]
-  updateMany?: Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput | Prisma.FederationGrantUpdateManyWithWhereWithoutClientInput[]
-  deleteMany?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
-}
-
-export type EnumGrantEffectFieldUpdateOperationsInput = {
-  set?: $Enums.GrantEffect
-}
-
-export type FederationGrantCreateWithoutOrganizationInput = {
-  id?: string
-  scope: string
-  effect?: $Enums.GrantEffect
-  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
-  branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
-}
-
-export type FederationGrantUncheckedCreateWithoutOrganizationInput = {
-  id?: string
-  clientId: string
-  branchId?: string | null
-  scope: string
-  effect?: $Enums.GrantEffect
-}
-
-export type FederationGrantCreateOrConnectWithoutOrganizationInput = {
-  where: Prisma.FederationGrantWhereUniqueInput
-  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutOrganizationInput, Prisma.FederationGrantUncheckedCreateWithoutOrganizationInput>
-}
-
-export type FederationGrantCreateManyOrganizationInputEnvelope = {
-  data: Prisma.FederationGrantCreateManyOrganizationInput | Prisma.FederationGrantCreateManyOrganizationInput[]
-  skipDuplicates?: boolean
-}
-
-export type FederationGrantUpsertWithWhereUniqueWithoutOrganizationInput = {
-  where: Prisma.FederationGrantWhereUniqueInput
-  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutOrganizationInput, Prisma.FederationGrantUncheckedUpdateWithoutOrganizationInput>
-  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutOrganizationInput, Prisma.FederationGrantUncheckedCreateWithoutOrganizationInput>
-}
-
-export type FederationGrantUpdateWithWhereUniqueWithoutOrganizationInput = {
-  where: Prisma.FederationGrantWhereUniqueInput
-  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutOrganizationInput, Prisma.FederationGrantUncheckedUpdateWithoutOrganizationInput>
-}
-
-export type FederationGrantUpdateManyWithWhereWithoutOrganizationInput = {
-  where: Prisma.FederationGrantScalarWhereInput
-  data: Prisma.XOR<Prisma.FederationGrantUpdateManyMutationInput, Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationInput>
-}
-
-export type FederationGrantScalarWhereInput = {
-  AND?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
-  OR?: Prisma.FederationGrantScalarWhereInput[]
-  NOT?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
-  id?: Prisma.UuidFilter<"FederationGrant"> | string
-  clientId?: Prisma.UuidFilter<"FederationGrant"> | string
-  organizationId?: Prisma.UuidFilter<"FederationGrant"> | string
-  branchId?: Prisma.UuidNullableFilter<"FederationGrant"> | string | null
-  scope?: Prisma.StringFilter<"FederationGrant"> | string
-  effect?: Prisma.EnumGrantEffectFilter<"FederationGrant"> | $Enums.GrantEffect
-}
-
-export type FederationGrantCreateWithoutBranchInput = {
-  id?: string
-  scope: string
-  effect?: $Enums.GrantEffect
-  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
-  organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
-}
-
-export type FederationGrantUncheckedCreateWithoutBranchInput = {
-  id?: string
-  clientId: string
-  organizationId: string
-  scope: string
-  effect?: $Enums.GrantEffect
-}
-
-export type FederationGrantCreateOrConnectWithoutBranchInput = {
-  where: Prisma.FederationGrantWhereUniqueInput
-  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutBranchInput, Prisma.FederationGrantUncheckedCreateWithoutBranchInput>
-}
-
-export type FederationGrantCreateManyBranchInputEnvelope = {
-  data: Prisma.FederationGrantCreateManyBranchInput | Prisma.FederationGrantCreateManyBranchInput[]
-  skipDuplicates?: boolean
-}
-
-export type FederationGrantUpsertWithWhereUniqueWithoutBranchInput = {
-  where: Prisma.FederationGrantWhereUniqueInput
-  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutBranchInput, Prisma.FederationGrantUncheckedUpdateWithoutBranchInput>
-  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutBranchInput, Prisma.FederationGrantUncheckedCreateWithoutBranchInput>
-}
-
-export type FederationGrantUpdateWithWhereUniqueWithoutBranchInput = {
-  where: Prisma.FederationGrantWhereUniqueInput
-  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutBranchInput, Prisma.FederationGrantUncheckedUpdateWithoutBranchInput>
-}
-
-export type FederationGrantUpdateManyWithWhereWithoutBranchInput = {
-  where: Prisma.FederationGrantScalarWhereInput
-  data: Prisma.XOR<Prisma.FederationGrantUpdateManyMutationInput, Prisma.FederationGrantUncheckedUpdateManyWithoutBranchInput>
-}
-
 export type FederationGrantCreateWithoutClientInput = {
   id?: string
-  scope: string
-  effect?: $Enums.GrantEffect
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
   branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGrantsInput
+  scopes?: Prisma.FederationGrantScopeCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutSourceFederationGrantInput
 }
 
 export type FederationGrantUncheckedCreateWithoutClientInput = {
   id?: string
   organizationId: string
   branchId?: string | null
-  scope: string
-  effect?: $Enums.GrantEffect
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutSourceFederationGrantInput
 }
 
 export type FederationGrantCreateOrConnectWithoutClientInput = {
@@ -619,102 +836,821 @@ export type FederationGrantUpdateManyWithWhereWithoutClientInput = {
   data: Prisma.XOR<Prisma.FederationGrantUpdateManyMutationInput, Prisma.FederationGrantUncheckedUpdateManyWithoutClientInput>
 }
 
-export type FederationGrantCreateManyOrganizationInput = {
+export type FederationGrantScalarWhereInput = {
+  AND?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
+  OR?: Prisma.FederationGrantScalarWhereInput[]
+  NOT?: Prisma.FederationGrantScalarWhereInput | Prisma.FederationGrantScalarWhereInput[]
+  id?: Prisma.UuidFilter<"FederationGrant"> | string
+  clientId?: Prisma.UuidFilter<"FederationGrant"> | string
+  organizationId?: Prisma.UuidFilter<"FederationGrant"> | string
+  branchId?: Prisma.UuidNullableFilter<"FederationGrant"> | string | null
+  effect?: Prisma.EnumGrantEffectFilter<"FederationGrant"> | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFilter<"FederationGrant"> | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  endsAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableFilter<"FederationGrant"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"FederationGrant"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  suspendedAt?: Prisma.DateTimeNullableFilter<"FederationGrant"> | Date | string | null
+  suspensionReason?: Prisma.StringNullableFilter<"FederationGrant"> | string | null
+}
+
+export type FederationGrantCreateWithoutScopesInput = {
   id?: string
-  clientId: string
-  branchId?: string | null
-  scope: string
-  effect?: $Enums.GrantEffect
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGrantsInput
+  roleMappings?: Prisma.FederationGrantRoleMappingCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutSourceFederationGrantInput
 }
 
-export type FederationGrantUpdateWithoutOrganizationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
-  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
-  client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
-  branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
-}
-
-export type FederationGrantUncheckedUpdateWithoutOrganizationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  clientId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
-  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
-}
-
-export type FederationGrantUncheckedUpdateManyWithoutOrganizationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  clientId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
-  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
-}
-
-export type FederationGrantCreateManyBranchInput = {
+export type FederationGrantUncheckedCreateWithoutScopesInput = {
   id?: string
   clientId: string
   organizationId: string
-  scope: string
-  effect?: $Enums.GrantEffect
+  branchId?: string | null
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutSourceFederationGrantInput
 }
 
-export type FederationGrantUpdateWithoutBranchInput = {
+export type FederationGrantCreateOrConnectWithoutScopesInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutScopesInput, Prisma.FederationGrantUncheckedCreateWithoutScopesInput>
+}
+
+export type FederationGrantUpsertWithoutScopesInput = {
+  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutScopesInput, Prisma.FederationGrantUncheckedUpdateWithoutScopesInput>
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutScopesInput, Prisma.FederationGrantUncheckedCreateWithoutScopesInput>
+  where?: Prisma.FederationGrantWhereInput
+}
+
+export type FederationGrantUpdateToOneWithWhereWithoutScopesInput = {
+  where?: Prisma.FederationGrantWhereInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutScopesInput, Prisma.FederationGrantUncheckedUpdateWithoutScopesInput>
+}
+
+export type FederationGrantUpdateWithoutScopesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutFederationGrantsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGrantsNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutSourceFederationGrantNestedInput
 }
 
-export type FederationGrantUncheckedUpdateWithoutBranchInput = {
+export type FederationGrantUncheckedUpdateWithoutScopesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutSourceFederationGrantNestedInput
 }
 
-export type FederationGrantUncheckedUpdateManyWithoutBranchInput = {
+export type FederationGrantCreateWithoutRoleMappingsInput = {
+  id?: string
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGrantsInput
+  scopes?: Prisma.FederationGrantScopeCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantUncheckedCreateWithoutRoleMappingsInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  branchId?: string | null
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantCreateOrConnectWithoutRoleMappingsInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutRoleMappingsInput, Prisma.FederationGrantUncheckedCreateWithoutRoleMappingsInput>
+}
+
+export type FederationGrantUpsertWithoutRoleMappingsInput = {
+  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutRoleMappingsInput, Prisma.FederationGrantUncheckedUpdateWithoutRoleMappingsInput>
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutRoleMappingsInput, Prisma.FederationGrantUncheckedCreateWithoutRoleMappingsInput>
+  where?: Prisma.FederationGrantWhereInput
+}
+
+export type FederationGrantUpdateToOneWithWhereWithoutRoleMappingsInput = {
+  where?: Prisma.FederationGrantWhereInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutRoleMappingsInput, Prisma.FederationGrantUncheckedUpdateWithoutRoleMappingsInput>
+}
+
+export type FederationGrantUpdateWithoutRoleMappingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutFederationGrantsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGrantsNestedInput
+  scopes?: Prisma.FederationGrantScopeUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateWithoutRoleMappingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantCreateWithoutCreatedByInput = {
+  id?: string
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
+  scopes?: Prisma.FederationGrantScopeCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantUncheckedCreateWithoutCreatedByInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  branchId?: string | null
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantCreateOrConnectWithoutCreatedByInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutCreatedByInput, Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput>
+}
+
+export type FederationGrantCreateManyCreatedByInputEnvelope = {
+  data: Prisma.FederationGrantCreateManyCreatedByInput | Prisma.FederationGrantCreateManyCreatedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type FederationGrantUpsertWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutCreatedByInput, Prisma.FederationGrantUncheckedUpdateWithoutCreatedByInput>
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutCreatedByInput, Prisma.FederationGrantUncheckedCreateWithoutCreatedByInput>
+}
+
+export type FederationGrantUpdateWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutCreatedByInput, Prisma.FederationGrantUncheckedUpdateWithoutCreatedByInput>
+}
+
+export type FederationGrantUpdateManyWithWhereWithoutCreatedByInput = {
+  where: Prisma.FederationGrantScalarWhereInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateManyMutationInput, Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByInput>
+}
+
+export type FederationGrantCreateWithoutUserRolesInput = {
+  id?: string
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGrantsInput
+  scopes?: Prisma.FederationGrantScopeCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingCreateNestedManyWithoutGrantInput
+}
+
+export type FederationGrantUncheckedCreateWithoutUserRolesInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  branchId?: string | null
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedCreateNestedManyWithoutGrantInput
+}
+
+export type FederationGrantCreateOrConnectWithoutUserRolesInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutUserRolesInput, Prisma.FederationGrantUncheckedCreateWithoutUserRolesInput>
+}
+
+export type FederationGrantUpsertWithoutUserRolesInput = {
+  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutUserRolesInput, Prisma.FederationGrantUncheckedUpdateWithoutUserRolesInput>
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutUserRolesInput, Prisma.FederationGrantUncheckedCreateWithoutUserRolesInput>
+  where?: Prisma.FederationGrantWhereInput
+}
+
+export type FederationGrantUpdateToOneWithWhereWithoutUserRolesInput = {
+  where?: Prisma.FederationGrantWhereInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutUserRolesInput, Prisma.FederationGrantUncheckedUpdateWithoutUserRolesInput>
+}
+
+export type FederationGrantUpdateWithoutUserRolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutFederationGrantsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGrantsNestedInput
+  scopes?: Prisma.FederationGrantScopeUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUpdateManyWithoutGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateWithoutUserRolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedUpdateManyWithoutGrantNestedInput
+}
+
+export type FederationGrantCreateWithoutOrganizationInput = {
+  id?: string
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutGrantsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGrantsInput
+  scopes?: Prisma.FederationGrantScopeCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantUncheckedCreateWithoutOrganizationInput = {
+  id?: string
+  clientId: string
+  branchId?: string | null
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantCreateOrConnectWithoutOrganizationInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutOrganizationInput, Prisma.FederationGrantUncheckedCreateWithoutOrganizationInput>
+}
+
+export type FederationGrantCreateManyOrganizationInputEnvelope = {
+  data: Prisma.FederationGrantCreateManyOrganizationInput | Prisma.FederationGrantCreateManyOrganizationInput[]
+  skipDuplicates?: boolean
+}
+
+export type FederationGrantUpsertWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutOrganizationInput, Prisma.FederationGrantUncheckedUpdateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutOrganizationInput, Prisma.FederationGrantUncheckedCreateWithoutOrganizationInput>
+}
+
+export type FederationGrantUpdateWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutOrganizationInput, Prisma.FederationGrantUncheckedUpdateWithoutOrganizationInput>
+}
+
+export type FederationGrantUpdateManyWithWhereWithoutOrganizationInput = {
+  where: Prisma.FederationGrantScalarWhereInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateManyMutationInput, Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationInput>
+}
+
+export type FederationGrantCreateWithoutBranchInput = {
+  id?: string
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutGrantsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutFederationGrantsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedGrantsInput
+  scopes?: Prisma.FederationGrantScopeCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantUncheckedCreateWithoutBranchInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedCreateNestedManyWithoutGrantInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedCreateNestedManyWithoutGrantInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutSourceFederationGrantInput
+}
+
+export type FederationGrantCreateOrConnectWithoutBranchInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutBranchInput, Prisma.FederationGrantUncheckedCreateWithoutBranchInput>
+}
+
+export type FederationGrantCreateManyBranchInputEnvelope = {
+  data: Prisma.FederationGrantCreateManyBranchInput | Prisma.FederationGrantCreateManyBranchInput[]
+  skipDuplicates?: boolean
+}
+
+export type FederationGrantUpsertWithWhereUniqueWithoutBranchInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  update: Prisma.XOR<Prisma.FederationGrantUpdateWithoutBranchInput, Prisma.FederationGrantUncheckedUpdateWithoutBranchInput>
+  create: Prisma.XOR<Prisma.FederationGrantCreateWithoutBranchInput, Prisma.FederationGrantUncheckedCreateWithoutBranchInput>
+}
+
+export type FederationGrantUpdateWithWhereUniqueWithoutBranchInput = {
+  where: Prisma.FederationGrantWhereUniqueInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateWithoutBranchInput, Prisma.FederationGrantUncheckedUpdateWithoutBranchInput>
+}
+
+export type FederationGrantUpdateManyWithWhereWithoutBranchInput = {
+  where: Prisma.FederationGrantScalarWhereInput
+  data: Prisma.XOR<Prisma.FederationGrantUpdateManyMutationInput, Prisma.FederationGrantUncheckedUpdateManyWithoutBranchInput>
 }
 
 export type FederationGrantCreateManyClientInput = {
   id?: string
   organizationId: string
   branchId?: string | null
-  scope: string
-  effect?: $Enums.GrantEffect
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
 }
 
 export type FederationGrantUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutFederationGrantsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGrantsNestedInput
+  scopes?: Prisma.FederationGrantScopeUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutSourceFederationGrantNestedInput
 }
 
 export type FederationGrantUncheckedUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutSourceFederationGrantNestedInput
 }
 
 export type FederationGrantUncheckedUpdateManyWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scope?: Prisma.StringFieldUpdateOperationsInput | string
   effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
+export type FederationGrantCreateManyCreatedByInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  branchId?: string | null
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+}
+
+export type FederationGrantUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutFederationGrantsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
+  scopes?: Prisma.FederationGrantScopeUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateManyWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type FederationGrantCreateManyOrganizationInput = {
+  id?: string
+  clientId: string
+  branchId?: string | null
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+}
+
+export type FederationGrantUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutGrantsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGrantsNestedInput
+  scopes?: Prisma.FederationGrantScopeUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateManyWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type FederationGrantCreateManyBranchInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  effect: $Enums.GrantEffect
+  status?: $Enums.GrantStatus
+  startsAt: Date | string
+  endsAt?: Date | string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  suspendedAt?: Date | string | null
+  suspensionReason?: string | null
+}
+
+export type FederationGrantUpdateWithoutBranchInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutGrantsNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutFederationGrantsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedGrantsNestedInput
+  scopes?: Prisma.FederationGrantScopeUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateWithoutBranchInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scopes?: Prisma.FederationGrantScopeUncheckedUpdateManyWithoutGrantNestedInput
+  roleMappings?: Prisma.FederationGrantRoleMappingUncheckedUpdateManyWithoutGrantNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutSourceFederationGrantNestedInput
+}
+
+export type FederationGrantUncheckedUpdateManyWithoutBranchInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  effect?: Prisma.EnumGrantEffectFieldUpdateOperationsInput | $Enums.GrantEffect
+  status?: Prisma.EnumGrantStatusFieldUpdateOperationsInput | $Enums.GrantStatus
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspensionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+
+/**
+ * Count Type FederationGrantCountOutputType
+ */
+
+export type FederationGrantCountOutputType = {
+  scopes: number
+  roleMappings: number
+  userRoles: number
+}
+
+export type FederationGrantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  scopes?: boolean | FederationGrantCountOutputTypeCountScopesArgs
+  roleMappings?: boolean | FederationGrantCountOutputTypeCountRoleMappingsArgs
+  userRoles?: boolean | FederationGrantCountOutputTypeCountUserRolesArgs
+}
+
+/**
+ * FederationGrantCountOutputType without action
+ */
+export type FederationGrantCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationGrantCountOutputType
+   */
+  select?: Prisma.FederationGrantCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FederationGrantCountOutputType without action
+ */
+export type FederationGrantCountOutputTypeCountScopesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FederationGrantScopeWhereInput
+}
+
+/**
+ * FederationGrantCountOutputType without action
+ */
+export type FederationGrantCountOutputTypeCountRoleMappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FederationGrantRoleMappingWhereInput
+}
+
+/**
+ * FederationGrantCountOutputType without action
+ */
+export type FederationGrantCountOutputTypeCountUserRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserRoleWhereInput
+}
 
 
 export type FederationGrantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -722,11 +1658,24 @@ export type FederationGrantSelect<ExtArgs extends runtime.Types.Extensions.Inter
   clientId?: boolean
   organizationId?: boolean
   branchId?: boolean
-  scope?: boolean
   effect?: boolean
+  status?: boolean
+  startsAt?: boolean
+  endsAt?: boolean
+  createdByUserId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  revokedAt?: boolean
+  suspendedAt?: boolean
+  suspensionReason?: boolean
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.FederationGrant$branchArgs<ExtArgs>
+  createdBy?: boolean | Prisma.FederationGrant$createdByArgs<ExtArgs>
+  scopes?: boolean | Prisma.FederationGrant$scopesArgs<ExtArgs>
+  roleMappings?: boolean | Prisma.FederationGrant$roleMappingsArgs<ExtArgs>
+  userRoles?: boolean | Prisma.FederationGrant$userRolesArgs<ExtArgs>
+  _count?: boolean | Prisma.FederationGrantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["federationGrant"]>
 
 export type FederationGrantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -734,11 +1683,20 @@ export type FederationGrantSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   clientId?: boolean
   organizationId?: boolean
   branchId?: boolean
-  scope?: boolean
   effect?: boolean
+  status?: boolean
+  startsAt?: boolean
+  endsAt?: boolean
+  createdByUserId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  revokedAt?: boolean
+  suspendedAt?: boolean
+  suspensionReason?: boolean
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.FederationGrant$branchArgs<ExtArgs>
+  createdBy?: boolean | Prisma.FederationGrant$createdByArgs<ExtArgs>
 }, ExtArgs["result"]["federationGrant"]>
 
 export type FederationGrantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -746,11 +1704,20 @@ export type FederationGrantSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   clientId?: boolean
   organizationId?: boolean
   branchId?: boolean
-  scope?: boolean
   effect?: boolean
+  status?: boolean
+  startsAt?: boolean
+  endsAt?: boolean
+  createdByUserId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  revokedAt?: boolean
+  suspendedAt?: boolean
+  suspensionReason?: boolean
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.FederationGrant$branchArgs<ExtArgs>
+  createdBy?: boolean | Prisma.FederationGrant$createdByArgs<ExtArgs>
 }, ExtArgs["result"]["federationGrant"]>
 
 export type FederationGrantSelectScalar = {
@@ -758,25 +1725,40 @@ export type FederationGrantSelectScalar = {
   clientId?: boolean
   organizationId?: boolean
   branchId?: boolean
-  scope?: boolean
   effect?: boolean
+  status?: boolean
+  startsAt?: boolean
+  endsAt?: boolean
+  createdByUserId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  revokedAt?: boolean
+  suspendedAt?: boolean
+  suspensionReason?: boolean
 }
 
-export type FederationGrantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "organizationId" | "branchId" | "scope" | "effect", ExtArgs["result"]["federationGrant"]>
+export type FederationGrantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "organizationId" | "branchId" | "effect" | "status" | "startsAt" | "endsAt" | "createdByUserId" | "createdAt" | "updatedAt" | "revokedAt" | "suspendedAt" | "suspensionReason", ExtArgs["result"]["federationGrant"]>
 export type FederationGrantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.FederationGrant$branchArgs<ExtArgs>
+  createdBy?: boolean | Prisma.FederationGrant$createdByArgs<ExtArgs>
+  scopes?: boolean | Prisma.FederationGrant$scopesArgs<ExtArgs>
+  roleMappings?: boolean | Prisma.FederationGrant$roleMappingsArgs<ExtArgs>
+  userRoles?: boolean | Prisma.FederationGrant$userRolesArgs<ExtArgs>
+  _count?: boolean | Prisma.FederationGrantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FederationGrantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.FederationGrant$branchArgs<ExtArgs>
+  createdBy?: boolean | Prisma.FederationGrant$createdByArgs<ExtArgs>
 }
 export type FederationGrantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.FederationGrant$branchArgs<ExtArgs>
+  createdBy?: boolean | Prisma.FederationGrant$createdByArgs<ExtArgs>
 }
 
 export type $FederationGrantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -785,14 +1767,26 @@ export type $FederationGrantPayload<ExtArgs extends runtime.Types.Extensions.Int
     client: Prisma.$FederationClientPayload<ExtArgs>
     organization: Prisma.$OrganizationPayload<ExtArgs>
     branch: Prisma.$BranchPayload<ExtArgs> | null
+    createdBy: Prisma.$UserPayload<ExtArgs> | null
+    scopes: Prisma.$FederationGrantScopePayload<ExtArgs>[]
+    roleMappings: Prisma.$FederationGrantRoleMappingPayload<ExtArgs>[]
+    userRoles: Prisma.$UserRolePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     clientId: string
     organizationId: string
     branchId: string | null
-    scope: string
     effect: $Enums.GrantEffect
+    status: $Enums.GrantStatus
+    startsAt: Date
+    endsAt: Date | null
+    createdByUserId: string | null
+    createdAt: Date
+    updatedAt: Date
+    revokedAt: Date | null
+    suspendedAt: Date | null
+    suspensionReason: string | null
   }, ExtArgs["result"]["federationGrant"]>
   composites: {}
 }
@@ -1190,6 +2184,10 @@ export interface Prisma__FederationGrantClient<T, Null = never, ExtArgs extends 
   client<T extends Prisma.FederationClientDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClientDefaultArgs<ExtArgs>>): Prisma.Prisma__FederationClientClient<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   branch<T extends Prisma.FederationGrant$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationGrant$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  createdBy<T extends Prisma.FederationGrant$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationGrant$createdByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  scopes<T extends Prisma.FederationGrant$scopesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationGrant$scopesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FederationGrantScopePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  roleMappings<T extends Prisma.FederationGrant$roleMappingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationGrant$roleMappingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FederationGrantRoleMappingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userRoles<T extends Prisma.FederationGrant$userRolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationGrant$userRolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1223,8 +2221,16 @@ export interface FederationGrantFieldRefs {
   readonly clientId: Prisma.FieldRef<"FederationGrant", 'String'>
   readonly organizationId: Prisma.FieldRef<"FederationGrant", 'String'>
   readonly branchId: Prisma.FieldRef<"FederationGrant", 'String'>
-  readonly scope: Prisma.FieldRef<"FederationGrant", 'String'>
   readonly effect: Prisma.FieldRef<"FederationGrant", 'GrantEffect'>
+  readonly status: Prisma.FieldRef<"FederationGrant", 'GrantStatus'>
+  readonly startsAt: Prisma.FieldRef<"FederationGrant", 'DateTime'>
+  readonly endsAt: Prisma.FieldRef<"FederationGrant", 'DateTime'>
+  readonly createdByUserId: Prisma.FieldRef<"FederationGrant", 'String'>
+  readonly createdAt: Prisma.FieldRef<"FederationGrant", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"FederationGrant", 'DateTime'>
+  readonly revokedAt: Prisma.FieldRef<"FederationGrant", 'DateTime'>
+  readonly suspendedAt: Prisma.FieldRef<"FederationGrant", 'DateTime'>
+  readonly suspensionReason: Prisma.FieldRef<"FederationGrant", 'String'>
 }
     
 
@@ -1642,6 +2648,97 @@ export type FederationGrant$branchArgs<ExtArgs extends runtime.Types.Extensions.
    */
   include?: Prisma.BranchInclude<ExtArgs> | null
   where?: Prisma.BranchWhereInput
+}
+
+/**
+ * FederationGrant.createdBy
+ */
+export type FederationGrant$createdByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * FederationGrant.scopes
+ */
+export type FederationGrant$scopesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationGrantScope
+   */
+  select?: Prisma.FederationGrantScopeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FederationGrantScope
+   */
+  omit?: Prisma.FederationGrantScopeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FederationGrantScopeInclude<ExtArgs> | null
+  where?: Prisma.FederationGrantScopeWhereInput
+  orderBy?: Prisma.FederationGrantScopeOrderByWithRelationInput | Prisma.FederationGrantScopeOrderByWithRelationInput[]
+  cursor?: Prisma.FederationGrantScopeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FederationGrantScopeScalarFieldEnum | Prisma.FederationGrantScopeScalarFieldEnum[]
+}
+
+/**
+ * FederationGrant.roleMappings
+ */
+export type FederationGrant$roleMappingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationGrantRoleMapping
+   */
+  select?: Prisma.FederationGrantRoleMappingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FederationGrantRoleMapping
+   */
+  omit?: Prisma.FederationGrantRoleMappingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FederationGrantRoleMappingInclude<ExtArgs> | null
+  where?: Prisma.FederationGrantRoleMappingWhereInput
+  orderBy?: Prisma.FederationGrantRoleMappingOrderByWithRelationInput | Prisma.FederationGrantRoleMappingOrderByWithRelationInput[]
+  cursor?: Prisma.FederationGrantRoleMappingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FederationGrantRoleMappingScalarFieldEnum | Prisma.FederationGrantRoleMappingScalarFieldEnum[]
+}
+
+/**
+ * FederationGrant.userRoles
+ */
+export type FederationGrant$userRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserRole
+   */
+  select?: Prisma.UserRoleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserRole
+   */
+  omit?: Prisma.UserRoleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserRoleInclude<ExtArgs> | null
+  where?: Prisma.UserRoleWhereInput
+  orderBy?: Prisma.UserRoleOrderByWithRelationInput | Prisma.UserRoleOrderByWithRelationInput[]
+  cursor?: Prisma.UserRoleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserRoleScalarFieldEnum | Prisma.UserRoleScalarFieldEnum[]
 }
 
 /**

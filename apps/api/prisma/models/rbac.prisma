@@ -1,0 +1,72 @@
+model Role {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String?   @map("organization_id") @db.Uuid
+  code            String
+  name            String
+  description     String?
+  scope           RoleScope
+  branchId        String?   @map("branch_id") @db.Uuid
+  isSystem        Boolean   @default(false) @map("is_system")
+  createdByUserId String?   @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization       Organization?                @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch             Branch?                      @relation("BranchRoles", fields: [branchId], references: [id], onDelete: Restrict)
+  createdBy          User?                        @relation("RoleCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  permissions        RolePermission[]
+  users              UserRole[]
+  approvalSteps      ApprovalPolicyStep[]
+  federationMappings FederationGrantRoleMapping[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, scope, isSystem])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  id                      String     @id @default(uuid()) @db.Uuid
+  userId                  String     @map("user_id") @db.Uuid
+  organizationId          String     @map("organization_id") @db.Uuid
+  roleId                  String     @map("role_id") @db.Uuid
+  branchId                String?    @map("branch_id") @db.Uuid
+  assignmentSource        AccessMode @map("assignment_source")
+  sourceFederationGrantId String?    @map("source_federation_grant_id") @db.Uuid
+  grantedByUserId         String?    @map("granted_by_user_id") @db.Uuid
+  startsAt                DateTime   @default(now()) @map("starts_at") @db.Timestamptz(6)
+  endsAt                  DateTime?  @map("ends_at") @db.Timestamptz(6)
+  createdAt               DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user                  User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  organization          Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  role                  Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  branch                Branch?          @relation("BranchUserRoles", fields: [branchId], references: [id], onDelete: Restrict)
+  sourceFederationGrant FederationGrant? @relation(fields: [sourceFederationGrantId], references: [id], onDelete: SetNull)
+  grantedBy             User?            @relation("OrganizationRoleGrantedBy", fields: [grantedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, userId])
+  @@index([organizationId, branchId])
+  @@map("user_roles")
+}

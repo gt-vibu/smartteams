@@ -1,0 +1,155 @@
+model PayrollRun {
+  id                 String           @id @default(uuid()) @db.Uuid
+  organizationId     String           @map("organization_id") @db.Uuid
+  periodStart        DateTime         @map("period_start") @db.Date
+  periodEnd          DateTime         @map("period_end") @db.Date
+  payFrequency       PayFrequency     @map("pay_frequency")
+  currencyCode       String           @map("currency_code") @db.Char(3)
+  approvalPolicyId   String?          @map("approval_policy_id") @db.Uuid
+  status             PayrollRunStatus @default(DRAFT)
+  calculationVersion String           @map("calculation_version")
+  inputSnapshotHash  String           @map("input_snapshot_hash") @db.Char(64)
+  calculationHash    String?          @map("calculation_hash") @db.Char(64)
+  calculatedAt       DateTime?        @map("calculated_at") @db.Timestamptz(6)
+  approvedAt         DateTime?        @map("approved_at") @db.Timestamptz(6)
+  releasedAt         DateTime?        @map("released_at") @db.Timestamptz(6)
+  lockedAt           DateTime?        @map("locked_at") @db.Timestamptz(6)
+  correctionOfRunId  String?          @map("correction_of_run_id") @db.Uuid
+  createdByUserId    String?          @map("created_by_user_id") @db.Uuid
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version            Int              @default(1)
+
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  approvalPolicy ApprovalPolicy?     @relation(fields: [approvalPolicyId], references: [id], onDelete: Restrict)
+  correctionOf   PayrollRun?         @relation("PayrollCorrection", fields: [correctionOfRunId], references: [id], onDelete: Restrict)
+  corrections    PayrollRun[]        @relation("PayrollCorrection")
+  createdBy      User?               @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  lineItems      PayrollLineItem[]
+  adjustments    PayrollAdjustment[]
+  approvals      PayrollApproval[]
+  payslips       Payslip[]
+
+  @@unique([organizationId, periodStart, periodEnd])
+  @@index([organizationId, status, periodStart])
+  @@map("payroll_runs")
+}
+
+model PayrollLineItem {
+  id                   String   @id @default(uuid()) @db.Uuid
+  organizationId       String   @map("organization_id") @db.Uuid
+  payrollRunId         String   @map("payroll_run_id") @db.Uuid
+  employeeId           String   @map("employee_id") @db.Uuid
+  grossAmount          Decimal  @map("gross_amount") @db.Decimal(14, 2)
+  deductionAmount      Decimal  @map("deduction_amount") @db.Decimal(14, 2)
+  netAmount            Decimal  @map("net_amount") @db.Decimal(14, 2)
+  regularAmount        Decimal  @map("regular_amount") @db.Decimal(14, 2)
+  overtimeAmount       Decimal  @map("overtime_amount") @db.Decimal(14, 2)
+  leaveAmount          Decimal  @map("leave_amount") @db.Decimal(14, 2)
+  inputSnapshot        Json     @map("input_snapshot")
+  calculationBreakdown Json     @map("calculation_breakdown")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollRun   PayrollRun                 @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
+  employee     Employee                   @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  components   PayrollLineItemComponent[]
+  payslip      Payslip?
+
+  @@unique([payrollRunId, employeeId])
+  @@index([organizationId, employeeId])
+  @@map("payroll_line_items")
+}
+
+model PayrollLineItemComponent {
+  id                  String                      @id @default(uuid()) @db.Uuid
+  organizationId      String                      @map("organization_id") @db.Uuid
+  payrollLineItemId   String                      @map("payroll_line_item_id") @db.Uuid
+  payComponentId      String                      @map("pay_component_id") @db.Uuid
+  componentCode       String                      @map("component_code")
+  componentName       String                      @map("component_name")
+  componentType       PayComponentType            @map("component_type")
+  calculationType     PayComponentCalculationType @map("calculation_type")
+  quantity            Decimal?                    @db.Decimal(14, 4)
+  rate                Decimal?                    @db.Decimal(14, 6)
+  amount              Decimal                     @db.Decimal(14, 2)
+  isTaxable           Boolean                     @map("is_taxable")
+  calculationSnapshot Json                        @map("calculation_snapshot")
+  displayOrder        Int                         @map("display_order") @db.SmallInt
+  createdAt           DateTime                    @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollLineItem PayrollLineItem @relation(fields: [payrollLineItemId], references: [id], onDelete: Restrict)
+  payComponent    PayComponent    @relation(fields: [payComponentId], references: [id], onDelete: Restrict)
+
+  @@unique([payrollLineItemId, payComponentId])
+  @@index([organizationId, componentType, componentCode])
+  @@map("payroll_line_item_components")
+}
+
+model PayrollAdjustment {
+  id                String                  @id @default(uuid()) @db.Uuid
+  organizationId    String                  @map("organization_id") @db.Uuid
+  payrollRunId      String                  @map("payroll_run_id") @db.Uuid
+  employeeId        String                  @map("employee_id") @db.Uuid
+  type              PayrollAdjustmentType   @map("type")
+  source            PayrollAdjustmentSource
+  description       String
+  amount            Decimal                 @db.Decimal(14, 2)
+  taxable           Boolean
+  externalId        String?                 @map("external_id")
+  createdByUserId   String?                 @map("created_by_user_id") @db.Uuid
+  createdByClientId String?                 @map("created_by_client_id") @db.Uuid
+  createdAt         DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollRun      PayrollRun        @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
+  employee        Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  createdByUser   User?             @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdByClient FederationClient? @relation(fields: [createdByClientId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, externalId])
+  @@index([organizationId, payrollRunId, employeeId])
+  @@map("payroll_adjustments")
+}
+
+model PayrollApproval {
+  id                   String         @id @default(uuid()) @db.Uuid
+  organizationId       String         @map("organization_id") @db.Uuid
+  payrollRunId         String         @map("payroll_run_id") @db.Uuid
+  approverUserId       String         @map("approver_user_id") @db.Uuid
+  approvalPolicyStepId String?        @map("approval_policy_step_id") @db.Uuid
+  status               ApprovalStatus
+  comment              String?
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollRun         PayrollRun          @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
+  approver           User                @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
+  approvalPolicyStep ApprovalPolicyStep? @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
+
+  @@unique([payrollRunId, approverUserId])
+  @@map("payroll_approvals")
+}
+
+model Payslip {
+  id                String     @id @default(uuid()) @db.Uuid
+  organizationId    String     @map("organization_id") @db.Uuid
+  payrollRunId      String     @map("payroll_run_id") @db.Uuid
+  payrollLineItemId String     @unique @map("payroll_line_item_id") @db.Uuid
+  employeeId        String     @map("employee_id") @db.Uuid
+  fileObjectId      String?    @unique @map("file_object_id") @db.Uuid
+  status            FileStatus
+  issuedAt          DateTime?  @map("issued_at") @db.Timestamptz(6)
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollRun      PayrollRun      @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
+  payrollLineItem PayrollLineItem @relation(fields: [payrollLineItemId], references: [id], onDelete: Restrict)
+  employee        Employee        @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  fileObject      FileObject?     @relation(fields: [fileObjectId], references: [id], onDelete: SetNull)
+
+  @@unique([payrollRunId, employeeId])
+  @@index([organizationId, employeeId, issuedAt])
+  @@map("payslips")
+}
