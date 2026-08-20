@@ -1,0 +1,47 @@
+{
+  "name": "@smarteam/platform",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Smarteam V2 People Management platform",
+  "packageManager": "npm@11.6.2",
+  "engines": {
+    "node": ">=20.9 <25"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "db:generate": "npm run db:generate --workspace=@smarteam/api",
+    "db:migrate": "npm run db:migrate --workspace=@smarteam/api",
+    "db:studio": "npm run db:studio --workspace=@smarteam/api",
+    "dev": "turbo run dev --parallel",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "turbo run lint",
+    "prepare": "husky",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.2",
+    "@commitlint/config-conventional": "21.2.2",
+    "@eslint/js": "9.39.5",
+    "@types/node": "26.2.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.11.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.3.0",
+    "prettier": "3.9.6",
+    "turbo": "2.10.11",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.67.0"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,tsx,json,md,yml,yaml,css}": "prettier --write",
+    "*.{ts,tsx}": "eslint --fix --max-warnings=0 --no-warn-ignored"
+  }
+}

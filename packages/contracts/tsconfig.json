@@ -1,0 +1,13 @@
+{
+  "extends": "@smarteam/tsconfig/base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "ignoreDeprecations": "6.0",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*.ts"]
+}
