@@ -13,14 +13,14 @@ Smarteam is the backend-first HR and workforce platform rewrite. It is maintaine
 
 ## Local setup
 
-Requirements: Node.js `24.11.1`, npm `11.6.2`, PostgreSQL, and Redis.
+Requirements: Node.js `24.11.1`, pnpm `10.24.0`, PostgreSQL, and Redis.
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env
 # Replace every invalid placeholder before starting the API.
-npm run db:generate
-npm run dev
+pnpm run db:generate
+pnpm run dev
 ```
 
 The applications run at:
@@ -30,6 +30,8 @@ The applications run at:
 - API: <http://localhost:4000>
 - Swagger: <http://localhost:4000/docs>
 
+During frontend development, `@smarteam/ui` is resolved from its source files, so edits to shared UI components hot-reload without rebuilding the package. Restart the dev server after changing package manifests or dependencies. Use `pnpm run build` for production-build validation, not for normal source edits.
+
 Set the database, Redis, S3, and federation values in `.env` before starting the API. Never commit `.env` or real credentials.
 
 The committed `.env.example` intentionally contains invalid placeholder values. It documents the required variable names and shapes only; it must not be used as a working runtime configuration.
@@ -37,14 +39,14 @@ The committed `.env.example` intentionally contains invalid placeholder values. 
 ## Quality checks
 
 ```bash
-npm run format:check
-npm run lint
-npm run typecheck
-npm test
-npm run build
+pnpm run format:check
+pnpm run lint
+pnpm run typecheck
+pnpm test
+pnpm run build
 ```
 
-Prisma commands are available through the root scripts: `npm run db:generate`, `npm run db:migrate`, and `npm run db:studio`.
+Prisma commands are available through the root scripts: `pnpm run db:generate`, `pnpm run db:migrate`, and `pnpm run db:studio`.
 
 ## Git workflow
 

@@ -28,10 +28,12 @@ export type BranchMinAggregateOutputType = {
   id: string | null
   organizationId: string | null
   name: string | null
+  code: string | null
   source: $Enums.OrganizationSource | null
   externalId: string | null
   status: $Enums.OrganizationStatus | null
   timezone: string | null
+  geofenceMode: $Enums.GeofenceMode | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,10 +42,12 @@ export type BranchMaxAggregateOutputType = {
   id: string | null
   organizationId: string | null
   name: string | null
+  code: string | null
   source: $Enums.OrganizationSource | null
   externalId: string | null
   status: $Enums.OrganizationStatus | null
   timezone: string | null
+  geofenceMode: $Enums.GeofenceMode | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,10 +56,13 @@ export type BranchCountAggregateOutputType = {
   id: number
   organizationId: number
   name: number
+  code: number
   source: number
   externalId: number
   status: number
   timezone: number
+  geofenceMode: number
+  address: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -66,10 +73,12 @@ export type BranchMinAggregateInputType = {
   id?: true
   organizationId?: true
   name?: true
+  code?: true
   source?: true
   externalId?: true
   status?: true
   timezone?: true
+  geofenceMode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -78,10 +87,12 @@ export type BranchMaxAggregateInputType = {
   id?: true
   organizationId?: true
   name?: true
+  code?: true
   source?: true
   externalId?: true
   status?: true
   timezone?: true
+  geofenceMode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -90,10 +101,13 @@ export type BranchCountAggregateInputType = {
   id?: true
   organizationId?: true
   name?: true
+  code?: true
   source?: true
   externalId?: true
   status?: true
   timezone?: true
+  geofenceMode?: true
+  address?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -175,10 +189,13 @@ export type BranchGroupByOutputType = {
   id: string
   organizationId: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId: string | null
   status: $Enums.OrganizationStatus
   timezone: string | null
+  geofenceMode: $Enums.GeofenceMode | null
+  address: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
   _count: BranchCountAggregateOutputType | null
@@ -208,71 +225,114 @@ export type BranchWhereInput = {
   id?: Prisma.UuidFilter<"Branch"> | string
   organizationId?: Prisma.UuidFilter<"Branch"> | string
   name?: Prisma.StringFilter<"Branch"> | string
+  code?: Prisma.StringFilter<"Branch"> | string
   source?: Prisma.EnumOrganizationSourceFilter<"Branch"> | $Enums.OrganizationSource
-  externalId?: Prisma.UuidNullableFilter<"Branch"> | string | null
+  externalId?: Prisma.StringNullableFilter<"Branch"> | string | null
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
+  geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  address?: Prisma.JsonFilter<"Branch">
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-  employees?: Prisma.EmployeeListRelationFilter
-  attendance?: Prisma.AttendanceListRelationFilter
+  workLocations?: Prisma.WorkLocationListRelationFilter
+  primaryEmployees?: Prisma.EmployeeListRelationFilter
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentListRelationFilter
+  roles?: Prisma.RoleListRelationFilter
+  userRoles?: Prisma.UserRoleListRelationFilter
+  attendanceRecords?: Prisma.AttendanceRecordListRelationFilter
   leaveRequests?: Prisma.LeaveRequestListRelationFilter
-  timesheets?: Prisma.TimesheetListRelationFilter
   shifts?: Prisma.ShiftListRelationFilter
+  timesheets?: Prisma.TimesheetListRelationFilter
+  holidays?: Prisma.HolidayListRelationFilter
+  teams?: Prisma.TeamListRelationFilter
+  projects?: Prisma.ProjectListRelationFilter
   grants?: Prisma.FederationGrantListRelationFilter
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentListRelationFilter
+  requestRecords?: Prisma.FederationRequestRecordListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
 }
 
 export type BranchOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
+  geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
-  employees?: Prisma.EmployeeOrderByRelationAggregateInput
-  attendance?: Prisma.AttendanceOrderByRelationAggregateInput
+  workLocations?: Prisma.WorkLocationOrderByRelationAggregateInput
+  primaryEmployees?: Prisma.EmployeeOrderByRelationAggregateInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentOrderByRelationAggregateInput
+  roles?: Prisma.RoleOrderByRelationAggregateInput
+  userRoles?: Prisma.UserRoleOrderByRelationAggregateInput
+  attendanceRecords?: Prisma.AttendanceRecordOrderByRelationAggregateInput
   leaveRequests?: Prisma.LeaveRequestOrderByRelationAggregateInput
-  timesheets?: Prisma.TimesheetOrderByRelationAggregateInput
   shifts?: Prisma.ShiftOrderByRelationAggregateInput
+  timesheets?: Prisma.TimesheetOrderByRelationAggregateInput
+  holidays?: Prisma.HolidayOrderByRelationAggregateInput
+  teams?: Prisma.TeamOrderByRelationAggregateInput
+  projects?: Prisma.ProjectOrderByRelationAggregateInput
   grants?: Prisma.FederationGrantOrderByRelationAggregateInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentOrderByRelationAggregateInput
+  requestRecords?: Prisma.FederationRequestRecordOrderByRelationAggregateInput
+  auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
 }
 
 export type BranchWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  organizationId_code?: Prisma.BranchOrganizationIdCodeCompoundUniqueInput
   organizationId_externalId?: Prisma.BranchOrganizationIdExternalIdCompoundUniqueInput
   AND?: Prisma.BranchWhereInput | Prisma.BranchWhereInput[]
   OR?: Prisma.BranchWhereInput[]
   NOT?: Prisma.BranchWhereInput | Prisma.BranchWhereInput[]
   organizationId?: Prisma.UuidFilter<"Branch"> | string
   name?: Prisma.StringFilter<"Branch"> | string
+  code?: Prisma.StringFilter<"Branch"> | string
   source?: Prisma.EnumOrganizationSourceFilter<"Branch"> | $Enums.OrganizationSource
-  externalId?: Prisma.UuidNullableFilter<"Branch"> | string | null
+  externalId?: Prisma.StringNullableFilter<"Branch"> | string | null
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
+  geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  address?: Prisma.JsonFilter<"Branch">
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-  employees?: Prisma.EmployeeListRelationFilter
-  attendance?: Prisma.AttendanceListRelationFilter
+  workLocations?: Prisma.WorkLocationListRelationFilter
+  primaryEmployees?: Prisma.EmployeeListRelationFilter
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentListRelationFilter
+  roles?: Prisma.RoleListRelationFilter
+  userRoles?: Prisma.UserRoleListRelationFilter
+  attendanceRecords?: Prisma.AttendanceRecordListRelationFilter
   leaveRequests?: Prisma.LeaveRequestListRelationFilter
-  timesheets?: Prisma.TimesheetListRelationFilter
   shifts?: Prisma.ShiftListRelationFilter
+  timesheets?: Prisma.TimesheetListRelationFilter
+  holidays?: Prisma.HolidayListRelationFilter
+  teams?: Prisma.TeamListRelationFilter
+  projects?: Prisma.ProjectListRelationFilter
   grants?: Prisma.FederationGrantListRelationFilter
-}, "id" | "organizationId_externalId">
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentListRelationFilter
+  requestRecords?: Prisma.FederationRequestRecordListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
+}, "id" | "organizationId_code" | "organizationId_externalId">
 
 export type BranchOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
+  geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BranchCountOrderByAggregateInput
@@ -287,10 +347,13 @@ export type BranchScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"Branch"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"Branch"> | string
   name?: Prisma.StringWithAggregatesFilter<"Branch"> | string
+  code?: Prisma.StringWithAggregatesFilter<"Branch"> | string
   source?: Prisma.EnumOrganizationSourceWithAggregatesFilter<"Branch"> | $Enums.OrganizationSource
-  externalId?: Prisma.UuidNullableWithAggregatesFilter<"Branch"> | string | null
+  externalId?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
   status?: Prisma.EnumOrganizationStatusWithAggregatesFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
+  geofenceMode?: Prisma.EnumGeofenceModeNullableWithAggregatesFilter<"Branch"> | $Enums.GeofenceMode | null
+  address?: Prisma.JsonWithAggregatesFilter<"Branch">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
 }
@@ -298,83 +361,138 @@ export type BranchScalarWhereWithAggregatesInput = {
 export type BranchCreateInput = {
   id?: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutBranchInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
 }
 
 export type BranchUncheckedCreateInput = {
   id?: string
   organizationId: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBranchInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
 }
 
 export type BranchUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutBranchNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBranchNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchCreateManyInput = {
   id?: string
   organizationId: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -382,10 +500,13 @@ export type BranchCreateManyInput = {
 export type BranchUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -394,12 +515,20 @@ export type BranchUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BranchNullableScalarRelationFilter = {
+  is?: Prisma.BranchWhereInput | null
+  isNot?: Prisma.BranchWhereInput | null
 }
 
 export type BranchListRelationFilter = {
@@ -412,6 +541,11 @@ export type BranchOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type BranchOrganizationIdCodeCompoundUniqueInput = {
+  organizationId: string
+  code: string
+}
+
 export type BranchOrganizationIdExternalIdCompoundUniqueInput = {
   organizationId: string
   externalId: string
@@ -421,10 +555,13 @@ export type BranchCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  geofenceMode?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -433,10 +570,12 @@ export type BranchMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  geofenceMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -445,17 +584,195 @@ export type BranchMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
+  geofenceMode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type BranchNullableScalarRelationFilter = {
-  is?: Prisma.BranchWhereInput | null
-  isNot?: Prisma.BranchWhereInput | null
+export type BranchScalarRelationFilter = {
+  is?: Prisma.BranchWhereInput
+  isNot?: Prisma.BranchWhereInput
+}
+
+export type BranchCreateNestedOneWithoutRequestRecordsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutRequestRecordsInput, Prisma.BranchUncheckedCreateWithoutRequestRecordsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutRequestRecordsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutRequestRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutRequestRecordsInput, Prisma.BranchUncheckedCreateWithoutRequestRecordsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutRequestRecordsInput
+  upsert?: Prisma.BranchUpsertWithoutRequestRecordsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutRequestRecordsInput, Prisma.BranchUpdateWithoutRequestRecordsInput>, Prisma.BranchUncheckedUpdateWithoutRequestRecordsInput>
+}
+
+export type BranchCreateNestedOneWithoutAuditLogsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutAuditLogsInput, Prisma.BranchUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutAuditLogsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutAuditLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutAuditLogsInput, Prisma.BranchUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutAuditLogsInput
+  upsert?: Prisma.BranchUpsertWithoutAuditLogsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.BranchUpdateWithoutAuditLogsInput>, Prisma.BranchUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type BranchCreateNestedOneWithoutGrantsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGrantsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutGrantsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGrantsInput
+  upsert?: Prisma.BranchUpsertWithoutGrantsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutGrantsInput, Prisma.BranchUpdateWithoutGrantsInput>, Prisma.BranchUncheckedUpdateWithoutGrantsInput>
+}
+
+export type BranchCreateNestedOneWithoutAttendanceRecordsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceRecordsInput, Prisma.BranchUncheckedCreateWithoutAttendanceRecordsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutAttendanceRecordsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutAttendanceRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceRecordsInput, Prisma.BranchUncheckedCreateWithoutAttendanceRecordsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutAttendanceRecordsInput
+  upsert?: Prisma.BranchUpsertWithoutAttendanceRecordsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutAttendanceRecordsInput, Prisma.BranchUpdateWithoutAttendanceRecordsInput>, Prisma.BranchUncheckedUpdateWithoutAttendanceRecordsInput>
+}
+
+export type BranchCreateNestedOneWithoutHolidaysInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutHolidaysInput, Prisma.BranchUncheckedCreateWithoutHolidaysInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutHolidaysInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutHolidaysNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutHolidaysInput, Prisma.BranchUncheckedCreateWithoutHolidaysInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutHolidaysInput
+  upsert?: Prisma.BranchUpsertWithoutHolidaysInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutHolidaysInput, Prisma.BranchUpdateWithoutHolidaysInput>, Prisma.BranchUncheckedUpdateWithoutHolidaysInput>
+}
+
+export type BranchCreateNestedOneWithoutLeaveRequestsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutLeaveRequestsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutLeaveRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutLeaveRequestsInput
+  upsert?: Prisma.BranchUpsertWithoutLeaveRequestsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutLeaveRequestsInput, Prisma.BranchUpdateWithoutLeaveRequestsInput>, Prisma.BranchUncheckedUpdateWithoutLeaveRequestsInput>
+}
+
+export type BranchCreateNestedOneWithoutShiftsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutShiftsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutShiftsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutShiftsInput
+  upsert?: Prisma.BranchUpsertWithoutShiftsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutShiftsInput, Prisma.BranchUpdateWithoutShiftsInput>, Prisma.BranchUncheckedUpdateWithoutShiftsInput>
+}
+
+export type BranchCreateNestedOneWithoutShiftAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutShiftAssignmentsInput, Prisma.BranchUncheckedCreateWithoutShiftAssignmentsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutShiftAssignmentsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutShiftAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutShiftAssignmentsInput, Prisma.BranchUncheckedCreateWithoutShiftAssignmentsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutShiftAssignmentsInput
+  upsert?: Prisma.BranchUpsertWithoutShiftAssignmentsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutShiftAssignmentsInput, Prisma.BranchUpdateWithoutShiftAssignmentsInput>, Prisma.BranchUncheckedUpdateWithoutShiftAssignmentsInput>
+}
+
+export type BranchCreateNestedOneWithoutTimesheetsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutTimesheetsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutTimesheetsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutTimesheetsInput
+  upsert?: Prisma.BranchUpsertWithoutTimesheetsInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutTimesheetsInput, Prisma.BranchUpdateWithoutTimesheetsInput>, Prisma.BranchUncheckedUpdateWithoutTimesheetsInput>
+}
+
+export type BranchCreateNestedOneWithoutRolesInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutRolesInput, Prisma.BranchUncheckedCreateWithoutRolesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutRolesInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutRolesNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutRolesInput, Prisma.BranchUncheckedCreateWithoutRolesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutRolesInput
+  upsert?: Prisma.BranchUpsertWithoutRolesInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutRolesInput, Prisma.BranchUpdateWithoutRolesInput>, Prisma.BranchUncheckedUpdateWithoutRolesInput>
+}
+
+export type BranchCreateNestedOneWithoutUserRolesInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutUserRolesInput, Prisma.BranchUncheckedCreateWithoutUserRolesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutUserRolesInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutUserRolesNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutUserRolesInput, Prisma.BranchUncheckedCreateWithoutUserRolesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutUserRolesInput
+  upsert?: Prisma.BranchUpsertWithoutUserRolesInput
+  disconnect?: Prisma.BranchWhereInput | boolean
+  delete?: Prisma.BranchWhereInput | boolean
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutUserRolesInput, Prisma.BranchUpdateWithoutUserRolesInput>, Prisma.BranchUncheckedUpdateWithoutUserRolesInput>
 }
 
 export type BranchCreateNestedManyWithoutOrganizationInput = {
@@ -500,134 +817,1642 @@ export type BranchUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
 }
 
-export type BranchCreateNestedOneWithoutEmployeesInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutEmployeesInput, Prisma.BranchUncheckedCreateWithoutEmployeesInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutEmployeesInput
+export type NullableEnumGeofenceModeFieldUpdateOperationsInput = {
+  set?: $Enums.GeofenceMode | null
+}
+
+export type BranchCreateNestedOneWithoutWorkLocationsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutWorkLocationsInput, Prisma.BranchUncheckedCreateWithoutWorkLocationsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutWorkLocationsInput
   connect?: Prisma.BranchWhereUniqueInput
 }
 
-export type BranchUpdateOneWithoutEmployeesNestedInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutEmployeesInput, Prisma.BranchUncheckedCreateWithoutEmployeesInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutEmployeesInput
-  upsert?: Prisma.BranchUpsertWithoutEmployeesInput
+export type BranchUpdateOneWithoutWorkLocationsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutWorkLocationsInput, Prisma.BranchUncheckedCreateWithoutWorkLocationsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutWorkLocationsInput
+  upsert?: Prisma.BranchUpsertWithoutWorkLocationsInput
   disconnect?: Prisma.BranchWhereInput | boolean
   delete?: Prisma.BranchWhereInput | boolean
   connect?: Prisma.BranchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutEmployeesInput, Prisma.BranchUpdateWithoutEmployeesInput>, Prisma.BranchUncheckedUpdateWithoutEmployeesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutWorkLocationsInput, Prisma.BranchUpdateWithoutWorkLocationsInput>, Prisma.BranchUncheckedUpdateWithoutWorkLocationsInput>
 }
 
-export type BranchCreateNestedOneWithoutAttendanceInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceInput, Prisma.BranchUncheckedCreateWithoutAttendanceInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutAttendanceInput
+export type BranchCreateNestedOneWithoutPrimaryEmployeesInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutPrimaryEmployeesInput, Prisma.BranchUncheckedCreateWithoutPrimaryEmployeesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutPrimaryEmployeesInput
   connect?: Prisma.BranchWhereUniqueInput
 }
 
-export type BranchUpdateOneWithoutAttendanceNestedInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceInput, Prisma.BranchUncheckedCreateWithoutAttendanceInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutAttendanceInput
-  upsert?: Prisma.BranchUpsertWithoutAttendanceInput
+export type BranchUpdateOneWithoutPrimaryEmployeesNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutPrimaryEmployeesInput, Prisma.BranchUncheckedCreateWithoutPrimaryEmployeesInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutPrimaryEmployeesInput
+  upsert?: Prisma.BranchUpsertWithoutPrimaryEmployeesInput
   disconnect?: Prisma.BranchWhereInput | boolean
   delete?: Prisma.BranchWhereInput | boolean
   connect?: Prisma.BranchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutAttendanceInput, Prisma.BranchUpdateWithoutAttendanceInput>, Prisma.BranchUncheckedUpdateWithoutAttendanceInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutPrimaryEmployeesInput, Prisma.BranchUpdateWithoutPrimaryEmployeesInput>, Prisma.BranchUncheckedUpdateWithoutPrimaryEmployeesInput>
 }
 
-export type BranchCreateNestedOneWithoutLeaveRequestsInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutLeaveRequestsInput
+export type BranchCreateNestedOneWithoutEmployeeAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutEmployeeAssignmentsInput, Prisma.BranchUncheckedCreateWithoutEmployeeAssignmentsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutEmployeeAssignmentsInput
   connect?: Prisma.BranchWhereUniqueInput
 }
 
-export type BranchUpdateOneWithoutLeaveRequestsNestedInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutLeaveRequestsInput
-  upsert?: Prisma.BranchUpsertWithoutLeaveRequestsInput
+export type BranchUpdateOneRequiredWithoutEmployeeAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutEmployeeAssignmentsInput, Prisma.BranchUncheckedCreateWithoutEmployeeAssignmentsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutEmployeeAssignmentsInput
+  upsert?: Prisma.BranchUpsertWithoutEmployeeAssignmentsInput
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutEmployeeAssignmentsInput, Prisma.BranchUpdateWithoutEmployeeAssignmentsInput>, Prisma.BranchUncheckedUpdateWithoutEmployeeAssignmentsInput>
+}
+
+export type BranchCreateNestedOneWithoutTeamsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutTeamsInput, Prisma.BranchUncheckedCreateWithoutTeamsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutTeamsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneWithoutTeamsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutTeamsInput, Prisma.BranchUncheckedCreateWithoutTeamsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutTeamsInput
+  upsert?: Prisma.BranchUpsertWithoutTeamsInput
   disconnect?: Prisma.BranchWhereInput | boolean
   delete?: Prisma.BranchWhereInput | boolean
   connect?: Prisma.BranchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutLeaveRequestsInput, Prisma.BranchUpdateWithoutLeaveRequestsInput>, Prisma.BranchUncheckedUpdateWithoutLeaveRequestsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutTeamsInput, Prisma.BranchUpdateWithoutTeamsInput>, Prisma.BranchUncheckedUpdateWithoutTeamsInput>
 }
 
-export type BranchCreateNestedOneWithoutTimesheetsInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutTimesheetsInput
+export type BranchCreateNestedOneWithoutProjectsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutProjectsInput, Prisma.BranchUncheckedCreateWithoutProjectsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutProjectsInput
   connect?: Prisma.BranchWhereUniqueInput
 }
 
-export type BranchUpdateOneWithoutTimesheetsNestedInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutTimesheetsInput
-  upsert?: Prisma.BranchUpsertWithoutTimesheetsInput
+export type BranchUpdateOneWithoutProjectsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutProjectsInput, Prisma.BranchUncheckedCreateWithoutProjectsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutProjectsInput
+  upsert?: Prisma.BranchUpsertWithoutProjectsInput
   disconnect?: Prisma.BranchWhereInput | boolean
   delete?: Prisma.BranchWhereInput | boolean
   connect?: Prisma.BranchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutTimesheetsInput, Prisma.BranchUpdateWithoutTimesheetsInput>, Prisma.BranchUncheckedUpdateWithoutTimesheetsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutProjectsInput, Prisma.BranchUpdateWithoutProjectsInput>, Prisma.BranchUncheckedUpdateWithoutProjectsInput>
 }
 
-export type BranchCreateNestedOneWithoutShiftsInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutShiftsInput
-  connect?: Prisma.BranchWhereUniqueInput
+export type BranchCreateWithoutRequestRecordsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
 }
 
-export type BranchUpdateOneWithoutShiftsNestedInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutShiftsInput
-  upsert?: Prisma.BranchUpsertWithoutShiftsInput
-  disconnect?: Prisma.BranchWhereInput | boolean
-  delete?: Prisma.BranchWhereInput | boolean
-  connect?: Prisma.BranchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutShiftsInput, Prisma.BranchUpdateWithoutShiftsInput>, Prisma.BranchUncheckedUpdateWithoutShiftsInput>
+export type BranchUncheckedCreateWithoutRequestRecordsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
 }
 
-export type BranchCreateNestedOneWithoutGrantsInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGrantsInput
-  connect?: Prisma.BranchWhereUniqueInput
+export type BranchCreateOrConnectWithoutRequestRecordsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutRequestRecordsInput, Prisma.BranchUncheckedCreateWithoutRequestRecordsInput>
 }
 
-export type BranchUpdateOneWithoutGrantsNestedInput = {
-  create?: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
-  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGrantsInput
-  upsert?: Prisma.BranchUpsertWithoutGrantsInput
-  disconnect?: Prisma.BranchWhereInput | boolean
-  delete?: Prisma.BranchWhereInput | boolean
-  connect?: Prisma.BranchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutGrantsInput, Prisma.BranchUpdateWithoutGrantsInput>, Prisma.BranchUncheckedUpdateWithoutGrantsInput>
+export type BranchUpsertWithoutRequestRecordsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutRequestRecordsInput, Prisma.BranchUncheckedUpdateWithoutRequestRecordsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutRequestRecordsInput, Prisma.BranchUncheckedCreateWithoutRequestRecordsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutRequestRecordsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutRequestRecordsInput, Prisma.BranchUncheckedUpdateWithoutRequestRecordsInput>
+}
+
+export type BranchUpdateWithoutRequestRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutRequestRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutAuditLogsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutAuditLogsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutAuditLogsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutAuditLogsInput, Prisma.BranchUncheckedCreateWithoutAuditLogsInput>
+}
+
+export type BranchUpsertWithoutAuditLogsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutAuditLogsInput, Prisma.BranchUncheckedUpdateWithoutAuditLogsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutAuditLogsInput, Prisma.BranchUncheckedCreateWithoutAuditLogsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutAuditLogsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutAuditLogsInput, Prisma.BranchUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type BranchUpdateWithoutAuditLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutAuditLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutGrantsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutGrantsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutGrantsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
+}
+
+export type BranchUpsertWithoutGrantsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutGrantsInput, Prisma.BranchUncheckedUpdateWithoutGrantsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutGrantsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutGrantsInput, Prisma.BranchUncheckedUpdateWithoutGrantsInput>
+}
+
+export type BranchUpdateWithoutGrantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutGrantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutAttendanceRecordsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutAttendanceRecordsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutAttendanceRecordsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceRecordsInput, Prisma.BranchUncheckedCreateWithoutAttendanceRecordsInput>
+}
+
+export type BranchUpsertWithoutAttendanceRecordsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutAttendanceRecordsInput, Prisma.BranchUncheckedUpdateWithoutAttendanceRecordsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceRecordsInput, Prisma.BranchUncheckedCreateWithoutAttendanceRecordsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutAttendanceRecordsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutAttendanceRecordsInput, Prisma.BranchUncheckedUpdateWithoutAttendanceRecordsInput>
+}
+
+export type BranchUpdateWithoutAttendanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutAttendanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutHolidaysInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutHolidaysInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutHolidaysInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutHolidaysInput, Prisma.BranchUncheckedCreateWithoutHolidaysInput>
+}
+
+export type BranchUpsertWithoutHolidaysInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutHolidaysInput, Prisma.BranchUncheckedUpdateWithoutHolidaysInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutHolidaysInput, Prisma.BranchUncheckedCreateWithoutHolidaysInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutHolidaysInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutHolidaysInput, Prisma.BranchUncheckedUpdateWithoutHolidaysInput>
+}
+
+export type BranchUpdateWithoutHolidaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutHolidaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutLeaveRequestsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutLeaveRequestsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutLeaveRequestsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
+}
+
+export type BranchUpsertWithoutLeaveRequestsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutLeaveRequestsInput, Prisma.BranchUncheckedUpdateWithoutLeaveRequestsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutLeaveRequestsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutLeaveRequestsInput, Prisma.BranchUncheckedUpdateWithoutLeaveRequestsInput>
+}
+
+export type BranchUpdateWithoutLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutLeaveRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutShiftsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutShiftsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutShiftsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
+}
+
+export type BranchUpsertWithoutShiftsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutShiftsInput, Prisma.BranchUncheckedUpdateWithoutShiftsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutShiftsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutShiftsInput, Prisma.BranchUncheckedUpdateWithoutShiftsInput>
+}
+
+export type BranchUpdateWithoutShiftsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutShiftsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutShiftAssignmentsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutShiftAssignmentsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutShiftAssignmentsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutShiftAssignmentsInput, Prisma.BranchUncheckedCreateWithoutShiftAssignmentsInput>
+}
+
+export type BranchUpsertWithoutShiftAssignmentsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutShiftAssignmentsInput, Prisma.BranchUncheckedUpdateWithoutShiftAssignmentsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutShiftAssignmentsInput, Prisma.BranchUncheckedCreateWithoutShiftAssignmentsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutShiftAssignmentsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutShiftAssignmentsInput, Prisma.BranchUncheckedUpdateWithoutShiftAssignmentsInput>
+}
+
+export type BranchUpdateWithoutShiftAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutShiftAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutTimesheetsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutTimesheetsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutTimesheetsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
+}
+
+export type BranchUpsertWithoutTimesheetsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutTimesheetsInput, Prisma.BranchUncheckedUpdateWithoutTimesheetsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutTimesheetsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutTimesheetsInput, Prisma.BranchUncheckedUpdateWithoutTimesheetsInput>
+}
+
+export type BranchUpdateWithoutTimesheetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutTimesheetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutRolesInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutRolesInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutRolesInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutRolesInput, Prisma.BranchUncheckedCreateWithoutRolesInput>
+}
+
+export type BranchUpsertWithoutRolesInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutRolesInput, Prisma.BranchUncheckedUpdateWithoutRolesInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutRolesInput, Prisma.BranchUncheckedCreateWithoutRolesInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutRolesInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutRolesInput, Prisma.BranchUncheckedUpdateWithoutRolesInput>
+}
+
+export type BranchUpdateWithoutRolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutRolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutUserRolesInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutUserRolesInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutUserRolesInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutUserRolesInput, Prisma.BranchUncheckedCreateWithoutUserRolesInput>
+}
+
+export type BranchUpsertWithoutUserRolesInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutUserRolesInput, Prisma.BranchUncheckedUpdateWithoutUserRolesInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutUserRolesInput, Prisma.BranchUncheckedCreateWithoutUserRolesInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutUserRolesInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutUserRolesInput, Prisma.BranchUncheckedUpdateWithoutUserRolesInput>
+}
+
+export type BranchUpdateWithoutUserRolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutUserRolesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchCreateWithoutOrganizationInput = {
   id?: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  employees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutBranchInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
 }
 
 export type BranchUncheckedCreateWithoutOrganizationInput = {
   id?: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBranchInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
 }
 
 export type BranchCreateOrConnectWithoutOrganizationInput = {
@@ -663,525 +2488,707 @@ export type BranchScalarWhereInput = {
   id?: Prisma.UuidFilter<"Branch"> | string
   organizationId?: Prisma.UuidFilter<"Branch"> | string
   name?: Prisma.StringFilter<"Branch"> | string
+  code?: Prisma.StringFilter<"Branch"> | string
   source?: Prisma.EnumOrganizationSourceFilter<"Branch"> | $Enums.OrganizationSource
-  externalId?: Prisma.UuidNullableFilter<"Branch"> | string | null
+  externalId?: Prisma.StringNullableFilter<"Branch"> | string | null
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
+  geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  address?: Prisma.JsonFilter<"Branch">
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
 }
 
-export type BranchCreateWithoutEmployeesInput = {
+export type BranchCreateWithoutWorkLocationsInput = {
   id?: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutBranchInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
-}
-
-export type BranchUncheckedCreateWithoutEmployeesInput = {
-  id?: string
-  organizationId: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBranchInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
-}
-
-export type BranchCreateOrConnectWithoutEmployeesInput = {
-  where: Prisma.BranchWhereUniqueInput
-  create: Prisma.XOR<Prisma.BranchCreateWithoutEmployeesInput, Prisma.BranchUncheckedCreateWithoutEmployeesInput>
-}
-
-export type BranchUpsertWithoutEmployeesInput = {
-  update: Prisma.XOR<Prisma.BranchUpdateWithoutEmployeesInput, Prisma.BranchUncheckedUpdateWithoutEmployeesInput>
-  create: Prisma.XOR<Prisma.BranchCreateWithoutEmployeesInput, Prisma.BranchUncheckedCreateWithoutEmployeesInput>
-  where?: Prisma.BranchWhereInput
-}
-
-export type BranchUpdateToOneWithWhereWithoutEmployeesInput = {
-  where?: Prisma.BranchWhereInput
-  data: Prisma.XOR<Prisma.BranchUpdateWithoutEmployeesInput, Prisma.BranchUncheckedUpdateWithoutEmployeesInput>
-}
-
-export type BranchUpdateWithoutEmployeesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutBranchNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchUncheckedUpdateWithoutEmployeesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBranchNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchCreateWithoutAttendanceInput = {
-  id?: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
-}
-
-export type BranchUncheckedCreateWithoutAttendanceInput = {
-  id?: string
-  organizationId: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
-}
-
-export type BranchCreateOrConnectWithoutAttendanceInput = {
-  where: Prisma.BranchWhereUniqueInput
-  create: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceInput, Prisma.BranchUncheckedCreateWithoutAttendanceInput>
-}
-
-export type BranchUpsertWithoutAttendanceInput = {
-  update: Prisma.XOR<Prisma.BranchUpdateWithoutAttendanceInput, Prisma.BranchUncheckedUpdateWithoutAttendanceInput>
-  create: Prisma.XOR<Prisma.BranchCreateWithoutAttendanceInput, Prisma.BranchUncheckedCreateWithoutAttendanceInput>
-  where?: Prisma.BranchWhereInput
-}
-
-export type BranchUpdateToOneWithWhereWithoutAttendanceInput = {
-  where?: Prisma.BranchWhereInput
-  data: Prisma.XOR<Prisma.BranchUpdateWithoutAttendanceInput, Prisma.BranchUncheckedUpdateWithoutAttendanceInput>
-}
-
-export type BranchUpdateWithoutAttendanceInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchUncheckedUpdateWithoutAttendanceInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchCreateWithoutLeaveRequestsInput = {
-  id?: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
-}
-
-export type BranchUncheckedCreateWithoutLeaveRequestsInput = {
-  id?: string
-  organizationId: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
-}
-
-export type BranchCreateOrConnectWithoutLeaveRequestsInput = {
-  where: Prisma.BranchWhereUniqueInput
-  create: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
-}
-
-export type BranchUpsertWithoutLeaveRequestsInput = {
-  update: Prisma.XOR<Prisma.BranchUpdateWithoutLeaveRequestsInput, Prisma.BranchUncheckedUpdateWithoutLeaveRequestsInput>
-  create: Prisma.XOR<Prisma.BranchCreateWithoutLeaveRequestsInput, Prisma.BranchUncheckedCreateWithoutLeaveRequestsInput>
-  where?: Prisma.BranchWhereInput
-}
-
-export type BranchUpdateToOneWithWhereWithoutLeaveRequestsInput = {
-  where?: Prisma.BranchWhereInput
-  data: Prisma.XOR<Prisma.BranchUpdateWithoutLeaveRequestsInput, Prisma.BranchUncheckedUpdateWithoutLeaveRequestsInput>
-}
-
-export type BranchUpdateWithoutLeaveRequestsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchUncheckedUpdateWithoutLeaveRequestsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchCreateWithoutTimesheetsInput = {
-  id?: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
 }
 
-export type BranchUncheckedCreateWithoutTimesheetsInput = {
+export type BranchUncheckedCreateWithoutWorkLocationsInput = {
   id?: string
   organizationId: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
 }
 
-export type BranchCreateOrConnectWithoutTimesheetsInput = {
+export type BranchCreateOrConnectWithoutWorkLocationsInput = {
   where: Prisma.BranchWhereUniqueInput
-  create: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutWorkLocationsInput, Prisma.BranchUncheckedCreateWithoutWorkLocationsInput>
 }
 
-export type BranchUpsertWithoutTimesheetsInput = {
-  update: Prisma.XOR<Prisma.BranchUpdateWithoutTimesheetsInput, Prisma.BranchUncheckedUpdateWithoutTimesheetsInput>
-  create: Prisma.XOR<Prisma.BranchCreateWithoutTimesheetsInput, Prisma.BranchUncheckedCreateWithoutTimesheetsInput>
+export type BranchUpsertWithoutWorkLocationsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutWorkLocationsInput, Prisma.BranchUncheckedUpdateWithoutWorkLocationsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutWorkLocationsInput, Prisma.BranchUncheckedCreateWithoutWorkLocationsInput>
   where?: Prisma.BranchWhereInput
 }
 
-export type BranchUpdateToOneWithWhereWithoutTimesheetsInput = {
+export type BranchUpdateToOneWithWhereWithoutWorkLocationsInput = {
   where?: Prisma.BranchWhereInput
-  data: Prisma.XOR<Prisma.BranchUpdateWithoutTimesheetsInput, Prisma.BranchUncheckedUpdateWithoutTimesheetsInput>
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutWorkLocationsInput, Prisma.BranchUncheckedUpdateWithoutWorkLocationsInput>
 }
 
-export type BranchUpdateWithoutTimesheetsInput = {
+export type BranchUpdateWithoutWorkLocationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
 }
 
-export type BranchUncheckedUpdateWithoutTimesheetsInput = {
+export type BranchUncheckedUpdateWithoutWorkLocationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchCreateWithoutShiftsInput = {
-  id?: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutBranchInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
-}
-
-export type BranchUncheckedCreateWithoutShiftsInput = {
-  id?: string
-  organizationId: string
-  name: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBranchInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
-  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
-}
-
-export type BranchCreateOrConnectWithoutShiftsInput = {
-  where: Prisma.BranchWhereUniqueInput
-  create: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
-}
-
-export type BranchUpsertWithoutShiftsInput = {
-  update: Prisma.XOR<Prisma.BranchUpdateWithoutShiftsInput, Prisma.BranchUncheckedUpdateWithoutShiftsInput>
-  create: Prisma.XOR<Prisma.BranchCreateWithoutShiftsInput, Prisma.BranchUncheckedCreateWithoutShiftsInput>
-  where?: Prisma.BranchWhereInput
-}
-
-export type BranchUpdateToOneWithWhereWithoutShiftsInput = {
-  where?: Prisma.BranchWhereInput
-  data: Prisma.XOR<Prisma.BranchUpdateWithoutShiftsInput, Prisma.BranchUncheckedUpdateWithoutShiftsInput>
-}
-
-export type BranchUpdateWithoutShiftsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutBranchNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
-  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
-}
-
-export type BranchUncheckedUpdateWithoutShiftsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBranchNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
 }
 
-export type BranchCreateWithoutGrantsInput = {
+export type BranchCreateWithoutPrimaryEmployeesInput = {
   id?: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceCreateNestedManyWithoutBranchInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
 }
 
-export type BranchUncheckedCreateWithoutGrantsInput = {
+export type BranchUncheckedCreateWithoutPrimaryEmployeesInput = {
   id?: string
   organizationId: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
-  attendance?: Prisma.AttendanceUncheckedCreateNestedManyWithoutBranchInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
 }
 
-export type BranchCreateOrConnectWithoutGrantsInput = {
+export type BranchCreateOrConnectWithoutPrimaryEmployeesInput = {
   where: Prisma.BranchWhereUniqueInput
-  create: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutPrimaryEmployeesInput, Prisma.BranchUncheckedCreateWithoutPrimaryEmployeesInput>
 }
 
-export type BranchUpsertWithoutGrantsInput = {
-  update: Prisma.XOR<Prisma.BranchUpdateWithoutGrantsInput, Prisma.BranchUncheckedUpdateWithoutGrantsInput>
-  create: Prisma.XOR<Prisma.BranchCreateWithoutGrantsInput, Prisma.BranchUncheckedCreateWithoutGrantsInput>
+export type BranchUpsertWithoutPrimaryEmployeesInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutPrimaryEmployeesInput, Prisma.BranchUncheckedUpdateWithoutPrimaryEmployeesInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutPrimaryEmployeesInput, Prisma.BranchUncheckedCreateWithoutPrimaryEmployeesInput>
   where?: Prisma.BranchWhereInput
 }
 
-export type BranchUpdateToOneWithWhereWithoutGrantsInput = {
+export type BranchUpdateToOneWithWhereWithoutPrimaryEmployeesInput = {
   where?: Prisma.BranchWhereInput
-  data: Prisma.XOR<Prisma.BranchUpdateWithoutGrantsInput, Prisma.BranchUncheckedUpdateWithoutGrantsInput>
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutPrimaryEmployeesInput, Prisma.BranchUncheckedUpdateWithoutPrimaryEmployeesInput>
 }
 
-export type BranchUpdateWithoutGrantsInput = {
+export type BranchUpdateWithoutPrimaryEmployeesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutBranchNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
 }
 
-export type BranchUncheckedUpdateWithoutGrantsInput = {
+export type BranchUncheckedUpdateWithoutPrimaryEmployeesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBranchNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutEmployeeAssignmentsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutEmployeeAssignmentsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutEmployeeAssignmentsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutEmployeeAssignmentsInput, Prisma.BranchUncheckedCreateWithoutEmployeeAssignmentsInput>
+}
+
+export type BranchUpsertWithoutEmployeeAssignmentsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutEmployeeAssignmentsInput, Prisma.BranchUncheckedUpdateWithoutEmployeeAssignmentsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutEmployeeAssignmentsInput, Prisma.BranchUncheckedCreateWithoutEmployeeAssignmentsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutEmployeeAssignmentsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutEmployeeAssignmentsInput, Prisma.BranchUncheckedUpdateWithoutEmployeeAssignmentsInput>
+}
+
+export type BranchUpdateWithoutEmployeeAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutEmployeeAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutTeamsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutTeamsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutTeamsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutTeamsInput, Prisma.BranchUncheckedCreateWithoutTeamsInput>
+}
+
+export type BranchUpsertWithoutTeamsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutTeamsInput, Prisma.BranchUncheckedUpdateWithoutTeamsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutTeamsInput, Prisma.BranchUncheckedCreateWithoutTeamsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutTeamsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutTeamsInput, Prisma.BranchUncheckedUpdateWithoutTeamsInput>
+}
+
+export type BranchUpdateWithoutTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutTeamsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutProjectsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+}
+
+export type BranchUncheckedCreateWithoutProjectsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutProjectsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutProjectsInput, Prisma.BranchUncheckedCreateWithoutProjectsInput>
+}
+
+export type BranchUpsertWithoutProjectsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutProjectsInput, Prisma.BranchUncheckedUpdateWithoutProjectsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutProjectsInput, Prisma.BranchUncheckedCreateWithoutProjectsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutProjectsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutProjectsInput, Prisma.BranchUncheckedUpdateWithoutProjectsInput>
+}
+
+export type BranchUpdateWithoutProjectsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutProjectsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchCreateManyOrganizationInput = {
   id?: string
   name: string
+  code: string
   source: $Enums.OrganizationSource
   externalId?: string | null
   status?: $Enums.OrganizationStatus
   timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1189,44 +3196,73 @@ export type BranchCreateManyOrganizationInput = {
 export type BranchUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUpdateManyWithoutBranchNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
-  attendance?: Prisma.AttendanceUncheckedUpdateManyWithoutBranchNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
 }
 
 export type BranchUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
   externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1237,21 +3273,41 @@ export type BranchUncheckedUpdateManyWithoutOrganizationInput = {
  */
 
 export type BranchCountOutputType = {
-  employees: number
-  attendance: number
+  workLocations: number
+  primaryEmployees: number
+  employeeAssignments: number
+  roles: number
+  userRoles: number
+  attendanceRecords: number
   leaveRequests: number
-  timesheets: number
   shifts: number
+  timesheets: number
+  holidays: number
+  teams: number
+  projects: number
   grants: number
+  shiftAssignments: number
+  requestRecords: number
+  auditLogs: number
 }
 
 export type BranchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  employees?: boolean | BranchCountOutputTypeCountEmployeesArgs
-  attendance?: boolean | BranchCountOutputTypeCountAttendanceArgs
+  workLocations?: boolean | BranchCountOutputTypeCountWorkLocationsArgs
+  primaryEmployees?: boolean | BranchCountOutputTypeCountPrimaryEmployeesArgs
+  employeeAssignments?: boolean | BranchCountOutputTypeCountEmployeeAssignmentsArgs
+  roles?: boolean | BranchCountOutputTypeCountRolesArgs
+  userRoles?: boolean | BranchCountOutputTypeCountUserRolesArgs
+  attendanceRecords?: boolean | BranchCountOutputTypeCountAttendanceRecordsArgs
   leaveRequests?: boolean | BranchCountOutputTypeCountLeaveRequestsArgs
-  timesheets?: boolean | BranchCountOutputTypeCountTimesheetsArgs
   shifts?: boolean | BranchCountOutputTypeCountShiftsArgs
+  timesheets?: boolean | BranchCountOutputTypeCountTimesheetsArgs
+  holidays?: boolean | BranchCountOutputTypeCountHolidaysArgs
+  teams?: boolean | BranchCountOutputTypeCountTeamsArgs
+  projects?: boolean | BranchCountOutputTypeCountProjectsArgs
   grants?: boolean | BranchCountOutputTypeCountGrantsArgs
+  shiftAssignments?: boolean | BranchCountOutputTypeCountShiftAssignmentsArgs
+  requestRecords?: boolean | BranchCountOutputTypeCountRequestRecordsArgs
+  auditLogs?: boolean | BranchCountOutputTypeCountAuditLogsArgs
 }
 
 /**
@@ -1267,15 +3323,43 @@ export type BranchCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
 /**
  * BranchCountOutputType without action
  */
-export type BranchCountOutputTypeCountEmployeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type BranchCountOutputTypeCountWorkLocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WorkLocationWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountPrimaryEmployeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.EmployeeWhereInput
 }
 
 /**
  * BranchCountOutputType without action
  */
-export type BranchCountOutputTypeCountAttendanceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AttendanceWhereInput
+export type BranchCountOutputTypeCountEmployeeAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeBranchAssignmentWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RoleWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountUserRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserRoleWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountAttendanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceRecordWhereInput
 }
 
 /**
@@ -1288,6 +3372,13 @@ export type BranchCountOutputTypeCountLeaveRequestsArgs<ExtArgs extends runtime.
 /**
  * BranchCountOutputType without action
  */
+export type BranchCountOutputTypeCountShiftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShiftWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
 export type BranchCountOutputTypeCountTimesheetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TimesheetWhereInput
 }
@@ -1295,8 +3386,22 @@ export type BranchCountOutputTypeCountTimesheetsArgs<ExtArgs extends runtime.Typ
 /**
  * BranchCountOutputType without action
  */
-export type BranchCountOutputTypeCountShiftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ShiftWhereInput
+export type BranchCountOutputTypeCountHolidaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.HolidayWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountTeamsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TeamWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectWhereInput
 }
 
 /**
@@ -1306,24 +3411,58 @@ export type BranchCountOutputTypeCountGrantsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.FederationGrantWhereInput
 }
 
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountShiftAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeShiftAssignmentWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountRequestRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FederationRequestRecordWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
+export type BranchCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuditLogWhereInput
+}
+
 
 export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  code?: boolean
   source?: boolean
   externalId?: boolean
   status?: boolean
   timezone?: boolean
+  geofenceMode?: boolean
+  address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  employees?: boolean | Prisma.Branch$employeesArgs<ExtArgs>
-  attendance?: boolean | Prisma.Branch$attendanceArgs<ExtArgs>
+  workLocations?: boolean | Prisma.Branch$workLocationsArgs<ExtArgs>
+  primaryEmployees?: boolean | Prisma.Branch$primaryEmployeesArgs<ExtArgs>
+  employeeAssignments?: boolean | Prisma.Branch$employeeAssignmentsArgs<ExtArgs>
+  roles?: boolean | Prisma.Branch$rolesArgs<ExtArgs>
+  userRoles?: boolean | Prisma.Branch$userRolesArgs<ExtArgs>
+  attendanceRecords?: boolean | Prisma.Branch$attendanceRecordsArgs<ExtArgs>
   leaveRequests?: boolean | Prisma.Branch$leaveRequestsArgs<ExtArgs>
-  timesheets?: boolean | Prisma.Branch$timesheetsArgs<ExtArgs>
   shifts?: boolean | Prisma.Branch$shiftsArgs<ExtArgs>
+  timesheets?: boolean | Prisma.Branch$timesheetsArgs<ExtArgs>
+  holidays?: boolean | Prisma.Branch$holidaysArgs<ExtArgs>
+  teams?: boolean | Prisma.Branch$teamsArgs<ExtArgs>
+  projects?: boolean | Prisma.Branch$projectsArgs<ExtArgs>
   grants?: boolean | Prisma.Branch$grantsArgs<ExtArgs>
+  shiftAssignments?: boolean | Prisma.Branch$shiftAssignmentsArgs<ExtArgs>
+  requestRecords?: boolean | Prisma.Branch$requestRecordsArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.Branch$auditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.BranchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["branch"]>
 
@@ -1331,10 +3470,13 @@ export type BranchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  code?: boolean
   source?: boolean
   externalId?: boolean
   status?: boolean
   timezone?: boolean
+  geofenceMode?: boolean
+  address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -1344,10 +3486,13 @@ export type BranchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  code?: boolean
   source?: boolean
   externalId?: boolean
   status?: boolean
   timezone?: boolean
+  geofenceMode?: boolean
+  address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -1357,23 +3502,36 @@ export type BranchSelectScalar = {
   id?: boolean
   organizationId?: boolean
   name?: boolean
+  code?: boolean
   source?: boolean
   externalId?: boolean
   status?: boolean
   timezone?: boolean
+  geofenceMode?: boolean
+  address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "source" | "externalId" | "status" | "timezone" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
+export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "code" | "source" | "externalId" | "status" | "timezone" | "geofenceMode" | "address" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
 export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  employees?: boolean | Prisma.Branch$employeesArgs<ExtArgs>
-  attendance?: boolean | Prisma.Branch$attendanceArgs<ExtArgs>
+  workLocations?: boolean | Prisma.Branch$workLocationsArgs<ExtArgs>
+  primaryEmployees?: boolean | Prisma.Branch$primaryEmployeesArgs<ExtArgs>
+  employeeAssignments?: boolean | Prisma.Branch$employeeAssignmentsArgs<ExtArgs>
+  roles?: boolean | Prisma.Branch$rolesArgs<ExtArgs>
+  userRoles?: boolean | Prisma.Branch$userRolesArgs<ExtArgs>
+  attendanceRecords?: boolean | Prisma.Branch$attendanceRecordsArgs<ExtArgs>
   leaveRequests?: boolean | Prisma.Branch$leaveRequestsArgs<ExtArgs>
-  timesheets?: boolean | Prisma.Branch$timesheetsArgs<ExtArgs>
   shifts?: boolean | Prisma.Branch$shiftsArgs<ExtArgs>
+  timesheets?: boolean | Prisma.Branch$timesheetsArgs<ExtArgs>
+  holidays?: boolean | Prisma.Branch$holidaysArgs<ExtArgs>
+  teams?: boolean | Prisma.Branch$teamsArgs<ExtArgs>
+  projects?: boolean | Prisma.Branch$projectsArgs<ExtArgs>
   grants?: boolean | Prisma.Branch$grantsArgs<ExtArgs>
+  shiftAssignments?: boolean | Prisma.Branch$shiftAssignmentsArgs<ExtArgs>
+  requestRecords?: boolean | Prisma.Branch$requestRecordsArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.Branch$auditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.BranchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BranchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1387,21 +3545,34 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Branch"
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
-    employees: Prisma.$EmployeePayload<ExtArgs>[]
-    attendance: Prisma.$AttendancePayload<ExtArgs>[]
+    workLocations: Prisma.$WorkLocationPayload<ExtArgs>[]
+    primaryEmployees: Prisma.$EmployeePayload<ExtArgs>[]
+    employeeAssignments: Prisma.$EmployeeBranchAssignmentPayload<ExtArgs>[]
+    roles: Prisma.$RolePayload<ExtArgs>[]
+    userRoles: Prisma.$UserRolePayload<ExtArgs>[]
+    attendanceRecords: Prisma.$AttendanceRecordPayload<ExtArgs>[]
     leaveRequests: Prisma.$LeaveRequestPayload<ExtArgs>[]
-    timesheets: Prisma.$TimesheetPayload<ExtArgs>[]
     shifts: Prisma.$ShiftPayload<ExtArgs>[]
+    timesheets: Prisma.$TimesheetPayload<ExtArgs>[]
+    holidays: Prisma.$HolidayPayload<ExtArgs>[]
+    teams: Prisma.$TeamPayload<ExtArgs>[]
+    projects: Prisma.$ProjectPayload<ExtArgs>[]
     grants: Prisma.$FederationGrantPayload<ExtArgs>[]
+    shiftAssignments: Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>[]
+    requestRecords: Prisma.$FederationRequestRecordPayload<ExtArgs>[]
+    auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
     name: string
+    code: string
     source: $Enums.OrganizationSource
     externalId: string | null
     status: $Enums.OrganizationStatus
     timezone: string | null
+    geofenceMode: $Enums.GeofenceMode | null
+    address: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["branch"]>
@@ -1799,12 +3970,22 @@ readonly fields: BranchFieldRefs;
 export interface Prisma__BranchClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  employees<T extends Prisma.Branch$employeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  attendance<T extends Prisma.Branch$attendanceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$attendanceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  workLocations<T extends Prisma.Branch$workLocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$workLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  primaryEmployees<T extends Prisma.Branch$primaryEmployeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$primaryEmployeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employeeAssignments<T extends Prisma.Branch$employeeAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$employeeAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeBranchAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  roles<T extends Prisma.Branch$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  userRoles<T extends Prisma.Branch$userRolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$userRolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendanceRecords<T extends Prisma.Branch$attendanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$attendanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leaveRequests<T extends Prisma.Branch$leaveRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$leaveRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  timesheets<T extends Prisma.Branch$timesheetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$timesheetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimesheetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   shifts<T extends Prisma.Branch$shiftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$shiftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  timesheets<T extends Prisma.Branch$timesheetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$timesheetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimesheetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  holidays<T extends Prisma.Branch$holidaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$holidaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HolidayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  teams<T extends Prisma.Branch$teamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projects<T extends Prisma.Branch$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   grants<T extends Prisma.Branch$grantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$grantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FederationGrantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  shiftAssignments<T extends Prisma.Branch$shiftAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$shiftAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  requestRecords<T extends Prisma.Branch$requestRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$requestRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FederationRequestRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditLogs<T extends Prisma.Branch$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1837,10 +4018,13 @@ export interface BranchFieldRefs {
   readonly id: Prisma.FieldRef<"Branch", 'String'>
   readonly organizationId: Prisma.FieldRef<"Branch", 'String'>
   readonly name: Prisma.FieldRef<"Branch", 'String'>
+  readonly code: Prisma.FieldRef<"Branch", 'String'>
   readonly source: Prisma.FieldRef<"Branch", 'OrganizationSource'>
   readonly externalId: Prisma.FieldRef<"Branch", 'String'>
   readonly status: Prisma.FieldRef<"Branch", 'OrganizationStatus'>
   readonly timezone: Prisma.FieldRef<"Branch", 'String'>
+  readonly geofenceMode: Prisma.FieldRef<"Branch", 'GeofenceMode'>
+  readonly address: Prisma.FieldRef<"Branch", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Branch", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Branch", 'DateTime'>
 }
@@ -2244,9 +4428,33 @@ export type BranchDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * Branch.employees
+ * Branch.workLocations
  */
-export type Branch$employeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Branch$workLocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WorkLocation
+   */
+  select?: Prisma.WorkLocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WorkLocation
+   */
+  omit?: Prisma.WorkLocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WorkLocationInclude<ExtArgs> | null
+  where?: Prisma.WorkLocationWhereInput
+  orderBy?: Prisma.WorkLocationOrderByWithRelationInput | Prisma.WorkLocationOrderByWithRelationInput[]
+  cursor?: Prisma.WorkLocationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WorkLocationScalarFieldEnum | Prisma.WorkLocationScalarFieldEnum[]
+}
+
+/**
+ * Branch.primaryEmployees
+ */
+export type Branch$primaryEmployeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Employee
    */
@@ -2268,27 +4476,99 @@ export type Branch$employeesArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * Branch.attendance
+ * Branch.employeeAssignments
  */
-export type Branch$attendanceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Branch$employeeAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Attendance
+   * Select specific fields to fetch from the EmployeeBranchAssignment
    */
-  select?: Prisma.AttendanceSelect<ExtArgs> | null
+  select?: Prisma.EmployeeBranchAssignmentSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Attendance
+   * Omit specific fields from the EmployeeBranchAssignment
    */
-  omit?: Prisma.AttendanceOmit<ExtArgs> | null
+  omit?: Prisma.EmployeeBranchAssignmentOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.AttendanceInclude<ExtArgs> | null
-  where?: Prisma.AttendanceWhereInput
-  orderBy?: Prisma.AttendanceOrderByWithRelationInput | Prisma.AttendanceOrderByWithRelationInput[]
-  cursor?: Prisma.AttendanceWhereUniqueInput
+  include?: Prisma.EmployeeBranchAssignmentInclude<ExtArgs> | null
+  where?: Prisma.EmployeeBranchAssignmentWhereInput
+  orderBy?: Prisma.EmployeeBranchAssignmentOrderByWithRelationInput | Prisma.EmployeeBranchAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeBranchAssignmentWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.AttendanceScalarFieldEnum | Prisma.AttendanceScalarFieldEnum[]
+  distinct?: Prisma.EmployeeBranchAssignmentScalarFieldEnum | Prisma.EmployeeBranchAssignmentScalarFieldEnum[]
+}
+
+/**
+ * Branch.roles
+ */
+export type Branch$rolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Role
+   */
+  select?: Prisma.RoleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Role
+   */
+  omit?: Prisma.RoleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RoleInclude<ExtArgs> | null
+  where?: Prisma.RoleWhereInput
+  orderBy?: Prisma.RoleOrderByWithRelationInput | Prisma.RoleOrderByWithRelationInput[]
+  cursor?: Prisma.RoleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RoleScalarFieldEnum | Prisma.RoleScalarFieldEnum[]
+}
+
+/**
+ * Branch.userRoles
+ */
+export type Branch$userRolesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserRole
+   */
+  select?: Prisma.UserRoleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserRole
+   */
+  omit?: Prisma.UserRoleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserRoleInclude<ExtArgs> | null
+  where?: Prisma.UserRoleWhereInput
+  orderBy?: Prisma.UserRoleOrderByWithRelationInput | Prisma.UserRoleOrderByWithRelationInput[]
+  cursor?: Prisma.UserRoleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserRoleScalarFieldEnum | Prisma.UserRoleScalarFieldEnum[]
+}
+
+/**
+ * Branch.attendanceRecords
+ */
+export type Branch$attendanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceRecord
+   */
+  select?: Prisma.AttendanceRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceRecord
+   */
+  omit?: Prisma.AttendanceRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceRecordInclude<ExtArgs> | null
+  where?: Prisma.AttendanceRecordWhereInput
+  orderBy?: Prisma.AttendanceRecordOrderByWithRelationInput | Prisma.AttendanceRecordOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceRecordScalarFieldEnum | Prisma.AttendanceRecordScalarFieldEnum[]
 }
 
 /**
@@ -2316,30 +4596,6 @@ export type Branch$leaveRequestsArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * Branch.timesheets
- */
-export type Branch$timesheetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Timesheet
-   */
-  select?: Prisma.TimesheetSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Timesheet
-   */
-  omit?: Prisma.TimesheetOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TimesheetInclude<ExtArgs> | null
-  where?: Prisma.TimesheetWhereInput
-  orderBy?: Prisma.TimesheetOrderByWithRelationInput | Prisma.TimesheetOrderByWithRelationInput[]
-  cursor?: Prisma.TimesheetWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TimesheetScalarFieldEnum | Prisma.TimesheetScalarFieldEnum[]
-}
-
-/**
  * Branch.shifts
  */
 export type Branch$shiftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2364,6 +4620,102 @@ export type Branch$shiftsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
+ * Branch.timesheets
+ */
+export type Branch$timesheetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Timesheet
+   */
+  select?: Prisma.TimesheetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Timesheet
+   */
+  omit?: Prisma.TimesheetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TimesheetInclude<ExtArgs> | null
+  where?: Prisma.TimesheetWhereInput
+  orderBy?: Prisma.TimesheetOrderByWithRelationInput | Prisma.TimesheetOrderByWithRelationInput[]
+  cursor?: Prisma.TimesheetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TimesheetScalarFieldEnum | Prisma.TimesheetScalarFieldEnum[]
+}
+
+/**
+ * Branch.holidays
+ */
+export type Branch$holidaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Holiday
+   */
+  select?: Prisma.HolidaySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Holiday
+   */
+  omit?: Prisma.HolidayOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HolidayInclude<ExtArgs> | null
+  where?: Prisma.HolidayWhereInput
+  orderBy?: Prisma.HolidayOrderByWithRelationInput | Prisma.HolidayOrderByWithRelationInput[]
+  cursor?: Prisma.HolidayWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.HolidayScalarFieldEnum | Prisma.HolidayScalarFieldEnum[]
+}
+
+/**
+ * Branch.teams
+ */
+export type Branch$teamsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Team
+   */
+  select?: Prisma.TeamSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Team
+   */
+  omit?: Prisma.TeamOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamInclude<ExtArgs> | null
+  where?: Prisma.TeamWhereInput
+  orderBy?: Prisma.TeamOrderByWithRelationInput | Prisma.TeamOrderByWithRelationInput[]
+  cursor?: Prisma.TeamWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TeamScalarFieldEnum | Prisma.TeamScalarFieldEnum[]
+}
+
+/**
+ * Branch.projects
+ */
+export type Branch$projectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
+}
+
+/**
  * Branch.grants
  */
 export type Branch$grantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2385,6 +4737,78 @@ export type Branch$grantsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.FederationGrantScalarFieldEnum | Prisma.FederationGrantScalarFieldEnum[]
+}
+
+/**
+ * Branch.shiftAssignments
+ */
+export type Branch$shiftAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeShiftAssignment
+   */
+  select?: Prisma.EmployeeShiftAssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeShiftAssignment
+   */
+  omit?: Prisma.EmployeeShiftAssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeShiftAssignmentInclude<ExtArgs> | null
+  where?: Prisma.EmployeeShiftAssignmentWhereInput
+  orderBy?: Prisma.EmployeeShiftAssignmentOrderByWithRelationInput | Prisma.EmployeeShiftAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeShiftAssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeShiftAssignmentScalarFieldEnum | Prisma.EmployeeShiftAssignmentScalarFieldEnum[]
+}
+
+/**
+ * Branch.requestRecords
+ */
+export type Branch$requestRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationRequestRecord
+   */
+  select?: Prisma.FederationRequestRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FederationRequestRecord
+   */
+  omit?: Prisma.FederationRequestRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FederationRequestRecordInclude<ExtArgs> | null
+  where?: Prisma.FederationRequestRecordWhereInput
+  orderBy?: Prisma.FederationRequestRecordOrderByWithRelationInput | Prisma.FederationRequestRecordOrderByWithRelationInput[]
+  cursor?: Prisma.FederationRequestRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FederationRequestRecordScalarFieldEnum | Prisma.FederationRequestRecordScalarFieldEnum[]
+}
+
+/**
+ * Branch.auditLogs
+ */
+export type Branch$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuditLog
+   */
+  select?: Prisma.AuditLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuditLog
+   */
+  omit?: Prisma.AuditLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuditLogInclude<ExtArgs> | null
+  where?: Prisma.AuditLogWhereInput
+  orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[]
+  cursor?: Prisma.AuditLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
 }
 
 /**

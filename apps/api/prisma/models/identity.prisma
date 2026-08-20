@@ -1,0 +1,185 @@
+model User {
+  id                       String       @id @default(uuid()) @db.Uuid
+  email                    String       @db.Citext
+  emailNormalized          String       @unique @map("email_normalized")
+  displayName              String       @map("display_name")
+  passwordHash             String?      @map("password_hash")
+  identityType             IdentityType @default(NATIVE) @map("identity_type")
+  externalIdentityProvider String?      @map("external_identity_provider")
+  externalIdentityId       String?      @map("external_identity_id")
+  externalOrganizationId   String?      @map("external_organization_id")
+  isActive                 Boolean      @default(true) @map("is_active")
+  tokenVersion             Int          @default(0) @map("token_version")
+  lastLoginAt              DateTime?    @map("last_login_at") @db.Timestamptz(6)
+  deactivatedAt            DateTime?    @map("deactivated_at") @db.Timestamptz(6)
+  createdAt                DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  memberships                     UserOrganization[]
+  employee                        Employee?
+  authSessions                    AuthSession[]
+  platformRoleAssignments         UserPlatformRole[]
+  organizationRoleAssignments     UserRole[]
+  auditLogs                       AuditLog[]
+  uploadedFiles                   FileObject[]                       @relation("FileUploadedBy")
+  createdFileVersions             FileObjectVersion[]
+  createdInvitations              UserInvitation[]                   @relation("InvitationCreatedBy")
+  acceptedInvitations             UserInvitation[]                   @relation("InvitationAcceptedBy")
+  passwordResetTokens             PasswordResetToken[]
+  grantedPlatformRoles            UserPlatformRole[]                 @relation("PlatformRoleGrantedBy")
+  createdRoles                    Role[]                             @relation("RoleCreatedBy")
+  grantedOrganizationRoles        UserRole[]                         @relation("OrganizationRoleGrantedBy")
+  createdApprovalPolicies         ApprovalPolicy[]                   @relation("ApprovalPolicyCreatedBy")
+  createdSourceChanges            OrganizationSourceChange[]         @relation("SourceChangeCreatedBy")
+  createdFederationClients        FederationClient[]                 @relation("FederationClientCreatedBy")
+  createdClientCredentials        FederationClientCredential[]       @relation("ClientCredentialCreatedBy")
+  createdGrants                   FederationGrant[]                  @relation("FederationGrantCreatedBy")
+  createdWebhookKeys              WebhookSigningKey[]                @relation("WebhookKeyCreatedBy")
+  capturedAttendancePunches       AttendancePunch[]
+  requestedAttendanceCorrections  AttendanceCorrection[]
+  attendanceApprovals             AttendanceApproval[]
+  createdLeaveTransactions        LeaveBalanceTransaction[]
+  leaveApprovals                  LeaveApproval[]
+  timesheetApprovals              TimesheetApproval[]
+  createdPayrollRuns              PayrollRun[]
+  createdPayrollAdjustments       PayrollAdjustment[]
+  payrollApprovals                PayrollApproval[]
+  approvalPolicySteps             ApprovalPolicyStep[]
+  updatedOrganizationCapabilities OrganizationFederationCapability[] @relation("OrganizationCapabilityUpdatedBy")
+
+  @@unique([externalIdentityProvider, externalOrganizationId, externalIdentityId])
+  @@index([identityType, isActive])
+  @@map("users")
+}
+
+model UserInvitation {
+  id               String    @id @default(uuid()) @db.Uuid
+  organizationId   String    @map("organization_id") @db.Uuid
+  emailNormalized  String    @map("email_normalized")
+  tokenHash        String    @unique @map("token_hash")
+  invitedByUserId  String    @map("invited_by_user_id") @db.Uuid
+  acceptedByUserId String?   @map("accepted_by_user_id") @db.Uuid
+  expiresAt        DateTime  @map("expires_at") @db.Timestamptz(6)
+  acceptedAt       DateTime? @map("accepted_at") @db.Timestamptz(6)
+  revokedAt        DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  invitedBy    User         @relation("InvitationCreatedBy", fields: [invitedByUserId], references: [id], onDelete: Restrict)
+  acceptedBy   User?        @relation("InvitationAcceptedBy", fields: [acceptedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, emailNormalized])
+  @@index([organizationId, expiresAt])
+  @@map("user_invitations")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("password_reset_tokens")
+}
+
+model UserOrganization {
+  id             String             @id @default(uuid()) @db.Uuid
+  userId         String             @map("user_id") @db.Uuid
+  organizationId String             @map("organization_id") @db.Uuid
+  status         MembershipStatus
+  source         OrganizationSource
+  joinedAt       DateTime           @default(now()) @map("joined_at") @db.Timestamptz(6)
+  removedAt      DateTime?          @map("removed_at") @db.Timestamptz(6)
+  externalId     String?            @map("external_id")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, status])
+  @@map("user_organizations")
+}
+
+model AuthSession {
+  id               String            @id @default(uuid()) @db.Uuid
+  userId           String            @map("user_id") @db.Uuid
+  organizationId   String?           @map("organization_id") @db.Uuid
+  refreshTokenHash String            @unique @map("refresh_token_hash")
+  tokenFamily      String            @default(uuid()) @map("token_family") @db.Uuid
+  status           AuthSessionStatus @default(ACTIVE)
+  ipAddress        String?           @map("ip_address") @db.Inet
+  userAgent        String?           @map("user_agent")
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastSeenAt       DateTime          @default(now()) @map("last_seen_at") @db.Timestamptz(6)
+  expiresAt        DateTime          @map("expires_at") @db.Timestamptz(6)
+  revokedAt        DateTime?         @map("revoked_at") @db.Timestamptz(6)
+  revocationReason String?           @map("revocation_reason")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@index([userId, status])
+  @@index([organizationId, status])
+  @@map("auth_sessions")
+}
+
+model PlatformRole {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique
+  name        String
+  description String?
+  isSystem    Boolean  @default(true) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  permissions PlatformRolePermission[]
+  users       UserPlatformRole[]
+
+  @@map("platform_roles")
+}
+
+model PlatformPermission {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  roles PlatformRolePermission[]
+
+  @@map("platform_permissions")
+}
+
+model PlatformRolePermission {
+  roleId       String @map("role_id") @db.Uuid
+  permissionId String @map("permission_id") @db.Uuid
+
+  role       PlatformRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission PlatformPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("platform_role_permissions")
+}
+
+model UserPlatformRole {
+  userId          String    @map("user_id") @db.Uuid
+  roleId          String    @map("role_id") @db.Uuid
+  grantedByUserId String?   @map("granted_by_user_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  revokedAt       DateTime? @map("revoked_at") @db.Timestamptz(6)
+
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      PlatformRole @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  grantedBy User?        @relation("PlatformRoleGrantedBy", fields: [grantedByUserId], references: [id], onDelete: SetNull)
+
+  @@id([userId, roleId])
+  @@index([roleId, revokedAt])
+  @@map("user_platform_roles")
+}

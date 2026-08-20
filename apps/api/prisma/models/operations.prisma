@@ -1,0 +1,415 @@
+model AttendanceRecord {
+  id               String           @id @default(uuid()) @db.Uuid
+  organizationId   String           @map("organization_id") @db.Uuid
+  employeeId       String           @map("employee_id") @db.Uuid
+  branchId         String?          @map("branch_id") @db.Uuid
+  workDate         DateTime         @map("work_date") @db.Date
+  status           AttendanceStatus @default(OPEN)
+  scheduledMinutes Int?             @map("scheduled_minutes")
+  workedMinutes    Int              @default(0) @map("worked_minutes")
+  overtimeMinutes  Int              @default(0) @map("overtime_minutes")
+  sourceAccessMode AccessMode       @map("source_access_mode")
+  externalId       String?          @map("external_id")
+  correctionNote   String?          @map("correction_note")
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version          Int              @default(1)
+
+  organization     Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee         Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  branch           Branch?                @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  punches          AttendancePunch[]
+  corrections      AttendanceCorrection[]
+  timesheetEntries TimesheetEntry[]
+
+  @@unique([employeeId, workDate])
+  @@unique([organizationId, externalId])
+  @@index([organizationId, workDate, status])
+  @@index([organizationId, employeeId, workDate])
+  @@map("attendance_records")
+}
+
+model AttendancePunch {
+  id                         String                @id @default(uuid()) @db.Uuid
+  organizationId             String                @map("organization_id") @db.Uuid
+  attendanceRecordId         String                @map("attendance_record_id") @db.Uuid
+  employeeId                 String                @map("employee_id") @db.Uuid
+  punchType                  AttendancePunchType   @map("punch_type")
+  occurredAt                 DateTime              @map("occurred_at") @db.Timestamptz(6)
+  source                     AttendancePunchSource
+  capturedByUserId           String?               @map("captured_by_user_id") @db.Uuid
+  externalId                 String?               @map("external_id")
+  latitude                   Decimal?              @db.Decimal(9, 6)
+  longitude                  Decimal?              @db.Decimal(9, 6)
+  accuracyMeters             Decimal?              @map("accuracy_meters") @db.Decimal(8, 2)
+  workLocationId             String?               @map("work_location_id") @db.Uuid
+  isWithinGeofence           Boolean?              @map("is_within_geofence")
+  distanceFromLocationMeters Decimal?              @map("distance_from_location_meters") @db.Decimal(10, 2)
+  metadata                   Json                  @default("{}")
+  createdAt                  DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization     Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  attendanceRecord AttendanceRecord       @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
+  employee         Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  capturedBy       User?                  @relation(fields: [capturedByUserId], references: [id], onDelete: SetNull)
+  workLocation     WorkLocation?          @relation(fields: [workLocationId], references: [id], onDelete: Restrict)
+  corrections      AttendanceCorrection[]
+
+  @@unique([organizationId, externalId])
+  @@index([organizationId, employeeId, occurredAt])
+  @@index([attendanceRecordId, occurredAt])
+  @@index([organizationId, workLocationId, occurredAt])
+  @@map("attendance_punches")
+}
+
+model AttendanceCorrection {
+  id                  String         @id @default(uuid()) @db.Uuid
+  organizationId      String         @map("organization_id") @db.Uuid
+  attendanceRecordId  String         @map("attendance_record_id") @db.Uuid
+  attendancePunchId   String?        @map("attendance_punch_id") @db.Uuid
+  approvalPolicyId    String?        @map("approval_policy_id") @db.Uuid
+  requestedByUserId   String?        @map("requested_by_user_id") @db.Uuid
+  requestedByClientId String?        @map("requested_by_client_id") @db.Uuid
+  reason              String
+  beforeSnapshot      Json           @map("before_snapshot")
+  afterSnapshot       Json           @map("after_snapshot")
+  status              ApprovalStatus
+  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  attendanceRecord  AttendanceRecord     @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
+  attendancePunch   AttendancePunch?     @relation(fields: [attendancePunchId], references: [id], onDelete: Restrict)
+  approvalPolicy    ApprovalPolicy?      @relation(fields: [approvalPolicyId], references: [id], onDelete: Restrict)
+  requestedByUser   User?                @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
+  requestedByClient FederationClient?    @relation(fields: [requestedByClientId], references: [id], onDelete: SetNull)
+  approvals         AttendanceApproval[]
+
+  @@index([organizationId, status, createdAt])
+  @@map("attendance_corrections")
+}
+
+model AttendanceApproval {
+  id                     String         @id @default(uuid()) @db.Uuid
+  organizationId         String         @map("organization_id") @db.Uuid
+  attendanceCorrectionId String         @map("attendance_correction_id") @db.Uuid
+  approverUserId         String         @map("approver_user_id") @db.Uuid
+  approvalPolicyStepId   String?        @map("approval_policy_step_id") @db.Uuid
+  stepNumber             Int            @map("step_number") @db.SmallInt
+  status                 ApprovalStatus
+  comment                String?
+  createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization         Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  attendanceCorrection AttendanceCorrection @relation(fields: [attendanceCorrectionId], references: [id], onDelete: Restrict)
+  approver             User                 @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
+  approvalPolicyStep   ApprovalPolicyStep?  @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
+
+  @@unique([attendanceCorrectionId, stepNumber])
+  @@index([organizationId, approverUserId, status])
+  @@map("attendance_approvals")
+}
+
+model Holiday {
+  id               String     @id @default(uuid()) @db.Uuid
+  organizationId   String     @map("organization_id") @db.Uuid
+  branchId         String?    @map("branch_id") @db.Uuid
+  holidayDate      DateTime   @map("holiday_date") @db.Date
+  name             String
+  isOptional       Boolean    @default(false) @map("is_optional")
+  isActive         Boolean    @default(true) @map("is_active")
+  sourceAccessMode AccessMode @map("source_access_mode")
+  externalId       String?    @map("external_id")
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch?      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, branchId, holidayDate])
+  @@unique([organizationId, externalId])
+  @@index([organizationId, holidayDate, isActive])
+  @@map("holidays")
+}
+
+model LeaveType {
+  id                 String           @id @default(uuid()) @db.Uuid
+  organizationId     String           @map("organization_id") @db.Uuid
+  code               String
+  name               String
+  paid               Boolean          @default(true)
+  accrualType        LeaveAccrualType @map("accrual_type")
+  annualAllowance    Decimal?         @map("annual_allowance") @db.Decimal(10, 2)
+  monthlyAccrual     Decimal?         @map("monthly_accrual") @db.Decimal(10, 2)
+  carryoverLimit     Decimal?         @map("carryover_limit") @db.Decimal(10, 2)
+  requiresAttachment Boolean          @default(false) @map("requires_attachment")
+  isActive           Boolean          @default(true) @map("is_active")
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  balances     LeaveBalance[]
+  requests     LeaveRequest[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, isActive])
+  @@map("leave_types")
+}
+
+model LeaveBalance {
+  id              String   @id @default(uuid()) @db.Uuid
+  organizationId  String   @map("organization_id") @db.Uuid
+  employeeId      String   @map("employee_id") @db.Uuid
+  leaveTypeId     String   @map("leave_type_id") @db.Uuid
+  periodStart     DateTime @map("period_start") @db.Date
+  periodEnd       DateTime @map("period_end") @db.Date
+  openingAmount   Decimal  @map("opening_amount") @db.Decimal(10, 2)
+  accruedAmount   Decimal  @map("accrued_amount") @db.Decimal(10, 2)
+  usedAmount      Decimal  @map("used_amount") @db.Decimal(10, 2)
+  reservedAmount  Decimal  @map("reserved_amount") @db.Decimal(10, 2)
+  availableAmount Decimal  @map("available_amount") @db.Decimal(10, 2)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version         Int      @default(1)
+
+  organization Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee                  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  leaveType    LeaveType                 @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+  transactions LeaveBalanceTransaction[]
+
+  @@unique([employeeId, leaveTypeId, periodStart, periodEnd])
+  @@index([organizationId, employeeId, periodStart])
+  @@map("leave_balances")
+}
+
+model LeaveBalanceTransaction {
+  id                String                      @id @default(uuid()) @db.Uuid
+  organizationId    String                      @map("organization_id") @db.Uuid
+  leaveBalanceId    String                      @map("leave_balance_id") @db.Uuid
+  leaveRequestId    String?                     @map("leave_request_id") @db.Uuid
+  transactionType   LeaveBalanceTransactionType @map("transaction_type")
+  amount            Decimal                     @db.Decimal(10, 2)
+  reason            String
+  idempotencyKey    String?                     @map("idempotency_key")
+  createdByUserId   String?                     @map("created_by_user_id") @db.Uuid
+  createdByClientId String?                     @map("created_by_client_id") @db.Uuid
+  createdAt         DateTime                    @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  leaveBalance    LeaveBalance      @relation(fields: [leaveBalanceId], references: [id], onDelete: Restrict)
+  leaveRequest    LeaveRequest?     @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
+  createdByUser   User?             @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdByClient FederationClient? @relation(fields: [createdByClientId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, leaveBalanceId, createdAt])
+  @@map("leave_balance_transactions")
+}
+
+model LeaveRequest {
+  id               String             @id @default(uuid()) @db.Uuid
+  organizationId   String             @map("organization_id") @db.Uuid
+  employeeId       String             @map("employee_id") @db.Uuid
+  branchId         String?            @map("branch_id") @db.Uuid
+  leaveTypeId      String             @map("leave_type_id") @db.Uuid
+  approvalPolicyId String?            @map("approval_policy_id") @db.Uuid
+  startDate        DateTime           @map("start_date") @db.Date
+  endDate          DateTime           @map("end_date") @db.Date
+  requestedDays    Decimal            @map("requested_days") @db.Decimal(8, 2)
+  reason           String?
+  status           LeaveRequestStatus @default(DRAFT)
+  sourceAccessMode AccessMode         @map("source_access_mode")
+  externalId       String?            @map("external_id")
+  submittedAt      DateTime?          @map("submitted_at") @db.Timestamptz(6)
+  decidedAt        DateTime?          @map("decided_at") @db.Timestamptz(6)
+  cancelledAt      DateTime?          @map("cancelled_at") @db.Timestamptz(6)
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version          Int                @default(1)
+
+  organization        Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee            Employee                  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  branch              Branch?                   @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  leaveType           LeaveType                 @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+  approvalPolicy      ApprovalPolicy?           @relation(fields: [approvalPolicyId], references: [id], onDelete: Restrict)
+  approvals           LeaveApproval[]
+  balanceTransactions LeaveBalanceTransaction[]
+  files               FileObject[]
+
+  @@unique([organizationId, externalId])
+  @@index([organizationId, status, startDate])
+  @@index([organizationId, employeeId, startDate])
+  @@map("leave_requests")
+}
+
+model LeaveApproval {
+  id                   String         @id @default(uuid()) @db.Uuid
+  organizationId       String         @map("organization_id") @db.Uuid
+  leaveRequestId       String         @map("leave_request_id") @db.Uuid
+  approverUserId       String         @map("approver_user_id") @db.Uuid
+  approvalPolicyStepId String?        @map("approval_policy_step_id") @db.Uuid
+  stepNumber           Int            @map("step_number") @db.SmallInt
+  status               ApprovalStatus
+  comment              String?
+  decidedAt            DateTime?      @map("decided_at") @db.Timestamptz(6)
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  leaveRequest       LeaveRequest        @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
+  approver           User                @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
+  approvalPolicyStep ApprovalPolicyStep? @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
+
+  @@unique([leaveRequestId, stepNumber])
+  @@index([organizationId, approverUserId, status])
+  @@map("leave_approvals")
+}
+
+model Shift {
+  id              String   @id @default(uuid()) @db.Uuid
+  organizationId  String   @map("organization_id") @db.Uuid
+  branchId        String?  @map("branch_id") @db.Uuid
+  code            String
+  name            String
+  daysOfWeek      Int[]    @map("days_of_week") @db.SmallInt
+  startsAt        DateTime @map("starts_at") @db.Time(6)
+  endsAt          DateTime @map("ends_at") @db.Time(6)
+  crossesMidnight Boolean  @default(false) @map("crosses_midnight")
+  breakMinutes    Int      @default(0) @map("break_minutes")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization              @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch?                   @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  breakRules   ShiftBreakRule[]
+  assignments  EmployeeShiftAssignment[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, branchId, isActive])
+  @@map("shifts")
+}
+
+model ShiftBreakRule {
+  id              String  @id @default(uuid()) @db.Uuid
+  shiftId         String  @map("shift_id") @db.Uuid
+  name            String
+  durationMinutes Int     @map("duration_minutes") @db.SmallInt
+  isPaid          Boolean @map("is_paid")
+  sequence        Int     @db.SmallInt
+
+  shift Shift @relation(fields: [shiftId], references: [id], onDelete: Restrict)
+
+  @@unique([shiftId, sequence])
+  @@map("shift_break_rules")
+}
+
+model EmployeeShiftAssignment {
+  id               String     @id @default(uuid()) @db.Uuid
+  organizationId   String     @map("organization_id") @db.Uuid
+  employeeId       String     @map("employee_id") @db.Uuid
+  shiftId          String     @map("shift_id") @db.Uuid
+  branchId         String?    @map("branch_id") @db.Uuid
+  startsOn         DateTime   @map("starts_on") @db.Date
+  endsOn           DateTime?  @map("ends_on") @db.Date
+  sourceAccessMode AccessMode @map("source_access_mode")
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  shift        Shift        @relation(fields: [shiftId], references: [id], onDelete: Restrict)
+  branch       Branch?      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, employeeId, startsOn])
+  @@index([organizationId, shiftId, startsOn])
+  @@map("employee_shift_assignments")
+}
+
+model TimesheetPeriod {
+  id             String              @id @default(uuid()) @db.Uuid
+  organizationId String              @map("organization_id") @db.Uuid
+  periodType     TimesheetPeriodType @map("period_type")
+  periodStart    DateTime            @map("period_start") @db.Date
+  periodEnd      DateTime            @map("period_end") @db.Date
+  status         TimesheetStatus
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  timesheets   Timesheet[]
+
+  @@unique([organizationId, periodStart, periodEnd])
+  @@map("timesheet_periods")
+}
+
+model Timesheet {
+  id                String          @id @default(uuid()) @db.Uuid
+  organizationId    String          @map("organization_id") @db.Uuid
+  timesheetPeriodId String          @map("timesheet_period_id") @db.Uuid
+  employeeId        String          @map("employee_id") @db.Uuid
+  approvalPolicyId  String?         @map("approval_policy_id") @db.Uuid
+  branchId          String?         @map("branch_id") @db.Uuid
+  status            TimesheetStatus
+  totalMinutes      Int             @default(0) @map("total_minutes")
+  regularMinutes    Int             @default(0) @map("regular_minutes")
+  overtimeMinutes   Int             @default(0) @map("overtime_minutes")
+  sourceAccessMode  AccessMode      @map("source_access_mode")
+  externalId        String?         @map("external_id")
+  submittedAt       DateTime?       @map("submitted_at") @db.Timestamptz(6)
+  approvedAt        DateTime?       @map("approved_at") @db.Timestamptz(6)
+  createdAt         DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version           Int             @default(1)
+
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  period         TimesheetPeriod     @relation(fields: [timesheetPeriodId], references: [id], onDelete: Restrict)
+  employee       Employee            @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  approvalPolicy ApprovalPolicy?     @relation(fields: [approvalPolicyId], references: [id], onDelete: Restrict)
+  branch         Branch?             @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  entries        TimesheetEntry[]
+  approvals      TimesheetApproval[]
+
+  @@unique([employeeId, timesheetPeriodId])
+  @@unique([organizationId, externalId])
+  @@index([organizationId, status, timesheetPeriodId])
+  @@map("timesheets")
+}
+
+model TimesheetEntry {
+  id                 String               @id @default(uuid()) @db.Uuid
+  organizationId     String               @map("organization_id") @db.Uuid
+  timesheetId        String               @map("timesheet_id") @db.Uuid
+  attendanceRecordId String?              @map("attendance_record_id") @db.Uuid
+  workDate           DateTime             @map("work_date") @db.Date
+  minutes            Int
+  regularMinutes     Int                  @default(0) @map("regular_minutes")
+  overtimeMinutes    Int                  @default(0) @map("overtime_minutes")
+  source             TimesheetEntrySource
+  description        String?
+  createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  timesheet        Timesheet         @relation(fields: [timesheetId], references: [id], onDelete: Restrict)
+  attendanceRecord AttendanceRecord? @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, timesheetId, workDate])
+  @@index([attendanceRecordId])
+  @@map("timesheet_entries")
+}
+
+model TimesheetApproval {
+  id                   String         @id @default(uuid()) @db.Uuid
+  organizationId       String         @map("organization_id") @db.Uuid
+  timesheetId          String         @map("timesheet_id") @db.Uuid
+  approverUserId       String         @map("approver_user_id") @db.Uuid
+  approvalPolicyStepId String?        @map("approval_policy_step_id") @db.Uuid
+  status               ApprovalStatus
+  comment              String?
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  timesheet          Timesheet           @relation(fields: [timesheetId], references: [id], onDelete: Restrict)
+  approver           User                @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
+  approvalPolicyStep ApprovalPolicyStep? @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
+
+  @@unique([timesheetId, approverUserId])
+  @@map("timesheet_approvals")
+}

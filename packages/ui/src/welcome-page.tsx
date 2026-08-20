@@ -1,4 +1,4 @@
-import { ArrowUpRight } from 'lucide-react';
+import teamImg from '../../assets/team.png';
 
 export type WelcomePageProps = {
   audience: 'organization' | 'platform';
@@ -21,6 +21,7 @@ const content = {
 
 export function WelcomePage({ audience }: WelcomePageProps) {
   const copy = content[audience];
+  const imageSrc = typeof teamImg === 'string' ? teamImg : teamImg.src;
 
   return (
     <main className="welcome-shell">
@@ -51,20 +52,9 @@ export function WelcomePage({ audience }: WelcomePageProps) {
         </div>
 
         <div className="welcome-figure" aria-hidden="true">
-          <div className="figure-orbit figure-orbit--outer" />
-          <div className="figure-orbit figure-orbit--inner" />
-          <div className="figure-core">
-            <span>V2</span>
-            <ArrowUpRight size={18} strokeWidth={1.5} />
-          </div>
-          <p className="figure-note">A calmer system for the work between people.</p>
+          <img src={imageSrc} alt="Smarteam Team" className="welcome-figure__image" />
         </div>
       </section>
-
-      <footer className="welcome-footer">
-        <span>SMARTEAM V2</span>
-        <span>Backend foundation in progress</span>
-      </footer>
     </main>
   );
 }

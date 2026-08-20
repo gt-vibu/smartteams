@@ -30,9 +30,10 @@ export type WebhookSubscriptionMinAggregateOutputType = {
   organizationId: string | null
   callbackUrl: string | null
   signingKeyId: string | null
-  isActive: boolean | null
+  status: $Enums.WebhookSubscriptionStatus | null
   createdAt: Date | null
   updatedAt: Date | null
+  revokedAt: Date | null
 }
 
 export type WebhookSubscriptionMaxAggregateOutputType = {
@@ -41,9 +42,10 @@ export type WebhookSubscriptionMaxAggregateOutputType = {
   organizationId: string | null
   callbackUrl: string | null
   signingKeyId: string | null
-  isActive: boolean | null
+  status: $Enums.WebhookSubscriptionStatus | null
   createdAt: Date | null
   updatedAt: Date | null
+  revokedAt: Date | null
 }
 
 export type WebhookSubscriptionCountAggregateOutputType = {
@@ -53,9 +55,10 @@ export type WebhookSubscriptionCountAggregateOutputType = {
   callbackUrl: number
   eventTypes: number
   signingKeyId: number
-  isActive: number
+  status: number
   createdAt: number
   updatedAt: number
+  revokedAt: number
   _all: number
 }
 
@@ -66,9 +69,10 @@ export type WebhookSubscriptionMinAggregateInputType = {
   organizationId?: true
   callbackUrl?: true
   signingKeyId?: true
-  isActive?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
+  revokedAt?: true
 }
 
 export type WebhookSubscriptionMaxAggregateInputType = {
@@ -77,9 +81,10 @@ export type WebhookSubscriptionMaxAggregateInputType = {
   organizationId?: true
   callbackUrl?: true
   signingKeyId?: true
-  isActive?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
+  revokedAt?: true
 }
 
 export type WebhookSubscriptionCountAggregateInputType = {
@@ -89,9 +94,10 @@ export type WebhookSubscriptionCountAggregateInputType = {
   callbackUrl?: true
   eventTypes?: true
   signingKeyId?: true
-  isActive?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
+  revokedAt?: true
   _all?: true
 }
 
@@ -173,10 +179,11 @@ export type WebhookSubscriptionGroupByOutputType = {
   organizationId: string
   callbackUrl: string
   eventTypes: string[]
-  signingKeyId: string | null
-  isActive: boolean
+  signingKeyId: string
+  status: $Enums.WebhookSubscriptionStatus
   createdAt: Date
   updatedAt: Date
+  revokedAt: Date | null
   _count: WebhookSubscriptionCountAggregateOutputType | null
   _min: WebhookSubscriptionMinAggregateOutputType | null
   _max: WebhookSubscriptionMaxAggregateOutputType | null
@@ -206,12 +213,15 @@ export type WebhookSubscriptionWhereInput = {
   organizationId?: Prisma.UuidFilter<"WebhookSubscription"> | string
   callbackUrl?: Prisma.StringFilter<"WebhookSubscription"> | string
   eventTypes?: Prisma.StringNullableListFilter<"WebhookSubscription">
-  signingKeyId?: Prisma.StringNullableFilter<"WebhookSubscription"> | string | null
-  isActive?: Prisma.BoolFilter<"WebhookSubscription"> | boolean
+  signingKeyId?: Prisma.UuidFilter<"WebhookSubscription"> | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFilter<"WebhookSubscription"> | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFilter<"WebhookSubscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WebhookSubscription"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableFilter<"WebhookSubscription"> | Date | string | null
   client?: Prisma.XOR<Prisma.FederationClientScalarRelationFilter, Prisma.FederationClientWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  signingKey?: Prisma.XOR<Prisma.WebhookSigningKeyScalarRelationFilter, Prisma.WebhookSigningKeyWhereInput>
+  deliveries?: Prisma.WebhookDeliveryListRelationFilter
 }
 
 export type WebhookSubscriptionOrderByWithRelationInput = {
@@ -220,17 +230,20 @@ export type WebhookSubscriptionOrderByWithRelationInput = {
   organizationId?: Prisma.SortOrder
   callbackUrl?: Prisma.SortOrder
   eventTypes?: Prisma.SortOrder
-  signingKeyId?: Prisma.SortOrderInput | Prisma.SortOrder
-  isActive?: Prisma.SortOrder
+  signingKeyId?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   client?: Prisma.FederationClientOrderByWithRelationInput
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  signingKey?: Prisma.WebhookSigningKeyOrderByWithRelationInput
+  deliveries?: Prisma.WebhookDeliveryOrderByRelationAggregateInput
 }
 
 export type WebhookSubscriptionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  clientId_organizationId?: Prisma.WebhookSubscriptionClientIdOrganizationIdCompoundUniqueInput
+  clientId_organizationId_callbackUrl?: Prisma.WebhookSubscriptionClientIdOrganizationIdCallbackUrlCompoundUniqueInput
   AND?: Prisma.WebhookSubscriptionWhereInput | Prisma.WebhookSubscriptionWhereInput[]
   OR?: Prisma.WebhookSubscriptionWhereInput[]
   NOT?: Prisma.WebhookSubscriptionWhereInput | Prisma.WebhookSubscriptionWhereInput[]
@@ -238,13 +251,16 @@ export type WebhookSubscriptionWhereUniqueInput = Prisma.AtLeast<{
   organizationId?: Prisma.UuidFilter<"WebhookSubscription"> | string
   callbackUrl?: Prisma.StringFilter<"WebhookSubscription"> | string
   eventTypes?: Prisma.StringNullableListFilter<"WebhookSubscription">
-  signingKeyId?: Prisma.StringNullableFilter<"WebhookSubscription"> | string | null
-  isActive?: Prisma.BoolFilter<"WebhookSubscription"> | boolean
+  signingKeyId?: Prisma.UuidFilter<"WebhookSubscription"> | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFilter<"WebhookSubscription"> | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFilter<"WebhookSubscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WebhookSubscription"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableFilter<"WebhookSubscription"> | Date | string | null
   client?: Prisma.XOR<Prisma.FederationClientScalarRelationFilter, Prisma.FederationClientWhereInput>
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-}, "id" | "clientId_organizationId">
+  signingKey?: Prisma.XOR<Prisma.WebhookSigningKeyScalarRelationFilter, Prisma.WebhookSigningKeyWhereInput>
+  deliveries?: Prisma.WebhookDeliveryListRelationFilter
+}, "id" | "clientId_organizationId_callbackUrl">
 
 export type WebhookSubscriptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -252,10 +268,11 @@ export type WebhookSubscriptionOrderByWithAggregationInput = {
   organizationId?: Prisma.SortOrder
   callbackUrl?: Prisma.SortOrder
   eventTypes?: Prisma.SortOrder
-  signingKeyId?: Prisma.SortOrderInput | Prisma.SortOrder
-  isActive?: Prisma.SortOrder
+  signingKeyId?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.WebhookSubscriptionCountOrderByAggregateInput
   _max?: Prisma.WebhookSubscriptionMaxOrderByAggregateInput
   _min?: Prisma.WebhookSubscriptionMinOrderByAggregateInput
@@ -270,22 +287,25 @@ export type WebhookSubscriptionScalarWhereWithAggregatesInput = {
   organizationId?: Prisma.UuidWithAggregatesFilter<"WebhookSubscription"> | string
   callbackUrl?: Prisma.StringWithAggregatesFilter<"WebhookSubscription"> | string
   eventTypes?: Prisma.StringNullableListFilter<"WebhookSubscription">
-  signingKeyId?: Prisma.StringNullableWithAggregatesFilter<"WebhookSubscription"> | string | null
-  isActive?: Prisma.BoolWithAggregatesFilter<"WebhookSubscription"> | boolean
+  signingKeyId?: Prisma.UuidWithAggregatesFilter<"WebhookSubscription"> | string
+  status?: Prisma.EnumWebhookSubscriptionStatusWithAggregatesFilter<"WebhookSubscription"> | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"WebhookSubscription"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"WebhookSubscription"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WebhookSubscription"> | Date | string | null
 }
 
 export type WebhookSubscriptionCreateInput = {
   id?: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  client: Prisma.FederationClientCreateNestedOneWithoutSubscriptionsInput
+  revokedAt?: Date | string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutWebhookSubscriptionsInput
   organization: Prisma.OrganizationCreateNestedOneWithoutWebhookSubscriptionsInput
+  signingKey: Prisma.WebhookSigningKeyCreateNestedOneWithoutSubscriptionsInput
+  deliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutSubscriptionInput
 }
 
 export type WebhookSubscriptionUncheckedCreateInput = {
@@ -294,22 +314,26 @@ export type WebhookSubscriptionUncheckedCreateInput = {
   organizationId: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  signingKeyId: string
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutSubscriptionInput
 }
 
 export type WebhookSubscriptionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  client?: Prisma.FederationClientUpdateOneRequiredWithoutSubscriptionsNestedInput
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
+  signingKey?: Prisma.WebhookSigningKeyUpdateOneRequiredWithoutSubscriptionsNestedInput
+  deliveries?: Prisma.WebhookDeliveryUpdateManyWithoutSubscriptionNestedInput
 }
 
 export type WebhookSubscriptionUncheckedUpdateInput = {
@@ -318,10 +342,12 @@ export type WebhookSubscriptionUncheckedUpdateInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  signingKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutSubscriptionNestedInput
 }
 
 export type WebhookSubscriptionCreateManyInput = {
@@ -330,20 +356,21 @@ export type WebhookSubscriptionCreateManyInput = {
   organizationId: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  signingKeyId: string
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  revokedAt?: Date | string | null
 }
 
 export type WebhookSubscriptionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type WebhookSubscriptionUncheckedUpdateManyInput = {
@@ -352,10 +379,11 @@ export type WebhookSubscriptionUncheckedUpdateManyInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  signingKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type WebhookSubscriptionListRelationFilter = {
@@ -376,9 +404,10 @@ export type StringNullableListFilter<$PrismaModel = never> = {
   isEmpty?: boolean
 }
 
-export type WebhookSubscriptionClientIdOrganizationIdCompoundUniqueInput = {
+export type WebhookSubscriptionClientIdOrganizationIdCallbackUrlCompoundUniqueInput = {
   clientId: string
   organizationId: string
+  callbackUrl: string
 }
 
 export type WebhookSubscriptionCountOrderByAggregateInput = {
@@ -388,9 +417,10 @@ export type WebhookSubscriptionCountOrderByAggregateInput = {
   callbackUrl?: Prisma.SortOrder
   eventTypes?: Prisma.SortOrder
   signingKeyId?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
 }
 
 export type WebhookSubscriptionMaxOrderByAggregateInput = {
@@ -399,9 +429,10 @@ export type WebhookSubscriptionMaxOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   callbackUrl?: Prisma.SortOrder
   signingKeyId?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
 }
 
 export type WebhookSubscriptionMinOrderByAggregateInput = {
@@ -410,51 +441,84 @@ export type WebhookSubscriptionMinOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   callbackUrl?: Prisma.SortOrder
   signingKeyId?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  revokedAt?: Prisma.SortOrder
 }
 
-export type WebhookSubscriptionCreateNestedManyWithoutOrganizationInput = {
-  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
-  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+export type WebhookSubscriptionScalarRelationFilter = {
+  is?: Prisma.WebhookSubscriptionWhereInput
+  isNot?: Prisma.WebhookSubscriptionWhereInput
+}
+
+export type WebhookSubscriptionCreateNestedManyWithoutSigningKeyInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput> | Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManySigningKeyInputEnvelope
   connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
 }
 
-export type WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput = {
-  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
-  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+export type WebhookSubscriptionUncheckedCreateNestedManyWithoutSigningKeyInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput> | Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManySigningKeyInputEnvelope
   connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
 }
 
-export type WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput = {
-  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
-  upsert?: Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput[]
-  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+export type WebhookSubscriptionUpdateManyWithoutSigningKeyNestedInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput> | Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput[]
+  upsert?: Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutSigningKeyInput | Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutSigningKeyInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManySigningKeyInputEnvelope
   set?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
   disconnect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
   delete?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
   connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
-  update?: Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput[]
-  updateMany?: Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput[]
+  update?: Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutSigningKeyInput | Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutSigningKeyInput[]
+  updateMany?: Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutSigningKeyInput | Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutSigningKeyInput[]
   deleteMany?: Prisma.WebhookSubscriptionScalarWhereInput | Prisma.WebhookSubscriptionScalarWhereInput[]
 }
 
-export type WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput = {
-  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
-  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
-  upsert?: Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput[]
-  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+export type WebhookSubscriptionUncheckedUpdateManyWithoutSigningKeyNestedInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput> | Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput[]
+  upsert?: Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutSigningKeyInput | Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutSigningKeyInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManySigningKeyInputEnvelope
   set?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
   disconnect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
   delete?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
   connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
-  update?: Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput[]
-  updateMany?: Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput[]
+  update?: Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutSigningKeyInput | Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutSigningKeyInput[]
+  updateMany?: Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutSigningKeyInput | Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutSigningKeyInput[]
   deleteMany?: Prisma.WebhookSubscriptionScalarWhereInput | Prisma.WebhookSubscriptionScalarWhereInput[]
+}
+
+export type WebhookSubscriptionCreateeventTypesInput = {
+  set: string[]
+}
+
+export type WebhookSubscriptionUpdateeventTypesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type EnumWebhookSubscriptionStatusFieldUpdateOperationsInput = {
+  set?: $Enums.WebhookSubscriptionStatus
+}
+
+export type WebhookSubscriptionCreateNestedOneWithoutDeliveriesInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutDeliveriesInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutDeliveriesInput>
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutDeliveriesInput
+  connect?: Prisma.WebhookSubscriptionWhereUniqueInput
+}
+
+export type WebhookSubscriptionUpdateOneRequiredWithoutDeliveriesNestedInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutDeliveriesInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutDeliveriesInput>
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutDeliveriesInput
+  upsert?: Prisma.WebhookSubscriptionUpsertWithoutDeliveriesInput
+  connect?: Prisma.WebhookSubscriptionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WebhookSubscriptionUpdateToOneWithWhereWithoutDeliveriesInput, Prisma.WebhookSubscriptionUpdateWithoutDeliveriesInput>, Prisma.WebhookSubscriptionUncheckedUpdateWithoutDeliveriesInput>
 }
 
 export type WebhookSubscriptionCreateNestedManyWithoutClientInput = {
@@ -499,61 +563,98 @@ export type WebhookSubscriptionUncheckedUpdateManyWithoutClientNestedInput = {
   deleteMany?: Prisma.WebhookSubscriptionScalarWhereInput | Prisma.WebhookSubscriptionScalarWhereInput[]
 }
 
-export type WebhookSubscriptionCreateeventTypesInput = {
-  set: string[]
+export type WebhookSubscriptionCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+  connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
 }
 
-export type WebhookSubscriptionUpdateeventTypesInput = {
-  set?: string[]
-  push?: string | string[]
+export type WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+  connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
 }
 
-export type WebhookSubscriptionCreateWithoutOrganizationInput = {
+export type WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+  set?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  delete?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  update?: Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.WebhookSubscriptionScalarWhereInput | Prisma.WebhookSubscriptionScalarWhereInput[]
+}
+
+export type WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput> | Prisma.WebhookSubscriptionCreateWithoutOrganizationInput[] | Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput | Prisma.WebhookSubscriptionCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.WebhookSubscriptionCreateManyOrganizationInputEnvelope
+  set?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  disconnect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  delete?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  connect?: Prisma.WebhookSubscriptionWhereUniqueInput | Prisma.WebhookSubscriptionWhereUniqueInput[]
+  update?: Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput | Prisma.WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.WebhookSubscriptionScalarWhereInput | Prisma.WebhookSubscriptionScalarWhereInput[]
+}
+
+export type WebhookSubscriptionCreateWithoutSigningKeyInput = {
   id?: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
-  client: Prisma.FederationClientCreateNestedOneWithoutSubscriptionsInput
+  revokedAt?: Date | string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutWebhookSubscriptionsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutWebhookSubscriptionsInput
+  deliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutSubscriptionInput
 }
 
-export type WebhookSubscriptionUncheckedCreateWithoutOrganizationInput = {
+export type WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput = {
   id?: string
   clientId: string
+  organizationId: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutSubscriptionInput
 }
 
-export type WebhookSubscriptionCreateOrConnectWithoutOrganizationInput = {
+export type WebhookSubscriptionCreateOrConnectWithoutSigningKeyInput = {
   where: Prisma.WebhookSubscriptionWhereUniqueInput
-  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput>
 }
 
-export type WebhookSubscriptionCreateManyOrganizationInputEnvelope = {
-  data: Prisma.WebhookSubscriptionCreateManyOrganizationInput | Prisma.WebhookSubscriptionCreateManyOrganizationInput[]
+export type WebhookSubscriptionCreateManySigningKeyInputEnvelope = {
+  data: Prisma.WebhookSubscriptionCreateManySigningKeyInput | Prisma.WebhookSubscriptionCreateManySigningKeyInput[]
   skipDuplicates?: boolean
 }
 
-export type WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput = {
+export type WebhookSubscriptionUpsertWithWhereUniqueWithoutSigningKeyInput = {
   where: Prisma.WebhookSubscriptionWhereUniqueInput
-  update: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutOrganizationInput>
-  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput>
+  update: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutSigningKeyInput>
+  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutSigningKeyInput>
 }
 
-export type WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput = {
+export type WebhookSubscriptionUpdateWithWhereUniqueWithoutSigningKeyInput = {
   where: Prisma.WebhookSubscriptionWhereUniqueInput
-  data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutOrganizationInput>
+  data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutSigningKeyInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutSigningKeyInput>
 }
 
-export type WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput = {
+export type WebhookSubscriptionUpdateManyWithWhereWithoutSigningKeyInput = {
   where: Prisma.WebhookSubscriptionScalarWhereInput
-  data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateManyMutationInput, Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationInput>
+  data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateManyMutationInput, Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutSigningKeyInput>
 }
 
 export type WebhookSubscriptionScalarWhereInput = {
@@ -565,21 +666,92 @@ export type WebhookSubscriptionScalarWhereInput = {
   organizationId?: Prisma.UuidFilter<"WebhookSubscription"> | string
   callbackUrl?: Prisma.StringFilter<"WebhookSubscription"> | string
   eventTypes?: Prisma.StringNullableListFilter<"WebhookSubscription">
-  signingKeyId?: Prisma.StringNullableFilter<"WebhookSubscription"> | string | null
-  isActive?: Prisma.BoolFilter<"WebhookSubscription"> | boolean
+  signingKeyId?: Prisma.UuidFilter<"WebhookSubscription"> | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFilter<"WebhookSubscription"> | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFilter<"WebhookSubscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WebhookSubscription"> | Date | string
+  revokedAt?: Prisma.DateTimeNullableFilter<"WebhookSubscription"> | Date | string | null
+}
+
+export type WebhookSubscriptionCreateWithoutDeliveriesInput = {
+  id?: string
+  callbackUrl: string
+  eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
+  status?: $Enums.WebhookSubscriptionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutWebhookSubscriptionsInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutWebhookSubscriptionsInput
+  signingKey: Prisma.WebhookSigningKeyCreateNestedOneWithoutSubscriptionsInput
+}
+
+export type WebhookSubscriptionUncheckedCreateWithoutDeliveriesInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  callbackUrl: string
+  eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
+  signingKeyId: string
+  status?: $Enums.WebhookSubscriptionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+}
+
+export type WebhookSubscriptionCreateOrConnectWithoutDeliveriesInput = {
+  where: Prisma.WebhookSubscriptionWhereUniqueInput
+  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutDeliveriesInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutDeliveriesInput>
+}
+
+export type WebhookSubscriptionUpsertWithoutDeliveriesInput = {
+  update: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutDeliveriesInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutDeliveriesInput>
+  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutDeliveriesInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutDeliveriesInput>
+  where?: Prisma.WebhookSubscriptionWhereInput
+}
+
+export type WebhookSubscriptionUpdateToOneWithWhereWithoutDeliveriesInput = {
+  where?: Prisma.WebhookSubscriptionWhereInput
+  data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutDeliveriesInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutDeliveriesInput>
+}
+
+export type WebhookSubscriptionUpdateWithoutDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
+  signingKey?: Prisma.WebhookSigningKeyUpdateOneRequiredWithoutSubscriptionsNestedInput
+}
+
+export type WebhookSubscriptionUncheckedUpdateWithoutDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
+  signingKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type WebhookSubscriptionCreateWithoutClientInput = {
   id?: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  revokedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutWebhookSubscriptionsInput
+  signingKey: Prisma.WebhookSigningKeyCreateNestedOneWithoutSubscriptionsInput
+  deliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutSubscriptionInput
 }
 
 export type WebhookSubscriptionUncheckedCreateWithoutClientInput = {
@@ -587,10 +759,12 @@ export type WebhookSubscriptionUncheckedCreateWithoutClientInput = {
   organizationId: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  signingKeyId: string
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutSubscriptionInput
 }
 
 export type WebhookSubscriptionCreateOrConnectWithoutClientInput = {
@@ -619,48 +793,106 @@ export type WebhookSubscriptionUpdateManyWithWhereWithoutClientInput = {
   data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateManyMutationInput, Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutClientInput>
 }
 
-export type WebhookSubscriptionCreateManyOrganizationInput = {
+export type WebhookSubscriptionCreateWithoutOrganizationInput = {
+  id?: string
+  callbackUrl: string
+  eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
+  status?: $Enums.WebhookSubscriptionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  client: Prisma.FederationClientCreateNestedOneWithoutWebhookSubscriptionsInput
+  signingKey: Prisma.WebhookSigningKeyCreateNestedOneWithoutSubscriptionsInput
+  deliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutSubscriptionInput
+}
+
+export type WebhookSubscriptionUncheckedCreateWithoutOrganizationInput = {
   id?: string
   clientId: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  signingKeyId: string
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutSubscriptionInput
 }
 
-export type WebhookSubscriptionUpdateWithoutOrganizationInput = {
+export type WebhookSubscriptionCreateOrConnectWithoutOrganizationInput = {
+  where: Prisma.WebhookSubscriptionWhereUniqueInput
+  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput>
+}
+
+export type WebhookSubscriptionCreateManyOrganizationInputEnvelope = {
+  data: Prisma.WebhookSubscriptionCreateManyOrganizationInput | Prisma.WebhookSubscriptionCreateManyOrganizationInput[]
+  skipDuplicates?: boolean
+}
+
+export type WebhookSubscriptionUpsertWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.WebhookSubscriptionWhereUniqueInput
+  update: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.WebhookSubscriptionCreateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedCreateWithoutOrganizationInput>
+}
+
+export type WebhookSubscriptionUpdateWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.WebhookSubscriptionWhereUniqueInput
+  data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateWithoutOrganizationInput, Prisma.WebhookSubscriptionUncheckedUpdateWithoutOrganizationInput>
+}
+
+export type WebhookSubscriptionUpdateManyWithWhereWithoutOrganizationInput = {
+  where: Prisma.WebhookSubscriptionScalarWhereInput
+  data: Prisma.XOR<Prisma.WebhookSubscriptionUpdateManyMutationInput, Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationInput>
+}
+
+export type WebhookSubscriptionCreateManySigningKeyInput = {
+  id?: string
+  clientId: string
+  organizationId: string
+  callbackUrl: string
+  eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
+  status?: $Enums.WebhookSubscriptionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+}
+
+export type WebhookSubscriptionUpdateWithoutSigningKeyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  client?: Prisma.FederationClientUpdateOneRequiredWithoutSubscriptionsNestedInput
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
+  deliveries?: Prisma.WebhookDeliveryUpdateManyWithoutSubscriptionNestedInput
 }
 
-export type WebhookSubscriptionUncheckedUpdateWithoutOrganizationInput = {
+export type WebhookSubscriptionUncheckedUpdateWithoutSigningKeyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutSubscriptionNestedInput
 }
 
-export type WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationInput = {
+export type WebhookSubscriptionUncheckedUpdateManyWithoutSigningKeyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type WebhookSubscriptionCreateManyClientInput = {
@@ -668,21 +900,24 @@ export type WebhookSubscriptionCreateManyClientInput = {
   organizationId: string
   callbackUrl: string
   eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
-  signingKeyId?: string | null
-  isActive?: boolean
+  signingKeyId: string
+  status?: $Enums.WebhookSubscriptionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  revokedAt?: Date | string | null
 }
 
 export type WebhookSubscriptionUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
+  signingKey?: Prisma.WebhookSigningKeyUpdateOneRequiredWithoutSubscriptionsNestedInput
+  deliveries?: Prisma.WebhookDeliveryUpdateManyWithoutSubscriptionNestedInput
 }
 
 export type WebhookSubscriptionUncheckedUpdateWithoutClientInput = {
@@ -690,10 +925,12 @@ export type WebhookSubscriptionUncheckedUpdateWithoutClientInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  signingKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutSubscriptionNestedInput
 }
 
 export type WebhookSubscriptionUncheckedUpdateManyWithoutClientInput = {
@@ -701,12 +938,92 @@ export type WebhookSubscriptionUncheckedUpdateManyWithoutClientInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
   eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
-  signingKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  signingKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+export type WebhookSubscriptionCreateManyOrganizationInput = {
+  id?: string
+  clientId: string
+  callbackUrl: string
+  eventTypes?: Prisma.WebhookSubscriptionCreateeventTypesInput | string[]
+  signingKeyId: string
+  status?: $Enums.WebhookSubscriptionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+}
+
+export type WebhookSubscriptionUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  client?: Prisma.FederationClientUpdateOneRequiredWithoutWebhookSubscriptionsNestedInput
+  signingKey?: Prisma.WebhookSigningKeyUpdateOneRequiredWithoutSubscriptionsNestedInput
+  deliveries?: Prisma.WebhookDeliveryUpdateManyWithoutSubscriptionNestedInput
+}
+
+export type WebhookSubscriptionUncheckedUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
+  signingKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutSubscriptionNestedInput
+}
+
+export type WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  callbackUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  eventTypes?: Prisma.WebhookSubscriptionUpdateeventTypesInput | string[]
+  signingKeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumWebhookSubscriptionStatusFieldUpdateOperationsInput | $Enums.WebhookSubscriptionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+
+/**
+ * Count Type WebhookSubscriptionCountOutputType
+ */
+
+export type WebhookSubscriptionCountOutputType = {
+  deliveries: number
+}
+
+export type WebhookSubscriptionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deliveries?: boolean | WebhookSubscriptionCountOutputTypeCountDeliveriesArgs
+}
+
+/**
+ * WebhookSubscriptionCountOutputType without action
+ */
+export type WebhookSubscriptionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WebhookSubscriptionCountOutputType
+   */
+  select?: Prisma.WebhookSubscriptionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * WebhookSubscriptionCountOutputType without action
+ */
+export type WebhookSubscriptionCountOutputTypeCountDeliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WebhookDeliveryWhereInput
+}
 
 
 export type WebhookSubscriptionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -716,11 +1033,15 @@ export type WebhookSubscriptionSelect<ExtArgs extends runtime.Types.Extensions.I
   callbackUrl?: boolean
   eventTypes?: boolean
   signingKeyId?: boolean
-  isActive?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  revokedAt?: boolean
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  signingKey?: boolean | Prisma.WebhookSigningKeyDefaultArgs<ExtArgs>
+  deliveries?: boolean | Prisma.WebhookSubscription$deliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.WebhookSubscriptionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webhookSubscription"]>
 
 export type WebhookSubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -730,11 +1051,13 @@ export type WebhookSubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime
   callbackUrl?: boolean
   eventTypes?: boolean
   signingKeyId?: boolean
-  isActive?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  revokedAt?: boolean
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  signingKey?: boolean | Prisma.WebhookSigningKeyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webhookSubscription"]>
 
 export type WebhookSubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -744,11 +1067,13 @@ export type WebhookSubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime
   callbackUrl?: boolean
   eventTypes?: boolean
   signingKeyId?: boolean
-  isActive?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  revokedAt?: boolean
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  signingKey?: boolean | Prisma.WebhookSigningKeyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webhookSubscription"]>
 
 export type WebhookSubscriptionSelectScalar = {
@@ -758,23 +1083,29 @@ export type WebhookSubscriptionSelectScalar = {
   callbackUrl?: boolean
   eventTypes?: boolean
   signingKeyId?: boolean
-  isActive?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  revokedAt?: boolean
 }
 
-export type WebhookSubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "organizationId" | "callbackUrl" | "eventTypes" | "signingKeyId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["webhookSubscription"]>
+export type WebhookSubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "organizationId" | "callbackUrl" | "eventTypes" | "signingKeyId" | "status" | "createdAt" | "updatedAt" | "revokedAt", ExtArgs["result"]["webhookSubscription"]>
 export type WebhookSubscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  signingKey?: boolean | Prisma.WebhookSigningKeyDefaultArgs<ExtArgs>
+  deliveries?: boolean | Prisma.WebhookSubscription$deliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.WebhookSubscriptionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WebhookSubscriptionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  signingKey?: boolean | Prisma.WebhookSigningKeyDefaultArgs<ExtArgs>
 }
 export type WebhookSubscriptionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.FederationClientDefaultArgs<ExtArgs>
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  signingKey?: boolean | Prisma.WebhookSigningKeyDefaultArgs<ExtArgs>
 }
 
 export type $WebhookSubscriptionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -782,6 +1113,8 @@ export type $WebhookSubscriptionPayload<ExtArgs extends runtime.Types.Extensions
   objects: {
     client: Prisma.$FederationClientPayload<ExtArgs>
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    signingKey: Prisma.$WebhookSigningKeyPayload<ExtArgs>
+    deliveries: Prisma.$WebhookDeliveryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -789,10 +1122,11 @@ export type $WebhookSubscriptionPayload<ExtArgs extends runtime.Types.Extensions
     organizationId: string
     callbackUrl: string
     eventTypes: string[]
-    signingKeyId: string | null
-    isActive: boolean
+    signingKeyId: string
+    status: $Enums.WebhookSubscriptionStatus
     createdAt: Date
     updatedAt: Date
+    revokedAt: Date | null
   }, ExtArgs["result"]["webhookSubscription"]>
   composites: {}
 }
@@ -1189,6 +1523,8 @@ export interface Prisma__WebhookSubscriptionClient<T, Null = never, ExtArgs exte
   readonly [Symbol.toStringTag]: "PrismaPromise"
   client<T extends Prisma.FederationClientDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClientDefaultArgs<ExtArgs>>): Prisma.Prisma__FederationClientClient<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  signingKey<T extends Prisma.WebhookSigningKeyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WebhookSigningKeyDefaultArgs<ExtArgs>>): Prisma.Prisma__WebhookSigningKeyClient<runtime.Types.Result.GetResult<Prisma.$WebhookSigningKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  deliveries<T extends Prisma.WebhookSubscription$deliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WebhookSubscription$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1224,9 +1560,10 @@ export interface WebhookSubscriptionFieldRefs {
   readonly callbackUrl: Prisma.FieldRef<"WebhookSubscription", 'String'>
   readonly eventTypes: Prisma.FieldRef<"WebhookSubscription", 'String[]'>
   readonly signingKeyId: Prisma.FieldRef<"WebhookSubscription", 'String'>
-  readonly isActive: Prisma.FieldRef<"WebhookSubscription", 'Boolean'>
+  readonly status: Prisma.FieldRef<"WebhookSubscription", 'WebhookSubscriptionStatus'>
   readonly createdAt: Prisma.FieldRef<"WebhookSubscription", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"WebhookSubscription", 'DateTime'>
+  readonly revokedAt: Prisma.FieldRef<"WebhookSubscription", 'DateTime'>
 }
     
 
@@ -1625,6 +1962,30 @@ export type WebhookSubscriptionDeleteManyArgs<ExtArgs extends runtime.Types.Exte
    * Limit how many WebhookSubscriptions to delete.
    */
   limit?: number
+}
+
+/**
+ * WebhookSubscription.deliveries
+ */
+export type WebhookSubscription$deliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WebhookDelivery
+   */
+  select?: Prisma.WebhookDeliverySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WebhookDelivery
+   */
+  omit?: Prisma.WebhookDeliveryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WebhookDeliveryInclude<ExtArgs> | null
+  where?: Prisma.WebhookDeliveryWhereInput
+  orderBy?: Prisma.WebhookDeliveryOrderByWithRelationInput | Prisma.WebhookDeliveryOrderByWithRelationInput[]
+  cursor?: Prisma.WebhookDeliveryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WebhookDeliveryScalarFieldEnum | Prisma.WebhookDeliveryScalarFieldEnum[]
 }
 
 /**

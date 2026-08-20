@@ -28,74 +28,124 @@ export type AggregateLeaveType = {
 
 export type LeaveTypeAvgAggregateOutputType = {
   annualAllowance: runtime.Decimal | null
+  monthlyAccrual: runtime.Decimal | null
+  carryoverLimit: runtime.Decimal | null
 }
 
 export type LeaveTypeSumAggregateOutputType = {
   annualAllowance: runtime.Decimal | null
+  monthlyAccrual: runtime.Decimal | null
+  carryoverLimit: runtime.Decimal | null
 }
 
 export type LeaveTypeMinAggregateOutputType = {
   id: string | null
   organizationId: string | null
-  name: string | null
   code: string | null
+  name: string | null
   paid: boolean | null
+  accrualType: $Enums.LeaveAccrualType | null
   annualAllowance: runtime.Decimal | null
+  monthlyAccrual: runtime.Decimal | null
+  carryoverLimit: runtime.Decimal | null
+  requiresAttachment: boolean | null
+  isActive: boolean | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type LeaveTypeMaxAggregateOutputType = {
   id: string | null
   organizationId: string | null
-  name: string | null
   code: string | null
+  name: string | null
   paid: boolean | null
+  accrualType: $Enums.LeaveAccrualType | null
   annualAllowance: runtime.Decimal | null
+  monthlyAccrual: runtime.Decimal | null
+  carryoverLimit: runtime.Decimal | null
+  requiresAttachment: boolean | null
+  isActive: boolean | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type LeaveTypeCountAggregateOutputType = {
   id: number
   organizationId: number
-  name: number
   code: number
+  name: number
   paid: number
+  accrualType: number
   annualAllowance: number
+  monthlyAccrual: number
+  carryoverLimit: number
+  requiresAttachment: number
+  isActive: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
 
 export type LeaveTypeAvgAggregateInputType = {
   annualAllowance?: true
+  monthlyAccrual?: true
+  carryoverLimit?: true
 }
 
 export type LeaveTypeSumAggregateInputType = {
   annualAllowance?: true
+  monthlyAccrual?: true
+  carryoverLimit?: true
 }
 
 export type LeaveTypeMinAggregateInputType = {
   id?: true
   organizationId?: true
-  name?: true
   code?: true
+  name?: true
   paid?: true
+  accrualType?: true
   annualAllowance?: true
+  monthlyAccrual?: true
+  carryoverLimit?: true
+  requiresAttachment?: true
+  isActive?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type LeaveTypeMaxAggregateInputType = {
   id?: true
   organizationId?: true
-  name?: true
   code?: true
+  name?: true
   paid?: true
+  accrualType?: true
   annualAllowance?: true
+  monthlyAccrual?: true
+  carryoverLimit?: true
+  requiresAttachment?: true
+  isActive?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type LeaveTypeCountAggregateInputType = {
   id?: true
   organizationId?: true
-  name?: true
   code?: true
+  name?: true
   paid?: true
+  accrualType?: true
   annualAllowance?: true
+  monthlyAccrual?: true
+  carryoverLimit?: true
+  requiresAttachment?: true
+  isActive?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -188,10 +238,17 @@ export type LeaveTypeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type LeaveTypeGroupByOutputType = {
   id: string
   organizationId: string
-  name: string
   code: string
+  name: string
   paid: boolean
+  accrualType: $Enums.LeaveAccrualType
   annualAllowance: runtime.Decimal | null
+  monthlyAccrual: runtime.Decimal | null
+  carryoverLimit: runtime.Decimal | null
+  requiresAttachment: boolean
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
   _count: LeaveTypeCountAggregateOutputType | null
   _avg: LeaveTypeAvgAggregateOutputType | null
   _sum: LeaveTypeSumAggregateOutputType | null
@@ -220,10 +277,17 @@ export type LeaveTypeWhereInput = {
   NOT?: Prisma.LeaveTypeWhereInput | Prisma.LeaveTypeWhereInput[]
   id?: Prisma.UuidFilter<"LeaveType"> | string
   organizationId?: Prisma.UuidFilter<"LeaveType"> | string
-  name?: Prisma.StringFilter<"LeaveType"> | string
   code?: Prisma.StringFilter<"LeaveType"> | string
+  name?: Prisma.StringFilter<"LeaveType"> | string
   paid?: Prisma.BoolFilter<"LeaveType"> | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFilter<"LeaveType"> | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFilter<"LeaveType"> | boolean
+  isActive?: Prisma.BoolFilter<"LeaveType"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   balances?: Prisma.LeaveBalanceListRelationFilter
   requests?: Prisma.LeaveRequestListRelationFilter
@@ -232,10 +296,17 @@ export type LeaveTypeWhereInput = {
 export type LeaveTypeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
   code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   paid?: Prisma.SortOrder
+  accrualType?: Prisma.SortOrder
   annualAllowance?: Prisma.SortOrderInput | Prisma.SortOrder
+  monthlyAccrual?: Prisma.SortOrderInput | Prisma.SortOrder
+  carryoverLimit?: Prisma.SortOrderInput | Prisma.SortOrder
+  requiresAttachment?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   balances?: Prisma.LeaveBalanceOrderByRelationAggregateInput
   requests?: Prisma.LeaveRequestOrderByRelationAggregateInput
@@ -248,10 +319,17 @@ export type LeaveTypeWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.LeaveTypeWhereInput[]
   NOT?: Prisma.LeaveTypeWhereInput | Prisma.LeaveTypeWhereInput[]
   organizationId?: Prisma.UuidFilter<"LeaveType"> | string
-  name?: Prisma.StringFilter<"LeaveType"> | string
   code?: Prisma.StringFilter<"LeaveType"> | string
+  name?: Prisma.StringFilter<"LeaveType"> | string
   paid?: Prisma.BoolFilter<"LeaveType"> | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFilter<"LeaveType"> | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFilter<"LeaveType"> | boolean
+  isActive?: Prisma.BoolFilter<"LeaveType"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   balances?: Prisma.LeaveBalanceListRelationFilter
   requests?: Prisma.LeaveRequestListRelationFilter
@@ -260,10 +338,17 @@ export type LeaveTypeWhereUniqueInput = Prisma.AtLeast<{
 export type LeaveTypeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
   code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   paid?: Prisma.SortOrder
+  accrualType?: Prisma.SortOrder
   annualAllowance?: Prisma.SortOrderInput | Prisma.SortOrder
+  monthlyAccrual?: Prisma.SortOrderInput | Prisma.SortOrder
+  carryoverLimit?: Prisma.SortOrderInput | Prisma.SortOrder
+  requiresAttachment?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.LeaveTypeCountOrderByAggregateInput
   _avg?: Prisma.LeaveTypeAvgOrderByAggregateInput
   _max?: Prisma.LeaveTypeMaxOrderByAggregateInput
@@ -277,18 +362,32 @@ export type LeaveTypeScalarWhereWithAggregatesInput = {
   NOT?: Prisma.LeaveTypeScalarWhereWithAggregatesInput | Prisma.LeaveTypeScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"LeaveType"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"LeaveType"> | string
-  name?: Prisma.StringWithAggregatesFilter<"LeaveType"> | string
   code?: Prisma.StringWithAggregatesFilter<"LeaveType"> | string
+  name?: Prisma.StringWithAggregatesFilter<"LeaveType"> | string
   paid?: Prisma.BoolWithAggregatesFilter<"LeaveType"> | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeWithAggregatesFilter<"LeaveType"> | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.DecimalNullableWithAggregatesFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.DecimalNullableWithAggregatesFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.DecimalNullableWithAggregatesFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolWithAggregatesFilter<"LeaveType"> | boolean
+  isActive?: Prisma.BoolWithAggregatesFilter<"LeaveType"> | boolean
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"LeaveType"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LeaveType"> | Date | string
 }
 
 export type LeaveTypeCreateInput = {
   id?: string
-  name: string
   code: string
+  name: string
   paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
   annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
   balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
@@ -297,20 +396,34 @@ export type LeaveTypeCreateInput = {
 export type LeaveTypeUncheckedCreateInput = {
   id?: string
   organizationId: string
-  name: string
   code: string
+  name: string
   paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
   annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
 }
 
 export type LeaveTypeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
   balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
@@ -319,10 +432,17 @@ export type LeaveTypeUpdateInput = {
 export type LeaveTypeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
 }
@@ -330,27 +450,118 @@ export type LeaveTypeUncheckedUpdateInput = {
 export type LeaveTypeCreateManyInput = {
   id?: string
   organizationId: string
-  name: string
   code: string
+  name: string
   paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
   annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type LeaveTypeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type LeaveTypeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LeaveTypeOrganizationIdCodeCompoundUniqueInput = {
+  organizationId: string
+  code: string
+}
+
+export type LeaveTypeCountOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  paid?: Prisma.SortOrder
+  accrualType?: Prisma.SortOrder
+  annualAllowance?: Prisma.SortOrder
+  monthlyAccrual?: Prisma.SortOrder
+  carryoverLimit?: Prisma.SortOrder
+  requiresAttachment?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type LeaveTypeAvgOrderByAggregateInput = {
+  annualAllowance?: Prisma.SortOrder
+  monthlyAccrual?: Prisma.SortOrder
+  carryoverLimit?: Prisma.SortOrder
+}
+
+export type LeaveTypeMaxOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  paid?: Prisma.SortOrder
+  accrualType?: Prisma.SortOrder
+  annualAllowance?: Prisma.SortOrder
+  monthlyAccrual?: Prisma.SortOrder
+  carryoverLimit?: Prisma.SortOrder
+  requiresAttachment?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type LeaveTypeMinOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  paid?: Prisma.SortOrder
+  accrualType?: Prisma.SortOrder
+  annualAllowance?: Prisma.SortOrder
+  monthlyAccrual?: Prisma.SortOrder
+  carryoverLimit?: Prisma.SortOrder
+  requiresAttachment?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type LeaveTypeSumOrderByAggregateInput = {
+  annualAllowance?: Prisma.SortOrder
+  monthlyAccrual?: Prisma.SortOrder
+  carryoverLimit?: Prisma.SortOrder
+}
+
+export type LeaveTypeScalarRelationFilter = {
+  is?: Prisma.LeaveTypeWhereInput
+  isNot?: Prisma.LeaveTypeWhereInput
 }
 
 export type LeaveTypeListRelationFilter = {
@@ -363,49 +574,36 @@ export type LeaveTypeOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type LeaveTypeOrganizationIdCodeCompoundUniqueInput = {
-  organizationId: string
-  code: string
+export type EnumLeaveAccrualTypeFieldUpdateOperationsInput = {
+  set?: $Enums.LeaveAccrualType
 }
 
-export type LeaveTypeCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  code?: Prisma.SortOrder
-  paid?: Prisma.SortOrder
-  annualAllowance?: Prisma.SortOrder
+export type LeaveTypeCreateNestedOneWithoutBalancesInput = {
+  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
+  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutBalancesInput
+  connect?: Prisma.LeaveTypeWhereUniqueInput
 }
 
-export type LeaveTypeAvgOrderByAggregateInput = {
-  annualAllowance?: Prisma.SortOrder
+export type LeaveTypeUpdateOneRequiredWithoutBalancesNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
+  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutBalancesInput
+  upsert?: Prisma.LeaveTypeUpsertWithoutBalancesInput
+  connect?: Prisma.LeaveTypeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveTypeUpdateToOneWithWhereWithoutBalancesInput, Prisma.LeaveTypeUpdateWithoutBalancesInput>, Prisma.LeaveTypeUncheckedUpdateWithoutBalancesInput>
 }
 
-export type LeaveTypeMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  code?: Prisma.SortOrder
-  paid?: Prisma.SortOrder
-  annualAllowance?: Prisma.SortOrder
+export type LeaveTypeCreateNestedOneWithoutRequestsInput = {
+  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
+  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutRequestsInput
+  connect?: Prisma.LeaveTypeWhereUniqueInput
 }
 
-export type LeaveTypeMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  code?: Prisma.SortOrder
-  paid?: Prisma.SortOrder
-  annualAllowance?: Prisma.SortOrder
-}
-
-export type LeaveTypeSumOrderByAggregateInput = {
-  annualAllowance?: Prisma.SortOrder
-}
-
-export type LeaveTypeScalarRelationFilter = {
-  is?: Prisma.LeaveTypeWhereInput
-  isNot?: Prisma.LeaveTypeWhereInput
+export type LeaveTypeUpdateOneRequiredWithoutRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
+  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutRequestsInput
+  upsert?: Prisma.LeaveTypeUpsertWithoutRequestsInput
+  connect?: Prisma.LeaveTypeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveTypeUpdateToOneWithWhereWithoutRequestsInput, Prisma.LeaveTypeUpdateWithoutRequestsInput>, Prisma.LeaveTypeUncheckedUpdateWithoutRequestsInput>
 }
 
 export type LeaveTypeCreateNestedManyWithoutOrganizationInput = {
@@ -450,58 +648,204 @@ export type LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.LeaveTypeScalarWhereInput | Prisma.LeaveTypeScalarWhereInput[]
 }
 
-export type NullableDecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+export type LeaveTypeCreateWithoutBalancesInput = {
+  id?: string
+  code: string
+  name: string
+  paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
+  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
+  requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
 }
 
-export type LeaveTypeCreateNestedOneWithoutBalancesInput = {
-  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
-  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutBalancesInput
-  connect?: Prisma.LeaveTypeWhereUniqueInput
+export type LeaveTypeUncheckedCreateWithoutBalancesInput = {
+  id?: string
+  organizationId: string
+  code: string
+  name: string
+  paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
+  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
 }
 
-export type LeaveTypeUpdateOneRequiredWithoutBalancesNestedInput = {
-  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
-  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutBalancesInput
-  upsert?: Prisma.LeaveTypeUpsertWithoutBalancesInput
-  connect?: Prisma.LeaveTypeWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveTypeUpdateToOneWithWhereWithoutBalancesInput, Prisma.LeaveTypeUpdateWithoutBalancesInput>, Prisma.LeaveTypeUncheckedUpdateWithoutBalancesInput>
+export type LeaveTypeCreateOrConnectWithoutBalancesInput = {
+  where: Prisma.LeaveTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
 }
 
-export type LeaveTypeCreateNestedOneWithoutRequestsInput = {
-  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
-  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutRequestsInput
-  connect?: Prisma.LeaveTypeWhereUniqueInput
+export type LeaveTypeUpsertWithoutBalancesInput = {
+  update: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutBalancesInput, Prisma.LeaveTypeUncheckedUpdateWithoutBalancesInput>
+  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
+  where?: Prisma.LeaveTypeWhereInput
 }
 
-export type LeaveTypeUpdateOneRequiredWithoutRequestsNestedInput = {
-  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
-  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutRequestsInput
-  upsert?: Prisma.LeaveTypeUpsertWithoutRequestsInput
-  connect?: Prisma.LeaveTypeWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveTypeUpdateToOneWithWhereWithoutRequestsInput, Prisma.LeaveTypeUpdateWithoutRequestsInput>, Prisma.LeaveTypeUncheckedUpdateWithoutRequestsInput>
+export type LeaveTypeUpdateToOneWithWhereWithoutBalancesInput = {
+  where?: Prisma.LeaveTypeWhereInput
+  data: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutBalancesInput, Prisma.LeaveTypeUncheckedUpdateWithoutBalancesInput>
+}
+
+export type LeaveTypeUpdateWithoutBalancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
+  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
+  requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
+}
+
+export type LeaveTypeUncheckedUpdateWithoutBalancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
+  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
+}
+
+export type LeaveTypeCreateWithoutRequestsInput = {
+  id?: string
+  code: string
+  name: string
+  paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
+  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
+  balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
+}
+
+export type LeaveTypeUncheckedCreateWithoutRequestsInput = {
+  id?: string
+  organizationId: string
+  code: string
+  name: string
+  paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
+  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
+}
+
+export type LeaveTypeCreateOrConnectWithoutRequestsInput = {
+  where: Prisma.LeaveTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
+}
+
+export type LeaveTypeUpsertWithoutRequestsInput = {
+  update: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutRequestsInput, Prisma.LeaveTypeUncheckedUpdateWithoutRequestsInput>
+  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
+  where?: Prisma.LeaveTypeWhereInput
+}
+
+export type LeaveTypeUpdateToOneWithWhereWithoutRequestsInput = {
+  where?: Prisma.LeaveTypeWhereInput
+  data: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutRequestsInput, Prisma.LeaveTypeUncheckedUpdateWithoutRequestsInput>
+}
+
+export type LeaveTypeUpdateWithoutRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
+  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
+  balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
+}
+
+export type LeaveTypeUncheckedUpdateWithoutRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
+  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
 }
 
 export type LeaveTypeCreateWithoutOrganizationInput = {
   id?: string
-  name: string
   code: string
+  name: string
   paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
   annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
 }
 
 export type LeaveTypeUncheckedCreateWithoutOrganizationInput = {
   id?: string
-  name: string
   code: string
+  name: string
   paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
   annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
 }
@@ -538,158 +882,81 @@ export type LeaveTypeScalarWhereInput = {
   NOT?: Prisma.LeaveTypeScalarWhereInput | Prisma.LeaveTypeScalarWhereInput[]
   id?: Prisma.UuidFilter<"LeaveType"> | string
   organizationId?: Prisma.UuidFilter<"LeaveType"> | string
-  name?: Prisma.StringFilter<"LeaveType"> | string
   code?: Prisma.StringFilter<"LeaveType"> | string
+  name?: Prisma.StringFilter<"LeaveType"> | string
   paid?: Prisma.BoolFilter<"LeaveType"> | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFilter<"LeaveType"> | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-}
-
-export type LeaveTypeCreateWithoutBalancesInput = {
-  id?: string
-  name: string
-  code: string
-  paid?: boolean
-  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
-  requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
-}
-
-export type LeaveTypeUncheckedCreateWithoutBalancesInput = {
-  id?: string
-  organizationId: string
-  name: string
-  code: string
-  paid?: boolean
-  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
-}
-
-export type LeaveTypeCreateOrConnectWithoutBalancesInput = {
-  where: Prisma.LeaveTypeWhereUniqueInput
-  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
-}
-
-export type LeaveTypeUpsertWithoutBalancesInput = {
-  update: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutBalancesInput, Prisma.LeaveTypeUncheckedUpdateWithoutBalancesInput>
-  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
-  where?: Prisma.LeaveTypeWhereInput
-}
-
-export type LeaveTypeUpdateToOneWithWhereWithoutBalancesInput = {
-  where?: Prisma.LeaveTypeWhereInput
-  data: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutBalancesInput, Prisma.LeaveTypeUncheckedUpdateWithoutBalancesInput>
-}
-
-export type LeaveTypeUpdateWithoutBalancesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
-  requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
-}
-
-export type LeaveTypeUncheckedUpdateWithoutBalancesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
-}
-
-export type LeaveTypeCreateWithoutRequestsInput = {
-  id?: string
-  name: string
-  code: string
-  paid?: boolean
-  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
-  balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
-}
-
-export type LeaveTypeUncheckedCreateWithoutRequestsInput = {
-  id?: string
-  organizationId: string
-  name: string
-  code: string
-  paid?: boolean
-  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
-}
-
-export type LeaveTypeCreateOrConnectWithoutRequestsInput = {
-  where: Prisma.LeaveTypeWhereUniqueInput
-  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
-}
-
-export type LeaveTypeUpsertWithoutRequestsInput = {
-  update: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutRequestsInput, Prisma.LeaveTypeUncheckedUpdateWithoutRequestsInput>
-  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutRequestsInput, Prisma.LeaveTypeUncheckedCreateWithoutRequestsInput>
-  where?: Prisma.LeaveTypeWhereInput
-}
-
-export type LeaveTypeUpdateToOneWithWhereWithoutRequestsInput = {
-  where?: Prisma.LeaveTypeWhereInput
-  data: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutRequestsInput, Prisma.LeaveTypeUncheckedUpdateWithoutRequestsInput>
-}
-
-export type LeaveTypeUpdateWithoutRequestsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
-  balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
-}
-
-export type LeaveTypeUncheckedUpdateWithoutRequestsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
+  monthlyAccrual?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.DecimalNullableFilter<"LeaveType"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFilter<"LeaveType"> | boolean
+  isActive?: Prisma.BoolFilter<"LeaveType"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
 }
 
 export type LeaveTypeCreateManyOrganizationInput = {
   id?: string
-  name: string
   code: string
+  name: string
   paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
   annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type LeaveTypeUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
 }
 
 export type LeaveTypeUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
 }
 
 export type LeaveTypeUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
   annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -735,10 +1002,17 @@ export type LeaveTypeCountOutputTypeCountRequestsArgs<ExtArgs extends runtime.Ty
 export type LeaveTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
-  name?: boolean
   code?: boolean
+  name?: boolean
   paid?: boolean
+  accrualType?: boolean
   annualAllowance?: boolean
+  monthlyAccrual?: boolean
+  carryoverLimit?: boolean
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   balances?: boolean | Prisma.LeaveType$balancesArgs<ExtArgs>
   requests?: boolean | Prisma.LeaveType$requestsArgs<ExtArgs>
@@ -748,33 +1022,54 @@ export type LeaveTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type LeaveTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
-  name?: boolean
   code?: boolean
+  name?: boolean
   paid?: boolean
+  accrualType?: boolean
   annualAllowance?: boolean
+  monthlyAccrual?: boolean
+  carryoverLimit?: boolean
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["leaveType"]>
 
 export type LeaveTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
-  name?: boolean
   code?: boolean
+  name?: boolean
   paid?: boolean
+  accrualType?: boolean
   annualAllowance?: boolean
+  monthlyAccrual?: boolean
+  carryoverLimit?: boolean
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["leaveType"]>
 
 export type LeaveTypeSelectScalar = {
   id?: boolean
   organizationId?: boolean
-  name?: boolean
   code?: boolean
+  name?: boolean
   paid?: boolean
+  accrualType?: boolean
   annualAllowance?: boolean
+  monthlyAccrual?: boolean
+  carryoverLimit?: boolean
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type LeaveTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "code" | "paid" | "annualAllowance", ExtArgs["result"]["leaveType"]>
+export type LeaveTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "code" | "name" | "paid" | "accrualType" | "annualAllowance" | "monthlyAccrual" | "carryoverLimit" | "requiresAttachment" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["leaveType"]>
 export type LeaveTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   balances?: boolean | Prisma.LeaveType$balancesArgs<ExtArgs>
@@ -798,10 +1093,17 @@ export type $LeaveTypePayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
-    name: string
     code: string
+    name: string
     paid: boolean
+    accrualType: $Enums.LeaveAccrualType
     annualAllowance: runtime.Decimal | null
+    monthlyAccrual: runtime.Decimal | null
+    carryoverLimit: runtime.Decimal | null
+    requiresAttachment: boolean
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["leaveType"]>
   composites: {}
 }
@@ -1230,10 +1532,17 @@ export interface Prisma__LeaveTypeClient<T, Null = never, ExtArgs extends runtim
 export interface LeaveTypeFieldRefs {
   readonly id: Prisma.FieldRef<"LeaveType", 'String'>
   readonly organizationId: Prisma.FieldRef<"LeaveType", 'String'>
-  readonly name: Prisma.FieldRef<"LeaveType", 'String'>
   readonly code: Prisma.FieldRef<"LeaveType", 'String'>
+  readonly name: Prisma.FieldRef<"LeaveType", 'String'>
   readonly paid: Prisma.FieldRef<"LeaveType", 'Boolean'>
+  readonly accrualType: Prisma.FieldRef<"LeaveType", 'LeaveAccrualType'>
   readonly annualAllowance: Prisma.FieldRef<"LeaveType", 'Decimal'>
+  readonly monthlyAccrual: Prisma.FieldRef<"LeaveType", 'Decimal'>
+  readonly carryoverLimit: Prisma.FieldRef<"LeaveType", 'Decimal'>
+  readonly requiresAttachment: Prisma.FieldRef<"LeaveType", 'Boolean'>
+  readonly isActive: Prisma.FieldRef<"LeaveType", 'Boolean'>
+  readonly createdAt: Prisma.FieldRef<"LeaveType", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"LeaveType", 'DateTime'>
 }
     
 

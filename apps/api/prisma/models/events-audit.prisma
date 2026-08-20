@@ -1,0 +1,202 @@
+model FederationIdempotencyRecord {
+  id                 String            @id @default(uuid()) @db.Uuid
+  clientId           String            @map("client_id") @db.Uuid
+  organizationId     String?           @map("organization_id") @db.Uuid
+  idempotencyKey     String            @map("idempotency_key")
+  requestHash        String            @map("request_hash") @db.Char(64)
+  status             IdempotencyStatus
+  responseStatus     Int?              @map("response_status") @db.SmallInt
+  responseCiphertext Bytes?            @map("response_ciphertext") @db.ByteA
+  resourceType       String?           @map("resource_type")
+  resourceId         String?           @map("resource_id") @db.Uuid
+  startedAt          DateTime          @map("started_at") @db.Timestamptz(6)
+  completedAt        DateTime?         @map("completed_at") @db.Timestamptz(6)
+  expiresAt          DateTime          @map("expires_at") @db.Timestamptz(6)
+
+  client       FederationClient @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  organization Organization?    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([clientId, organizationId, idempotencyKey])
+  @@index([organizationId, status, expiresAt])
+  @@map("federation_idempotency_records")
+}
+
+model FederationRequestRecord {
+  id               String                  @id @default(uuid()) @db.Uuid
+  clientId         String?                 @map("client_id") @db.Uuid
+  organizationId   String?                 @map("organization_id") @db.Uuid
+  branchId         String?                 @map("branch_id") @db.Uuid
+  correlationId    String                  @map("correlation_id") @db.Uuid
+  requestId        String                  @map("request_id") @db.Uuid
+  method           String
+  path             String
+  bodyHash         String                  @map("body_hash") @db.Char(64)
+  actorExternalId  String?                 @map("actor_external_id")
+  targetExternalId String?                 @map("target_external_id")
+  nonceHash        String?                 @map("nonce_hash") @db.Char(64)
+  signatureKeyId   String?                 @map("signature_key_id")
+  mtlsFingerprint  String?                 @map("mtls_fingerprint")
+  result           FederationRequestResult
+  rejectionReason  String?                 @map("rejection_reason")
+  createdAt        DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  client       FederationClient? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  organization Organization?     @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  branch       Branch?           @relation(fields: [branchId], references: [id], onDelete: SetNull)
+
+  @@index([clientId, createdAt])
+  @@index([organizationId, createdAt])
+  @@index([correlationId])
+  @@index([result, createdAt])
+  @@map("federation_request_records")
+}
+
+model WebhookSigningKey {
+  id              String           @id @default(uuid()) @db.Uuid
+  clientId        String           @map("client_id") @db.Uuid
+  keyId           String           @map("key_id")
+  secretRef       String           @map("secret_ref")
+  algorithm       String
+  status          CredentialStatus
+  validFrom       DateTime         @map("valid_from") @db.Timestamptz(6)
+  validUntil      DateTime?        @map("valid_until") @db.Timestamptz(6)
+  createdByUserId String?          @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  revokedAt       DateTime?        @map("revoked_at") @db.Timestamptz(6)
+
+  client        FederationClient      @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  createdBy     User?                 @relation("WebhookKeyCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  subscriptions WebhookSubscription[]
+
+  @@unique([clientId, keyId])
+  @@index([clientId, status, validFrom])
+  @@map("webhook_signing_keys")
+}
+
+model WebhookSubscription {
+  id             String                    @id @default(uuid()) @db.Uuid
+  clientId       String                    @map("client_id") @db.Uuid
+  organizationId String                    @map("organization_id") @db.Uuid
+  callbackUrl    String                    @map("callback_url")
+  eventTypes     String[]                  @map("event_types")
+  signingKeyId   String                    @map("signing_key_id") @db.Uuid
+  status         WebhookSubscriptionStatus @default(ACTIVE)
+  createdAt      DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  revokedAt      DateTime?                 @map("revoked_at") @db.Timestamptz(6)
+
+  client       FederationClient  @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  signingKey   WebhookSigningKey @relation(fields: [signingKeyId], references: [id], onDelete: Restrict)
+  deliveries   WebhookDelivery[]
+
+  @@unique([clientId, organizationId, callbackUrl])
+  @@index([organizationId, status])
+  @@map("webhook_subscriptions")
+}
+
+model OutboxEvent {
+  id               String       @id @default(uuid()) @db.Uuid
+  eventId          String       @unique @map("event_id") @db.Uuid
+  organizationId   String       @map("organization_id") @db.Uuid
+  aggregateType    String       @map("aggregate_type")
+  aggregateId      String       @map("aggregate_id") @db.Uuid
+  aggregateVersion Int          @map("aggregate_version")
+  eventType        String       @map("event_type")
+  schemaVersion    String       @map("schema_version")
+  payload          Json
+  correlationId    String       @map("correlation_id") @db.Uuid
+  causationId      String?      @map("causation_id") @db.Uuid
+  status           OutboxStatus @default(PENDING)
+  attempts         Int          @default(0)
+  nextAttemptAt    DateTime     @default(now()) @map("next_attempt_at") @db.Timestamptz(6)
+  lastErrorCode    String?      @map("last_error_code")
+  lastErrorAt      DateTime?    @map("last_error_at") @db.Timestamptz(6)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  completedAt      DateTime?    @map("completed_at") @db.Timestamptz(6)
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  deliveries   WebhookDelivery[]
+
+  @@index([status, nextAttemptAt])
+  @@index([organizationId, eventType, createdAt])
+  @@map("outbox_events")
+}
+
+model WebhookDelivery {
+  id                  String                @id @default(uuid()) @db.Uuid
+  outboxEventId       String                @map("outbox_event_id") @db.Uuid
+  subscriptionId      String                @map("subscription_id") @db.Uuid
+  organizationId      String                @map("organization_id") @db.Uuid
+  status              WebhookDeliveryStatus @default(PENDING)
+  attemptCount        Int                   @default(0) @map("attempt_count")
+  nextAttemptAt       DateTime              @map("next_attempt_at") @db.Timestamptz(6)
+  lastHttpStatus      Int?                  @map("last_http_status") @db.SmallInt
+  lastResponseExcerpt String?               @map("last_response_excerpt")
+  lastErrorCode       String?               @map("last_error_code")
+  deliveredAt         DateTime?             @map("delivered_at") @db.Timestamptz(6)
+  replayRequestedAt   DateTime?             @map("replay_requested_at") @db.Timestamptz(6)
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  outboxEvent  OutboxEvent              @relation(fields: [outboxEventId], references: [id], onDelete: Restrict)
+  subscription WebhookSubscription      @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
+  organization Organization             @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  attempts     WebhookDeliveryAttempt[]
+
+  @@unique([outboxEventId, subscriptionId])
+  @@index([status, nextAttemptAt])
+  @@index([organizationId, createdAt])
+  @@map("webhook_deliveries")
+}
+
+model WebhookDeliveryAttempt {
+  id              String    @id @default(uuid()) @db.Uuid
+  deliveryId      String    @map("delivery_id") @db.Uuid
+  attemptNumber   Int       @map("attempt_number")
+  requestId       String    @map("request_id") @db.Uuid
+  signatureKeyId  String    @map("signature_key_id")
+  requestBodyHash String    @map("request_body_hash") @db.Char(64)
+  httpStatus      Int?      @map("http_status") @db.SmallInt
+  responseExcerpt String?   @map("response_excerpt")
+  errorCode       String?   @map("error_code")
+  startedAt       DateTime  @map("started_at") @db.Timestamptz(6)
+  finishedAt      DateTime? @map("finished_at") @db.Timestamptz(6)
+
+  delivery WebhookDelivery @relation(fields: [deliveryId], references: [id], onDelete: Restrict)
+
+  @@unique([deliveryId, attemptNumber])
+  @@map("webhook_delivery_attempts")
+}
+
+model AuditLog {
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String?        @map("organization_id") @db.Uuid
+  branchId       String?        @map("branch_id") @db.Uuid
+  actorType      AuditActorType @map("actor_type")
+  actorUserId    String?        @map("actor_user_id") @db.Uuid
+  actorClientId  String?        @map("actor_client_id") @db.Uuid
+  accessMode     AccessMode     @map("access_mode")
+  action         String
+  entityType     String         @map("entity_type")
+  entityId       String         @map("entity_id") @db.Uuid
+  correlationId  String         @map("correlation_id") @db.Uuid
+  requestId      String?        @map("request_id") @db.Uuid
+  beforeState    Json?          @map("before_state")
+  afterState     Json?          @map("after_state")
+  reason         String?
+  ipAddress      String?        @map("ip_address") @db.Inet
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization?     @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  branch       Branch?           @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  actorUser    User?             @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  actorClient  FederationClient? @relation(fields: [actorClientId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([actorUserId, createdAt])
+  @@index([actorClientId, createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([correlationId])
+  @@map("audit_logs")
+}

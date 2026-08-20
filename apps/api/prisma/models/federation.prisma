@@ -1,0 +1,178 @@
+model FederationClient {
+  id                             String                 @id @default(uuid()) @db.Uuid
+  name                           String
+  clientId                       String                 @unique @map("client_id")
+  homeOrganizationId             String?                @map("home_organization_id") @db.Uuid
+  status                         FederationClientStatus @default(ACTIVE)
+  tokenVersion                   Int                    @default(0) @map("token_version")
+  expiresAt                      DateTime?              @map("expires_at") @db.Timestamptz(6)
+  mtlsRequired                   Boolean                @default(false) @map("mtls_required")
+  allowedCertificateFingerprints String[]               @default([]) @map("allowed_certificate_fingerprints")
+  createdByUserId                String?                @map("created_by_user_id") @db.Uuid
+  createdAt                      DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                      DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  revokedAt                      DateTime?              @map("revoked_at") @db.Timestamptz(6)
+  revocationReason               String?                @map("revocation_reason")
+
+  homeOrganization         Organization?                 @relation("FederationClientHomeOrganization", fields: [homeOrganizationId], references: [id], onDelete: SetNull)
+  createdBy                User?                         @relation("FederationClientCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  credentials              FederationClientCredential[]
+  grants                   FederationGrant[]
+  fieldOwnerships          EmployeeFieldOwnership[]
+  externalMappings         ExternalIdMapping[]
+  idempotencyRecords       FederationIdempotencyRecord[]
+  requestRecords           FederationRequestRecord[]
+  webhookSigningKeys       WebhookSigningKey[]
+  webhookSubscriptions     WebhookSubscription[]
+  auditLogs                AuditLog[]
+  attendanceCorrections    AttendanceCorrection[]
+  leaveBalanceTransactions LeaveBalanceTransaction[]
+  payrollAdjustments       PayrollAdjustment[]
+
+  @@index([status, expiresAt])
+  @@map("federation_clients")
+}
+
+model FederationClientCredential {
+  id              String           @id @default(uuid()) @db.Uuid
+  clientId        String           @map("client_id") @db.Uuid
+  secretHash      String           @map("secret_hash")
+  keyId           String           @map("key_id")
+  status          CredentialStatus
+  validFrom       DateTime         @map("valid_from") @db.Timestamptz(6)
+  validUntil      DateTime?        @map("valid_until") @db.Timestamptz(6)
+  lastUsedAt      DateTime?        @map("last_used_at") @db.Timestamptz(6)
+  createdByUserId String?          @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  revokedAt       DateTime?        @map("revoked_at") @db.Timestamptz(6)
+
+  client    FederationClient @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  createdBy User?            @relation("ClientCredentialCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([clientId, keyId])
+  @@index([clientId, status, validFrom])
+  @@map("federation_client_credentials")
+}
+
+model FederationScope {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique
+  description String
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  grants FederationGrantScope[]
+
+  @@map("federation_scopes")
+}
+
+model FederationGrant {
+  id               String      @id @default(uuid()) @db.Uuid
+  clientId         String      @map("client_id") @db.Uuid
+  organizationId   String      @map("organization_id") @db.Uuid
+  branchId         String?     @map("branch_id") @db.Uuid
+  effect           GrantEffect
+  status           GrantStatus @default(ACTIVE)
+  startsAt         DateTime    @map("starts_at") @db.Timestamptz(6)
+  endsAt           DateTime?   @map("ends_at") @db.Timestamptz(6)
+  createdByUserId  String?     @map("created_by_user_id") @db.Uuid
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  revokedAt        DateTime?   @map("revoked_at") @db.Timestamptz(6)
+  suspendedAt      DateTime?   @map("suspended_at") @db.Timestamptz(6)
+  suspensionReason String?     @map("suspension_reason")
+
+  client       FederationClient             @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  organization Organization                 @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch?                      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  createdBy    User?                        @relation("FederationGrantCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  scopes       FederationGrantScope[]
+  roleMappings FederationGrantRoleMapping[]
+  userRoles    UserRole[]
+
+  @@index([clientId, organizationId, branchId, status])
+  @@index([organizationId, branchId, status])
+  @@map("federation_grants")
+}
+
+model FederationGrantScope {
+  grantId String @map("grant_id") @db.Uuid
+  scopeId String @map("scope_id") @db.Uuid
+
+  grant FederationGrant @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  scope FederationScope @relation(fields: [scopeId], references: [id], onDelete: Restrict)
+
+  @@id([grantId, scopeId])
+  @@map("federation_grant_scopes")
+}
+
+model FederationGrantRoleMapping {
+  id        String   @id @default(uuid()) @db.Uuid
+  grantId   String   @map("grant_id") @db.Uuid
+  roleId    String   @map("role_id") @db.Uuid
+  priority  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  grant FederationGrant @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  role  Role            @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@unique([grantId, roleId])
+  @@unique([grantId, priority])
+  @@index([grantId, priority])
+  @@map("federation_grant_role_mappings")
+}
+
+model FederationCapability {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String
+  version     String
+  description String
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organizations OrganizationFederationCapability[]
+
+  @@unique([code, version])
+  @@map("federation_capabilities")
+}
+
+model OrganizationFederationCapability {
+  organizationId  String           @map("organization_id") @db.Uuid
+  capabilityId    String           @map("capability_id") @db.Uuid
+  status          CapabilityStatus
+  configuration   Json             @default("{}")
+  enabledAt       DateTime?        @map("enabled_at") @db.Timestamptz(6)
+  disabledAt      DateTime?        @map("disabled_at") @db.Timestamptz(6)
+  updatedByUserId String?          @map("updated_by_user_id") @db.Uuid
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  capability   FederationCapability @relation(fields: [capabilityId], references: [id], onDelete: Restrict)
+  updatedBy    User?                @relation("OrganizationCapabilityUpdatedBy", fields: [updatedByUserId], references: [id], onDelete: SetNull)
+
+  @@id([organizationId, capabilityId])
+  @@map("organization_federation_capabilities")
+}
+
+model ExternalIdMapping {
+  id              String             @id @default(uuid()) @db.Uuid
+  clientId        String             @map("client_id") @db.Uuid
+  organizationId  String             @map("organization_id") @db.Uuid
+  entityType      ExternalEntityType @map("entity_type")
+  externalId      String             @map("external_id")
+  externalVersion String?            @map("external_version")
+  localEntityId   String             @map("local_entity_id") @db.Uuid
+  lastSyncedAt    DateTime?          @map("last_synced_at") @db.Timestamptz(6)
+  metadata        Json               @default("{}")
+  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  client       FederationClient @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([clientId, entityType, externalId])
+  @@unique([clientId, entityType, localEntityId])
+  @@index([organizationId, entityType, externalId])
+  @@map("external_id_mappings")
+}

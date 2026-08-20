@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - argon2
+  - prisma
+  - unrs-resolver
+
+ignoredBuiltDependencies:
+  - '@scarf/scarf'
+  - msgpackr-extract

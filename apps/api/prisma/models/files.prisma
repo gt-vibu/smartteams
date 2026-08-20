@@ -1,0 +1,52 @@
+model FileObject {
+  id               String      @id @default(uuid()) @db.Uuid
+  organizationId   String      @map("organization_id") @db.Uuid
+  uploadedByUserId String?     @map("uploaded_by_user_id") @db.Uuid
+  employeeId       String?     @map("employee_id") @db.Uuid
+  leaveRequestId   String?     @map("leave_request_id") @db.Uuid
+  purpose          FilePurpose
+  status           FileStatus  @default(PENDING_UPLOAD)
+  bucket           String
+  objectKey        String      @map("object_key")
+  originalName     String      @map("original_name")
+  contentType      String      @map("content_type")
+  byteSize         BigInt      @map("byte_size")
+  checksumSha256   String?     @map("checksum_sha256") @db.Char(64)
+  kmsKeyId         String?     @map("kms_key_id")
+  currentVersionId String?     @map("current_version_id")
+  metadata         Json        @default("{}")
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt        DateTime?   @map("deleted_at") @db.Timestamptz(6)
+
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  uploadedBy   User?               @relation("FileUploadedBy", fields: [uploadedByUserId], references: [id], onDelete: SetNull)
+  employee     Employee?           @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  leaveRequest LeaveRequest?       @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
+  versions     FileObjectVersion[]
+  payslip      Payslip?
+
+  @@unique([bucket, objectKey])
+  @@index([organizationId, purpose, createdAt])
+  @@index([organizationId, employeeId])
+  @@index([organizationId, leaveRequestId])
+  @@map("file_objects")
+}
+
+model FileObjectVersion {
+  id              String   @id @default(uuid()) @db.Uuid
+  fileObjectId    String   @map("file_object_id") @db.Uuid
+  s3VersionId     String   @map("s3_version_id")
+  byteSize        BigInt   @map("byte_size")
+  checksumSha256  String?  @map("checksum_sha256") @db.Char(64)
+  uploadedAt      DateTime @map("uploaded_at") @db.Timestamptz(6)
+  createdByUserId String?  @map("created_by_user_id") @db.Uuid
+  isCurrent       Boolean  @default(false) @map("is_current")
+
+  fileObject FileObject @relation(fields: [fileObjectId], references: [id], onDelete: Restrict)
+  createdBy  User?      @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([fileObjectId, s3VersionId])
+  @@index([fileObjectId, isCurrent])
+  @@map("file_object_versions")
+}

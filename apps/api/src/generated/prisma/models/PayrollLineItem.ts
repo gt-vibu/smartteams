@@ -28,84 +28,128 @@ export type AggregatePayrollLineItem = {
 
 export type PayrollLineItemAvgAggregateOutputType = {
   grossAmount: runtime.Decimal | null
-  deductions: runtime.Decimal | null
+  deductionAmount: runtime.Decimal | null
   netAmount: runtime.Decimal | null
+  regularAmount: runtime.Decimal | null
+  overtimeAmount: runtime.Decimal | null
+  leaveAmount: runtime.Decimal | null
 }
 
 export type PayrollLineItemSumAggregateOutputType = {
   grossAmount: runtime.Decimal | null
-  deductions: runtime.Decimal | null
+  deductionAmount: runtime.Decimal | null
   netAmount: runtime.Decimal | null
+  regularAmount: runtime.Decimal | null
+  overtimeAmount: runtime.Decimal | null
+  leaveAmount: runtime.Decimal | null
 }
 
 export type PayrollLineItemMinAggregateOutputType = {
   id: string | null
+  organizationId: string | null
   payrollRunId: string | null
   employeeId: string | null
   grossAmount: runtime.Decimal | null
-  deductions: runtime.Decimal | null
+  deductionAmount: runtime.Decimal | null
   netAmount: runtime.Decimal | null
+  regularAmount: runtime.Decimal | null
+  overtimeAmount: runtime.Decimal | null
+  leaveAmount: runtime.Decimal | null
+  createdAt: Date | null
 }
 
 export type PayrollLineItemMaxAggregateOutputType = {
   id: string | null
+  organizationId: string | null
   payrollRunId: string | null
   employeeId: string | null
   grossAmount: runtime.Decimal | null
-  deductions: runtime.Decimal | null
+  deductionAmount: runtime.Decimal | null
   netAmount: runtime.Decimal | null
+  regularAmount: runtime.Decimal | null
+  overtimeAmount: runtime.Decimal | null
+  leaveAmount: runtime.Decimal | null
+  createdAt: Date | null
 }
 
 export type PayrollLineItemCountAggregateOutputType = {
   id: number
+  organizationId: number
   payrollRunId: number
   employeeId: number
   grossAmount: number
-  deductions: number
+  deductionAmount: number
   netAmount: number
-  breakdown: number
+  regularAmount: number
+  overtimeAmount: number
+  leaveAmount: number
+  inputSnapshot: number
+  calculationBreakdown: number
+  createdAt: number
   _all: number
 }
 
 
 export type PayrollLineItemAvgAggregateInputType = {
   grossAmount?: true
-  deductions?: true
+  deductionAmount?: true
   netAmount?: true
+  regularAmount?: true
+  overtimeAmount?: true
+  leaveAmount?: true
 }
 
 export type PayrollLineItemSumAggregateInputType = {
   grossAmount?: true
-  deductions?: true
+  deductionAmount?: true
   netAmount?: true
+  regularAmount?: true
+  overtimeAmount?: true
+  leaveAmount?: true
 }
 
 export type PayrollLineItemMinAggregateInputType = {
   id?: true
+  organizationId?: true
   payrollRunId?: true
   employeeId?: true
   grossAmount?: true
-  deductions?: true
+  deductionAmount?: true
   netAmount?: true
+  regularAmount?: true
+  overtimeAmount?: true
+  leaveAmount?: true
+  createdAt?: true
 }
 
 export type PayrollLineItemMaxAggregateInputType = {
   id?: true
+  organizationId?: true
   payrollRunId?: true
   employeeId?: true
   grossAmount?: true
-  deductions?: true
+  deductionAmount?: true
   netAmount?: true
+  regularAmount?: true
+  overtimeAmount?: true
+  leaveAmount?: true
+  createdAt?: true
 }
 
 export type PayrollLineItemCountAggregateInputType = {
   id?: true
+  organizationId?: true
   payrollRunId?: true
   employeeId?: true
   grossAmount?: true
-  deductions?: true
+  deductionAmount?: true
   netAmount?: true
-  breakdown?: true
+  regularAmount?: true
+  overtimeAmount?: true
+  leaveAmount?: true
+  inputSnapshot?: true
+  calculationBreakdown?: true
+  createdAt?: true
   _all?: true
 }
 
@@ -197,12 +241,18 @@ export type PayrollLineItemGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type PayrollLineItemGroupByOutputType = {
   id: string
+  organizationId: string
   payrollRunId: string
   employeeId: string
   grossAmount: runtime.Decimal
-  deductions: runtime.Decimal
+  deductionAmount: runtime.Decimal
   netAmount: runtime.Decimal
-  breakdown: runtime.JsonValue
+  regularAmount: runtime.Decimal
+  overtimeAmount: runtime.Decimal
+  leaveAmount: runtime.Decimal
+  inputSnapshot: runtime.JsonValue
+  calculationBreakdown: runtime.JsonValue
+  createdAt: Date
   _count: PayrollLineItemCountAggregateOutputType | null
   _avg: PayrollLineItemAvgAggregateOutputType | null
   _sum: PayrollLineItemSumAggregateOutputType | null
@@ -230,26 +280,44 @@ export type PayrollLineItemWhereInput = {
   OR?: Prisma.PayrollLineItemWhereInput[]
   NOT?: Prisma.PayrollLineItemWhereInput | Prisma.PayrollLineItemWhereInput[]
   id?: Prisma.UuidFilter<"PayrollLineItem"> | string
+  organizationId?: Prisma.UuidFilter<"PayrollLineItem"> | string
   payrollRunId?: Prisma.UuidFilter<"PayrollLineItem"> | string
   employeeId?: Prisma.UuidFilter<"PayrollLineItem"> | string
   grossAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonFilter<"PayrollLineItem">
+  regularAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonFilter<"PayrollLineItem">
+  calculationBreakdown?: Prisma.JsonFilter<"PayrollLineItem">
+  createdAt?: Prisma.DateTimeFilter<"PayrollLineItem"> | Date | string
+  organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   payrollRun?: Prisma.XOR<Prisma.PayrollRunScalarRelationFilter, Prisma.PayrollRunWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
+  components?: Prisma.PayrollLineItemComponentListRelationFilter
+  payslip?: Prisma.XOR<Prisma.PayslipNullableScalarRelationFilter, Prisma.PayslipWhereInput> | null
 }
 
 export type PayrollLineItemOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   payrollRunId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   grossAmount?: Prisma.SortOrder
-  deductions?: Prisma.SortOrder
+  deductionAmount?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
-  breakdown?: Prisma.SortOrder
+  regularAmount?: Prisma.SortOrder
+  overtimeAmount?: Prisma.SortOrder
+  leaveAmount?: Prisma.SortOrder
+  inputSnapshot?: Prisma.SortOrder
+  calculationBreakdown?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  organization?: Prisma.OrganizationOrderByWithRelationInput
   payrollRun?: Prisma.PayrollRunOrderByWithRelationInput
   employee?: Prisma.EmployeeOrderByWithRelationInput
+  components?: Prisma.PayrollLineItemComponentOrderByRelationAggregateInput
+  payslip?: Prisma.PayslipOrderByWithRelationInput
 }
 
 export type PayrollLineItemWhereUniqueInput = Prisma.AtLeast<{
@@ -258,24 +326,39 @@ export type PayrollLineItemWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PayrollLineItemWhereInput | Prisma.PayrollLineItemWhereInput[]
   OR?: Prisma.PayrollLineItemWhereInput[]
   NOT?: Prisma.PayrollLineItemWhereInput | Prisma.PayrollLineItemWhereInput[]
+  organizationId?: Prisma.UuidFilter<"PayrollLineItem"> | string
   payrollRunId?: Prisma.UuidFilter<"PayrollLineItem"> | string
   employeeId?: Prisma.UuidFilter<"PayrollLineItem"> | string
   grossAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonFilter<"PayrollLineItem">
+  regularAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonFilter<"PayrollLineItem">
+  calculationBreakdown?: Prisma.JsonFilter<"PayrollLineItem">
+  createdAt?: Prisma.DateTimeFilter<"PayrollLineItem"> | Date | string
+  organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   payrollRun?: Prisma.XOR<Prisma.PayrollRunScalarRelationFilter, Prisma.PayrollRunWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
+  components?: Prisma.PayrollLineItemComponentListRelationFilter
+  payslip?: Prisma.XOR<Prisma.PayslipNullableScalarRelationFilter, Prisma.PayslipWhereInput> | null
 }, "id" | "payrollRunId_employeeId">
 
 export type PayrollLineItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   payrollRunId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   grossAmount?: Prisma.SortOrder
-  deductions?: Prisma.SortOrder
+  deductionAmount?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
-  breakdown?: Prisma.SortOrder
+  regularAmount?: Prisma.SortOrder
+  overtimeAmount?: Prisma.SortOrder
+  leaveAmount?: Prisma.SortOrder
+  inputSnapshot?: Prisma.SortOrder
+  calculationBreakdown?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   _count?: Prisma.PayrollLineItemCountOrderByAggregateInput
   _avg?: Prisma.PayrollLineItemAvgOrderByAggregateInput
   _max?: Prisma.PayrollLineItemMaxOrderByAggregateInput
@@ -288,80 +371,135 @@ export type PayrollLineItemScalarWhereWithAggregatesInput = {
   OR?: Prisma.PayrollLineItemScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PayrollLineItemScalarWhereWithAggregatesInput | Prisma.PayrollLineItemScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"PayrollLineItem"> | string
+  organizationId?: Prisma.UuidWithAggregatesFilter<"PayrollLineItem"> | string
   payrollRunId?: Prisma.UuidWithAggregatesFilter<"PayrollLineItem"> | string
   employeeId?: Prisma.UuidWithAggregatesFilter<"PayrollLineItem"> | string
   grossAmount?: Prisma.DecimalWithAggregatesFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalWithAggregatesFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalWithAggregatesFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalWithAggregatesFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonWithAggregatesFilter<"PayrollLineItem">
+  regularAmount?: Prisma.DecimalWithAggregatesFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalWithAggregatesFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalWithAggregatesFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonWithAggregatesFilter<"PayrollLineItem">
+  calculationBreakdown?: Prisma.JsonWithAggregatesFilter<"PayrollLineItem">
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"PayrollLineItem"> | Date | string
 }
 
 export type PayrollLineItemCreateInput = {
   id?: string
   grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  payrollRun: Prisma.PayrollRunCreateNestedOneWithoutLinesInput
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollLineItemsInput
+  payrollRun: Prisma.PayrollRunCreateNestedOneWithoutLineItemsInput
   employee: Prisma.EmployeeCreateNestedOneWithoutPayrollLinesInput
+  components?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipCreateNestedOneWithoutPayrollLineItemInput
 }
 
 export type PayrollLineItemUncheckedCreateInput = {
   id?: string
+  organizationId: string
   payrollRunId: string
   employeeId: string
   grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutPayrollLineItemInput
 }
 
 export type PayrollLineItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  payrollRun?: Prisma.PayrollRunUpdateOneRequiredWithoutLinesNestedInput
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollLineItemsNestedInput
+  payrollRun?: Prisma.PayrollRunUpdateOneRequiredWithoutLineItemsNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayrollLinesNestedInput
+  components?: Prisma.PayrollLineItemComponentUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUpdateOneWithoutPayrollLineItemNestedInput
 }
 
 export type PayrollLineItemUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUncheckedUpdateOneWithoutPayrollLineItemNestedInput
 }
 
 export type PayrollLineItemCreateManyInput = {
   id?: string
+  organizationId: string
   payrollRunId: string
   employeeId: string
   grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
 }
 
 export type PayrollLineItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PayrollLineItemUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PayrollLineItemListRelationFilter = {
@@ -381,84 +519,69 @@ export type PayrollLineItemPayrollRunIdEmployeeIdCompoundUniqueInput = {
 
 export type PayrollLineItemCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   payrollRunId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   grossAmount?: Prisma.SortOrder
-  deductions?: Prisma.SortOrder
+  deductionAmount?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
-  breakdown?: Prisma.SortOrder
+  regularAmount?: Prisma.SortOrder
+  overtimeAmount?: Prisma.SortOrder
+  leaveAmount?: Prisma.SortOrder
+  inputSnapshot?: Prisma.SortOrder
+  calculationBreakdown?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type PayrollLineItemAvgOrderByAggregateInput = {
   grossAmount?: Prisma.SortOrder
-  deductions?: Prisma.SortOrder
+  deductionAmount?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
+  regularAmount?: Prisma.SortOrder
+  overtimeAmount?: Prisma.SortOrder
+  leaveAmount?: Prisma.SortOrder
 }
 
 export type PayrollLineItemMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   payrollRunId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   grossAmount?: Prisma.SortOrder
-  deductions?: Prisma.SortOrder
+  deductionAmount?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
+  regularAmount?: Prisma.SortOrder
+  overtimeAmount?: Prisma.SortOrder
+  leaveAmount?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type PayrollLineItemMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   payrollRunId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   grossAmount?: Prisma.SortOrder
-  deductions?: Prisma.SortOrder
+  deductionAmount?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
+  regularAmount?: Prisma.SortOrder
+  overtimeAmount?: Prisma.SortOrder
+  leaveAmount?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type PayrollLineItemSumOrderByAggregateInput = {
   grossAmount?: Prisma.SortOrder
-  deductions?: Prisma.SortOrder
+  deductionAmount?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
+  regularAmount?: Prisma.SortOrder
+  overtimeAmount?: Prisma.SortOrder
+  leaveAmount?: Prisma.SortOrder
 }
 
-export type PayrollLineItemCreateNestedManyWithoutEmployeeInput = {
-  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
-  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
-  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
-  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-}
-
-export type PayrollLineItemUncheckedCreateNestedManyWithoutEmployeeInput = {
-  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
-  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
-  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
-  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-}
-
-export type PayrollLineItemUpdateManyWithoutEmployeeNestedInput = {
-  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
-  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
-  upsert?: Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput[]
-  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
-  set?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  disconnect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  delete?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  update?: Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput[]
-  updateMany?: Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput | Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput[]
-  deleteMany?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
-}
-
-export type PayrollLineItemUncheckedUpdateManyWithoutEmployeeNestedInput = {
-  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
-  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
-  upsert?: Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput[]
-  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
-  set?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  disconnect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  delete?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
-  update?: Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput[]
-  updateMany?: Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput | Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput[]
-  deleteMany?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
+export type PayrollLineItemScalarRelationFilter = {
+  is?: Prisma.PayrollLineItemWhereInput
+  isNot?: Prisma.PayrollLineItemWhereInput
 }
 
 export type PayrollLineItemCreateNestedManyWithoutPayrollRunInput = {
@@ -503,79 +626,150 @@ export type PayrollLineItemUncheckedUpdateManyWithoutPayrollRunNestedInput = {
   deleteMany?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
 }
 
-export type PayrollLineItemCreateWithoutEmployeeInput = {
-  id?: string
-  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
-  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  payrollRun: Prisma.PayrollRunCreateNestedOneWithoutLinesInput
+export type PayrollLineItemCreateNestedOneWithoutComponentsInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutComponentsInput, Prisma.PayrollLineItemUncheckedCreateWithoutComponentsInput>
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutComponentsInput
+  connect?: Prisma.PayrollLineItemWhereUniqueInput
 }
 
-export type PayrollLineItemUncheckedCreateWithoutEmployeeInput = {
-  id?: string
-  payrollRunId: string
-  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
-  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+export type PayrollLineItemUpdateOneRequiredWithoutComponentsNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutComponentsInput, Prisma.PayrollLineItemUncheckedCreateWithoutComponentsInput>
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutComponentsInput
+  upsert?: Prisma.PayrollLineItemUpsertWithoutComponentsInput
+  connect?: Prisma.PayrollLineItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PayrollLineItemUpdateToOneWithWhereWithoutComponentsInput, Prisma.PayrollLineItemUpdateWithoutComponentsInput>, Prisma.PayrollLineItemUncheckedUpdateWithoutComponentsInput>
 }
 
-export type PayrollLineItemCreateOrConnectWithoutEmployeeInput = {
-  where: Prisma.PayrollLineItemWhereUniqueInput
-  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput>
+export type PayrollLineItemCreateNestedOneWithoutPayslipInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutPayslipInput, Prisma.PayrollLineItemUncheckedCreateWithoutPayslipInput>
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutPayslipInput
+  connect?: Prisma.PayrollLineItemWhereUniqueInput
 }
 
-export type PayrollLineItemCreateManyEmployeeInputEnvelope = {
-  data: Prisma.PayrollLineItemCreateManyEmployeeInput | Prisma.PayrollLineItemCreateManyEmployeeInput[]
-  skipDuplicates?: boolean
+export type PayrollLineItemUpdateOneRequiredWithoutPayslipNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutPayslipInput, Prisma.PayrollLineItemUncheckedCreateWithoutPayslipInput>
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutPayslipInput
+  upsert?: Prisma.PayrollLineItemUpsertWithoutPayslipInput
+  connect?: Prisma.PayrollLineItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PayrollLineItemUpdateToOneWithWhereWithoutPayslipInput, Prisma.PayrollLineItemUpdateWithoutPayslipInput>, Prisma.PayrollLineItemUncheckedUpdateWithoutPayslipInput>
 }
 
-export type PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput = {
-  where: Prisma.PayrollLineItemWhereUniqueInput
-  update: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedUpdateWithoutEmployeeInput>
-  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput>
+export type PayrollLineItemCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput> | Prisma.PayrollLineItemCreateWithoutOrganizationInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput | Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyOrganizationInputEnvelope
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
 }
 
-export type PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput = {
-  where: Prisma.PayrollLineItemWhereUniqueInput
-  data: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedUpdateWithoutEmployeeInput>
+export type PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput> | Prisma.PayrollLineItemCreateWithoutOrganizationInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput | Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyOrganizationInputEnvelope
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
 }
 
-export type PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput = {
-  where: Prisma.PayrollLineItemScalarWhereInput
-  data: Prisma.XOR<Prisma.PayrollLineItemUpdateManyMutationInput, Prisma.PayrollLineItemUncheckedUpdateManyWithoutEmployeeInput>
+export type PayrollLineItemUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput> | Prisma.PayrollLineItemCreateWithoutOrganizationInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput | Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyOrganizationInputEnvelope
+  set?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  disconnect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  delete?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  update?: Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.PayrollLineItemUpdateManyWithWhereWithoutOrganizationInput | Prisma.PayrollLineItemUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
 }
 
-export type PayrollLineItemScalarWhereInput = {
-  AND?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
-  OR?: Prisma.PayrollLineItemScalarWhereInput[]
-  NOT?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
-  id?: Prisma.UuidFilter<"PayrollLineItem"> | string
-  payrollRunId?: Prisma.UuidFilter<"PayrollLineItem"> | string
-  employeeId?: Prisma.UuidFilter<"PayrollLineItem"> | string
-  grossAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  netAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonFilter<"PayrollLineItem">
+export type PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput> | Prisma.PayrollLineItemCreateWithoutOrganizationInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput | Prisma.PayrollLineItemCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyOrganizationInputEnvelope
+  set?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  disconnect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  delete?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  update?: Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.PayrollLineItemUpdateManyWithWhereWithoutOrganizationInput | Prisma.PayrollLineItemUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
+}
+
+export type PayrollLineItemCreateNestedManyWithoutEmployeeInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+}
+
+export type PayrollLineItemUncheckedCreateNestedManyWithoutEmployeeInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+}
+
+export type PayrollLineItemUpdateManyWithoutEmployeeNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
+  upsert?: Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
+  set?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  disconnect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  delete?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  update?: Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput[]
+  updateMany?: Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput | Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput[]
+  deleteMany?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
+}
+
+export type PayrollLineItemUncheckedUpdateManyWithoutEmployeeNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput> | Prisma.PayrollLineItemCreateWithoutEmployeeInput[] | Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput[]
+  connectOrCreate?: Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput | Prisma.PayrollLineItemCreateOrConnectWithoutEmployeeInput[]
+  upsert?: Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput[]
+  createMany?: Prisma.PayrollLineItemCreateManyEmployeeInputEnvelope
+  set?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  disconnect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  delete?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  connect?: Prisma.PayrollLineItemWhereUniqueInput | Prisma.PayrollLineItemWhereUniqueInput[]
+  update?: Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput | Prisma.PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput[]
+  updateMany?: Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput | Prisma.PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput[]
+  deleteMany?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
 }
 
 export type PayrollLineItemCreateWithoutPayrollRunInput = {
   id?: string
   grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollLineItemsInput
   employee: Prisma.EmployeeCreateNestedOneWithoutPayrollLinesInput
+  components?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipCreateNestedOneWithoutPayrollLineItemInput
 }
 
 export type PayrollLineItemUncheckedCreateWithoutPayrollRunInput = {
   id?: string
+  organizationId: string
   employeeId: string
   grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutPayrollLineItemInput
 }
 
 export type PayrollLineItemCreateOrConnectWithoutPayrollRunInput = {
@@ -604,136 +798,628 @@ export type PayrollLineItemUpdateManyWithWhereWithoutPayrollRunInput = {
   data: Prisma.XOR<Prisma.PayrollLineItemUpdateManyMutationInput, Prisma.PayrollLineItemUncheckedUpdateManyWithoutPayrollRunInput>
 }
 
-export type PayrollLineItemCreateManyEmployeeInput = {
+export type PayrollLineItemScalarWhereInput = {
+  AND?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
+  OR?: Prisma.PayrollLineItemScalarWhereInput[]
+  NOT?: Prisma.PayrollLineItemScalarWhereInput | Prisma.PayrollLineItemScalarWhereInput[]
+  id?: Prisma.UuidFilter<"PayrollLineItem"> | string
+  organizationId?: Prisma.UuidFilter<"PayrollLineItem"> | string
+  payrollRunId?: Prisma.UuidFilter<"PayrollLineItem"> | string
+  employeeId?: Prisma.UuidFilter<"PayrollLineItem"> | string
+  grossAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFilter<"PayrollLineItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonFilter<"PayrollLineItem">
+  calculationBreakdown?: Prisma.JsonFilter<"PayrollLineItem">
+  createdAt?: Prisma.DateTimeFilter<"PayrollLineItem"> | Date | string
+}
+
+export type PayrollLineItemCreateWithoutComponentsInput = {
+  id?: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollLineItemsInput
+  payrollRun: Prisma.PayrollRunCreateNestedOneWithoutLineItemsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutPayrollLinesInput
+  payslip?: Prisma.PayslipCreateNestedOneWithoutPayrollLineItemInput
+}
+
+export type PayrollLineItemUncheckedCreateWithoutComponentsInput = {
+  id?: string
+  organizationId: string
+  payrollRunId: string
+  employeeId: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutPayrollLineItemInput
+}
+
+export type PayrollLineItemCreateOrConnectWithoutComponentsInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutComponentsInput, Prisma.PayrollLineItemUncheckedCreateWithoutComponentsInput>
+}
+
+export type PayrollLineItemUpsertWithoutComponentsInput = {
+  update: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutComponentsInput, Prisma.PayrollLineItemUncheckedUpdateWithoutComponentsInput>
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutComponentsInput, Prisma.PayrollLineItemUncheckedCreateWithoutComponentsInput>
+  where?: Prisma.PayrollLineItemWhereInput
+}
+
+export type PayrollLineItemUpdateToOneWithWhereWithoutComponentsInput = {
+  where?: Prisma.PayrollLineItemWhereInput
+  data: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutComponentsInput, Prisma.PayrollLineItemUncheckedUpdateWithoutComponentsInput>
+}
+
+export type PayrollLineItemUpdateWithoutComponentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollLineItemsNestedInput
+  payrollRun?: Prisma.PayrollRunUpdateOneRequiredWithoutLineItemsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayrollLinesNestedInput
+  payslip?: Prisma.PayslipUpdateOneWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemUncheckedUpdateWithoutComponentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payslip?: Prisma.PayslipUncheckedUpdateOneWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemCreateWithoutPayslipInput = {
+  id?: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollLineItemsInput
+  payrollRun: Prisma.PayrollRunCreateNestedOneWithoutLineItemsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutPayrollLinesInput
+  components?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutPayrollLineItemInput
+}
+
+export type PayrollLineItemUncheckedCreateWithoutPayslipInput = {
+  id?: string
+  organizationId: string
+  payrollRunId: string
+  employeeId: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutPayrollLineItemInput
+}
+
+export type PayrollLineItemCreateOrConnectWithoutPayslipInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutPayslipInput, Prisma.PayrollLineItemUncheckedCreateWithoutPayslipInput>
+}
+
+export type PayrollLineItemUpsertWithoutPayslipInput = {
+  update: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutPayslipInput, Prisma.PayrollLineItemUncheckedUpdateWithoutPayslipInput>
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutPayslipInput, Prisma.PayrollLineItemUncheckedCreateWithoutPayslipInput>
+  where?: Prisma.PayrollLineItemWhereInput
+}
+
+export type PayrollLineItemUpdateToOneWithWhereWithoutPayslipInput = {
+  where?: Prisma.PayrollLineItemWhereInput
+  data: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutPayslipInput, Prisma.PayrollLineItemUncheckedUpdateWithoutPayslipInput>
+}
+
+export type PayrollLineItemUpdateWithoutPayslipInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollLineItemsNestedInput
+  payrollRun?: Prisma.PayrollRunUpdateOneRequiredWithoutLineItemsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayrollLinesNestedInput
+  components?: Prisma.PayrollLineItemComponentUpdateManyWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemUncheckedUpdateWithoutPayslipInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemCreateWithoutOrganizationInput = {
+  id?: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  payrollRun: Prisma.PayrollRunCreateNestedOneWithoutLineItemsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutPayrollLinesInput
+  components?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipCreateNestedOneWithoutPayrollLineItemInput
+}
+
+export type PayrollLineItemUncheckedCreateWithoutOrganizationInput = {
   id?: string
   payrollRunId: string
+  employeeId: string
   grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutPayrollLineItemInput
 }
 
-export type PayrollLineItemUpdateWithoutEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  payrollRun?: Prisma.PayrollRunUpdateOneRequiredWithoutLinesNestedInput
+export type PayrollLineItemCreateOrConnectWithoutOrganizationInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput>
 }
 
-export type PayrollLineItemUncheckedUpdateWithoutEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
-  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+export type PayrollLineItemCreateManyOrganizationInputEnvelope = {
+  data: Prisma.PayrollLineItemCreateManyOrganizationInput | Prisma.PayrollLineItemCreateManyOrganizationInput[]
+  skipDuplicates?: boolean
 }
 
-export type PayrollLineItemUncheckedUpdateManyWithoutEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
-  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+export type PayrollLineItemUpsertWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedUpdateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedCreateWithoutOrganizationInput>
+}
+
+export type PayrollLineItemUpdateWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutOrganizationInput, Prisma.PayrollLineItemUncheckedUpdateWithoutOrganizationInput>
+}
+
+export type PayrollLineItemUpdateManyWithWhereWithoutOrganizationInput = {
+  where: Prisma.PayrollLineItemScalarWhereInput
+  data: Prisma.XOR<Prisma.PayrollLineItemUpdateManyMutationInput, Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationInput>
+}
+
+export type PayrollLineItemCreateWithoutEmployeeInput = {
+  id?: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollLineItemsInput
+  payrollRun: Prisma.PayrollRunCreateNestedOneWithoutLineItemsInput
+  components?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipCreateNestedOneWithoutPayrollLineItemInput
+}
+
+export type PayrollLineItemUncheckedCreateWithoutEmployeeInput = {
+  id?: string
+  organizationId: string
+  payrollRunId: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutPayrollLineItemInput
+  payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutPayrollLineItemInput
+}
+
+export type PayrollLineItemCreateOrConnectWithoutEmployeeInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput>
+}
+
+export type PayrollLineItemCreateManyEmployeeInputEnvelope = {
+  data: Prisma.PayrollLineItemCreateManyEmployeeInput | Prisma.PayrollLineItemCreateManyEmployeeInput[]
+  skipDuplicates?: boolean
+}
+
+export type PayrollLineItemUpsertWithWhereUniqueWithoutEmployeeInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedUpdateWithoutEmployeeInput>
+  create: Prisma.XOR<Prisma.PayrollLineItemCreateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedCreateWithoutEmployeeInput>
+}
+
+export type PayrollLineItemUpdateWithWhereUniqueWithoutEmployeeInput = {
+  where: Prisma.PayrollLineItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.PayrollLineItemUpdateWithoutEmployeeInput, Prisma.PayrollLineItemUncheckedUpdateWithoutEmployeeInput>
+}
+
+export type PayrollLineItemUpdateManyWithWhereWithoutEmployeeInput = {
+  where: Prisma.PayrollLineItemScalarWhereInput
+  data: Prisma.XOR<Prisma.PayrollLineItemUpdateManyMutationInput, Prisma.PayrollLineItemUncheckedUpdateManyWithoutEmployeeInput>
 }
 
 export type PayrollLineItemCreateManyPayrollRunInput = {
   id?: string
+  organizationId: string
   employeeId: string
   grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
 }
 
 export type PayrollLineItemUpdateWithoutPayrollRunInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollLineItemsNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayrollLinesNestedInput
+  components?: Prisma.PayrollLineItemComponentUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUpdateOneWithoutPayrollLineItemNestedInput
 }
 
 export type PayrollLineItemUncheckedUpdateWithoutPayrollRunInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUncheckedUpdateOneWithoutPayrollLineItemNestedInput
 }
 
 export type PayrollLineItemUncheckedUpdateManyWithoutPayrollRunInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  deductions?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  breakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type PayrollLineItemCreateManyOrganizationInput = {
+  id?: string
+  payrollRunId: string
+  employeeId: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+}
+
+export type PayrollLineItemUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payrollRun?: Prisma.PayrollRunUpdateOneRequiredWithoutLineItemsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayrollLinesNestedInput
+  components?: Prisma.PayrollLineItemComponentUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUpdateOneWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemUncheckedUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUncheckedUpdateOneWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemUncheckedUpdateManyWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PayrollLineItemCreateManyEmployeeInput = {
+  id?: string
+  organizationId: string
+  payrollRunId: string
+  grossAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+}
+
+export type PayrollLineItemUpdateWithoutEmployeeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollLineItemsNestedInput
+  payrollRun?: Prisma.PayrollRunUpdateOneRequiredWithoutLineItemsNestedInput
+  components?: Prisma.PayrollLineItemComponentUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUpdateOneWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemUncheckedUpdateWithoutEmployeeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutPayrollLineItemNestedInput
+  payslip?: Prisma.PayslipUncheckedUpdateOneWithoutPayrollLineItemNestedInput
+}
+
+export type PayrollLineItemUncheckedUpdateManyWithoutEmployeeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  payrollRunId?: Prisma.StringFieldUpdateOperationsInput | string
+  grossAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deductionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  netAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  regularAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  overtimeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  leaveAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  inputSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  calculationBreakdown?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type PayrollLineItemCountOutputType
+ */
+
+export type PayrollLineItemCountOutputType = {
+  components: number
+}
+
+export type PayrollLineItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  components?: boolean | PayrollLineItemCountOutputTypeCountComponentsArgs
+}
+
+/**
+ * PayrollLineItemCountOutputType without action
+ */
+export type PayrollLineItemCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayrollLineItemCountOutputType
+   */
+  select?: Prisma.PayrollLineItemCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PayrollLineItemCountOutputType without action
+ */
+export type PayrollLineItemCountOutputTypeCountComponentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayrollLineItemComponentWhereInput
+}
 
 
 export type PayrollLineItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  organizationId?: boolean
   payrollRunId?: boolean
   employeeId?: boolean
   grossAmount?: boolean
-  deductions?: boolean
+  deductionAmount?: boolean
   netAmount?: boolean
-  breakdown?: boolean
+  regularAmount?: boolean
+  overtimeAmount?: boolean
+  leaveAmount?: boolean
+  inputSnapshot?: boolean
+  calculationBreakdown?: boolean
+  createdAt?: boolean
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   payrollRun?: boolean | Prisma.PayrollRunDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  components?: boolean | Prisma.PayrollLineItem$componentsArgs<ExtArgs>
+  payslip?: boolean | Prisma.PayrollLineItem$payslipArgs<ExtArgs>
+  _count?: boolean | Prisma.PayrollLineItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payrollLineItem"]>
 
 export type PayrollLineItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  organizationId?: boolean
   payrollRunId?: boolean
   employeeId?: boolean
   grossAmount?: boolean
-  deductions?: boolean
+  deductionAmount?: boolean
   netAmount?: boolean
-  breakdown?: boolean
+  regularAmount?: boolean
+  overtimeAmount?: boolean
+  leaveAmount?: boolean
+  inputSnapshot?: boolean
+  calculationBreakdown?: boolean
+  createdAt?: boolean
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   payrollRun?: boolean | Prisma.PayrollRunDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payrollLineItem"]>
 
 export type PayrollLineItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  organizationId?: boolean
   payrollRunId?: boolean
   employeeId?: boolean
   grossAmount?: boolean
-  deductions?: boolean
+  deductionAmount?: boolean
   netAmount?: boolean
-  breakdown?: boolean
+  regularAmount?: boolean
+  overtimeAmount?: boolean
+  leaveAmount?: boolean
+  inputSnapshot?: boolean
+  calculationBreakdown?: boolean
+  createdAt?: boolean
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   payrollRun?: boolean | Prisma.PayrollRunDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payrollLineItem"]>
 
 export type PayrollLineItemSelectScalar = {
   id?: boolean
+  organizationId?: boolean
   payrollRunId?: boolean
   employeeId?: boolean
   grossAmount?: boolean
-  deductions?: boolean
+  deductionAmount?: boolean
   netAmount?: boolean
-  breakdown?: boolean
+  regularAmount?: boolean
+  overtimeAmount?: boolean
+  leaveAmount?: boolean
+  inputSnapshot?: boolean
+  calculationBreakdown?: boolean
+  createdAt?: boolean
 }
 
-export type PayrollLineItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "payrollRunId" | "employeeId" | "grossAmount" | "deductions" | "netAmount" | "breakdown", ExtArgs["result"]["payrollLineItem"]>
+export type PayrollLineItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "payrollRunId" | "employeeId" | "grossAmount" | "deductionAmount" | "netAmount" | "regularAmount" | "overtimeAmount" | "leaveAmount" | "inputSnapshot" | "calculationBreakdown" | "createdAt", ExtArgs["result"]["payrollLineItem"]>
 export type PayrollLineItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   payrollRun?: boolean | Prisma.PayrollRunDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  components?: boolean | Prisma.PayrollLineItem$componentsArgs<ExtArgs>
+  payslip?: boolean | Prisma.PayrollLineItem$payslipArgs<ExtArgs>
+  _count?: boolean | Prisma.PayrollLineItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PayrollLineItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   payrollRun?: boolean | Prisma.PayrollRunDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }
 export type PayrollLineItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   payrollRun?: boolean | Prisma.PayrollRunDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }
@@ -741,17 +1427,26 @@ export type PayrollLineItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Ty
 export type $PayrollLineItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PayrollLineItem"
   objects: {
+    organization: Prisma.$OrganizationPayload<ExtArgs>
     payrollRun: Prisma.$PayrollRunPayload<ExtArgs>
     employee: Prisma.$EmployeePayload<ExtArgs>
+    components: Prisma.$PayrollLineItemComponentPayload<ExtArgs>[]
+    payslip: Prisma.$PayslipPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    organizationId: string
     payrollRunId: string
     employeeId: string
     grossAmount: runtime.Decimal
-    deductions: runtime.Decimal
+    deductionAmount: runtime.Decimal
     netAmount: runtime.Decimal
-    breakdown: runtime.JsonValue
+    regularAmount: runtime.Decimal
+    overtimeAmount: runtime.Decimal
+    leaveAmount: runtime.Decimal
+    inputSnapshot: runtime.JsonValue
+    calculationBreakdown: runtime.JsonValue
+    createdAt: Date
   }, ExtArgs["result"]["payrollLineItem"]>
   composites: {}
 }
@@ -1146,8 +1841,11 @@ readonly fields: PayrollLineItemFieldRefs;
  */
 export interface Prisma__PayrollLineItemClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   payrollRun<T extends Prisma.PayrollRunDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollRunDefaultArgs<ExtArgs>>): Prisma.Prisma__PayrollRunClient<runtime.Types.Result.GetResult<Prisma.$PayrollRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   employee<T extends Prisma.EmployeeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmployeeDefaultArgs<ExtArgs>>): Prisma.Prisma__EmployeeClient<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  components<T extends Prisma.PayrollLineItem$componentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollLineItem$componentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollLineItemComponentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payslip<T extends Prisma.PayrollLineItem$payslipArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollLineItem$payslipArgs<ExtArgs>>): Prisma.Prisma__PayslipClient<runtime.Types.Result.GetResult<Prisma.$PayslipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1178,12 +1876,18 @@ export interface Prisma__PayrollLineItemClient<T, Null = never, ExtArgs extends 
  */
 export interface PayrollLineItemFieldRefs {
   readonly id: Prisma.FieldRef<"PayrollLineItem", 'String'>
+  readonly organizationId: Prisma.FieldRef<"PayrollLineItem", 'String'>
   readonly payrollRunId: Prisma.FieldRef<"PayrollLineItem", 'String'>
   readonly employeeId: Prisma.FieldRef<"PayrollLineItem", 'String'>
   readonly grossAmount: Prisma.FieldRef<"PayrollLineItem", 'Decimal'>
-  readonly deductions: Prisma.FieldRef<"PayrollLineItem", 'Decimal'>
+  readonly deductionAmount: Prisma.FieldRef<"PayrollLineItem", 'Decimal'>
   readonly netAmount: Prisma.FieldRef<"PayrollLineItem", 'Decimal'>
-  readonly breakdown: Prisma.FieldRef<"PayrollLineItem", 'Json'>
+  readonly regularAmount: Prisma.FieldRef<"PayrollLineItem", 'Decimal'>
+  readonly overtimeAmount: Prisma.FieldRef<"PayrollLineItem", 'Decimal'>
+  readonly leaveAmount: Prisma.FieldRef<"PayrollLineItem", 'Decimal'>
+  readonly inputSnapshot: Prisma.FieldRef<"PayrollLineItem", 'Json'>
+  readonly calculationBreakdown: Prisma.FieldRef<"PayrollLineItem", 'Json'>
+  readonly createdAt: Prisma.FieldRef<"PayrollLineItem", 'DateTime'>
 }
     
 
@@ -1582,6 +2286,49 @@ export type PayrollLineItemDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many PayrollLineItems to delete.
    */
   limit?: number
+}
+
+/**
+ * PayrollLineItem.components
+ */
+export type PayrollLineItem$componentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayrollLineItemComponent
+   */
+  select?: Prisma.PayrollLineItemComponentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PayrollLineItemComponent
+   */
+  omit?: Prisma.PayrollLineItemComponentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayrollLineItemComponentInclude<ExtArgs> | null
+  where?: Prisma.PayrollLineItemComponentWhereInput
+  orderBy?: Prisma.PayrollLineItemComponentOrderByWithRelationInput | Prisma.PayrollLineItemComponentOrderByWithRelationInput[]
+  cursor?: Prisma.PayrollLineItemComponentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayrollLineItemComponentScalarFieldEnum | Prisma.PayrollLineItemComponentScalarFieldEnum[]
+}
+
+/**
+ * PayrollLineItem.payslip
+ */
+export type PayrollLineItem$payslipArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payslip
+   */
+  select?: Prisma.PayslipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payslip
+   */
+  omit?: Prisma.PayslipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipInclude<ExtArgs> | null
+  where?: Prisma.PayslipWhereInput
 }
 
 /**

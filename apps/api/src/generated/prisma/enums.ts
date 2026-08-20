@@ -34,6 +34,15 @@ export const IdentityType = {
 export type IdentityType = (typeof IdentityType)[keyof typeof IdentityType]
 
 
+export const MembershipStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  REMOVED: 'REMOVED'
+} as const
+
+export type MembershipStatus = (typeof MembershipStatus)[keyof typeof MembershipStatus]
+
+
 export const EmployeeStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE',
@@ -41,6 +50,18 @@ export const EmployeeStatus = {
 } as const
 
 export type EmployeeStatus = (typeof EmployeeStatus)[keyof typeof EmployeeStatus]
+
+
+export const EmploymentType = {
+  FULL_TIME: 'FULL_TIME',
+  PART_TIME: 'PART_TIME',
+  CONTRACTOR: 'CONTRACTOR',
+  TEMPORARY: 'TEMPORARY',
+  INTERN: 'INTERN',
+  OTHER: 'OTHER'
+} as const
+
+export type EmploymentType = (typeof EmploymentType)[keyof typeof EmploymentType]
 
 
 export const AccessMode = {
@@ -52,29 +73,97 @@ export const AccessMode = {
 export type AccessMode = (typeof AccessMode)[keyof typeof AccessMode]
 
 
-export const PlatformRole = {
-  SUPER_ADMIN: 'SUPER_ADMIN',
-  SUPPORT: 'SUPPORT'
+export const OwnerSource = {
+  NATIVE: 'NATIVE',
+  BLIZBOOKS: 'BLIZBOOKS'
 } as const
 
-export type PlatformRole = (typeof PlatformRole)[keyof typeof PlatformRole]
+export type OwnerSource = (typeof OwnerSource)[keyof typeof OwnerSource]
 
 
-export const FederationClientStatus = {
+export const RoleScope = {
+  PLATFORM: 'PLATFORM',
+  ORGANIZATION: 'ORGANIZATION',
+  BRANCH: 'BRANCH'
+} as const
+
+export type RoleScope = (typeof RoleScope)[keyof typeof RoleScope]
+
+
+export const AuthSessionStatus = {
   ACTIVE: 'ACTIVE',
   REVOKED: 'REVOKED',
   EXPIRED: 'EXPIRED'
 } as const
 
-export type FederationClientStatus = (typeof FederationClientStatus)[keyof typeof FederationClientStatus]
+export type AuthSessionStatus = (typeof AuthSessionStatus)[keyof typeof AuthSessionStatus]
 
 
-export const GrantEffect = {
-  ALLOW: 'ALLOW',
-  DENY: 'DENY'
+export const ApprovalDomain = {
+  LEAVE: 'LEAVE',
+  ATTENDANCE_CORRECTION: 'ATTENDANCE_CORRECTION',
+  TIMESHEET: 'TIMESHEET',
+  PAYROLL: 'PAYROLL'
 } as const
 
-export type GrantEffect = (typeof GrantEffect)[keyof typeof GrantEffect]
+export type ApprovalDomain = (typeof ApprovalDomain)[keyof typeof ApprovalDomain]
+
+
+export const ApproverType = {
+  ROLE: 'ROLE',
+  USER: 'USER',
+  MANAGER: 'MANAGER'
+} as const
+
+export type ApproverType = (typeof ApproverType)[keyof typeof ApproverType]
+
+
+export const PayType = {
+  SALARY: 'SALARY',
+  HOURLY: 'HOURLY',
+  DAILY: 'DAILY',
+  PER_SHIFT: 'PER_SHIFT'
+} as const
+
+export type PayType = (typeof PayType)[keyof typeof PayType]
+
+
+export const PayFrequency = {
+  WEEKLY: 'WEEKLY',
+  BIWEEKLY: 'BIWEEKLY',
+  SEMIMONTHLY: 'SEMIMONTHLY',
+  MONTHLY: 'MONTHLY'
+} as const
+
+export type PayFrequency = (typeof PayFrequency)[keyof typeof PayFrequency]
+
+
+export const GeofenceMode = {
+  DISABLED: 'DISABLED',
+  FLAG_ONLY: 'FLAG_ONLY',
+  REQUIRED: 'REQUIRED'
+} as const
+
+export type GeofenceMode = (typeof GeofenceMode)[keyof typeof GeofenceMode]
+
+
+export const TeamStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type TeamStatus = (typeof TeamStatus)[keyof typeof TeamStatus]
+
+
+export const ProjectStatus = {
+  PLANNED: 'PLANNED',
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 
 
 export const AttendanceStatus = {
@@ -88,6 +177,45 @@ export const AttendanceStatus = {
 export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
 
 
+export const AttendancePunchType = {
+  IN: 'IN',
+  OUT: 'OUT'
+} as const
+
+export type AttendancePunchType = (typeof AttendancePunchType)[keyof typeof AttendancePunchType]
+
+
+export const AttendancePunchSource = {
+  NATIVE: 'NATIVE',
+  FEDERATION: 'FEDERATION',
+  ADMIN_CORRECTION: 'ADMIN_CORRECTION',
+  IMPORT: 'IMPORT'
+} as const
+
+export type AttendancePunchSource = (typeof AttendancePunchSource)[keyof typeof AttendancePunchSource]
+
+
+export const ApprovalStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
+
+
+export const LeaveAccrualType = {
+  NONE: 'NONE',
+  FIXED_ANNUAL: 'FIXED_ANNUAL',
+  MONTHLY: 'MONTHLY',
+  PER_PAY_PERIOD: 'PER_PAY_PERIOD',
+  MANUAL: 'MANUAL'
+} as const
+
+export type LeaveAccrualType = (typeof LeaveAccrualType)[keyof typeof LeaveAccrualType]
+
+
 export const LeaveRequestStatus = {
   DRAFT: 'DRAFT',
   PENDING: 'PENDING',
@@ -99,14 +227,49 @@ export const LeaveRequestStatus = {
 export type LeaveRequestStatus = (typeof LeaveRequestStatus)[keyof typeof LeaveRequestStatus]
 
 
+export const LeaveBalanceTransactionType = {
+  OPENING: 'OPENING',
+  ACCRUAL: 'ACCRUAL',
+  ADJUSTMENT: 'ADJUSTMENT',
+  RESERVATION: 'RESERVATION',
+  RELEASE: 'RELEASE',
+  USAGE: 'USAGE',
+  EXPIRY: 'EXPIRY',
+  REVERSAL: 'REVERSAL'
+} as const
+
+export type LeaveBalanceTransactionType = (typeof LeaveBalanceTransactionType)[keyof typeof LeaveBalanceTransactionType]
+
+
+export const TimesheetPeriodType = {
+  WEEKLY: 'WEEKLY',
+  BIWEEKLY: 'BIWEEKLY',
+  MONTHLY: 'MONTHLY',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type TimesheetPeriodType = (typeof TimesheetPeriodType)[keyof typeof TimesheetPeriodType]
+
+
 export const TimesheetStatus = {
   DRAFT: 'DRAFT',
   SUBMITTED: 'SUBMITTED',
   APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  LOCKED: 'LOCKED'
 } as const
 
 export type TimesheetStatus = (typeof TimesheetStatus)[keyof typeof TimesheetStatus]
+
+
+export const TimesheetEntrySource = {
+  ATTENDANCE: 'ATTENDANCE',
+  MANUAL: 'MANUAL',
+  FEDERATION: 'FEDERATION',
+  IMPORT: 'IMPORT'
+} as const
+
+export type TimesheetEntrySource = (typeof TimesheetEntrySource)[keyof typeof TimesheetEntrySource]
 
 
 export const PayrollRunStatus = {
@@ -115,17 +278,202 @@ export const PayrollRunStatus = {
   APPROVED: 'APPROVED',
   RELEASED: 'RELEASED',
   LOCKED: 'LOCKED',
-  CORRECTED: 'CORRECTED'
+  CORRECTED: 'CORRECTED',
+  VOIDED: 'VOIDED'
 } as const
 
 export type PayrollRunStatus = (typeof PayrollRunStatus)[keyof typeof PayrollRunStatus]
 
 
+export const PayrollAdjustmentType = {
+  BONUS: 'BONUS',
+  DEDUCTION: 'DEDUCTION',
+  REIMBURSEMENT: 'REIMBURSEMENT',
+  OVERTIME: 'OVERTIME',
+  TAX: 'TAX',
+  OTHER: 'OTHER'
+} as const
+
+export type PayrollAdjustmentType = (typeof PayrollAdjustmentType)[keyof typeof PayrollAdjustmentType]
+
+
+export const PayrollAdjustmentSource = {
+  NATIVE: 'NATIVE',
+  FEDERATION: 'FEDERATION',
+  IMPORT: 'IMPORT',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type PayrollAdjustmentSource = (typeof PayrollAdjustmentSource)[keyof typeof PayrollAdjustmentSource]
+
+
+export const PayComponentType = {
+  EARNING: 'EARNING',
+  DEDUCTION: 'DEDUCTION',
+  EMPLOYER_CONTRIBUTION: 'EMPLOYER_CONTRIBUTION'
+} as const
+
+export type PayComponentType = (typeof PayComponentType)[keyof typeof PayComponentType]
+
+
+export const PayComponentCalculationType = {
+  FIXED: 'FIXED',
+  PERCENTAGE_OF_BASE: 'PERCENTAGE_OF_BASE',
+  FORMULA: 'FORMULA'
+} as const
+
+export type PayComponentCalculationType = (typeof PayComponentCalculationType)[keyof typeof PayComponentCalculationType]
+
+
+export const FederationClientStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  REVOKED: 'REVOKED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type FederationClientStatus = (typeof FederationClientStatus)[keyof typeof FederationClientStatus]
+
+
+export const CredentialStatus = {
+  ACTIVE: 'ACTIVE',
+  REVOKED: 'REVOKED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type CredentialStatus = (typeof CredentialStatus)[keyof typeof CredentialStatus]
+
+
+export const GrantEffect = {
+  ALLOW: 'ALLOW',
+  DENY: 'DENY'
+} as const
+
+export type GrantEffect = (typeof GrantEffect)[keyof typeof GrantEffect]
+
+
+export const GrantStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  REVOKED: 'REVOKED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type GrantStatus = (typeof GrantStatus)[keyof typeof GrantStatus]
+
+
+export const CapabilityStatus = {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED'
+} as const
+
+export type CapabilityStatus = (typeof CapabilityStatus)[keyof typeof CapabilityStatus]
+
+
+export const FederationRequestResult = {
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  REPLAYED: 'REPLAYED',
+  DUPLICATE: 'DUPLICATE',
+  INVALID_SIGNATURE: 'INVALID_SIGNATURE',
+  INVALID_SCOPE: 'INVALID_SCOPE',
+  INVALID_TENANT: 'INVALID_TENANT',
+  RATE_LIMITED: 'RATE_LIMITED',
+  ERROR: 'ERROR'
+} as const
+
+export type FederationRequestResult = (typeof FederationRequestResult)[keyof typeof FederationRequestResult]
+
+
+export const IdempotencyStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type IdempotencyStatus = (typeof IdempotencyStatus)[keyof typeof IdempotencyStatus]
+
+
 export const OutboxStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING',
-  DELIVERED: 'DELIVERED',
-  FAILED: 'FAILED'
+  READY: 'READY',
+  FAILED: 'FAILED',
+  COMPLETED: 'COMPLETED',
+  DEAD_LETTERED: 'DEAD_LETTERED'
 } as const
 
 export type OutboxStatus = (typeof OutboxStatus)[keyof typeof OutboxStatus]
+
+
+export const WebhookSubscriptionStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  REVOKED: 'REVOKED'
+} as const
+
+export type WebhookSubscriptionStatus = (typeof WebhookSubscriptionStatus)[keyof typeof WebhookSubscriptionStatus]
+
+
+export const WebhookDeliveryStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
+  REPLAY_REQUESTED: 'REPLAY_REQUESTED',
+  DEAD_LETTERED: 'DEAD_LETTERED'
+} as const
+
+export type WebhookDeliveryStatus = (typeof WebhookDeliveryStatus)[keyof typeof WebhookDeliveryStatus]
+
+
+export const FilePurpose = {
+  PROFILE_IMAGE: 'PROFILE_IMAGE',
+  RESUME: 'RESUME',
+  EMPLOYEE_DOCUMENT: 'EMPLOYEE_DOCUMENT',
+  LEAVE_ATTACHMENT: 'LEAVE_ATTACHMENT',
+  PAYSLIP: 'PAYSLIP',
+  PAYROLL_EXPORT: 'PAYROLL_EXPORT',
+  IMPORT: 'IMPORT',
+  OTHER: 'OTHER'
+} as const
+
+export type FilePurpose = (typeof FilePurpose)[keyof typeof FilePurpose]
+
+
+export const FileStatus = {
+  PENDING_UPLOAD: 'PENDING_UPLOAD',
+  AVAILABLE: 'AVAILABLE',
+  QUARANTINED: 'QUARANTINED',
+  DELETED: 'DELETED',
+  FAILED: 'FAILED'
+} as const
+
+export type FileStatus = (typeof FileStatus)[keyof typeof FileStatus]
+
+
+export const AuditActorType = {
+  USER: 'USER',
+  FEDERATION_CLIENT: 'FEDERATION_CLIENT',
+  PLATFORM_OPERATOR: 'PLATFORM_OPERATOR',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type AuditActorType = (typeof AuditActorType)[keyof typeof AuditActorType]
+
+
+export const ExternalEntityType = {
+  ORGANIZATION: 'ORGANIZATION',
+  BRANCH: 'BRANCH',
+  USER: 'USER',
+  EMPLOYEE: 'EMPLOYEE',
+  ATTENDANCE: 'ATTENDANCE',
+  LEAVE_REQUEST: 'LEAVE_REQUEST',
+  TIMESHEET: 'TIMESHEET',
+  PAYROLL_RUN: 'PAYROLL_RUN',
+  PAYSLIP: 'PAYSLIP',
+  FILE: 'FILE'
+} as const
+
+export type ExternalEntityType = (typeof ExternalEntityType)[keyof typeof ExternalEntityType]

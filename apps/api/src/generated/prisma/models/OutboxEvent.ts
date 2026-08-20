@@ -40,52 +40,61 @@ export type OutboxEventMinAggregateOutputType = {
   id: string | null
   eventId: string | null
   organizationId: string | null
-  clientId: string | null
-  eventType: string | null
   aggregateType: string | null
   aggregateId: string | null
   aggregateVersion: number | null
+  eventType: string | null
+  schemaVersion: string | null
+  correlationId: string | null
+  causationId: string | null
   status: $Enums.OutboxStatus | null
   attempts: number | null
   nextAttemptAt: Date | null
-  deliveredAt: Date | null
-  lastError: string | null
+  lastErrorCode: string | null
+  lastErrorAt: Date | null
   createdAt: Date | null
+  completedAt: Date | null
 }
 
 export type OutboxEventMaxAggregateOutputType = {
   id: string | null
   eventId: string | null
   organizationId: string | null
-  clientId: string | null
-  eventType: string | null
   aggregateType: string | null
   aggregateId: string | null
   aggregateVersion: number | null
+  eventType: string | null
+  schemaVersion: string | null
+  correlationId: string | null
+  causationId: string | null
   status: $Enums.OutboxStatus | null
   attempts: number | null
   nextAttemptAt: Date | null
-  deliveredAt: Date | null
-  lastError: string | null
+  lastErrorCode: string | null
+  lastErrorAt: Date | null
   createdAt: Date | null
+  completedAt: Date | null
 }
 
 export type OutboxEventCountAggregateOutputType = {
   id: number
   eventId: number
   organizationId: number
-  clientId: number
-  eventType: number
   aggregateType: number
   aggregateId: number
   aggregateVersion: number
+  eventType: number
+  schemaVersion: number
   payload: number
+  correlationId: number
+  causationId: number
   status: number
   attempts: number
   nextAttemptAt: number
-  deliveredAt: number
-  lastError: number
+  lastErrorCode: number
+  lastErrorAt: number
   createdAt: number
+  completedAt: number
   _all: number
 }
 
@@ -104,52 +113,61 @@ export type OutboxEventMinAggregateInputType = {
   id?: true
   eventId?: true
   organizationId?: true
-  clientId?: true
-  eventType?: true
   aggregateType?: true
   aggregateId?: true
   aggregateVersion?: true
+  eventType?: true
+  schemaVersion?: true
+  correlationId?: true
+  causationId?: true
   status?: true
   attempts?: true
   nextAttemptAt?: true
-  deliveredAt?: true
-  lastError?: true
+  lastErrorCode?: true
+  lastErrorAt?: true
   createdAt?: true
+  completedAt?: true
 }
 
 export type OutboxEventMaxAggregateInputType = {
   id?: true
   eventId?: true
   organizationId?: true
-  clientId?: true
-  eventType?: true
   aggregateType?: true
   aggregateId?: true
   aggregateVersion?: true
+  eventType?: true
+  schemaVersion?: true
+  correlationId?: true
+  causationId?: true
   status?: true
   attempts?: true
   nextAttemptAt?: true
-  deliveredAt?: true
-  lastError?: true
+  lastErrorCode?: true
+  lastErrorAt?: true
   createdAt?: true
+  completedAt?: true
 }
 
 export type OutboxEventCountAggregateInputType = {
   id?: true
   eventId?: true
   organizationId?: true
-  clientId?: true
-  eventType?: true
   aggregateType?: true
   aggregateId?: true
   aggregateVersion?: true
+  eventType?: true
+  schemaVersion?: true
   payload?: true
+  correlationId?: true
+  causationId?: true
   status?: true
   attempts?: true
   nextAttemptAt?: true
-  deliveredAt?: true
-  lastError?: true
+  lastErrorCode?: true
+  lastErrorAt?: true
   createdAt?: true
+  completedAt?: true
   _all?: true
 }
 
@@ -243,18 +261,21 @@ export type OutboxEventGroupByOutputType = {
   id: string
   eventId: string
   organizationId: string
-  clientId: string | null
-  eventType: string
   aggregateType: string
   aggregateId: string
   aggregateVersion: number
+  eventType: string
+  schemaVersion: string
   payload: runtime.JsonValue
+  correlationId: string
+  causationId: string | null
   status: $Enums.OutboxStatus
   attempts: number
   nextAttemptAt: Date
-  deliveredAt: Date | null
-  lastError: string | null
+  lastErrorCode: string | null
+  lastErrorAt: Date | null
   createdAt: Date
+  completedAt: Date | null
   _count: OutboxEventCountAggregateOutputType | null
   _avg: OutboxEventAvgAggregateOutputType | null
   _sum: OutboxEventSumAggregateOutputType | null
@@ -284,40 +305,46 @@ export type OutboxEventWhereInput = {
   id?: Prisma.UuidFilter<"OutboxEvent"> | string
   eventId?: Prisma.UuidFilter<"OutboxEvent"> | string
   organizationId?: Prisma.UuidFilter<"OutboxEvent"> | string
-  clientId?: Prisma.UuidNullableFilter<"OutboxEvent"> | string | null
-  eventType?: Prisma.StringFilter<"OutboxEvent"> | string
   aggregateType?: Prisma.StringFilter<"OutboxEvent"> | string
-  aggregateId?: Prisma.StringFilter<"OutboxEvent"> | string
+  aggregateId?: Prisma.UuidFilter<"OutboxEvent"> | string
   aggregateVersion?: Prisma.IntFilter<"OutboxEvent"> | number
+  eventType?: Prisma.StringFilter<"OutboxEvent"> | string
+  schemaVersion?: Prisma.StringFilter<"OutboxEvent"> | string
   payload?: Prisma.JsonFilter<"OutboxEvent">
+  correlationId?: Prisma.UuidFilter<"OutboxEvent"> | string
+  causationId?: Prisma.UuidNullableFilter<"OutboxEvent"> | string | null
   status?: Prisma.EnumOutboxStatusFilter<"OutboxEvent"> | $Enums.OutboxStatus
   attempts?: Prisma.IntFilter<"OutboxEvent"> | number
   nextAttemptAt?: Prisma.DateTimeFilter<"OutboxEvent"> | Date | string
-  deliveredAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
-  lastError?: Prisma.StringNullableFilter<"OutboxEvent"> | string | null
+  lastErrorCode?: Prisma.StringNullableFilter<"OutboxEvent"> | string | null
+  lastErrorAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"OutboxEvent"> | Date | string
+  completedAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-  client?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
+  deliveries?: Prisma.WebhookDeliveryListRelationFilter
 }
 
 export type OutboxEventOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   eventId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  clientId?: Prisma.SortOrderInput | Prisma.SortOrder
-  eventType?: Prisma.SortOrder
   aggregateType?: Prisma.SortOrder
   aggregateId?: Prisma.SortOrder
   aggregateVersion?: Prisma.SortOrder
+  eventType?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
   payload?: Prisma.SortOrder
+  correlationId?: Prisma.SortOrder
+  causationId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   nextAttemptAt?: Prisma.SortOrder
-  deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastError?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
-  client?: Prisma.FederationClientOrderByWithRelationInput
+  deliveries?: Prisma.WebhookDeliveryOrderByRelationAggregateInput
 }
 
 export type OutboxEventWhereUniqueInput = Prisma.AtLeast<{
@@ -327,38 +354,44 @@ export type OutboxEventWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.OutboxEventWhereInput[]
   NOT?: Prisma.OutboxEventWhereInput | Prisma.OutboxEventWhereInput[]
   organizationId?: Prisma.UuidFilter<"OutboxEvent"> | string
-  clientId?: Prisma.UuidNullableFilter<"OutboxEvent"> | string | null
-  eventType?: Prisma.StringFilter<"OutboxEvent"> | string
   aggregateType?: Prisma.StringFilter<"OutboxEvent"> | string
-  aggregateId?: Prisma.StringFilter<"OutboxEvent"> | string
+  aggregateId?: Prisma.UuidFilter<"OutboxEvent"> | string
   aggregateVersion?: Prisma.IntFilter<"OutboxEvent"> | number
+  eventType?: Prisma.StringFilter<"OutboxEvent"> | string
+  schemaVersion?: Prisma.StringFilter<"OutboxEvent"> | string
   payload?: Prisma.JsonFilter<"OutboxEvent">
+  correlationId?: Prisma.UuidFilter<"OutboxEvent"> | string
+  causationId?: Prisma.UuidNullableFilter<"OutboxEvent"> | string | null
   status?: Prisma.EnumOutboxStatusFilter<"OutboxEvent"> | $Enums.OutboxStatus
   attempts?: Prisma.IntFilter<"OutboxEvent"> | number
   nextAttemptAt?: Prisma.DateTimeFilter<"OutboxEvent"> | Date | string
-  deliveredAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
-  lastError?: Prisma.StringNullableFilter<"OutboxEvent"> | string | null
+  lastErrorCode?: Prisma.StringNullableFilter<"OutboxEvent"> | string | null
+  lastErrorAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"OutboxEvent"> | Date | string
+  completedAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-  client?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
+  deliveries?: Prisma.WebhookDeliveryListRelationFilter
 }, "id" | "eventId">
 
 export type OutboxEventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   eventId?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
-  clientId?: Prisma.SortOrderInput | Prisma.SortOrder
-  eventType?: Prisma.SortOrder
   aggregateType?: Prisma.SortOrder
   aggregateId?: Prisma.SortOrder
   aggregateVersion?: Prisma.SortOrder
+  eventType?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
   payload?: Prisma.SortOrder
+  correlationId?: Prisma.SortOrder
+  causationId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   nextAttemptAt?: Prisma.SortOrder
-  deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastError?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.OutboxEventCountOrderByAggregateInput
   _avg?: Prisma.OutboxEventAvgOrderByAggregateInput
   _max?: Prisma.OutboxEventMaxOrderByAggregateInput
@@ -373,142 +406,247 @@ export type OutboxEventScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"OutboxEvent"> | string
   eventId?: Prisma.UuidWithAggregatesFilter<"OutboxEvent"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"OutboxEvent"> | string
-  clientId?: Prisma.UuidNullableWithAggregatesFilter<"OutboxEvent"> | string | null
-  eventType?: Prisma.StringWithAggregatesFilter<"OutboxEvent"> | string
   aggregateType?: Prisma.StringWithAggregatesFilter<"OutboxEvent"> | string
-  aggregateId?: Prisma.StringWithAggregatesFilter<"OutboxEvent"> | string
+  aggregateId?: Prisma.UuidWithAggregatesFilter<"OutboxEvent"> | string
   aggregateVersion?: Prisma.IntWithAggregatesFilter<"OutboxEvent"> | number
+  eventType?: Prisma.StringWithAggregatesFilter<"OutboxEvent"> | string
+  schemaVersion?: Prisma.StringWithAggregatesFilter<"OutboxEvent"> | string
   payload?: Prisma.JsonWithAggregatesFilter<"OutboxEvent">
+  correlationId?: Prisma.UuidWithAggregatesFilter<"OutboxEvent"> | string
+  causationId?: Prisma.UuidNullableWithAggregatesFilter<"OutboxEvent"> | string | null
   status?: Prisma.EnumOutboxStatusWithAggregatesFilter<"OutboxEvent"> | $Enums.OutboxStatus
   attempts?: Prisma.IntWithAggregatesFilter<"OutboxEvent"> | number
   nextAttemptAt?: Prisma.DateTimeWithAggregatesFilter<"OutboxEvent"> | Date | string
-  deliveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OutboxEvent"> | Date | string | null
-  lastError?: Prisma.StringNullableWithAggregatesFilter<"OutboxEvent"> | string | null
+  lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"OutboxEvent"> | string | null
+  lastErrorAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OutboxEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OutboxEvent"> | Date | string
+  completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OutboxEvent"> | Date | string | null
 }
 
 export type OutboxEventCreateInput = {
   id?: string
   eventId: string
-  eventType: string
   aggregateType: string
   aggregateId: string
   aggregateVersion: number
+  eventType: string
+  schemaVersion: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
   status?: $Enums.OutboxStatus
   attempts?: number
   nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
   createdAt?: Date | string
+  completedAt?: Date | string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutOutboxEventsInput
-  client?: Prisma.FederationClientCreateNestedOneWithoutOutboxEventsInput
+  deliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOutboxEventInput
 }
 
 export type OutboxEventUncheckedCreateInput = {
   id?: string
   eventId: string
   organizationId: string
-  clientId?: string | null
-  eventType: string
   aggregateType: string
   aggregateId: string
   aggregateVersion: number
+  eventType: string
+  schemaVersion: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
   status?: $Enums.OutboxStatus
   attempts?: number
   nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
   createdAt?: Date | string
+  completedAt?: Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOutboxEventInput
 }
 
 export type OutboxEventUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutOutboxEventsNestedInput
-  client?: Prisma.FederationClientUpdateOneWithoutOutboxEventsNestedInput
+  deliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOutboxEventNestedInput
 }
 
 export type OutboxEventUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOutboxEventNestedInput
 }
 
 export type OutboxEventCreateManyInput = {
   id?: string
   eventId: string
   organizationId: string
-  clientId?: string | null
-  eventType: string
   aggregateType: string
   aggregateId: string
   aggregateVersion: number
+  eventType: string
+  schemaVersion: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
   status?: $Enums.OutboxStatus
   attempts?: number
   nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
   createdAt?: Date | string
+  completedAt?: Date | string | null
 }
 
 export type OutboxEventUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type OutboxEventUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type OutboxEventCountOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  aggregateType?: Prisma.SortOrder
+  aggregateId?: Prisma.SortOrder
+  aggregateVersion?: Prisma.SortOrder
+  eventType?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  payload?: Prisma.SortOrder
+  correlationId?: Prisma.SortOrder
+  causationId?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
+}
+
+export type OutboxEventAvgOrderByAggregateInput = {
+  aggregateVersion?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+}
+
+export type OutboxEventMaxOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  aggregateType?: Prisma.SortOrder
+  aggregateId?: Prisma.SortOrder
+  aggregateVersion?: Prisma.SortOrder
+  eventType?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  correlationId?: Prisma.SortOrder
+  causationId?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
+}
+
+export type OutboxEventMinOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  eventId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  aggregateType?: Prisma.SortOrder
+  aggregateId?: Prisma.SortOrder
+  aggregateVersion?: Prisma.SortOrder
+  eventType?: Prisma.SortOrder
+  schemaVersion?: Prisma.SortOrder
+  correlationId?: Prisma.SortOrder
+  causationId?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorAt?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
+}
+
+export type OutboxEventSumOrderByAggregateInput = {
+  aggregateVersion?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
+}
+
+export type OutboxEventScalarRelationFilter = {
+  is?: Prisma.OutboxEventWhereInput
+  isNot?: Prisma.OutboxEventWhereInput
 }
 
 export type OutboxEventListRelationFilter = {
@@ -521,66 +659,30 @@ export type OutboxEventOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type OutboxEventCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  clientId?: Prisma.SortOrder
-  eventType?: Prisma.SortOrder
-  aggregateType?: Prisma.SortOrder
-  aggregateId?: Prisma.SortOrder
-  aggregateVersion?: Prisma.SortOrder
-  payload?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  attempts?: Prisma.SortOrder
-  nextAttemptAt?: Prisma.SortOrder
-  deliveredAt?: Prisma.SortOrder
-  lastError?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
-export type OutboxEventAvgOrderByAggregateInput = {
-  aggregateVersion?: Prisma.SortOrder
-  attempts?: Prisma.SortOrder
+export type EnumOutboxStatusFieldUpdateOperationsInput = {
+  set?: $Enums.OutboxStatus
 }
 
-export type OutboxEventMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  clientId?: Prisma.SortOrder
-  eventType?: Prisma.SortOrder
-  aggregateType?: Prisma.SortOrder
-  aggregateId?: Prisma.SortOrder
-  aggregateVersion?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  attempts?: Prisma.SortOrder
-  nextAttemptAt?: Prisma.SortOrder
-  deliveredAt?: Prisma.SortOrder
-  lastError?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
+export type OutboxEventCreateNestedOneWithoutDeliveriesInput = {
+  create?: Prisma.XOR<Prisma.OutboxEventCreateWithoutDeliveriesInput, Prisma.OutboxEventUncheckedCreateWithoutDeliveriesInput>
+  connectOrCreate?: Prisma.OutboxEventCreateOrConnectWithoutDeliveriesInput
+  connect?: Prisma.OutboxEventWhereUniqueInput
 }
 
-export type OutboxEventMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  eventId?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  clientId?: Prisma.SortOrder
-  eventType?: Prisma.SortOrder
-  aggregateType?: Prisma.SortOrder
-  aggregateId?: Prisma.SortOrder
-  aggregateVersion?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  attempts?: Prisma.SortOrder
-  nextAttemptAt?: Prisma.SortOrder
-  deliveredAt?: Prisma.SortOrder
-  lastError?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-}
-
-export type OutboxEventSumOrderByAggregateInput = {
-  aggregateVersion?: Prisma.SortOrder
-  attempts?: Prisma.SortOrder
+export type OutboxEventUpdateOneRequiredWithoutDeliveriesNestedInput = {
+  create?: Prisma.XOR<Prisma.OutboxEventCreateWithoutDeliveriesInput, Prisma.OutboxEventUncheckedCreateWithoutDeliveriesInput>
+  connectOrCreate?: Prisma.OutboxEventCreateOrConnectWithoutDeliveriesInput
+  upsert?: Prisma.OutboxEventUpsertWithoutDeliveriesInput
+  connect?: Prisma.OutboxEventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OutboxEventUpdateToOneWithWhereWithoutDeliveriesInput, Prisma.OutboxEventUpdateWithoutDeliveriesInput>, Prisma.OutboxEventUncheckedUpdateWithoutDeliveriesInput>
 }
 
 export type OutboxEventCreateNestedManyWithoutOrganizationInput = {
@@ -625,84 +727,146 @@ export type OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.OutboxEventScalarWhereInput | Prisma.OutboxEventScalarWhereInput[]
 }
 
-export type OutboxEventCreateNestedManyWithoutClientInput = {
-  create?: Prisma.XOR<Prisma.OutboxEventCreateWithoutClientInput, Prisma.OutboxEventUncheckedCreateWithoutClientInput> | Prisma.OutboxEventCreateWithoutClientInput[] | Prisma.OutboxEventUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.OutboxEventCreateOrConnectWithoutClientInput | Prisma.OutboxEventCreateOrConnectWithoutClientInput[]
-  createMany?: Prisma.OutboxEventCreateManyClientInputEnvelope
-  connect?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
+export type OutboxEventCreateWithoutDeliveriesInput = {
+  id?: string
+  eventId: string
+  aggregateType: string
+  aggregateId: string
+  aggregateVersion: number
+  eventType: string
+  schemaVersion: string
+  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
+  status?: $Enums.OutboxStatus
+  attempts?: number
+  nextAttemptAt?: Date | string
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
+  createdAt?: Date | string
+  completedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutOutboxEventsInput
 }
 
-export type OutboxEventUncheckedCreateNestedManyWithoutClientInput = {
-  create?: Prisma.XOR<Prisma.OutboxEventCreateWithoutClientInput, Prisma.OutboxEventUncheckedCreateWithoutClientInput> | Prisma.OutboxEventCreateWithoutClientInput[] | Prisma.OutboxEventUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.OutboxEventCreateOrConnectWithoutClientInput | Prisma.OutboxEventCreateOrConnectWithoutClientInput[]
-  createMany?: Prisma.OutboxEventCreateManyClientInputEnvelope
-  connect?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
+export type OutboxEventUncheckedCreateWithoutDeliveriesInput = {
+  id?: string
+  eventId: string
+  organizationId: string
+  aggregateType: string
+  aggregateId: string
+  aggregateVersion: number
+  eventType: string
+  schemaVersion: string
+  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
+  status?: $Enums.OutboxStatus
+  attempts?: number
+  nextAttemptAt?: Date | string
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
+  createdAt?: Date | string
+  completedAt?: Date | string | null
 }
 
-export type OutboxEventUpdateManyWithoutClientNestedInput = {
-  create?: Prisma.XOR<Prisma.OutboxEventCreateWithoutClientInput, Prisma.OutboxEventUncheckedCreateWithoutClientInput> | Prisma.OutboxEventCreateWithoutClientInput[] | Prisma.OutboxEventUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.OutboxEventCreateOrConnectWithoutClientInput | Prisma.OutboxEventCreateOrConnectWithoutClientInput[]
-  upsert?: Prisma.OutboxEventUpsertWithWhereUniqueWithoutClientInput | Prisma.OutboxEventUpsertWithWhereUniqueWithoutClientInput[]
-  createMany?: Prisma.OutboxEventCreateManyClientInputEnvelope
-  set?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  disconnect?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  delete?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  connect?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  update?: Prisma.OutboxEventUpdateWithWhereUniqueWithoutClientInput | Prisma.OutboxEventUpdateWithWhereUniqueWithoutClientInput[]
-  updateMany?: Prisma.OutboxEventUpdateManyWithWhereWithoutClientInput | Prisma.OutboxEventUpdateManyWithWhereWithoutClientInput[]
-  deleteMany?: Prisma.OutboxEventScalarWhereInput | Prisma.OutboxEventScalarWhereInput[]
+export type OutboxEventCreateOrConnectWithoutDeliveriesInput = {
+  where: Prisma.OutboxEventWhereUniqueInput
+  create: Prisma.XOR<Prisma.OutboxEventCreateWithoutDeliveriesInput, Prisma.OutboxEventUncheckedCreateWithoutDeliveriesInput>
 }
 
-export type OutboxEventUncheckedUpdateManyWithoutClientNestedInput = {
-  create?: Prisma.XOR<Prisma.OutboxEventCreateWithoutClientInput, Prisma.OutboxEventUncheckedCreateWithoutClientInput> | Prisma.OutboxEventCreateWithoutClientInput[] | Prisma.OutboxEventUncheckedCreateWithoutClientInput[]
-  connectOrCreate?: Prisma.OutboxEventCreateOrConnectWithoutClientInput | Prisma.OutboxEventCreateOrConnectWithoutClientInput[]
-  upsert?: Prisma.OutboxEventUpsertWithWhereUniqueWithoutClientInput | Prisma.OutboxEventUpsertWithWhereUniqueWithoutClientInput[]
-  createMany?: Prisma.OutboxEventCreateManyClientInputEnvelope
-  set?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  disconnect?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  delete?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  connect?: Prisma.OutboxEventWhereUniqueInput | Prisma.OutboxEventWhereUniqueInput[]
-  update?: Prisma.OutboxEventUpdateWithWhereUniqueWithoutClientInput | Prisma.OutboxEventUpdateWithWhereUniqueWithoutClientInput[]
-  updateMany?: Prisma.OutboxEventUpdateManyWithWhereWithoutClientInput | Prisma.OutboxEventUpdateManyWithWhereWithoutClientInput[]
-  deleteMany?: Prisma.OutboxEventScalarWhereInput | Prisma.OutboxEventScalarWhereInput[]
+export type OutboxEventUpsertWithoutDeliveriesInput = {
+  update: Prisma.XOR<Prisma.OutboxEventUpdateWithoutDeliveriesInput, Prisma.OutboxEventUncheckedUpdateWithoutDeliveriesInput>
+  create: Prisma.XOR<Prisma.OutboxEventCreateWithoutDeliveriesInput, Prisma.OutboxEventUncheckedCreateWithoutDeliveriesInput>
+  where?: Prisma.OutboxEventWhereInput
 }
 
-export type EnumOutboxStatusFieldUpdateOperationsInput = {
-  set?: $Enums.OutboxStatus
+export type OutboxEventUpdateToOneWithWhereWithoutDeliveriesInput = {
+  where?: Prisma.OutboxEventWhereInput
+  data: Prisma.XOR<Prisma.OutboxEventUpdateWithoutDeliveriesInput, Prisma.OutboxEventUncheckedUpdateWithoutDeliveriesInput>
+}
+
+export type OutboxEventUpdateWithoutDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
+  aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
+  aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutOutboxEventsNestedInput
+}
+
+export type OutboxEventUncheckedUpdateWithoutDeliveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
+  aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
+  aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type OutboxEventCreateWithoutOrganizationInput = {
   id?: string
   eventId: string
-  eventType: string
   aggregateType: string
   aggregateId: string
   aggregateVersion: number
+  eventType: string
+  schemaVersion: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
   status?: $Enums.OutboxStatus
   attempts?: number
   nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
   createdAt?: Date | string
-  client?: Prisma.FederationClientCreateNestedOneWithoutOutboxEventsInput
+  completedAt?: Date | string | null
+  deliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOutboxEventInput
 }
 
 export type OutboxEventUncheckedCreateWithoutOrganizationInput = {
   id?: string
   eventId: string
-  clientId?: string | null
-  eventType: string
   aggregateType: string
   aggregateId: string
   aggregateVersion: number
+  eventType: string
+  schemaVersion: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
   status?: $Enums.OutboxStatus
   attempts?: number
   nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
   createdAt?: Date | string
+  completedAt?: Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOutboxEventInput
 }
 
 export type OutboxEventCreateOrConnectWithoutOrganizationInput = {
@@ -738,332 +902,263 @@ export type OutboxEventScalarWhereInput = {
   id?: Prisma.UuidFilter<"OutboxEvent"> | string
   eventId?: Prisma.UuidFilter<"OutboxEvent"> | string
   organizationId?: Prisma.UuidFilter<"OutboxEvent"> | string
-  clientId?: Prisma.UuidNullableFilter<"OutboxEvent"> | string | null
-  eventType?: Prisma.StringFilter<"OutboxEvent"> | string
   aggregateType?: Prisma.StringFilter<"OutboxEvent"> | string
-  aggregateId?: Prisma.StringFilter<"OutboxEvent"> | string
+  aggregateId?: Prisma.UuidFilter<"OutboxEvent"> | string
   aggregateVersion?: Prisma.IntFilter<"OutboxEvent"> | number
+  eventType?: Prisma.StringFilter<"OutboxEvent"> | string
+  schemaVersion?: Prisma.StringFilter<"OutboxEvent"> | string
   payload?: Prisma.JsonFilter<"OutboxEvent">
+  correlationId?: Prisma.UuidFilter<"OutboxEvent"> | string
+  causationId?: Prisma.UuidNullableFilter<"OutboxEvent"> | string | null
   status?: Prisma.EnumOutboxStatusFilter<"OutboxEvent"> | $Enums.OutboxStatus
   attempts?: Prisma.IntFilter<"OutboxEvent"> | number
   nextAttemptAt?: Prisma.DateTimeFilter<"OutboxEvent"> | Date | string
-  deliveredAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
-  lastError?: Prisma.StringNullableFilter<"OutboxEvent"> | string | null
+  lastErrorCode?: Prisma.StringNullableFilter<"OutboxEvent"> | string | null
+  lastErrorAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"OutboxEvent"> | Date | string
-}
-
-export type OutboxEventCreateWithoutClientInput = {
-  id?: string
-  eventId: string
-  eventType: string
-  aggregateType: string
-  aggregateId: string
-  aggregateVersion: number
-  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: $Enums.OutboxStatus
-  attempts?: number
-  nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
-  createdAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutOutboxEventsInput
-}
-
-export type OutboxEventUncheckedCreateWithoutClientInput = {
-  id?: string
-  eventId: string
-  organizationId: string
-  eventType: string
-  aggregateType: string
-  aggregateId: string
-  aggregateVersion: number
-  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: $Enums.OutboxStatus
-  attempts?: number
-  nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
-  createdAt?: Date | string
-}
-
-export type OutboxEventCreateOrConnectWithoutClientInput = {
-  where: Prisma.OutboxEventWhereUniqueInput
-  create: Prisma.XOR<Prisma.OutboxEventCreateWithoutClientInput, Prisma.OutboxEventUncheckedCreateWithoutClientInput>
-}
-
-export type OutboxEventCreateManyClientInputEnvelope = {
-  data: Prisma.OutboxEventCreateManyClientInput | Prisma.OutboxEventCreateManyClientInput[]
-  skipDuplicates?: boolean
-}
-
-export type OutboxEventUpsertWithWhereUniqueWithoutClientInput = {
-  where: Prisma.OutboxEventWhereUniqueInput
-  update: Prisma.XOR<Prisma.OutboxEventUpdateWithoutClientInput, Prisma.OutboxEventUncheckedUpdateWithoutClientInput>
-  create: Prisma.XOR<Prisma.OutboxEventCreateWithoutClientInput, Prisma.OutboxEventUncheckedCreateWithoutClientInput>
-}
-
-export type OutboxEventUpdateWithWhereUniqueWithoutClientInput = {
-  where: Prisma.OutboxEventWhereUniqueInput
-  data: Prisma.XOR<Prisma.OutboxEventUpdateWithoutClientInput, Prisma.OutboxEventUncheckedUpdateWithoutClientInput>
-}
-
-export type OutboxEventUpdateManyWithWhereWithoutClientInput = {
-  where: Prisma.OutboxEventScalarWhereInput
-  data: Prisma.XOR<Prisma.OutboxEventUpdateManyMutationInput, Prisma.OutboxEventUncheckedUpdateManyWithoutClientInput>
+  completedAt?: Prisma.DateTimeNullableFilter<"OutboxEvent"> | Date | string | null
 }
 
 export type OutboxEventCreateManyOrganizationInput = {
   id?: string
   eventId: string
-  clientId?: string | null
-  eventType: string
   aggregateType: string
   aggregateId: string
   aggregateVersion: number
+  eventType: string
+  schemaVersion: string
   payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId: string
+  causationId?: string | null
   status?: $Enums.OutboxStatus
   attempts?: number
   nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
+  lastErrorCode?: string | null
+  lastErrorAt?: Date | string | null
   createdAt?: Date | string
+  completedAt?: Date | string | null
 }
 
 export type OutboxEventUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  client?: Prisma.FederationClientUpdateOneWithoutOutboxEventsNestedInput
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOutboxEventNestedInput
 }
 
 export type OutboxEventUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOutboxEventNestedInput
 }
 
 export type OutboxEventUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  clientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
   aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
-  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
-  attempts?: Prisma.IntFieldUpdateOperationsInput | number
-  nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type OutboxEventCreateManyClientInput = {
-  id?: string
-  eventId: string
-  organizationId: string
-  eventType: string
-  aggregateType: string
-  aggregateId: string
-  aggregateVersion: number
-  payload: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: $Enums.OutboxStatus
-  attempts?: number
-  nextAttemptAt?: Date | string
-  deliveredAt?: Date | string | null
-  lastError?: string | null
-  createdAt?: Date | string
-}
-
-export type OutboxEventUpdateWithoutClientInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  schemaVersion?: Prisma.StringFieldUpdateOperationsInput | string
   payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  correlationId?: Prisma.StringFieldUpdateOperationsInput | string
+  causationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutOutboxEventsNestedInput
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
-export type OutboxEventUncheckedUpdateWithoutClientInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
-  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
-  attempts?: Prisma.IntFieldUpdateOperationsInput | number
-  nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+
+/**
+ * Count Type OutboxEventCountOutputType
+ */
+
+export type OutboxEventCountOutputType = {
+  deliveries: number
 }
 
-export type OutboxEventUncheckedUpdateManyWithoutClientInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateType?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateId?: Prisma.StringFieldUpdateOperationsInput | string
-  aggregateVersion?: Prisma.IntFieldUpdateOperationsInput | number
-  payload?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: Prisma.EnumOutboxStatusFieldUpdateOperationsInput | $Enums.OutboxStatus
-  attempts?: Prisma.IntFieldUpdateOperationsInput | number
-  nextAttemptAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type OutboxEventCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deliveries?: boolean | OutboxEventCountOutputTypeCountDeliveriesArgs
 }
 
+/**
+ * OutboxEventCountOutputType without action
+ */
+export type OutboxEventCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OutboxEventCountOutputType
+   */
+  select?: Prisma.OutboxEventCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * OutboxEventCountOutputType without action
+ */
+export type OutboxEventCountOutputTypeCountDeliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WebhookDeliveryWhereInput
+}
 
 
 export type OutboxEventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   eventId?: boolean
   organizationId?: boolean
-  clientId?: boolean
-  eventType?: boolean
   aggregateType?: boolean
   aggregateId?: boolean
   aggregateVersion?: boolean
+  eventType?: boolean
+  schemaVersion?: boolean
   payload?: boolean
+  correlationId?: boolean
+  causationId?: boolean
   status?: boolean
   attempts?: boolean
   nextAttemptAt?: boolean
-  deliveredAt?: boolean
-  lastError?: boolean
+  lastErrorCode?: boolean
+  lastErrorAt?: boolean
   createdAt?: boolean
+  completedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  client?: boolean | Prisma.OutboxEvent$clientArgs<ExtArgs>
+  deliveries?: boolean | Prisma.OutboxEvent$deliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.OutboxEventCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["outboxEvent"]>
 
 export type OutboxEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   eventId?: boolean
   organizationId?: boolean
-  clientId?: boolean
-  eventType?: boolean
   aggregateType?: boolean
   aggregateId?: boolean
   aggregateVersion?: boolean
+  eventType?: boolean
+  schemaVersion?: boolean
   payload?: boolean
+  correlationId?: boolean
+  causationId?: boolean
   status?: boolean
   attempts?: boolean
   nextAttemptAt?: boolean
-  deliveredAt?: boolean
-  lastError?: boolean
+  lastErrorCode?: boolean
+  lastErrorAt?: boolean
   createdAt?: boolean
+  completedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  client?: boolean | Prisma.OutboxEvent$clientArgs<ExtArgs>
 }, ExtArgs["result"]["outboxEvent"]>
 
 export type OutboxEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   eventId?: boolean
   organizationId?: boolean
-  clientId?: boolean
-  eventType?: boolean
   aggregateType?: boolean
   aggregateId?: boolean
   aggregateVersion?: boolean
+  eventType?: boolean
+  schemaVersion?: boolean
   payload?: boolean
+  correlationId?: boolean
+  causationId?: boolean
   status?: boolean
   attempts?: boolean
   nextAttemptAt?: boolean
-  deliveredAt?: boolean
-  lastError?: boolean
+  lastErrorCode?: boolean
+  lastErrorAt?: boolean
   createdAt?: boolean
+  completedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  client?: boolean | Prisma.OutboxEvent$clientArgs<ExtArgs>
 }, ExtArgs["result"]["outboxEvent"]>
 
 export type OutboxEventSelectScalar = {
   id?: boolean
   eventId?: boolean
   organizationId?: boolean
-  clientId?: boolean
-  eventType?: boolean
   aggregateType?: boolean
   aggregateId?: boolean
   aggregateVersion?: boolean
+  eventType?: boolean
+  schemaVersion?: boolean
   payload?: boolean
+  correlationId?: boolean
+  causationId?: boolean
   status?: boolean
   attempts?: boolean
   nextAttemptAt?: boolean
-  deliveredAt?: boolean
-  lastError?: boolean
+  lastErrorCode?: boolean
+  lastErrorAt?: boolean
   createdAt?: boolean
+  completedAt?: boolean
 }
 
-export type OutboxEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "organizationId" | "clientId" | "eventType" | "aggregateType" | "aggregateId" | "aggregateVersion" | "payload" | "status" | "attempts" | "nextAttemptAt" | "deliveredAt" | "lastError" | "createdAt", ExtArgs["result"]["outboxEvent"]>
+export type OutboxEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "organizationId" | "aggregateType" | "aggregateId" | "aggregateVersion" | "eventType" | "schemaVersion" | "payload" | "correlationId" | "causationId" | "status" | "attempts" | "nextAttemptAt" | "lastErrorCode" | "lastErrorAt" | "createdAt" | "completedAt", ExtArgs["result"]["outboxEvent"]>
 export type OutboxEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  client?: boolean | Prisma.OutboxEvent$clientArgs<ExtArgs>
+  deliveries?: boolean | Prisma.OutboxEvent$deliveriesArgs<ExtArgs>
+  _count?: boolean | Prisma.OutboxEventCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OutboxEventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  client?: boolean | Prisma.OutboxEvent$clientArgs<ExtArgs>
 }
 export type OutboxEventIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
-  client?: boolean | Prisma.OutboxEvent$clientArgs<ExtArgs>
 }
 
 export type $OutboxEventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "OutboxEvent"
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
-    client: Prisma.$FederationClientPayload<ExtArgs> | null
+    deliveries: Prisma.$WebhookDeliveryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     eventId: string
     organizationId: string
-    clientId: string | null
-    eventType: string
     aggregateType: string
     aggregateId: string
     aggregateVersion: number
+    eventType: string
+    schemaVersion: string
     payload: runtime.JsonValue
+    correlationId: string
+    causationId: string | null
     status: $Enums.OutboxStatus
     attempts: number
     nextAttemptAt: Date
-    deliveredAt: Date | null
-    lastError: string | null
+    lastErrorCode: string | null
+    lastErrorAt: Date | null
     createdAt: Date
+    completedAt: Date | null
   }, ExtArgs["result"]["outboxEvent"]>
   composites: {}
 }
@@ -1459,7 +1554,7 @@ readonly fields: OutboxEventFieldRefs;
 export interface Prisma__OutboxEventClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  client<T extends Prisma.OutboxEvent$clientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OutboxEvent$clientArgs<ExtArgs>>): Prisma.Prisma__FederationClientClient<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deliveries<T extends Prisma.OutboxEvent$deliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OutboxEvent$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1492,18 +1587,21 @@ export interface OutboxEventFieldRefs {
   readonly id: Prisma.FieldRef<"OutboxEvent", 'String'>
   readonly eventId: Prisma.FieldRef<"OutboxEvent", 'String'>
   readonly organizationId: Prisma.FieldRef<"OutboxEvent", 'String'>
-  readonly clientId: Prisma.FieldRef<"OutboxEvent", 'String'>
-  readonly eventType: Prisma.FieldRef<"OutboxEvent", 'String'>
   readonly aggregateType: Prisma.FieldRef<"OutboxEvent", 'String'>
   readonly aggregateId: Prisma.FieldRef<"OutboxEvent", 'String'>
   readonly aggregateVersion: Prisma.FieldRef<"OutboxEvent", 'Int'>
+  readonly eventType: Prisma.FieldRef<"OutboxEvent", 'String'>
+  readonly schemaVersion: Prisma.FieldRef<"OutboxEvent", 'String'>
   readonly payload: Prisma.FieldRef<"OutboxEvent", 'Json'>
+  readonly correlationId: Prisma.FieldRef<"OutboxEvent", 'String'>
+  readonly causationId: Prisma.FieldRef<"OutboxEvent", 'String'>
   readonly status: Prisma.FieldRef<"OutboxEvent", 'OutboxStatus'>
   readonly attempts: Prisma.FieldRef<"OutboxEvent", 'Int'>
   readonly nextAttemptAt: Prisma.FieldRef<"OutboxEvent", 'DateTime'>
-  readonly deliveredAt: Prisma.FieldRef<"OutboxEvent", 'DateTime'>
-  readonly lastError: Prisma.FieldRef<"OutboxEvent", 'String'>
+  readonly lastErrorCode: Prisma.FieldRef<"OutboxEvent", 'String'>
+  readonly lastErrorAt: Prisma.FieldRef<"OutboxEvent", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"OutboxEvent", 'DateTime'>
+  readonly completedAt: Prisma.FieldRef<"OutboxEvent", 'DateTime'>
 }
     
 
@@ -1905,22 +2003,27 @@ export type OutboxEventDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * OutboxEvent.client
+ * OutboxEvent.deliveries
  */
-export type OutboxEvent$clientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type OutboxEvent$deliveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the FederationClient
+   * Select specific fields to fetch from the WebhookDelivery
    */
-  select?: Prisma.FederationClientSelect<ExtArgs> | null
+  select?: Prisma.WebhookDeliverySelect<ExtArgs> | null
   /**
-   * Omit specific fields from the FederationClient
+   * Omit specific fields from the WebhookDelivery
    */
-  omit?: Prisma.FederationClientOmit<ExtArgs> | null
+  omit?: Prisma.WebhookDeliveryOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.FederationClientInclude<ExtArgs> | null
-  where?: Prisma.FederationClientWhereInput
+  include?: Prisma.WebhookDeliveryInclude<ExtArgs> | null
+  where?: Prisma.WebhookDeliveryWhereInput
+  orderBy?: Prisma.WebhookDeliveryOrderByWithRelationInput | Prisma.WebhookDeliveryOrderByWithRelationInput[]
+  cursor?: Prisma.WebhookDeliveryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WebhookDeliveryScalarFieldEnum | Prisma.WebhookDeliveryScalarFieldEnum[]
 }
 
 /**

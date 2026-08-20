@@ -7,33 +7,34 @@ stages:
 cache:
   key:
     files:
-      - package-lock.json
+      - pnpm-lock.yaml
   paths:
-    - .npm/
+    - .pnpm-store/
 
 before_script:
-  - npm ci --cache .npm --prefer-offline
+  - corepack enable
+  - pnpm install --frozen-lockfile --store-dir .pnpm-store
 
 lint:
   stage: validate
   script:
-    - npm run lint
-    - npm run format:check
+    - pnpm run lint
+    - pnpm run format:check
 
 typecheck:
   stage: validate
   script:
-    - npm run typecheck
+    - pnpm run typecheck
 
 test:
   stage: validate
   script:
-    - npm run test
+    - pnpm run test
 
 build:
   stage: build
   script:
-    - npm run build
+    - pnpm run build
   artifacts:
     expire_in: 1 week
     paths:

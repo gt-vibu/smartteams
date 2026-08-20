@@ -1,0 +1,219 @@
+model Organization {
+  id            String             @id @default(uuid()) @db.Uuid
+  name          String
+  slug          String             @unique @db.Citext
+  source        OrganizationSource
+  externalId    String?            @map("external_id")
+  status        OrganizationStatus @default(ACTIVE)
+  timezone      String             @default("UTC")
+  currencyCode  String             @map("currency_code") @db.Char(3)
+  locale        String             @default("en-IN")
+  deactivatedAt DateTime?          @map("deactivated_at") @db.Timestamptz(6)
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version       Int                @default(1)
+
+  settings                  OrganizationSettings?
+  branches                  Branch[]
+  sourceChanges             OrganizationSourceChange[]
+  users                     UserOrganization[]
+  sessions                  AuthSession[]
+  invitations               UserInvitation[]
+  approvalPolicies          ApprovalPolicy[]
+  approvalPolicySteps       ApprovalPolicyStep[]
+  roles                     Role[]
+  userRoles                 UserRole[]
+  employees                 Employee[]
+  emergencyContacts         EmployeeEmergencyContact[]
+  employeeBranchAssignments EmployeeBranchAssignment[]
+  employeeFieldOwnership    EmployeeFieldOwnership[]
+  employmentRecords         EmployeeEmploymentRecord[]
+  compensations             EmployeeCompensation[]
+  payComponents             PayComponent[]
+  employeePayComponents     EmployeePayComponent[]
+  teams                     Team[]
+  teamMembers               TeamMember[]
+  projects                  Project[]
+  projectMembers            ProjectMember[]
+  files                     FileObject[]
+  workLocations             WorkLocation[]
+  attendanceRecords         AttendanceRecord[]
+  attendancePunches         AttendancePunch[]
+  attendanceCorrections     AttendanceCorrection[]
+  attendanceApprovals       AttendanceApproval[]
+  holidays                  Holiday[]
+  leaveTypes                LeaveType[]
+  leaveBalances             LeaveBalance[]
+  leaveBalanceTransactions  LeaveBalanceTransaction[]
+  leaveRequests             LeaveRequest[]
+  leaveApprovals            LeaveApproval[]
+  shifts                    Shift[]
+  shiftAssignments          EmployeeShiftAssignment[]
+  timesheetPeriods          TimesheetPeriod[]
+  timesheets                Timesheet[]
+  timesheetEntries          TimesheetEntry[]
+  timesheetApprovals        TimesheetApproval[]
+  payrollRuns               PayrollRun[]
+  payrollLineItems          PayrollLineItem[]
+  payrollLineItemComponents PayrollLineItemComponent[]
+  payrollAdjustments        PayrollAdjustment[]
+  payrollApprovals          PayrollApproval[]
+  payslips                  Payslip[]
+  federationGrants          FederationGrant[]
+  organizationCapabilities  OrganizationFederationCapability[]
+  externalIdMappings        ExternalIdMapping[]
+  idempotencyRecords        FederationIdempotencyRecord[]
+  requestRecords            FederationRequestRecord[]
+  webhookSubscriptions      WebhookSubscription[]
+  webhookDeliveries         WebhookDelivery[]
+  outboxEvents              OutboxEvent[]
+  auditLogs                 AuditLog[]
+  homeFederationClients     FederationClient[]                 @relation("FederationClientHomeOrganization")
+
+  @@unique([source, externalId])
+  @@index([status])
+  @@map("organizations")
+}
+
+model OrganizationSettings {
+  organizationId      String       @id @map("organization_id") @db.Uuid
+  workWeekDays        Int[]        @default(dbgenerated("ARRAY[(1)::smallint, (2)::smallint, (3)::smallint, (4)::smallint, (5)::smallint]")) @map("work_week_days") @db.SmallInt
+  standardDayMinutes  Int          @default(480) @map("standard_day_minutes") @db.SmallInt
+  payrollFrequency    PayFrequency @default(MONTHLY) @map("payroll_frequency")
+  payrollDayOfMonth   Int?         @map("payroll_day_of_month") @db.SmallInt
+  leaveYearStartMonth Int          @default(1) @map("leave_year_start_month") @db.SmallInt
+  geofenceMode        GeofenceMode @default(DISABLED) @map("geofence_mode")
+  metadata            Json         @default("{}")
+  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@map("organization_settings")
+}
+
+model ApprovalPolicy {
+  id              String         @id @default(uuid()) @db.Uuid
+  organizationId  String         @map("organization_id") @db.Uuid
+  domain          ApprovalDomain
+  code            String
+  name            String
+  isDefault       Boolean        @default(false) @map("is_default")
+  isActive        Boolean        @default(true) @map("is_active")
+  createdByUserId String?        @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  createdBy             User?                  @relation("ApprovalPolicyCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  steps                 ApprovalPolicyStep[]
+  attendanceCorrections AttendanceCorrection[]
+  leaveRequests         LeaveRequest[]
+  timesheets            Timesheet[]
+  payrollRuns           PayrollRun[]
+
+  @@unique([organizationId, domain, code])
+  @@index([organizationId, domain, isActive])
+  @@map("approval_policies")
+}
+
+model ApprovalPolicyStep {
+  id               String       @id @default(uuid()) @db.Uuid
+  organizationId   String       @map("organization_id") @db.Uuid
+  approvalPolicyId String       @map("approval_policy_id") @db.Uuid
+  stepNumber       Int          @map("step_number") @db.SmallInt
+  approverType     ApproverType @map("approver_type")
+  roleId           String?      @map("role_id") @db.Uuid
+  approverUserId   String?      @map("approver_user_id") @db.Uuid
+  required         Boolean      @default(true)
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  approvalPolicy      ApprovalPolicy       @relation(fields: [approvalPolicyId], references: [id], onDelete: Restrict)
+  role                Role?                @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  approverUser        User?                @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
+  attendanceApprovals AttendanceApproval[]
+  leaveApprovals      LeaveApproval[]
+  timesheetApprovals  TimesheetApproval[]
+  payrollApprovals    PayrollApproval[]
+
+  @@unique([approvalPolicyId, stepNumber])
+  @@index([organizationId, approvalPolicyId])
+  @@map("approval_policy_steps")
+}
+
+model Branch {
+  id             String             @id @default(uuid()) @db.Uuid
+  organizationId String             @map("organization_id") @db.Uuid
+  name           String
+  code           String
+  source         OrganizationSource
+  externalId     String?            @map("external_id")
+  status         OrganizationStatus @default(ACTIVE)
+  timezone       String?
+  geofenceMode   GeofenceMode?      @map("geofence_mode")
+  address        Json               @default("{}")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization        Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  workLocations       WorkLocation[]
+  primaryEmployees    Employee[]                 @relation("EmployeePrimaryBranch")
+  employeeAssignments EmployeeBranchAssignment[]
+  roles               Role[]                     @relation("BranchRoles")
+  userRoles           UserRole[]                 @relation("BranchUserRoles")
+  attendanceRecords   AttendanceRecord[]
+  leaveRequests       LeaveRequest[]
+  shifts              Shift[]
+  timesheets          Timesheet[]
+  holidays            Holiday[]
+  teams               Team[]
+  projects            Project[]
+  grants              FederationGrant[]
+  shiftAssignments    EmployeeShiftAssignment[]
+  requestRecords      FederationRequestRecord[]
+  auditLogs           AuditLog[]
+
+  @@unique([organizationId, code])
+  @@unique([organizationId, externalId])
+  @@index([organizationId, status])
+  @@map("branches")
+}
+
+model WorkLocation {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  branchId       String?  @map("branch_id") @db.Uuid
+  name           String
+  latitude       Decimal  @db.Decimal(9, 6)
+  longitude      Decimal  @db.Decimal(9, 6)
+  radiusMeters   Decimal  @map("radius_meters") @db.Decimal(8, 2)
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch?           @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  punches      AttendancePunch[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, branchId, isActive])
+  @@map("work_locations")
+}
+
+model OrganizationSourceChange {
+  id                String             @id @default(uuid()) @db.Uuid
+  organizationId    String             @map("organization_id") @db.Uuid
+  fromSource        OrganizationSource @map("from_source")
+  toSource          OrganizationSource @map("to_source")
+  reason            String
+  requestedByUserId String             @map("requested_by_user_id") @db.Uuid
+  correlationId     String             @map("correlation_id") @db.Uuid
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  requestedBy  User         @relation("SourceChangeCreatedBy", fields: [requestedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, createdAt])
+  @@map("organization_source_changes")
+}

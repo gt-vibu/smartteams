@@ -12,9 +12,9 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@smarteam/config": "0.1.0",
-    "@smarteam/contracts": "0.1.0",
-    "@smarteam/ui": "0.1.0",
+    "@smarteam/config": "workspace:*",
+    "@smarteam/contracts": "workspace:*",
+    "@smarteam/ui": "workspace:*",
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8"

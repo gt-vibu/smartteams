@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "@types/node": "26.2.0",
-    "@smarteam/tsconfig": "0.1.0"
+    "@smarteam/tsconfig": "workspace:*"
   }
 }

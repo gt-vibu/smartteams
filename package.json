@@ -3,20 +3,21 @@
   "private": true,
   "version": "0.1.0",
   "description": "Smarteam V2 People Management platform",
-  "packageManager": "npm@11.6.2",
+  "packageManager": "pnpm@10.24.0",
   "engines": {
     "node": ">=20.9 <25"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
-    "db:generate": "npm run db:generate --workspace=@smarteam/api",
-    "db:migrate": "npm run db:migrate --workspace=@smarteam/api",
-    "db:studio": "npm run db:studio --workspace=@smarteam/api",
+    "db:generate": "pnpm --filter @smarteam/api db:generate",
+    "db:format": "pnpm --filter @smarteam/api db:format",
+    "db:migrate": "pnpm --filter @smarteam/api db:migrate",
+    "db:deploy": "pnpm --filter @smarteam/api db:deploy",
+    "db:status": "pnpm --filter @smarteam/api db:status",
+    "db:validate": "pnpm --filter @smarteam/api db:validate",
+    "db:diff": "pnpm --filter @smarteam/api db:diff",
+    "db:studio": "pnpm --filter @smarteam/api db:studio",
     "dev": "turbo run dev --parallel",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

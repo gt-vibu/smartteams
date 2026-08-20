@@ -27,15 +27,21 @@ export type AggregateLeaveBalance = {
 }
 
 export type LeaveBalanceAvgAggregateOutputType = {
-  periodYear: number | null
-  available: runtime.Decimal | null
-  used: runtime.Decimal | null
+  openingAmount: runtime.Decimal | null
+  accruedAmount: runtime.Decimal | null
+  usedAmount: runtime.Decimal | null
+  reservedAmount: runtime.Decimal | null
+  availableAmount: runtime.Decimal | null
+  version: number | null
 }
 
 export type LeaveBalanceSumAggregateOutputType = {
-  periodYear: number | null
-  available: runtime.Decimal | null
-  used: runtime.Decimal | null
+  openingAmount: runtime.Decimal | null
+  accruedAmount: runtime.Decimal | null
+  usedAmount: runtime.Decimal | null
+  reservedAmount: runtime.Decimal | null
+  availableAmount: runtime.Decimal | null
+  version: number | null
 }
 
 export type LeaveBalanceMinAggregateOutputType = {
@@ -43,9 +49,16 @@ export type LeaveBalanceMinAggregateOutputType = {
   organizationId: string | null
   employeeId: string | null
   leaveTypeId: string | null
-  periodYear: number | null
-  available: runtime.Decimal | null
-  used: runtime.Decimal | null
+  periodStart: Date | null
+  periodEnd: Date | null
+  openingAmount: runtime.Decimal | null
+  accruedAmount: runtime.Decimal | null
+  usedAmount: runtime.Decimal | null
+  reservedAmount: runtime.Decimal | null
+  availableAmount: runtime.Decimal | null
+  createdAt: Date | null
+  updatedAt: Date | null
+  version: number | null
 }
 
 export type LeaveBalanceMaxAggregateOutputType = {
@@ -53,9 +66,16 @@ export type LeaveBalanceMaxAggregateOutputType = {
   organizationId: string | null
   employeeId: string | null
   leaveTypeId: string | null
-  periodYear: number | null
-  available: runtime.Decimal | null
-  used: runtime.Decimal | null
+  periodStart: Date | null
+  periodEnd: Date | null
+  openingAmount: runtime.Decimal | null
+  accruedAmount: runtime.Decimal | null
+  usedAmount: runtime.Decimal | null
+  reservedAmount: runtime.Decimal | null
+  availableAmount: runtime.Decimal | null
+  createdAt: Date | null
+  updatedAt: Date | null
+  version: number | null
 }
 
 export type LeaveBalanceCountAggregateOutputType = {
@@ -63,23 +83,36 @@ export type LeaveBalanceCountAggregateOutputType = {
   organizationId: number
   employeeId: number
   leaveTypeId: number
-  periodYear: number
-  available: number
-  used: number
+  periodStart: number
+  periodEnd: number
+  openingAmount: number
+  accruedAmount: number
+  usedAmount: number
+  reservedAmount: number
+  availableAmount: number
+  createdAt: number
+  updatedAt: number
+  version: number
   _all: number
 }
 
 
 export type LeaveBalanceAvgAggregateInputType = {
-  periodYear?: true
-  available?: true
-  used?: true
+  openingAmount?: true
+  accruedAmount?: true
+  usedAmount?: true
+  reservedAmount?: true
+  availableAmount?: true
+  version?: true
 }
 
 export type LeaveBalanceSumAggregateInputType = {
-  periodYear?: true
-  available?: true
-  used?: true
+  openingAmount?: true
+  accruedAmount?: true
+  usedAmount?: true
+  reservedAmount?: true
+  availableAmount?: true
+  version?: true
 }
 
 export type LeaveBalanceMinAggregateInputType = {
@@ -87,9 +120,16 @@ export type LeaveBalanceMinAggregateInputType = {
   organizationId?: true
   employeeId?: true
   leaveTypeId?: true
-  periodYear?: true
-  available?: true
-  used?: true
+  periodStart?: true
+  periodEnd?: true
+  openingAmount?: true
+  accruedAmount?: true
+  usedAmount?: true
+  reservedAmount?: true
+  availableAmount?: true
+  createdAt?: true
+  updatedAt?: true
+  version?: true
 }
 
 export type LeaveBalanceMaxAggregateInputType = {
@@ -97,9 +137,16 @@ export type LeaveBalanceMaxAggregateInputType = {
   organizationId?: true
   employeeId?: true
   leaveTypeId?: true
-  periodYear?: true
-  available?: true
-  used?: true
+  periodStart?: true
+  periodEnd?: true
+  openingAmount?: true
+  accruedAmount?: true
+  usedAmount?: true
+  reservedAmount?: true
+  availableAmount?: true
+  createdAt?: true
+  updatedAt?: true
+  version?: true
 }
 
 export type LeaveBalanceCountAggregateInputType = {
@@ -107,9 +154,16 @@ export type LeaveBalanceCountAggregateInputType = {
   organizationId?: true
   employeeId?: true
   leaveTypeId?: true
-  periodYear?: true
-  available?: true
-  used?: true
+  periodStart?: true
+  periodEnd?: true
+  openingAmount?: true
+  accruedAmount?: true
+  usedAmount?: true
+  reservedAmount?: true
+  availableAmount?: true
+  createdAt?: true
+  updatedAt?: true
+  version?: true
   _all?: true
 }
 
@@ -204,9 +258,16 @@ export type LeaveBalanceGroupByOutputType = {
   organizationId: string
   employeeId: string
   leaveTypeId: string
-  periodYear: number
-  available: runtime.Decimal
-  used: runtime.Decimal
+  periodStart: Date
+  periodEnd: Date
+  openingAmount: runtime.Decimal
+  accruedAmount: runtime.Decimal
+  usedAmount: runtime.Decimal
+  reservedAmount: runtime.Decimal
+  availableAmount: runtime.Decimal
+  createdAt: Date
+  updatedAt: Date
+  version: number
   _count: LeaveBalanceCountAggregateOutputType | null
   _avg: LeaveBalanceAvgAggregateOutputType | null
   _sum: LeaveBalanceSumAggregateOutputType | null
@@ -237,12 +298,20 @@ export type LeaveBalanceWhereInput = {
   organizationId?: Prisma.UuidFilter<"LeaveBalance"> | string
   employeeId?: Prisma.UuidFilter<"LeaveBalance"> | string
   leaveTypeId?: Prisma.UuidFilter<"LeaveBalance"> | string
-  periodYear?: Prisma.IntFilter<"LeaveBalance"> | number
-  available?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  periodEnd?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  openingAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  version?: Prisma.IntFilter<"LeaveBalance"> | number
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
   leaveType?: Prisma.XOR<Prisma.LeaveTypeScalarRelationFilter, Prisma.LeaveTypeWhereInput>
+  transactions?: Prisma.LeaveBalanceTransactionListRelationFilter
 }
 
 export type LeaveBalanceOrderByWithRelationInput = {
@@ -250,39 +319,62 @@ export type LeaveBalanceOrderByWithRelationInput = {
   organizationId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  periodYear?: Prisma.SortOrder
-  available?: Prisma.SortOrder
-  used?: Prisma.SortOrder
+  periodStart?: Prisma.SortOrder
+  periodEnd?: Prisma.SortOrder
+  openingAmount?: Prisma.SortOrder
+  accruedAmount?: Prisma.SortOrder
+  usedAmount?: Prisma.SortOrder
+  reservedAmount?: Prisma.SortOrder
+  availableAmount?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   employee?: Prisma.EmployeeOrderByWithRelationInput
   leaveType?: Prisma.LeaveTypeOrderByWithRelationInput
+  transactions?: Prisma.LeaveBalanceTransactionOrderByRelationAggregateInput
 }
 
 export type LeaveBalanceWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  employeeId_leaveTypeId_periodYear?: Prisma.LeaveBalanceEmployeeIdLeaveTypeIdPeriodYearCompoundUniqueInput
+  employeeId_leaveTypeId_periodStart_periodEnd?: Prisma.LeaveBalanceEmployeeIdLeaveTypeIdPeriodStartPeriodEndCompoundUniqueInput
   AND?: Prisma.LeaveBalanceWhereInput | Prisma.LeaveBalanceWhereInput[]
   OR?: Prisma.LeaveBalanceWhereInput[]
   NOT?: Prisma.LeaveBalanceWhereInput | Prisma.LeaveBalanceWhereInput[]
   organizationId?: Prisma.UuidFilter<"LeaveBalance"> | string
   employeeId?: Prisma.UuidFilter<"LeaveBalance"> | string
   leaveTypeId?: Prisma.UuidFilter<"LeaveBalance"> | string
-  periodYear?: Prisma.IntFilter<"LeaveBalance"> | number
-  available?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  periodEnd?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  openingAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  version?: Prisma.IntFilter<"LeaveBalance"> | number
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
   leaveType?: Prisma.XOR<Prisma.LeaveTypeScalarRelationFilter, Prisma.LeaveTypeWhereInput>
-}, "id" | "employeeId_leaveTypeId_periodYear">
+  transactions?: Prisma.LeaveBalanceTransactionListRelationFilter
+}, "id" | "employeeId_leaveTypeId_periodStart_periodEnd">
 
 export type LeaveBalanceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  periodYear?: Prisma.SortOrder
-  available?: Prisma.SortOrder
-  used?: Prisma.SortOrder
+  periodStart?: Prisma.SortOrder
+  periodEnd?: Prisma.SortOrder
+  openingAmount?: Prisma.SortOrder
+  accruedAmount?: Prisma.SortOrder
+  usedAmount?: Prisma.SortOrder
+  reservedAmount?: Prisma.SortOrder
+  availableAmount?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
   _count?: Prisma.LeaveBalanceCountOrderByAggregateInput
   _avg?: Prisma.LeaveBalanceAvgOrderByAggregateInput
   _max?: Prisma.LeaveBalanceMaxOrderByAggregateInput
@@ -298,19 +390,34 @@ export type LeaveBalanceScalarWhereWithAggregatesInput = {
   organizationId?: Prisma.UuidWithAggregatesFilter<"LeaveBalance"> | string
   employeeId?: Prisma.UuidWithAggregatesFilter<"LeaveBalance"> | string
   leaveTypeId?: Prisma.UuidWithAggregatesFilter<"LeaveBalance"> | string
-  periodYear?: Prisma.IntWithAggregatesFilter<"LeaveBalance"> | number
-  available?: Prisma.DecimalWithAggregatesFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalWithAggregatesFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeWithAggregatesFilter<"LeaveBalance"> | Date | string
+  periodEnd?: Prisma.DateTimeWithAggregatesFilter<"LeaveBalance"> | Date | string
+  openingAmount?: Prisma.DecimalWithAggregatesFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalWithAggregatesFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalWithAggregatesFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalWithAggregatesFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalWithAggregatesFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"LeaveBalance"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LeaveBalance"> | Date | string
+  version?: Prisma.IntWithAggregatesFilter<"LeaveBalance"> | number
 }
 
 export type LeaveBalanceCreateInput = {
   id?: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveBalancesInput
   employee: Prisma.EmployeeCreateNestedOneWithoutLeaveBalancesInput
   leaveType: Prisma.LeaveTypeCreateNestedOneWithoutBalancesInput
+  transactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveBalanceInput
 }
 
 export type LeaveBalanceUncheckedCreateInput = {
@@ -318,19 +425,35 @@ export type LeaveBalanceUncheckedCreateInput = {
   organizationId: string
   employeeId: string
   leaveTypeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveBalanceInput
 }
 
 export type LeaveBalanceUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveBalancesNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutLeaveBalancesNestedInput
   leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutBalancesNestedInput
+  transactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveBalanceNestedInput
 }
 
 export type LeaveBalanceUncheckedUpdateInput = {
@@ -338,9 +461,17 @@ export type LeaveBalanceUncheckedUpdateInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveBalanceNestedInput
 }
 
 export type LeaveBalanceCreateManyInput = {
@@ -348,16 +479,30 @@ export type LeaveBalanceCreateManyInput = {
   organizationId: string
   employeeId: string
   leaveTypeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
 }
 
 export type LeaveBalanceUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type LeaveBalanceUncheckedUpdateManyInput = {
@@ -365,9 +510,16 @@ export type LeaveBalanceUncheckedUpdateManyInput = {
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type LeaveBalanceListRelationFilter = {
@@ -380,10 +532,11 @@ export type LeaveBalanceOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type LeaveBalanceEmployeeIdLeaveTypeIdPeriodYearCompoundUniqueInput = {
+export type LeaveBalanceEmployeeIdLeaveTypeIdPeriodStartPeriodEndCompoundUniqueInput = {
   employeeId: string
   leaveTypeId: string
-  periodYear: number
+  periodStart: Date | string
+  periodEnd: Date | string
 }
 
 export type LeaveBalanceCountOrderByAggregateInput = {
@@ -391,15 +544,25 @@ export type LeaveBalanceCountOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  periodYear?: Prisma.SortOrder
-  available?: Prisma.SortOrder
-  used?: Prisma.SortOrder
+  periodStart?: Prisma.SortOrder
+  periodEnd?: Prisma.SortOrder
+  openingAmount?: Prisma.SortOrder
+  accruedAmount?: Prisma.SortOrder
+  usedAmount?: Prisma.SortOrder
+  reservedAmount?: Prisma.SortOrder
+  availableAmount?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type LeaveBalanceAvgOrderByAggregateInput = {
-  periodYear?: Prisma.SortOrder
-  available?: Prisma.SortOrder
-  used?: Prisma.SortOrder
+  openingAmount?: Prisma.SortOrder
+  accruedAmount?: Prisma.SortOrder
+  usedAmount?: Prisma.SortOrder
+  reservedAmount?: Prisma.SortOrder
+  availableAmount?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type LeaveBalanceMaxOrderByAggregateInput = {
@@ -407,9 +570,16 @@ export type LeaveBalanceMaxOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  periodYear?: Prisma.SortOrder
-  available?: Prisma.SortOrder
-  used?: Prisma.SortOrder
+  periodStart?: Prisma.SortOrder
+  periodEnd?: Prisma.SortOrder
+  openingAmount?: Prisma.SortOrder
+  accruedAmount?: Prisma.SortOrder
+  usedAmount?: Prisma.SortOrder
+  reservedAmount?: Prisma.SortOrder
+  availableAmount?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type LeaveBalanceMinOrderByAggregateInput = {
@@ -417,15 +587,94 @@ export type LeaveBalanceMinOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   leaveTypeId?: Prisma.SortOrder
-  periodYear?: Prisma.SortOrder
-  available?: Prisma.SortOrder
-  used?: Prisma.SortOrder
+  periodStart?: Prisma.SortOrder
+  periodEnd?: Prisma.SortOrder
+  openingAmount?: Prisma.SortOrder
+  accruedAmount?: Prisma.SortOrder
+  usedAmount?: Prisma.SortOrder
+  reservedAmount?: Prisma.SortOrder
+  availableAmount?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  version?: Prisma.SortOrder
 }
 
 export type LeaveBalanceSumOrderByAggregateInput = {
-  periodYear?: Prisma.SortOrder
-  available?: Prisma.SortOrder
-  used?: Prisma.SortOrder
+  openingAmount?: Prisma.SortOrder
+  accruedAmount?: Prisma.SortOrder
+  usedAmount?: Prisma.SortOrder
+  reservedAmount?: Prisma.SortOrder
+  availableAmount?: Prisma.SortOrder
+  version?: Prisma.SortOrder
+}
+
+export type LeaveBalanceScalarRelationFilter = {
+  is?: Prisma.LeaveBalanceWhereInput
+  isNot?: Prisma.LeaveBalanceWhereInput
+}
+
+export type LeaveBalanceCreateNestedManyWithoutLeaveTypeInput = {
+  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
+  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
+  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
+  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+}
+
+export type LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput = {
+  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
+  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
+  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
+  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+}
+
+export type LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
+  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
+  upsert?: Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput[]
+  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
+  set?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  disconnect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  delete?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  update?: Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput[]
+  updateMany?: Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput[]
+  deleteMany?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
+}
+
+export type LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
+  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
+  upsert?: Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput[]
+  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
+  set?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  disconnect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  delete?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
+  update?: Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput[]
+  updateMany?: Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput[]
+  deleteMany?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
+}
+
+export type DecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type LeaveBalanceCreateNestedOneWithoutTransactionsInput = {
+  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutTransactionsInput, Prisma.LeaveBalanceUncheckedCreateWithoutTransactionsInput>
+  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutTransactionsInput
+  connect?: Prisma.LeaveBalanceWhereUniqueInput
+}
+
+export type LeaveBalanceUpdateOneRequiredWithoutTransactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutTransactionsInput, Prisma.LeaveBalanceUncheckedCreateWithoutTransactionsInput>
+  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutTransactionsInput
+  upsert?: Prisma.LeaveBalanceUpsertWithoutTransactionsInput
+  connect?: Prisma.LeaveBalanceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveBalanceUpdateToOneWithWhereWithoutTransactionsInput, Prisma.LeaveBalanceUpdateWithoutTransactionsInput>, Prisma.LeaveBalanceUncheckedUpdateWithoutTransactionsInput>
 }
 
 export type LeaveBalanceCreateNestedManyWithoutOrganizationInput = {
@@ -512,173 +761,38 @@ export type LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput = {
   deleteMany?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
 }
 
-export type LeaveBalanceCreateNestedManyWithoutLeaveTypeInput = {
-  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
-  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
-  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
-  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-}
-
-export type LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput = {
-  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
-  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
-  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
-  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-}
-
-export type LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput = {
-  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
-  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
-  upsert?: Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput[]
-  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
-  set?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  disconnect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  delete?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  update?: Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput[]
-  updateMany?: Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput[]
-  deleteMany?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
-}
-
-export type LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput = {
-  create?: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutLeaveTypeInput, Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput> | Prisma.LeaveBalanceCreateWithoutLeaveTypeInput[] | Prisma.LeaveBalanceUncheckedCreateWithoutLeaveTypeInput[]
-  connectOrCreate?: Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput | Prisma.LeaveBalanceCreateOrConnectWithoutLeaveTypeInput[]
-  upsert?: Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpsertWithWhereUniqueWithoutLeaveTypeInput[]
-  createMany?: Prisma.LeaveBalanceCreateManyLeaveTypeInputEnvelope
-  set?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  disconnect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  delete?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  connect?: Prisma.LeaveBalanceWhereUniqueInput | Prisma.LeaveBalanceWhereUniqueInput[]
-  update?: Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateWithWhereUniqueWithoutLeaveTypeInput[]
-  updateMany?: Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput | Prisma.LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput[]
-  deleteMany?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
-}
-
-export type DecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
-export type LeaveBalanceCreateWithoutOrganizationInput = {
-  id?: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  employee: Prisma.EmployeeCreateNestedOneWithoutLeaveBalancesInput
-  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutBalancesInput
-}
-
-export type LeaveBalanceUncheckedCreateWithoutOrganizationInput = {
-  id?: string
-  employeeId: string
-  leaveTypeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
-export type LeaveBalanceCreateOrConnectWithoutOrganizationInput = {
-  where: Prisma.LeaveBalanceWhereUniqueInput
-  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedCreateWithoutOrganizationInput>
-}
-
-export type LeaveBalanceCreateManyOrganizationInputEnvelope = {
-  data: Prisma.LeaveBalanceCreateManyOrganizationInput | Prisma.LeaveBalanceCreateManyOrganizationInput[]
-  skipDuplicates?: boolean
-}
-
-export type LeaveBalanceUpsertWithWhereUniqueWithoutOrganizationInput = {
-  where: Prisma.LeaveBalanceWhereUniqueInput
-  update: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedUpdateWithoutOrganizationInput>
-  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedCreateWithoutOrganizationInput>
-}
-
-export type LeaveBalanceUpdateWithWhereUniqueWithoutOrganizationInput = {
-  where: Prisma.LeaveBalanceWhereUniqueInput
-  data: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedUpdateWithoutOrganizationInput>
-}
-
-export type LeaveBalanceUpdateManyWithWhereWithoutOrganizationInput = {
-  where: Prisma.LeaveBalanceScalarWhereInput
-  data: Prisma.XOR<Prisma.LeaveBalanceUpdateManyMutationInput, Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationInput>
-}
-
-export type LeaveBalanceScalarWhereInput = {
-  AND?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
-  OR?: Prisma.LeaveBalanceScalarWhereInput[]
-  NOT?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
-  id?: Prisma.UuidFilter<"LeaveBalance"> | string
-  organizationId?: Prisma.UuidFilter<"LeaveBalance"> | string
-  employeeId?: Prisma.UuidFilter<"LeaveBalance"> | string
-  leaveTypeId?: Prisma.UuidFilter<"LeaveBalance"> | string
-  periodYear?: Prisma.IntFilter<"LeaveBalance"> | number
-  available?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
-export type LeaveBalanceCreateWithoutEmployeeInput = {
-  id?: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveBalancesInput
-  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutBalancesInput
-}
-
-export type LeaveBalanceUncheckedCreateWithoutEmployeeInput = {
-  id?: string
-  organizationId: string
-  leaveTypeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
-export type LeaveBalanceCreateOrConnectWithoutEmployeeInput = {
-  where: Prisma.LeaveBalanceWhereUniqueInput
-  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedCreateWithoutEmployeeInput>
-}
-
-export type LeaveBalanceCreateManyEmployeeInputEnvelope = {
-  data: Prisma.LeaveBalanceCreateManyEmployeeInput | Prisma.LeaveBalanceCreateManyEmployeeInput[]
-  skipDuplicates?: boolean
-}
-
-export type LeaveBalanceUpsertWithWhereUniqueWithoutEmployeeInput = {
-  where: Prisma.LeaveBalanceWhereUniqueInput
-  update: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedUpdateWithoutEmployeeInput>
-  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedCreateWithoutEmployeeInput>
-}
-
-export type LeaveBalanceUpdateWithWhereUniqueWithoutEmployeeInput = {
-  where: Prisma.LeaveBalanceWhereUniqueInput
-  data: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedUpdateWithoutEmployeeInput>
-}
-
-export type LeaveBalanceUpdateManyWithWhereWithoutEmployeeInput = {
-  where: Prisma.LeaveBalanceScalarWhereInput
-  data: Prisma.XOR<Prisma.LeaveBalanceUpdateManyMutationInput, Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeInput>
-}
-
 export type LeaveBalanceCreateWithoutLeaveTypeInput = {
   id?: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveBalancesInput
   employee: Prisma.EmployeeCreateNestedOneWithoutLeaveBalancesInput
+  transactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveBalanceInput
 }
 
 export type LeaveBalanceUncheckedCreateWithoutLeaveTypeInput = {
   id?: string
   organizationId: string
   employeeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveBalanceInput
 }
 
 export type LeaveBalanceCreateOrConnectWithoutLeaveTypeInput = {
@@ -707,114 +821,457 @@ export type LeaveBalanceUpdateManyWithWhereWithoutLeaveTypeInput = {
   data: Prisma.XOR<Prisma.LeaveBalanceUpdateManyMutationInput, Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeInput>
 }
 
-export type LeaveBalanceCreateManyOrganizationInput = {
-  id?: string
-  employeeId: string
-  leaveTypeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+export type LeaveBalanceScalarWhereInput = {
+  AND?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
+  OR?: Prisma.LeaveBalanceScalarWhereInput[]
+  NOT?: Prisma.LeaveBalanceScalarWhereInput | Prisma.LeaveBalanceScalarWhereInput[]
+  id?: Prisma.UuidFilter<"LeaveBalance"> | string
+  organizationId?: Prisma.UuidFilter<"LeaveBalance"> | string
+  employeeId?: Prisma.UuidFilter<"LeaveBalance"> | string
+  leaveTypeId?: Prisma.UuidFilter<"LeaveBalance"> | string
+  periodStart?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  periodEnd?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  openingAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFilter<"LeaveBalance"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LeaveBalance"> | Date | string
+  version?: Prisma.IntFilter<"LeaveBalance"> | number
 }
 
-export type LeaveBalanceUpdateWithoutOrganizationInput = {
+export type LeaveBalanceCreateWithoutTransactionsInput = {
+  id?: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveBalancesInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutLeaveBalancesInput
+  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutBalancesInput
+}
+
+export type LeaveBalanceUncheckedCreateWithoutTransactionsInput = {
+  id?: string
+  organizationId: string
+  employeeId: string
+  leaveTypeId: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+}
+
+export type LeaveBalanceCreateOrConnectWithoutTransactionsInput = {
+  where: Prisma.LeaveBalanceWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutTransactionsInput, Prisma.LeaveBalanceUncheckedCreateWithoutTransactionsInput>
+}
+
+export type LeaveBalanceUpsertWithoutTransactionsInput = {
+  update: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutTransactionsInput, Prisma.LeaveBalanceUncheckedUpdateWithoutTransactionsInput>
+  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutTransactionsInput, Prisma.LeaveBalanceUncheckedCreateWithoutTransactionsInput>
+  where?: Prisma.LeaveBalanceWhereInput
+}
+
+export type LeaveBalanceUpdateToOneWithWhereWithoutTransactionsInput = {
+  where?: Prisma.LeaveBalanceWhereInput
+  data: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutTransactionsInput, Prisma.LeaveBalanceUncheckedUpdateWithoutTransactionsInput>
+}
+
+export type LeaveBalanceUpdateWithoutTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveBalancesNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutLeaveBalancesNestedInput
   leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutBalancesNestedInput
 }
 
-export type LeaveBalanceUncheckedUpdateWithoutOrganizationInput = {
+export type LeaveBalanceUncheckedUpdateWithoutTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type LeaveBalanceUncheckedUpdateManyWithoutOrganizationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+export type LeaveBalanceCreateWithoutOrganizationInput = {
+  id?: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  employee: Prisma.EmployeeCreateNestedOneWithoutLeaveBalancesInput
+  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutBalancesInput
+  transactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveBalanceInput
 }
 
-export type LeaveBalanceCreateManyEmployeeInput = {
+export type LeaveBalanceUncheckedCreateWithoutOrganizationInput = {
+  id?: string
+  employeeId: string
+  leaveTypeId: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveBalanceInput
+}
+
+export type LeaveBalanceCreateOrConnectWithoutOrganizationInput = {
+  where: Prisma.LeaveBalanceWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedCreateWithoutOrganizationInput>
+}
+
+export type LeaveBalanceCreateManyOrganizationInputEnvelope = {
+  data: Prisma.LeaveBalanceCreateManyOrganizationInput | Prisma.LeaveBalanceCreateManyOrganizationInput[]
+  skipDuplicates?: boolean
+}
+
+export type LeaveBalanceUpsertWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.LeaveBalanceWhereUniqueInput
+  update: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedUpdateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedCreateWithoutOrganizationInput>
+}
+
+export type LeaveBalanceUpdateWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.LeaveBalanceWhereUniqueInput
+  data: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutOrganizationInput, Prisma.LeaveBalanceUncheckedUpdateWithoutOrganizationInput>
+}
+
+export type LeaveBalanceUpdateManyWithWhereWithoutOrganizationInput = {
+  where: Prisma.LeaveBalanceScalarWhereInput
+  data: Prisma.XOR<Prisma.LeaveBalanceUpdateManyMutationInput, Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationInput>
+}
+
+export type LeaveBalanceCreateWithoutEmployeeInput = {
+  id?: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveBalancesInput
+  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutBalancesInput
+  transactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveBalanceInput
+}
+
+export type LeaveBalanceUncheckedCreateWithoutEmployeeInput = {
   id?: string
   organizationId: string
   leaveTypeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveBalanceInput
 }
 
-export type LeaveBalanceUpdateWithoutEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveBalancesNestedInput
-  leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutBalancesNestedInput
+export type LeaveBalanceCreateOrConnectWithoutEmployeeInput = {
+  where: Prisma.LeaveBalanceWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedCreateWithoutEmployeeInput>
 }
 
-export type LeaveBalanceUncheckedUpdateWithoutEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+export type LeaveBalanceCreateManyEmployeeInputEnvelope = {
+  data: Prisma.LeaveBalanceCreateManyEmployeeInput | Prisma.LeaveBalanceCreateManyEmployeeInput[]
+  skipDuplicates?: boolean
 }
 
-export type LeaveBalanceUncheckedUpdateManyWithoutEmployeeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+export type LeaveBalanceUpsertWithWhereUniqueWithoutEmployeeInput = {
+  where: Prisma.LeaveBalanceWhereUniqueInput
+  update: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedUpdateWithoutEmployeeInput>
+  create: Prisma.XOR<Prisma.LeaveBalanceCreateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedCreateWithoutEmployeeInput>
+}
+
+export type LeaveBalanceUpdateWithWhereUniqueWithoutEmployeeInput = {
+  where: Prisma.LeaveBalanceWhereUniqueInput
+  data: Prisma.XOR<Prisma.LeaveBalanceUpdateWithoutEmployeeInput, Prisma.LeaveBalanceUncheckedUpdateWithoutEmployeeInput>
+}
+
+export type LeaveBalanceUpdateManyWithWhereWithoutEmployeeInput = {
+  where: Prisma.LeaveBalanceScalarWhereInput
+  data: Prisma.XOR<Prisma.LeaveBalanceUpdateManyMutationInput, Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeInput>
 }
 
 export type LeaveBalanceCreateManyLeaveTypeInput = {
   id?: string
   organizationId: string
   employeeId: string
-  periodYear: number
-  available: runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
 }
 
 export type LeaveBalanceUpdateWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveBalancesNestedInput
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutLeaveBalancesNestedInput
+  transactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveBalanceNestedInput
 }
 
 export type LeaveBalanceUncheckedUpdateWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveBalanceNestedInput
 }
 
 export type LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  periodYear?: Prisma.IntFieldUpdateOperationsInput | number
-  available?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  used?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
+export type LeaveBalanceCreateManyOrganizationInput = {
+  id?: string
+  employeeId: string
+  leaveTypeId: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+}
+
+export type LeaveBalanceUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutLeaveBalancesNestedInput
+  leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutBalancesNestedInput
+  transactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveBalanceNestedInput
+}
+
+export type LeaveBalanceUncheckedUpdateWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveBalanceNestedInput
+}
+
+export type LeaveBalanceUncheckedUpdateManyWithoutOrganizationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type LeaveBalanceCreateManyEmployeeInput = {
+  id?: string
+  organizationId: string
+  leaveTypeId: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  openingAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+}
+
+export type LeaveBalanceUpdateWithoutEmployeeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveBalancesNestedInput
+  leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutBalancesNestedInput
+  transactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveBalanceNestedInput
+}
+
+export type LeaveBalanceUncheckedUpdateWithoutEmployeeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  transactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveBalanceNestedInput
+}
+
+export type LeaveBalanceUncheckedUpdateManyWithoutEmployeeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  openingAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  accruedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  usedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  reservedAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  availableAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+
+/**
+ * Count Type LeaveBalanceCountOutputType
+ */
+
+export type LeaveBalanceCountOutputType = {
+  transactions: number
+}
+
+export type LeaveBalanceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  transactions?: boolean | LeaveBalanceCountOutputTypeCountTransactionsArgs
+}
+
+/**
+ * LeaveBalanceCountOutputType without action
+ */
+export type LeaveBalanceCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveBalanceCountOutputType
+   */
+  select?: Prisma.LeaveBalanceCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * LeaveBalanceCountOutputType without action
+ */
+export type LeaveBalanceCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeaveBalanceTransactionWhereInput
+}
 
 
 export type LeaveBalanceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -822,12 +1279,21 @@ export type LeaveBalanceSelect<ExtArgs extends runtime.Types.Extensions.Internal
   organizationId?: boolean
   employeeId?: boolean
   leaveTypeId?: boolean
-  periodYear?: boolean
-  available?: boolean
-  used?: boolean
+  periodStart?: boolean
+  periodEnd?: boolean
+  openingAmount?: boolean
+  accruedAmount?: boolean
+  usedAmount?: boolean
+  reservedAmount?: boolean
+  availableAmount?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  version?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
+  transactions?: boolean | Prisma.LeaveBalance$transactionsArgs<ExtArgs>
+  _count?: boolean | Prisma.LeaveBalanceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["leaveBalance"]>
 
 export type LeaveBalanceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -835,9 +1301,16 @@ export type LeaveBalanceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   organizationId?: boolean
   employeeId?: boolean
   leaveTypeId?: boolean
-  periodYear?: boolean
-  available?: boolean
-  used?: boolean
+  periodStart?: boolean
+  periodEnd?: boolean
+  openingAmount?: boolean
+  accruedAmount?: boolean
+  usedAmount?: boolean
+  reservedAmount?: boolean
+  availableAmount?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  version?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
@@ -848,9 +1321,16 @@ export type LeaveBalanceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   organizationId?: boolean
   employeeId?: boolean
   leaveTypeId?: boolean
-  periodYear?: boolean
-  available?: boolean
-  used?: boolean
+  periodStart?: boolean
+  periodEnd?: boolean
+  openingAmount?: boolean
+  accruedAmount?: boolean
+  usedAmount?: boolean
+  reservedAmount?: boolean
+  availableAmount?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  version?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
@@ -861,16 +1341,25 @@ export type LeaveBalanceSelectScalar = {
   organizationId?: boolean
   employeeId?: boolean
   leaveTypeId?: boolean
-  periodYear?: boolean
-  available?: boolean
-  used?: boolean
+  periodStart?: boolean
+  periodEnd?: boolean
+  openingAmount?: boolean
+  accruedAmount?: boolean
+  usedAmount?: boolean
+  reservedAmount?: boolean
+  availableAmount?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
+  version?: boolean
 }
 
-export type LeaveBalanceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "leaveTypeId" | "periodYear" | "available" | "used", ExtArgs["result"]["leaveBalance"]>
+export type LeaveBalanceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "leaveTypeId" | "periodStart" | "periodEnd" | "openingAmount" | "accruedAmount" | "usedAmount" | "reservedAmount" | "availableAmount" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["leaveBalance"]>
 export type LeaveBalanceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   leaveType?: boolean | Prisma.LeaveTypeDefaultArgs<ExtArgs>
+  transactions?: boolean | Prisma.LeaveBalance$transactionsArgs<ExtArgs>
+  _count?: boolean | Prisma.LeaveBalanceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LeaveBalanceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -889,15 +1378,23 @@ export type $LeaveBalancePayload<ExtArgs extends runtime.Types.Extensions.Intern
     organization: Prisma.$OrganizationPayload<ExtArgs>
     employee: Prisma.$EmployeePayload<ExtArgs>
     leaveType: Prisma.$LeaveTypePayload<ExtArgs>
+    transactions: Prisma.$LeaveBalanceTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
     employeeId: string
     leaveTypeId: string
-    periodYear: number
-    available: runtime.Decimal
-    used: runtime.Decimal
+    periodStart: Date
+    periodEnd: Date
+    openingAmount: runtime.Decimal
+    accruedAmount: runtime.Decimal
+    usedAmount: runtime.Decimal
+    reservedAmount: runtime.Decimal
+    availableAmount: runtime.Decimal
+    createdAt: Date
+    updatedAt: Date
+    version: number
   }, ExtArgs["result"]["leaveBalance"]>
   composites: {}
 }
@@ -1295,6 +1792,7 @@ export interface Prisma__LeaveBalanceClient<T, Null = never, ExtArgs extends run
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   employee<T extends Prisma.EmployeeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmployeeDefaultArgs<ExtArgs>>): Prisma.Prisma__EmployeeClient<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   leaveType<T extends Prisma.LeaveTypeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveTypeDefaultArgs<ExtArgs>>): Prisma.Prisma__LeaveTypeClient<runtime.Types.Result.GetResult<Prisma.$LeaveTypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  transactions<T extends Prisma.LeaveBalance$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveBalance$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveBalanceTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1328,9 +1826,16 @@ export interface LeaveBalanceFieldRefs {
   readonly organizationId: Prisma.FieldRef<"LeaveBalance", 'String'>
   readonly employeeId: Prisma.FieldRef<"LeaveBalance", 'String'>
   readonly leaveTypeId: Prisma.FieldRef<"LeaveBalance", 'String'>
-  readonly periodYear: Prisma.FieldRef<"LeaveBalance", 'Int'>
-  readonly available: Prisma.FieldRef<"LeaveBalance", 'Decimal'>
-  readonly used: Prisma.FieldRef<"LeaveBalance", 'Decimal'>
+  readonly periodStart: Prisma.FieldRef<"LeaveBalance", 'DateTime'>
+  readonly periodEnd: Prisma.FieldRef<"LeaveBalance", 'DateTime'>
+  readonly openingAmount: Prisma.FieldRef<"LeaveBalance", 'Decimal'>
+  readonly accruedAmount: Prisma.FieldRef<"LeaveBalance", 'Decimal'>
+  readonly usedAmount: Prisma.FieldRef<"LeaveBalance", 'Decimal'>
+  readonly reservedAmount: Prisma.FieldRef<"LeaveBalance", 'Decimal'>
+  readonly availableAmount: Prisma.FieldRef<"LeaveBalance", 'Decimal'>
+  readonly createdAt: Prisma.FieldRef<"LeaveBalance", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"LeaveBalance", 'DateTime'>
+  readonly version: Prisma.FieldRef<"LeaveBalance", 'Int'>
 }
     
 
@@ -1729,6 +2234,30 @@ export type LeaveBalanceDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many LeaveBalances to delete.
    */
   limit?: number
+}
+
+/**
+ * LeaveBalance.transactions
+ */
+export type LeaveBalance$transactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveBalanceTransaction
+   */
+  select?: Prisma.LeaveBalanceTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeaveBalanceTransaction
+   */
+  omit?: Prisma.LeaveBalanceTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeaveBalanceTransactionInclude<ExtArgs> | null
+  where?: Prisma.LeaveBalanceTransactionWhereInput
+  orderBy?: Prisma.LeaveBalanceTransactionOrderByWithRelationInput | Prisma.LeaveBalanceTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.LeaveBalanceTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeaveBalanceTransactionScalarFieldEnum | Prisma.LeaveBalanceTransactionScalarFieldEnum[]
 }
 
 /**

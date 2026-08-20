@@ -27,10 +27,12 @@ export type AggregateShift = {
 }
 
 export type ShiftAvgAggregateOutputType = {
+  daysOfWeek: number | null
   breakMinutes: number | null
 }
 
 export type ShiftSumAggregateOutputType = {
+  daysOfWeek: number[]
   breakMinutes: number | null
 }
 
@@ -38,39 +40,57 @@ export type ShiftMinAggregateOutputType = {
   id: string | null
   organizationId: string | null
   branchId: string | null
+  code: string | null
   name: string | null
-  startsAt: string | null
-  endsAt: string | null
+  startsAt: Date | null
+  endsAt: Date | null
+  crossesMidnight: boolean | null
   breakMinutes: number | null
+  isActive: boolean | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ShiftMaxAggregateOutputType = {
   id: string | null
   organizationId: string | null
   branchId: string | null
+  code: string | null
   name: string | null
-  startsAt: string | null
-  endsAt: string | null
+  startsAt: Date | null
+  endsAt: Date | null
+  crossesMidnight: boolean | null
   breakMinutes: number | null
+  isActive: boolean | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ShiftCountAggregateOutputType = {
   id: number
   organizationId: number
   branchId: number
+  code: number
   name: number
+  daysOfWeek: number
   startsAt: number
   endsAt: number
+  crossesMidnight: number
   breakMinutes: number
+  isActive: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
 
 export type ShiftAvgAggregateInputType = {
+  daysOfWeek?: true
   breakMinutes?: true
 }
 
 export type ShiftSumAggregateInputType = {
+  daysOfWeek?: true
   breakMinutes?: true
 }
 
@@ -78,30 +98,46 @@ export type ShiftMinAggregateInputType = {
   id?: true
   organizationId?: true
   branchId?: true
+  code?: true
   name?: true
   startsAt?: true
   endsAt?: true
+  crossesMidnight?: true
   breakMinutes?: true
+  isActive?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ShiftMaxAggregateInputType = {
   id?: true
   organizationId?: true
   branchId?: true
+  code?: true
   name?: true
   startsAt?: true
   endsAt?: true
+  crossesMidnight?: true
   breakMinutes?: true
+  isActive?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type ShiftCountAggregateInputType = {
   id?: true
   organizationId?: true
   branchId?: true
+  code?: true
   name?: true
+  daysOfWeek?: true
   startsAt?: true
   endsAt?: true
+  crossesMidnight?: true
   breakMinutes?: true
+  isActive?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -195,10 +231,16 @@ export type ShiftGroupByOutputType = {
   id: string
   organizationId: string
   branchId: string | null
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek: number[]
+  startsAt: Date
+  endsAt: Date
+  crossesMidnight: boolean
   breakMinutes: number
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
   _count: ShiftCountAggregateOutputType | null
   _avg: ShiftAvgAggregateOutputType | null
   _sum: ShiftSumAggregateOutputType | null
@@ -228,52 +270,80 @@ export type ShiftWhereInput = {
   id?: Prisma.UuidFilter<"Shift"> | string
   organizationId?: Prisma.UuidFilter<"Shift"> | string
   branchId?: Prisma.UuidNullableFilter<"Shift"> | string | null
+  code?: Prisma.StringFilter<"Shift"> | string
   name?: Prisma.StringFilter<"Shift"> | string
-  startsAt?: Prisma.StringFilter<"Shift"> | string
-  endsAt?: Prisma.StringFilter<"Shift"> | string
+  daysOfWeek?: Prisma.IntNullableListFilter<"Shift">
+  startsAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  endsAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  crossesMidnight?: Prisma.BoolFilter<"Shift"> | boolean
   breakMinutes?: Prisma.IntFilter<"Shift"> | number
+  isActive?: Prisma.BoolFilter<"Shift"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
-  assignments?: Prisma.EmployeeShiftListRelationFilter
+  breakRules?: Prisma.ShiftBreakRuleListRelationFilter
+  assignments?: Prisma.EmployeeShiftAssignmentListRelationFilter
 }
 
 export type ShiftOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   branchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  daysOfWeek?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
+  crossesMidnight?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   branch?: Prisma.BranchOrderByWithRelationInput
-  assignments?: Prisma.EmployeeShiftOrderByRelationAggregateInput
+  breakRules?: Prisma.ShiftBreakRuleOrderByRelationAggregateInput
+  assignments?: Prisma.EmployeeShiftAssignmentOrderByRelationAggregateInput
 }
 
 export type ShiftWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  organizationId_code?: Prisma.ShiftOrganizationIdCodeCompoundUniqueInput
   AND?: Prisma.ShiftWhereInput | Prisma.ShiftWhereInput[]
   OR?: Prisma.ShiftWhereInput[]
   NOT?: Prisma.ShiftWhereInput | Prisma.ShiftWhereInput[]
   organizationId?: Prisma.UuidFilter<"Shift"> | string
   branchId?: Prisma.UuidNullableFilter<"Shift"> | string | null
+  code?: Prisma.StringFilter<"Shift"> | string
   name?: Prisma.StringFilter<"Shift"> | string
-  startsAt?: Prisma.StringFilter<"Shift"> | string
-  endsAt?: Prisma.StringFilter<"Shift"> | string
+  daysOfWeek?: Prisma.IntNullableListFilter<"Shift">
+  startsAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  endsAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  crossesMidnight?: Prisma.BoolFilter<"Shift"> | boolean
   breakMinutes?: Prisma.IntFilter<"Shift"> | number
+  isActive?: Prisma.BoolFilter<"Shift"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
-  assignments?: Prisma.EmployeeShiftListRelationFilter
-}, "id">
+  breakRules?: Prisma.ShiftBreakRuleListRelationFilter
+  assignments?: Prisma.EmployeeShiftAssignmentListRelationFilter
+}, "id" | "organizationId_code">
 
 export type ShiftOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   branchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  daysOfWeek?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   endsAt?: Prisma.SortOrder
+  crossesMidnight?: Prisma.SortOrder
   breakMinutes?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.ShiftCountOrderByAggregateInput
   _avg?: Prisma.ShiftAvgOrderByAggregateInput
   _max?: Prisma.ShiftMaxOrderByAggregateInput
@@ -288,82 +358,208 @@ export type ShiftScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"Shift"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"Shift"> | string
   branchId?: Prisma.UuidNullableWithAggregatesFilter<"Shift"> | string | null
+  code?: Prisma.StringWithAggregatesFilter<"Shift"> | string
   name?: Prisma.StringWithAggregatesFilter<"Shift"> | string
-  startsAt?: Prisma.StringWithAggregatesFilter<"Shift"> | string
-  endsAt?: Prisma.StringWithAggregatesFilter<"Shift"> | string
+  daysOfWeek?: Prisma.IntNullableListFilter<"Shift">
+  startsAt?: Prisma.DateTimeWithAggregatesFilter<"Shift"> | Date | string
+  endsAt?: Prisma.DateTimeWithAggregatesFilter<"Shift"> | Date | string
+  crossesMidnight?: Prisma.BoolWithAggregatesFilter<"Shift"> | boolean
   breakMinutes?: Prisma.IntWithAggregatesFilter<"Shift"> | number
+  isActive?: Prisma.BoolWithAggregatesFilter<"Shift"> | boolean
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Shift"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Shift"> | Date | string
 }
 
 export type ShiftCreateInput = {
   id?: string
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutShiftsInput
   branch?: Prisma.BranchCreateNestedOneWithoutShiftsInput
-  assignments?: Prisma.EmployeeShiftCreateNestedManyWithoutShiftInput
+  breakRules?: Prisma.ShiftBreakRuleCreateNestedManyWithoutShiftInput
+  assignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutShiftInput
 }
 
 export type ShiftUncheckedCreateInput = {
   id?: string
   organizationId: string
   branchId?: string | null
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
-  assignments?: Prisma.EmployeeShiftUncheckedCreateNestedManyWithoutShiftInput
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedCreateNestedManyWithoutShiftInput
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutShiftInput
 }
 
 export type ShiftUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutShiftsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutShiftsNestedInput
-  assignments?: Prisma.EmployeeShiftUpdateManyWithoutShiftNestedInput
+  breakRules?: Prisma.ShiftBreakRuleUpdateManyWithoutShiftNestedInput
+  assignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutShiftNestedInput
 }
 
 export type ShiftUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  assignments?: Prisma.EmployeeShiftUncheckedUpdateManyWithoutShiftNestedInput
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedUpdateManyWithoutShiftNestedInput
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutShiftNestedInput
 }
 
 export type ShiftCreateManyInput = {
   id?: string
   organizationId: string
   branchId?: string | null
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ShiftUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShiftUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type IntNullableListFilter<$PrismaModel = never> = {
+  equals?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
+  has?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
+  hasEvery?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  hasSome?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
+export type ShiftOrganizationIdCodeCompoundUniqueInput = {
+  organizationId: string
+  code: string
+}
+
+export type ShiftCountOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  daysOfWeek?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrder
+  crossesMidnight?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type ShiftAvgOrderByAggregateInput = {
+  daysOfWeek?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+}
+
+export type ShiftMaxOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrder
+  crossesMidnight?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type ShiftMinOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
+  branchId?: Prisma.SortOrder
+  code?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  startsAt?: Prisma.SortOrder
+  endsAt?: Prisma.SortOrder
+  crossesMidnight?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type ShiftSumOrderByAggregateInput = {
+  daysOfWeek?: Prisma.SortOrder
+  breakMinutes?: Prisma.SortOrder
+}
+
+export type ShiftScalarRelationFilter = {
+  is?: Prisma.ShiftWhereInput
+  isNot?: Prisma.ShiftWhereInput
 }
 
 export type ShiftListRelationFilter = {
@@ -376,47 +572,41 @@ export type ShiftOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ShiftCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  startsAt?: Prisma.SortOrder
-  endsAt?: Prisma.SortOrder
-  breakMinutes?: Prisma.SortOrder
+export type ShiftCreatedaysOfWeekInput = {
+  set: number[]
 }
 
-export type ShiftAvgOrderByAggregateInput = {
-  breakMinutes?: Prisma.SortOrder
+export type ShiftUpdatedaysOfWeekInput = {
+  set?: number[]
+  push?: number | number[]
 }
 
-export type ShiftMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  startsAt?: Prisma.SortOrder
-  endsAt?: Prisma.SortOrder
-  breakMinutes?: Prisma.SortOrder
+export type ShiftCreateNestedOneWithoutBreakRulesInput = {
+  create?: Prisma.XOR<Prisma.ShiftCreateWithoutBreakRulesInput, Prisma.ShiftUncheckedCreateWithoutBreakRulesInput>
+  connectOrCreate?: Prisma.ShiftCreateOrConnectWithoutBreakRulesInput
+  connect?: Prisma.ShiftWhereUniqueInput
 }
 
-export type ShiftMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  organizationId?: Prisma.SortOrder
-  branchId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  startsAt?: Prisma.SortOrder
-  endsAt?: Prisma.SortOrder
-  breakMinutes?: Prisma.SortOrder
+export type ShiftUpdateOneRequiredWithoutBreakRulesNestedInput = {
+  create?: Prisma.XOR<Prisma.ShiftCreateWithoutBreakRulesInput, Prisma.ShiftUncheckedCreateWithoutBreakRulesInput>
+  connectOrCreate?: Prisma.ShiftCreateOrConnectWithoutBreakRulesInput
+  upsert?: Prisma.ShiftUpsertWithoutBreakRulesInput
+  connect?: Prisma.ShiftWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShiftUpdateToOneWithWhereWithoutBreakRulesInput, Prisma.ShiftUpdateWithoutBreakRulesInput>, Prisma.ShiftUncheckedUpdateWithoutBreakRulesInput>
 }
 
-export type ShiftSumOrderByAggregateInput = {
-  breakMinutes?: Prisma.SortOrder
+export type ShiftCreateNestedOneWithoutAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.ShiftCreateOrConnectWithoutAssignmentsInput
+  connect?: Prisma.ShiftWhereUniqueInput
 }
 
-export type ShiftScalarRelationFilter = {
-  is?: Prisma.ShiftWhereInput
-  isNot?: Prisma.ShiftWhereInput
+export type ShiftUpdateOneRequiredWithoutAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.ShiftCreateOrConnectWithoutAssignmentsInput
+  upsert?: Prisma.ShiftUpsertWithoutAssignmentsInput
+  connect?: Prisma.ShiftWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShiftUpdateToOneWithWhereWithoutAssignmentsInput, Prisma.ShiftUpdateWithoutAssignmentsInput>, Prisma.ShiftUncheckedUpdateWithoutAssignmentsInput>
 }
 
 export type ShiftCreateNestedManyWithoutOrganizationInput = {
@@ -503,38 +693,206 @@ export type ShiftUncheckedUpdateManyWithoutBranchNestedInput = {
   deleteMany?: Prisma.ShiftScalarWhereInput | Prisma.ShiftScalarWhereInput[]
 }
 
-export type ShiftCreateNestedOneWithoutAssignmentsInput = {
-  create?: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
-  connectOrCreate?: Prisma.ShiftCreateOrConnectWithoutAssignmentsInput
-  connect?: Prisma.ShiftWhereUniqueInput
+export type ShiftCreateWithoutBreakRulesInput = {
+  id?: string
+  code: string
+  name: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
+  breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutShiftsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutShiftsInput
+  assignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutShiftInput
 }
 
-export type ShiftUpdateOneRequiredWithoutAssignmentsNestedInput = {
-  create?: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
-  connectOrCreate?: Prisma.ShiftCreateOrConnectWithoutAssignmentsInput
-  upsert?: Prisma.ShiftUpsertWithoutAssignmentsInput
-  connect?: Prisma.ShiftWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ShiftUpdateToOneWithWhereWithoutAssignmentsInput, Prisma.ShiftUpdateWithoutAssignmentsInput>, Prisma.ShiftUncheckedUpdateWithoutAssignmentsInput>
+export type ShiftUncheckedCreateWithoutBreakRulesInput = {
+  id?: string
+  organizationId: string
+  branchId?: string | null
+  code: string
+  name: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
+  breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutShiftInput
+}
+
+export type ShiftCreateOrConnectWithoutBreakRulesInput = {
+  where: Prisma.ShiftWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShiftCreateWithoutBreakRulesInput, Prisma.ShiftUncheckedCreateWithoutBreakRulesInput>
+}
+
+export type ShiftUpsertWithoutBreakRulesInput = {
+  update: Prisma.XOR<Prisma.ShiftUpdateWithoutBreakRulesInput, Prisma.ShiftUncheckedUpdateWithoutBreakRulesInput>
+  create: Prisma.XOR<Prisma.ShiftCreateWithoutBreakRulesInput, Prisma.ShiftUncheckedCreateWithoutBreakRulesInput>
+  where?: Prisma.ShiftWhereInput
+}
+
+export type ShiftUpdateToOneWithWhereWithoutBreakRulesInput = {
+  where?: Prisma.ShiftWhereInput
+  data: Prisma.XOR<Prisma.ShiftUpdateWithoutBreakRulesInput, Prisma.ShiftUncheckedUpdateWithoutBreakRulesInput>
+}
+
+export type ShiftUpdateWithoutBreakRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutShiftsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutShiftsNestedInput
+  assignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutShiftNestedInput
+}
+
+export type ShiftUncheckedUpdateWithoutBreakRulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutShiftNestedInput
+}
+
+export type ShiftCreateWithoutAssignmentsInput = {
+  id?: string
+  code: string
+  name: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
+  breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutShiftsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutShiftsInput
+  breakRules?: Prisma.ShiftBreakRuleCreateNestedManyWithoutShiftInput
+}
+
+export type ShiftUncheckedCreateWithoutAssignmentsInput = {
+  id?: string
+  organizationId: string
+  branchId?: string | null
+  code: string
+  name: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
+  breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedCreateNestedManyWithoutShiftInput
+}
+
+export type ShiftCreateOrConnectWithoutAssignmentsInput = {
+  where: Prisma.ShiftWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
+}
+
+export type ShiftUpsertWithoutAssignmentsInput = {
+  update: Prisma.XOR<Prisma.ShiftUpdateWithoutAssignmentsInput, Prisma.ShiftUncheckedUpdateWithoutAssignmentsInput>
+  create: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
+  where?: Prisma.ShiftWhereInput
+}
+
+export type ShiftUpdateToOneWithWhereWithoutAssignmentsInput = {
+  where?: Prisma.ShiftWhereInput
+  data: Prisma.XOR<Prisma.ShiftUpdateWithoutAssignmentsInput, Prisma.ShiftUncheckedUpdateWithoutAssignmentsInput>
+}
+
+export type ShiftUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutShiftsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutShiftsNestedInput
+  breakRules?: Prisma.ShiftBreakRuleUpdateManyWithoutShiftNestedInput
+}
+
+export type ShiftUncheckedUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedUpdateManyWithoutShiftNestedInput
 }
 
 export type ShiftCreateWithoutOrganizationInput = {
   id?: string
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   branch?: Prisma.BranchCreateNestedOneWithoutShiftsInput
-  assignments?: Prisma.EmployeeShiftCreateNestedManyWithoutShiftInput
+  breakRules?: Prisma.ShiftBreakRuleCreateNestedManyWithoutShiftInput
+  assignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutShiftInput
 }
 
 export type ShiftUncheckedCreateWithoutOrganizationInput = {
   id?: string
   branchId?: string | null
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
-  assignments?: Prisma.EmployeeShiftUncheckedCreateNestedManyWithoutShiftInput
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedCreateNestedManyWithoutShiftInput
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutShiftInput
 }
 
 export type ShiftCreateOrConnectWithoutOrganizationInput = {
@@ -570,30 +928,50 @@ export type ShiftScalarWhereInput = {
   id?: Prisma.UuidFilter<"Shift"> | string
   organizationId?: Prisma.UuidFilter<"Shift"> | string
   branchId?: Prisma.UuidNullableFilter<"Shift"> | string | null
+  code?: Prisma.StringFilter<"Shift"> | string
   name?: Prisma.StringFilter<"Shift"> | string
-  startsAt?: Prisma.StringFilter<"Shift"> | string
-  endsAt?: Prisma.StringFilter<"Shift"> | string
+  daysOfWeek?: Prisma.IntNullableListFilter<"Shift">
+  startsAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  endsAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  crossesMidnight?: Prisma.BoolFilter<"Shift"> | boolean
   breakMinutes?: Prisma.IntFilter<"Shift"> | number
+  isActive?: Prisma.BoolFilter<"Shift"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Shift"> | Date | string
 }
 
 export type ShiftCreateWithoutBranchInput = {
   id?: string
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutShiftsInput
-  assignments?: Prisma.EmployeeShiftCreateNestedManyWithoutShiftInput
+  breakRules?: Prisma.ShiftBreakRuleCreateNestedManyWithoutShiftInput
+  assignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutShiftInput
 }
 
 export type ShiftUncheckedCreateWithoutBranchInput = {
   id?: string
   organizationId: string
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
-  assignments?: Prisma.EmployeeShiftUncheckedCreateNestedManyWithoutShiftInput
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedCreateNestedManyWithoutShiftInput
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutShiftInput
 }
 
 export type ShiftCreateOrConnectWithoutBranchInput = {
@@ -622,136 +1000,132 @@ export type ShiftUpdateManyWithWhereWithoutBranchInput = {
   data: Prisma.XOR<Prisma.ShiftUpdateManyMutationInput, Prisma.ShiftUncheckedUpdateManyWithoutBranchInput>
 }
 
-export type ShiftCreateWithoutAssignmentsInput = {
-  id?: string
-  name: string
-  startsAt: string
-  endsAt: string
-  breakMinutes?: number
-  organization: Prisma.OrganizationCreateNestedOneWithoutShiftsInput
-  branch?: Prisma.BranchCreateNestedOneWithoutShiftsInput
-}
-
-export type ShiftUncheckedCreateWithoutAssignmentsInput = {
-  id?: string
-  organizationId: string
-  branchId?: string | null
-  name: string
-  startsAt: string
-  endsAt: string
-  breakMinutes?: number
-}
-
-export type ShiftCreateOrConnectWithoutAssignmentsInput = {
-  where: Prisma.ShiftWhereUniqueInput
-  create: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
-}
-
-export type ShiftUpsertWithoutAssignmentsInput = {
-  update: Prisma.XOR<Prisma.ShiftUpdateWithoutAssignmentsInput, Prisma.ShiftUncheckedUpdateWithoutAssignmentsInput>
-  create: Prisma.XOR<Prisma.ShiftCreateWithoutAssignmentsInput, Prisma.ShiftUncheckedCreateWithoutAssignmentsInput>
-  where?: Prisma.ShiftWhereInput
-}
-
-export type ShiftUpdateToOneWithWhereWithoutAssignmentsInput = {
-  where?: Prisma.ShiftWhereInput
-  data: Prisma.XOR<Prisma.ShiftUpdateWithoutAssignmentsInput, Prisma.ShiftUncheckedUpdateWithoutAssignmentsInput>
-}
-
-export type ShiftUpdateWithoutAssignmentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutShiftsNestedInput
-  branch?: Prisma.BranchUpdateOneWithoutShiftsNestedInput
-}
-
-export type ShiftUncheckedUpdateWithoutAssignmentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-}
-
 export type ShiftCreateManyOrganizationInput = {
   id?: string
   branchId?: string | null
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ShiftUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   branch?: Prisma.BranchUpdateOneWithoutShiftsNestedInput
-  assignments?: Prisma.EmployeeShiftUpdateManyWithoutShiftNestedInput
+  breakRules?: Prisma.ShiftBreakRuleUpdateManyWithoutShiftNestedInput
+  assignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutShiftNestedInput
 }
 
 export type ShiftUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  assignments?: Prisma.EmployeeShiftUncheckedUpdateManyWithoutShiftNestedInput
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedUpdateManyWithoutShiftNestedInput
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutShiftNestedInput
 }
 
 export type ShiftUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShiftCreateManyBranchInput = {
   id?: string
   organizationId: string
+  code: string
   name: string
-  startsAt: string
-  endsAt: string
+  daysOfWeek?: Prisma.ShiftCreatedaysOfWeekInput | number[]
+  startsAt: Date | string
+  endsAt: Date | string
+  crossesMidnight?: boolean
   breakMinutes?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type ShiftUpdateWithoutBranchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutShiftsNestedInput
-  assignments?: Prisma.EmployeeShiftUpdateManyWithoutShiftNestedInput
+  breakRules?: Prisma.ShiftBreakRuleUpdateManyWithoutShiftNestedInput
+  assignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutShiftNestedInput
 }
 
 export type ShiftUncheckedUpdateWithoutBranchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
-  assignments?: Prisma.EmployeeShiftUncheckedUpdateManyWithoutShiftNestedInput
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  breakRules?: Prisma.ShiftBreakRuleUncheckedUpdateManyWithoutShiftNestedInput
+  assignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutShiftNestedInput
 }
 
 export type ShiftUncheckedUpdateManyWithoutBranchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  startsAt?: Prisma.StringFieldUpdateOperationsInput | string
-  endsAt?: Prisma.StringFieldUpdateOperationsInput | string
+  daysOfWeek?: Prisma.ShiftUpdatedaysOfWeekInput | number[]
+  startsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crossesMidnight?: Prisma.BoolFieldUpdateOperationsInput | boolean
   breakMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -760,10 +1134,12 @@ export type ShiftUncheckedUpdateManyWithoutBranchInput = {
  */
 
 export type ShiftCountOutputType = {
+  breakRules: number
   assignments: number
 }
 
 export type ShiftCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  breakRules?: boolean | ShiftCountOutputTypeCountBreakRulesArgs
   assignments?: boolean | ShiftCountOutputTypeCountAssignmentsArgs
 }
 
@@ -780,8 +1156,15 @@ export type ShiftCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
 /**
  * ShiftCountOutputType without action
  */
+export type ShiftCountOutputTypeCountBreakRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShiftBreakRuleWhereInput
+}
+
+/**
+ * ShiftCountOutputType without action
+ */
 export type ShiftCountOutputTypeCountAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.EmployeeShiftWhereInput
+  where?: Prisma.EmployeeShiftAssignmentWhereInput
 }
 
 
@@ -789,12 +1172,19 @@ export type ShiftSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   organizationId?: boolean
   branchId?: boolean
+  code?: boolean
   name?: boolean
+  daysOfWeek?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  crossesMidnight?: boolean
   breakMinutes?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.Shift$branchArgs<ExtArgs>
+  breakRules?: boolean | Prisma.Shift$breakRulesArgs<ExtArgs>
   assignments?: boolean | Prisma.Shift$assignmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ShiftCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shift"]>
@@ -803,10 +1193,16 @@ export type ShiftSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   organizationId?: boolean
   branchId?: boolean
+  code?: boolean
   name?: boolean
+  daysOfWeek?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  crossesMidnight?: boolean
   breakMinutes?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.Shift$branchArgs<ExtArgs>
 }, ExtArgs["result"]["shift"]>
@@ -815,10 +1211,16 @@ export type ShiftSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   organizationId?: boolean
   branchId?: boolean
+  code?: boolean
   name?: boolean
+  daysOfWeek?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  crossesMidnight?: boolean
   breakMinutes?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.Shift$branchArgs<ExtArgs>
 }, ExtArgs["result"]["shift"]>
@@ -827,16 +1229,23 @@ export type ShiftSelectScalar = {
   id?: boolean
   organizationId?: boolean
   branchId?: boolean
+  code?: boolean
   name?: boolean
+  daysOfWeek?: boolean
   startsAt?: boolean
   endsAt?: boolean
+  crossesMidnight?: boolean
   breakMinutes?: boolean
+  isActive?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type ShiftOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "branchId" | "name" | "startsAt" | "endsAt" | "breakMinutes", ExtArgs["result"]["shift"]>
+export type ShiftOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "branchId" | "code" | "name" | "daysOfWeek" | "startsAt" | "endsAt" | "crossesMidnight" | "breakMinutes" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["shift"]>
 export type ShiftInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   branch?: boolean | Prisma.Shift$branchArgs<ExtArgs>
+  breakRules?: boolean | Prisma.Shift$breakRulesArgs<ExtArgs>
   assignments?: boolean | Prisma.Shift$assignmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ShiftCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -854,16 +1263,23 @@ export type $ShiftPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
     branch: Prisma.$BranchPayload<ExtArgs> | null
-    assignments: Prisma.$EmployeeShiftPayload<ExtArgs>[]
+    breakRules: Prisma.$ShiftBreakRulePayload<ExtArgs>[]
+    assignments: Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
     branchId: string | null
+    code: string
     name: string
-    startsAt: string
-    endsAt: string
+    daysOfWeek: number[]
+    startsAt: Date
+    endsAt: Date
+    crossesMidnight: boolean
     breakMinutes: number
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["shift"]>
   composites: {}
 }
@@ -1260,7 +1676,8 @@ export interface Prisma__ShiftClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   branch<T extends Prisma.Shift$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Shift$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  assignments<T extends Prisma.Shift$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Shift$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeShiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  breakRules<T extends Prisma.Shift$breakRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Shift$breakRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftBreakRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignments<T extends Prisma.Shift$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Shift$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1293,10 +1710,16 @@ export interface ShiftFieldRefs {
   readonly id: Prisma.FieldRef<"Shift", 'String'>
   readonly organizationId: Prisma.FieldRef<"Shift", 'String'>
   readonly branchId: Prisma.FieldRef<"Shift", 'String'>
+  readonly code: Prisma.FieldRef<"Shift", 'String'>
   readonly name: Prisma.FieldRef<"Shift", 'String'>
-  readonly startsAt: Prisma.FieldRef<"Shift", 'String'>
-  readonly endsAt: Prisma.FieldRef<"Shift", 'String'>
+  readonly daysOfWeek: Prisma.FieldRef<"Shift", 'Int[]'>
+  readonly startsAt: Prisma.FieldRef<"Shift", 'DateTime'>
+  readonly endsAt: Prisma.FieldRef<"Shift", 'DateTime'>
+  readonly crossesMidnight: Prisma.FieldRef<"Shift", 'Boolean'>
   readonly breakMinutes: Prisma.FieldRef<"Shift", 'Int'>
+  readonly isActive: Prisma.FieldRef<"Shift", 'Boolean'>
+  readonly createdAt: Prisma.FieldRef<"Shift", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Shift", 'DateTime'>
 }
     
 
@@ -1717,27 +2140,51 @@ export type Shift$branchArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 /**
+ * Shift.breakRules
+ */
+export type Shift$breakRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShiftBreakRule
+   */
+  select?: Prisma.ShiftBreakRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShiftBreakRule
+   */
+  omit?: Prisma.ShiftBreakRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShiftBreakRuleInclude<ExtArgs> | null
+  where?: Prisma.ShiftBreakRuleWhereInput
+  orderBy?: Prisma.ShiftBreakRuleOrderByWithRelationInput | Prisma.ShiftBreakRuleOrderByWithRelationInput[]
+  cursor?: Prisma.ShiftBreakRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShiftBreakRuleScalarFieldEnum | Prisma.ShiftBreakRuleScalarFieldEnum[]
+}
+
+/**
  * Shift.assignments
  */
 export type Shift$assignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the EmployeeShift
+   * Select specific fields to fetch from the EmployeeShiftAssignment
    */
-  select?: Prisma.EmployeeShiftSelect<ExtArgs> | null
+  select?: Prisma.EmployeeShiftAssignmentSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the EmployeeShift
+   * Omit specific fields from the EmployeeShiftAssignment
    */
-  omit?: Prisma.EmployeeShiftOmit<ExtArgs> | null
+  omit?: Prisma.EmployeeShiftAssignmentOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.EmployeeShiftInclude<ExtArgs> | null
-  where?: Prisma.EmployeeShiftWhereInput
-  orderBy?: Prisma.EmployeeShiftOrderByWithRelationInput | Prisma.EmployeeShiftOrderByWithRelationInput[]
-  cursor?: Prisma.EmployeeShiftWhereUniqueInput
+  include?: Prisma.EmployeeShiftAssignmentInclude<ExtArgs> | null
+  where?: Prisma.EmployeeShiftAssignmentWhereInput
+  orderBy?: Prisma.EmployeeShiftAssignmentOrderByWithRelationInput | Prisma.EmployeeShiftAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeShiftAssignmentWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.EmployeeShiftScalarFieldEnum | Prisma.EmployeeShiftScalarFieldEnum[]
+  distinct?: Prisma.EmployeeShiftAssignmentScalarFieldEnum | Prisma.EmployeeShiftAssignmentScalarFieldEnum[]
 }
 
 /**

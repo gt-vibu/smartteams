@@ -1,0 +1,331 @@
+enum OrganizationSource {
+  NATIVE
+  BLIZBOOKS
+}
+
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum IdentityType {
+  NATIVE
+  FEDERATED
+}
+
+enum MembershipStatus {
+  ACTIVE
+  SUSPENDED
+  REMOVED
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+  TERMINATED
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACTOR
+  TEMPORARY
+  INTERN
+  OTHER
+}
+
+enum AccessMode {
+  NATIVE
+  FEDERATION
+  PLATFORM
+}
+
+enum OwnerSource {
+  NATIVE
+  BLIZBOOKS
+}
+
+enum RoleScope {
+  PLATFORM
+  ORGANIZATION
+  BRANCH
+}
+
+enum AuthSessionStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum ApprovalDomain {
+  LEAVE
+  ATTENDANCE_CORRECTION
+  TIMESHEET
+  PAYROLL
+}
+
+enum ApproverType {
+  ROLE
+  USER
+  MANAGER
+}
+
+enum PayType {
+  SALARY
+  HOURLY
+  DAILY
+  PER_SHIFT
+}
+
+enum PayFrequency {
+  WEEKLY
+  BIWEEKLY
+  SEMIMONTHLY
+  MONTHLY
+}
+
+enum GeofenceMode {
+  DISABLED
+  FLAG_ONLY
+  REQUIRED
+}
+
+enum TeamStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProjectStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  ARCHIVED
+}
+
+enum AttendanceStatus {
+  OPEN
+  COMPLETED
+  CORRECTED
+  APPROVED
+  REJECTED
+}
+
+enum AttendancePunchType {
+  IN
+  OUT
+}
+
+enum AttendancePunchSource {
+  NATIVE
+  FEDERATION
+  ADMIN_CORRECTION
+  IMPORT
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum LeaveAccrualType {
+  NONE
+  FIXED_ANNUAL
+  MONTHLY
+  PER_PAY_PERIOD
+  MANUAL
+}
+
+enum LeaveRequestStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum LeaveBalanceTransactionType {
+  OPENING
+  ACCRUAL
+  ADJUSTMENT
+  RESERVATION
+  RELEASE
+  USAGE
+  EXPIRY
+  REVERSAL
+}
+
+enum TimesheetPeriodType {
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
+  CUSTOM
+}
+
+enum TimesheetStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  LOCKED
+}
+
+enum TimesheetEntrySource {
+  ATTENDANCE
+  MANUAL
+  FEDERATION
+  IMPORT
+}
+
+enum PayrollRunStatus {
+  DRAFT
+  CALCULATED
+  APPROVED
+  RELEASED
+  LOCKED
+  CORRECTED
+  VOIDED
+}
+
+enum PayrollAdjustmentType {
+  BONUS
+  DEDUCTION
+  REIMBURSEMENT
+  OVERTIME
+  TAX
+  OTHER
+}
+
+enum PayrollAdjustmentSource {
+  NATIVE
+  FEDERATION
+  IMPORT
+  SYSTEM
+}
+
+enum PayComponentType {
+  EARNING
+  DEDUCTION
+  EMPLOYER_CONTRIBUTION
+}
+
+enum PayComponentCalculationType {
+  FIXED
+  PERCENTAGE_OF_BASE
+  FORMULA
+}
+
+enum FederationClientStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+  EXPIRED
+}
+
+enum CredentialStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum GrantEffect {
+  ALLOW
+  DENY
+}
+
+enum GrantStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+  EXPIRED
+}
+
+enum CapabilityStatus {
+  ENABLED
+  DISABLED
+}
+
+enum FederationRequestResult {
+  ACCEPTED
+  REJECTED
+  REPLAYED
+  DUPLICATE
+  INVALID_SIGNATURE
+  INVALID_SCOPE
+  INVALID_TENANT
+  RATE_LIMITED
+  ERROR
+}
+
+enum IdempotencyStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  EXPIRED
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+  COMPLETED
+  DEAD_LETTERED
+}
+
+enum WebhookSubscriptionStatus {
+  ACTIVE
+  PAUSED
+  REVOKED
+}
+
+enum WebhookDeliveryStatus {
+  PENDING
+  PROCESSING
+  DELIVERED
+  FAILED
+  REPLAY_REQUESTED
+  DEAD_LETTERED
+}
+
+enum FilePurpose {
+  PROFILE_IMAGE
+  RESUME
+  EMPLOYEE_DOCUMENT
+  LEAVE_ATTACHMENT
+  PAYSLIP
+  PAYROLL_EXPORT
+  IMPORT
+  OTHER
+}
+
+enum FileStatus {
+  PENDING_UPLOAD
+  AVAILABLE
+  QUARANTINED
+  DELETED
+  FAILED
+}
+
+enum AuditActorType {
+  USER
+  FEDERATION_CLIENT
+  PLATFORM_OPERATOR
+  SYSTEM
+}
+
+enum ExternalEntityType {
+  ORGANIZATION
+  BRANCH
+  USER
+  EMPLOYEE
+  ATTENDANCE
+  LEAVE_REQUEST
+  TIMESHEET
+  PAYROLL_RUN
+  PAYSLIP
+  FILE
+}

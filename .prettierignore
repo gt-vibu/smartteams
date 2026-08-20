@@ -3,6 +3,7 @@ node_modules
 dist
 coverage
 .turbo
-package-lock.json
+pnpm-lock.yaml
 apps/api/src/generated
+apps/*/next-env.d.ts
 docs
