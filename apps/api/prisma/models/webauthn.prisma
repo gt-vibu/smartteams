@@ -1,0 +1,51 @@
+model WebauthnCredential {
+  id                String           @id @default(uuid()) @db.Uuid
+  organizationId    String           @map("organization_id") @db.Uuid
+  employeeId        String           @map("employee_id") @db.Uuid
+  credentialId      String           @unique @map("credential_id")
+  publicKey         Bytes            @map("public_key") @db.ByteA
+  signCount         BigInt           @default(0) @map("sign_count")
+  deviceLabel       String?          @map("device_label")
+  transports        String[]         @default([])
+  attestationFormat String?          @map("attestation_format")
+  status            CredentialStatus @default(ACTIVE)
+  reviewRequired    Boolean          @default(false) @map("review_required")
+  enrolledAt        DateTime         @default(now()) @map("enrolled_at") @db.Timestamptz(6)
+  lastUsedAt        DateTime?        @map("last_used_at") @db.Timestamptz(6)
+  revokedAt         DateTime?        @map("revoked_at") @db.Timestamptz(6)
+  revokedByUserId   String?          @map("revoked_by_user_id") @db.Uuid
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee          Employee            @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  revokedBy         User?               @relation("WebauthnCredentialRevokedBy", fields: [revokedByUserId], references: [id], onDelete: SetNull)
+  challenges        WebauthnChallenge[] @relation("ChallengeCredential")
+  attendancePunches AttendancePunch[]
+
+  @@index([organizationId, employeeId, status])
+  @@map("webauthn_credentials")
+}
+
+model WebauthnChallenge {
+  id                       String                   @id @default(uuid()) @db.Uuid
+  organizationId           String                   @map("organization_id") @db.Uuid
+  employeeId               String                   @map("employee_id") @db.Uuid
+  purpose                  WebauthnChallengePurpose
+  challenge                String
+  relatedCredentialId      String?                  @map("related_credential_id") @db.Uuid
+  relatedAttendancePunchId String?                  @map("related_attendance_punch_id") @db.Uuid
+  status                   WebauthnChallengeStatus  @default(PENDING)
+  expiresAt                DateTime                 @map("expires_at") @db.Timestamptz(6)
+  consumedAt               DateTime?                @map("consumed_at") @db.Timestamptz(6)
+  createdAt                DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee          Employee            @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  relatedCredential WebauthnCredential? @relation("ChallengeCredential", fields: [relatedCredentialId], references: [id], onDelete: Restrict)
+  relatedPunch      AttendancePunch?    @relation("ChallengePunch", fields: [relatedAttendancePunchId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, employeeId, purpose, status])
+  @@index([expiresAt])
+  @@map("webauthn_challenges")
+}

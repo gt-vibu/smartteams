@@ -45,15 +45,19 @@ model AttendancePunch {
   workLocationId             String?               @map("work_location_id") @db.Uuid
   isWithinGeofence           Boolean?              @map("is_within_geofence")
   distanceFromLocationMeters Decimal?              @map("distance_from_location_meters") @db.Decimal(10, 2)
+  biometricVerified          Boolean               @default(false) @map("biometric_verified")
+  webauthnCredentialId       String?               @map("webauthn_credential_id") @db.Uuid
   metadata                   Json                  @default("{}")
   createdAt                  DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  organization     Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  attendanceRecord AttendanceRecord       @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
-  employee         Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-  capturedBy       User?                  @relation(fields: [capturedByUserId], references: [id], onDelete: SetNull)
-  workLocation     WorkLocation?          @relation(fields: [workLocationId], references: [id], onDelete: Restrict)
-  corrections      AttendanceCorrection[]
+  organization       Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  attendanceRecord   AttendanceRecord       @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
+  employee           Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  capturedBy         User?                  @relation(fields: [capturedByUserId], references: [id], onDelete: SetNull)
+  workLocation       WorkLocation?          @relation(fields: [workLocationId], references: [id], onDelete: Restrict)
+  corrections        AttendanceCorrection[]
+  webauthnCredential WebauthnCredential?    @relation(fields: [webauthnCredentialId], references: [id], onDelete: Restrict)
+  webauthnChallenges WebauthnChallenge[]    @relation("ChallengePunch")
 
   @@unique([organizationId, externalId])
   @@index([organizationId, employeeId, occurredAt])

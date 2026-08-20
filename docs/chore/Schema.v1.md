@@ -1,10 +1,10 @@
 # Smarteam V2 Database Schema
 
-**Status:** Proposed design for review — revision 2  
+**Status:** Implemented design reference — revision 3
 **Scope:** PostgreSQL schema for the backend and BlizBooks federation layer  
 **Source documents:** [PRD.v1.md](./PRD.v1.md), [TECHSTACK.v1.md](./TECHSTACK.v1.md), [Phase-1.v1.md](../development/Phase-1.v1.md)
 
-This document defines the relational model before the Prisma schema is finalized. It covers the native product, platform administration, multi-tenant isolation, attendance geofencing, teams and projects, component-based payroll, object storage metadata, and the compatibility surface required by BlizBooks.
+This document describes the implemented relational model represented by the Prisma schema and migrations. It covers the native product, platform administration, multi-tenant isolation, attendance geofencing, teams and projects, component-based payroll, object storage metadata, and the compatibility surface required by BlizBooks.
 
 The schema is intentionally shared-database and shared-schema. Every tenant-owned row carries `organization_id`, even when another foreign key already implies the organization. That duplication gives PostgreSQL RLS a direct policy key and lets the application detect cross-tenant relationship mistakes.
 
@@ -32,10 +32,9 @@ SET LOCAL app.organization_id = '<organization uuid>';
 SET LOCAL app.user_id = '<user uuid or empty string>';
 SET LOCAL app.client_id = '<federation client uuid or empty string>';
 SET LOCAL app.access_mode = 'NATIVE' | 'FEDERATION' | 'PLATFORM';
-SET LOCAL app.platform_bypass = 'true' | 'false';
 ```
 
-RLS policies compare `organization_id` with `current_setting('app.organization_id', true)::uuid`. Platform access uses an explicit, audited transaction path and never becomes a process-wide or connection-pool-wide bypass.
+RLS policies compare `organization_id` with `current_setting('app.organization_id', true)::uuid`. Platform and system operations use separate PostgreSQL connections whose roles are explicitly provisioned with the required elevated privilege; RLS never trusts a client-set session variable as a bypass signal. Platform access still uses an explicit, audited transaction path and never becomes a process-wide or connection-pool-wide bypass.
 
 ### 1.3 Deletion policy
 
@@ -96,7 +95,7 @@ These are PostgreSQL enums or Prisma enums. Values are uppercase in storage and 
 | `employee_status`                | `ACTIVE`, `INACTIVE`, `TERMINATED`                                                                                               | employees                                    |
 | `employment_type`                | `FULL_TIME`, `PART_TIME`, `CONTRACTOR`, `TEMPORARY`, `INTERN`, `OTHER`                                                           | employees                                    |
 | `access_mode`                    | `NATIVE`, `FEDERATION`, `PLATFORM`                                                                                               | mutations, audit, provenance                 |
-| `owner_source`                   | `NATIVE`, `BLIZBOOKS`                                                                                                            | employee_field_ownership                     |
+| `owner_source`                   | `NATIVE`, `FEDERATED`                                                                                                           | employee_field_ownership and federation-owned settings |
 | `role_scope`                     | `PLATFORM`, `ORGANIZATION`, `BRANCH`                                                                                             | roles, platform_roles                        |
 | `auth_session_status`            | `ACTIVE`, `REVOKED`, `EXPIRED`                                                                                                   | auth_sessions                                |
 | `approval_domain`                | `LEAVE`, `ATTENDANCE_CORRECTION`, `TIMESHEET`, `PAYROLL`                                                                         | approval_policies                            |
@@ -567,12 +566,12 @@ Normalized field-level ownership for EC-3 and FR-17.
 | `employee_id`           | `uuid`         |   No | FK `employees.id`.                                     |
 | `organization_id`       | `uuid`         |   No | Tenant key.                                            |
 | `field_name`            | `text`         |   No | Allowlisted API field name.                            |
-| `owner_source`          | `owner_source` |   No | `NATIVE` or `BLIZBOOKS`.                               |
+| `owner_source`          | `owner_source` |   No | `NATIVE` or `FEDERATED`; `owner_client_id` identifies the federation client when federated. |
 | `owner_client_id`       | `uuid`         |  Yes | Federation client that owns the field when applicable. |
 | `last_external_version` | `text`         |  Yes | Provider version/etag for conflict detection.          |
 | `updated_at`            | `timestamptz`  |   No | Ownership update time.                                 |
 
-Primary key `(employee_id, field_name)`. The service rejects native writes when `owner_source = BLIZBOOKS`; the database trigger or service layer also verifies the client matches `owner_client_id` for federation writes.
+Primary key `(employee_id, field_name)`. The service rejects native writes when `owner_source = FEDERATED`; the service also verifies the federation client matches `owner_client_id` for federated writes. `BLIZBOOKS` remains an organization/source value, not an ownership enum value.
 
 ### 6.5 `employee_employment_records`
 
@@ -1457,7 +1456,7 @@ Private signing material stays in a secrets manager. The database stores referen
 | `client_id`   | `uuid`              |   No | Federation client FK.                            |
 | `key_id`      | `text`              |   No | Public key rotation identifier.                  |
 | `secret_ref`  | `text`              |   No | Secret-manager reference, never the private key. |
-| `algorithm`   | `text`              |   No | Initially `HMAC-SHA256` per tech stack.          |
+| `algorithm`   | `text`              |   No | `RSA-SHA256` for outbound webhook signatures.   |
 | `status`      | `credential_status` |   No | Key lifecycle.                                   |
 | `valid_from`  | `timestamptz`       |   No | Start time.                                      |
 | `valid_until` | `timestamptz`       |  Yes | End time.                                        |
@@ -1666,7 +1665,7 @@ Prisma models cannot express every required PostgreSQL safety rule. The migratio
 
 1. Enable RLS on every table with `organization_id`.
 2. Add tenant policies for `SELECT`, `INSERT`, `UPDATE`, and `DELETE`, with normal application roles unable to bypass RLS.
-3. Add a separate audited platform policy or stored procedure for cross-tenant support operations.
+3. Provision separate audited system/platform database roles for cross-tenant support operations; normal application roles must not have `BYPASSRLS`.
 4. Add composite foreign keys or triggers ensuring `branch_id`, `employee_id`, `leave_type_id`, `timesheet_id`, `payroll_run_id`, `work_location_id`, `team_id`, `project_id`, and other related records belong to the same `organization_id`.
 5. Add partial unique indexes for nullable external IDs on every synchronized domain table, plus active primary branch assignments, organization-wide holidays, and branch holidays.
 6. Add check constraints for non-negative minutes, positive monetary quantities where required, valid date ranges, valid time ranges, and mutually exclusive audit actor columns.
@@ -1693,8 +1692,9 @@ The federation adapter must preserve:
 
 - OAuth client-credentials authentication and token format.
 - Optional mTLS verification at Nginx, with the verified certificate fingerprint passed to the API.
-- HMAC-SHA256 request signing over the canonical method, path, body hash, actor, tenant, branch/outlet, target, and nonce.
-- Replay rejection within the configured clock-skew and nonce window.
+- OAuth client-credentials bearer authentication for inbound federation calls, with optional mTLS fingerprint verification.
+- RSA-SHA256 signatures for outbound webhooks; the public key is exposed through `/v1/federation/webhook-signing-keys`.
+- Replay protection and timestamp/nonce handling for any contract operation that carries replay metadata; the exact webhook header/canonicalization format remains an integration verification item.
 - Idempotency keys and canonical request hashes.
 - Correlation IDs through request processing, outbox events, and webhook attempts.
 - Additive-only request and response evolution.
@@ -1769,4 +1769,4 @@ No controller or federation adapter may write directly around these sources. Nat
 | Private S3 assets                 | File objects and version metadata                                                                                          |
 | Shared-database tenant isolation  | `organization_id` on tenant tables plus PostgreSQL RLS                                                                     |
 
-This file is the schema contract for review. It does not change the Prisma schema or create migrations until the relationships, constraints, BlizBooks compatibility assumptions, and RLS strategy are approved.
+This file is the schema contract implemented by the Prisma schema and migrations. Any remaining external-contract uncertainty is recorded in `docs/integration/INFERRED_CONTRACT_GAPS.md` rather than silently encoded as a breaking assumption.

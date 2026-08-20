@@ -34,6 +34,11 @@ export type BranchMinAggregateOutputType = {
   status: $Enums.OrganizationStatus | null
   timezone: string | null
   geofenceMode: $Enums.GeofenceMode | null
+  geofenceOwnerSource: $Enums.OwnerSource | null
+  geofenceOwnerClientId: string | null
+  biometricVerificationMode: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource: $Enums.OwnerSource | null
+  biometricOwnerClientId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +53,11 @@ export type BranchMaxAggregateOutputType = {
   status: $Enums.OrganizationStatus | null
   timezone: string | null
   geofenceMode: $Enums.GeofenceMode | null
+  geofenceOwnerSource: $Enums.OwnerSource | null
+  geofenceOwnerClientId: string | null
+  biometricVerificationMode: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource: $Enums.OwnerSource | null
+  biometricOwnerClientId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +72,11 @@ export type BranchCountAggregateOutputType = {
   status: number
   timezone: number
   geofenceMode: number
+  geofenceOwnerSource: number
+  geofenceOwnerClientId: number
+  biometricVerificationMode: number
+  biometricOwnerSource: number
+  biometricOwnerClientId: number
   address: number
   createdAt: number
   updatedAt: number
@@ -79,6 +94,11 @@ export type BranchMinAggregateInputType = {
   status?: true
   timezone?: true
   geofenceMode?: true
+  geofenceOwnerSource?: true
+  geofenceOwnerClientId?: true
+  biometricVerificationMode?: true
+  biometricOwnerSource?: true
+  biometricOwnerClientId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -93,6 +113,11 @@ export type BranchMaxAggregateInputType = {
   status?: true
   timezone?: true
   geofenceMode?: true
+  geofenceOwnerSource?: true
+  geofenceOwnerClientId?: true
+  biometricVerificationMode?: true
+  biometricOwnerSource?: true
+  biometricOwnerClientId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -107,6 +132,11 @@ export type BranchCountAggregateInputType = {
   status?: true
   timezone?: true
   geofenceMode?: true
+  geofenceOwnerSource?: true
+  geofenceOwnerClientId?: true
+  biometricVerificationMode?: true
+  biometricOwnerSource?: true
+  biometricOwnerClientId?: true
   address?: true
   createdAt?: true
   updatedAt?: true
@@ -195,6 +225,11 @@ export type BranchGroupByOutputType = {
   status: $Enums.OrganizationStatus
   timezone: string | null
   geofenceMode: $Enums.GeofenceMode | null
+  geofenceOwnerSource: $Enums.OwnerSource
+  geofenceOwnerClientId: string | null
+  biometricVerificationMode: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource: $Enums.OwnerSource
+  biometricOwnerClientId: string | null
   address: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
@@ -231,6 +266,11 @@ export type BranchWhereInput = {
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableFilter<"Branch"> | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
   address?: Prisma.JsonFilter<"Branch">
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
@@ -251,6 +291,8 @@ export type BranchWhereInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentListRelationFilter
   requestRecords?: Prisma.FederationRequestRecordListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  geofenceOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
+  biometricOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
 }
 
 export type BranchOrderByWithRelationInput = {
@@ -263,6 +305,11 @@ export type BranchOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -283,6 +330,8 @@ export type BranchOrderByWithRelationInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentOrderByRelationAggregateInput
   requestRecords?: Prisma.FederationRequestRecordOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  geofenceOwnerClient?: Prisma.FederationClientOrderByWithRelationInput
+  biometricOwnerClient?: Prisma.FederationClientOrderByWithRelationInput
 }
 
 export type BranchWhereUniqueInput = Prisma.AtLeast<{
@@ -300,6 +349,11 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableFilter<"Branch"> | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
   address?: Prisma.JsonFilter<"Branch">
   createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
@@ -320,6 +374,8 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   shiftAssignments?: Prisma.EmployeeShiftAssignmentListRelationFilter
   requestRecords?: Prisma.FederationRequestRecordListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  geofenceOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
+  biometricOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
 }, "id" | "organizationId_code" | "organizationId_externalId">
 
 export type BranchOrderByWithAggregationInput = {
@@ -332,6 +388,11 @@ export type BranchOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -353,6 +414,11 @@ export type BranchScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumOrganizationStatusWithAggregatesFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableWithAggregatesFilter<"Branch"> | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"Branch"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"Branch"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableWithAggregatesFilter<"Branch"> | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"Branch"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"Branch"> | string | null
   address?: Prisma.JsonWithAggregatesFilter<"Branch">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Branch"> | Date | string
@@ -367,6 +433,9 @@ export type BranchCreateInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -387,6 +456,8 @@ export type BranchCreateInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateInput = {
@@ -399,6 +470,11 @@ export type BranchUncheckedCreateInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -429,6 +505,9 @@ export type BranchUpdateInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -449,6 +528,8 @@ export type BranchUpdateInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateInput = {
@@ -461,6 +542,11 @@ export type BranchUncheckedUpdateInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -492,6 +578,11 @@ export type BranchCreateManyInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -506,6 +597,9 @@ export type BranchUpdateManyMutationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -521,6 +615,11 @@ export type BranchUncheckedUpdateManyInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -561,6 +660,11 @@ export type BranchCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrder
   address?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -576,6 +680,11 @@ export type BranchMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -590,6 +699,11 @@ export type BranchMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -629,6 +743,90 @@ export type BranchUpdateOneWithoutAuditLogsNestedInput = {
   delete?: Prisma.BranchWhereInput | boolean
   connect?: Prisma.BranchWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.BranchUpdateWithoutAuditLogsInput>, Prisma.BranchUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type BranchCreateNestedManyWithoutGeofenceOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.BranchCreateWithoutGeofenceOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyGeofenceOwnerClientInputEnvelope
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+}
+
+export type BranchCreateNestedManyWithoutBiometricOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.BranchCreateWithoutBiometricOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyBiometricOwnerClientInputEnvelope
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+}
+
+export type BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.BranchCreateWithoutGeofenceOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyGeofenceOwnerClientInputEnvelope
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+}
+
+export type BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.BranchCreateWithoutBiometricOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyBiometricOwnerClientInputEnvelope
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+}
+
+export type BranchUpdateManyWithoutGeofenceOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.BranchCreateWithoutGeofenceOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  upsert?: Prisma.BranchUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.BranchUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyGeofenceOwnerClientInputEnvelope
+  set?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  disconnect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  delete?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  update?: Prisma.BranchUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.BranchUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  updateMany?: Prisma.BranchUpdateManyWithWhereWithoutGeofenceOwnerClientInput | Prisma.BranchUpdateManyWithWhereWithoutGeofenceOwnerClientInput[]
+  deleteMany?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
+}
+
+export type BranchUpdateManyWithoutBiometricOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.BranchCreateWithoutBiometricOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput[]
+  upsert?: Prisma.BranchUpsertWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.BranchUpsertWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyBiometricOwnerClientInputEnvelope
+  set?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  disconnect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  delete?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  update?: Prisma.BranchUpdateWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.BranchUpdateWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  updateMany?: Prisma.BranchUpdateManyWithWhereWithoutBiometricOwnerClientInput | Prisma.BranchUpdateManyWithWhereWithoutBiometricOwnerClientInput[]
+  deleteMany?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
+}
+
+export type BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.BranchCreateWithoutGeofenceOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.BranchCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  upsert?: Prisma.BranchUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.BranchUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyGeofenceOwnerClientInputEnvelope
+  set?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  disconnect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  delete?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  update?: Prisma.BranchUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.BranchUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  updateMany?: Prisma.BranchUpdateManyWithWhereWithoutGeofenceOwnerClientInput | Prisma.BranchUpdateManyWithWhereWithoutGeofenceOwnerClientInput[]
+  deleteMany?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
+}
+
+export type BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.BranchCreateWithoutBiometricOwnerClientInput[] | Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.BranchCreateOrConnectWithoutBiometricOwnerClientInput[]
+  upsert?: Prisma.BranchUpsertWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.BranchUpsertWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.BranchCreateManyBiometricOwnerClientInputEnvelope
+  set?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  disconnect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  delete?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  connect?: Prisma.BranchWhereUniqueInput | Prisma.BranchWhereUniqueInput[]
+  update?: Prisma.BranchUpdateWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.BranchUpdateWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  updateMany?: Prisma.BranchUpdateManyWithWhereWithoutBiometricOwnerClientInput | Prisma.BranchUpdateManyWithWhereWithoutBiometricOwnerClientInput[]
+  deleteMany?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
 }
 
 export type BranchCreateNestedOneWithoutGrantsInput = {
@@ -821,6 +1019,10 @@ export type NullableEnumGeofenceModeFieldUpdateOperationsInput = {
   set?: $Enums.GeofenceMode | null
 }
 
+export type NullableEnumBiometricVerificationModeFieldUpdateOperationsInput = {
+  set?: $Enums.BiometricVerificationMode | null
+}
+
 export type BranchCreateNestedOneWithoutWorkLocationsInput = {
   create?: Prisma.XOR<Prisma.BranchCreateWithoutWorkLocationsInput, Prisma.BranchUncheckedCreateWithoutWorkLocationsInput>
   connectOrCreate?: Prisma.BranchCreateOrConnectWithoutWorkLocationsInput
@@ -908,6 +1110,9 @@ export type BranchCreateWithoutRequestRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -927,6 +1132,8 @@ export type BranchCreateWithoutRequestRecordsInput = {
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutRequestRecordsInput = {
@@ -939,6 +1146,11 @@ export type BranchUncheckedCreateWithoutRequestRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -984,6 +1196,9 @@ export type BranchUpdateWithoutRequestRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1003,6 +1218,8 @@ export type BranchUpdateWithoutRequestRecordsInput = {
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutRequestRecordsInput = {
@@ -1015,6 +1232,11 @@ export type BranchUncheckedUpdateWithoutRequestRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1044,6 +1266,9 @@ export type BranchCreateWithoutAuditLogsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1063,6 +1288,8 @@ export type BranchCreateWithoutAuditLogsInput = {
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutAuditLogsInput = {
@@ -1075,6 +1302,11 @@ export type BranchUncheckedCreateWithoutAuditLogsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1120,6 +1352,9 @@ export type BranchUpdateWithoutAuditLogsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1139,6 +1374,8 @@ export type BranchUpdateWithoutAuditLogsInput = {
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutAuditLogsInput = {
@@ -1151,6 +1388,11 @@ export type BranchUncheckedUpdateWithoutAuditLogsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1171,6 +1413,221 @@ export type BranchUncheckedUpdateWithoutAuditLogsInput = {
   requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
 }
 
+export type BranchCreateWithoutGeofenceOwnerClientInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
+}
+
+export type BranchUncheckedCreateWithoutGeofenceOwnerClientInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutGeofenceOwnerClientInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput>
+}
+
+export type BranchCreateManyGeofenceOwnerClientInputEnvelope = {
+  data: Prisma.BranchCreateManyGeofenceOwnerClientInput | Prisma.BranchCreateManyGeofenceOwnerClientInput[]
+  skipDuplicates?: boolean
+}
+
+export type BranchCreateWithoutBiometricOwnerClientInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+}
+
+export type BranchUncheckedCreateWithoutBiometricOwnerClientInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutBiometricOwnerClientInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput>
+}
+
+export type BranchCreateManyBiometricOwnerClientInputEnvelope = {
+  data: Prisma.BranchCreateManyBiometricOwnerClientInput | Prisma.BranchCreateManyBiometricOwnerClientInput[]
+  skipDuplicates?: boolean
+}
+
+export type BranchUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput = {
+  where: Prisma.BranchWhereUniqueInput
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedUpdateWithoutGeofenceOwnerClientInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedCreateWithoutGeofenceOwnerClientInput>
+}
+
+export type BranchUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput = {
+  where: Prisma.BranchWhereUniqueInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutGeofenceOwnerClientInput, Prisma.BranchUncheckedUpdateWithoutGeofenceOwnerClientInput>
+}
+
+export type BranchUpdateManyWithWhereWithoutGeofenceOwnerClientInput = {
+  where: Prisma.BranchScalarWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateManyMutationInput, Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientInput>
+}
+
+export type BranchScalarWhereInput = {
+  AND?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
+  OR?: Prisma.BranchScalarWhereInput[]
+  NOT?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
+  id?: Prisma.UuidFilter<"Branch"> | string
+  organizationId?: Prisma.UuidFilter<"Branch"> | string
+  name?: Prisma.StringFilter<"Branch"> | string
+  code?: Prisma.StringFilter<"Branch"> | string
+  source?: Prisma.EnumOrganizationSourceFilter<"Branch"> | $Enums.OrganizationSource
+  externalId?: Prisma.StringNullableFilter<"Branch"> | string | null
+  status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
+  timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
+  geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableFilter<"Branch"> | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
+  address?: Prisma.JsonFilter<"Branch">
+  createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
+}
+
+export type BranchUpsertWithWhereUniqueWithoutBiometricOwnerClientInput = {
+  where: Prisma.BranchWhereUniqueInput
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedUpdateWithoutBiometricOwnerClientInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedCreateWithoutBiometricOwnerClientInput>
+}
+
+export type BranchUpdateWithWhereUniqueWithoutBiometricOwnerClientInput = {
+  where: Prisma.BranchWhereUniqueInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutBiometricOwnerClientInput, Prisma.BranchUncheckedUpdateWithoutBiometricOwnerClientInput>
+}
+
+export type BranchUpdateManyWithWhereWithoutBiometricOwnerClientInput = {
+  where: Prisma.BranchScalarWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateManyMutationInput, Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientInput>
+}
+
 export type BranchCreateWithoutGrantsInput = {
   id?: string
   name: string
@@ -1180,6 +1637,9 @@ export type BranchCreateWithoutGrantsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1199,6 +1659,8 @@ export type BranchCreateWithoutGrantsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutGrantsInput = {
@@ -1211,6 +1673,11 @@ export type BranchUncheckedCreateWithoutGrantsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1256,6 +1723,9 @@ export type BranchUpdateWithoutGrantsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1275,6 +1745,8 @@ export type BranchUpdateWithoutGrantsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutGrantsInput = {
@@ -1287,6 +1759,11 @@ export type BranchUncheckedUpdateWithoutGrantsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1316,6 +1793,9 @@ export type BranchCreateWithoutAttendanceRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1335,6 +1815,8 @@ export type BranchCreateWithoutAttendanceRecordsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutAttendanceRecordsInput = {
@@ -1347,6 +1829,11 @@ export type BranchUncheckedCreateWithoutAttendanceRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1392,6 +1879,9 @@ export type BranchUpdateWithoutAttendanceRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1411,6 +1901,8 @@ export type BranchUpdateWithoutAttendanceRecordsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutAttendanceRecordsInput = {
@@ -1423,6 +1915,11 @@ export type BranchUncheckedUpdateWithoutAttendanceRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1452,6 +1949,9 @@ export type BranchCreateWithoutHolidaysInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1471,6 +1971,8 @@ export type BranchCreateWithoutHolidaysInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutHolidaysInput = {
@@ -1483,6 +1985,11 @@ export type BranchUncheckedCreateWithoutHolidaysInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1528,6 +2035,9 @@ export type BranchUpdateWithoutHolidaysInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1547,6 +2057,8 @@ export type BranchUpdateWithoutHolidaysInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutHolidaysInput = {
@@ -1559,6 +2071,11 @@ export type BranchUncheckedUpdateWithoutHolidaysInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1588,6 +2105,9 @@ export type BranchCreateWithoutLeaveRequestsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1607,6 +2127,8 @@ export type BranchCreateWithoutLeaveRequestsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutLeaveRequestsInput = {
@@ -1619,6 +2141,11 @@ export type BranchUncheckedCreateWithoutLeaveRequestsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1664,6 +2191,9 @@ export type BranchUpdateWithoutLeaveRequestsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1683,6 +2213,8 @@ export type BranchUpdateWithoutLeaveRequestsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutLeaveRequestsInput = {
@@ -1695,6 +2227,11 @@ export type BranchUncheckedUpdateWithoutLeaveRequestsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1724,6 +2261,9 @@ export type BranchCreateWithoutShiftsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1743,6 +2283,8 @@ export type BranchCreateWithoutShiftsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutShiftsInput = {
@@ -1755,6 +2297,11 @@ export type BranchUncheckedCreateWithoutShiftsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1800,6 +2347,9 @@ export type BranchUpdateWithoutShiftsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1819,6 +2369,8 @@ export type BranchUpdateWithoutShiftsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutShiftsInput = {
@@ -1831,6 +2383,11 @@ export type BranchUncheckedUpdateWithoutShiftsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1860,6 +2417,9 @@ export type BranchCreateWithoutShiftAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1879,6 +2439,8 @@ export type BranchCreateWithoutShiftAssignmentsInput = {
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutShiftAssignmentsInput = {
@@ -1891,6 +2453,11 @@ export type BranchUncheckedCreateWithoutShiftAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1936,6 +2503,9 @@ export type BranchUpdateWithoutShiftAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1955,6 +2525,8 @@ export type BranchUpdateWithoutShiftAssignmentsInput = {
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutShiftAssignmentsInput = {
@@ -1967,6 +2539,11 @@ export type BranchUncheckedUpdateWithoutShiftAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1996,6 +2573,9 @@ export type BranchCreateWithoutTimesheetsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2015,6 +2595,8 @@ export type BranchCreateWithoutTimesheetsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutTimesheetsInput = {
@@ -2027,6 +2609,11 @@ export type BranchUncheckedCreateWithoutTimesheetsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2072,6 +2659,9 @@ export type BranchUpdateWithoutTimesheetsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2091,6 +2681,8 @@ export type BranchUpdateWithoutTimesheetsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutTimesheetsInput = {
@@ -2103,6 +2695,11 @@ export type BranchUncheckedUpdateWithoutTimesheetsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2132,6 +2729,9 @@ export type BranchCreateWithoutRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2151,6 +2751,8 @@ export type BranchCreateWithoutRolesInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutRolesInput = {
@@ -2163,6 +2765,11 @@ export type BranchUncheckedCreateWithoutRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2208,6 +2815,9 @@ export type BranchUpdateWithoutRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2227,6 +2837,8 @@ export type BranchUpdateWithoutRolesInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutRolesInput = {
@@ -2239,6 +2851,11 @@ export type BranchUncheckedUpdateWithoutRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2268,6 +2885,9 @@ export type BranchCreateWithoutUserRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2287,6 +2907,8 @@ export type BranchCreateWithoutUserRolesInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutUserRolesInput = {
@@ -2299,6 +2921,11 @@ export type BranchUncheckedCreateWithoutUserRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2344,6 +2971,9 @@ export type BranchUpdateWithoutUserRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2363,6 +2993,8 @@ export type BranchUpdateWithoutUserRolesInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutUserRolesInput = {
@@ -2375,6 +3007,11 @@ export type BranchUncheckedUpdateWithoutUserRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2404,6 +3041,9 @@ export type BranchCreateWithoutOrganizationInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2423,6 +3063,8 @@ export type BranchCreateWithoutOrganizationInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutOrganizationInput = {
@@ -2434,6 +3076,11 @@ export type BranchUncheckedCreateWithoutOrganizationInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2481,24 +3128,6 @@ export type BranchUpdateManyWithWhereWithoutOrganizationInput = {
   data: Prisma.XOR<Prisma.BranchUpdateManyMutationInput, Prisma.BranchUncheckedUpdateManyWithoutOrganizationInput>
 }
 
-export type BranchScalarWhereInput = {
-  AND?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
-  OR?: Prisma.BranchScalarWhereInput[]
-  NOT?: Prisma.BranchScalarWhereInput | Prisma.BranchScalarWhereInput[]
-  id?: Prisma.UuidFilter<"Branch"> | string
-  organizationId?: Prisma.UuidFilter<"Branch"> | string
-  name?: Prisma.StringFilter<"Branch"> | string
-  code?: Prisma.StringFilter<"Branch"> | string
-  source?: Prisma.EnumOrganizationSourceFilter<"Branch"> | $Enums.OrganizationSource
-  externalId?: Prisma.StringNullableFilter<"Branch"> | string | null
-  status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
-  timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
-  geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
-  address?: Prisma.JsonFilter<"Branch">
-  createdAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Branch"> | Date | string
-}
-
 export type BranchCreateWithoutWorkLocationsInput = {
   id?: string
   name: string
@@ -2508,6 +3137,9 @@ export type BranchCreateWithoutWorkLocationsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2527,6 +3159,8 @@ export type BranchCreateWithoutWorkLocationsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutWorkLocationsInput = {
@@ -2539,6 +3173,11 @@ export type BranchUncheckedCreateWithoutWorkLocationsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2584,6 +3223,9 @@ export type BranchUpdateWithoutWorkLocationsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2603,6 +3245,8 @@ export type BranchUpdateWithoutWorkLocationsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutWorkLocationsInput = {
@@ -2615,6 +3259,11 @@ export type BranchUncheckedUpdateWithoutWorkLocationsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2644,6 +3293,9 @@ export type BranchCreateWithoutPrimaryEmployeesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2663,6 +3315,8 @@ export type BranchCreateWithoutPrimaryEmployeesInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutPrimaryEmployeesInput = {
@@ -2675,6 +3329,11 @@ export type BranchUncheckedCreateWithoutPrimaryEmployeesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2720,6 +3379,9 @@ export type BranchUpdateWithoutPrimaryEmployeesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2739,6 +3401,8 @@ export type BranchUpdateWithoutPrimaryEmployeesInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutPrimaryEmployeesInput = {
@@ -2751,6 +3415,11 @@ export type BranchUncheckedUpdateWithoutPrimaryEmployeesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2780,6 +3449,9 @@ export type BranchCreateWithoutEmployeeAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2799,6 +3471,8 @@ export type BranchCreateWithoutEmployeeAssignmentsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutEmployeeAssignmentsInput = {
@@ -2811,6 +3485,11 @@ export type BranchUncheckedCreateWithoutEmployeeAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2856,6 +3535,9 @@ export type BranchUpdateWithoutEmployeeAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2875,6 +3557,8 @@ export type BranchUpdateWithoutEmployeeAssignmentsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutEmployeeAssignmentsInput = {
@@ -2887,6 +3571,11 @@ export type BranchUncheckedUpdateWithoutEmployeeAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2916,6 +3605,9 @@ export type BranchCreateWithoutTeamsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2935,6 +3627,8 @@ export type BranchCreateWithoutTeamsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutTeamsInput = {
@@ -2947,6 +3641,11 @@ export type BranchUncheckedCreateWithoutTeamsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2992,6 +3691,9 @@ export type BranchUpdateWithoutTeamsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3011,6 +3713,8 @@ export type BranchUpdateWithoutTeamsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutTeamsInput = {
@@ -3023,6 +3727,11 @@ export type BranchUncheckedUpdateWithoutTeamsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3052,6 +3761,9 @@ export type BranchCreateWithoutProjectsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3071,6 +3783,8 @@ export type BranchCreateWithoutProjectsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
   requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
 }
 
 export type BranchUncheckedCreateWithoutProjectsInput = {
@@ -3083,6 +3797,11 @@ export type BranchUncheckedCreateWithoutProjectsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3128,6 +3847,9 @@ export type BranchUpdateWithoutProjectsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3147,6 +3869,8 @@ export type BranchUpdateWithoutProjectsInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutProjectsInput = {
@@ -3159,6 +3883,11 @@ export type BranchUncheckedUpdateWithoutProjectsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3179,6 +3908,222 @@ export type BranchUncheckedUpdateWithoutProjectsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
 }
 
+export type BranchCreateManyGeofenceOwnerClientInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BranchCreateManyBiometricOwnerClientInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BranchUpdateWithoutGeofenceOwnerClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutGeofenceOwnerClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateManyWithoutGeofenceOwnerClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BranchUpdateWithoutBiometricOwnerClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutBiometricOwnerClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchUncheckedUpdateManyWithoutBiometricOwnerClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type BranchCreateManyOrganizationInput = {
   id?: string
   name: string
@@ -3188,6 +4133,11 @@ export type BranchCreateManyOrganizationInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3202,6 +4152,9 @@ export type BranchUpdateWithoutOrganizationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3221,6 +4174,8 @@ export type BranchUpdateWithoutOrganizationInput = {
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
   requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
 }
 
 export type BranchUncheckedUpdateWithoutOrganizationInput = {
@@ -3232,6 +4187,11 @@ export type BranchUncheckedUpdateWithoutOrganizationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3262,6 +4222,11 @@ export type BranchUncheckedUpdateManyWithoutOrganizationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3443,6 +4408,11 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -3463,6 +4433,8 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   shiftAssignments?: boolean | Prisma.Branch$shiftAssignmentsArgs<ExtArgs>
   requestRecords?: boolean | Prisma.Branch$requestRecordsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Branch$auditLogsArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.Branch$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.Branch$biometricOwnerClientArgs<ExtArgs>
   _count?: boolean | Prisma.BranchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["branch"]>
 
@@ -3476,10 +4448,17 @@ export type BranchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.Branch$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.Branch$biometricOwnerClientArgs<ExtArgs>
 }, ExtArgs["result"]["branch"]>
 
 export type BranchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -3492,10 +4471,17 @@ export type BranchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.Branch$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.Branch$biometricOwnerClientArgs<ExtArgs>
 }, ExtArgs["result"]["branch"]>
 
 export type BranchSelectScalar = {
@@ -3508,12 +4494,17 @@ export type BranchSelectScalar = {
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   address?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "code" | "source" | "externalId" | "status" | "timezone" | "geofenceMode" | "address" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
+export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "code" | "source" | "externalId" | "status" | "timezone" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "address" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
 export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   workLocations?: boolean | Prisma.Branch$workLocationsArgs<ExtArgs>
@@ -3532,13 +4523,19 @@ export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   shiftAssignments?: boolean | Prisma.Branch$shiftAssignmentsArgs<ExtArgs>
   requestRecords?: boolean | Prisma.Branch$requestRecordsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Branch$auditLogsArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.Branch$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.Branch$biometricOwnerClientArgs<ExtArgs>
   _count?: boolean | Prisma.BranchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BranchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.Branch$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.Branch$biometricOwnerClientArgs<ExtArgs>
 }
 export type BranchIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.Branch$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.Branch$biometricOwnerClientArgs<ExtArgs>
 }
 
 export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3561,6 +4558,8 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     shiftAssignments: Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>[]
     requestRecords: Prisma.$FederationRequestRecordPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    geofenceOwnerClient: Prisma.$FederationClientPayload<ExtArgs> | null
+    biometricOwnerClient: Prisma.$FederationClientPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3572,6 +4571,11 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     status: $Enums.OrganizationStatus
     timezone: string | null
     geofenceMode: $Enums.GeofenceMode | null
+    geofenceOwnerSource: $Enums.OwnerSource
+    geofenceOwnerClientId: string | null
+    biometricVerificationMode: $Enums.BiometricVerificationMode | null
+    biometricOwnerSource: $Enums.OwnerSource
+    biometricOwnerClientId: string | null
     address: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
@@ -3986,6 +4990,8 @@ export interface Prisma__BranchClient<T, Null = never, ExtArgs extends runtime.T
   shiftAssignments<T extends Prisma.Branch$shiftAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$shiftAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   requestRecords<T extends Prisma.Branch$requestRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$requestRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FederationRequestRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.Branch$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  geofenceOwnerClient<T extends Prisma.Branch$geofenceOwnerClientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$geofenceOwnerClientArgs<ExtArgs>>): Prisma.Prisma__FederationClientClient<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  biometricOwnerClient<T extends Prisma.Branch$biometricOwnerClientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$biometricOwnerClientArgs<ExtArgs>>): Prisma.Prisma__FederationClientClient<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4024,6 +5030,11 @@ export interface BranchFieldRefs {
   readonly status: Prisma.FieldRef<"Branch", 'OrganizationStatus'>
   readonly timezone: Prisma.FieldRef<"Branch", 'String'>
   readonly geofenceMode: Prisma.FieldRef<"Branch", 'GeofenceMode'>
+  readonly geofenceOwnerSource: Prisma.FieldRef<"Branch", 'OwnerSource'>
+  readonly geofenceOwnerClientId: Prisma.FieldRef<"Branch", 'String'>
+  readonly biometricVerificationMode: Prisma.FieldRef<"Branch", 'BiometricVerificationMode'>
+  readonly biometricOwnerSource: Prisma.FieldRef<"Branch", 'OwnerSource'>
+  readonly biometricOwnerClientId: Prisma.FieldRef<"Branch", 'String'>
   readonly address: Prisma.FieldRef<"Branch", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Branch", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Branch", 'DateTime'>
@@ -4809,6 +5820,44 @@ export type Branch$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * Branch.geofenceOwnerClient
+ */
+export type Branch$geofenceOwnerClientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationClient
+   */
+  select?: Prisma.FederationClientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FederationClient
+   */
+  omit?: Prisma.FederationClientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FederationClientInclude<ExtArgs> | null
+  where?: Prisma.FederationClientWhereInput
+}
+
+/**
+ * Branch.biometricOwnerClient
+ */
+export type Branch$biometricOwnerClientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationClient
+   */
+  select?: Prisma.FederationClientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FederationClient
+   */
+  omit?: Prisma.FederationClientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FederationClientInclude<ExtArgs> | null
+  where?: Prisma.FederationClientWhereInput
 }
 
 /**

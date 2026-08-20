@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -33,6 +34,10 @@ export class StorageService {
     });
   }
 
+  getBucket() {
+    return this.bucket;
+  }
+
   createObjectKey(organizationId: string, purpose: string, originalName: string) {
     const extension = originalName
       .split('.')
@@ -42,17 +47,33 @@ export class StorageService {
     return `${organizationId}/${purpose}/${randomUUID()}${extension ? `.${extension}` : ''}`;
   }
 
-  async createUploadUrl(input: { key: string; contentType: string; expiresIn?: number }) {
+  async createUploadUrl(input: {
+    key: string;
+    contentType: string;
+    byteSize?: number;
+    checksumSha256?: string;
+    expiresIn?: number;
+  }) {
     return getSignedUrl(
       this.client,
       new PutObjectCommand({
         Bucket: this.bucket,
         ContentType: input.contentType,
         Key: input.key,
+        ...(input.byteSize === undefined ? {} : { ContentLength: input.byteSize }),
+        ...(input.checksumSha256 && /^[0-9a-f]{64}$/i.test(input.checksumSha256)
+          ? { ChecksumSHA256: Buffer.from(input.checksumSha256, 'hex').toString('base64') }
+          : {}),
         ServerSideEncryption: 'aws:kms',
         ...(this.kmsKeyId ? { SSEKMSKeyId: this.kmsKeyId } : {}),
       }),
       { expiresIn: input.expiresIn ?? 600 },
+    );
+  }
+
+  async head(key: string) {
+    return this.client.send(
+      new HeadObjectCommand({ Bucket: this.bucket, Key: key, ChecksumMode: 'ENABLED' }),
     );
   }
 

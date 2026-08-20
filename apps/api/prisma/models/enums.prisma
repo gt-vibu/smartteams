@@ -43,7 +43,7 @@ enum AccessMode {
 
 enum OwnerSource {
   NATIVE
-  BLIZBOOKS
+  FEDERATED
 }
 
 enum RoleScope {
@@ -89,6 +89,23 @@ enum GeofenceMode {
   DISABLED
   FLAG_ONLY
   REQUIRED
+}
+
+enum BiometricVerificationMode {
+  DISABLED
+  OPTIONAL
+  REQUIRED
+}
+
+enum WebauthnChallengePurpose {
+  ENROLLMENT
+  ASSERTION
+}
+
+enum WebauthnChallengeStatus {
+  PENDING
+  CONSUMED
+  EXPIRED
 }
 
 enum TeamStatus {
