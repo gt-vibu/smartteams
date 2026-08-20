@@ -28,6 +28,6 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@smarteam/tsconfig": "0.1.0"
+    "@smarteam/tsconfig": "workspace:*"
   }
 }

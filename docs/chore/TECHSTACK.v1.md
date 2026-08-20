@@ -133,7 +133,7 @@ Uploads must be validated for size, MIME type, extension, and content where requ
 | Process supervision | PM2 (cluster mode) | Multi-core utilization, auto-restart on crash, zero-downtime reload (`pm2 reload`) |
 | Build artifacts | Compiled NestJS (`dist/`) and Next.js production build (`.next/`), deployed via GitLab CI pipeline (build stage → deploy stage, e.g., rsync/SCP over SSH to the target server + PM2 restart) | Reuse the existing BlizBooks/BhojAI GitLab Runner pipeline pattern rather than introducing a new deployment mechanism |
 | CI/CD | GitLab CI/CD with GitLab Runner | Same pipeline mechanism already used for BlizBooks/BhojAI; `.gitlab-ci.yml` stages for lint, typecheck, unit + integration + contract tests, build, deploy |
-| Environment consistency | `.nvmrc` pinning Node version, `package-lock.json` committed | Prevents version drift across dev/staging/production without needing containers |
+| Environment consistency | `.nvmrc` pinning Node version, `pnpm-lock.yaml` committed | Prevents version drift across dev/staging/production without needing containers |
 
 ---
 
