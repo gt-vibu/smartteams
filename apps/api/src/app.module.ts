@@ -1,6 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino';
+import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './common/config/config.module';
+import { CommonModule } from './common/common.module';
+import { RequestContextMiddleware } from './common/context/request-context';
 import { HealthModule } from './common/health/health.module';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
@@ -8,9 +11,11 @@ import { QueueModule } from './infrastructure/queue/queue.module';
 import { RedisModule } from './infrastructure/redis/redis.module';
 import { StorageModule } from './infrastructure/storage/storage.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
+import { ApprovalsModule } from './modules/approvals/approvals.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EmployeesModule } from './modules/employees/employees.module';
+import { FilesModule } from './modules/files/files.module';
 import { FederationModule } from './modules/federation/federation.module';
 import { LeaveModule } from './modules/leave/leave.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
@@ -23,10 +28,15 @@ import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
-    LoggerModule.forRoot({
-      pinoHttp: { level: process.env.LOG_LEVEL ?? 'info' },
+    LoggerModule.forRootAsync({
+      imports: [AppConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        pinoHttp: { level: config.getOrThrow<string>('LOG_LEVEL') },
+      }),
     }),
     AppConfigModule,
+    CommonModule,
     DatabaseModule,
     RedisModule,
     QueueModule,
@@ -38,7 +48,9 @@ import { UsersModule } from './modules/users/users.module';
     OrganizationsModule,
     UsersModule,
     EmployeesModule,
+    FilesModule,
     AttendanceModule,
+    ApprovalsModule,
     LeaveModule,
     TimesheetsModule,
     ShiftsModule,
@@ -48,4 +60,8 @@ import { UsersModule } from './modules/users/users.module';
     PlatformModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestContextMiddleware).forRoutes('*');
+  }
+}

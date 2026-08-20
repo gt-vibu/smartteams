@@ -75,7 +75,7 @@ export type AccessMode = (typeof AccessMode)[keyof typeof AccessMode]
 
 export const OwnerSource = {
   NATIVE: 'NATIVE',
-  BLIZBOOKS: 'BLIZBOOKS'
+  FEDERATED: 'FEDERATED'
 } as const
 
 export type OwnerSource = (typeof OwnerSource)[keyof typeof OwnerSource]
@@ -145,6 +145,32 @@ export const GeofenceMode = {
 } as const
 
 export type GeofenceMode = (typeof GeofenceMode)[keyof typeof GeofenceMode]
+
+
+export const BiometricVerificationMode = {
+  DISABLED: 'DISABLED',
+  OPTIONAL: 'OPTIONAL',
+  REQUIRED: 'REQUIRED'
+} as const
+
+export type BiometricVerificationMode = (typeof BiometricVerificationMode)[keyof typeof BiometricVerificationMode]
+
+
+export const WebauthnChallengePurpose = {
+  ENROLLMENT: 'ENROLLMENT',
+  ASSERTION: 'ASSERTION'
+} as const
+
+export type WebauthnChallengePurpose = (typeof WebauthnChallengePurpose)[keyof typeof WebauthnChallengePurpose]
+
+
+export const WebauthnChallengeStatus = {
+  PENDING: 'PENDING',
+  CONSUMED: 'CONSUMED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type WebauthnChallengeStatus = (typeof WebauthnChallengeStatus)[keyof typeof WebauthnChallengeStatus]
 
 
 export const TeamStatus = {

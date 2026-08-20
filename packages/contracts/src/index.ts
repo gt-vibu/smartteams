@@ -28,5 +28,21 @@ export const healthResponseSchema = z.object({
   ),
 });
 
+export const problemDetailsSchema = z.object({
+  type: z.string().url(),
+  title: z.string().min(1),
+  status: z.number().int().min(400).max(599),
+  detail: z.string().min(1),
+  instance: z.string().min(1),
+  code: z.string().min(1).optional(),
+  meta: z
+    .object({
+      requestId: z.string().min(1).optional(),
+      correlationId: correlationIdSchema.optional(),
+    })
+    .optional(),
+});
+
 export type ApiError = z.infer<typeof apiErrorSchema>;
 export type HealthResponse = z.infer<typeof healthResponseSchema>;
+export type ProblemDetails = z.infer<typeof problemDetailsSchema>;

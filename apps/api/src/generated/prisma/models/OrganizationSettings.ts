@@ -47,6 +47,11 @@ export type OrganizationSettingsMinAggregateOutputType = {
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number | null
   geofenceMode: $Enums.GeofenceMode | null
+  geofenceOwnerSource: $Enums.OwnerSource | null
+  geofenceOwnerClientId: string | null
+  biometricVerificationMode: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource: $Enums.OwnerSource | null
+  biometricOwnerClientId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +63,11 @@ export type OrganizationSettingsMaxAggregateOutputType = {
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number | null
   geofenceMode: $Enums.GeofenceMode | null
+  geofenceOwnerSource: $Enums.OwnerSource | null
+  geofenceOwnerClientId: string | null
+  biometricVerificationMode: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource: $Enums.OwnerSource | null
+  biometricOwnerClientId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -70,6 +80,11 @@ export type OrganizationSettingsCountAggregateOutputType = {
   payrollDayOfMonth: number
   leaveYearStartMonth: number
   geofenceMode: number
+  geofenceOwnerSource: number
+  geofenceOwnerClientId: number
+  biometricVerificationMode: number
+  biometricOwnerSource: number
+  biometricOwnerClientId: number
   metadata: number
   createdAt: number
   updatedAt: number
@@ -98,6 +113,11 @@ export type OrganizationSettingsMinAggregateInputType = {
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
   geofenceMode?: true
+  geofenceOwnerSource?: true
+  geofenceOwnerClientId?: true
+  biometricVerificationMode?: true
+  biometricOwnerSource?: true
+  biometricOwnerClientId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -109,6 +129,11 @@ export type OrganizationSettingsMaxAggregateInputType = {
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
   geofenceMode?: true
+  geofenceOwnerSource?: true
+  geofenceOwnerClientId?: true
+  biometricVerificationMode?: true
+  biometricOwnerSource?: true
+  biometricOwnerClientId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -121,6 +146,11 @@ export type OrganizationSettingsCountAggregateInputType = {
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
   geofenceMode?: true
+  geofenceOwnerSource?: true
+  geofenceOwnerClientId?: true
+  biometricVerificationMode?: true
+  biometricOwnerSource?: true
+  biometricOwnerClientId?: true
   metadata?: true
   createdAt?: true
   updatedAt?: true
@@ -221,6 +251,11 @@ export type OrganizationSettingsGroupByOutputType = {
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number
   geofenceMode: $Enums.GeofenceMode
+  geofenceOwnerSource: $Enums.OwnerSource
+  geofenceOwnerClientId: string | null
+  biometricVerificationMode: $Enums.BiometricVerificationMode
+  biometricOwnerSource: $Enums.OwnerSource
+  biometricOwnerClientId: string | null
   metadata: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
@@ -257,10 +292,17 @@ export type OrganizationSettingsWhereInput = {
   payrollDayOfMonth?: Prisma.IntNullableFilter<"OrganizationSettings"> | number | null
   leaveYearStartMonth?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  geofenceOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
+  biometricOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
 }
 
 export type OrganizationSettingsOrderByWithRelationInput = {
@@ -271,10 +313,17 @@ export type OrganizationSettingsOrderByWithRelationInput = {
   payrollDayOfMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  geofenceOwnerClient?: Prisma.FederationClientOrderByWithRelationInput
+  biometricOwnerClient?: Prisma.FederationClientOrderByWithRelationInput
 }
 
 export type OrganizationSettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -288,10 +337,17 @@ export type OrganizationSettingsWhereUniqueInput = Prisma.AtLeast<{
   payrollDayOfMonth?: Prisma.IntNullableFilter<"OrganizationSettings"> | number | null
   leaveYearStartMonth?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  geofenceOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
+  biometricOwnerClient?: Prisma.XOR<Prisma.FederationClientNullableScalarRelationFilter, Prisma.FederationClientWhereInput> | null
 }, "organizationId">
 
 export type OrganizationSettingsOrderByWithAggregationInput = {
@@ -302,6 +358,11 @@ export type OrganizationSettingsOrderByWithAggregationInput = {
   payrollDayOfMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -323,6 +384,11 @@ export type OrganizationSettingsScalarWhereWithAggregatesInput = {
   payrollDayOfMonth?: Prisma.IntNullableWithAggregatesFilter<"OrganizationSettings"> | number | null
   leaveYearStartMonth?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"OrganizationSettings"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"OrganizationSettings"> | string | null
   metadata?: Prisma.JsonWithAggregatesFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
@@ -335,10 +401,15 @@ export type OrganizationSettingsCreateInput = {
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
   geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutSettingsInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutOrganizationGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutOrganizationBiometricSettingsOwnedInput
 }
 
 export type OrganizationSettingsUncheckedCreateInput = {
@@ -349,6 +420,11 @@ export type OrganizationSettingsUncheckedCreateInput = {
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
   geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -361,10 +437,15 @@ export type OrganizationSettingsUpdateInput = {
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutSettingsNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutOrganizationGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutOrganizationBiometricSettingsOwnedNestedInput
 }
 
 export type OrganizationSettingsUncheckedUpdateInput = {
@@ -375,6 +456,11 @@ export type OrganizationSettingsUncheckedUpdateInput = {
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -388,6 +474,11 @@ export type OrganizationSettingsCreateManyInput = {
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
   geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -400,6 +491,9 @@ export type OrganizationSettingsUpdateManyMutationInput = {
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -413,9 +507,24 @@ export type OrganizationSettingsUncheckedUpdateManyInput = {
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OrganizationSettingsListRelationFilter = {
+  every?: Prisma.OrganizationSettingsWhereInput
+  some?: Prisma.OrganizationSettingsWhereInput
+  none?: Prisma.OrganizationSettingsWhereInput
+}
+
+export type OrganizationSettingsOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type OrganizationSettingsNullableScalarRelationFilter = {
@@ -431,6 +540,11 @@ export type OrganizationSettingsCountOrderByAggregateInput = {
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -450,6 +564,11 @@ export type OrganizationSettingsMaxOrderByAggregateInput = {
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -461,6 +580,11 @@ export type OrganizationSettingsMinOrderByAggregateInput = {
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  geofenceOwnerSource?: Prisma.SortOrder
+  geofenceOwnerClientId?: Prisma.SortOrder
+  biometricVerificationMode?: Prisma.SortOrder
+  biometricOwnerSource?: Prisma.SortOrder
+  biometricOwnerClientId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -470,6 +594,90 @@ export type OrganizationSettingsSumOrderByAggregateInput = {
   standardDayMinutes?: Prisma.SortOrder
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
+}
+
+export type OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyGeofenceOwnerClientInputEnvelope
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+}
+
+export type OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyBiometricOwnerClientInputEnvelope
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+}
+
+export type OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyGeofenceOwnerClientInputEnvelope
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+}
+
+export type OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyBiometricOwnerClientInputEnvelope
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+}
+
+export type OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  upsert?: Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyGeofenceOwnerClientInputEnvelope
+  set?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  disconnect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  delete?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  update?: Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  updateMany?: Prisma.OrganizationSettingsUpdateManyWithWhereWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsUpdateManyWithWhereWithoutGeofenceOwnerClientInput[]
+  deleteMany?: Prisma.OrganizationSettingsScalarWhereInput | Prisma.OrganizationSettingsScalarWhereInput[]
+}
+
+export type OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput[]
+  upsert?: Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyBiometricOwnerClientInputEnvelope
+  set?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  disconnect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  delete?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  update?: Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  updateMany?: Prisma.OrganizationSettingsUpdateManyWithWhereWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsUpdateManyWithWhereWithoutBiometricOwnerClientInput[]
+  deleteMany?: Prisma.OrganizationSettingsScalarWhereInput | Prisma.OrganizationSettingsScalarWhereInput[]
+}
+
+export type OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput[]
+  upsert?: Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyGeofenceOwnerClientInputEnvelope
+  set?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  disconnect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  delete?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  update?: Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput[]
+  updateMany?: Prisma.OrganizationSettingsUpdateManyWithWhereWithoutGeofenceOwnerClientInput | Prisma.OrganizationSettingsUpdateManyWithWhereWithoutGeofenceOwnerClientInput[]
+  deleteMany?: Prisma.OrganizationSettingsScalarWhereInput | Prisma.OrganizationSettingsScalarWhereInput[]
+}
+
+export type OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput> | Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput[] | Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput[]
+  connectOrCreate?: Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput[]
+  upsert?: Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsUpsertWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  createMany?: Prisma.OrganizationSettingsCreateManyBiometricOwnerClientInputEnvelope
+  set?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  disconnect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  delete?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  connect?: Prisma.OrganizationSettingsWhereUniqueInput | Prisma.OrganizationSettingsWhereUniqueInput[]
+  update?: Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsUpdateWithWhereUniqueWithoutBiometricOwnerClientInput[]
+  updateMany?: Prisma.OrganizationSettingsUpdateManyWithWhereWithoutBiometricOwnerClientInput | Prisma.OrganizationSettingsUpdateManyWithWhereWithoutBiometricOwnerClientInput[]
+  deleteMany?: Prisma.OrganizationSettingsScalarWhereInput | Prisma.OrganizationSettingsScalarWhereInput[]
 }
 
 export type OrganizationSettingsCreateNestedOneWithoutOrganizationInput = {
@@ -517,6 +725,155 @@ export type EnumGeofenceModeFieldUpdateOperationsInput = {
   set?: $Enums.GeofenceMode
 }
 
+export type EnumOwnerSourceFieldUpdateOperationsInput = {
+  set?: $Enums.OwnerSource
+}
+
+export type EnumBiometricVerificationModeFieldUpdateOperationsInput = {
+  set?: $Enums.BiometricVerificationMode
+}
+
+export type OrganizationSettingsCreateWithoutGeofenceOwnerClientInput = {
+  workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
+  standardDayMinutes?: number
+  payrollFrequency?: $Enums.PayFrequency
+  payrollDayOfMonth?: number | null
+  leaveYearStartMonth?: number
+  geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutSettingsInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutOrganizationBiometricSettingsOwnedInput
+}
+
+export type OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput = {
+  organizationId: string
+  workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
+  standardDayMinutes?: number
+  payrollFrequency?: $Enums.PayFrequency
+  payrollDayOfMonth?: number | null
+  leaveYearStartMonth?: number
+  geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OrganizationSettingsCreateOrConnectWithoutGeofenceOwnerClientInput = {
+  where: Prisma.OrganizationSettingsWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput>
+}
+
+export type OrganizationSettingsCreateManyGeofenceOwnerClientInputEnvelope = {
+  data: Prisma.OrganizationSettingsCreateManyGeofenceOwnerClientInput | Prisma.OrganizationSettingsCreateManyGeofenceOwnerClientInput[]
+  skipDuplicates?: boolean
+}
+
+export type OrganizationSettingsCreateWithoutBiometricOwnerClientInput = {
+  workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
+  standardDayMinutes?: number
+  payrollFrequency?: $Enums.PayFrequency
+  payrollDayOfMonth?: number | null
+  leaveYearStartMonth?: number
+  geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutSettingsInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutOrganizationGeofenceSettingsOwnedInput
+}
+
+export type OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput = {
+  organizationId: string
+  workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
+  standardDayMinutes?: number
+  payrollFrequency?: $Enums.PayFrequency
+  payrollDayOfMonth?: number | null
+  leaveYearStartMonth?: number
+  geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OrganizationSettingsCreateOrConnectWithoutBiometricOwnerClientInput = {
+  where: Prisma.OrganizationSettingsWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput>
+}
+
+export type OrganizationSettingsCreateManyBiometricOwnerClientInputEnvelope = {
+  data: Prisma.OrganizationSettingsCreateManyBiometricOwnerClientInput | Prisma.OrganizationSettingsCreateManyBiometricOwnerClientInput[]
+  skipDuplicates?: boolean
+}
+
+export type OrganizationSettingsUpsertWithWhereUniqueWithoutGeofenceOwnerClientInput = {
+  where: Prisma.OrganizationSettingsWhereUniqueInput
+  update: Prisma.XOR<Prisma.OrganizationSettingsUpdateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedUpdateWithoutGeofenceOwnerClientInput>
+  create: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput>
+}
+
+export type OrganizationSettingsUpdateWithWhereUniqueWithoutGeofenceOwnerClientInput = {
+  where: Prisma.OrganizationSettingsWhereUniqueInput
+  data: Prisma.XOR<Prisma.OrganizationSettingsUpdateWithoutGeofenceOwnerClientInput, Prisma.OrganizationSettingsUncheckedUpdateWithoutGeofenceOwnerClientInput>
+}
+
+export type OrganizationSettingsUpdateManyWithWhereWithoutGeofenceOwnerClientInput = {
+  where: Prisma.OrganizationSettingsScalarWhereInput
+  data: Prisma.XOR<Prisma.OrganizationSettingsUpdateManyMutationInput, Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientInput>
+}
+
+export type OrganizationSettingsScalarWhereInput = {
+  AND?: Prisma.OrganizationSettingsScalarWhereInput | Prisma.OrganizationSettingsScalarWhereInput[]
+  OR?: Prisma.OrganizationSettingsScalarWhereInput[]
+  NOT?: Prisma.OrganizationSettingsScalarWhereInput | Prisma.OrganizationSettingsScalarWhereInput[]
+  organizationId?: Prisma.UuidFilter<"OrganizationSettings"> | string
+  workWeekDays?: Prisma.IntNullableListFilter<"OrganizationSettings">
+  standardDayMinutes?: Prisma.IntFilter<"OrganizationSettings"> | number
+  payrollFrequency?: Prisma.EnumPayFrequencyFilter<"OrganizationSettings"> | $Enums.PayFrequency
+  payrollDayOfMonth?: Prisma.IntNullableFilter<"OrganizationSettings"> | number | null
+  leaveYearStartMonth?: Prisma.IntFilter<"OrganizationSettings"> | number
+  geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
+  metadata?: Prisma.JsonFilter<"OrganizationSettings">
+  createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
+}
+
+export type OrganizationSettingsUpsertWithWhereUniqueWithoutBiometricOwnerClientInput = {
+  where: Prisma.OrganizationSettingsWhereUniqueInput
+  update: Prisma.XOR<Prisma.OrganizationSettingsUpdateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedUpdateWithoutBiometricOwnerClientInput>
+  create: Prisma.XOR<Prisma.OrganizationSettingsCreateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput>
+}
+
+export type OrganizationSettingsUpdateWithWhereUniqueWithoutBiometricOwnerClientInput = {
+  where: Prisma.OrganizationSettingsWhereUniqueInput
+  data: Prisma.XOR<Prisma.OrganizationSettingsUpdateWithoutBiometricOwnerClientInput, Prisma.OrganizationSettingsUncheckedUpdateWithoutBiometricOwnerClientInput>
+}
+
+export type OrganizationSettingsUpdateManyWithWhereWithoutBiometricOwnerClientInput = {
+  where: Prisma.OrganizationSettingsScalarWhereInput
+  data: Prisma.XOR<Prisma.OrganizationSettingsUpdateManyMutationInput, Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientInput>
+}
+
 export type OrganizationSettingsCreateWithoutOrganizationInput = {
   workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
   standardDayMinutes?: number
@@ -524,9 +881,14 @@ export type OrganizationSettingsCreateWithoutOrganizationInput = {
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
   geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutOrganizationGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutOrganizationBiometricSettingsOwnedInput
 }
 
 export type OrganizationSettingsUncheckedCreateWithoutOrganizationInput = {
@@ -536,6 +898,11 @@ export type OrganizationSettingsUncheckedCreateWithoutOrganizationInput = {
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
   geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -564,9 +931,14 @@ export type OrganizationSettingsUpdateWithoutOrganizationInput = {
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutOrganizationGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutOrganizationBiometricSettingsOwnedNestedInput
 }
 
 export type OrganizationSettingsUncheckedUpdateWithoutOrganizationInput = {
@@ -576,6 +948,147 @@ export type OrganizationSettingsUncheckedUpdateWithoutOrganizationInput = {
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OrganizationSettingsCreateManyGeofenceOwnerClientInput = {
+  organizationId: string
+  workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
+  standardDayMinutes?: number
+  payrollFrequency?: $Enums.PayFrequency
+  payrollDayOfMonth?: number | null
+  leaveYearStartMonth?: number
+  geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OrganizationSettingsCreateManyBiometricOwnerClientInput = {
+  organizationId: string
+  workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
+  standardDayMinutes?: number
+  payrollFrequency?: $Enums.PayFrequency
+  payrollDayOfMonth?: number | null
+  leaveYearStartMonth?: number
+  geofenceMode?: $Enums.GeofenceMode
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode
+  biometricOwnerSource?: $Enums.OwnerSource
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OrganizationSettingsUpdateWithoutGeofenceOwnerClientInput = {
+  workWeekDays?: Prisma.OrganizationSettingsUpdateworkWeekDaysInput | number[]
+  standardDayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutSettingsNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutOrganizationBiometricSettingsOwnedNestedInput
+}
+
+export type OrganizationSettingsUncheckedUpdateWithoutGeofenceOwnerClientInput = {
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  workWeekDays?: Prisma.OrganizationSettingsUpdateworkWeekDaysInput | number[]
+  standardDayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientInput = {
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  workWeekDays?: Prisma.OrganizationSettingsUpdateworkWeekDaysInput | number[]
+  standardDayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OrganizationSettingsUpdateWithoutBiometricOwnerClientInput = {
+  workWeekDays?: Prisma.OrganizationSettingsUpdateworkWeekDaysInput | number[]
+  standardDayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutSettingsNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutOrganizationGeofenceSettingsOwnedNestedInput
+}
+
+export type OrganizationSettingsUncheckedUpdateWithoutBiometricOwnerClientInput = {
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  workWeekDays?: Prisma.OrganizationSettingsUpdateworkWeekDaysInput | number[]
+  standardDayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientInput = {
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  workWeekDays?: Prisma.OrganizationSettingsUpdateworkWeekDaysInput | number[]
+  standardDayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -591,10 +1104,17 @@ export type OrganizationSettingsSelect<ExtArgs extends runtime.Types.Extensions.
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs>
 }, ExtArgs["result"]["organizationSettings"]>
 
 export type OrganizationSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -605,10 +1125,17 @@ export type OrganizationSettingsSelectCreateManyAndReturn<ExtArgs extends runtim
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs>
 }, ExtArgs["result"]["organizationSettings"]>
 
 export type OrganizationSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -619,10 +1146,17 @@ export type OrganizationSettingsSelectUpdateManyAndReturn<ExtArgs extends runtim
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs>
 }, ExtArgs["result"]["organizationSettings"]>
 
 export type OrganizationSettingsSelectScalar = {
@@ -633,26 +1167,39 @@ export type OrganizationSettingsSelectScalar = {
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
   geofenceMode?: boolean
+  geofenceOwnerSource?: boolean
+  geofenceOwnerClientId?: boolean
+  biometricVerificationMode?: boolean
+  biometricOwnerSource?: boolean
+  biometricOwnerClientId?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "geofenceMode" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
+export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
 export type OrganizationSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs>
 }
 export type OrganizationSettingsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs>
 }
 export type OrganizationSettingsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
+  biometricOwnerClient?: boolean | Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs>
 }
 
 export type $OrganizationSettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "OrganizationSettings"
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    geofenceOwnerClient: Prisma.$FederationClientPayload<ExtArgs> | null
+    biometricOwnerClient: Prisma.$FederationClientPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     organizationId: string
@@ -662,6 +1209,11 @@ export type $OrganizationSettingsPayload<ExtArgs extends runtime.Types.Extension
     payrollDayOfMonth: number | null
     leaveYearStartMonth: number
     geofenceMode: $Enums.GeofenceMode
+    geofenceOwnerSource: $Enums.OwnerSource
+    geofenceOwnerClientId: string | null
+    biometricVerificationMode: $Enums.BiometricVerificationMode
+    biometricOwnerSource: $Enums.OwnerSource
+    biometricOwnerClientId: string | null
     metadata: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
@@ -1060,6 +1612,8 @@ readonly fields: OrganizationSettingsFieldRefs;
 export interface Prisma__OrganizationSettingsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  geofenceOwnerClient<T extends Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>>): Prisma.Prisma__FederationClientClient<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  biometricOwnerClient<T extends Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationSettings$biometricOwnerClientArgs<ExtArgs>>): Prisma.Prisma__FederationClientClient<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1096,6 +1650,11 @@ export interface OrganizationSettingsFieldRefs {
   readonly payrollDayOfMonth: Prisma.FieldRef<"OrganizationSettings", 'Int'>
   readonly leaveYearStartMonth: Prisma.FieldRef<"OrganizationSettings", 'Int'>
   readonly geofenceMode: Prisma.FieldRef<"OrganizationSettings", 'GeofenceMode'>
+  readonly geofenceOwnerSource: Prisma.FieldRef<"OrganizationSettings", 'OwnerSource'>
+  readonly geofenceOwnerClientId: Prisma.FieldRef<"OrganizationSettings", 'String'>
+  readonly biometricVerificationMode: Prisma.FieldRef<"OrganizationSettings", 'BiometricVerificationMode'>
+  readonly biometricOwnerSource: Prisma.FieldRef<"OrganizationSettings", 'OwnerSource'>
+  readonly biometricOwnerClientId: Prisma.FieldRef<"OrganizationSettings", 'String'>
   readonly metadata: Prisma.FieldRef<"OrganizationSettings", 'Json'>
   readonly createdAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>
@@ -1497,6 +2056,44 @@ export type OrganizationSettingsDeleteManyArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many OrganizationSettings to delete.
    */
   limit?: number
+}
+
+/**
+ * OrganizationSettings.geofenceOwnerClient
+ */
+export type OrganizationSettings$geofenceOwnerClientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationClient
+   */
+  select?: Prisma.FederationClientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FederationClient
+   */
+  omit?: Prisma.FederationClientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FederationClientInclude<ExtArgs> | null
+  where?: Prisma.FederationClientWhereInput
+}
+
+/**
+ * OrganizationSettings.biometricOwnerClient
+ */
+export type OrganizationSettings$biometricOwnerClientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FederationClient
+   */
+  select?: Prisma.FederationClientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FederationClient
+   */
+  omit?: Prisma.FederationClientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FederationClientInclude<ExtArgs> | null
+  where?: Prisma.FederationClientWhereInput
 }
 
 /**

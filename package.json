@@ -4,6 +4,11 @@
   "version": "0.1.0",
   "description": "Smarteam V2 People Management platform",
   "packageManager": "pnpm@10.24.0",
+  "pnpm": {
+    "overrides": {
+      "deepmerge-ts": "8.0.1"
+    }
+  },
   "engines": {
     "node": ">=20.9 <25"
   },

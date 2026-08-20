@@ -46,6 +46,7 @@ model User {
   payrollApprovals                PayrollApproval[]
   approvalPolicySteps             ApprovalPolicyStep[]
   updatedOrganizationCapabilities OrganizationFederationCapability[] @relation("OrganizationCapabilityUpdatedBy")
+  revokedWebauthnCredentials      WebauthnCredential[]               @relation("WebauthnCredentialRevokedBy")
 
   @@unique([externalIdentityProvider, externalOrganizationId, externalIdentityId])
   @@index([identityType, isActive])

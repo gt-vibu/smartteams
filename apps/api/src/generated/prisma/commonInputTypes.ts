@@ -1105,6 +1105,20 @@ export type EnumGeofenceModeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGeofenceModeFilter<$PrismaModel> | $Enums.GeofenceMode
 }
 
+export type EnumOwnerSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel> | $Enums.OwnerSource
+}
+
+export type EnumBiometricVerificationModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel> | $Enums.BiometricVerificationMode
+}
+
 export type EnumGeofenceModeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GeofenceMode | Prisma.EnumGeofenceModeFieldRefInput<$PrismaModel>
   in?: $Enums.GeofenceMode[] | Prisma.ListEnumGeofenceModeFieldRefInput<$PrismaModel>
@@ -1113,6 +1127,26 @@ export type EnumGeofenceModeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGeofenceModeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGeofenceModeFilter<$PrismaModel>
+}
+
+export type EnumOwnerSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerSourceWithAggregatesFilter<$PrismaModel> | $Enums.OwnerSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
+}
+
+export type EnumBiometricVerificationModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBiometricVerificationModeWithAggregatesFilter<$PrismaModel> | $Enums.BiometricVerificationMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
 }
 
 export type EnumApprovalDomainFilter<$PrismaModel = never> = {
@@ -1156,6 +1190,13 @@ export type EnumGeofenceModeNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGeofenceModeNullableFilter<$PrismaModel> | $Enums.GeofenceMode | null
 }
 
+export type EnumBiometricVerificationModeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBiometricVerificationModeNullableFilter<$PrismaModel> | $Enums.BiometricVerificationMode | null
+}
+
 export type EnumGeofenceModeNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GeofenceMode | Prisma.EnumGeofenceModeFieldRefInput<$PrismaModel> | null
   in?: $Enums.GeofenceMode[] | Prisma.ListEnumGeofenceModeFieldRefInput<$PrismaModel> | null
@@ -1164,6 +1205,67 @@ export type EnumGeofenceModeNullableWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGeofenceModeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGeofenceModeNullableFilter<$PrismaModel>
+}
+
+export type EnumBiometricVerificationModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBiometricVerificationModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.BiometricVerificationMode | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBiometricVerificationModeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBiometricVerificationModeNullableFilter<$PrismaModel>
+}
+
+export type BytesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesFilter<$PrismaModel> | runtime.Bytes
+}
+
+export type BytesWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesWithAggregatesFilter<$PrismaModel> | runtime.Bytes
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBytesFilter<$PrismaModel>
+  _max?: Prisma.NestedBytesFilter<$PrismaModel>
+}
+
+export type EnumWebauthnChallengePurposeFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengePurpose | Prisma.EnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengePurposeFilter<$PrismaModel> | $Enums.WebauthnChallengePurpose
+}
+
+export type EnumWebauthnChallengeStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengeStatus | Prisma.EnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengeStatusFilter<$PrismaModel> | $Enums.WebauthnChallengeStatus
+}
+
+export type EnumWebauthnChallengePurposeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengePurpose | Prisma.EnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengePurposeWithAggregatesFilter<$PrismaModel> | $Enums.WebauthnChallengePurpose
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWebauthnChallengePurposeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWebauthnChallengePurposeFilter<$PrismaModel>
+}
+
+export type EnumWebauthnChallengeStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengeStatus | Prisma.EnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengeStatusWithAggregatesFilter<$PrismaModel> | $Enums.WebauthnChallengeStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWebauthnChallengeStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWebauthnChallengeStatusFilter<$PrismaModel>
 }
 
 export type EnumEmployeeStatusFilter<$PrismaModel = never> = {
@@ -1198,23 +1300,6 @@ export type EnumEmploymentTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumEmploymentTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumEmploymentTypeFilter<$PrismaModel>
-}
-
-export type EnumOwnerSourceFilter<$PrismaModel = never> = {
-  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
-  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel> | $Enums.OwnerSource
-}
-
-export type EnumOwnerSourceWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
-  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumOwnerSourceWithAggregatesFilter<$PrismaModel> | $Enums.OwnerSource
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
 }
 
 export type EnumPayTypeFilter<$PrismaModel = never> = {
@@ -2314,6 +2399,20 @@ export type NestedEnumGeofenceModeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGeofenceModeFilter<$PrismaModel> | $Enums.GeofenceMode
 }
 
+export type NestedEnumOwnerSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel> | $Enums.OwnerSource
+}
+
+export type NestedEnumBiometricVerificationModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel> | $Enums.BiometricVerificationMode
+}
+
 export type NestedEnumGeofenceModeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GeofenceMode | Prisma.EnumGeofenceModeFieldRefInput<$PrismaModel>
   in?: $Enums.GeofenceMode[] | Prisma.ListEnumGeofenceModeFieldRefInput<$PrismaModel>
@@ -2322,6 +2421,26 @@ export type NestedEnumGeofenceModeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGeofenceModeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGeofenceModeFilter<$PrismaModel>
+}
+
+export type NestedEnumOwnerSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOwnerSourceWithAggregatesFilter<$PrismaModel> | $Enums.OwnerSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
+}
+
+export type NestedEnumBiometricVerificationModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumBiometricVerificationModeWithAggregatesFilter<$PrismaModel> | $Enums.BiometricVerificationMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
 }
 
 export type NestedEnumApprovalDomainFilter<$PrismaModel = never> = {
@@ -2365,6 +2484,13 @@ export type NestedEnumGeofenceModeNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGeofenceModeNullableFilter<$PrismaModel> | $Enums.GeofenceMode | null
 }
 
+export type NestedEnumBiometricVerificationModeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBiometricVerificationModeNullableFilter<$PrismaModel> | $Enums.BiometricVerificationMode | null
+}
+
 export type NestedEnumGeofenceModeNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GeofenceMode | Prisma.EnumGeofenceModeFieldRefInput<$PrismaModel> | null
   in?: $Enums.GeofenceMode[] | Prisma.ListEnumGeofenceModeFieldRefInput<$PrismaModel> | null
@@ -2373,6 +2499,67 @@ export type NestedEnumGeofenceModeNullableWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGeofenceModeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGeofenceModeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumBiometricVerificationModeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BiometricVerificationMode | Prisma.EnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.BiometricVerificationMode[] | Prisma.ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumBiometricVerificationModeNullableWithAggregatesFilter<$PrismaModel> | $Enums.BiometricVerificationMode | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumBiometricVerificationModeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumBiometricVerificationModeNullableFilter<$PrismaModel>
+}
+
+export type NestedBytesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesFilter<$PrismaModel> | runtime.Bytes
+}
+
+export type NestedBytesWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesWithAggregatesFilter<$PrismaModel> | runtime.Bytes
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBytesFilter<$PrismaModel>
+  _max?: Prisma.NestedBytesFilter<$PrismaModel>
+}
+
+export type NestedEnumWebauthnChallengePurposeFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengePurpose | Prisma.EnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengePurposeFilter<$PrismaModel> | $Enums.WebauthnChallengePurpose
+}
+
+export type NestedEnumWebauthnChallengeStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengeStatus | Prisma.EnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengeStatusFilter<$PrismaModel> | $Enums.WebauthnChallengeStatus
+}
+
+export type NestedEnumWebauthnChallengePurposeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengePurpose | Prisma.EnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengePurpose[] | Prisma.ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengePurposeWithAggregatesFilter<$PrismaModel> | $Enums.WebauthnChallengePurpose
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWebauthnChallengePurposeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWebauthnChallengePurposeFilter<$PrismaModel>
+}
+
+export type NestedEnumWebauthnChallengeStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WebauthnChallengeStatus | Prisma.EnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WebauthnChallengeStatus[] | Prisma.ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWebauthnChallengeStatusWithAggregatesFilter<$PrismaModel> | $Enums.WebauthnChallengeStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWebauthnChallengeStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWebauthnChallengeStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumEmployeeStatusFilter<$PrismaModel = never> = {
@@ -2407,23 +2594,6 @@ export type NestedEnumEmploymentTypeWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumEmploymentTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumEmploymentTypeFilter<$PrismaModel>
-}
-
-export type NestedEnumOwnerSourceFilter<$PrismaModel = never> = {
-  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
-  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel> | $Enums.OwnerSource
-}
-
-export type NestedEnumOwnerSourceWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.OwnerSource | Prisma.EnumOwnerSourceFieldRefInput<$PrismaModel>
-  in?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  notIn?: $Enums.OwnerSource[] | Prisma.ListEnumOwnerSourceFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumOwnerSourceWithAggregatesFilter<$PrismaModel> | $Enums.OwnerSource
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumOwnerSourceFilter<$PrismaModel>
 }
 
 export type NestedEnumPayTypeFilter<$PrismaModel = never> = {

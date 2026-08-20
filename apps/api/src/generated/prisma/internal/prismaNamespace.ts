@@ -459,6 +459,8 @@ export const ModelName = {
   Branch: 'Branch',
   WorkLocation: 'WorkLocation',
   OrganizationSourceChange: 'OrganizationSourceChange',
+  WebauthnCredential: 'WebauthnCredential',
+  WebauthnChallenge: 'WebauthnChallenge',
   Employee: 'Employee',
   EmployeeEmergencyContact: 'EmployeeEmergencyContact',
   EmployeeBranchAssignment: 'EmployeeBranchAssignment',
@@ -486,7 +488,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileObjectVersion" | "user" | "userInvitation" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "attendanceApproval" | "holiday" | "leaveType" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "leaveApproval" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "payrollRun" | "payrollLineItem" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "employee" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember"
+    modelProps: "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileObjectVersion" | "user" | "userInvitation" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "attendanceApproval" | "holiday" | "leaveType" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "leaveApproval" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "payrollRun" | "payrollLineItem" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "webauthnCredential" | "webauthnChallenge" | "employee" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -5078,6 +5080,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WebauthnCredential: {
+      payload: Prisma.$WebauthnCredentialPayload<ExtArgs>
+      fields: Prisma.WebauthnCredentialFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WebauthnCredentialFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WebauthnCredentialFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>
+        }
+        findFirst: {
+          args: Prisma.WebauthnCredentialFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WebauthnCredentialFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>
+        }
+        findMany: {
+          args: Prisma.WebauthnCredentialFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>[]
+        }
+        create: {
+          args: Prisma.WebauthnCredentialCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>
+        }
+        createMany: {
+          args: Prisma.WebauthnCredentialCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WebauthnCredentialCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>[]
+        }
+        delete: {
+          args: Prisma.WebauthnCredentialDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>
+        }
+        update: {
+          args: Prisma.WebauthnCredentialUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>
+        }
+        deleteMany: {
+          args: Prisma.WebauthnCredentialDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WebauthnCredentialUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WebauthnCredentialUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>[]
+        }
+        upsert: {
+          args: Prisma.WebauthnCredentialUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnCredentialPayload>
+        }
+        aggregate: {
+          args: Prisma.WebauthnCredentialAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWebauthnCredential>
+        }
+        groupBy: {
+          args: Prisma.WebauthnCredentialGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebauthnCredentialGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WebauthnCredentialCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebauthnCredentialCountAggregateOutputType> | number
+        }
+      }
+    }
+    WebauthnChallenge: {
+      payload: Prisma.$WebauthnChallengePayload<ExtArgs>
+      fields: Prisma.WebauthnChallengeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WebauthnChallengeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WebauthnChallengeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>
+        }
+        findFirst: {
+          args: Prisma.WebauthnChallengeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WebauthnChallengeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>
+        }
+        findMany: {
+          args: Prisma.WebauthnChallengeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>[]
+        }
+        create: {
+          args: Prisma.WebauthnChallengeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>
+        }
+        createMany: {
+          args: Prisma.WebauthnChallengeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WebauthnChallengeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>[]
+        }
+        delete: {
+          args: Prisma.WebauthnChallengeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>
+        }
+        update: {
+          args: Prisma.WebauthnChallengeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>
+        }
+        deleteMany: {
+          args: Prisma.WebauthnChallengeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WebauthnChallengeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WebauthnChallengeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>[]
+        }
+        upsert: {
+          args: Prisma.WebauthnChallengeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebauthnChallengePayload>
+        }
+        aggregate: {
+          args: Prisma.WebauthnChallengeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWebauthnChallenge>
+        }
+        groupBy: {
+          args: Prisma.WebauthnChallengeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebauthnChallengeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WebauthnChallengeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebauthnChallengeCountAggregateOutputType> | number
+        }
+      }
+    }
     Employee: {
       payload: Prisma.$EmployeePayload<ExtArgs>
       fields: Prisma.EmployeeFieldRefs
@@ -6498,6 +6648,8 @@ export const AttendancePunchScalarFieldEnum = {
   workLocationId: 'workLocationId',
   isWithinGeofence: 'isWithinGeofence',
   distanceFromLocationMeters: 'distanceFromLocationMeters',
+  biometricVerified: 'biometricVerified',
+  webauthnCredentialId: 'webauthnCredentialId',
   metadata: 'metadata',
   createdAt: 'createdAt'
 } as const
@@ -6960,6 +7112,11 @@ export const OrganizationSettingsScalarFieldEnum = {
   payrollDayOfMonth: 'payrollDayOfMonth',
   leaveYearStartMonth: 'leaveYearStartMonth',
   geofenceMode: 'geofenceMode',
+  geofenceOwnerSource: 'geofenceOwnerSource',
+  geofenceOwnerClientId: 'geofenceOwnerClientId',
+  biometricVerificationMode: 'biometricVerificationMode',
+  biometricOwnerSource: 'biometricOwnerSource',
+  biometricOwnerClientId: 'biometricOwnerClientId',
   metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -7009,6 +7166,11 @@ export const BranchScalarFieldEnum = {
   status: 'status',
   timezone: 'timezone',
   geofenceMode: 'geofenceMode',
+  geofenceOwnerSource: 'geofenceOwnerSource',
+  geofenceOwnerClientId: 'geofenceOwnerClientId',
+  biometricVerificationMode: 'biometricVerificationMode',
+  biometricOwnerSource: 'biometricOwnerSource',
+  biometricOwnerClientId: 'biometricOwnerClientId',
   address: 'address',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -7045,6 +7207,46 @@ export const OrganizationSourceChangeScalarFieldEnum = {
 } as const
 
 export type OrganizationSourceChangeScalarFieldEnum = (typeof OrganizationSourceChangeScalarFieldEnum)[keyof typeof OrganizationSourceChangeScalarFieldEnum]
+
+
+export const WebauthnCredentialScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  credentialId: 'credentialId',
+  publicKey: 'publicKey',
+  signCount: 'signCount',
+  deviceLabel: 'deviceLabel',
+  transports: 'transports',
+  attestationFormat: 'attestationFormat',
+  status: 'status',
+  reviewRequired: 'reviewRequired',
+  enrolledAt: 'enrolledAt',
+  lastUsedAt: 'lastUsedAt',
+  revokedAt: 'revokedAt',
+  revokedByUserId: 'revokedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WebauthnCredentialScalarFieldEnum = (typeof WebauthnCredentialScalarFieldEnum)[keyof typeof WebauthnCredentialScalarFieldEnum]
+
+
+export const WebauthnChallengeScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  purpose: 'purpose',
+  challenge: 'challenge',
+  relatedCredentialId: 'relatedCredentialId',
+  relatedAttendancePunchId: 'relatedAttendancePunchId',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  consumedAt: 'consumedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type WebauthnChallengeScalarFieldEnum = (typeof WebauthnChallengeScalarFieldEnum)[keyof typeof WebauthnChallengeScalarFieldEnum]
 
 
 export const EmployeeScalarFieldEnum = {
@@ -7953,6 +8155,34 @@ export type ListEnumGeofenceModeFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'OwnerSource'
+ */
+export type EnumOwnerSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OwnerSource'>
+    
+
+
+/**
+ * Reference to a field of type 'OwnerSource[]'
+ */
+export type ListEnumOwnerSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OwnerSource[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BiometricVerificationMode'
+ */
+export type EnumBiometricVerificationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BiometricVerificationMode'>
+    
+
+
+/**
+ * Reference to a field of type 'BiometricVerificationMode[]'
+ */
+export type ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BiometricVerificationMode[]'>
+    
+
+
+/**
  * Reference to a field of type 'ApprovalDomain'
  */
 export type EnumApprovalDomainFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalDomain'>
@@ -7981,6 +8211,34 @@ export type ListEnumApproverTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'WebauthnChallengePurpose'
+ */
+export type EnumWebauthnChallengePurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebauthnChallengePurpose'>
+    
+
+
+/**
+ * Reference to a field of type 'WebauthnChallengePurpose[]'
+ */
+export type ListEnumWebauthnChallengePurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebauthnChallengePurpose[]'>
+    
+
+
+/**
+ * Reference to a field of type 'WebauthnChallengeStatus'
+ */
+export type EnumWebauthnChallengeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebauthnChallengeStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'WebauthnChallengeStatus[]'
+ */
+export type ListEnumWebauthnChallengeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebauthnChallengeStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'EmployeeStatus'
  */
 export type EnumEmployeeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmployeeStatus'>
@@ -8005,20 +8263,6 @@ export type EnumEmploymentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'EmploymentType[]'
  */
 export type ListEnumEmploymentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmploymentType[]'>
-    
-
-
-/**
- * Reference to a field of type 'OwnerSource'
- */
-export type EnumOwnerSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OwnerSource'>
-    
-
-
-/**
- * Reference to a field of type 'OwnerSource[]'
- */
-export type ListEnumOwnerSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OwnerSource[]'>
     
 
 
@@ -8290,6 +8534,8 @@ export type GlobalOmitConfig = {
   branch?: Prisma.BranchOmit
   workLocation?: Prisma.WorkLocationOmit
   organizationSourceChange?: Prisma.OrganizationSourceChangeOmit
+  webauthnCredential?: Prisma.WebauthnCredentialOmit
+  webauthnChallenge?: Prisma.WebauthnChallengeOmit
   employee?: Prisma.EmployeeOmit
   employeeEmergencyContact?: Prisma.EmployeeEmergencyContactOmit
   employeeBranchAssignment?: Prisma.EmployeeBranchAssignmentOmit

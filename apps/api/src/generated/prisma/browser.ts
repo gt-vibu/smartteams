@@ -328,6 +328,16 @@ export type WorkLocation = Prisma.WorkLocationModel
  */
 export type OrganizationSourceChange = Prisma.OrganizationSourceChangeModel
 /**
+ * Model WebauthnCredential
+ * 
+ */
+export type WebauthnCredential = Prisma.WebauthnCredentialModel
+/**
+ * Model WebauthnChallenge
+ * 
+ */
+export type WebauthnChallenge = Prisma.WebauthnChallengeModel
+/**
  * Model Employee
  * 
  */

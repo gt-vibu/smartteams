@@ -51,6 +51,8 @@ model Employee {
   payrollAdjustments       PayrollAdjustment[]
   files                    FileObject[]
   teamLeadOf               Team[]
+  webauthnCredentials      WebauthnCredential[]
+  webauthnChallenges       WebauthnChallenge[]
 
   @@unique([organizationId, employeeNumber])
   @@unique([organizationId, externalId])

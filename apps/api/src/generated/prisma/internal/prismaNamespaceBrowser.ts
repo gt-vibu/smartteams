@@ -113,6 +113,8 @@ export const ModelName = {
   Branch: 'Branch',
   WorkLocation: 'WorkLocation',
   OrganizationSourceChange: 'OrganizationSourceChange',
+  WebauthnCredential: 'WebauthnCredential',
+  WebauthnChallenge: 'WebauthnChallenge',
   Employee: 'Employee',
   EmployeeEmergencyContact: 'EmployeeEmergencyContact',
   EmployeeBranchAssignment: 'EmployeeBranchAssignment',
@@ -636,6 +638,8 @@ export const AttendancePunchScalarFieldEnum = {
   workLocationId: 'workLocationId',
   isWithinGeofence: 'isWithinGeofence',
   distanceFromLocationMeters: 'distanceFromLocationMeters',
+  biometricVerified: 'biometricVerified',
+  webauthnCredentialId: 'webauthnCredentialId',
   metadata: 'metadata',
   createdAt: 'createdAt'
 } as const
@@ -1098,6 +1102,11 @@ export const OrganizationSettingsScalarFieldEnum = {
   payrollDayOfMonth: 'payrollDayOfMonth',
   leaveYearStartMonth: 'leaveYearStartMonth',
   geofenceMode: 'geofenceMode',
+  geofenceOwnerSource: 'geofenceOwnerSource',
+  geofenceOwnerClientId: 'geofenceOwnerClientId',
+  biometricVerificationMode: 'biometricVerificationMode',
+  biometricOwnerSource: 'biometricOwnerSource',
+  biometricOwnerClientId: 'biometricOwnerClientId',
   metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1147,6 +1156,11 @@ export const BranchScalarFieldEnum = {
   status: 'status',
   timezone: 'timezone',
   geofenceMode: 'geofenceMode',
+  geofenceOwnerSource: 'geofenceOwnerSource',
+  geofenceOwnerClientId: 'geofenceOwnerClientId',
+  biometricVerificationMode: 'biometricVerificationMode',
+  biometricOwnerSource: 'biometricOwnerSource',
+  biometricOwnerClientId: 'biometricOwnerClientId',
   address: 'address',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1183,6 +1197,46 @@ export const OrganizationSourceChangeScalarFieldEnum = {
 } as const
 
 export type OrganizationSourceChangeScalarFieldEnum = (typeof OrganizationSourceChangeScalarFieldEnum)[keyof typeof OrganizationSourceChangeScalarFieldEnum]
+
+
+export const WebauthnCredentialScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  credentialId: 'credentialId',
+  publicKey: 'publicKey',
+  signCount: 'signCount',
+  deviceLabel: 'deviceLabel',
+  transports: 'transports',
+  attestationFormat: 'attestationFormat',
+  status: 'status',
+  reviewRequired: 'reviewRequired',
+  enrolledAt: 'enrolledAt',
+  lastUsedAt: 'lastUsedAt',
+  revokedAt: 'revokedAt',
+  revokedByUserId: 'revokedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WebauthnCredentialScalarFieldEnum = (typeof WebauthnCredentialScalarFieldEnum)[keyof typeof WebauthnCredentialScalarFieldEnum]
+
+
+export const WebauthnChallengeScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  purpose: 'purpose',
+  challenge: 'challenge',
+  relatedCredentialId: 'relatedCredentialId',
+  relatedAttendancePunchId: 'relatedAttendancePunchId',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  consumedAt: 'consumedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type WebauthnChallengeScalarFieldEnum = (typeof WebauthnChallengeScalarFieldEnum)[keyof typeof WebauthnChallengeScalarFieldEnum]
 
 
 export const EmployeeScalarFieldEnum = {

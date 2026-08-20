@@ -14,20 +14,24 @@ model FederationClient {
   revokedAt                      DateTime?              @map("revoked_at") @db.Timestamptz(6)
   revocationReason               String?                @map("revocation_reason")
 
-  homeOrganization         Organization?                 @relation("FederationClientHomeOrganization", fields: [homeOrganizationId], references: [id], onDelete: SetNull)
-  createdBy                User?                         @relation("FederationClientCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
-  credentials              FederationClientCredential[]
-  grants                   FederationGrant[]
-  fieldOwnerships          EmployeeFieldOwnership[]
-  externalMappings         ExternalIdMapping[]
-  idempotencyRecords       FederationIdempotencyRecord[]
-  requestRecords           FederationRequestRecord[]
-  webhookSigningKeys       WebhookSigningKey[]
-  webhookSubscriptions     WebhookSubscription[]
-  auditLogs                AuditLog[]
-  attendanceCorrections    AttendanceCorrection[]
-  leaveBalanceTransactions LeaveBalanceTransaction[]
-  payrollAdjustments       PayrollAdjustment[]
+  homeOrganization                   Organization?                 @relation("FederationClientHomeOrganization", fields: [homeOrganizationId], references: [id], onDelete: SetNull)
+  createdBy                          User?                         @relation("FederationClientCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  credentials                        FederationClientCredential[]
+  grants                             FederationGrant[]
+  fieldOwnerships                    EmployeeFieldOwnership[]
+  externalMappings                   ExternalIdMapping[]
+  idempotencyRecords                 FederationIdempotencyRecord[]
+  requestRecords                     FederationRequestRecord[]
+  webhookSigningKeys                 WebhookSigningKey[]
+  webhookSubscriptions               WebhookSubscription[]
+  auditLogs                          AuditLog[]
+  attendanceCorrections              AttendanceCorrection[]
+  leaveBalanceTransactions           LeaveBalanceTransaction[]
+  payrollAdjustments                 PayrollAdjustment[]
+  organizationGeofenceSettingsOwned  OrganizationSettings[]        @relation("OrganizationGeofenceOwner")
+  organizationBiometricSettingsOwned OrganizationSettings[]        @relation("OrganizationBiometricOwner")
+  branchGeofenceSettingsOwned        Branch[]                      @relation("BranchGeofenceOwner")
+  branchBiometricSettingsOwned       Branch[]                      @relation("BranchBiometricOwner")
 
   @@index([status, expiresAt])
   @@map("federation_clients")
