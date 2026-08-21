@@ -129,6 +129,12 @@ graph TD
 | `POST` | `/api/webhooks/smartteams` | **Inbound Webhook**: Real-time webhook listener in BlizBooks for push notifications. |
 | `GET` | `/v1/federation/events` | **Event Replay**: Cursor-based replay API to catch up on missed events if webhooks were delayed. |
 
+The OAuth token request uses the standard JSON fields `grant_type`, `client_id`, and
+`client_secret`; SmartTeams does not require a client-supplied `scope` field. The
+capabilities response includes the enabled tenant capabilities and the additive
+`grantableCapabilities` list. BlizBooks uses that list to expose only permission keys
+that SmartTeams can accept through employee access synchronization.
+
 ---
 
 ## 4. Configuration & Environment Variables Reference

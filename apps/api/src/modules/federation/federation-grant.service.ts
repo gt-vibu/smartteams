@@ -3,6 +3,45 @@ import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { randomUUID } from 'node:crypto';
 
+export const FEDERATION_GRANTABLE_SCOPES = [
+  'tenants.write',
+  'branches.write',
+  'capabilities.read',
+  'webhooks.write',
+  'events.read',
+  'webhooks.replay',
+  'employees.write',
+  'employees.branches.write',
+  'employees.access.write',
+  'employees.sessions.revoke',
+  'attendance.read',
+  'attendance.preferences.read',
+  'shifts.read',
+  'attendance.preferences.write',
+  'attendance.corrections.write',
+  'attendance.corrections.decide',
+  'attendance.webauthn.assert',
+  'attendance.write',
+  'attendance.webauthn.enroll',
+  'leave.types.read',
+  'leave.types.write',
+  'leave.balances.read',
+  'leave.requests.read',
+  'leave.requests.write',
+  'leave.requests.decide',
+  'leave.balances.adjust',
+  'payroll.components.read',
+  'payroll.calendars.read',
+  'payroll.runs.read',
+  'payroll.runs.write',
+  'payroll.runs.calculate',
+  'payroll.runs.approve',
+  'payroll.runs.release',
+  'payroll.runs.lock',
+  'payroll.ledger.read',
+  'payroll.calendars.write',
+] as const;
+
 @Injectable()
 export class FederationGrantService {
   constructor(private readonly database: TenantDatabaseService) {}
@@ -51,7 +90,7 @@ export class FederationGrantService {
   }
 
   async listCapabilities(clientId: string, organizationId: string) {
-    return this.database.run(
+    const capabilities = await this.database.run(
       {
         organizationId,
         accessMode: 'FEDERATION',
@@ -70,6 +109,10 @@ export class FederationGrantService {
           orderBy: { capability: { code: 'asc' } },
         }),
     );
+    return {
+      capabilities,
+      grantableCapabilities: [...FEDERATION_GRANTABLE_SCOPES],
+    };
   }
 
   async resolveTarget(

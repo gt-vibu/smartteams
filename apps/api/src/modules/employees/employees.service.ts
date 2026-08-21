@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { Prisma } from '../../generated/prisma/client';
 import {
   EmployeeStatus,
   EmploymentType,
@@ -140,6 +141,20 @@ export class EmployeesService {
       const existing = await tx.employee.findFirst({
         where: { organizationId: context.organizationId, externalId },
       });
+      // Federation callers identify branches by the external id BlizBooks
+      // provisioned; native callers use the internal id. Accept either, but
+      // persist the resolved internal id for the foreign key.
+      let primaryBranchId = input.primaryBranchId;
+      if (primaryBranchId) {
+        const branch = await tx.branch.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            OR: [{ id: primaryBranchId }, { externalId: primaryBranchId }],
+          },
+        });
+        if (!branch) throw new NotFoundError('Branch');
+        primaryBranchId = branch.id;
+      }
       const data = {
         employeeNumber: input.employeeNumber,
         firstName: input.firstName,
@@ -150,17 +165,10 @@ export class EmployeesService {
         status: input.status ?? EmployeeStatus.ACTIVE,
         employmentType: input.employmentType ?? EmploymentType.FULL_TIME,
         dateOfJoining: input.dateOfJoining ? new Date(input.dateOfJoining) : undefined,
-        primaryBranchId: input.primaryBranchId,
+        primaryBranchId,
         identitySource: IdentityType.FEDERATED,
         externalId,
       };
-      if (
-        data.primaryBranchId &&
-        !(await tx.branch.findFirst({
-          where: { id: data.primaryBranchId, organizationId: context.organizationId },
-        }))
-      )
-        throw new NotFoundError('Branch');
       const shadowUser = existing?.userId
         ? { id: existing.userId }
         : ((await tx.user.findFirst({
@@ -348,27 +356,48 @@ export class EmployeesService {
       if (!branch) throw new NotFoundError('Branch');
       if (input.endsOn && new Date(input.endsOn) <= new Date(input.startsOn))
         throw new ConflictError('Branch assignment end must be after its start');
-      if (input.isPrimary)
-        await tx.employeeBranchAssignment.updateMany({
-          where: {
-            organizationId: context.organizationId,
-            employeeId,
-            isPrimary: true,
-            endsOn: null,
-          },
-          data: { endsOn: new Date(input.startsOn) },
-        });
-      const assignment = await tx.employeeBranchAssignment.create({
-        data: {
+      const startsOn = new Date(input.startsOn);
+      const open = await tx.employeeBranchAssignment.findFirst({
+        where: {
           organizationId: context.organizationId,
           employeeId,
           branchId: input.branchId,
-          startsOn: new Date(input.startsOn),
-          endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
-          isPrimary: input.isPrimary ?? false,
-          sourceAccessMode: context.accessMode,
+          endsOn: null,
         },
+        orderBy: { startsOn: 'desc' },
       });
+      let assignment;
+      if (open) {
+        // Same-day reassignment would overlap the open row under
+        // employee_branch_assignments_no_overlap, so extend it in place.
+        assignment = await tx.employeeBranchAssignment.update({
+          where: { id: open.id },
+          data: {
+            startsOn: open.startsOn < startsOn ? open.startsOn : startsOn,
+            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
+            isPrimary: input.isPrimary ?? open.isPrimary,
+          },
+        });
+      } else {
+        await this.endOpenPrimaryAssignments(
+          tx,
+          context.organizationId,
+          employeeId,
+          startsOn,
+          input.isPrimary,
+        );
+        assignment = await tx.employeeBranchAssignment.create({
+          data: {
+            organizationId: context.organizationId,
+            employeeId,
+            branchId: input.branchId,
+            startsOn,
+            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
+            isPrimary: input.isPrimary ?? false,
+            sourceAccessMode: context.accessMode,
+          },
+        });
+      }
       if (input.isPrimary)
         await tx.employee.update({
           where: { id: employeeId },
@@ -404,27 +433,50 @@ export class EmployeesService {
       });
       if (!employee) throw new NotFoundError('Employee');
       if (!branch) throw new NotFoundError('Branch');
-      if (input.isPrimary)
-        await tx.employeeBranchAssignment.updateMany({
-          where: {
-            organizationId: context.organizationId,
-            employeeId: employee.id,
-            isPrimary: true,
-            endsOn: null,
-          },
-          data: { endsOn: new Date(input.startsOn) },
-        });
-      const assignment = await tx.employeeBranchAssignment.create({
-        data: {
+      const startsOn = new Date(input.startsOn);
+      // Federation sync repeats the same assignment. employee_branch_assignments_
+      // no_overlap treats a row as covering its inclusive start date, so
+      // close-and-recreate on the same day violates the exclusion constraint.
+      // Reuse the open assignment for this branch instead.
+      const open = await tx.employeeBranchAssignment.findFirst({
+        where: {
           organizationId: context.organizationId,
           employeeId: employee.id,
           branchId: branch.id,
-          startsOn: new Date(input.startsOn),
-          endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
-          isPrimary: input.isPrimary ?? false,
-          sourceAccessMode: context.accessMode,
+          endsOn: null,
         },
+        orderBy: { startsOn: 'desc' },
       });
+      let assignment;
+      if (open) {
+        assignment = await tx.employeeBranchAssignment.update({
+          where: { id: open.id },
+          data: {
+            startsOn: open.startsOn < startsOn ? open.startsOn : startsOn,
+            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
+            isPrimary: input.isPrimary ?? open.isPrimary,
+          },
+        });
+      } else {
+        await this.endOpenPrimaryAssignments(
+          tx,
+          context.organizationId,
+          employee.id,
+          startsOn,
+          input.isPrimary,
+        );
+        assignment = await tx.employeeBranchAssignment.create({
+          data: {
+            organizationId: context.organizationId,
+            employeeId: employee.id,
+            branchId: branch.id,
+            startsOn,
+            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
+            isPrimary: input.isPrimary ?? false,
+            sourceAccessMode: context.accessMode,
+          },
+        });
+      }
       if (input.isPrimary)
         await tx.employee.update({
           where: { id: employee.id },
@@ -442,6 +494,41 @@ export class EmployeesService {
       );
       return assignment;
     });
+  }
+
+  /**
+   * Close currently open primary assignments so a replacement can take over.
+   * A daterange row covers its end date inclusively, so the boundary is the
+   * day before the replacement starts; a same-day primary on another branch
+   * cannot move before its own start and instead ends on its start date.
+   */
+  private async endOpenPrimaryAssignments(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+    employeeId: string,
+    replacementStartsOn: Date,
+    close: boolean | undefined,
+  ) {
+    if (!close) return;
+    const boundary = new Date(replacementStartsOn);
+    boundary.setUTCDate(boundary.getUTCDate() - 1);
+    const openPrimary = await tx.employeeBranchAssignment.findMany({
+      where: {
+        organizationId,
+        employeeId,
+        isPrimary: true,
+        endsOn: null,
+      },
+    });
+    for (const assignment of openPrimary) {
+      await tx.employeeBranchAssignment.update({
+        where: { id: assignment.id },
+        data: {
+          endsOn: assignment.startsOn >= boundary ? assignment.startsOn : boundary,
+          isPrimary: false,
+        },
+      });
+    }
   }
 
   async syncAccess(context: DomainContext, externalEmployeeId: string, permissionKeys: string[]) {

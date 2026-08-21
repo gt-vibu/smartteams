@@ -72,13 +72,17 @@ export class FederationInfrastructureController {
     const target = organizationId
       ? await this.support.target(request, organizationId, undefined, 'capabilities.read')
       : undefined;
-    const capabilities = target
+    const result = target
       ? await this.grants.listCapabilities(federation.clientInternalId, target.organizationId)
-      : [];
+      : { capabilities: [], grantableCapabilities: [] };
     return {
       clientId: federation.clientId,
       organizationId: target?.organizationId ?? organizationId,
-      capabilities: capabilities.map(({ capability, status }) => ({ ...capability, status })),
+      capabilities: result.capabilities.map(({ capability, status }) => ({
+        ...capability,
+        status,
+      })),
+      grantableCapabilities: result.grantableCapabilities,
     };
   }
 
@@ -105,9 +109,12 @@ export class FederationInfrastructureController {
     @Body() body: ProvisionBranchDto,
     @Req() request: FederationRequest,
   ) {
-    const target = await this.support.target(request, organizationId, branchId, 'branches.write');
+    // The branch PUT is the registration operation, so the branch cannot be
+    // resolved before the service creates it. An organization-wide grant is
+    // still required; branch-scoped grants cannot create new branches.
+    const target = await this.support.target(request, organizationId, undefined, 'branches.write');
     return this.organizations.syncFederatedBranch(
-      await this.support.context(request, target.organizationId, 'branches.write', target.branchId),
+      await this.support.context(request, target.organizationId, 'branches.write'),
       organizationId,
       branchId,
       body,

@@ -76,15 +76,23 @@ export class AttendanceService {
         input.longitude,
         mode,
       );
-      const biometricVerified = false;
+      let webauthnCredentialId: string | undefined;
       if (input.webauthnCredentialId) {
+        const credentialSelector = isUuid(input.webauthnCredentialId)
+          ? {
+              OR: [
+                { id: input.webauthnCredentialId },
+                { credentialId: input.webauthnCredentialId },
+              ],
+            }
+          : { credentialId: input.webauthnCredentialId };
         const credential = await tx.webauthnCredential.findFirst({
           where: {
-            id: input.webauthnCredentialId,
             organizationId: context.organizationId,
             employeeId: input.employeeId,
             status: 'ACTIVE',
             reviewRequired: false,
+            ...credentialSelector,
           },
           select: { id: true },
         });
@@ -92,7 +100,9 @@ export class AttendanceService {
           throw new ConflictError(
             'The supplied WebAuthn credential is not active for this employee',
           );
+        webauthnCredentialId = credential.id;
       }
+      const biometricVerified = Boolean(webauthnCredentialId);
       const record = await tx.attendanceRecord.upsert({
         where: {
           employeeId_workDate: { employeeId: input.employeeId, workDate: new Date(input.workDate) },
@@ -134,6 +144,7 @@ export class AttendanceService {
           isWithinGeofence: geofence.isWithin,
           distanceFromLocationMeters: geofence.distance,
           biometricVerified,
+          webauthnCredentialId,
         },
       });
       const allPunches = await tx.attendancePunch.findMany({
@@ -652,4 +663,8 @@ export function attendanceTotals(
     overtimeMinutes: Math.max(0, workedMinutes - standardDayMinutes),
     completed: workedMinutes > 0 && !openAt,
   };
+}
+
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }

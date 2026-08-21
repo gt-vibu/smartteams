@@ -124,7 +124,7 @@ export class WebhookService {
     );
     const last = events.at(-1);
     return {
-      events: events.map((event) => this.eventDto(event)),
+      events: await Promise.all(events.map((event) => this.eventDto(event))),
       nextCursor: last
         ? Buffer.from(
             JSON.stringify({ createdAt: last.createdAt.toISOString(), id: last.id }),
@@ -165,7 +165,11 @@ export class WebhookService {
     const delivery = await this.database.runSystem(undefined, (tx) =>
       tx.webhookDelivery.findUnique({
         where: { id: deliveryId },
-        include: { outboxEvent: true, subscription: true },
+        include: {
+          outboxEvent: true,
+          subscription: true,
+          organization: { select: { externalId: true } },
+        },
       }),
     );
     if (!delivery || !['PENDING', 'REPLAY_REQUESTED'].includes(delivery.status)) return;
@@ -192,13 +196,24 @@ export class WebhookService {
       );
       return;
     }
+    const branchId = await this.externalBranchId(
+      delivery.organizationId,
+      delivery.outboxEvent.payload,
+    );
     const body = JSON.stringify({
       eventId: delivery.outboxEvent.eventId,
       eventType: delivery.outboxEvent.eventType,
       schemaVersion: delivery.outboxEvent.schemaVersion,
       occurredAt: delivery.outboxEvent.createdAt.toISOString(),
       correlationId: delivery.outboxEvent.correlationId,
-      payload: delivery.outboxEvent.payload,
+      externalOrganizationId: delivery.organization.externalId,
+      ...(branchId ? { externalBranchId: branchId } : {}),
+      aggregate: {
+        type: delivery.outboxEvent.aggregateType,
+        id: delivery.outboxEvent.aggregateId,
+        version: delivery.outboxEvent.aggregateVersion,
+      },
+      data: delivery.outboxEvent.payload,
     });
     const timestamp = Math.floor(Date.now() / 1000).toString();
     const signed = this.sign(body, randomUUID(), timestamp);
@@ -304,7 +319,7 @@ export class WebhookService {
           where: {
             organizationId: event.organizationId,
             status: 'ACTIVE',
-            eventTypes: { has: event.eventType },
+            OR: [{ eventTypes: { has: event.eventType } }, { eventTypes: { has: '*' } }],
           },
         });
         for (const subscription of subscriptions) {
@@ -367,22 +382,53 @@ export class WebhookService {
       throw new ConflictError('Invalid federation replay cursor');
     }
   }
-  private eventDto(event: {
+  private async eventDto(event: {
     eventId: string;
     eventType: string;
     schemaVersion: string;
+    aggregateType: string;
+    aggregateId: string;
+    aggregateVersion: number;
+    organizationId: string;
     payload: Prisma.JsonValue;
     correlationId: string;
     createdAt: Date;
   }) {
+    const organization = await this.database.runSystem(undefined, (tx) =>
+      tx.organization.findUnique({
+        where: { id: event.organizationId },
+        select: { externalId: true },
+      }),
+    );
+    const branchId = await this.externalBranchId(event.organizationId, event.payload);
     return {
       eventId: event.eventId,
       eventType: event.eventType,
       schemaVersion: event.schemaVersion,
-      payload: event.payload,
+      externalOrganizationId: organization?.externalId,
+      ...(branchId ? { externalBranchId: branchId } : {}),
+      aggregate: {
+        type: event.aggregateType,
+        id: event.aggregateId,
+        version: event.aggregateVersion,
+      },
+      data: event.payload,
       correlationId: event.correlationId,
-      createdAt: event.createdAt,
+      occurredAt: event.createdAt,
     };
+  }
+
+  private async externalBranchId(organizationId: string, payload: Prisma.JsonValue) {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return undefined;
+    const branchId = typeof payload.branchId === 'string' ? payload.branchId : undefined;
+    if (!branchId) return undefined;
+    const branch = await this.database.runSystem(undefined, (tx) =>
+      tx.branch.findFirst({
+        where: { organizationId, OR: [{ id: branchId }, { externalId: branchId }] },
+        select: { externalId: true, id: true },
+      }),
+    );
+    return branch?.externalId ?? branch?.id;
   }
 }
 

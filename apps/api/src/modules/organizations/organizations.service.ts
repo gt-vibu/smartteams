@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
+import type { Prisma } from '../../generated/prisma/client';
 import {
   requirePermission,
   requireReason,
@@ -9,6 +10,7 @@ import { ConflictError, NotFoundError, StaleWriteError } from '../../common/erro
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
+import { FEDERATION_CAPABILITY_CATALOG } from '../federation/federation-capability.catalog';
 import type { AuditContext } from '../audit/audit.service';
 
 @Injectable()
@@ -311,6 +313,7 @@ export class OrganizationsService {
               settings: { create: {} },
             },
           });
+      await this.ensureFederationCapabilities(tx, organization.id);
       const tenantContext = { ...context, organizationId: organization.id };
       await this.audit.record(
         tenantContext,
@@ -336,6 +339,36 @@ export class OrganizationsService {
       );
       return this.toDto(organization);
     });
+  }
+
+  private async ensureFederationCapabilities(tx: Prisma.TransactionClient, organizationId: string) {
+    const capabilities = await Promise.all(
+      FEDERATION_CAPABILITY_CATALOG.map((catalogEntry) =>
+        tx.federationCapability.upsert({
+          where: { code_version: { code: catalogEntry.code, version: catalogEntry.version } },
+          create: catalogEntry,
+          update: {},
+        }),
+      ),
+    );
+    const enabledAt = new Date();
+    await Promise.all(
+      capabilities.map((capability) =>
+        tx.organizationFederationCapability.upsert({
+          where: {
+            organizationId_capabilityId: { organizationId, capabilityId: capability.id },
+          },
+          create: {
+            organizationId,
+            capabilityId: capability.id,
+            status: 'ENABLED',
+            configuration: {},
+            enabledAt,
+          },
+          update: {},
+        }),
+      ),
+    );
   }
 
   async syncFederatedBranch(

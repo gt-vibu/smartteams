@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNumber,
   IsInt,
+  MaxLength,
   IsOptional,
   IsString,
   IsUUID,
@@ -21,7 +22,7 @@ export class PunchDto {
   @IsOptional() @IsNumber() @Min(-180) @Max(180) longitude?: number;
   @IsOptional() @IsNumber() @Min(0) accuracyMeters?: number;
   @IsOptional() @IsUUID() branchId?: string;
-  @IsOptional() @IsUUID() webauthnCredentialId?: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(512) webauthnCredentialId?: string;
   @IsOptional() @IsString() externalId?: string;
 }
 

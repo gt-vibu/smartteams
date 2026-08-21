@@ -38,7 +38,11 @@ export class FederationAuthService {
       (client.expiresAt && client.expiresAt <= new Date())
     )
       throw new UnauthorizedDomainError('Federation client is invalid or expired');
-    this.verifyMtls(client.allowedCertificateFingerprints, input.mtlsFingerprint);
+    this.verifyMtls(
+      client.mtlsRequired,
+      client.allowedCertificateFingerprints,
+      input.mtlsFingerprint,
+    );
     const now = new Date();
     const credential = client.credentials.find(
       (candidate) =>
@@ -78,7 +82,7 @@ export class FederationAuthService {
       (client.expiresAt && client.expiresAt <= new Date())
     )
       throw new UnauthorizedDomainError('Federation token is invalid or revoked');
-    this.verifyMtls(client.allowedCertificateFingerprints, mtlsFingerprint);
+    this.verifyMtls(client.mtlsRequired, client.allowedCertificateFingerprints, mtlsFingerprint);
     return {
       clientInternalId: client.id,
       clientId: client.clientId,
@@ -108,7 +112,8 @@ export class FederationAuthService {
     return { id: credential.id, keyId, clientSecret: secret };
   }
 
-  private verifyMtls(allowed: string[], fingerprint?: string) {
+  private verifyMtls(required: boolean, allowed: string[], fingerprint?: string) {
+    if (!required) return;
     const normalizedFingerprint = fingerprint ? normalizeFingerprint(fingerprint) : undefined;
     const normalizedAllowed = allowed.map(normalizeFingerprint);
     if (!normalizedFingerprint || !normalizedAllowed.includes(normalizedFingerprint)) {
