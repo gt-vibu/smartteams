@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   description: 'Smarteam platform administration',
-  title: 'Smarteam | Platform control room',
+  title: 'Smarteam | Integration desk',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
