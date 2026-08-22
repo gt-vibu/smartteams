@@ -121,6 +121,8 @@ export const ModelName = {
   EmployeeFieldOwnership: 'EmployeeFieldOwnership',
   EmployeeEmploymentRecord: 'EmployeeEmploymentRecord',
   EmployeeCompensation: 'EmployeeCompensation',
+  EmployeeStatutoryProfile: 'EmployeeStatutoryProfile',
+  EmployeeStatutoryRecord: 'EmployeeStatutoryRecord',
   PayComponent: 'PayComponent',
   EmployeePayComponent: 'EmployeePayComponent',
   Team: 'Team',
@@ -608,6 +610,7 @@ export const AttendanceRecordScalarFieldEnum = {
   branchId: 'branchId',
   workDate: 'workDate',
   status: 'status',
+  dayStatus: 'dayStatus',
   scheduledMinutes: 'scheduledMinutes',
   workedMinutes: 'workedMinutes',
   overtimeMinutes: 'overtimeMinutes',
@@ -1352,6 +1355,46 @@ export const EmployeeCompensationScalarFieldEnum = {
 } as const
 
 export type EmployeeCompensationScalarFieldEnum = (typeof EmployeeCompensationScalarFieldEnum)[keyof typeof EmployeeCompensationScalarFieldEnum]
+
+
+export const EmployeeStatutoryProfileScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  schemeCode: 'schemeCode',
+  registrationNumber: 'registrationNumber',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  employeeRate: 'employeeRate',
+  employerRate: 'employerRate',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeStatutoryProfileScalarFieldEnum = (typeof EmployeeStatutoryProfileScalarFieldEnum)[keyof typeof EmployeeStatutoryProfileScalarFieldEnum]
+
+
+export const EmployeeStatutoryRecordScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  schemeCode: 'schemeCode',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  status: 'status',
+  employeeAmount: 'employeeAmount',
+  employerAmount: 'employerAmount',
+  dueDate: 'dueDate',
+  submittedAt: 'submittedAt',
+  filingReference: 'filingReference',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  version: 'version'
+} as const
+
+export type EmployeeStatutoryRecordScalarFieldEnum = (typeof EmployeeStatutoryRecordScalarFieldEnum)[keyof typeof EmployeeStatutoryRecordScalarFieldEnum]
 
 
 export const PayComponentScalarFieldEnum = {

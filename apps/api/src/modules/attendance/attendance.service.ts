@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   AttendancePunchType,
   AttendanceStatus,
+  AttendanceDayStatus,
   GeofenceMode,
   BiometricVerificationMode,
 } from '../../generated/prisma/enums';
@@ -31,6 +32,7 @@ export type PunchInput = {
   branchId?: string;
   webauthnCredentialId?: string;
   externalId?: string;
+  dayStatus?: AttendanceDayStatus;
   source: 'NATIVE' | 'FEDERATION';
 };
 @Injectable()
@@ -44,6 +46,16 @@ export class AttendanceService {
 
   async punch(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
     requirePermission(context, 'attendance.write');
+    if (
+      input.dayStatus &&
+      !new Set<AttendanceDayStatus>([
+        AttendanceDayStatus.PRESENT,
+        AttendanceDayStatus.LATE,
+        AttendanceDayStatus.HALF_DAY,
+      ]).has(input.dayStatus)
+    ) {
+      throw new ConflictError('Absence and leave statuses must be recorded by their workflows');
+    }
     return this.database.run(context, async (tx) => {
       const employee = await tx.employee.findFirst({
         where: { id: input.employeeId, organizationId: context.organizationId },
@@ -113,9 +125,15 @@ export class AttendanceService {
           branchId,
           workDate: new Date(input.workDate),
           status: AttendanceStatus.OPEN,
+          dayStatus: input.dayStatus ?? AttendanceDayStatus.PRESENT,
           sourceAccessMode: context.accessMode,
         },
-        update: { branchId, sourceAccessMode: context.accessMode, version: { increment: 1 } },
+        update: {
+          branchId,
+          sourceAccessMode: context.accessMode,
+          ...(input.dayStatus ? { dayStatus: input.dayStatus } : {}),
+          version: { increment: 1 },
+        },
       });
       const existingPunches = await tx.attendancePunch.findMany({
         where: { attendanceRecordId: record.id, organizationId: context.organizationId },
@@ -235,7 +253,7 @@ export class AttendanceService {
         where: {
           organizationId: context.organizationId,
           employeeId: filters.employeeId,
-          branchId: filters.branchId,
+          branchId: context.branchId,
           workDate: {
             gte: filters.from ? new Date(filters.from) : undefined,
             lte: filters.to ? new Date(filters.to) : undefined,
@@ -243,7 +261,15 @@ export class AttendanceService {
         },
         include: {
           punches: { orderBy: { occurredAt: 'asc' } },
-          employee: { select: { id: true, employeeNumber: true, firstName: true, lastName: true } },
+          employee: {
+            select: {
+              id: true,
+              externalId: true,
+              employeeNumber: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
         },
         ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
         orderBy: { id: 'desc' },
@@ -254,6 +280,7 @@ export class AttendanceService {
       return {
         records: page.map((record) => ({
           ...this.toRecordDto(record),
+          externalEmployeeId: record.employee.externalId,
           employee: record.employee,
           punches: record.punches.map((punch) => this.toPunchDto(punch)),
         })),
@@ -271,7 +298,11 @@ export class AttendanceService {
     requireReason(context, 'Attendance correction requires a reason');
     return this.database.run(context, async (tx) => {
       const record = await tx.attendanceRecord.findFirst({
-        where: { id: attendanceId, organizationId: context.organizationId },
+        where: {
+          id: attendanceId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
         include: { punches: true },
       });
       if (!record) throw new NotFoundError('Attendance record');
@@ -325,7 +356,11 @@ export class AttendanceService {
     );
     return this.database.run(context, async (tx) => {
       const correction = await tx.attendanceCorrection.findFirst({
-        where: { id: correctionId, organizationId: context.organizationId },
+        where: {
+          id: correctionId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { attendanceRecord: { branchId: context.branchId } } : {}),
+        },
         include: {
           approvals: true,
           approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
@@ -375,12 +410,14 @@ export class AttendanceService {
           },
         },
       });
+      const correctedDayStatus = dayStatusFromSnapshot(correction.afterSnapshot);
       if (status === 'APPROVED' && !hasMoreSteps)
         await tx.attendanceRecord.update({
           where: { id: correction.attendanceRecordId },
           data: {
             status: AttendanceStatus.CORRECTED,
             correctionNote: correction.reason,
+            ...(correctedDayStatus ? { dayStatus: correctedDayStatus } : {}),
             version: { increment: 1 },
           },
         });
@@ -562,6 +599,7 @@ export class AttendanceService {
     branchId: string | null;
     workDate: Date;
     status: string;
+    dayStatus: string;
     workedMinutes: number;
     overtimeMinutes: number;
     version: number;
@@ -573,6 +611,7 @@ export class AttendanceService {
       branchId: record.branchId,
       workDate: record.workDate,
       status: record.status,
+      dayStatus: record.dayStatus,
       workedMinutes: record.workedMinutes,
       overtimeMinutes: record.overtimeMinutes,
       version: record.version,
@@ -667,4 +706,13 @@ export function attendanceTotals(
 
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function dayStatusFromSnapshot(value: unknown): AttendanceDayStatus | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const status = (value as Record<string, unknown>).dayStatus;
+  return typeof status === 'string' &&
+    Object.values(AttendanceDayStatus).includes(status as AttendanceDayStatus)
+    ? (status as AttendanceDayStatus)
+    : undefined;
 }

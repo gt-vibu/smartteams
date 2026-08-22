@@ -26,11 +26,19 @@ import { EmployeeRecordsService } from './employee-records.service';
 import { toEmployeeDto } from './employee-mappers';
 
 const externallyOwnedFields = new Set([
+  'employeeNumber',
   'firstName',
   'middleName',
   'lastName',
   'preferredName',
+  'workEmail',
+  'personalEmail',
+  'phone',
   'status',
+  'employmentType',
+  'dateOfJoining',
+  'dateOfLeaving',
+  'managerEmployeeId',
   'primaryBranchId',
 ]);
 
@@ -49,14 +57,14 @@ export class EmployeesService {
     input: {
       employeeNumber: string;
       firstName: string;
-      middleName?: string;
+      middleName?: string | null;
       lastName: string;
-      preferredName?: string;
-      workEmail?: string;
-      personalEmail?: string;
-      phone?: string;
+      preferredName?: string | null;
+      workEmail?: string | null;
+      personalEmail?: string | null;
+      phone?: string | null;
       employmentType: EmploymentType;
-      dateOfJoining?: string;
+      dateOfJoining?: string | null;
       primaryBranchId?: string;
     },
   ) {
@@ -125,13 +133,17 @@ export class EmployeesService {
     input: {
       employeeNumber: string;
       firstName: string;
-      middleName?: string;
+      middleName?: string | null;
       lastName: string;
-      preferredName?: string;
-      workEmail?: string;
+      preferredName?: string | null;
+      workEmail?: string | null;
+      personalEmail?: string | null;
+      phone?: string | null;
       status?: EmployeeStatus;
       employmentType?: EmploymentType;
-      dateOfJoining?: string;
+      dateOfJoining?: string | null;
+      dateOfLeaving?: string | null;
+      managerEmployeeId?: string;
       primaryBranchId?: string;
       externalVersion?: string;
     },
@@ -139,7 +151,18 @@ export class EmployeesService {
     requirePermission(context, 'employees.write');
     return this.database.run(context, async (tx) => {
       const existing = await tx.employee.findFirst({
-        where: { organizationId: context.organizationId, externalId },
+        where: {
+          organizationId: context.organizationId,
+          externalId,
+          ...(context.branchId
+            ? {
+                OR: [
+                  { primaryBranchId: context.branchId },
+                  { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+                ],
+              }
+            : {}),
+        },
       });
       // Federation callers identify branches by the external id BlizBooks
       // provisioned; native callers use the internal id. Accept either, but
@@ -155,6 +178,19 @@ export class EmployeesService {
         if (!branch) throw new NotFoundError('Branch');
         primaryBranchId = branch.id;
       }
+      let managerEmployeeId = input.managerEmployeeId;
+      if (managerEmployeeId) {
+        const manager = await tx.employee.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            OR: [{ id: managerEmployeeId }, { externalId: managerEmployeeId }],
+            status: EmployeeStatus.ACTIVE,
+          },
+          select: { id: true },
+        });
+        if (!manager || manager.id === existing?.id) throw new ConflictError('Manager is invalid');
+        managerEmployeeId = manager.id;
+      }
       const data = {
         employeeNumber: input.employeeNumber,
         firstName: input.firstName,
@@ -162,10 +198,25 @@ export class EmployeesService {
         lastName: input.lastName,
         preferredName: input.preferredName,
         workEmail: input.workEmail,
+        personalEmail: input.personalEmail,
+        phone: input.phone,
         status: input.status ?? EmployeeStatus.ACTIVE,
         employmentType: input.employmentType ?? EmploymentType.FULL_TIME,
-        dateOfJoining: input.dateOfJoining ? new Date(input.dateOfJoining) : undefined,
+        dateOfJoining:
+          input.dateOfJoining === null
+            ? null
+            : input.dateOfJoining
+              ? new Date(input.dateOfJoining)
+              : undefined,
+        dateOfLeaving:
+          input.dateOfLeaving === null
+            ? null
+            : input.dateOfLeaving
+              ? new Date(input.dateOfLeaving)
+              : undefined,
+        managerEmployeeId,
         primaryBranchId,
+        deactivatedAt: input.status && input.status !== EmployeeStatus.ACTIVE ? new Date() : null,
         identitySource: IdentityType.FEDERATED,
         externalId,
       };

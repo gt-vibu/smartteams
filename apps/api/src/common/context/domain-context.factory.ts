@@ -42,6 +42,7 @@ export class DomainContextFactory {
     permissions = scopes,
     branchId?: string,
     reason?: string,
+    actorUserId?: string,
   ): DomainContext {
     const request = this.contexts.require();
     return {
@@ -51,7 +52,11 @@ export class DomainContextFactory {
       permissions,
       scopes,
       accessMode: AccessMode.FEDERATION,
-      actor: { type: 'FEDERATION_CLIENT', clientId },
+      actor: {
+        type: 'FEDERATION_CLIENT',
+        clientId,
+        ...(actorUserId ? { userId: actorUserId } : {}),
+      },
       correlationId: request.correlationId,
       requestId: request.requestId,
     };

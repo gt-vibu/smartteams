@@ -114,7 +114,56 @@ export class EmployeeRecordsService {
           OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
         },
       });
-      if (overlap) throw new ConflictError('Employment records must not overlap');
+      if (overlap) {
+        if (
+          context.accessMode === 'FEDERATION' &&
+          overlap.effectiveFrom.getTime() === effectiveFrom.getTime() &&
+          overlap.effectiveTo === null
+        ) {
+          const record = await tx.employeeEmploymentRecord.update({
+            where: { id: overlap.id },
+            data: {
+              jobTitle: input.jobTitle?.trim(),
+              department: input.department?.trim(),
+              managerEmployeeId: input.managerEmployeeId,
+              employmentType: input.employmentType,
+              status: input.status,
+            },
+          });
+          await tx.employee.update({
+            where: { id: employeeId },
+            data: {
+              managerEmployeeId: input.managerEmployeeId,
+              employmentType: input.employmentType,
+              status: input.status,
+              version: { increment: 1 },
+            },
+          });
+          await this.audit.record(
+            context,
+            {
+              entityType: 'EMPLOYEE_EMPLOYMENT_RECORD',
+              entityId: record.id,
+              action: 'EMPLOYEE_EMPLOYMENT_RECORD_UPDATED',
+              afterState: jsonSnapshot(record),
+            },
+            tx,
+          );
+          return record;
+        }
+        if (
+          context.accessMode === 'FEDERATION' &&
+          overlap.effectiveTo === null &&
+          effectiveFrom > overlap.effectiveFrom
+        ) {
+          await tx.employeeEmploymentRecord.update({
+            where: { id: overlap.id },
+            data: { effectiveTo: dateBefore(effectiveFrom) },
+          });
+        } else {
+          throw new ConflictError('Employment records must not overlap');
+        }
+      }
       const record = await tx.employeeEmploymentRecord.create({
         data: {
           organizationId: context.organizationId,
@@ -187,7 +236,47 @@ export class EmployeeRecordsService {
           OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
         },
       });
-      if (overlap) throw new ConflictError('Compensation records must not overlap');
+      if (overlap) {
+        if (
+          context.accessMode === 'FEDERATION' &&
+          overlap.effectiveFrom.getTime() === effectiveFrom.getTime() &&
+          overlap.effectiveTo === null
+        ) {
+          const compensation = await tx.employeeCompensation.update({
+            where: { id: overlap.id },
+            data: {
+              payType: input.payType,
+              payFrequency: input.payFrequency,
+              baseAmount: new Prisma.Decimal(input.baseAmount),
+              currencyCode: input.currencyCode.toUpperCase(),
+              overtimeMultiplier: new Prisma.Decimal(input.overtimeMultiplier),
+            },
+          });
+          await this.audit.record(
+            context,
+            {
+              entityType: 'EMPLOYEE_COMPENSATION',
+              entityId: compensation.id,
+              action: 'EMPLOYEE_COMPENSATION_UPDATED',
+              afterState: jsonSnapshot(compensation),
+            },
+            tx,
+          );
+          return compensation;
+        }
+        if (
+          context.accessMode === 'FEDERATION' &&
+          overlap.effectiveTo === null &&
+          effectiveFrom > overlap.effectiveFrom
+        ) {
+          await tx.employeeCompensation.update({
+            where: { id: overlap.id },
+            data: { effectiveTo: dateBefore(effectiveFrom) },
+          });
+        } else {
+          throw new ConflictError('Compensation records must not overlap');
+        }
+      }
       const compensation = await tx.employeeCompensation.create({
         data: {
           organizationId: context.organizationId,
@@ -258,4 +347,10 @@ export class EmployeeRecordsService {
     if (!employee) throw new NotFoundError('Employee');
     return employee;
   }
+}
+
+function dateBefore(value: Date) {
+  const previous = new Date(value);
+  previous.setUTCDate(previous.getUTCDate() - 1);
+  return previous;
 }

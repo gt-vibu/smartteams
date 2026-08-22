@@ -24,6 +24,8 @@ model Organization {
   roles                     Role[]
   userRoles                 UserRole[]
   employees                 Employee[]
+  employeeStatutoryProfiles EmployeeStatutoryProfile[]
+  employeeStatutoryRecords  EmployeeStatutoryRecord[]
   emergencyContacts         EmployeeEmergencyContact[]
   employeeBranchAssignments EmployeeBranchAssignment[]
   employeeFieldOwnership    EmployeeFieldOwnership[]

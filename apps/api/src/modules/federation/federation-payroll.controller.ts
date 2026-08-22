@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
@@ -16,7 +17,11 @@ import {
   PayrollAdjustmentDto,
   PayrollCalendarDto,
   PayrollRunDto,
+  FederatedPayComponentAssignmentDto,
+  PayrollPayslipQueryDto,
+  PayrollLedgerQueryDto,
 } from '../payroll/payroll.dto';
+import { FederatedEmployeeService } from './federated-employee.service';
 import { PayrollAdjustmentSource } from '../../generated/prisma/enums';
 import type { PayrollRunStatus } from '../../generated/prisma/enums';
 import { ConflictError } from '../../common/errors/domain-error';
@@ -32,6 +37,7 @@ export class FederationPayrollController {
   constructor(
     private readonly payroll: PayrollService,
     private readonly support: FederationControllerSupport,
+    private readonly employees: FederatedEmployeeService,
   ) {}
 
   @Get('federation/payroll/components')
@@ -65,6 +71,66 @@ export class FederationPayrollController {
     return this.payroll.listRuns(
       await this.support.context(request, organizationId, 'payroll.runs.read'),
     );
+  }
+
+  @Get('federation/payroll/payslips')
+  @UseGuards(FederationAuthGuard)
+  async payslips(
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Query() query: PayrollPayslipQueryDto,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'payroll.payslips.read',
+      branchId,
+    );
+    const employeeId = query.employeeId
+      ? await this.employees.internalId(context, query.employeeId)
+      : undefined;
+    return this.payroll.listPayslips(context, employeeId);
+  }
+
+  @Get('federation/payroll/employee-components')
+  @UseGuards(FederationAuthGuard)
+  async employeeComponents(
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Query('employeeId') externalEmployeeId: string,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'payroll.components.read',
+      branchId,
+    );
+    return this.payroll.listEmployeeComponents(
+      context,
+      await this.employees.internalId(context, externalEmployeeId),
+    );
+  }
+
+  @Post('federation/payroll/employee-components')
+  @UseGuards(FederationAuthGuard)
+  async assignEmployeeComponent(
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Body() body: FederatedPayComponentAssignmentDto,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'payroll.components.write',
+      branchId,
+    );
+    return this.payroll.assignComponent(context, {
+      ...body,
+      employeeId: await this.employees.internalId(context, body.externalEmployeeId),
+    });
   }
 
   @Post('federation/payroll/runs')
@@ -109,6 +175,7 @@ export class FederationPayrollController {
   @UseGuards(FederationAuthGuard)
   async adjustment(
     @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Body() body: PayrollAdjustmentDto,
     @Req() request: FederationRequest,
   ) {
@@ -117,7 +184,7 @@ export class FederationPayrollController {
         request,
         organizationId,
         'payroll.adjustments.write',
-        undefined,
+        branchId,
         body.description,
       ),
       { ...body, source: PayrollAdjustmentSource.FEDERATION },
@@ -128,11 +195,23 @@ export class FederationPayrollController {
   @UseGuards(FederationAuthGuard)
   async ledger(
     @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Query() query: PayrollLedgerQueryDto,
     @Req() request: FederationRequest,
   ) {
-    return this.payroll.ledger(
-      await this.support.context(request, organizationId, 'payroll.ledger.read'),
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'payroll.ledger.read',
+      branchId,
     );
+    const employeeId = query.employeeId
+      ? await this.employees.internalId(context, query.employeeId)
+      : undefined;
+    return this.payroll.ledger(context, employeeId, {
+      ...(query.cursor ? { cursor: query.cursor } : {}),
+      ...(query.limit ? { limit: query.limit } : {}),
+    });
   }
 
   @Put('federation/payroll/calendars/:year/:month')

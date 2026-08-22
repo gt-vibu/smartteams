@@ -10,18 +10,28 @@ export const FEDERATION_GRANTABLE_SCOPES = [
   'webhooks.write',
   'events.read',
   'webhooks.replay',
+  'employees.read',
   'employees.write',
+  'employees.deactivate',
   'employees.branches.write',
   'employees.access.write',
   'employees.sessions.revoke',
+  'employees.records.write',
+  'employees.compensation.read',
+  'employees.compensation.write',
   'attendance.read',
   'attendance.preferences.read',
   'shifts.read',
+  'shifts.write',
   'attendance.preferences.write',
   'attendance.corrections.write',
   'attendance.corrections.decide',
   'attendance.webauthn.assert',
   'attendance.write',
+  'timesheets.read',
+  'timesheets.write',
+  'timesheets.submit',
+  'timesheets.decide',
   'attendance.webauthn.enroll',
   'leave.types.read',
   'leave.types.write',
@@ -31,6 +41,9 @@ export const FEDERATION_GRANTABLE_SCOPES = [
   'leave.requests.decide',
   'leave.balances.adjust',
   'payroll.components.read',
+  'payroll.components.write',
+  'payroll.payslips.read',
+  'payroll.payslips.read.all',
   'payroll.calendars.read',
   'payroll.runs.read',
   'payroll.runs.write',
@@ -40,6 +53,9 @@ export const FEDERATION_GRANTABLE_SCOPES = [
   'payroll.runs.lock',
   'payroll.ledger.read',
   'payroll.calendars.write',
+  'payroll.adjustments.write',
+  'payroll.compliance.read',
+  'payroll.compliance.write',
 ] as const;
 
 @Injectable()
@@ -61,8 +77,24 @@ export class FederationGrantService {
         requestId: randomUUID(),
         permissions: new Set(),
       },
-      (tx) =>
-        tx.federationGrant.findMany({
+      async (tx) => {
+        const capabilityCode = capabilityForScope(scope);
+        if (capabilityCode) {
+          const capability = await tx.organizationFederationCapability.findFirst({
+            where: {
+              organizationId,
+              status: 'ENABLED',
+              capability: { code: capabilityCode, isActive: true },
+            },
+            select: { capabilityId: true },
+          });
+          if (!capability) {
+            throw new ForbiddenDomainError(
+              `Federation capability is not enabled for this organization: ${capabilityCode}`,
+            );
+          }
+        }
+        return tx.federationGrant.findMany({
           where: {
             clientId,
             organizationId,
@@ -72,7 +104,8 @@ export class FederationGrantService {
             AND: [{ OR: [{ branchId: null }, ...(branchId ? [{ branchId }] : [])] }],
           },
           include: { scopes: { include: { scope: true } } },
-        }),
+        });
+      },
     );
     const denied = grants.some(
       (grant) =>
@@ -84,7 +117,7 @@ export class FederationGrantService {
     );
     if (denied || !allowed)
       throw new ForbiddenDomainError(
-        'Federation grant does not allow this organization, branch, or scope',
+        `Federation grant does not allow scope ${scope} for this organization or branch`,
       );
     return { branchId: branchId ?? grants.find((grant) => grant.branchId)?.branchId };
   }
@@ -157,6 +190,18 @@ export class FederationGrantService {
     const resolved = await this.resolve(clientId, organization.id, branch?.id, scope);
     return { organizationId: organization.id, branchId: resolved.branchId ?? branch?.id };
   }
+}
+
+export function capabilityForScope(scope: string) {
+  if (scope.startsWith('employees.')) return 'employees';
+  if (scope.startsWith('attendance.webauthn.')) return 'device_verification';
+  if (scope.startsWith('attendance.')) return 'attendance';
+  if (scope.startsWith('leave.')) return 'leave';
+  if (scope.startsWith('timesheets.')) return 'timesheets';
+  if (scope.startsWith('shifts.')) return 'shifts';
+  if (scope.startsWith('payroll.compliance.')) return 'compliance';
+  if (scope.startsWith('payroll.')) return 'payroll';
+  return undefined;
 }
 
 function isUuid(value: string) {

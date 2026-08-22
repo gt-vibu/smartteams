@@ -49,6 +49,8 @@ model Employee {
   payrollLines             PayrollLineItem[]
   payslips                 Payslip[]
   payrollAdjustments       PayrollAdjustment[]
+  statutoryProfiles        EmployeeStatutoryProfile[]
+  statutoryRecords         EmployeeStatutoryRecord[]
   files                    FileObject[]
   teamLeadOf               Team[]
   webauthnCredentials      WebauthnCredential[]
@@ -162,6 +164,53 @@ model EmployeeCompensation {
 
   @@index([organizationId, employeeId, effectiveFrom])
   @@map("employee_compensation")
+}
+
+model EmployeeStatutoryProfile {
+  id                   String   @id @default(uuid()) @db.Uuid
+  organizationId       String   @map("organization_id") @db.Uuid
+  employeeId           String   @map("employee_id") @db.Uuid
+  schemeCode           String   @map("scheme_code")
+  registrationNumber   String?  @map("registration_number")
+  effectiveFrom        DateTime @map("effective_from") @db.Date
+  effectiveTo          DateTime? @map("effective_to") @db.Date
+  employeeRate         Decimal? @map("employee_rate") @db.Decimal(8, 4)
+  employerRate         Decimal? @map("employer_rate") @db.Decimal(8, 4)
+  metadata             Json     @default("{}")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, employeeId, schemeCode, effectiveFrom])
+  @@map("employee_statutory_profiles")
+}
+
+model EmployeeStatutoryRecord {
+  id                 String                @id @default(uuid()) @db.Uuid
+  organizationId     String                @map("organization_id") @db.Uuid
+  employeeId         String                @map("employee_id") @db.Uuid
+  schemeCode         String                @map("scheme_code")
+  periodStart        DateTime              @map("period_start") @db.Date
+  periodEnd          DateTime              @map("period_end") @db.Date
+  status             ComplianceRecordStatus @default(DRAFT)
+  employeeAmount     Decimal?              @map("employee_amount") @db.Decimal(14, 2)
+  employerAmount     Decimal?              @map("employer_amount") @db.Decimal(14, 2)
+  dueDate            DateTime?             @map("due_date") @db.Date
+  submittedAt        DateTime?             @map("submitted_at") @db.Timestamptz(6)
+  filingReference    String?               @map("filing_reference")
+  metadata           Json                  @default("{}")
+  createdAt          DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version            Int                   @default(1)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, employeeId, schemeCode, periodStart, periodEnd])
+  @@index([organizationId, schemeCode, periodStart, status])
+  @@map("employee_statutory_records")
 }
 
 model PayComponent {

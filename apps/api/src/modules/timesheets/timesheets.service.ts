@@ -42,6 +42,7 @@ export class TimesheetsService {
           organizationId: context.organizationId,
           employeeId,
           timesheetPeriodId: filters.periodId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
         },
         include: { entries: { orderBy: { workDate: 'asc' } }, period: true },
         orderBy: [{ period: { periodStart: 'desc' } }, { employeeId: 'asc' }],
@@ -107,13 +108,25 @@ export class TimesheetsService {
       if (!period || period.status !== TimesheetStatus.DRAFT)
         throw new ConflictError('Timesheet period is unavailable for derivation');
       const employees = await tx.employee.findMany({
-        where: { organizationId: context.organizationId, status: 'ACTIVE' },
+        where: {
+          organizationId: context.organizationId,
+          status: 'ACTIVE',
+          ...(context.branchId
+            ? {
+                OR: [
+                  { primaryBranchId: context.branchId },
+                  { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+                ],
+              }
+            : {}),
+        },
         select: { id: true, primaryBranchId: true },
       });
       const records = await tx.attendanceRecord.findMany({
         where: {
           organizationId: context.organizationId,
           workDate: { gte: period.periodStart, lte: period.periodEnd },
+          ...(context.branchId ? { branchId: context.branchId } : {}),
         },
         select: {
           id: true,
@@ -135,7 +148,7 @@ export class TimesheetsService {
             organizationId: context.organizationId,
             timesheetPeriodId: period.id,
             employeeId: employee.id,
-            branchId: employee.primaryBranchId,
+            branchId: context.branchId ?? employee.primaryBranchId,
             status: TimesheetStatus.DRAFT,
             sourceAccessMode: context.accessMode,
           },
@@ -199,7 +212,11 @@ export class TimesheetsService {
       throw new ConflictError('Timesheet minutes are invalid');
     return this.database.run(context, async (tx) => {
       const timesheet = await tx.timesheet.findFirst({
-        where: { id: timesheetId, organizationId: context.organizationId },
+        where: {
+          id: timesheetId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
       });
       if (!timesheet || timesheet.status !== TimesheetStatus.DRAFT)
         throw new ConflictError('Only a draft timesheet can be edited');
@@ -243,7 +260,11 @@ export class TimesheetsService {
     requirePermission(context, 'timesheets.submit');
     return this.database.run(context, async (tx) => {
       const timesheet = await tx.timesheet.findFirst({
-        where: { id: timesheetId, organizationId: context.organizationId },
+        where: {
+          id: timesheetId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
       });
       if (!timesheet || timesheet.status !== TimesheetStatus.DRAFT)
         throw new ConflictError('Only a draft timesheet can be submitted');
@@ -292,7 +313,11 @@ export class TimesheetsService {
     if (!approverUserId) throw new ConflictError('A human approver is required');
     return this.database.run(context, async (tx) => {
       const timesheet = await tx.timesheet.findFirst({
-        where: { id: timesheetId, organizationId: context.organizationId },
+        where: {
+          id: timesheetId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
         include: {
           approvals: true,
           approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },

@@ -17,6 +17,7 @@ export class FederationControllerSupport {
     scope: string,
     branchId?: string,
     reason?: string,
+    actorUserId?: string,
   ) {
     const federation = this.requireFederation(request);
     const target = await this.target(request, organizationId, branchId, scope);
@@ -27,6 +28,7 @@ export class FederationControllerSupport {
       new Set([scope]),
       target.branchId,
       reason,
+      actorUserId,
     );
   }
 
@@ -50,4 +52,10 @@ export class FederationControllerSupport {
       throw new UnauthorizedDomainError('Federation authentication context is missing');
     return request.federation;
   }
+}
+
+export function requireFederatedApprover(value: string | undefined) {
+  if (!value?.trim())
+    throw new ConflictError('A federation approver employee identifier is required');
+  return value;
 }

@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
@@ -6,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   Min,
   MinLength,
 } from 'class-validator';
@@ -53,5 +55,20 @@ export class PayrollCalendarDto {
 }
 export class PayrollPayslipQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
+}
+
+export class PayrollLedgerQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsString() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(1) @Max(500) limit?: number;
+}
+
+export class FederatedPayComponentAssignmentDto {
+  @IsString() externalEmployeeId!: string;
+  @IsUUID() payComponentId!: string;
+  @IsOptional() @IsNumber() amount?: number;
+  @IsOptional() @IsNumber() percentage?: number;
+  @IsDateString() effectiveFrom!: string;
+  @IsOptional() @IsDateString() effectiveTo?: string;
 }
 import type { PayrollAdjustmentType, PayrollRunStatus } from '../../generated/prisma/enums';

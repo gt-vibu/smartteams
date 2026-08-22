@@ -752,7 +752,7 @@ Database metadata for private S3 objects. The database never stores the object b
 | `content_type`        | `text`         |   No | Validated MIME type.                                 |
 | `byte_size`           | `bigint`       |   No | Validated object size.                               |
 | `checksum_sha256`     | `char(64)`     |  Yes | Integrity checksum.                                  |
-| `kms_key_id`          | `text`         |  Yes | KMS key identifier used for SSE-KMS.                 |
+| `kms_key_id`          | `text`         |  Yes | Legacy nullable encryption metadata; new uploads use SSE-S3/AES256. |
 | `current_version_id`  | `text`         |  Yes | S3 object version identifier.                        |
 | `metadata`            | `jsonb`        |   No | Sanitized metadata only.                             |
 | `created_at`          | `timestamptz`  |   No | Metadata creation time.                              |

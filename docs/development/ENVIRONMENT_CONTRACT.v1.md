@@ -9,7 +9,7 @@ The root `.env.example` is the canonical environment contract and contains inten
 | Runtime | `NODE_ENV`, `LOG_LEVEL`, `API_*`, `WEB_*`, `CORS_ORIGINS`, `TRUST_PROXY_HOPS` | API and deployment | Yes |
 | PostgreSQL | `DATABASE_URL`, `DATABASE_SYSTEM_URL`, `DATABASE_PLATFORM_URL` | API runtime, system workers, platform operations, Prisma CLI | Yes; all three must be distinct outside development |
 | Redis | `REDIS_*` | API, BullMQ workers | Yes |
-| Object storage | `AWS_REGION`, `AWS_S3_BUCKET`, optional endpoint and KMS key, `FILE_DELETION_RETENTION_DAYS` | API and storage workers | Yes |
+| Object storage | `AWS_REGION`, `AWS_S3_BUCKET`, optional endpoint, `FILE_DELETION_RETENTION_DAYS` | API and storage workers | Yes |
 | Native auth | `JWT_*`, `SESSION_*`, password-hash cost | API | Yes |
 | Federation security | `FEDERATION_*` (including `FEDERATION_RATE_LIMIT_PER_MINUTE`, `FEDERATION_TOKEN_RATE_LIMIT_PER_MINUTE`, `FEDERATION_WEBHOOK_ALLOWED_HOSTS`) | Federation module and webhook workers | Yes |
 | Observability | `OTEL_*`, `PROMETHEUS_ENABLED`, `SENTRY_DSN` | API and deployment | Metrics and health yes; exporters optional |

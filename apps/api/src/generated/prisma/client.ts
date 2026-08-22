@@ -390,6 +390,16 @@ export type EmployeeEmploymentRecord = Prisma.EmployeeEmploymentRecordModel
  */
 export type EmployeeCompensation = Prisma.EmployeeCompensationModel
 /**
+ * Model EmployeeStatutoryProfile
+ * 
+ */
+export type EmployeeStatutoryProfile = Prisma.EmployeeStatutoryProfileModel
+/**
+ * Model EmployeeStatutoryRecord
+ * 
+ */
+export type EmployeeStatutoryRecord = Prisma.EmployeeStatutoryRecordModel
+/**
  * Model PayComponent
  * 
  */

@@ -138,20 +138,46 @@ export class LeaveService {
     requirePermission(context, 'leave.balances.read');
     return this.database.run(context, (tx) =>
       tx.leaveBalance.findMany({
-        where: { organizationId: context.organizationId, employeeId },
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          ...(context.branchId ? { employee: this.employeeScope(context) } : {}),
+        },
         include: { leaveType: true },
         orderBy: [{ employeeId: 'asc' }, { periodStart: 'desc' }],
       }),
     );
   }
-  async listRequests(context: DomainContext, employeeId?: string) {
+  async listRequests(
+    context: DomainContext,
+    employeeId?: string,
+    pagination: { cursor?: string; limit?: number } = {},
+  ) {
     requirePermission(context, 'leave.requests.read');
-    return this.database.run(context, (tx) =>
-      tx.leaveRequest.findMany({
-        where: { organizationId: context.organizationId, employeeId },
-        orderBy: { startDate: 'desc' },
-      }),
-    );
+    return this.database.run(context, async (tx) => {
+      const cursorId = pagination.cursor ? decodeLeaveCursor(pagination.cursor) : undefined;
+      const limit = Math.min(pagination.limit ?? 100, 500);
+      const requests = await tx.leaveRequest.findMany({
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
+        orderBy: [{ startDate: 'desc' }, { id: 'desc' }],
+        take: limit + 1,
+        include: { employee: { select: { externalId: true } } },
+      });
+      const hasNextPage = requests.length > limit;
+      const page = requests.slice(0, limit);
+      return {
+        requests: page.map(({ employee, ...request }) => ({
+          ...request,
+          externalEmployeeId: employee.externalId,
+        })),
+        nextCursor: hasNextPage ? encodeLeaveCursor(page.at(-1)?.id) : undefined,
+      };
+    });
   }
 
   async createRequest(context: DomainContext, input: LeaveRequestInput) {
@@ -162,7 +188,12 @@ export class LeaveService {
       if (end < start) throw new ConflictError('Leave end date must not precede start date');
       const [employee, type, settings] = await Promise.all([
         tx.employee.findFirst({
-          where: { id: input.employeeId, organizationId: context.organizationId, status: 'ACTIVE' },
+          where: {
+            id: input.employeeId,
+            organizationId: context.organizationId,
+            status: 'ACTIVE',
+            ...(context.branchId ? this.employeeScope(context) : {}),
+          },
         }),
         tx.leaveType.findFirst({
           where: { id: input.leaveTypeId, organizationId: context.organizationId, isActive: true },
@@ -173,7 +204,7 @@ export class LeaveService {
       ]);
       if (!employee) throw new NotFoundError('Active employee');
       if (!type) throw new NotFoundError('Leave type');
-      const branchId = input.branchId ?? employee.primaryBranchId;
+      const branchId = context.branchId ?? input.branchId ?? employee.primaryBranchId;
       if (
         input.branchId &&
         !(await tx.branch.findFirst({
@@ -299,7 +330,11 @@ export class LeaveService {
     if (!approverUserId) throw new ConflictError('A human approver is required');
     return this.database.run(context, async (tx) => {
       const request = await tx.leaveRequest.findFirst({
-        where: { id: requestId, organizationId: context.organizationId },
+        where: {
+          id: requestId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
         include: {
           approvals: true,
           approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
@@ -408,7 +443,11 @@ export class LeaveService {
     requireReason({ ...context, reason }, 'Leave cancellation requires a reason');
     return this.database.run(context, async (tx) => {
       const request = await tx.leaveRequest.findFirst({
-        where: { id: requestId, organizationId: context.organizationId },
+        where: {
+          id: requestId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
       });
       if (
         !request ||
@@ -489,6 +528,7 @@ export class LeaveService {
           leaveTypeId: input.leaveTypeId,
           periodStart: dateOnly(input.periodStart),
           periodEnd: dateOnly(input.periodEnd),
+          ...(context.branchId ? { employee: this.employeeScope(context) } : {}),
         },
       });
       if (!balance) throw new NotFoundError('Leave balance');
@@ -558,6 +598,15 @@ export class LeaveService {
       },
       update: {},
     });
+  }
+
+  private employeeScope(context: DomainContext): Prisma.EmployeeWhereInput {
+    return {
+      OR: [
+        { primaryBranchId: context.branchId },
+        { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+      ],
+    };
   }
 
   private async releaseReservation(
@@ -683,6 +732,28 @@ export class LeaveService {
       status: request.status,
       version: request.version,
     };
+  }
+}
+
+function encodeLeaveCursor(id: string | undefined) {
+  return id ? Buffer.from(JSON.stringify({ id })).toString('base64url') : undefined;
+}
+
+function decodeLeaveCursor(cursor: string) {
+  try {
+    const value: unknown = JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8'));
+    if (
+      !value ||
+      typeof value !== 'object' ||
+      !('id' in value) ||
+      typeof value.id !== 'string' ||
+      !value.id
+    ) {
+      throw new Error('invalid');
+    }
+    return value.id;
+  } catch {
+    throw new ConflictError('Leave request cursor is invalid or expired');
   }
 }
 

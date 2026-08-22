@@ -8,6 +8,7 @@ import {
   PayrollAdjustmentType,
   PayrollRunStatus,
   TimesheetStatus,
+  AccessMode,
 } from '../../generated/prisma/enums';
 import {
   requirePermission,
@@ -102,11 +103,17 @@ export class PayrollService {
     requirePermission(context, 'payroll.payslips.read');
     return this.database.run(context, async (tx) => {
       const canReadAll =
-        context.permissions.has('*') || context.permissions.has('payroll.payslips.read.all');
+        context.accessMode === AccessMode.FEDERATION ||
+        context.permissions.has('*') ||
+        context.permissions.has('payroll.payslips.read.all');
       let employeeId = requestedEmployeeId;
       if (!canReadAll) {
         const employee = await tx.employee.findFirst({
-          where: { organizationId: context.organizationId, userId: context.actor.userId },
+          where: {
+            organizationId: context.organizationId,
+            userId: context.actor.userId,
+            ...this.employeeScope(context),
+          },
           select: { id: true },
         });
         if (!employee) return [];
@@ -115,7 +122,11 @@ export class PayrollService {
         employeeId = employee.id;
       }
       const payslips = await tx.payslip.findMany({
-        where: { organizationId: context.organizationId, employeeId },
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          ...(context.branchId ? { employee: this.employeeScope(context) } : {}),
+        },
         include: {
           payrollRun: {
             select: {
@@ -142,6 +153,7 @@ export class PayrollService {
               },
             },
           },
+          employee: { select: { externalId: true, employeeNumber: true } },
           fileObject: { select: { id: true, status: true } },
         },
         orderBy: { issuedAt: 'desc' },
@@ -149,6 +161,8 @@ export class PayrollService {
       return payslips.map((payslip) => ({
         id: payslip.id,
         employeeId: payslip.employeeId,
+        externalEmployeeId: payslip.employee.externalId,
+        employeeNumber: payslip.employee.employeeNumber,
         status: payslip.status,
         issuedAt: payslip.issuedAt,
         file: payslip.fileObject,
@@ -162,18 +176,87 @@ export class PayrollService {
       }));
     });
   }
-  async ledger(context: DomainContext) {
+  async ledger(
+    context: DomainContext,
+    requestedEmployeeId?: string,
+    pagination: { cursor?: string; limit?: number } = {},
+  ) {
     requirePermission(context, 'payroll.ledger.read');
-    return this.database.run(context, (tx) =>
-      tx.payrollLineItem.findMany({
+    return this.database.run(context, async (tx) => {
+      const canReadAll =
+        context.accessMode === AccessMode.FEDERATION ||
+        context.permissions.has('*') ||
+        context.permissions.has('payroll.ledger.read.all');
+      let employeeId = requestedEmployeeId;
+      if (!canReadAll) {
+        const employee = await tx.employee.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            userId: context.actor.userId,
+            ...this.employeeScope(context),
+          },
+          select: { id: true },
+        });
+        if (!employee) return { entries: [], nextCursor: undefined };
+        if (requestedEmployeeId && requestedEmployeeId !== employee.id)
+          throw new ConflictError('Employees may only read their own payroll ledger');
+        employeeId = employee.id;
+      }
+      const cursorId = pagination.cursor ? decodePayrollCursor(pagination.cursor) : undefined;
+      const limit = Math.min(pagination.limit ?? 100, 500);
+      const entries = await tx.payrollLineItem.findMany({
         where: {
           organizationId: context.organizationId,
+          ...(employeeId ? { employeeId } : {}),
+          ...(context.branchId ? { employee: this.employeeScope(context) } : {}),
           payrollRun: { status: { in: [PayrollRunStatus.RELEASED, PayrollRunStatus.LOCKED] } },
         },
-        include: { payrollRun: true, components: true },
-        orderBy: [{ payrollRun: { periodStart: 'desc' } }, { employeeId: 'asc' }],
-      }),
-    );
+        include: {
+          employee: { select: { externalId: true, employeeNumber: true } },
+          payrollRun: true,
+          components: true,
+        },
+        ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
+        orderBy: [{ payrollRun: { periodStart: 'desc' } }, { employeeId: 'asc' }, { id: 'asc' }],
+        take: limit + 1,
+      });
+      const hasNextPage = entries.length > limit;
+      const page = entries.slice(0, limit);
+      return {
+        entries: page.map((entry) => ({
+          id: entry.id,
+          externalEmployeeId: entry.employee.externalId,
+          employeeNumber: entry.employee.employeeNumber,
+          payrollRunId: entry.payrollRunId,
+          grossAmount: entry.grossAmount,
+          deductionAmount: entry.deductionAmount,
+          netAmount: entry.netAmount,
+          payrollRun: entry.payrollRun,
+          components: entry.components,
+        })),
+        nextCursor: hasNextPage ? encodePayrollCursor(page.at(-1)?.id) : undefined,
+      };
+    });
+  }
+
+  async listEmployeeComponents(context: DomainContext, employeeId: string) {
+    requirePermission(context, 'payroll.components.read');
+    return this.database.run(context, async (tx) => {
+      const employee = await tx.employee.findFirst({
+        where: {
+          id: employeeId,
+          organizationId: context.organizationId,
+          ...this.employeeScope(context),
+        },
+        select: { id: true },
+      });
+      if (!employee) throw new NotFoundError('Employee');
+      return tx.employeePayComponent.findMany({
+        where: { organizationId: context.organizationId, employeeId },
+        include: { payComponent: true },
+        orderBy: [{ effectiveFrom: 'desc' }, { payComponent: { displayOrder: 'asc' } }],
+      });
+    });
   }
   async getCalendar(context: DomainContext) {
     requirePermission(context, 'payroll.calendars.read');
@@ -234,7 +317,12 @@ export class PayrollService {
     return this.database.run(context, async (tx) => {
       const [employee, component] = await Promise.all([
         tx.employee.findFirst({
-          where: { id: input.employeeId, organizationId: context.organizationId, status: 'ACTIVE' },
+          where: {
+            id: input.employeeId,
+            organizationId: context.organizationId,
+            status: 'ACTIVE',
+            ...this.employeeScope(context),
+          },
         }),
         tx.payComponent.findFirst({
           where: {
@@ -740,5 +828,38 @@ export class PayrollService {
         },
         update: { issuedAt: new Date() },
       });
+  }
+
+  private employeeScope(context: DomainContext): Prisma.EmployeeWhereInput {
+    return context.branchId
+      ? {
+          OR: [
+            { primaryBranchId: context.branchId },
+            { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+          ],
+        }
+      : {};
+  }
+}
+
+function encodePayrollCursor(id: string | undefined) {
+  return id ? Buffer.from(JSON.stringify({ id })).toString('base64url') : undefined;
+}
+
+function decodePayrollCursor(cursor: string) {
+  try {
+    const value: unknown = JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8'));
+    if (
+      !value ||
+      typeof value !== 'object' ||
+      !('id' in value) ||
+      typeof value.id !== 'string' ||
+      !value.id
+    ) {
+      throw new Error('invalid');
+    }
+    return value.id;
+  } catch {
+    throw new ConflictError('Payroll ledger cursor is invalid or expired');
   }
 }

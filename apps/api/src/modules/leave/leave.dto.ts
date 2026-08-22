@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
   Min,
   MinLength,
 } from 'class-validator';
@@ -36,6 +37,7 @@ export class LeaveRequestDto {
 export class LeaveDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
   @IsString() @MinLength(2) comment!: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
 }
 
 export class LeaveCancelDto {

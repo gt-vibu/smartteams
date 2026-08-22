@@ -14,11 +14,9 @@ import { randomUUID } from 'node:crypto';
 export class StorageService {
   private readonly bucket: string;
   private readonly client: S3Client;
-  private readonly kmsKeyId?: string;
 
   constructor(config: ConfigService) {
     this.bucket = config.getOrThrow<string>('AWS_S3_BUCKET');
-    this.kmsKeyId = config.get<string>('AWS_S3_KMS_KEY_ID') || undefined;
     this.client = new S3Client({
       endpoint: config.get<string>('AWS_S3_ENDPOINT') || undefined,
       forcePathStyle: config.get<boolean>('AWS_S3_FORCE_PATH_STYLE', false),
@@ -64,8 +62,7 @@ export class StorageService {
         ...(input.checksumSha256 && /^[0-9a-f]{64}$/i.test(input.checksumSha256)
           ? { ChecksumSHA256: Buffer.from(input.checksumSha256, 'hex').toString('base64') }
           : {}),
-        ServerSideEncryption: 'aws:kms',
-        ...(this.kmsKeyId ? { SSEKMSKeyId: this.kmsKeyId } : {}),
+        ServerSideEncryption: 'AES256',
       }),
       { expiresIn: input.expiresIn ?? 600 },
     );

@@ -29,4 +29,14 @@ export const FEDERATION_CAPABILITY_CATALOG = [
     version: 'v1',
     description: 'Federated WebAuthn device verification for workforce actions.',
   },
+  {
+    code: 'timesheets',
+    version: 'v1',
+    description: 'Federated timesheet derivation, submission, and approval.',
+  },
+  {
+    code: 'compliance',
+    version: 'v1',
+    description: 'Federated employee statutory profiles and filing records.',
+  },
 ] as const;

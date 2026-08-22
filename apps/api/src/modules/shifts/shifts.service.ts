@@ -28,18 +28,21 @@ export class ShiftsService {
   async create(context: DomainContext, input: ShiftInput) {
     requirePermission(context, 'shifts.write');
     validateDays(input.daysOfWeek);
+    if (context.branchId && input.branchId && input.branchId !== context.branchId)
+      throw new ConflictError('Shift branch does not match the federated branch scope');
+    const branchId = context.branchId ?? input.branchId;
     return this.database.run(context, async (tx) => {
       if (
-        input.branchId &&
+        branchId &&
         !(await tx.branch.findFirst({
-          where: { id: input.branchId, organizationId: context.organizationId },
+          where: { id: branchId, organizationId: context.organizationId },
         }))
       )
         throw new NotFoundError('Branch');
       const shift = await tx.shift.create({
         data: {
           organizationId: context.organizationId,
-          branchId: input.branchId,
+          branchId,
           code: input.code.trim().toUpperCase(),
           name: input.name.trim(),
           daysOfWeek: input.daysOfWeek,
@@ -69,7 +72,13 @@ export class ShiftsService {
     return this.database.run(context, (tx) =>
       tx.shift
         .findMany({
-          where: { organizationId: context.organizationId, isActive: true },
+          where: {
+            organizationId: context.organizationId,
+            isActive: true,
+            ...(context.branchId
+              ? { OR: [{ branchId: context.branchId }, { branchId: null }] }
+              : {}),
+          },
           include: { breakRules: { orderBy: { sequence: 'asc' } } },
           orderBy: { code: 'asc' },
         })
@@ -80,9 +89,16 @@ export class ShiftsService {
   async update(context: DomainContext, shiftId: string, input: Partial<ShiftInput>) {
     requirePermission(context, 'shifts.write');
     if (input.daysOfWeek) validateDays(input.daysOfWeek);
+    if (context.branchId && input.branchId && input.branchId !== context.branchId)
+      throw new ConflictError('Shift branch does not match the federated branch scope');
     return this.database.run(context, async (tx) => {
       const before = await tx.shift.findFirst({
-        where: { id: shiftId, organizationId: context.organizationId, isActive: true },
+        where: {
+          id: shiftId,
+          organizationId: context.organizationId,
+          isActive: true,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
         include: { breakRules: { orderBy: { sequence: 'asc' } } },
       });
       if (!before) throw new NotFoundError('Shift');
@@ -99,7 +115,7 @@ export class ShiftsService {
         data: {
           code: input.code?.trim().toUpperCase(),
           name: input.name?.trim(),
-          branchId: input.branchId,
+          branchId: input.branchId ?? undefined,
           daysOfWeek: input.daysOfWeek,
           startsAt: input.startsAt ? timeOnly(input.startsAt) : undefined,
           endsAt: input.endsAt ? timeOnly(input.endsAt) : undefined,
@@ -134,7 +150,12 @@ export class ShiftsService {
     if (!reason.trim()) throw new ConflictError('Shift deactivation requires a reason');
     return this.database.run(context, async (tx) => {
       const before = await tx.shift.findFirst({
-        where: { id: shiftId, organizationId: context.organizationId, isActive: true },
+        where: {
+          id: shiftId,
+          organizationId: context.organizationId,
+          isActive: true,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
       });
       if (!before) throw new NotFoundError('Shift');
       const updated = await tx.shift.update({
@@ -174,18 +195,40 @@ export class ShiftsService {
         throw new ConflictError('Shift assignment end must not precede start');
       const [employee, shift] = await Promise.all([
         tx.employee.findFirst({
-          where: { id: employeeId, organizationId: context.organizationId, status: 'ACTIVE' },
+          where: {
+            id: employeeId,
+            organizationId: context.organizationId,
+            status: 'ACTIVE',
+            ...(context.branchId
+              ? {
+                  OR: [
+                    { primaryBranchId: context.branchId },
+                    { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+                  ],
+                }
+              : {}),
+          },
         }),
         tx.shift.findFirst({
-          where: { id: input.shiftId, organizationId: context.organizationId, isActive: true },
+          where: {
+            id: input.shiftId,
+            organizationId: context.organizationId,
+            isActive: true,
+            ...(context.branchId ? { branchId: context.branchId } : {}),
+          },
         }),
       ]);
       if (!employee) throw new NotFoundError('Employee');
       if (!shift) throw new NotFoundError('Shift');
+      if (context.branchId && input.branchId && input.branchId !== context.branchId)
+        throw new ConflictError(
+          'Shift assignment branch does not match the federated branch scope',
+        );
+      const branchId = context.branchId ?? input.branchId;
       if (
-        input.branchId &&
+        branchId &&
         !(await tx.branch.findFirst({
-          where: { id: input.branchId, organizationId: context.organizationId },
+          where: { id: branchId, organizationId: context.organizationId },
         }))
       )
         throw new NotFoundError('Branch');
@@ -203,7 +246,7 @@ export class ShiftsService {
           organizationId: context.organizationId,
           employeeId,
           shiftId: input.shiftId,
-          branchId: input.branchId,
+          branchId,
           startsOn: start,
           endsOn: end,
           sourceAccessMode: context.accessMode,

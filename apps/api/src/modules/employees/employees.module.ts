@@ -8,6 +8,6 @@ import { EmployeeRecordsService } from './employee-records.service';
   controllers: [EmployeesController],
   imports: [AuthModule],
   providers: [EmployeesService, EmployeeRecordsService],
-  exports: [EmployeesService],
+  exports: [EmployeesService, EmployeeRecordsService],
 })
 export class EmployeesModule {}

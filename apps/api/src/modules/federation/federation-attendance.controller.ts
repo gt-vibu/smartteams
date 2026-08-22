@@ -20,7 +20,10 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { parseWebauthnResponse, WebauthnService } from '../attendance/webauthn.service';
 import { ShiftsService } from '../shifts/shifts.service';
 import { FederationAuthGuard } from './federation-auth.guard';
-import { FederationControllerSupport } from './federation-controller-support';
+import {
+  FederationControllerSupport,
+  requireFederatedApprover,
+} from './federation-controller-support';
 import {
   FederatedAssertionBeginDto,
   FederatedAttendanceQueryDto,
@@ -30,6 +33,7 @@ import {
 import type { FederationRequest } from './federation.types';
 import { FederationIdempotencyInterceptor } from './federation-idempotency.interceptor';
 import { FederationRateLimitInterceptor } from './federation-rate-limit.interceptor';
+import { FederatedEmployeeService } from './federated-employee.service';
 
 @Controller('v1')
 @UseInterceptors(FederationRateLimitInterceptor, FederationIdempotencyInterceptor)
@@ -39,6 +43,7 @@ export class FederationAttendanceController {
     private readonly webauthn: WebauthnService,
     private readonly shifts: ShiftsService,
     private readonly support: FederationControllerSupport,
+    private readonly employees: FederatedEmployeeService,
   ) {}
 
   @Get('federation/attendance')
@@ -48,10 +53,16 @@ export class FederationAttendanceController {
     @Query() query: FederatedAttendanceQueryDto,
     @Req() request: FederationRequest,
   ) {
-    return this.attendance.list(
-      await this.support.context(request, organizationId, 'attendance.read', query.branchId),
-      query,
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.read',
+      query.branchId,
     );
+    const employeeId = query.employeeId
+      ? await this.employees.internalId(context, query.employeeId)
+      : undefined;
+    return this.attendance.list(context, { ...query, ...(employeeId ? { employeeId } : {}) });
   }
 
   @Get('federation/attendance/policies')
@@ -71,9 +82,12 @@ export class FederationAttendanceController {
   @UseGuards(FederationAuthGuard)
   async shiftsList(
     @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Req() request: FederationRequest,
   ) {
-    return this.shifts.list(await this.support.context(request, organizationId, 'shifts.read'));
+    return this.shifts.list(
+      await this.support.context(request, organizationId, 'shifts.read', branchId),
+    );
   }
 
   @Put('federation/attendance/preferences')
@@ -100,6 +114,7 @@ export class FederationAttendanceController {
     @Param('attendanceId') attendanceId: string,
     @Headers('x-organization-id') organizationId: string,
     @Body() body: AttendanceCorrectionDto,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Req() request: FederationRequest,
   ) {
     return this.attendance.requestCorrection(
@@ -107,7 +122,7 @@ export class FederationAttendanceController {
         request,
         organizationId,
         'attendance.corrections.write',
-        undefined,
+        branchId,
         body.reason,
       ),
       attendanceId,
@@ -121,15 +136,28 @@ export class FederationAttendanceController {
     @Param('correctionId') correctionId: string,
     @Headers('x-organization-id') organizationId: string,
     @Body() body: AttendanceDecisionDto,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Req() request: FederationRequest,
   ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.corrections.decide',
+      branchId,
+      body.comment,
+    );
+    const approverUserId = await this.employees.internalUserId(
+      context,
+      requireFederatedApprover(body.decidedByExternalEmployeeId),
+    );
     return this.attendance.decideCorrection(
       await this.support.context(
         request,
         organizationId,
         'attendance.corrections.decide',
-        undefined,
+        branchId,
         body.comment,
+        approverUserId,
       ),
       correctionId,
       body.status,
@@ -174,11 +202,19 @@ export class FederationAttendanceController {
     @Body() body: PunchDto,
     @Req() request: FederationRequest,
   ) {
-    return this.attendance.punch(
-      await this.support.context(request, organizationId, 'attendance.write', body.branchId),
-      'IN',
-      { ...body, source: 'FEDERATION' },
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.write',
+      body.branchId,
     );
+    const employeeId = await this.employees.internalId(context, body.employeeId);
+    return this.attendance.punch(context, 'IN', {
+      ...body,
+      employeeId,
+      ...(context.branchId ? { branchId: context.branchId } : {}),
+      source: 'FEDERATION',
+    });
   }
 
   @Post('federation/attendance/check-outs')
@@ -188,10 +224,18 @@ export class FederationAttendanceController {
     @Body() body: PunchDto,
     @Req() request: FederationRequest,
   ) {
-    return this.attendance.punch(
-      await this.support.context(request, organizationId, 'attendance.write', body.branchId),
-      'OUT',
-      { ...body, source: 'FEDERATION' },
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.write',
+      body.branchId,
     );
+    const employeeId = await this.employees.internalId(context, body.employeeId);
+    return this.attendance.punch(context, 'OUT', {
+      ...body,
+      employeeId,
+      ...(context.branchId ? { branchId: context.branchId } : {}),
+      source: 'FEDERATION',
+    });
   }
 }

@@ -109,6 +109,17 @@ export const ApprovalDomain = {
 export type ApprovalDomain = (typeof ApprovalDomain)[keyof typeof ApprovalDomain]
 
 
+export const ComplianceRecordStatus = {
+  DRAFT: 'DRAFT',
+  READY: 'READY',
+  SUBMITTED: 'SUBMITTED',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type ComplianceRecordStatus = (typeof ComplianceRecordStatus)[keyof typeof ComplianceRecordStatus]
+
+
 export const ApproverType = {
   ROLE: 'ROLE',
   USER: 'USER',
@@ -201,6 +212,17 @@ export const AttendanceStatus = {
 } as const
 
 export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
+
+
+export const AttendanceDayStatus = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  LATE: 'LATE',
+  HALF_DAY: 'HALF_DAY',
+  ON_LEAVE: 'ON_LEAVE'
+} as const
+
+export type AttendanceDayStatus = (typeof AttendanceDayStatus)[keyof typeof AttendanceDayStatus]
 
 
 export const AttendancePunchType = {
