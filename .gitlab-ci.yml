@@ -79,7 +79,7 @@ build_api:
     - rm -rf deploy/api
     - mkdir -p deploy/api
     - pnpm exec turbo run build --filter=@smarteam/api...
-    - pnpm --filter @smarteam/api deploy --prod deploy/api
+    - pnpm --filter @smarteam/api deploy --prod --legacy deploy/api
     - rm -rf deploy/api/dist
     - cp -a apps/api/dist deploy/api/dist
   artifacts:
@@ -109,7 +109,7 @@ build_web_org:
     - rm -rf deploy/web-org
     - mkdir -p deploy/web-org
     - pnpm exec turbo run build --filter=@smarteam/web-org...
-    - pnpm --filter @smarteam/web-org deploy --prod deploy/web-org
+    - pnpm --filter @smarteam/web-org deploy --prod --legacy deploy/web-org
     - rm -rf deploy/web-org/.next
     - cp -a apps/web-org/.next deploy/web-org/.next
     - if [ -d apps/web-org/public ]; then cp -a apps/web-org/public deploy/web-org/public; fi
@@ -140,7 +140,7 @@ build_web_admin:
     - rm -rf deploy/web-admin
     - mkdir -p deploy/web-admin
     - pnpm exec turbo run build --filter=@smarteam/web-admin...
-    - pnpm --filter @smarteam/web-admin deploy --prod deploy/web-admin
+    - pnpm --filter @smarteam/web-admin deploy --prod --legacy deploy/web-admin
     - rm -rf deploy/web-admin/.next
     - cp -a apps/web-admin/.next deploy/web-admin/.next
     - if [ -d apps/web-admin/public ]; then cp -a apps/web-admin/public deploy/web-admin/public; fi
