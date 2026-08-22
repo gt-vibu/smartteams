@@ -7,6 +7,13 @@ CREATE TYPE "WebauthnChallengePurpose" AS ENUM ('ENROLLMENT', 'ASSERTION');
 -- CreateEnum
 CREATE TYPE "WebauthnChallengeStatus" AS ENUM ('PENDING', 'CONSUMED', 'EXPIRED');
 
+-- Existing tenant tables use FORCE ROW LEVEL SECURITY. PostgreSQL validates
+-- new foreign keys and checks by scanning the table, so allow the migration
+-- owner to perform these DDL scans and restore FORCE after the changes.
+ALTER TABLE "attendance_punches" NO FORCE ROW LEVEL SECURITY;
+ALTER TABLE "branches" NO FORCE ROW LEVEL SECURITY;
+ALTER TABLE "organization_settings" NO FORCE ROW LEVEL SECURITY;
+
 -- AlterEnum
 BEGIN;
 CREATE TYPE "OwnerSource_new" AS ENUM ('NATIVE', 'FEDERATED');
@@ -160,3 +167,7 @@ CREATE TRIGGER webauthn_credentials_same_organization_references
 CREATE TRIGGER webauthn_challenges_same_organization_references
   BEFORE INSERT OR UPDATE ON "webauthn_challenges"
   FOR EACH ROW EXECUTE FUNCTION enforce_webauthn_same_organization_references();
+
+ALTER TABLE "attendance_punches" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "branches" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "organization_settings" FORCE ROW LEVEL SECURITY;

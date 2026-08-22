@@ -2,6 +2,8 @@
 -- covered by the original review trigger. These guards remain active even if
 -- an application-layer validation is bypassed.
 
+ALTER TABLE "employee_field_ownership" NO FORCE ROW LEVEL SECURITY;
+
 ALTER TABLE "employee_field_ownership"
   ADD CONSTRAINT "employee_field_ownership_owner_check"
   CHECK (
@@ -39,3 +41,5 @@ CREATE TRIGGER holidays_same_organization_references
 CREATE TRIGGER user_roles_same_organization_references
   BEFORE INSERT OR UPDATE ON "user_roles"
   FOR EACH ROW EXECUTE FUNCTION enforce_additional_same_organization_references();
+
+ALTER TABLE "employee_field_ownership" FORCE ROW LEVEL SECURITY;

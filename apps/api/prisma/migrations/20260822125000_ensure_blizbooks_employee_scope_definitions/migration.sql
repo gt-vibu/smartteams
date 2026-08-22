@@ -1,3 +1,6 @@
+ALTER TABLE "organizations" NO FORCE ROW LEVEL SECURITY;
+ALTER TABLE "federation_grants" NO FORCE ROW LEVEL SECURITY;
+
 INSERT INTO "federation_scopes" ("id", "code", "description")
 VALUES
   (gen_random_uuid(), 'employees.read', 'Read federated employee records.'),
@@ -50,3 +53,6 @@ WHERE organization."source" = 'BLIZBOOKS'::"OrganizationSource"
       AND deny_scope."code" = target_scope."code"
   )
 ON CONFLICT ("grant_id", "scope_id") DO NOTHING;
+
+ALTER TABLE "organizations" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "federation_grants" FORCE ROW LEVEL SECURITY;

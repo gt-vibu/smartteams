@@ -1,3 +1,6 @@
+ALTER TABLE "organizations" NO FORCE ROW LEVEL SECURITY;
+ALTER TABLE "organization_federation_capabilities" NO FORCE ROW LEVEL SECURITY;
+
 INSERT INTO "federation_capabilities" ("id", "code", "version", "description", "is_active", "created_at")
 VALUES
   (gen_random_uuid(), 'timesheets', 'v1', 'Federated timesheet derivation, submission, and approval.', true, NOW()),
@@ -26,3 +29,6 @@ WHERE NOT EXISTS (
     AND current."capability_id" = capability."id"
 )
 AND organization."source" = 'BLIZBOOKS';
+
+ALTER TABLE "organizations" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "organization_federation_capabilities" FORCE ROW LEVEL SECURITY;

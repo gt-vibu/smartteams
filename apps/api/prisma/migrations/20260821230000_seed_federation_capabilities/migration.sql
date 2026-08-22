@@ -1,6 +1,9 @@
 -- Register the capabilities implemented by the federation API and enable them
 -- for existing federated tenants. Existing tenant overrides are preserved.
 
+ALTER TABLE "organizations" NO FORCE ROW LEVEL SECURITY;
+ALTER TABLE "organization_federation_capabilities" NO FORCE ROW LEVEL SECURITY;
+
 INSERT INTO "federation_capabilities" ("id", "code", "version", "description", "is_active", "created_at")
 VALUES
   (gen_random_uuid(), 'employees', 'v1', 'Federated employee identity and access synchronization.', true, NOW()),
@@ -35,5 +38,8 @@ LEFT JOIN "organization_federation_capabilities" AS existing
   ON existing."organization_id" = organization."id"
  AND existing."capability_id" = capability."id"
 WHERE organization."source" = 'BLIZBOOKS'::"OrganizationSource"
-  AND capability."version" = 'v1'
+AND capability."version" = 'v1'
   AND existing."organization_id" IS NULL;
+
+ALTER TABLE "organizations" FORCE ROW LEVEL SECURITY;
+ALTER TABLE "organization_federation_capabilities" FORCE ROW LEVEL SECURITY;
