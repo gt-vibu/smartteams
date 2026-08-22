@@ -16,6 +16,7 @@ export const serverEnvSchema = z
     CORS_ORIGINS: z.string().default('http://localhost:3000,http://localhost:3001'),
     TRUST_PROXY_HOPS: z.coerce.number().int().nonnegative().default(1),
     DATABASE_URL: z.string().min(1),
+    SHADOW_DATABASE_URL: z.string().min(1).optional().or(z.literal('')),
     // DATABASE_URL is the least-privileged application role. The elevated URLs
     // are intentionally separate so a tenant request can never reuse a role
     // that is allowed to bypass RLS.
@@ -30,7 +31,6 @@ export const serverEnvSchema = z
     AWS_S3_FORCE_PATH_STYLE: booleanFromEnv.default(false),
     AWS_ACCESS_KEY_ID: z.string().optional().or(z.literal('')),
     AWS_SECRET_ACCESS_KEY: z.string().optional().or(z.literal('')),
-    AWS_S3_KMS_KEY_ID: z.string().optional().or(z.literal('')),
     JWT_ISSUER: z.string().min(1).default('smarteam-api'),
     JWT_AUDIENCE: z.string().min(1).default('smarteam-app'),
     JWT_SECRET: z.string().min(32).optional().or(z.literal('')),

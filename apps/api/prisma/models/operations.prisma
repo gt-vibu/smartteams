@@ -5,6 +5,7 @@ model AttendanceRecord {
   branchId         String?          @map("branch_id") @db.Uuid
   workDate         DateTime         @map("work_date") @db.Date
   status           AttendanceStatus @default(OPEN)
+  dayStatus        AttendanceDayStatus @default(PRESENT) @map("day_status")
   scheduledMinutes Int?             @map("scheduled_minutes")
   workedMinutes    Int              @default(0) @map("worked_minutes")
   overtimeMinutes  Int              @default(0) @map("overtime_minutes")

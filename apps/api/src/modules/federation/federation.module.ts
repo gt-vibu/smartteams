@@ -9,6 +9,10 @@ import { FederationEmployeesController } from './federation-employees.controller
 import { FederationInfrastructureController } from './federation-infrastructure.controller';
 import { FederationLeaveController } from './federation-leave.controller';
 import { FederationPayrollController } from './federation-payroll.controller';
+import { FederationShiftsController } from './federation-shifts.controller';
+import { FederationTimesheetsController } from './federation-timesheets.controller';
+import { FederationComplianceController } from './federation-compliance.controller';
+import { FederatedEmployeeService } from './federated-employee.service';
 import { FederationGrantService } from './federation-grant.service';
 import { FederationIdempotencyService } from './federation-idempotency.service';
 import { OutboxService } from './outbox.service';
@@ -25,7 +29,9 @@ import { LeaveModule } from '../leave/leave.module';
 import { OrganizationsModule } from '../organizations/organizations.module';
 import { PayrollModule } from '../payroll/payroll.module';
 import { ShiftsModule } from '../shifts/shifts.module';
+import { TimesheetsModule } from '../timesheets/timesheets.module';
 import { HealthModule } from '../../common/health/health.module';
+import { ComplianceModule } from '../compliance/compliance.module';
 
 @Global()
 @Module({
@@ -35,6 +41,9 @@ import { HealthModule } from '../../common/health/health.module';
     FederationAttendanceController,
     FederationLeaveController,
     FederationPayrollController,
+    FederationShiftsController,
+    FederationTimesheetsController,
+    FederationComplianceController,
   ],
   exports: [
     FederationAuthService,
@@ -53,6 +62,8 @@ import { HealthModule } from '../../common/health/health.module';
     OrganizationsModule,
     PayrollModule,
     ShiftsModule,
+    TimesheetsModule,
+    ComplianceModule,
     HealthModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -77,6 +88,7 @@ import { HealthModule } from '../../common/health/health.module';
     WebhookService,
     WebhookProcessor,
     OutboxDispatchProcessor,
+    FederatedEmployeeService,
   ],
 })
 export class FederationModule {}

@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsEmail,
   IsArray,
   IsDateString,
   IsInt,
@@ -40,15 +41,45 @@ export class FederatedEmployeeDto {
   @IsOptional() @IsString() externalId?: string;
   @IsString() employeeNumber!: string;
   @IsString() firstName!: string;
-  @IsOptional() @IsString() middleName?: string;
+  @IsOptional() @IsString() middleName?: string | null;
   @IsString() lastName!: string;
-  @IsOptional() @IsString() preferredName?: string;
-  @IsOptional() @IsString() workEmail?: string;
+  @IsOptional() @IsString() preferredName?: string | null;
+  @IsOptional() @IsEmail() workEmail?: string | null;
+  @IsOptional() @IsEmail() personalEmail?: string | null;
+  @IsOptional() @IsString() phone?: string | null;
   @IsOptional() @IsIn(Object.values(EmployeeStatus)) status?: EmployeeStatus;
   @IsOptional() @IsIn(Object.values(EmploymentType)) employmentType?: EmploymentType;
-  @IsOptional() @IsDateString() dateOfJoining?: string;
+  @IsOptional() @IsDateString() dateOfJoining?: string | null;
+  @IsOptional() @IsDateString() dateOfLeaving?: string;
+  @IsOptional() @IsUUID() managerEmployeeId?: string;
   @IsOptional() @IsUUID() primaryBranchId?: string;
   @IsOptional() @IsString() externalVersion?: string;
+}
+
+export class FederatedEmployeePatchDto {
+  @IsOptional() @IsString() employeeNumber?: string;
+  @IsOptional() @IsString() firstName?: string;
+  @IsOptional() @IsString() middleName?: string;
+  @IsOptional() @IsString() lastName?: string;
+  @IsOptional() @IsString() preferredName?: string | null;
+  @IsOptional() @IsEmail() workEmail?: string | null;
+  @IsOptional() @IsEmail() personalEmail?: string | null;
+  @IsOptional() @IsString() phone?: string | null;
+  @IsOptional() @IsIn(Object.values(EmployeeStatus)) status?: EmployeeStatus;
+  @IsOptional() @IsIn(Object.values(EmploymentType)) employmentType?: EmploymentType;
+  @IsOptional() @IsDateString() dateOfJoining?: string | null;
+  @IsOptional() @IsDateString() dateOfLeaving?: string | null;
+  @IsOptional() @IsUUID() primaryBranchId?: string;
+  @IsOptional() @IsUUID() managerEmployeeId?: string;
+  @IsOptional() @IsString() externalVersion?: string;
+}
+
+export class FederatedEmployeeQueryDto {
+  @IsOptional() @IsString() search?: string;
+  @IsOptional() @IsIn(Object.values(EmployeeStatus)) status?: EmployeeStatus;
+  @IsOptional() @IsUUID() branchId?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+  @IsOptional() @IsString() @MinLength(1) cursor?: string;
 }
 
 export class WebhookSubscriptionDto {
@@ -102,6 +133,9 @@ export class FederatedPreferencesDto {
 }
 export class FederatedLeaveBalanceQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsString() status?: string;
+  @IsOptional() @IsString() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
 }
 export class FederatedAttendanceQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;

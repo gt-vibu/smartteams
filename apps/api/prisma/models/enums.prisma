@@ -65,6 +65,14 @@ enum ApprovalDomain {
   PAYROLL
 }
 
+enum ComplianceRecordStatus {
+  DRAFT
+  READY
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+}
+
 enum ApproverType {
   ROLE
   USER
@@ -127,6 +135,14 @@ enum AttendanceStatus {
   CORRECTED
   APPROVED
   REJECTED
+}
+
+enum AttendanceDayStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
+  ON_LEAVE
 }
 
 enum AttendancePunchType {

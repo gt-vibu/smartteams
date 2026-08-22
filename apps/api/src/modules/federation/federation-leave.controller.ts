@@ -14,7 +14,10 @@ import {
 import { LeaveService } from '../leave/leave.service';
 import { LeaveDecisionDto, LeaveRequestDto, LeaveTypeDto } from '../leave/leave.dto';
 import { FederationAuthGuard } from './federation-auth.guard';
-import { FederationControllerSupport } from './federation-controller-support';
+import {
+  FederationControllerSupport,
+  requireFederatedApprover,
+} from './federation-controller-support';
 import {
   FederatedLeaveAdjustmentDto,
   FederatedLeaveBalanceQueryDto,
@@ -23,6 +26,7 @@ import {
 import type { FederationRequest } from './federation.types';
 import { FederationIdempotencyInterceptor } from './federation-idempotency.interceptor';
 import { FederationRateLimitInterceptor } from './federation-rate-limit.interceptor';
+import { FederatedEmployeeService } from './federated-employee.service';
 
 @Controller('v1')
 @UseInterceptors(FederationRateLimitInterceptor, FederationIdempotencyInterceptor)
@@ -30,6 +34,7 @@ export class FederationLeaveController {
   constructor(
     private readonly leave: LeaveService,
     private readonly support: FederationControllerSupport,
+    private readonly employees: FederatedEmployeeService,
   ) {}
 
   @Get('federation/leave/types')
@@ -62,26 +67,43 @@ export class FederationLeaveController {
   @UseGuards(FederationAuthGuard)
   async balances(
     @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Query() query: FederatedLeaveBalanceQueryDto,
     @Req() request: FederationRequest,
   ) {
-    return this.leave.listBalances(
-      await this.support.context(request, organizationId, 'leave.balances.read'),
-      query.employeeId,
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'leave.balances.read',
+      branchId,
     );
+    const employeeId = query.employeeId
+      ? await this.employees.internalId(context, query.employeeId)
+      : undefined;
+    return this.leave.listBalances(context, employeeId);
   }
 
   @Get('federation/leave/requests')
   @UseGuards(FederationAuthGuard)
   async requests(
     @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Query() query: FederatedLeaveBalanceQueryDto,
     @Req() request: FederationRequest,
   ) {
-    return this.leave.listRequests(
-      await this.support.context(request, organizationId, 'leave.requests.read'),
-      query.employeeId,
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'leave.requests.read',
+      branchId,
     );
+    const employeeId = query.employeeId
+      ? await this.employees.internalId(context, query.employeeId)
+      : undefined;
+    return this.leave.listRequests(context, employeeId, {
+      ...(query.cursor ? { cursor: query.cursor } : {}),
+      ...(query.limit ? { limit: query.limit } : {}),
+    });
   }
 
   @Post('federation/leave/requests')
@@ -91,10 +113,19 @@ export class FederationLeaveController {
     @Body() body: LeaveRequestDto,
     @Req() request: FederationRequest,
   ) {
-    return this.leave.createRequest(
-      await this.support.context(request, organizationId, 'leave.requests.write', body.branchId),
-      { ...body, source: 'FEDERATION' },
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'leave.requests.write',
+      body.branchId,
     );
+    const employeeId = await this.employees.internalId(context, body.employeeId);
+    return this.leave.createRequest(context, {
+      ...body,
+      employeeId,
+      ...(context.branchId ? { branchId: context.branchId } : {}),
+      source: 'FEDERATION',
+    });
   }
 
   @Post('federation/leave/requests/:requestId/decision')
@@ -103,15 +134,28 @@ export class FederationLeaveController {
     @Param('requestId') requestId: string,
     @Headers('x-organization-id') organizationId: string,
     @Body() body: LeaveDecisionDto,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Req() request: FederationRequest,
   ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'leave.requests.decide',
+      branchId,
+      body.comment,
+    );
+    const approverUserId = await this.employees.internalUserId(
+      context,
+      requireFederatedApprover(body.decidedByExternalEmployeeId),
+    );
     return this.leave.decide(
       await this.support.context(
         request,
         organizationId,
         'leave.requests.decide',
-        undefined,
+        branchId,
         body.comment,
+        approverUserId,
       ),
       requestId,
       body.status,
@@ -125,6 +169,7 @@ export class FederationLeaveController {
     @Param('requestId') requestId: string,
     @Headers('x-organization-id') organizationId: string,
     @Body() body: FederationReasonDto,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Req() request: FederationRequest,
   ) {
     return this.leave.cancel(
@@ -132,7 +177,7 @@ export class FederationLeaveController {
         request,
         organizationId,
         'leave.requests.write',
-        undefined,
+        branchId,
         body.reason,
       ),
       requestId,
@@ -145,17 +190,19 @@ export class FederationLeaveController {
   async adjustment(
     @Headers('x-organization-id') organizationId: string,
     @Body() body: FederatedLeaveAdjustmentDto,
+    @Headers('x-branch-id') branchId: string | undefined,
     @Req() request: FederationRequest,
   ) {
-    return this.leave.adjustBalance(
-      await this.support.context(
-        request,
-        organizationId,
-        'leave.balances.adjust',
-        undefined,
-        body.reason,
-      ),
-      body,
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'leave.balances.adjust',
+      branchId,
+      body.reason,
     );
+    return this.leave.adjustBalance(context, {
+      ...body,
+      employeeId: await this.employees.internalId(context, body.employeeId),
+    });
   }
 }

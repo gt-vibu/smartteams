@@ -14,6 +14,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { AttendanceDayStatus } from '../../generated/prisma/enums';
 export class PunchDto {
   @IsUUID() employeeId!: string;
   @IsDateString() occurredAt!: string;
@@ -24,6 +25,7 @@ export class PunchDto {
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsString() @MinLength(1) @MaxLength(512) webauthnCredentialId?: string;
   @IsOptional() @IsString() externalId?: string;
+  @IsOptional() @IsEnum(AttendanceDayStatus) dayStatus?: AttendanceDayStatus;
 }
 
 export class AttendanceQueryDto {
@@ -31,18 +33,19 @@ export class AttendanceQueryDto {
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsDateString() from?: string;
   @IsOptional() @IsDateString() to?: string;
-  @IsOptional() @IsString() cursor?: string;
+  @IsOptional() @IsString() @MaxLength(256) cursor?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
 }
 
 export class AttendanceCorrectionDto {
-  @IsString() @MinLength(10) reason!: string;
+  @IsString() @MinLength(10) @MaxLength(500) reason!: string;
   @IsOptional() afterSnapshot?: Record<string, unknown>;
 }
 
 export class AttendanceDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
-  @IsString() @MinLength(2) comment!: string;
+  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
 }
 
 export class WorkLocationDto {

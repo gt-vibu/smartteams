@@ -1,4 +1,14 @@
-import { IsDateString, IsEnum, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class TimesheetPeriodDto {
   @IsEnum(['WEEKLY', 'BIWEEKLY', 'MONTHLY', 'CUSTOM']) periodType!:
@@ -14,7 +24,8 @@ export class ManualEntryDto {
 }
 export class TimesheetDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
-  @IsString() comment!: string;
+  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
 }
 export class TimesheetQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
