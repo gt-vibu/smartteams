@@ -1,43 +1,252 @@
-image: node:24.11.1
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+    - when: never
 
 stages:
   - validate
   - build
+  - deploy
 
-cache:
-  key:
-    files:
-      - pnpm-lock.yaml
-  paths:
-    - .pnpm-store/
-
-before_script:
-  - corepack enable
-  - pnpm install --frozen-lockfile --store-dir .pnpm-store
-
-lint:
-  stage: validate
-  script:
-    - pnpm run lint
-    - pnpm run format:check
-
-typecheck:
-  stage: validate
-  script:
-    - pnpm run typecheck
-
-test:
-  stage: validate
-  script:
-    - pnpm run test
-
-build:
-  stage: build
-  script:
-    - pnpm run build
-  artifacts:
-    expire_in: 1 week
+default:
+  image: node:24.11.1-bookworm
+  interruptible: true
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
     paths:
-      - apps/api/dist/
-      - apps/web-org/.next/
-      - apps/web-admin/.next/
+      - .pnpm-store/
+
+variables:
+  NEXT_PUBLIC_API_URL: https://people-control-dev.blizbooks.com
+  NEXT_PUBLIC_APP_ENV: development
+  NODE_OPTIONS: --max-old-space-size=1536
+  PNPM_STORE_DIR: $CI_PROJECT_DIR/.pnpm-store
+
+.node_setup:
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@10.24.0 --activate
+    - pnpm config set store-dir "$PNPM_STORE_DIR"
+    - pnpm install --frozen-lockfile
+
+quality:
+  extends: .node_setup
+  stage: validate
+  resource_group: smarteam-dev-quality
+  script:
+    - pnpm lint
+    - pnpm format:check
+    - pnpm typecheck
+    - pnpm test
+
+.service_changes:
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "dev"'
+      when: never
+    - changes:
+        - packages/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
+        - .npmrc
+        - .nvmrc
+        - scripts/**/*
+        - .gitlab-ci.yml
+
+build_api:
+  extends: .node_setup
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "dev"'
+      when: never
+    - changes:
+        - apps/api/**/*
+        - packages/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
+        - .npmrc
+        - .nvmrc
+        - scripts/**/*
+        - .gitlab-ci.yml
+  script:
+    - rm -rf deploy/api
+    - mkdir -p deploy/api
+    - pnpm exec turbo run build --filter=@smarteam/api...
+    - pnpm --filter @smarteam/api deploy --prod deploy/api
+    - rm -rf deploy/api/dist
+    - cp -a apps/api/dist deploy/api/dist
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - deploy/api/
+
+build_web_org:
+  extends: .node_setup
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "dev"'
+      when: never
+    - changes:
+        - apps/web-org/**/*
+        - packages/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
+        - .npmrc
+        - .nvmrc
+        - scripts/**/*
+        - .gitlab-ci.yml
+  script:
+    - rm -rf deploy/web-org
+    - mkdir -p deploy/web-org
+    - pnpm exec turbo run build --filter=@smarteam/web-org...
+    - pnpm --filter @smarteam/web-org deploy --prod deploy/web-org
+    - rm -rf deploy/web-org/.next
+    - cp -a apps/web-org/.next deploy/web-org/.next
+    - if [ -d apps/web-org/public ]; then cp -a apps/web-org/public deploy/web-org/public; fi
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - deploy/web-org/
+
+build_web_admin:
+  extends: .node_setup
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "dev"'
+      when: never
+    - changes:
+        - apps/web-admin/**/*
+        - packages/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
+        - .npmrc
+        - .nvmrc
+        - scripts/**/*
+        - .gitlab-ci.yml
+  script:
+    - rm -rf deploy/web-admin
+    - mkdir -p deploy/web-admin
+    - pnpm exec turbo run build --filter=@smarteam/web-admin...
+    - pnpm --filter @smarteam/web-admin deploy --prod deploy/web-admin
+    - rm -rf deploy/web-admin/.next
+    - cp -a apps/web-admin/.next deploy/web-admin/.next
+    - if [ -d apps/web-admin/public ]; then cp -a apps/web-admin/public deploy/web-admin/public; fi
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - deploy/web-admin/
+
+.deploy_setup:
+  image: debian:bookworm-slim
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends ca-certificates openssh-client
+    - install -d -m 700 ~/.ssh
+    - printf '%s\n' "$DEV_DEPLOY_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - printf '%s\n' "$DEV_DEPLOY_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - test -n "$DEV_DEPLOY_HOST"
+    - test -n "$DEV_DEPLOY_PORT"
+    - test -n "$DEV_DEPLOY_ROOT"
+    - test -n "$DEV_DEPLOY_USER"
+    - test -n "$DEV_APP_SECRET_ID"
+
+.deploy_script: &deploy_script
+  - export RELEASE_ID="$CI_COMMIT_SHORT_SHA"
+  - export DEPLOY_TARGET="$DEV_DEPLOY_USER@$DEV_DEPLOY_HOST"
+  - ssh -p "$DEV_DEPLOY_PORT" "$DEPLOY_TARGET" "sudo install -d -o $DEV_DEPLOY_USER -g $DEV_DEPLOY_USER '$DEV_DEPLOY_ROOT/incoming/$RELEASE_ID/$DEPLOY_SERVICE'"
+  - scp -P "$DEV_DEPLOY_PORT" -r "deploy/$DEPLOY_SERVICE/." "$DEPLOY_TARGET:$DEV_DEPLOY_ROOT/incoming/$RELEASE_ID/$DEPLOY_SERVICE/"
+  - scp -P "$DEV_DEPLOY_PORT" scripts/ci/activate-dev-release.sh "$DEPLOY_TARGET:/tmp/smarteam-activate-$RELEASE_ID-$DEPLOY_SERVICE.sh"
+  - ssh -p "$DEV_DEPLOY_PORT" "$DEPLOY_TARGET" "sudo bash /tmp/smarteam-activate-$RELEASE_ID-$DEPLOY_SERVICE.sh '$DEV_DEPLOY_ROOT' '$RELEASE_ID' '$DEV_APP_SECRET_ID' '${AWS_REGION:-ap-south-1}' '$DEV_DEPLOY_USER' '$DEPLOY_SERVICE'"
+
+deploy_api:
+  extends: .deploy_setup
+  stage: deploy
+  resource_group: smarteam-dev-deploy-api
+  variables:
+    DEPLOY_SERVICE: api
+  needs:
+    - job: build_api
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "dev"'
+      when: never
+    - changes:
+        - apps/api/**/*
+        - packages/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
+        - .npmrc
+        - .nvmrc
+        - scripts/**/*
+        - .gitlab-ci.yml
+  script: *deploy_script
+
+deploy_web_org:
+  extends: .deploy_setup
+  stage: deploy
+  resource_group: smarteam-dev-deploy-web-org
+  variables:
+    DEPLOY_SERVICE: web-org
+  needs:
+    - job: build_web_org
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "dev"'
+      when: never
+    - changes:
+        - apps/web-org/**/*
+        - packages/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
+        - .npmrc
+        - .nvmrc
+        - scripts/**/*
+        - .gitlab-ci.yml
+  script: *deploy_script
+
+deploy_web_admin:
+  extends: .deploy_setup
+  stage: deploy
+  resource_group: smarteam-dev-deploy-web-admin
+  variables:
+    DEPLOY_SERVICE: web-admin
+  needs:
+    - job: build_web_admin
+      artifacts: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "dev"'
+      when: never
+    - changes:
+        - apps/web-admin/**/*
+        - packages/**/*
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - turbo.json
+        - tsconfig.base.json
+        - .npmrc
+        - .nvmrc
+        - scripts/**/*
+        - .gitlab-ci.yml
+  script: *deploy_script
