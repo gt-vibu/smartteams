@@ -6,6 +6,7 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "noEmit": false,
     "outDir": "dist",
     "sourceMap": true,
