@@ -87,27 +87,32 @@ EOF
 chmod 750 "$START_FILE"
 chown "$DEPLOY_USER:$DEPLOY_USER" "$START_FILE"
 
-run_as_deploy_user() {
+run_as_service_user() {
   runuser -u "$DEPLOY_USER" -- env HOME="/home/$DEPLOY_USER" PM2_HOME="/home/$DEPLOY_USER/.pm2" bash -lc "$1"
 }
+
+if [ "$SERVICE" = api ]; then
+  echo "Running Prisma database migrations..."
+  run_as_service_user "cd '$SERVICE_RELEASE_DIR' && DATABASE_URL=\"\$(sed -n 's/^DATABASE_URL=//p' '$SHARED_DIR/.env')\" '$SERVICE_RELEASE_DIR/node_modules/.bin/prisma' migrate deploy --config prisma.config.ts"
+fi
 
 save_pm2_state() {
   (
     exec 8>"$PM2_SAVE_LOCK_FILE"
     flock 8
-    run_as_deploy_user "pm2 save"
+    run_as_service_user "pm2 save"
   )
 }
 
 legacy_was_running=false
-if run_as_deploy_user "pm2 describe '$PM2_NAME' >/dev/null 2>&1"; then
-  run_as_deploy_user "pm2 delete '$PM2_NAME' >/dev/null 2>&1 || true"
-elif [ -n "$LEGACY_PM2_NAME" ] && run_as_deploy_user "pm2 describe '$LEGACY_PM2_NAME' >/dev/null 2>&1"; then
-  run_as_deploy_user "pm2 stop '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"
+if run_as_service_user "pm2 describe '$PM2_NAME' >/dev/null 2>&1"; then
+  run_as_service_user "pm2 delete '$PM2_NAME' >/dev/null 2>&1 || true"
+elif [ -n "$LEGACY_PM2_NAME" ] && run_as_service_user "pm2 describe '$LEGACY_PM2_NAME' >/dev/null 2>&1"; then
+  run_as_service_user "pm2 stop '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"
   legacy_was_running=true
 fi
 
-run_as_deploy_user "pm2 start '$START_FILE' --name '$PM2_NAME'"
+run_as_service_user "pm2 start '$START_FILE' --name '$PM2_NAME'"
 
 healthy=false
 for _ in $(seq 1 30); do
@@ -119,16 +124,16 @@ for _ in $(seq 1 30); do
 done
 
 if [ "$healthy" != true ]; then
-  run_as_deploy_user "pm2 delete '$PM2_NAME' >/dev/null 2>&1 || true"
+  run_as_service_user "pm2 delete '$PM2_NAME' >/dev/null 2>&1 || true"
   if [ "$legacy_was_running" = true ]; then
-    run_as_deploy_user "pm2 restart '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"
+    run_as_service_user "pm2 restart '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"
   fi
   echo "Smart Team $SERVICE health check failed; previous service was restored when available." >&2
   exit 1
 fi
 
 if [ "$legacy_was_running" = true ]; then
-  run_as_deploy_user "pm2 delete '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"
+  run_as_service_user "pm2 delete '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"
 fi
 save_pm2_state
 rm -f "/tmp/smarteam-activate-$RELEASE_ID-$SERVICE.sh"

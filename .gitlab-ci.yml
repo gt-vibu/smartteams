@@ -82,6 +82,9 @@ build_api:
     - pnpm --filter @smarteam/api deploy --prod --legacy deploy/api
     - rm -rf deploy/api/dist
     - cp -a apps/api/dist deploy/api/dist
+    - rm -rf deploy/api/prisma
+    - cp -a apps/api/prisma deploy/api/prisma
+    - cp -a apps/api/prisma.config.ts deploy/api/prisma.config.ts
   artifacts:
     expire_in: 1 day
     paths:
@@ -97,14 +100,11 @@ build_web_org:
         - apps/web-org/**/*
         - packages/**/*
         - package.json
-        - pnpm-lock.yaml
         - pnpm-workspace.yaml
         - turbo.json
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
-        - scripts/**/*
-        - .gitlab-ci.yml
   script:
     - rm -rf deploy/web-org
     - mkdir -p deploy/web-org
@@ -128,14 +128,11 @@ build_web_admin:
         - apps/web-admin/**/*
         - packages/**/*
         - package.json
-        - pnpm-lock.yaml
         - pnpm-workspace.yaml
         - turbo.json
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
-        - scripts/**/*
-        - .gitlab-ci.yml
   script:
     - rm -rf deploy/web-admin
     - mkdir -p deploy/web-admin
@@ -215,14 +212,11 @@ deploy_web_org:
         - apps/web-org/**/*
         - packages/**/*
         - package.json
-        - pnpm-lock.yaml
         - pnpm-workspace.yaml
         - turbo.json
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
-        - scripts/**/*
-        - .gitlab-ci.yml
   script: *deploy_script
 
 deploy_web_admin:
@@ -241,12 +235,9 @@ deploy_web_admin:
         - apps/web-admin/**/*
         - packages/**/*
         - package.json
-        - pnpm-lock.yaml
         - pnpm-workspace.yaml
         - turbo.json
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
-        - scripts/**/*
-        - .gitlab-ci.yml
   script: *deploy_script
