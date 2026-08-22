@@ -153,7 +153,7 @@ build_web_admin:
   image: debian:bookworm-slim
   before_script:
     - apt-get update
-    - apt-get install -y --no-install-recommends ca-certificates openssh-client
+    - apt-get install -y --no-install-recommends ca-certificates openssh-client rsync
     - install -d -m 700 ~/.ssh
     - printf '%s\n' "$DEV_DEPLOY_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
@@ -169,7 +169,7 @@ build_web_admin:
   - export RELEASE_ID="$CI_COMMIT_SHORT_SHA"
   - export DEPLOY_TARGET="$DEV_DEPLOY_USER@$DEV_DEPLOY_HOST"
   - ssh -p "$DEV_DEPLOY_PORT" "$DEPLOY_TARGET" "sudo install -d -o $DEV_DEPLOY_USER -g $DEV_DEPLOY_USER '$DEV_DEPLOY_ROOT/incoming/$RELEASE_ID/$DEPLOY_SERVICE'"
-  - scp -P "$DEV_DEPLOY_PORT" -r "deploy/$DEPLOY_SERVICE/." "$DEPLOY_TARGET:$DEV_DEPLOY_ROOT/incoming/$RELEASE_ID/$DEPLOY_SERVICE/"
+  - rsync -az --delete -e "ssh -p $DEV_DEPLOY_PORT" "deploy/$DEPLOY_SERVICE/" "$DEPLOY_TARGET:$DEV_DEPLOY_ROOT/incoming/$RELEASE_ID/$DEPLOY_SERVICE/"
   - scp -P "$DEV_DEPLOY_PORT" scripts/ci/activate-dev-release.sh "$DEPLOY_TARGET:/tmp/smarteam-activate-$RELEASE_ID-$DEPLOY_SERVICE.sh"
   - ssh -p "$DEV_DEPLOY_PORT" "$DEPLOY_TARGET" "sudo bash /tmp/smarteam-activate-$RELEASE_ID-$DEPLOY_SERVICE.sh '$DEV_DEPLOY_ROOT' '$RELEASE_ID' '$DEV_APP_SECRET_ID' '${AWS_REGION:-ap-south-1}' '$DEV_DEPLOY_USER' '$DEPLOY_SERVICE'"
 
