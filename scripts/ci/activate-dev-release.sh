@@ -66,14 +66,14 @@ case "$SERVICE" in
     PORT=3011
     PM2_NAME=smarteam-web-org-dev
     LEGACY_PM2_NAME=smartteams-frontend
-    START_COMMAND="exec env NODE_ENV=production PORT=$PORT node $SERVICE_RELEASE_DIR/node_modules/next/dist/bin/next start --port $PORT"
+    START_COMMAND="cd '$SERVICE_RELEASE_DIR' && exec env NODE_ENV=production PORT=$PORT node '$SERVICE_RELEASE_DIR/node_modules/next/dist/bin/next' start --port $PORT"
     HEALTH_URL="http://127.0.0.1:$PORT/"
     ;;
   web-admin)
     PORT=3012
     PM2_NAME=smarteam-web-admin-dev
     LEGACY_PM2_NAME=""
-    START_COMMAND="exec env NODE_ENV=production PORT=$PORT node $SERVICE_RELEASE_DIR/node_modules/next/dist/bin/next start --port $PORT"
+    START_COMMAND="cd '$SERVICE_RELEASE_DIR' && exec env NODE_ENV=production PORT=$PORT node '$SERVICE_RELEASE_DIR/node_modules/next/dist/bin/next' start --port $PORT"
     HEALTH_URL="http://127.0.0.1:$PORT/"
     ;;
 esac
