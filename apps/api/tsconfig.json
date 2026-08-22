@@ -9,6 +9,7 @@
     "ignoreDeprecations": "6.0",
     "noEmit": false,
     "outDir": "dist",
+    "rootDir": "src",
     "sourceMap": true,
     "strictPropertyInitialization": false,
     "target": "ES2022",
