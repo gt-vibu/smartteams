@@ -40,6 +40,9 @@ export const FEDERATION_GRANTABLE_SCOPES = [
   'leave.requests.write',
   'leave.requests.decide',
   'leave.balances.adjust',
+  'approval-policies.read',
+  'approval-policies.write',
+  'files.write',
   'payroll.components.read',
   'payroll.components.write',
   'payroll.payslips.read',
@@ -56,7 +59,39 @@ export const FEDERATION_GRANTABLE_SCOPES = [
   'payroll.adjustments.write',
   'payroll.compliance.read',
   'payroll.compliance.write',
+  'payroll.policy.read',
+  'payroll.policy.write',
+  'payroll.employee-profile.read',
+  'payroll.employee-profile.read.all',
+  'payroll.employee-profile.write',
+  'payroll.preview.read',
+  'payroll.advances.read',
+  'payroll.advances.read.all',
+  'payroll.advances.request',
+  'payroll.advances.approve',
+  'payroll.payments.read',
+  'payroll.payments.read.all',
+  'payroll.payments.write',
 ] as const;
+
+type ResolvedGrant = {
+  effect: 'ALLOW' | 'DENY';
+  scopes: Array<{ scope: { code: string } }>;
+};
+
+export function effectiveFederationPermissions(grants: ResolvedGrant[]) {
+  const deniedScopes = new Set(
+    grants
+      .filter((grant) => grant.effect === 'DENY')
+      .flatMap((grant) => grant.scopes.map((entry) => entry.scope.code)),
+  );
+  return new Set(
+    grants
+      .filter((grant) => grant.effect === 'ALLOW')
+      .flatMap((grant) => grant.scopes.map((entry) => entry.scope.code))
+      .filter((permission) => !deniedScopes.has(permission)),
+  );
+}
 
 @Injectable()
 export class FederationGrantService {
@@ -119,7 +154,11 @@ export class FederationGrantService {
       throw new ForbiddenDomainError(
         `Federation grant does not allow scope ${scope} for this organization or branch`,
       );
-    return { branchId: branchId ?? grants.find((grant) => grant.branchId)?.branchId };
+    const permissions = effectiveFederationPermissions(grants);
+    return {
+      branchId: branchId ?? grants.find((grant) => grant.branchId)?.branchId,
+      permissions,
+    };
   }
 
   async listCapabilities(clientId: string, organizationId: string) {
@@ -188,7 +227,11 @@ export class FederationGrantService {
         'Federated branch must be registered before this operation can be authorized',
       );
     const resolved = await this.resolve(clientId, organization.id, branch?.id, scope);
-    return { organizationId: organization.id, branchId: resolved.branchId ?? branch?.id };
+    return {
+      organizationId: organization.id,
+      branchId: resolved.branchId ?? branch?.id,
+      permissions: resolved.permissions,
+    };
   }
 }
 
@@ -197,6 +240,8 @@ export function capabilityForScope(scope: string) {
   if (scope.startsWith('attendance.webauthn.')) return 'device_verification';
   if (scope.startsWith('attendance.')) return 'attendance';
   if (scope.startsWith('leave.')) return 'leave';
+  if (scope.startsWith('approval-policies.')) return 'approval_policies';
+  if (scope.startsWith('files.')) return 'leave';
   if (scope.startsWith('timesheets.')) return 'timesheets';
   if (scope.startsWith('shifts.')) return 'shifts';
   if (scope.startsWith('payroll.compliance.')) return 'compliance';

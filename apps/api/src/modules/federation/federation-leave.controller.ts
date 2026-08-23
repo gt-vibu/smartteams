@@ -63,6 +63,32 @@ export class FederationLeaveController {
     );
   }
 
+  @Get('federation/leave/assignments')
+  @UseGuards(FederationAuthGuard)
+  async assignments(
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Req() request: FederationRequest,
+  ) {
+    return this.leave.listAssignments(
+      await this.support.context(request, organizationId, 'leave.types.read', branchId),
+    );
+  }
+
+  @Post('federation/leave/types/:code/assign')
+  @UseGuards(FederationAuthGuard)
+  async assignType(
+    @Param('code') code: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Req() request: FederationRequest,
+  ) {
+    return this.leave.assignTypeToBranch(
+      await this.support.context(request, organizationId, 'leave.types.write', branchId),
+      code,
+    );
+  }
+
   @Get('federation/leave/balances')
   @UseGuards(FederationAuthGuard)
   async balances(
@@ -104,6 +130,27 @@ export class FederationLeaveController {
       ...(query.cursor ? { cursor: query.cursor } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
     });
+  }
+
+  @Get('federation/leave/approvals/inbox')
+  @UseGuards(FederationAuthGuard)
+  async approvalInbox(
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Query() query: FederatedLeaveBalanceQueryDto,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'leave.requests.read',
+      branchId,
+    );
+    const approverUserId = await this.employees.internalUserId(
+      context,
+      requireFederatedApprover(query.employeeId),
+    );
+    return this.leave.listPendingApprovals(context, approverUserId);
   }
 
   @Post('federation/leave/requests')

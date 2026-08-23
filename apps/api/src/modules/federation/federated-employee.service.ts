@@ -90,6 +90,7 @@ export class FederatedEmployeeService {
   ) {
     requirePermission(context, 'employees.read');
     return this.database.run(context, async (tx) => {
+      const effectiveDate = new Date();
       const search = filters.search?.trim();
       // FederationControllerSupport resolves the external branch identifier
       // before creating the context. Filtering with the raw query value here
@@ -143,10 +144,19 @@ export class FederatedEmployeeService {
           ...(conditions.length ? { AND: conditions } : {}),
         },
         include: {
+          user: { select: { isActive: true } },
           fieldOwnership: true,
           branchAssignments: true,
           employmentRecords: { orderBy: { effectiveFrom: 'desc' }, take: 1 },
           compensations: { orderBy: { effectiveFrom: 'desc' }, take: 1 },
+          payrollPolicies: {
+            where: {
+              effectiveFrom: { lte: effectiveDate },
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
+            },
+            orderBy: { effectiveFrom: 'desc' },
+            take: 1,
+          },
         },
         orderBy: [
           { lastName: 'asc' },
@@ -171,6 +181,7 @@ export class FederatedEmployeeService {
   async get(context: DomainContext, externalId: string) {
     requirePermission(context, 'employees.read');
     return this.database.run(context, async (tx) => {
+      const effectiveDate = new Date();
       const employee = await tx.employee.findFirst({
         where: {
           organizationId: context.organizationId,
@@ -185,11 +196,20 @@ export class FederatedEmployeeService {
             : {}),
         },
         include: {
+          user: { select: { isActive: true } },
           fieldOwnership: true,
           branchAssignments: { include: { branch: true }, orderBy: { startsOn: 'desc' } },
           emergencyContacts: { orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }] },
           employmentRecords: { orderBy: { effectiveFrom: 'desc' } },
           compensations: { orderBy: { effectiveFrom: 'desc' } },
+          payrollPolicies: {
+            where: {
+              effectiveFrom: { lte: effectiveDate },
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
+            },
+            orderBy: { effectiveFrom: 'desc' },
+            take: 1,
+          },
           manager: {
             select: {
               id: true,
@@ -459,7 +479,9 @@ export class FederatedEmployeeService {
       emergencyContacts?: Array<Record<string, unknown>>;
       employmentRecords?: Array<Record<string, unknown>>;
       compensations?: Array<Record<string, unknown>>;
+      payrollPolicies?: Array<Record<string, unknown>>;
       manager?: Record<string, unknown> | null;
+      user?: { isActive: boolean } | null;
     };
     return {
       id: employee.id,
@@ -479,6 +501,7 @@ export class FederatedEmployeeService {
       identitySource: employee.identitySource,
       status: employee.status,
       isActive: employee.status === EmployeeStatus.ACTIVE,
+      hasActiveUser: employee.user?.isActive === true,
       employmentType: employee.employmentType,
       dateOfJoining: employee.dateOfJoining?.toISOString().slice(0, 10) ?? null,
       dateOfLeaving: employee.dateOfLeaving?.toISOString().slice(0, 10) ?? null,
@@ -490,6 +513,18 @@ export class FederatedEmployeeService {
       emergencyContacts: employee.emergencyContacts ?? [],
       employmentRecords: employee.employmentRecords ?? [],
       compensations: employee.compensations ?? [],
+      payrollPolicy: employee.payrollPolicies?.[0]
+        ? {
+            payrollEnabled: employee.payrollPolicies[0].payrollEnabled,
+            salarySlipMode: employee.payrollPolicies[0].salarySlipMode,
+            pfEnabled: employee.payrollPolicies[0].pfEnabled,
+            esiEnabled: employee.payrollPolicies[0].esiEnabled,
+            ptEnabled: employee.payrollPolicies[0].ptEnabled,
+            statutoryJurisdiction: employee.payrollPolicies[0].statutoryJurisdiction,
+            effectiveFrom: employee.payrollPolicies[0].effectiveFrom,
+            effectiveTo: employee.payrollPolicies[0].effectiveTo,
+          }
+        : null,
       manager: employee.manager ?? null,
     };
   }

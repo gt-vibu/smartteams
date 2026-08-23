@@ -20,19 +20,71 @@ model PayrollRun {
   updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
   version            Int              @default(1)
 
-  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  approvalPolicy ApprovalPolicy?     @relation(fields: [approvalPolicyId], references: [id], onDelete: Restrict)
-  correctionOf   PayrollRun?         @relation("PayrollCorrection", fields: [correctionOfRunId], references: [id], onDelete: Restrict)
-  corrections    PayrollRun[]        @relation("PayrollCorrection")
-  createdBy      User?               @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
-  lineItems      PayrollLineItem[]
-  adjustments    PayrollAdjustment[]
-  approvals      PayrollApproval[]
-  payslips       Payslip[]
+  organization      Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  approvalPolicy    ApprovalPolicy?         @relation(fields: [approvalPolicyId], references: [id], onDelete: Restrict)
+  correctionOf      PayrollRun?             @relation("PayrollCorrection", fields: [correctionOfRunId], references: [id], onDelete: Restrict)
+  corrections       PayrollRun[]            @relation("PayrollCorrection")
+  createdBy         User?                   @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  lineItems         PayrollLineItem[]
+  adjustments       PayrollAdjustment[]
+  approvals         PayrollApproval[]
+  payslips          Payslip[]
+  payments          PayrollPayment[]
+  advanceRecoveries SalaryAdvanceRecovery[]
 
   @@unique([organizationId, periodStart, periodEnd])
   @@index([organizationId, status, periodStart])
   @@map("payroll_runs")
+}
+
+model PayrollPolicy {
+  id                    String              @id @default(uuid()) @db.Uuid
+  organizationId        String              @map("organization_id") @db.Uuid
+  effectiveFrom         DateTime            @map("effective_from") @db.Date
+  effectiveTo           DateTime?           @map("effective_to") @db.Date
+  salarySlipDefault     Boolean             @default(true) @map("salary_slip_default")
+  payrollEnabledDefault Boolean             @default(true) @map("payroll_enabled_default")
+  payrollDayBasis       Int                 @default(30) @map("payroll_day_basis") @db.SmallInt
+  basePercentage        Decimal             @default(50) @map("base_percentage") @db.Decimal(8, 4)
+  baseMinimum           Decimal             @default(15000) @map("base_minimum") @db.Decimal(14, 2)
+  hraPercentage         Decimal             @default(40) @map("hra_percentage") @db.Decimal(8, 4)
+  pfDefault             Boolean             @default(false) @map("pf_default")
+  esiDefault            Boolean             @default(false) @map("esi_default")
+  ptDefault             Boolean             @default(false) @map("pt_default")
+  statutoryJurisdiction String?             @map("statutory_jurisdiction")
+  roundingMode          PayrollRoundingMode @default(HALF_UP) @map("rounding_mode")
+  metadata              Json                @default("{}")
+  createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, effectiveFrom])
+  @@index([organizationId, effectiveFrom, effectiveTo])
+  @@map("payroll_policies")
+}
+
+model PayrollStatutoryRule {
+  id                String    @id @default(uuid()) @db.Uuid
+  organizationId    String    @map("organization_id") @db.Uuid
+  schemeCode        String    @map("scheme_code")
+  jurisdiction      String
+  effectiveFrom     DateTime  @map("effective_from") @db.Date
+  effectiveTo       DateTime? @map("effective_to") @db.Date
+  employeeRate      Decimal?  @map("employee_rate") @db.Decimal(8, 4)
+  employerRate      Decimal?  @map("employer_rate") @db.Decimal(8, 4)
+  wageCeiling       Decimal?  @map("wage_ceiling") @db.Decimal(14, 2)
+  employeeThreshold Decimal?  @map("employee_threshold") @db.Decimal(14, 2)
+  flatAmount        Decimal?  @map("flat_amount") @db.Decimal(14, 2)
+  metadata          Json      @default("{}")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, schemeCode, jurisdiction, effectiveFrom])
+  @@index([organizationId, schemeCode, jurisdiction, effectiveFrom])
+  @@map("payroll_statutory_rules")
 }
 
 model PayrollLineItem {
@@ -55,10 +107,88 @@ model PayrollLineItem {
   employee     Employee                   @relation(fields: [employeeId], references: [id], onDelete: Restrict)
   components   PayrollLineItemComponent[]
   payslip      Payslip?
+  payments     PayrollPayment[]
 
   @@unique([payrollRunId, employeeId])
   @@index([organizationId, employeeId])
   @@map("payroll_line_items")
+}
+
+model SalaryAdvance {
+  id               String                  @id @default(uuid()) @db.Uuid
+  organizationId   String                  @map("organization_id") @db.Uuid
+  employeeId       String                  @map("employee_id") @db.Uuid
+  requestedAmount  Decimal                 @map("requested_amount") @db.Decimal(14, 2)
+  approvedAmount   Decimal?                @map("approved_amount") @db.Decimal(14, 2)
+  recoveredAmount  Decimal                 @default(0) @map("recovered_amount") @db.Decimal(14, 2)
+  status           SalaryAdvanceStatus     @default(REQUESTED)
+  reason           String
+  requestedAt      DateTime                @default(now()) @map("requested_at") @db.Timestamptz(6)
+  approvedAt       DateTime?               @map("approved_at") @db.Timestamptz(6)
+  approvedByUserId String?                 @map("approved_by_user_id") @db.Uuid
+  rejectedAt       DateTime?               @map("rejected_at") @db.Timestamptz(6)
+  rejectedByUserId String?                 @map("rejected_by_user_id") @db.Uuid
+  source           PayrollAdjustmentSource @default(NATIVE)
+  externalId       String?                 @map("external_id")
+  metadata         Json                    @default("{}")
+  createdAt        DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee                @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  approvedBy   User?                   @relation("AdvanceApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  rejectedBy   User?                   @relation("AdvanceRejectedBy", fields: [rejectedByUserId], references: [id], onDelete: SetNull)
+  recoveries   SalaryAdvanceRecovery[]
+
+  @@unique([organizationId, externalId])
+  @@index([organizationId, employeeId, status, requestedAt])
+  @@map("salary_advances")
+}
+
+model SalaryAdvanceRecovery {
+  id              String   @id @default(uuid()) @db.Uuid
+  organizationId  String   @map("organization_id") @db.Uuid
+  salaryAdvanceId String   @map("salary_advance_id") @db.Uuid
+  payrollRunId    String   @map("payroll_run_id") @db.Uuid
+  employeeId      String   @map("employee_id") @db.Uuid
+  amount          Decimal  @db.Decimal(14, 2)
+  recoveredAt     DateTime @default(now()) @map("recovered_at") @db.Timestamptz(6)
+
+  organization  Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  salaryAdvance SalaryAdvance @relation(fields: [salaryAdvanceId], references: [id], onDelete: Restrict)
+  payrollRun    PayrollRun    @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
+  employee      Employee      @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([salaryAdvanceId, payrollRunId])
+  @@index([organizationId, employeeId, recoveredAt])
+  @@map("salary_advance_recoveries")
+}
+
+model PayrollPayment {
+  id                String                @id @default(uuid()) @db.Uuid
+  organizationId    String                @map("organization_id") @db.Uuid
+  payrollRunId      String                @map("payroll_run_id") @db.Uuid
+  payrollLineItemId String                @unique @map("payroll_line_item_id") @db.Uuid
+  employeeId        String                @map("employee_id") @db.Uuid
+  amount            Decimal               @db.Decimal(14, 2)
+  status            PayrollPaymentStatus  @default(PENDING)
+  paymentMethod     PayrollPaymentMethod? @map("payment_method")
+  paymentReference  String?               @map("payment_reference")
+  paidAt            DateTime?             @map("paid_at") @db.Timestamptz(6)
+  markedByUserId    String?               @map("marked_by_user_id") @db.Uuid
+  failureReason     String?               @map("failure_reason")
+  createdAt         DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollRun      PayrollRun      @relation(fields: [payrollRunId], references: [id], onDelete: Restrict)
+  payrollLineItem PayrollLineItem @relation(fields: [payrollLineItemId], references: [id], onDelete: Restrict)
+  employee        Employee        @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  markedBy        User?           @relation("PayrollPaymentMarkedBy", fields: [markedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, payrollRunId, status])
+  @@index([organizationId, employeeId, paidAt])
+  @@map("payroll_payments")
 }
 
 model PayrollLineItemComponent {

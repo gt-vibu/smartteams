@@ -15,6 +15,11 @@ export const FEDERATION_CAPABILITY_CATALOG = [
     description: 'Federated leave types, balances, requests, and approvals.',
   },
   {
+    code: 'approval_policies',
+    version: 'v1',
+    description: 'Federated approval policy configuration for workforce workflows.',
+  },
+  {
     code: 'payroll',
     version: 'v1',
     description: 'Federated payroll runs, adjustments, and ledger visibility.',

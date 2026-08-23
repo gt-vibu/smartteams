@@ -9,6 +9,7 @@ import {
   PayrollRunStatus,
   TimesheetStatus,
   AccessMode,
+  PayrollRoundingMode,
 } from '../../generated/prisma/enums';
 import {
   requirePermission,
@@ -27,9 +28,16 @@ import {
   countWorkingDays,
   sumTimesheets,
   summarizeLeave,
+  summarizeAttendance,
   payrollTransitionPermission,
   validTransition,
 } from './payroll-calculation';
+import {
+  allocateAdvanceRecovery,
+  calculateSalaryStructure,
+  calculateStatutoryDeduction,
+  prorateSalaryStructure,
+} from './payroll-salary-structure';
 
 type ComponentInput = {
   code: string;
@@ -51,6 +59,7 @@ export class PayrollService {
 
   async createComponent(context: DomainContext, input: ComponentInput) {
     requirePermission(context, 'payroll.components.write');
+    validateComponentInput(input);
     return this.database.run(context, async (tx) => {
       const component = await tx.payComponent.create({
         data: {
@@ -90,6 +99,44 @@ export class PayrollService {
       }),
     );
   }
+
+  async updateComponent(context: DomainContext, id: string, input: ComponentInput) {
+    requirePermission(context, 'payroll.components.write');
+    validateComponentInput(input);
+    return this.database.run(context, async (tx) => {
+      const existing = await tx.payComponent.findFirst({
+        where: { id, organizationId: context.organizationId, isActive: true },
+      });
+      if (!existing) throw new NotFoundError('Pay component');
+      const component = await tx.payComponent.update({
+        where: { id: existing.id },
+        data: {
+          code: input.code.trim().toUpperCase(),
+          name: input.name.trim(),
+          componentType: input.componentType,
+          calculationType: input.calculationType,
+          formulaDefinition:
+            input.formulaDefinition === undefined
+              ? Prisma.JsonNull
+              : jsonSnapshot(input.formulaDefinition),
+          isTaxable: input.isTaxable,
+          displayOrder: input.displayOrder ?? 0,
+        },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'PAY_COMPONENT',
+          entityId: component.id,
+          action: 'PAY_COMPONENT_UPDATED',
+          beforeState: jsonSnapshot(existing),
+          afterState: jsonSnapshot(component),
+        },
+        tx,
+      );
+      return component;
+    });
+  }
   async listRuns(context: DomainContext) {
     requirePermission(context, 'payroll.runs.read');
     return this.database.run(context, (tx) =>
@@ -103,11 +150,11 @@ export class PayrollService {
     requirePermission(context, 'payroll.payslips.read');
     return this.database.run(context, async (tx) => {
       const canReadAll =
-        context.accessMode === AccessMode.FEDERATION ||
-        context.permissions.has('*') ||
-        context.permissions.has('payroll.payslips.read.all');
+        context.permissions.has('*') || context.permissions.has('payroll.payslips.read.all');
       let employeeId = requestedEmployeeId;
-      if (!canReadAll) {
+      if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll)
+        return [];
+      if (!canReadAll && !requestedEmployeeId) {
         const employee = await tx.employee.findFirst({
           where: {
             organizationId: context.organizationId,
@@ -117,9 +164,18 @@ export class PayrollService {
           select: { id: true },
         });
         if (!employee) return [];
-        if (requestedEmployeeId && requestedEmployeeId !== employee.id)
-          throw new ConflictError('Employees may only read their own payslips');
         employeeId = employee.id;
+      } else if (!canReadAll && requestedEmployeeId) {
+        const employee = await tx.employee.findFirst({
+          where: {
+            id: requestedEmployeeId,
+            organizationId: context.organizationId,
+            userId: context.actor.userId,
+            ...this.employeeScope(context),
+          },
+          select: { id: true },
+        });
+        if (!employee) throw new ConflictError('Employees may only read their own payslips');
       }
       const payslips = await tx.payslip.findMany({
         where: {
@@ -142,6 +198,8 @@ export class PayrollService {
               grossAmount: true,
               deductionAmount: true,
               netAmount: true,
+              inputSnapshot: true,
+              calculationBreakdown: true,
               components: {
                 orderBy: [{ displayOrder: 'asc' }, { componentCode: 'asc' }],
                 select: {
@@ -172,7 +230,13 @@ export class PayrollService {
           deductionAmount: payslip.payrollLineItem.deductionAmount,
           netAmount: payslip.payrollLineItem.netAmount,
         },
-        components: payslip.payrollLineItem.components,
+        components:
+          canReadAll || detailedSalarySlipAllowed(payslip.payrollLineItem.inputSnapshot)
+            ? mergeSalaryComponents(
+                payslip.payrollLineItem.components,
+                payslip.payrollLineItem.calculationBreakdown,
+              )
+            : [],
       }));
     });
   }
@@ -184,11 +248,11 @@ export class PayrollService {
     requirePermission(context, 'payroll.ledger.read');
     return this.database.run(context, async (tx) => {
       const canReadAll =
-        context.accessMode === AccessMode.FEDERATION ||
-        context.permissions.has('*') ||
-        context.permissions.has('payroll.ledger.read.all');
+        context.permissions.has('*') || context.permissions.has('payroll.ledger.read.all');
       let employeeId = requestedEmployeeId;
-      if (!canReadAll) {
+      if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll)
+        return { entries: [], nextCursor: undefined };
+      if (!canReadAll && !requestedEmployeeId) {
         const employee = await tx.employee.findFirst({
           where: {
             organizationId: context.organizationId,
@@ -198,9 +262,18 @@ export class PayrollService {
           select: { id: true },
         });
         if (!employee) return { entries: [], nextCursor: undefined };
-        if (requestedEmployeeId && requestedEmployeeId !== employee.id)
-          throw new ConflictError('Employees may only read their own payroll ledger');
         employeeId = employee.id;
+      } else if (!canReadAll && requestedEmployeeId) {
+        const employee = await tx.employee.findFirst({
+          where: {
+            id: requestedEmployeeId,
+            organizationId: context.organizationId,
+            userId: context.actor.userId,
+            ...this.employeeScope(context),
+          },
+          select: { id: true },
+        });
+        if (!employee) throw new ConflictError('Employees may only read their own payroll ledger');
       }
       const cursorId = pagination.cursor ? decodePayrollCursor(pagination.cursor) : undefined;
       const limit = Math.min(pagination.limit ?? 100, 500);
@@ -258,46 +331,105 @@ export class PayrollService {
       });
     });
   }
-  async getCalendar(context: DomainContext) {
+  async getCalendar(
+    context: DomainContext,
+    year = new Date().getUTCFullYear(),
+    month = new Date().getUTCMonth() + 1,
+  ) {
     requirePermission(context, 'payroll.calendars.read');
-    return this.database.run(context, (tx) =>
-      tx.organizationSettings.findUniqueOrThrow({
-        where: { organizationId: context.organizationId },
-        select: { payrollFrequency: true, payrollDayOfMonth: true },
-      }),
-    );
+    validateCalendarMonth(year, month);
+    return this.database.run(context, async (tx) => {
+      const [settings, calendar] = await Promise.all([
+        tx.organizationSettings.findUniqueOrThrow({
+          where: { organizationId: context.organizationId },
+          select: { payrollFrequency: true, payrollDayOfMonth: true },
+        }),
+        tx.payrollCalendar.findUnique({
+          where: {
+            organizationId_year_month: { organizationId: context.organizationId, year, month },
+          },
+        }),
+      ]);
+      return { ...settings, calendar };
+    });
   }
   async updateCalendar(
     context: DomainContext,
-    payrollDayOfMonth: number,
-    calendar?: { year: number; month: number },
+    input: {
+      year: number;
+      month: number;
+      periodStart?: string;
+      periodEnd?: string;
+      attendanceFreezeDate?: string;
+      calculationDate?: string;
+      releaseDate?: string;
+      salaryCreditDate?: string;
+    },
   ) {
     requirePermission(context, 'payroll.calendars.write');
-    if (payrollDayOfMonth < 1 || payrollDayOfMonth > 31)
-      throw new ConflictError('Payroll day must be between 1 and 31');
+    validateCalendarMonth(input.year, input.month);
+    const periodStart = dateOnly(
+      input.periodStart ?? `${input.year}-${String(input.month).padStart(2, '0')}-01`,
+    );
+    const periodEnd = dateOnly(
+      input.periodEnd ??
+        `${input.year}-${String(input.month).padStart(2, '0')}-${String(new Date(Date.UTC(input.year, input.month, 0)).getUTCDate()).padStart(2, '0')}`,
+    );
+    if (periodEnd < periodStart)
+      throw new ConflictError('Payroll period end must be after its start');
+    const dates = {
+      attendanceFreezeDate: input.attendanceFreezeDate
+        ? dateOnly(input.attendanceFreezeDate)
+        : null,
+      calculationDate: input.calculationDate ? dateOnly(input.calculationDate) : null,
+      releaseDate: input.releaseDate ? dateOnly(input.releaseDate) : null,
+      salaryCreditDate: input.salaryCreditDate ? dateOnly(input.salaryCreditDate) : null,
+    };
+    if (dates.attendanceFreezeDate && dates.attendanceFreezeDate > periodEnd)
+      throw new ConflictError('Attendance freeze cannot be after the payroll period');
+    if (dates.calculationDate && dates.calculationDate < periodStart)
+      throw new ConflictError('Calculation date cannot be before the payroll period');
+    if (dates.releaseDate && dates.releaseDate < periodStart)
+      throw new ConflictError('Release date cannot be before the payroll period');
+    if (dates.salaryCreditDate && dates.salaryCreditDate < periodStart)
+      throw new ConflictError('Salary credit date cannot be before the payroll period');
     return this.database.run(context, async (tx) => {
       const before = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
       });
-      const updated = await tx.organizationSettings.update({
-        where: { organizationId: context.organizationId },
-        data: { payrollDayOfMonth },
+      const updated = await tx.payrollCalendar.upsert({
+        where: {
+          organizationId_year_month: {
+            organizationId: context.organizationId,
+            year: input.year,
+            month: input.month,
+          },
+        },
+        create: {
+          organizationId: context.organizationId,
+          year: input.year,
+          month: input.month,
+          periodStart,
+          periodEnd,
+          ...dates,
+        },
+        update: { periodStart, periodEnd, ...dates },
       });
       await this.audit.record(
         context,
         {
-          entityType: 'ORGANIZATION_SETTINGS',
-          entityId: context.organizationId,
+          entityType: 'PAYROLL_CALENDAR',
+          entityId: updated.id,
           action: 'PAYROLL_CALENDAR_UPDATED',
-          beforeState: jsonSnapshot(before),
+          beforeState: jsonSnapshot({ settings: before }),
           afterState: jsonSnapshot(updated),
         },
         tx,
       );
       return {
-        payrollFrequency: updated.payrollFrequency,
-        payrollDayOfMonth: updated.payrollDayOfMonth,
-        calendar,
+        payrollFrequency: before.payrollFrequency,
+        payrollDayOfMonth: before.payrollDayOfMonth,
+        calendar: updated,
       };
     });
   }
@@ -334,14 +466,25 @@ export class PayrollService {
       ]);
       if (!employee) throw new NotFoundError('Employee');
       if (!component) throw new NotFoundError('Pay component');
+      if (input.amount !== undefined && input.percentage !== undefined)
+        throw new ConflictError('Pay component assignment cannot set both amount and percentage');
+      if (input.amount !== undefined && (!Number.isFinite(input.amount) || input.amount < 0))
+        throw new ConflictError('Pay component amount must be a non-negative number');
+      if (
+        input.percentage !== undefined &&
+        (!Number.isFinite(input.percentage) || input.percentage < 0 || input.percentage > 100)
+      )
+        throw new ConflictError('Pay component percentage must be between 0 and 100');
       if (
         component.calculationType === PayComponentCalculationType.FIXED &&
-        input.amount === undefined
+        input.amount === undefined &&
+        !hasDefaultValue(component.formulaDefinition, 'FIXED')
       )
         throw new ConflictError('Fixed pay component requires an amount');
       if (
         component.calculationType === PayComponentCalculationType.PERCENTAGE_OF_BASE &&
-        input.percentage === undefined
+        input.percentage === undefined &&
+        !hasDefaultValue(component.formulaDefinition, 'PERCENTAGE_OF_BASE')
       )
         throw new ConflictError('Percentage pay component requires a percentage');
       const effectiveFrom = dateOnly(input.effectiveFrom);
@@ -440,12 +583,20 @@ export class PayrollService {
         },
       });
       if (unapproved > 0) throw new ConflictError('Payroll can consume only approved timesheets');
-      const [employees, settings, holidays, approvedLeaves] = await Promise.all([
+      const [employees, settings, holidays, approvedLeaves, attendanceRecords] = await Promise.all([
         tx.employee.findMany({
           where: { organizationId: context.organizationId, status: 'ACTIVE' },
           orderBy: { id: 'asc' },
           include: {
             compensations: {
+              where: {
+                effectiveFrom: { lte: run.periodEnd },
+                OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+              },
+              orderBy: { effectiveFrom: 'desc' },
+              take: 1,
+            },
+            payrollPolicies: {
               where: {
                 effectiveFrom: { lte: run.periodEnd },
                 OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
@@ -484,9 +635,18 @@ export class PayrollService {
           select: {
             employeeId: true,
             branchId: true,
+            startDate: true,
+            endDate: true,
             requestedDays: true,
             leaveType: { select: { paid: true } },
           },
+        }),
+        tx.attendanceRecord.findMany({
+          where: {
+            organizationId: context.organizationId,
+            workDate: { gte: run.periodStart, lte: run.periodEnd },
+          },
+          select: { employeeId: true, workDate: true, dayStatus: true },
         }),
       ]);
       const timesheets = await tx.timesheet.findMany({
@@ -500,28 +660,111 @@ export class PayrollService {
         where: { payrollRunId: run.id },
         orderBy: [{ employeeId: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
       });
-      const snapshot = employees.map((employee) => ({
-        employeeId: employee.id,
-        compensation: employee.compensations[0] ?? null,
-        components: employee.payComponents.map((assignment) => ({
-          id: assignment.id,
-          componentId: assignment.payComponentId,
-          amount: assignment.amount,
-          percentage: assignment.percentage,
-          component: assignment.payComponent,
-        })),
-        timesheet: sumTimesheets(timesheets.filter((entry) => entry.employeeId === employee.id)),
-        leave: summarizeLeave(approvedLeaves.filter((leave) => leave.employeeId === employee.id)),
-        periodWorkingDays: countWorkingDays(
-          run.periodStart,
-          run.periodEnd,
-          settings.workWeekDays,
-          holidays,
-          employee.primaryBranchId,
-        ),
-        adjustments: adjustments.filter((adjustment) => adjustment.employeeId === employee.id),
-      }));
+      const policy = (await tx.payrollPolicy.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          effectiveFrom: { lte: run.periodStart },
+          OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+        },
+        orderBy: { effectiveFrom: 'desc' },
+      })) ?? {
+        payrollDayBasis: 30,
+        basePercentage: new Prisma.Decimal(50),
+        baseMinimum: new Prisma.Decimal(15000),
+        hraPercentage: new Prisma.Decimal(40),
+        roundingMode: PayrollRoundingMode.HALF_UP,
+        pfDefault: false,
+        esiDefault: false,
+        ptDefault: false,
+        statutoryJurisdiction: null,
+        salarySlipDefault: true,
+        payrollEnabledDefault: true,
+      };
+      const statutoryRules = await tx.payrollStatutoryRule.findMany({
+        where: {
+          organizationId: context.organizationId,
+          ...(policy.statutoryJurisdiction ? { jurisdiction: policy.statutoryJurisdiction } : {}),
+          effectiveFrom: { lte: run.periodEnd },
+          OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+        },
+        orderBy: { effectiveFrom: 'desc' },
+      });
+      const calendar = await tx.payrollCalendar.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          periodStart: run.periodStart,
+          periodEnd: run.periodEnd,
+        },
+        select: { salaryCreditDate: true },
+      });
+      const advanceCutoff = endOfDay(calendar?.salaryCreditDate ?? run.periodEnd);
+      const advances = await tx.salaryAdvance.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: { in: ['APPROVED', 'PARTIALLY_RECOVERED'] },
+          approvedAt: { not: null, lte: advanceCutoff },
+        },
+        orderBy: [{ requestedAt: 'asc' }, { id: 'asc' }],
+      });
+      const snapshot = employees
+        .filter(
+          (employee) => employee.payrollPolicies[0]?.payrollEnabled ?? policy.payrollEnabledDefault,
+        )
+        .map((employee) => ({
+          employeeId: employee.id,
+          compensation: employee.compensations[0] ?? null,
+          employeePolicy: employee.payrollPolicies[0] ?? null,
+          policy,
+          statutoryRules,
+          components: employee.payComponents.map((assignment) => ({
+            id: assignment.id,
+            componentId: assignment.payComponentId,
+            amount: assignment.amount,
+            percentage: assignment.percentage,
+            component: assignment.payComponent,
+          })),
+          timesheet: sumTimesheets(timesheets.filter((entry) => entry.employeeId === employee.id)),
+          leave: summarizeLeave(
+            approvedLeaves.filter((leave) => leave.employeeId === employee.id),
+            run.periodStart,
+            run.periodEnd,
+          ),
+          attendance: summarizeAttendance(
+            attendanceRecords.filter((record) => record.employeeId === employee.id),
+          ),
+          periodWorkingDays: countWorkingDays(
+            run.periodStart,
+            run.periodEnd,
+            settings.workWeekDays,
+            holidays,
+            employee.primaryBranchId,
+          ),
+          adjustments: adjustments.filter((adjustment) => adjustment.employeeId === employee.id),
+          advances: advances.filter((advance) => advance.employeeId === employee.id),
+        }));
       const inputSnapshotHash = hash(snapshot);
+      const previousRecoveries = await tx.salaryAdvanceRecovery.findMany({
+        where: { payrollRunId: run.id },
+      });
+      for (const recovery of previousRecoveries) {
+        const advance = await tx.salaryAdvance.findUnique({
+          where: { id: recovery.salaryAdvanceId },
+        });
+        if (!advance) continue;
+        const recovered = Prisma.Decimal.max(
+          new Prisma.Decimal(0),
+          advance.recoveredAmount.sub(recovery.amount),
+        );
+        await tx.salaryAdvance.update({
+          where: { id: advance.id },
+          data: {
+            recoveredAmount: recovered,
+            status: recovered.isZero() ? 'APPROVED' : 'PARTIALLY_RECOVERED',
+          },
+        });
+      }
+      await tx.salaryAdvanceRecovery.deleteMany({ where: { payrollRunId: run.id } });
+      await tx.payrollPayment.deleteMany({ where: { payrollRunId: run.id } });
       await tx.payrollLineItem.deleteMany({ where: { payrollRunId: run.id } });
       const lines = [];
       for (const item of snapshot)
@@ -697,7 +940,38 @@ export class PayrollService {
     payrollRunId: string,
     item: {
       employeeId: string;
-      compensation: { baseAmount: Prisma.Decimal; overtimeMultiplier: Prisma.Decimal } | null;
+      compensation: {
+        baseAmount: Prisma.Decimal;
+        grossSalary: Prisma.Decimal | null;
+        overtimeMultiplier: Prisma.Decimal;
+      } | null;
+      employeePolicy: {
+        payrollEnabled: boolean;
+        pfEnabled: boolean;
+        esiEnabled: boolean;
+        ptEnabled: boolean;
+        statutoryJurisdiction: string | null;
+      } | null;
+      policy: {
+        payrollDayBasis: number;
+        basePercentage: Prisma.Decimal;
+        baseMinimum: Prisma.Decimal;
+        hraPercentage: Prisma.Decimal;
+        roundingMode: 'HALF_UP' | 'DOWN' | 'UP';
+        pfDefault: boolean;
+        esiDefault: boolean;
+        ptDefault: boolean;
+        statutoryJurisdiction: string | null;
+      };
+      statutoryRules: Array<{
+        schemeCode: string;
+        employeeRate: Prisma.Decimal | null;
+        employerRate: Prisma.Decimal | null;
+        wageCeiling: Prisma.Decimal | null;
+        employeeThreshold: Prisma.Decimal | null;
+        flatAmount: Prisma.Decimal | null;
+        metadata: unknown;
+      }>;
       components: Array<{
         componentId: string;
         amount: Prisma.Decimal | null;
@@ -715,26 +989,50 @@ export class PayrollService {
       }>;
       timesheet: { regularMinutes: number; overtimeMinutes: number } | null;
       leave: { paidDays: number; unpaidDays: number };
+      attendance: { absentDays: number; halfDays: number };
       periodWorkingDays: number;
       adjustments: Array<{
         type: PayrollAdjustmentType;
         amount: Prisma.Decimal;
         description: string;
       }>;
+      advances: Array<{
+        id: string;
+        approvedAmount: Prisma.Decimal | null;
+        recoveredAmount: Prisma.Decimal;
+      }>;
     },
     standardDayMinutes: number,
   ) {
-    const base = item.compensation?.baseAmount ?? new Prisma.Decimal(0);
-    const unpaidLeaveAdjustment = base.mul(item.leave.unpaidDays).div(item.periodWorkingDays);
-    const regular = base.sub(unpaidLeaveAdjustment);
+    const grossSalary =
+      item.compensation?.grossSalary ?? item.compensation?.baseAmount ?? new Prisma.Decimal(0);
+    const monthlyStructure = calculateSalaryStructure(grossSalary, {
+      basePercentage: item.policy.basePercentage,
+      baseMinimum: item.policy.baseMinimum,
+      hraPercentage: item.policy.hraPercentage,
+      roundingMode: item.policy.roundingMode,
+    });
+    const unpaidAttendanceDays = item.attendance.absentDays + item.attendance.halfDays / 2;
+    const payableDays = Math.max(
+      0,
+      item.policy.payrollDayBasis - item.leave.unpaidDays - unpaidAttendanceDays,
+    );
+    const proratedStructure = prorateSalaryStructure(
+      monthlyStructure,
+      payableDays,
+      item.policy.payrollDayBasis,
+      item.policy.roundingMode,
+    );
+    const unpaidLeaveAdjustment = monthlyStructure.gross.minus(proratedStructure.gross);
+    const regular = proratedStructure.base;
     const overtime =
       item.compensation && item.timesheet
-        ? base
-            .div(standardDayMinutes * item.periodWorkingDays)
+        ? monthlyStructure.gross
+            .div(standardDayMinutes * item.policy.payrollDayBasis)
             .mul(item.timesheet.overtimeMinutes)
             .mul(item.compensation.overtimeMultiplier)
         : new Prisma.Decimal(0);
-    const components = item.components
+    const calculatedComponents = item.components
       .slice()
       .sort(
         (a, b) =>
@@ -743,20 +1041,84 @@ export class PayrollService {
       )
       .map((assignment) => ({
         assignment,
-        amount: calculateComponent(assignment, base.add(overtime)),
+        amount: ['BASE', 'BASIC'].includes(assignment.component.code)
+          ? proratedStructure.base
+          : assignment.component.code === 'HRA'
+            ? proratedStructure.hra
+            : assignment.component.code === 'OTHER_ALLOWANCE'
+              ? proratedStructure.otherAllowance
+              : calculateComponent(assignment, proratedStructure.base),
       }));
-    const adjustmentTotal = item.adjustments.reduce(
+    const earningAdjustmentTotal = item.adjustments
+      .filter((adjustment) => ['BONUS', 'REIMBURSEMENT', 'OVERTIME'].includes(adjustment.type))
+      .reduce((sum, adjustment) => sum.add(adjustment.amount), new Prisma.Decimal(0));
+    const deductionAdjustmentTotal = item.adjustments
+      .filter((adjustment) => ['DEDUCTION', 'TAX', 'OTHER'].includes(adjustment.type))
+      .reduce((sum, adjustment) => sum.add(adjustment.amount), new Prisma.Decimal(0));
+    const extraEarnings = calculatedComponents
+      .filter(({ assignment }) => assignment.component.componentType === PayComponentType.EARNING)
+      .filter(
+        ({ assignment }) =>
+          !['BASE', 'BASIC', 'HRA', 'OTHER_ALLOWANCE'].includes(assignment.component.code),
+      )
+      .reduce((sum, entry) => sum.add(entry.amount), new Prisma.Decimal(0));
+    if (extraEarnings.greaterThan(proratedStructure.otherAllowance))
+      throw new ConflictError(
+        `Assigned earning components exceed the available other allowance for employee ${item.employeeId}`,
+      );
+    const components = calculatedComponents.map((entry) =>
+      entry.assignment.component.code === 'OTHER_ALLOWANCE'
+        ? { ...entry, amount: proratedStructure.otherAllowance.sub(extraEarnings) }
+        : entry,
+    );
+    const gross = proratedStructure.gross.add(overtime).add(earningAdjustmentTotal);
+    const componentDeduction = components
+      .filter(({ assignment }) => assignment.component.componentType === PayComponentType.DEDUCTION)
+      .reduce((sum, entry) => sum.add(entry.amount), new Prisma.Decimal(0));
+    const enabled = {
+      pf: item.employeePolicy?.pfEnabled ?? item.policy.pfDefault,
+      esi: item.employeePolicy?.esiEnabled ?? item.policy.esiDefault,
+      pt: item.employeePolicy?.ptEnabled ?? item.policy.ptDefault,
+    };
+    const statutory = item.statutoryRules
+      .filter((rule) => {
+        const code = rule.schemeCode.toUpperCase();
+        return (
+          (enabled.pf && ['PF', 'EPF'].includes(code)) ||
+          (enabled.esi && code === 'ESIC') ||
+          (enabled.pt && ['PT', 'PROFESSIONAL_TAX'].includes(code))
+        );
+      })
+      .map((rule) =>
+        calculateStatutoryDeduction(
+          proratedStructure,
+          rule,
+          item.policy.roundingMode,
+          monthlyStructure,
+        ),
+      );
+    const statutoryDeduction = statutory.reduce(
+      (sum, entry) => sum.add(entry.employeeAmount),
+      new Prisma.Decimal(0),
+    );
+    const beforeAdvanceDeductions = componentDeduction
+      .add(deductionAdjustmentTotal)
+      .add(statutoryDeduction);
+    let availableNetPay = gross.sub(beforeAdvanceDeductions);
+    const advanceRecoveries = item.advances.map((advance) => {
+      const amount = allocateAdvanceRecovery(
+        advance.approvedAmount ?? 0,
+        advance.recoveredAmount,
+        availableNetPay,
+      );
+      availableNetPay = availableNetPay.sub(amount);
+      return { advance, amount };
+    });
+    const advanceRecoveryTotal = advanceRecoveries.reduce(
       (sum, adjustment) => sum.add(adjustment.amount),
       new Prisma.Decimal(0),
     );
-    const gross = components
-      .filter(({ assignment }) => assignment.component.componentType === PayComponentType.EARNING)
-      .reduce((sum, entry) => sum.add(entry.amount), new Prisma.Decimal(0))
-      .add(adjustmentTotal)
-      .add(regular);
-    const deduction = components
-      .filter(({ assignment }) => assignment.component.componentType === PayComponentType.DEDUCTION)
-      .reduce((sum, entry) => sum.add(entry.amount), new Prisma.Decimal(0));
+    const deduction = beforeAdvanceDeductions.add(advanceRecoveryTotal);
     const net = gross.sub(deduction);
     const line = await tx.payrollLineItem.create({
       data: {
@@ -768,16 +1130,25 @@ export class PayrollService {
         netAmount: net,
         regularAmount: regular,
         overtimeAmount: overtime,
-        leaveAmount: base.mul(item.leave.paidDays).div(item.periodWorkingDays),
+        leaveAmount: unpaidLeaveAdjustment,
         inputSnapshot: jsonSnapshot(item),
         calculationBreakdown: jsonSnapshot({
-          base,
+          base: monthlyStructure.base,
           regular,
           overtime,
-          adjustmentTotal,
+          earningAdjustmentTotal,
+          deductionAdjustmentTotal,
+          monthlyStructure,
+          proratedStructure,
+          statutory,
+          advanceRecoveries,
+          advanceRecoveryTotal,
           unpaidLeaveAdjustment,
           paidLeaveDays: item.leave.paidDays,
           unpaidLeaveDays: item.leave.unpaidDays,
+          absentAttendanceDays: item.attendance.absentDays,
+          halfAttendanceDays: item.attendance.halfDays,
+          unpaidAttendanceDays,
           periodWorkingDays: item.periodWorkingDays,
         }),
         components: {
@@ -794,6 +1165,37 @@ export class PayrollService {
             displayOrder: assignment.component.displayOrder,
           })),
         },
+      },
+    });
+    for (const recovery of advanceRecoveries) {
+      if (!recovery.amount.greaterThan(0)) continue;
+      await tx.salaryAdvanceRecovery.create({
+        data: {
+          organizationId,
+          salaryAdvanceId: recovery.advance.id,
+          payrollRunId,
+          employeeId: item.employeeId,
+          amount: recovery.amount,
+        },
+      });
+      const recovered = recovery.advance.recoveredAmount.add(recovery.amount);
+      const approved = recovery.advance.approvedAmount ?? new Prisma.Decimal(0);
+      await tx.salaryAdvance.update({
+        where: { id: recovery.advance.id },
+        data: {
+          recoveredAmount: recovered,
+          status: recovered.greaterThanOrEqualTo(approved) ? 'RECOVERED' : 'PARTIALLY_RECOVERED',
+        },
+      });
+    }
+    await tx.payrollPayment.create({
+      data: {
+        organizationId,
+        payrollRunId,
+        payrollLineItemId: line.id,
+        employeeId: item.employeeId,
+        amount: net,
+        status: 'PENDING',
       },
     });
     return {
@@ -840,6 +1242,157 @@ export class PayrollService {
         }
       : {};
   }
+}
+
+function detailedSalarySlipAllowed(snapshot: Prisma.JsonValue) {
+  if (!isRecord(snapshot)) return true;
+  const employeePolicy = isRecord(snapshot.employeePolicy) ? snapshot.employeePolicy : null;
+  if (employeePolicy?.salarySlipMode === 'DISABLED') return false;
+  const policy = isRecord(snapshot.policy) ? snapshot.policy : null;
+  return policy?.salarySlipDefault !== false;
+}
+
+function endOfDay(value: Date) {
+  return new Date(
+    Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate(), 23, 59, 59, 999),
+  );
+}
+
+function mergeSalaryComponents(
+  components: Array<{
+    componentCode: string;
+    componentName: string;
+    componentType: string;
+    amount: Prisma.Decimal;
+  }>,
+  breakdown: Prisma.JsonValue,
+) {
+  const existingCodes = new Set(
+    components.map((component) => component.componentCode.toUpperCase()),
+  );
+  const structure =
+    isRecord(breakdown) && isRecord(breakdown.proratedStructure)
+      ? breakdown.proratedStructure
+      : null;
+  const extraEarnings = components
+    .filter((component) => component.componentType === 'EARNING')
+    .filter(
+      (component) =>
+        !['BASE', 'BASIC', 'HRA', 'OTHER_ALLOWANCE'].includes(
+          component.componentCode.toUpperCase(),
+        ),
+    )
+    .reduce((sum, component) => sum.add(component.amount), new Prisma.Decimal(0));
+  const computedCandidates: Array<[string, string, Prisma.Decimal]> = structure
+    ? [
+        ['BASE', 'Base salary', decimalFromUnknown(structure.base)],
+        ['HRA', 'HRA', decimalFromUnknown(structure.hra)],
+        [
+          'OTHER_ALLOWANCE',
+          'Other allowance',
+          decimalFromUnknown(structure.otherAllowance).sub(extraEarnings),
+        ],
+      ]
+    : [];
+  const computed = computedCandidates
+    .filter(([code]) => !existingCodes.has(code.toUpperCase()))
+    .map(([code, name, amount]) => ({
+      componentCode: code,
+      componentName: name,
+      componentType: 'EARNING',
+      amount,
+    }));
+  const statutory =
+    isRecord(breakdown) && Array.isArray(breakdown.statutory)
+      ? breakdown.statutory
+          .map((entry) => {
+            if (!isRecord(entry) || typeof entry.schemeCode !== 'string') return null;
+            const code = entry.schemeCode.toUpperCase();
+            if (existingCodes.has(code)) return null;
+            const name =
+              code === 'EPF' || code === 'PF'
+                ? 'EPF'
+                : code === 'ESIC'
+                  ? 'ESI'
+                  : code === 'PT' || code === 'PROFESSIONAL_TAX'
+                    ? 'Professional tax'
+                    : code;
+            return {
+              componentCode: code,
+              componentName: name,
+              componentType: 'DEDUCTION',
+              amount: decimalFromUnknown(entry.employeeAmount),
+            };
+          })
+          .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+      : [];
+  return [...components, ...computed, ...statutory];
+}
+
+function decimalFromUnknown(value: unknown) {
+  if (typeof value === 'number' && Number.isFinite(value)) return new Prisma.Decimal(value);
+  if (typeof value === 'string' && value.trim() && Number.isFinite(Number(value))) {
+    return new Prisma.Decimal(value);
+  }
+  return new Prisma.Decimal(0);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function validateCalendarMonth(year: number, month: number) {
+  if (!Number.isInteger(year) || year < 2000 || year > 2100)
+    throw new ConflictError('Payroll calendar year is invalid');
+  if (!Number.isInteger(month) || month < 1 || month > 12)
+    throw new ConflictError('Payroll calendar month is invalid');
+}
+
+function isSupportedFormula(
+  value: unknown,
+): value is { operation: 'FIXED' | 'PERCENTAGE_OF_BASE'; value: number } {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const candidate = value as { operation?: unknown; value?: unknown };
+  return (
+    (candidate.operation === 'FIXED' || candidate.operation === 'PERCENTAGE_OF_BASE') &&
+    typeof candidate.value === 'number' &&
+    Number.isFinite(candidate.value) &&
+    candidate.value >= 0 &&
+    (candidate.operation === 'PERCENTAGE_OF_BASE' ? candidate.value <= 100 : true)
+  );
+}
+
+function validateComponentInput(input: ComponentInput) {
+  if (!input.code.trim() || !input.name.trim())
+    throw new ConflictError('Pay component code and name are required');
+  if (input.formulaDefinition !== undefined && !isSupportedFormula(input.formulaDefinition))
+    throw new ConflictError('Pay component values require a supported formula definition');
+  if (
+    input.formulaDefinition !== undefined &&
+    input.calculationType !== PayComponentCalculationType.FORMULA &&
+    !matchesCalculationType(input.calculationType, input.formulaDefinition)
+  )
+    throw new ConflictError('Pay component value does not match its calculation type');
+  if (
+    input.calculationType === PayComponentCalculationType.FORMULA &&
+    input.formulaDefinition === undefined
+  )
+    throw new ConflictError('Formula pay components require a supported formula definition');
+}
+
+function matchesCalculationType(
+  calculationType: PayComponentCalculationType,
+  formula: { operation: 'FIXED' | 'PERCENTAGE_OF_BASE'; value: number },
+) {
+  return (
+    (calculationType === PayComponentCalculationType.FIXED && formula.operation === 'FIXED') ||
+    (calculationType === PayComponentCalculationType.PERCENTAGE_OF_BASE &&
+      formula.operation === 'PERCENTAGE_OF_BASE')
+  );
+}
+
+function hasDefaultValue(value: unknown, operation: 'FIXED' | 'PERCENTAGE_OF_BASE') {
+  return isSupportedFormula(value) && value.operation === operation;
 }
 
 function encodePayrollCursor(id: string | undefined) {

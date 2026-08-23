@@ -44,6 +44,9 @@ model User {
   createdPayrollRuns              PayrollRun[]
   createdPayrollAdjustments       PayrollAdjustment[]
   payrollApprovals                PayrollApproval[]
+  approvedSalaryAdvances          SalaryAdvance[]                    @relation("AdvanceApprovedBy")
+  rejectedSalaryAdvances          SalaryAdvance[]                    @relation("AdvanceRejectedBy")
+  markedPayrollPayments           PayrollPayment[]                   @relation("PayrollPaymentMarkedBy")
   approvalPolicySteps             ApprovalPolicyStep[]
   updatedOrganizationCapabilities OrganizationFederationCapability[] @relation("OrganizationCapabilityUpdatedBy")
   revokedWebauthnCredentials      WebauthnCredential[]               @relation("WebauthnCredentialRevokedBy")

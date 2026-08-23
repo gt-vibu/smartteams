@@ -85,6 +85,7 @@ export const ModelName = {
   AttendanceApproval: 'AttendanceApproval',
   Holiday: 'Holiday',
   LeaveType: 'LeaveType',
+  LeavePolicyAssignment: 'LeavePolicyAssignment',
   LeaveBalance: 'LeaveBalance',
   LeaveBalanceTransaction: 'LeaveBalanceTransaction',
   LeaveRequest: 'LeaveRequest',
@@ -97,7 +98,12 @@ export const ModelName = {
   TimesheetEntry: 'TimesheetEntry',
   TimesheetApproval: 'TimesheetApproval',
   PayrollRun: 'PayrollRun',
+  PayrollPolicy: 'PayrollPolicy',
+  PayrollStatutoryRule: 'PayrollStatutoryRule',
   PayrollLineItem: 'PayrollLineItem',
+  SalaryAdvance: 'SalaryAdvance',
+  SalaryAdvanceRecovery: 'SalaryAdvanceRecovery',
+  PayrollPayment: 'PayrollPayment',
   PayrollLineItemComponent: 'PayrollLineItemComponent',
   PayrollAdjustment: 'PayrollAdjustment',
   PayrollApproval: 'PayrollApproval',
@@ -108,6 +114,7 @@ export const ModelName = {
   UserRole: 'UserRole',
   Organization: 'Organization',
   OrganizationSettings: 'OrganizationSettings',
+  PayrollCalendar: 'PayrollCalendar',
   ApprovalPolicy: 'ApprovalPolicy',
   ApprovalPolicyStep: 'ApprovalPolicyStep',
   Branch: 'Branch',
@@ -121,6 +128,7 @@ export const ModelName = {
   EmployeeFieldOwnership: 'EmployeeFieldOwnership',
   EmployeeEmploymentRecord: 'EmployeeEmploymentRecord',
   EmployeeCompensation: 'EmployeeCompensation',
+  EmployeePayrollPolicy: 'EmployeePayrollPolicy',
   EmployeeStatutoryProfile: 'EmployeeStatutoryProfile',
   EmployeeStatutoryRecord: 'EmployeeStatutoryRecord',
   PayComponent: 'PayComponent',
@@ -719,6 +727,19 @@ export const LeaveTypeScalarFieldEnum = {
 export type LeaveTypeScalarFieldEnum = (typeof LeaveTypeScalarFieldEnum)[keyof typeof LeaveTypeScalarFieldEnum]
 
 
+export const LeavePolicyAssignmentScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  branchId: 'branchId',
+  leaveTypeId: 'leaveTypeId',
+  sourceAccessMode: 'sourceAccessMode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeavePolicyAssignmentScalarFieldEnum = (typeof LeavePolicyAssignmentScalarFieldEnum)[keyof typeof LeavePolicyAssignmentScalarFieldEnum]
+
+
 export const LeaveBalanceScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -938,6 +959,50 @@ export const PayrollRunScalarFieldEnum = {
 export type PayrollRunScalarFieldEnum = (typeof PayrollRunScalarFieldEnum)[keyof typeof PayrollRunScalarFieldEnum]
 
 
+export const PayrollPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  salarySlipDefault: 'salarySlipDefault',
+  payrollEnabledDefault: 'payrollEnabledDefault',
+  payrollDayBasis: 'payrollDayBasis',
+  basePercentage: 'basePercentage',
+  baseMinimum: 'baseMinimum',
+  hraPercentage: 'hraPercentage',
+  pfDefault: 'pfDefault',
+  esiDefault: 'esiDefault',
+  ptDefault: 'ptDefault',
+  statutoryJurisdiction: 'statutoryJurisdiction',
+  roundingMode: 'roundingMode',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollPolicyScalarFieldEnum = (typeof PayrollPolicyScalarFieldEnum)[keyof typeof PayrollPolicyScalarFieldEnum]
+
+
+export const PayrollStatutoryRuleScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  schemeCode: 'schemeCode',
+  jurisdiction: 'jurisdiction',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  employeeRate: 'employeeRate',
+  employerRate: 'employerRate',
+  wageCeiling: 'wageCeiling',
+  employeeThreshold: 'employeeThreshold',
+  flatAmount: 'flatAmount',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollStatutoryRuleScalarFieldEnum = (typeof PayrollStatutoryRuleScalarFieldEnum)[keyof typeof PayrollStatutoryRuleScalarFieldEnum]
+
+
 export const PayrollLineItemScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -955,6 +1020,63 @@ export const PayrollLineItemScalarFieldEnum = {
 } as const
 
 export type PayrollLineItemScalarFieldEnum = (typeof PayrollLineItemScalarFieldEnum)[keyof typeof PayrollLineItemScalarFieldEnum]
+
+
+export const SalaryAdvanceScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  requestedAmount: 'requestedAmount',
+  approvedAmount: 'approvedAmount',
+  recoveredAmount: 'recoveredAmount',
+  status: 'status',
+  reason: 'reason',
+  requestedAt: 'requestedAt',
+  approvedAt: 'approvedAt',
+  approvedByUserId: 'approvedByUserId',
+  rejectedAt: 'rejectedAt',
+  rejectedByUserId: 'rejectedByUserId',
+  source: 'source',
+  externalId: 'externalId',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SalaryAdvanceScalarFieldEnum = (typeof SalaryAdvanceScalarFieldEnum)[keyof typeof SalaryAdvanceScalarFieldEnum]
+
+
+export const SalaryAdvanceRecoveryScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  salaryAdvanceId: 'salaryAdvanceId',
+  payrollRunId: 'payrollRunId',
+  employeeId: 'employeeId',
+  amount: 'amount',
+  recoveredAt: 'recoveredAt'
+} as const
+
+export type SalaryAdvanceRecoveryScalarFieldEnum = (typeof SalaryAdvanceRecoveryScalarFieldEnum)[keyof typeof SalaryAdvanceRecoveryScalarFieldEnum]
+
+
+export const PayrollPaymentScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  payrollRunId: 'payrollRunId',
+  payrollLineItemId: 'payrollLineItemId',
+  employeeId: 'employeeId',
+  amount: 'amount',
+  status: 'status',
+  paymentMethod: 'paymentMethod',
+  paymentReference: 'paymentReference',
+  paidAt: 'paidAt',
+  markedByUserId: 'markedByUserId',
+  failureReason: 'failureReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollPaymentScalarFieldEnum = (typeof PayrollPaymentScalarFieldEnum)[keyof typeof PayrollPaymentScalarFieldEnum]
 
 
 export const PayrollLineItemComponentScalarFieldEnum = {
@@ -1116,6 +1238,24 @@ export const OrganizationSettingsScalarFieldEnum = {
 } as const
 
 export type OrganizationSettingsScalarFieldEnum = (typeof OrganizationSettingsScalarFieldEnum)[keyof typeof OrganizationSettingsScalarFieldEnum]
+
+
+export const PayrollCalendarScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  year: 'year',
+  month: 'month',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  attendanceFreezeDate: 'attendanceFreezeDate',
+  calculationDate: 'calculationDate',
+  releaseDate: 'releaseDate',
+  salaryCreditDate: 'salaryCreditDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollCalendarScalarFieldEnum = (typeof PayrollCalendarScalarFieldEnum)[keyof typeof PayrollCalendarScalarFieldEnum]
 
 
 export const ApprovalPolicyScalarFieldEnum = {
@@ -1345,6 +1485,7 @@ export const EmployeeCompensationScalarFieldEnum = {
   payType: 'payType',
   payFrequency: 'payFrequency',
   baseAmount: 'baseAmount',
+  grossSalary: 'grossSalary',
   currencyCode: 'currencyCode',
   overtimeMultiplier: 'overtimeMultiplier',
   effectiveFrom: 'effectiveFrom',
@@ -1355,6 +1496,26 @@ export const EmployeeCompensationScalarFieldEnum = {
 } as const
 
 export type EmployeeCompensationScalarFieldEnum = (typeof EmployeeCompensationScalarFieldEnum)[keyof typeof EmployeeCompensationScalarFieldEnum]
+
+
+export const EmployeePayrollPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  payrollEnabled: 'payrollEnabled',
+  salarySlipMode: 'salarySlipMode',
+  pfEnabled: 'pfEnabled',
+  esiEnabled: 'esiEnabled',
+  ptEnabled: 'ptEnabled',
+  statutoryJurisdiction: 'statutoryJurisdiction',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeePayrollPolicyScalarFieldEnum = (typeof EmployeePayrollPolicyScalarFieldEnum)[keyof typeof EmployeePayrollPolicyScalarFieldEnum]
 
 
 export const EmployeeStatutoryProfileScalarFieldEnum = {

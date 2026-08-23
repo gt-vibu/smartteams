@@ -26,6 +26,7 @@ import {
 } from './federation-controller-support';
 import {
   FederatedAssertionBeginDto,
+  FederatedAttendanceCorrectionQueryDto,
   FederatedAttendanceQueryDto,
   FederatedPreferencesDto,
   FederatedWebauthnCompleteDto,
@@ -65,6 +66,51 @@ export class FederationAttendanceController {
     return this.attendance.list(context, { ...query, ...(employeeId ? { employeeId } : {}) });
   }
 
+  @Get('federation/attendance/corrections')
+  @UseGuards(FederationAuthGuard)
+  async correctionRequests(
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Query() query: FederatedAttendanceCorrectionQueryDto,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.read',
+      branchId,
+    );
+    const employeeId = query.employeeId
+      ? await this.employees.internalId(context, query.employeeId)
+      : undefined;
+    return this.attendance.listCorrectionRequests(context, {
+      ...(employeeId ? { employeeId } : {}),
+      ...(query.status ? { status: query.status } : {}),
+      ...(query.limit ? { limit: query.limit } : {}),
+    });
+  }
+
+  @Get('federation/attendance/approvals/inbox')
+  @UseGuards(FederationAuthGuard)
+  async approvalInbox(
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Query('employeeId') employeeId: string,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.read',
+      branchId,
+    );
+    const approverUserId = await this.employees.internalUserId(
+      context,
+      requireFederatedApprover(employeeId),
+    );
+    return this.attendance.listPendingCorrectionApprovals(context, approverUserId);
+  }
+
   @Get('federation/attendance/policies')
   @UseGuards(FederationAuthGuard)
   async policies(
@@ -72,10 +118,13 @@ export class FederationAttendanceController {
     @Headers('x-branch-id') branchId: string | undefined,
     @Req() request: FederationRequest,
   ) {
-    return this.attendance.getPreferences(
-      await this.support.context(request, organizationId, 'attendance.preferences.read', branchId),
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.preferences.read',
       branchId,
     );
+    return this.attendance.getPreferences(context, context.branchId);
   }
 
   @Get('federation/attendance/shifts')
@@ -97,15 +146,16 @@ export class FederationAttendanceController {
     @Body() body: FederatedPreferencesDto,
     @Req() request: FederationRequest,
   ) {
-    return this.attendance.updatePreferences(
-      await this.support.context(
-        request,
-        organizationId,
-        'attendance.preferences.write',
-        body.branchId,
-      ),
-      body,
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.preferences.write',
+      body.branchId,
     );
+    return this.attendance.updatePreferences(context, {
+      ...body,
+      branchId: context.branchId,
+    });
   }
 
   @Post('federation/attendance/:attendanceId/corrections')
@@ -209,9 +259,13 @@ export class FederationAttendanceController {
       body.branchId,
     );
     const employeeId = await this.employees.internalId(context, body.employeeId);
+    const capturedByUserId = body.managedByExternalEmployeeId
+      ? await this.employees.internalUserId(context, body.managedByExternalEmployeeId)
+      : undefined;
     return this.attendance.punch(context, 'IN', {
       ...body,
       employeeId,
+      ...(capturedByUserId ? { capturedByUserId } : {}),
       ...(context.branchId ? { branchId: context.branchId } : {}),
       source: 'FEDERATION',
     });
@@ -231,9 +285,13 @@ export class FederationAttendanceController {
       body.branchId,
     );
     const employeeId = await this.employees.internalId(context, body.employeeId);
+    const capturedByUserId = body.managedByExternalEmployeeId
+      ? await this.employees.internalUserId(context, body.managedByExternalEmployeeId)
+      : undefined;
     return this.attendance.punch(context, 'OUT', {
       ...body,
       employeeId,
+      ...(capturedByUserId ? { capturedByUserId } : {}),
       ...(context.branchId ? { branchId: context.branchId } : {}),
       source: 'FEDERATION',
     });

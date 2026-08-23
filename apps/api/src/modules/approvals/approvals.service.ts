@@ -31,7 +31,7 @@ export class ApprovalsService {
     return this.database.run(context, (tx) =>
       tx.approvalPolicy
         .findMany({
-          where: { organizationId: context.organizationId, isActive: true },
+          where: { organizationId: context.organizationId },
           include: { steps: { orderBy: { stepNumber: 'asc' } } },
           orderBy: [{ domain: 'asc' }, { code: 'asc' }],
         })
@@ -65,9 +65,22 @@ export class ApprovalsService {
         })) !== users.length
       )
         throw new NotFoundError('Approval user');
-      if (input.isDefault)
+      const activeDefaultCount = await tx.approvalPolicy.count({
+        where: {
+          organizationId: context.organizationId,
+          domain: input.domain,
+          isActive: true,
+          isDefault: true,
+        },
+      });
+      const makeDefault = input.isDefault === true || activeDefaultCount === 0;
+      if (makeDefault)
         await tx.approvalPolicy.updateMany({
-          where: { organizationId: context.organizationId, domain: input.domain, isDefault: true },
+          where: {
+            organizationId: context.organizationId,
+            domain: input.domain,
+            isDefault: true,
+          },
           data: { isDefault: false },
         });
       const policy = await tx.approvalPolicy.create({
@@ -76,7 +89,7 @@ export class ApprovalsService {
           domain: input.domain,
           code: input.code.trim().toUpperCase(),
           name: input.name.trim(),
-          isDefault: input.isDefault ?? false,
+          isDefault: makeDefault,
           createdByUserId: context.actor.userId,
           steps: {
             create: input.steps.map((step) => ({
@@ -123,7 +136,20 @@ export class ApprovalsService {
         include: { steps: { orderBy: { stepNumber: 'asc' } } },
       });
       if (!before) throw new NotFoundError('Approval policy');
-      if (input.isDefault)
+      const otherDefaultCount = await tx.approvalPolicy.count({
+        where: {
+          organizationId: context.organizationId,
+          domain: before.domain,
+          isActive: true,
+          isDefault: true,
+          id: { not: before.id },
+        },
+      });
+      const makeDefault =
+        input.isDefault === true ||
+        (input.isDefault !== false && before.isDefault) ||
+        otherDefaultCount === 0;
+      if (makeDefault)
         await tx.approvalPolicy.updateMany({
           where: {
             organizationId: context.organizationId,
@@ -174,7 +200,7 @@ export class ApprovalsService {
         data: {
           code: input.code?.trim().toUpperCase(),
           name: input.name?.trim(),
-          isDefault: input.isDefault,
+          isDefault: makeDefault,
           steps: input.steps
             ? {
                 create: input.steps.map((step) => ({
@@ -230,6 +256,53 @@ export class ApprovalsService {
         tx,
       );
       return toDto({ ...after, steps: [] });
+    });
+  }
+
+  async reactivate(context: DomainContext, policyId: string) {
+    requirePermission(context, 'approval-policies.write');
+    return this.database.run(context, async (tx) => {
+      const before = await tx.approvalPolicy.findFirst({
+        where: { id: policyId, organizationId: context.organizationId, isActive: false },
+        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+      });
+      if (!before) throw new NotFoundError('Inactive approval policy');
+      const activeDefaultCount = await tx.approvalPolicy.count({
+        where: {
+          organizationId: context.organizationId,
+          domain: before.domain,
+          isActive: true,
+          isDefault: true,
+        },
+      });
+      const makeDefault = activeDefaultCount === 0;
+      if (makeDefault)
+        await tx.approvalPolicy.updateMany({
+          where: {
+            organizationId: context.organizationId,
+            domain: before.domain,
+            isActive: true,
+            isDefault: true,
+          },
+          data: { isDefault: false },
+        });
+      const after = await tx.approvalPolicy.update({
+        where: { id: before.id },
+        data: { isActive: true, isDefault: makeDefault },
+        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'APPROVAL_POLICY',
+          entityId: after.id,
+          action: 'APPROVAL_POLICY_REACTIVATED',
+          beforeState: jsonSnapshot(before),
+          afterState: jsonSnapshot(after),
+        },
+        tx,
+      );
+      return toDto(after);
     });
   }
 }

@@ -188,6 +188,11 @@ export type Holiday = Prisma.HolidayModel
  */
 export type LeaveType = Prisma.LeaveTypeModel
 /**
+ * Model LeavePolicyAssignment
+ * 
+ */
+export type LeavePolicyAssignment = Prisma.LeavePolicyAssignmentModel
+/**
  * Model LeaveBalance
  * 
  */
@@ -248,10 +253,35 @@ export type TimesheetApproval = Prisma.TimesheetApprovalModel
  */
 export type PayrollRun = Prisma.PayrollRunModel
 /**
+ * Model PayrollPolicy
+ * 
+ */
+export type PayrollPolicy = Prisma.PayrollPolicyModel
+/**
+ * Model PayrollStatutoryRule
+ * 
+ */
+export type PayrollStatutoryRule = Prisma.PayrollStatutoryRuleModel
+/**
  * Model PayrollLineItem
  * 
  */
 export type PayrollLineItem = Prisma.PayrollLineItemModel
+/**
+ * Model SalaryAdvance
+ * 
+ */
+export type SalaryAdvance = Prisma.SalaryAdvanceModel
+/**
+ * Model SalaryAdvanceRecovery
+ * 
+ */
+export type SalaryAdvanceRecovery = Prisma.SalaryAdvanceRecoveryModel
+/**
+ * Model PayrollPayment
+ * 
+ */
+export type PayrollPayment = Prisma.PayrollPaymentModel
 /**
  * Model PayrollLineItemComponent
  * 
@@ -302,6 +332,11 @@ export type Organization = Prisma.OrganizationModel
  * 
  */
 export type OrganizationSettings = Prisma.OrganizationSettingsModel
+/**
+ * Model PayrollCalendar
+ * 
+ */
+export type PayrollCalendar = Prisma.PayrollCalendarModel
 /**
  * Model ApprovalPolicy
  * 
@@ -367,6 +402,11 @@ export type EmployeeEmploymentRecord = Prisma.EmployeeEmploymentRecordModel
  * 
  */
 export type EmployeeCompensation = Prisma.EmployeeCompensationModel
+/**
+ * Model EmployeePayrollPolicy
+ * 
+ */
+export type EmployeePayrollPolicy = Prisma.EmployeePayrollPolicyModel
 /**
  * Model EmployeeStatutoryProfile
  * 

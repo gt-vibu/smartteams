@@ -12,6 +12,8 @@ import { FederationPayrollController } from './federation-payroll.controller';
 import { FederationShiftsController } from './federation-shifts.controller';
 import { FederationTimesheetsController } from './federation-timesheets.controller';
 import { FederationComplianceController } from './federation-compliance.controller';
+import { FederationApprovalsController } from './federation-approvals.controller';
+import { FederationApprovalsService } from './federation-approvals.service';
 import { FederatedEmployeeService } from './federated-employee.service';
 import { FederationGrantService } from './federation-grant.service';
 import { FederationIdempotencyService } from './federation-idempotency.service';
@@ -32,6 +34,9 @@ import { ShiftsModule } from '../shifts/shifts.module';
 import { TimesheetsModule } from '../timesheets/timesheets.module';
 import { HealthModule } from '../../common/health/health.module';
 import { ComplianceModule } from '../compliance/compliance.module';
+import { ApprovalsModule } from '../approvals/approvals.module';
+import { FilesModule } from '../files/files.module';
+import { FederationFilesController } from './federation-files.controller';
 
 @Global()
 @Module({
@@ -44,6 +49,8 @@ import { ComplianceModule } from '../compliance/compliance.module';
     FederationShiftsController,
     FederationTimesheetsController,
     FederationComplianceController,
+    FederationApprovalsController,
+    FederationFilesController,
   ],
   exports: [
     FederationAuthService,
@@ -64,6 +71,8 @@ import { ComplianceModule } from '../compliance/compliance.module';
     ShiftsModule,
     TimesheetsModule,
     ComplianceModule,
+    ApprovalsModule,
+    FilesModule,
     HealthModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -89,6 +98,7 @@ import { ComplianceModule } from '../compliance/compliance.module';
     WebhookProcessor,
     OutboxDispatchProcessor,
     FederatedEmployeeService,
+    FederationApprovalsService,
   ],
 })
 export class FederationModule {}
