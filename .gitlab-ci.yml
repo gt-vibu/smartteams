@@ -19,7 +19,6 @@ default:
       - .pnpm-store/
 
 variables:
-  NEXT_PUBLIC_API_URL: https://people-control-dev.blizbooks.com
   NEXT_PUBLIC_APP_ENV: development
   NODE_OPTIONS: --max-old-space-size=1536
   PNPM_STORE_DIR: $CI_PROJECT_DIR/.pnpm-store
@@ -30,6 +29,23 @@ variables:
     - corepack prepare pnpm@10.24.0 --activate
     - pnpm config set store-dir "$PNPM_STORE_DIR"
     - pnpm install --frozen-lockfile
+
+.frontend_node_setup:
+  before_script:
+    - apt-get update -y
+    - apt-get install -y --no-install-recommends awscli
+    - rm -rf /var/lib/apt/lists/*
+    - corepack enable
+    - corepack prepare pnpm@10.24.0 --activate
+    - pnpm config set store-dir "$PNPM_STORE_DIR"
+    - pnpm install --frozen-lockfile
+    - test -n "$DEV_APP_SECRET_ID"
+    - export SMARTEAM_SECRET_FILE="$(mktemp)"
+    - trap 'rm -f "$SMARTEAM_SECRET_FILE"' EXIT
+    - aws secretsmanager get-secret-value --secret-id "$DEV_APP_SECRET_ID" --region "${AWS_REGION:-ap-south-1}" --query SecretString --output text > "$SMARTEAM_SECRET_FILE"
+    - export NEXT_PUBLIC_API_URL="$(node -e 'const fs=require("fs"); const raw=fs.readFileSync(process.env.SMARTEAM_SECRET_FILE,"utf8"); let value=""; try { const secret=JSON.parse(raw); value=secret.NEXT_PUBLIC_API_URL || ""; } catch { const match=raw.match(/(?:^|\n)NEXT_PUBLIC_API_URL=(.*)(?:\n|$)/); value=match ? match[1].trim() : ""; } process.stdout.write(value.trim().replace(/^"|"$/g,""));')"
+    - test -n "$NEXT_PUBLIC_API_URL"
+    - echo "NEXT_PUBLIC_API_URL loaded from Secrets Manager"
 
 quality:
   extends: .node_setup
@@ -54,8 +70,8 @@ quality:
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
-        - scripts/**/*
         - .gitlab-ci.yml
+        - scripts/**/*
 
 build_api:
   extends: .node_setup
@@ -73,8 +89,8 @@ build_api:
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
-        - scripts/**/*
         - .gitlab-ci.yml
+        - scripts/**/*
   script:
     - rm -rf deploy/api
     - mkdir -p deploy/api
@@ -91,7 +107,7 @@ build_api:
       - deploy/api/
 
 build_web_org:
-  extends: .node_setup
+  extends: .frontend_node_setup
   stage: build
   rules:
     - if: '$CI_COMMIT_BRANCH != "dev"'
@@ -105,6 +121,7 @@ build_web_org:
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
+        - .gitlab-ci.yml
   script:
     - rm -rf deploy/web-org
     - mkdir -p deploy/web-org
@@ -119,7 +136,7 @@ build_web_org:
       - deploy/web-org/
 
 build_web_admin:
-  extends: .node_setup
+  extends: .frontend_node_setup
   stage: build
   rules:
     - if: '$CI_COMMIT_BRANCH != "dev"'
@@ -133,6 +150,7 @@ build_web_admin:
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
+        - .gitlab-ci.yml
   script:
     - rm -rf deploy/web-admin
     - mkdir -p deploy/web-admin
