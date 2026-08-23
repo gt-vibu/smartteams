@@ -130,18 +130,30 @@ graph TD
 | `GET` | `/v1/federation/leave/balances` | **Balance Lookup**: Retrieves employee leave balances. |
 | `GET` | `/v1/federation/leave/requests` | **Leave Requests List**: Lists leave applications filtered by branch, employee, or status. |
 | `POST` | `/v1/federation/leave/requests` | **Apply for Leave**: Submits a new leave request. |
+| `POST` | `/v1/federation/files/leave-attachments` | **Begin Leave Attachment**: Validates a PDF/JPG/PNG file and returns a presigned upload URL scoped to the employee. |
+| `POST` | `/v1/federation/files/{fileId}/complete` | **Complete Leave Attachment**: Verifies the uploaded object and makes it available for a leave request. |
+| `POST` | `/v1/federation/files/{fileId}/delete` | **Discard Leave Attachment**: Employee-scoped, audited cleanup for an abandoned upload; requires a reason. |
 | `POST` | `/v1/federation/leave/requests/{id}/decision` | **Approve/Reject Leave**: Approves or rejects a leave application. |
-
 | `POST` | `/v1/federation/leave/requests/{id}/cancel` | **Cancel Leave**: Withdraws an active leave request. |
 | `POST` | `/v1/federation/leave/balances/adjustments` | **Balance Override**: Manually adjusts an employee's leave balance. |
 
+### 3.7 Approval Policies
+
+| Method | Endpoint | Role & Purpose |
+| :--- | :--- | :--- |
+| `GET` | `/v1/federation/approval-policies` | **Policy List**: Lists active organization approval policies and their ordered steps. |
+| `POST` | `/v1/federation/approval-policies` | **Policy Create**: Creates an approval policy using a role, employee, or manager step. |
+| `PATCH` | `/v1/federation/approval-policies/{policyId}` | **Policy Update**: Updates an unused policy or its default flag; workflow history prevents unsafe step replacement. |
+| `POST` | `/v1/federation/approval-policies/{policyId}/deactivate` | **Policy Deactivate**: Deactivates a policy with an audited reason. |
+
 Federated approval decisions must include `decidedByExternalEmployeeId` alongside the decision status and comment. SmartTeams resolves that employee within the authenticated organization and branch to an active user account, then applies the configured approval policy. Missing, inactive, cross-tenant, or unauthorized approvers are rejected; the federation client is not treated as a substitute for a human approver.
 
-### 3.7 Payroll Processing & Financial Accounting
+### 3.8 Payroll Processing & Financial Accounting
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |
 | `GET` | `/v1/federation/payroll/components` | **Salary Components**: Lists basic pay, allowances, and deduction definitions. |
+| `POST` | `/v1/federation/payroll/components` | **Create Salary Component**: Creates an organization-owned earning, deduction, or employer-contribution component. |
 | `GET` | `/v1/federation/payroll/calendars` | **Payroll Calendar**: Retrieves monthly processing calendars. |
 | `PUT` | `/v1/federation/payroll/calendars/{year}/{month}` | **Calendar Config**: Updates monthly cut-off and processing rules. |
 | `GET` | `/v1/federation/payroll/runs` | **Payroll Runs List**: Lists monthly payroll calculations. |
@@ -152,12 +164,27 @@ Federated approval decisions must include `decidedByExternalEmployeeId` alongsid
 | `POST` | `/v1/federation/payroll/runs/{id}/{action}` | **Advance State**: Advances payroll run through (`calculate`, `approve`, `release`, `lock`). |
 | `POST` | `/v1/federation/payroll/adjustments` | **Payroll Adjustments**: Adds one-off bonuses, penalties, or advance recoveries to a run. |
 | `GET` | `/v1/federation/payroll/ledger` | **Financial Ledger**: Fetches finalized payroll payouts to log expenses into BlizBooks accounting. |
+| `GET` | `/v1/federation/payroll/policy` | **Salary Policy**: Reads the effective-dated gross salary, 30-day basis, HRA, toggle defaults, jurisdiction, and rounding policy. |
+| `PUT` | `/v1/federation/payroll/policy` | **Salary Policy Config**: Saves the canonical payroll policy. SmartTeams remains the source of truth. |
+| `GET` | `/v1/federation/payroll/statutory-rules` | **Statutory Rules**: Reads jurisdiction-specific EPF, ESIC, and professional-tax rule snapshots. |
+| `POST` | `/v1/federation/payroll/statutory-rules` | **Statutory Rule Config**: Saves an effective-dated rule; values must be reviewed for the organization's jurisdiction. |
+| `GET` | `/v1/federation/payroll/profile` | **Employee Salary Profile**: Reads gross salary, employee payroll toggles, structure preview, and assigned components. |
+| `POST` | `/v1/federation/payroll/profile` | **Employee Salary Profile Config**: Saves gross salary and employee-level payroll/statutory toggles. |
+| `POST` | `/v1/federation/payroll/preview` | **Payroll Preview**: Calculates the original salary structure, 30-day proration, statutory deductions, and net estimate without a local BlizBooks calculation. |
+| `GET` | `/v1/federation/payroll/advances` | **Salary Advances**: Lists requested, approved, and recovered advances. |
+| `POST` | `/v1/federation/payroll/advances` | **Request Advance**: Creates an approval-gated employee advance request. |
+| `POST` | `/v1/federation/payroll/advances/{advanceId}/decision` | **Decide Advance**: Approves, rejects, or cancels an advance with a reason. |
+| `GET` | `/v1/federation/payroll/payments` | **Employee Payments**: Lists per-line payment state and paid timestamps. |
+| `POST` | `/v1/federation/payroll/payments/{lineItemId}/paid` | **Mark Paid**: Records an individual payroll payment method, reference, and timestamp. |
 
-### 3.8 Statutory Compliance
+Payroll preview and calculation are gross-based. SmartTeams calculates `Base = min(Gross, max(Gross × base%, minimum base))`, caps HRA at the remaining gross, and treats the remainder as other allowance. Attendance and unpaid leave prorate the original monthly structure over the configured day basis; they never rebuild the structure from a reduced gross. Statutory values are stored as effective-dated jurisdiction rule snapshots and are not hard-coded in BlizBooks.
+
+### 3.9 Statutory Compliance
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |
 | `GET` | `/v1/federation/payroll/compliance/profiles/{employeeId}` | **Statutory Profile**: Reads effective-dated employee statutory scheme registrations and rates. |
+| `GET` | `/v1/federation/payroll/compliance/schemes` | **Scheme Catalog**: Lists the configured statutory reference schemes and their jurisdiction notes. This is not a calculation result. |
 | `POST` | `/v1/federation/payroll/compliance/profiles/{employeeId}` | **Statutory Profile Upsert**: Stores configurable employee statutory profile data. |
 | `GET` | `/v1/federation/payroll/compliance/records` | **Compliance Records**: Lists versioned statutory period records with employee and period filters. |
 | `POST` | `/v1/federation/payroll/compliance/records/{employeeId}` | **Compliance Record Upsert**: Stores an audited, reason-required statutory period record. |
@@ -166,7 +193,7 @@ The compliance API is jurisdiction-neutral until the organization's jurisdiction
 
 Compliance records follow a controlled lifecycle: `DRAFT` → `READY` → `SUBMITTED` → `ACCEPTED`, with `REJECTED` records returning to `DRAFT` or `READY`. Submitted and accepted records require a filing reference and submission timestamp; accepted records are immutable.
 
-### 3.9 Webhooks & Replay
+### 3.10 Webhooks & Replay
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |

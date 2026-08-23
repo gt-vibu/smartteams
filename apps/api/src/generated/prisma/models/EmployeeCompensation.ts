@@ -28,11 +28,13 @@ export type AggregateEmployeeCompensation = {
 
 export type EmployeeCompensationAvgAggregateOutputType = {
   baseAmount: runtime.Decimal | null
+  grossSalary: runtime.Decimal | null
   overtimeMultiplier: runtime.Decimal | null
 }
 
 export type EmployeeCompensationSumAggregateOutputType = {
   baseAmount: runtime.Decimal | null
+  grossSalary: runtime.Decimal | null
   overtimeMultiplier: runtime.Decimal | null
 }
 
@@ -43,6 +45,7 @@ export type EmployeeCompensationMinAggregateOutputType = {
   payType: $Enums.PayType | null
   payFrequency: $Enums.PayFrequency | null
   baseAmount: runtime.Decimal | null
+  grossSalary: runtime.Decimal | null
   currencyCode: string | null
   overtimeMultiplier: runtime.Decimal | null
   effectiveFrom: Date | null
@@ -58,6 +61,7 @@ export type EmployeeCompensationMaxAggregateOutputType = {
   payType: $Enums.PayType | null
   payFrequency: $Enums.PayFrequency | null
   baseAmount: runtime.Decimal | null
+  grossSalary: runtime.Decimal | null
   currencyCode: string | null
   overtimeMultiplier: runtime.Decimal | null
   effectiveFrom: Date | null
@@ -73,6 +77,7 @@ export type EmployeeCompensationCountAggregateOutputType = {
   payType: number
   payFrequency: number
   baseAmount: number
+  grossSalary: number
   currencyCode: number
   overtimeMultiplier: number
   effectiveFrom: number
@@ -86,11 +91,13 @@ export type EmployeeCompensationCountAggregateOutputType = {
 
 export type EmployeeCompensationAvgAggregateInputType = {
   baseAmount?: true
+  grossSalary?: true
   overtimeMultiplier?: true
 }
 
 export type EmployeeCompensationSumAggregateInputType = {
   baseAmount?: true
+  grossSalary?: true
   overtimeMultiplier?: true
 }
 
@@ -101,6 +108,7 @@ export type EmployeeCompensationMinAggregateInputType = {
   payType?: true
   payFrequency?: true
   baseAmount?: true
+  grossSalary?: true
   currencyCode?: true
   overtimeMultiplier?: true
   effectiveFrom?: true
@@ -116,6 +124,7 @@ export type EmployeeCompensationMaxAggregateInputType = {
   payType?: true
   payFrequency?: true
   baseAmount?: true
+  grossSalary?: true
   currencyCode?: true
   overtimeMultiplier?: true
   effectiveFrom?: true
@@ -131,6 +140,7 @@ export type EmployeeCompensationCountAggregateInputType = {
   payType?: true
   payFrequency?: true
   baseAmount?: true
+  grossSalary?: true
   currencyCode?: true
   overtimeMultiplier?: true
   effectiveFrom?: true
@@ -234,6 +244,7 @@ export type EmployeeCompensationGroupByOutputType = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal
+  grossSalary: runtime.Decimal | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal
   effectiveFrom: Date
@@ -273,6 +284,7 @@ export type EmployeeCompensationWhereInput = {
   payType?: Prisma.EnumPayTypeFilter<"EmployeeCompensation"> | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFilter<"EmployeeCompensation"> | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.DecimalNullableFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFilter<"EmployeeCompensation"> | string
   overtimeMultiplier?: Prisma.DecimalFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFilter<"EmployeeCompensation"> | Date | string
@@ -291,6 +303,7 @@ export type EmployeeCompensationOrderByWithRelationInput = {
   payType?: Prisma.SortOrder
   payFrequency?: Prisma.SortOrder
   baseAmount?: Prisma.SortOrder
+  grossSalary?: Prisma.SortOrderInput | Prisma.SortOrder
   currencyCode?: Prisma.SortOrder
   overtimeMultiplier?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
@@ -312,6 +325,7 @@ export type EmployeeCompensationWhereUniqueInput = Prisma.AtLeast<{
   payType?: Prisma.EnumPayTypeFilter<"EmployeeCompensation"> | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFilter<"EmployeeCompensation"> | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.DecimalNullableFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFilter<"EmployeeCompensation"> | string
   overtimeMultiplier?: Prisma.DecimalFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFilter<"EmployeeCompensation"> | Date | string
@@ -330,6 +344,7 @@ export type EmployeeCompensationOrderByWithAggregationInput = {
   payType?: Prisma.SortOrder
   payFrequency?: Prisma.SortOrder
   baseAmount?: Prisma.SortOrder
+  grossSalary?: Prisma.SortOrderInput | Prisma.SortOrder
   currencyCode?: Prisma.SortOrder
   overtimeMultiplier?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
@@ -354,6 +369,7 @@ export type EmployeeCompensationScalarWhereWithAggregatesInput = {
   payType?: Prisma.EnumPayTypeWithAggregatesFilter<"EmployeeCompensation"> | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyWithAggregatesFilter<"EmployeeCompensation"> | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalWithAggregatesFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.DecimalNullableWithAggregatesFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringWithAggregatesFilter<"EmployeeCompensation"> | string
   overtimeMultiplier?: Prisma.DecimalWithAggregatesFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeWithAggregatesFilter<"EmployeeCompensation"> | Date | string
@@ -368,6 +384,7 @@ export type EmployeeCompensationCreateInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -386,6 +403,7 @@ export type EmployeeCompensationUncheckedCreateInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -400,6 +418,7 @@ export type EmployeeCompensationUpdateInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -418,6 +437,7 @@ export type EmployeeCompensationUncheckedUpdateInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -434,6 +454,7 @@ export type EmployeeCompensationCreateManyInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -448,6 +469,7 @@ export type EmployeeCompensationUpdateManyMutationInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -464,6 +486,7 @@ export type EmployeeCompensationUncheckedUpdateManyInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -490,6 +513,7 @@ export type EmployeeCompensationCountOrderByAggregateInput = {
   payType?: Prisma.SortOrder
   payFrequency?: Prisma.SortOrder
   baseAmount?: Prisma.SortOrder
+  grossSalary?: Prisma.SortOrder
   currencyCode?: Prisma.SortOrder
   overtimeMultiplier?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
@@ -501,6 +525,7 @@ export type EmployeeCompensationCountOrderByAggregateInput = {
 
 export type EmployeeCompensationAvgOrderByAggregateInput = {
   baseAmount?: Prisma.SortOrder
+  grossSalary?: Prisma.SortOrder
   overtimeMultiplier?: Prisma.SortOrder
 }
 
@@ -511,6 +536,7 @@ export type EmployeeCompensationMaxOrderByAggregateInput = {
   payType?: Prisma.SortOrder
   payFrequency?: Prisma.SortOrder
   baseAmount?: Prisma.SortOrder
+  grossSalary?: Prisma.SortOrder
   currencyCode?: Prisma.SortOrder
   overtimeMultiplier?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
@@ -526,6 +552,7 @@ export type EmployeeCompensationMinOrderByAggregateInput = {
   payType?: Prisma.SortOrder
   payFrequency?: Prisma.SortOrder
   baseAmount?: Prisma.SortOrder
+  grossSalary?: Prisma.SortOrder
   currencyCode?: Prisma.SortOrder
   overtimeMultiplier?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
@@ -536,6 +563,7 @@ export type EmployeeCompensationMinOrderByAggregateInput = {
 
 export type EmployeeCompensationSumOrderByAggregateInput = {
   baseAmount?: Prisma.SortOrder
+  grossSalary?: Prisma.SortOrder
   overtimeMultiplier?: Prisma.SortOrder
 }
 
@@ -632,6 +660,7 @@ export type EmployeeCompensationCreateWithoutOrganizationInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -648,6 +677,7 @@ export type EmployeeCompensationUncheckedCreateWithoutOrganizationInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -693,6 +723,7 @@ export type EmployeeCompensationScalarWhereInput = {
   payType?: Prisma.EnumPayTypeFilter<"EmployeeCompensation"> | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFilter<"EmployeeCompensation"> | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.DecimalNullableFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFilter<"EmployeeCompensation"> | string
   overtimeMultiplier?: Prisma.DecimalFilter<"EmployeeCompensation"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFilter<"EmployeeCompensation"> | Date | string
@@ -707,6 +738,7 @@ export type EmployeeCompensationCreateWithoutEmployeeInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -723,6 +755,7 @@ export type EmployeeCompensationUncheckedCreateWithoutEmployeeInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -764,6 +797,7 @@ export type EmployeeCompensationCreateManyOrganizationInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -778,6 +812,7 @@ export type EmployeeCompensationUpdateWithoutOrganizationInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -794,6 +829,7 @@ export type EmployeeCompensationUncheckedUpdateWithoutOrganizationInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -809,6 +845,7 @@ export type EmployeeCompensationUncheckedUpdateManyWithoutOrganizationInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -824,6 +861,7 @@ export type EmployeeCompensationCreateManyEmployeeInput = {
   payType: $Enums.PayType
   payFrequency: $Enums.PayFrequency
   baseAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode: string
   overtimeMultiplier: runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom: Date | string
@@ -838,6 +876,7 @@ export type EmployeeCompensationUpdateWithoutEmployeeInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -854,6 +893,7 @@ export type EmployeeCompensationUncheckedUpdateWithoutEmployeeInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -869,6 +909,7 @@ export type EmployeeCompensationUncheckedUpdateManyWithoutEmployeeInput = {
   payType?: Prisma.EnumPayTypeFieldUpdateOperationsInput | $Enums.PayType
   payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   baseAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  grossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
   overtimeMultiplier?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -887,6 +928,7 @@ export type EmployeeCompensationSelect<ExtArgs extends runtime.Types.Extensions.
   payType?: boolean
   payFrequency?: boolean
   baseAmount?: boolean
+  grossSalary?: boolean
   currencyCode?: boolean
   overtimeMultiplier?: boolean
   effectiveFrom?: boolean
@@ -905,6 +947,7 @@ export type EmployeeCompensationSelectCreateManyAndReturn<ExtArgs extends runtim
   payType?: boolean
   payFrequency?: boolean
   baseAmount?: boolean
+  grossSalary?: boolean
   currencyCode?: boolean
   overtimeMultiplier?: boolean
   effectiveFrom?: boolean
@@ -923,6 +966,7 @@ export type EmployeeCompensationSelectUpdateManyAndReturn<ExtArgs extends runtim
   payType?: boolean
   payFrequency?: boolean
   baseAmount?: boolean
+  grossSalary?: boolean
   currencyCode?: boolean
   overtimeMultiplier?: boolean
   effectiveFrom?: boolean
@@ -941,6 +985,7 @@ export type EmployeeCompensationSelectScalar = {
   payType?: boolean
   payFrequency?: boolean
   baseAmount?: boolean
+  grossSalary?: boolean
   currencyCode?: boolean
   overtimeMultiplier?: boolean
   effectiveFrom?: boolean
@@ -950,7 +995,7 @@ export type EmployeeCompensationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type EmployeeCompensationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "payType" | "payFrequency" | "baseAmount" | "currencyCode" | "overtimeMultiplier" | "effectiveFrom" | "effectiveTo" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeCompensation"]>
+export type EmployeeCompensationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "payType" | "payFrequency" | "baseAmount" | "grossSalary" | "currencyCode" | "overtimeMultiplier" | "effectiveFrom" | "effectiveTo" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeCompensation"]>
 export type EmployeeCompensationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
@@ -977,6 +1022,7 @@ export type $EmployeeCompensationPayload<ExtArgs extends runtime.Types.Extension
     payType: $Enums.PayType
     payFrequency: $Enums.PayFrequency
     baseAmount: runtime.Decimal
+    grossSalary: runtime.Decimal | null
     currencyCode: string
     overtimeMultiplier: runtime.Decimal
     effectiveFrom: Date
@@ -1415,6 +1461,7 @@ export interface EmployeeCompensationFieldRefs {
   readonly payType: Prisma.FieldRef<"EmployeeCompensation", 'PayType'>
   readonly payFrequency: Prisma.FieldRef<"EmployeeCompensation", 'PayFrequency'>
   readonly baseAmount: Prisma.FieldRef<"EmployeeCompensation", 'Decimal'>
+  readonly grossSalary: Prisma.FieldRef<"EmployeeCompensation", 'Decimal'>
   readonly currencyCode: Prisma.FieldRef<"EmployeeCompensation", 'String'>
   readonly overtimeMultiplier: Prisma.FieldRef<"EmployeeCompensation", 'Decimal'>
   readonly effectiveFrom: Prisma.FieldRef<"EmployeeCompensation", 'DateTime'>

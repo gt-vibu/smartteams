@@ -15,7 +15,11 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
-import { assertApprover } from '../approvals/approval-authorization';
+import {
+  assertApprover,
+  assertResolvableApprovers,
+  canApprove,
+} from '../approvals/approval-authorization';
 
 type LeaveTypeInput = {
   code: string;
@@ -134,19 +138,177 @@ export class LeaveService {
     });
   }
 
+  async assignTypeToBranch(context: DomainContext, code: string) {
+    requirePermission(context, 'leave.types.write');
+    if (!context.branchId) throw new ConflictError('A branch is required to assign a leave policy');
+    return this.database.run(context, async (tx) => {
+      const [branch, type, settings] = await Promise.all([
+        tx.branch.findFirst({
+          where: { id: context.branchId, organizationId: context.organizationId, status: 'ACTIVE' },
+        }),
+        tx.leaveType.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            code: code.trim().toUpperCase(),
+            isActive: true,
+          },
+        }),
+        tx.organizationSettings.findUniqueOrThrow({
+          where: { organizationId: context.organizationId },
+        }),
+      ]);
+      if (!branch) throw new NotFoundError('Branch');
+      if (!type) throw new NotFoundError('Leave type');
+
+      const assignment = await tx.leavePolicyAssignment.upsert({
+        where: {
+          organizationId_branchId_leaveTypeId: {
+            organizationId: context.organizationId,
+            branchId: branch.id,
+            leaveTypeId: type.id,
+          },
+        },
+        create: {
+          organizationId: context.organizationId,
+          branchId: branch.id,
+          leaveTypeId: type.id,
+          sourceAccessMode: context.accessMode,
+        },
+        update: { sourceAccessMode: context.accessMode },
+        include: { leaveType: true, branch: { select: { id: true, name: true, code: true } } },
+      });
+      const employees = await tx.employee.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: 'ACTIVE',
+          OR: [
+            { primaryBranchId: branch.id },
+            { branchAssignments: { some: { branchId: branch.id, endsOn: null } } },
+          ],
+        },
+        select: { id: true },
+      });
+      let balancesProvisioned = 0;
+      for (const employee of employees) {
+        const created = await this.provisionBalance(
+          tx,
+          context.organizationId,
+          employee.id,
+          type,
+          settings.leaveYearStartMonth,
+          new Date(),
+        );
+        if (created) balancesProvisioned += 1;
+      }
+      await this.audit.record(
+        context,
+        {
+          entityType: 'LEAVE_POLICY_ASSIGNMENT',
+          entityId: assignment.id,
+          action: 'LEAVE_POLICY_ASSIGNED_TO_BRANCH',
+          afterState: jsonSnapshot({ assignment, balancesProvisioned }),
+        },
+        tx,
+      );
+      return {
+        id: assignment.id,
+        branch: assignment.branch,
+        leaveType: this.toTypeDto(assignment.leaveType),
+        assignedEmployeeCount: employees.length,
+        balancesProvisioned,
+      };
+    });
+  }
+
+  async listAssignments(context: DomainContext) {
+    requirePermission(context, 'leave.types.read');
+    if (!context.branchId)
+      throw new ConflictError('A branch is required to list leave assignments');
+    return this.database.run(context, async (tx) => {
+      const assignments = await tx.leavePolicyAssignment.findMany({
+        where: { organizationId: context.organizationId, branchId: context.branchId },
+        include: { leaveType: true, branch: { select: { id: true, name: true, code: true } } },
+        orderBy: { createdAt: 'asc' },
+      });
+      const assignedEmployeeCount = await tx.employee.count({
+        where: {
+          organizationId: context.organizationId,
+          status: 'ACTIVE',
+          OR: [
+            { primaryBranchId: context.branchId },
+            { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+          ],
+        },
+      });
+      return assignments.map((assignment) => ({
+        id: assignment.id,
+        branch: assignment.branch,
+        leaveType: this.toTypeDto(assignment.leaveType),
+        assignedEmployeeCount,
+      }));
+    });
+  }
+
   async listBalances(context: DomainContext, employeeId?: string) {
     requirePermission(context, 'leave.balances.read');
-    return this.database.run(context, (tx) =>
-      tx.leaveBalance.findMany({
+    return this.database.run(context, async (tx) => {
+      if (employeeId) {
+        const employee = await tx.employee.findFirst({
+          where: {
+            id: employeeId,
+            organizationId: context.organizationId,
+            status: 'ACTIVE',
+            ...(context.branchId
+              ? {
+                  OR: [
+                    { primaryBranchId: context.branchId },
+                    { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+                  ],
+                }
+              : {}),
+          },
+          select: {
+            id: true,
+            primaryBranchId: true,
+            branchAssignments: { where: { endsOn: null }, select: { branchId: true } },
+          },
+        });
+        if (!employee) throw new NotFoundError('Active employee');
+        const branchIds = context.branchId
+          ? [context.branchId]
+          : Array.from(
+              new Set(
+                [
+                  employee.primaryBranchId,
+                  ...employee.branchAssignments.map((assignment) => assignment.branchId),
+                ].filter((value): value is string => Boolean(value)),
+              ),
+            );
+        const settings = await tx.organizationSettings.findUniqueOrThrow({
+          where: { organizationId: context.organizationId },
+        });
+        for (const branchId of branchIds)
+          await this.provisionAssignedBalances(
+            tx,
+            context.organizationId,
+            employee.id,
+            branchId,
+            settings.leaveYearStartMonth,
+          );
+      }
+      return tx.leaveBalance.findMany({
         where: {
           organizationId: context.organizationId,
           employeeId,
           ...(context.branchId ? { employee: this.employeeScope(context) } : {}),
+          ...(context.branchId
+            ? { leaveType: { policyAssignments: { some: { branchId: context.branchId } } } }
+            : {}),
         },
         include: { leaveType: true },
         orderBy: [{ employeeId: 'asc' }, { periodStart: 'desc' }],
-      }),
-    );
+      });
+    });
   }
   async listRequests(
     context: DomainContext,
@@ -180,6 +342,81 @@ export class LeaveService {
     });
   }
 
+  async listPendingApprovals(context: DomainContext, approverUserId: string) {
+    requirePermission(context, 'leave.requests.read');
+    return this.database.run(context, async (tx) => {
+      const requests = await tx.leaveRequest.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: LeaveRequestStatus.PENDING,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        include: {
+          leaveType: { select: { id: true, code: true, name: true, paid: true } },
+          employee: {
+            select: {
+              id: true,
+              externalId: true,
+              employeeNumber: true,
+              firstName: true,
+              lastName: true,
+              userId: true,
+              manager: { select: { userId: true } },
+            },
+          },
+          branch: { select: { id: true, code: true, name: true } },
+          approvals: true,
+          approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
+        },
+        orderBy: [{ submittedAt: 'asc' }, { id: 'asc' }],
+        take: 500,
+      });
+      const items = [];
+      for (const request of requests) {
+        const pendingStep = request.approvalPolicy?.steps.find(
+          (step) => !request.approvals.some((approval) => approval.stepNumber === step.stepNumber),
+        );
+        if (
+          !pendingStep ||
+          !(await canApprove(
+            tx,
+            context.organizationId,
+            approverUserId,
+            request.employee.manager?.userId,
+            pendingStep.approverType,
+            pendingStep.roleId,
+            pendingStep.approverUserId,
+            request.branchId ?? context.branchId,
+            request.employee.userId,
+          ))
+        )
+          continue;
+        items.push({
+          ...this.toRequestDto(request),
+          externalEmployeeId: request.employee.externalId,
+          employee: {
+            id: request.employee.id,
+            externalId: request.employee.externalId,
+            employeeNumber: request.employee.employeeNumber,
+            firstName: request.employee.firstName,
+            lastName: request.employee.lastName,
+          },
+          branch: request.branch,
+          leaveType: request.leaveType,
+          reason: request.reason,
+          submittedAt: request.submittedAt,
+          currentStep: {
+            stepNumber: pendingStep.stepNumber,
+            approverType: pendingStep.approverType,
+            roleId: pendingStep.roleId,
+            approverUserId: pendingStep.approverUserId,
+          },
+        });
+      }
+      return { requests: items };
+    });
+  }
+
   async createRequest(context: DomainContext, input: LeaveRequestInput) {
     requirePermission(context, 'leave.requests.write');
     return this.database.run(context, async (tx) => {
@@ -194,6 +431,7 @@ export class LeaveService {
             status: 'ACTIVE',
             ...(context.branchId ? this.employeeScope(context) : {}),
           },
+          include: { manager: { select: { userId: true } } },
         }),
         tx.leaveType.findFirst({
           where: { id: input.leaveTypeId, organizationId: context.organizationId, isActive: true },
@@ -205,6 +443,7 @@ export class LeaveService {
       if (!employee) throw new NotFoundError('Active employee');
       if (!type) throw new NotFoundError('Leave type');
       const branchId = context.branchId ?? input.branchId ?? employee.primaryBranchId;
+      if (!branchId) throw new ConflictError('An employee branch is required for leave requests');
       if (
         input.branchId &&
         !(await tx.branch.findFirst({
@@ -237,32 +476,62 @@ export class LeaveService {
         if (count !== input.attachmentIds.length)
           throw new ConflictError('Every leave attachment must be an available tenant file');
       }
-      const balance = await this.ensureBalance(
+      const assignment = await tx.leavePolicyAssignment.findFirst({
+        where: { organizationId: context.organizationId, branchId, leaveTypeId: type.id },
+      });
+      if (!assignment)
+        throw new ConflictError('This leave policy is not assigned to the employee branch');
+      await this.provisionBalance(
         tx,
         context.organizationId,
         employee.id,
-        type.id,
-        start,
+        type,
         settings.leaveYearStartMonth,
+        start,
       );
+      const balance = await tx.leaveBalance.findUnique({
+        where: {
+          employeeId_leaveTypeId_periodStart_periodEnd: {
+            employeeId: employee.id,
+            leaveTypeId: type.id,
+            ...this.leavePeriod(start, settings.leaveYearStartMonth),
+          },
+        },
+      });
+      if (!balance) throw new NotFoundError('Leave balance');
       const available = Number(balance.availableAmount);
       if (available < days) throw new ConflictError('Leave balance is insufficient');
-      const policy = await tx.approvalPolicy.findFirst({
+      const activePolicies = await tx.approvalPolicy.findMany({
         where: {
           organizationId: context.organizationId,
           domain: 'LEAVE',
           isActive: true,
-          isDefault: true,
         },
-        orderBy: { createdAt: 'asc' },
+        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
       });
+      const policy =
+        activePolicies.find((candidate) => candidate.isDefault) ??
+        (activePolicies.length === 1 ? activePolicies[0] : undefined);
+      if (!policy)
+        throw new ConflictError(
+          'Configure a default leave approval policy before submitting leave requests',
+        );
+      await assertResolvableApprovers(
+        tx,
+        context.organizationId,
+        branchId,
+        employee.manager?.userId,
+        employee.userId,
+        policy.steps,
+      );
       const request = await tx.leaveRequest.create({
         data: {
           organizationId: context.organizationId,
           employeeId: employee.id,
           branchId,
           leaveTypeId: type.id,
-          approvalPolicyId: policy?.id,
+          approvalPolicyId: policy.id,
           startDate: start,
           endDate: end,
           requestedDays: new Prisma.Decimal(days),
@@ -347,17 +616,18 @@ export class LeaveService {
       const pendingStep = request.approvalPolicy?.steps.find(
         (step) => !request.approvals.some((approval) => approval.stepNumber === step.stepNumber),
       );
-      if (pendingStep)
-        await assertApprover(
-          tx,
-          context.organizationId,
-          approverUserId,
-          request.employee.manager?.userId,
-          pendingStep.approverType,
-          pendingStep.roleId,
-          pendingStep.approverUserId,
-          request.branchId ?? context.branchId,
-        );
+      if (!pendingStep) throw new ConflictError('Leave request has no pending approval step');
+      await assertApprover(
+        tx,
+        context.organizationId,
+        approverUserId,
+        request.employee.manager?.userId,
+        pendingStep.approverType,
+        pendingStep.roleId,
+        pendingStep.approverUserId,
+        request.branchId ?? context.branchId,
+        request.employee.userId,
+      );
       const balance = await tx.leaveBalance.findFirst({
         where: {
           organizationId: context.organizationId,
@@ -368,13 +638,13 @@ export class LeaveService {
         },
       });
       if (!balance) throw new NotFoundError('Leave balance');
-      const stepNumber = pendingStep?.stepNumber ?? 1;
+      const stepNumber = pendingStep.stepNumber;
       await tx.leaveApproval.create({
         data: {
           organizationId: context.organizationId,
           leaveRequestId: request.id,
           approverUserId,
-          approvalPolicyStepId: pendingStep?.id,
+          approvalPolicyStepId: pendingStep.id,
           stepNumber,
           status,
           comment,
@@ -557,29 +827,59 @@ export class LeaveService {
     });
   }
 
-  private async ensureBalance(
+  private async provisionAssignedBalances(
     tx: Prisma.TransactionClient,
     organizationId: string,
     employeeId: string,
-    leaveTypeId: string,
-    date: Date,
+    branchId: string,
     leaveYearStartMonth: number,
   ) {
-    const periodStart = new Date(
-      Date.UTC(
-        date.getUTCFullYear() - (date.getUTCMonth() + 1 < leaveYearStartMonth ? 1 : 0),
-        leaveYearStartMonth - 1,
-        1,
-      ),
-    );
-    const periodEnd = new Date(
-      Date.UTC(periodStart.getUTCFullYear() + 1, leaveYearStartMonth - 1, 0),
-    );
-    return tx.leaveBalance.upsert({
+    const assignments = await tx.leavePolicyAssignment.findMany({
+      where: { organizationId, branchId },
+      include: { leaveType: true },
+    });
+    for (const assignment of assignments)
+      await this.provisionBalance(
+        tx,
+        organizationId,
+        employeeId,
+        assignment.leaveType,
+        leaveYearStartMonth,
+        new Date(),
+      );
+  }
+
+  private async provisionBalance(
+    tx: Prisma.TransactionClient,
+    organizationId: string,
+    employeeId: string,
+    type: {
+      id: string;
+      accrualType: LeaveAccrualType;
+      annualAllowance: Prisma.Decimal | null;
+      monthlyAccrual: Prisma.Decimal | null;
+    },
+    leaveYearStartMonth: number,
+    date: Date,
+  ) {
+    const { periodStart, periodEnd } = this.leavePeriod(date, leaveYearStartMonth);
+    const existing = await tx.leaveBalance.findUnique({
       where: {
         employeeId_leaveTypeId_periodStart_periodEnd: {
           employeeId,
-          leaveTypeId,
+          leaveTypeId: type.id,
+          periodStart,
+          periodEnd,
+        },
+      },
+    });
+    if (existing) return false;
+    const amount = this.initialEntitlement(type, periodStart, date);
+    await tx.leaveBalance.upsert({
+      where: {
+        employeeId_leaveTypeId_periodStart_periodEnd: {
+          employeeId,
+          leaveTypeId: type.id,
           periodStart,
           periodEnd,
         },
@@ -587,17 +887,53 @@ export class LeaveService {
       create: {
         organizationId,
         employeeId,
-        leaveTypeId,
+        leaveTypeId: type.id,
         periodStart,
         periodEnd,
         openingAmount: 0,
-        accruedAmount: 0,
+        accruedAmount: amount,
         usedAmount: 0,
         reservedAmount: 0,
-        availableAmount: 0,
+        availableAmount: amount,
       },
       update: {},
     });
+    return true;
+  }
+
+  private leavePeriod(date: Date, leaveYearStartMonth: number) {
+    const periodStart = new Date(
+      Date.UTC(
+        date.getUTCFullYear() - (date.getUTCMonth() + 1 < leaveYearStartMonth ? 1 : 0),
+        leaveYearStartMonth - 1,
+        1,
+      ),
+    );
+    return {
+      periodStart,
+      periodEnd: new Date(Date.UTC(periodStart.getUTCFullYear() + 1, leaveYearStartMonth - 1, 0)),
+    };
+  }
+
+  private initialEntitlement(
+    type: {
+      accrualType: LeaveAccrualType;
+      annualAllowance: Prisma.Decimal | null;
+      monthlyAccrual: Prisma.Decimal | null;
+    },
+    periodStart: Date,
+    date: Date,
+  ) {
+    if (type.accrualType === 'FIXED_ANNUAL') return type.annualAllowance ?? new Prisma.Decimal(0);
+    if (type.accrualType === 'MONTHLY') {
+      const months =
+        (date.getUTCFullYear() - periodStart.getUTCFullYear()) * 12 +
+        date.getUTCMonth() -
+        periodStart.getUTCMonth() +
+        1;
+      return (type.monthlyAccrual ?? new Prisma.Decimal(0)).mul(months);
+    }
+    return new Prisma.Decimal(0);
   }
 
   private employeeScope(context: DomainContext): Prisma.EmployeeWhereInput {

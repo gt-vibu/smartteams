@@ -285,6 +285,7 @@ export type BranchWhereInput = {
   shifts?: Prisma.ShiftListRelationFilter
   timesheets?: Prisma.TimesheetListRelationFilter
   holidays?: Prisma.HolidayListRelationFilter
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentListRelationFilter
   teams?: Prisma.TeamListRelationFilter
   projects?: Prisma.ProjectListRelationFilter
   grants?: Prisma.FederationGrantListRelationFilter
@@ -324,6 +325,7 @@ export type BranchOrderByWithRelationInput = {
   shifts?: Prisma.ShiftOrderByRelationAggregateInput
   timesheets?: Prisma.TimesheetOrderByRelationAggregateInput
   holidays?: Prisma.HolidayOrderByRelationAggregateInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentOrderByRelationAggregateInput
   teams?: Prisma.TeamOrderByRelationAggregateInput
   projects?: Prisma.ProjectOrderByRelationAggregateInput
   grants?: Prisma.FederationGrantOrderByRelationAggregateInput
@@ -368,6 +370,7 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   shifts?: Prisma.ShiftListRelationFilter
   timesheets?: Prisma.TimesheetListRelationFilter
   holidays?: Prisma.HolidayListRelationFilter
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentListRelationFilter
   teams?: Prisma.TeamListRelationFilter
   projects?: Prisma.ProjectListRelationFilter
   grants?: Prisma.FederationGrantListRelationFilter
@@ -450,6 +453,7 @@ export type BranchCreateInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -488,6 +492,7 @@ export type BranchUncheckedCreateInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -522,6 +527,7 @@ export type BranchUpdateInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -560,6 +566,7 @@ export type BranchUncheckedUpdateInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -640,6 +647,11 @@ export type BranchOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type BranchScalarRelationFilter = {
+  is?: Prisma.BranchWhereInput
+  isNot?: Prisma.BranchWhereInput
+}
+
 export type BranchOrganizationIdCodeCompoundUniqueInput = {
   organizationId: string
   code: string
@@ -706,11 +718,6 @@ export type BranchMinOrderByAggregateInput = {
   biometricOwnerClientId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type BranchScalarRelationFilter = {
-  is?: Prisma.BranchWhereInput
-  isNot?: Prisma.BranchWhereInput
 }
 
 export type BranchCreateNestedOneWithoutRequestRecordsInput = {
@@ -875,6 +882,20 @@ export type BranchUpdateOneWithoutHolidaysNestedInput = {
   delete?: Prisma.BranchWhereInput | boolean
   connect?: Prisma.BranchWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutHolidaysInput, Prisma.BranchUpdateWithoutHolidaysInput>, Prisma.BranchUncheckedUpdateWithoutHolidaysInput>
+}
+
+export type BranchCreateNestedOneWithoutLeavePolicyAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutLeavePolicyAssignmentsInput, Prisma.BranchUncheckedCreateWithoutLeavePolicyAssignmentsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutLeavePolicyAssignmentsInput
+  connect?: Prisma.BranchWhereUniqueInput
+}
+
+export type BranchUpdateOneRequiredWithoutLeavePolicyAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.BranchCreateWithoutLeavePolicyAssignmentsInput, Prisma.BranchUncheckedCreateWithoutLeavePolicyAssignmentsInput>
+  connectOrCreate?: Prisma.BranchCreateOrConnectWithoutLeavePolicyAssignmentsInput
+  upsert?: Prisma.BranchUpsertWithoutLeavePolicyAssignmentsInput
+  connect?: Prisma.BranchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BranchUpdateToOneWithWhereWithoutLeavePolicyAssignmentsInput, Prisma.BranchUpdateWithoutLeavePolicyAssignmentsInput>, Prisma.BranchUncheckedUpdateWithoutLeavePolicyAssignmentsInput>
 }
 
 export type BranchCreateNestedOneWithoutLeaveRequestsInput = {
@@ -1127,6 +1148,7 @@ export type BranchCreateWithoutRequestRecordsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -1164,6 +1186,7 @@ export type BranchUncheckedCreateWithoutRequestRecordsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -1213,6 +1236,7 @@ export type BranchUpdateWithoutRequestRecordsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -1250,6 +1274,7 @@ export type BranchUncheckedUpdateWithoutRequestRecordsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -1283,6 +1308,7 @@ export type BranchCreateWithoutAuditLogsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -1320,6 +1346,7 @@ export type BranchUncheckedCreateWithoutAuditLogsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -1369,6 +1396,7 @@ export type BranchUpdateWithoutAuditLogsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -1406,6 +1434,7 @@ export type BranchUncheckedUpdateWithoutAuditLogsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -1439,6 +1468,7 @@ export type BranchCreateWithoutGeofenceOwnerClientInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -1475,6 +1505,7 @@ export type BranchUncheckedCreateWithoutGeofenceOwnerClientInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -1519,6 +1550,7 @@ export type BranchCreateWithoutBiometricOwnerClientInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -1555,6 +1587,7 @@ export type BranchUncheckedCreateWithoutBiometricOwnerClientInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -1654,6 +1687,7 @@ export type BranchCreateWithoutGrantsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
@@ -1691,6 +1725,7 @@ export type BranchUncheckedCreateWithoutGrantsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
@@ -1740,6 +1775,7 @@ export type BranchUpdateWithoutGrantsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
@@ -1777,6 +1813,7 @@ export type BranchUncheckedUpdateWithoutGrantsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
@@ -1809,6 +1846,7 @@ export type BranchCreateWithoutAttendanceRecordsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -1846,6 +1884,7 @@ export type BranchUncheckedCreateWithoutAttendanceRecordsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -1895,6 +1934,7 @@ export type BranchUpdateWithoutAttendanceRecordsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -1932,6 +1972,7 @@ export type BranchUncheckedUpdateWithoutAttendanceRecordsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -1965,6 +2006,7 @@ export type BranchCreateWithoutHolidaysInput = {
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -2002,6 +2044,7 @@ export type BranchUncheckedCreateWithoutHolidaysInput = {
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -2051,6 +2094,7 @@ export type BranchUpdateWithoutHolidaysInput = {
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -2088,6 +2132,167 @@ export type BranchUncheckedUpdateWithoutHolidaysInput = {
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutBranchNestedInput
+}
+
+export type BranchCreateWithoutLeavePolicyAssignmentsInput = {
+  id?: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBranchesInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutBranchInput
+  geofenceOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput
+  biometricOwnerClient?: Prisma.FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput
+}
+
+export type BranchUncheckedCreateWithoutLeavePolicyAssignmentsInput = {
+  id?: string
+  organizationId: string
+  name: string
+  code: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  geofenceOwnerSource?: $Enums.OwnerSource
+  geofenceOwnerClientId?: string | null
+  biometricVerificationMode?: $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: $Enums.OwnerSource
+  biometricOwnerClientId?: string | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutBranchInput
+  primaryEmployees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutPrimaryBranchInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutBranchInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutBranchInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutBranchInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutBranchInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutBranchInput
+}
+
+export type BranchCreateOrConnectWithoutLeavePolicyAssignmentsInput = {
+  where: Prisma.BranchWhereUniqueInput
+  create: Prisma.XOR<Prisma.BranchCreateWithoutLeavePolicyAssignmentsInput, Prisma.BranchUncheckedCreateWithoutLeavePolicyAssignmentsInput>
+}
+
+export type BranchUpsertWithoutLeavePolicyAssignmentsInput = {
+  update: Prisma.XOR<Prisma.BranchUpdateWithoutLeavePolicyAssignmentsInput, Prisma.BranchUncheckedUpdateWithoutLeavePolicyAssignmentsInput>
+  create: Prisma.XOR<Prisma.BranchCreateWithoutLeavePolicyAssignmentsInput, Prisma.BranchUncheckedCreateWithoutLeavePolicyAssignmentsInput>
+  where?: Prisma.BranchWhereInput
+}
+
+export type BranchUpdateToOneWithWhereWithoutLeavePolicyAssignmentsInput = {
+  where?: Prisma.BranchWhereInput
+  data: Prisma.XOR<Prisma.BranchUpdateWithoutLeavePolicyAssignmentsInput, Prisma.BranchUncheckedUpdateWithoutLeavePolicyAssignmentsInput>
+}
+
+export type BranchUpdateWithoutLeavePolicyAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBranchesNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutBranchNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutBranchNestedInput
+  geofenceOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput
+  biometricOwnerClient?: Prisma.FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput
+}
+
+export type BranchUncheckedUpdateWithoutLeavePolicyAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
+  biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutBranchNestedInput
+  primaryEmployees?: Prisma.EmployeeUncheckedUpdateManyWithoutPrimaryBranchNestedInput
+  employeeAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutBranchNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutBranchNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutBranchNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutBranchNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -2121,6 +2326,7 @@ export type BranchCreateWithoutLeaveRequestsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -2158,6 +2364,7 @@ export type BranchUncheckedCreateWithoutLeaveRequestsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -2207,6 +2414,7 @@ export type BranchUpdateWithoutLeaveRequestsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -2244,6 +2452,7 @@ export type BranchUncheckedUpdateWithoutLeaveRequestsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -2277,6 +2486,7 @@ export type BranchCreateWithoutShiftsInput = {
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -2314,6 +2524,7 @@ export type BranchUncheckedCreateWithoutShiftsInput = {
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -2363,6 +2574,7 @@ export type BranchUpdateWithoutShiftsInput = {
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -2400,6 +2612,7 @@ export type BranchUncheckedUpdateWithoutShiftsInput = {
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -2434,6 +2647,7 @@ export type BranchCreateWithoutShiftAssignmentsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -2471,6 +2685,7 @@ export type BranchUncheckedCreateWithoutShiftAssignmentsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -2520,6 +2735,7 @@ export type BranchUpdateWithoutShiftAssignmentsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -2557,6 +2773,7 @@ export type BranchUncheckedUpdateWithoutShiftAssignmentsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -2589,6 +2806,7 @@ export type BranchCreateWithoutTimesheetsInput = {
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -2626,6 +2844,7 @@ export type BranchUncheckedCreateWithoutTimesheetsInput = {
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutBranchInput
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -2675,6 +2894,7 @@ export type BranchUpdateWithoutTimesheetsInput = {
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -2712,6 +2932,7 @@ export type BranchUncheckedUpdateWithoutTimesheetsInput = {
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutBranchNestedInput
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -2745,6 +2966,7 @@ export type BranchCreateWithoutRolesInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -2782,6 +3004,7 @@ export type BranchUncheckedCreateWithoutRolesInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -2831,6 +3054,7 @@ export type BranchUpdateWithoutRolesInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -2868,6 +3092,7 @@ export type BranchUncheckedUpdateWithoutRolesInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -2901,6 +3126,7 @@ export type BranchCreateWithoutUserRolesInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -2938,6 +3164,7 @@ export type BranchUncheckedCreateWithoutUserRolesInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -2987,6 +3214,7 @@ export type BranchUpdateWithoutUserRolesInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -3024,6 +3252,7 @@ export type BranchUncheckedUpdateWithoutUserRolesInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -3057,6 +3286,7 @@ export type BranchCreateWithoutOrganizationInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -3094,6 +3324,7 @@ export type BranchUncheckedCreateWithoutOrganizationInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -3153,6 +3384,7 @@ export type BranchCreateWithoutWorkLocationsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -3190,6 +3422,7 @@ export type BranchUncheckedCreateWithoutWorkLocationsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -3239,6 +3472,7 @@ export type BranchUpdateWithoutWorkLocationsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -3276,6 +3510,7 @@ export type BranchUncheckedUpdateWithoutWorkLocationsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -3309,6 +3544,7 @@ export type BranchCreateWithoutPrimaryEmployeesInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -3346,6 +3582,7 @@ export type BranchUncheckedCreateWithoutPrimaryEmployeesInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -3395,6 +3632,7 @@ export type BranchUpdateWithoutPrimaryEmployeesInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -3432,6 +3670,7 @@ export type BranchUncheckedUpdateWithoutPrimaryEmployeesInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -3465,6 +3704,7 @@ export type BranchCreateWithoutEmployeeAssignmentsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
@@ -3502,6 +3742,7 @@ export type BranchUncheckedCreateWithoutEmployeeAssignmentsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
@@ -3551,6 +3792,7 @@ export type BranchUpdateWithoutEmployeeAssignmentsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -3588,6 +3830,7 @@ export type BranchUncheckedUpdateWithoutEmployeeAssignmentsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -3622,6 +3865,7 @@ export type BranchCreateWithoutTeamsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
@@ -3659,6 +3903,7 @@ export type BranchUncheckedCreateWithoutTeamsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
@@ -3708,6 +3953,7 @@ export type BranchUpdateWithoutTeamsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
@@ -3745,6 +3991,7 @@ export type BranchUncheckedUpdateWithoutTeamsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
@@ -3778,6 +4025,7 @@ export type BranchCreateWithoutProjectsInput = {
   shifts?: Prisma.ShiftCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutBranchInput
@@ -3815,6 +4063,7 @@ export type BranchUncheckedCreateWithoutProjectsInput = {
   shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutBranchInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutBranchInput
   holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutBranchInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutBranchInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutBranchInput
   grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutBranchInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutBranchInput
@@ -3864,6 +4113,7 @@ export type BranchUpdateWithoutProjectsInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutBranchNestedInput
@@ -3901,6 +4151,7 @@ export type BranchUncheckedUpdateWithoutProjectsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
   shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutBranchNestedInput
@@ -3972,6 +4223,7 @@ export type BranchUpdateWithoutGeofenceOwnerClientInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -4008,6 +4260,7 @@ export type BranchUncheckedUpdateWithoutGeofenceOwnerClientInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -4061,6 +4314,7 @@ export type BranchUpdateWithoutBiometricOwnerClientInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -4097,6 +4351,7 @@ export type BranchUncheckedUpdateWithoutBiometricOwnerClientInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -4168,6 +4423,7 @@ export type BranchUpdateWithoutOrganizationInput = {
   shifts?: Prisma.ShiftUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUpdateManyWithoutBranchNestedInput
@@ -4205,6 +4461,7 @@ export type BranchUncheckedUpdateWithoutOrganizationInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutBranchNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutBranchNestedInput
   holidays?: Prisma.HolidayUncheckedUpdateManyWithoutBranchNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutBranchNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutBranchNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutBranchNestedInput
   grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutBranchNestedInput
@@ -4248,6 +4505,7 @@ export type BranchCountOutputType = {
   shifts: number
   timesheets: number
   holidays: number
+  leavePolicyAssignments: number
   teams: number
   projects: number
   grants: number
@@ -4267,6 +4525,7 @@ export type BranchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   shifts?: boolean | BranchCountOutputTypeCountShiftsArgs
   timesheets?: boolean | BranchCountOutputTypeCountTimesheetsArgs
   holidays?: boolean | BranchCountOutputTypeCountHolidaysArgs
+  leavePolicyAssignments?: boolean | BranchCountOutputTypeCountLeavePolicyAssignmentsArgs
   teams?: boolean | BranchCountOutputTypeCountTeamsArgs
   projects?: boolean | BranchCountOutputTypeCountProjectsArgs
   grants?: boolean | BranchCountOutputTypeCountGrantsArgs
@@ -4358,6 +4617,13 @@ export type BranchCountOutputTypeCountHolidaysArgs<ExtArgs extends runtime.Types
 /**
  * BranchCountOutputType without action
  */
+export type BranchCountOutputTypeCountLeavePolicyAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeavePolicyAssignmentWhereInput
+}
+
+/**
+ * BranchCountOutputType without action
+ */
 export type BranchCountOutputTypeCountTeamsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TeamWhereInput
 }
@@ -4427,6 +4693,7 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   shifts?: boolean | Prisma.Branch$shiftsArgs<ExtArgs>
   timesheets?: boolean | Prisma.Branch$timesheetsArgs<ExtArgs>
   holidays?: boolean | Prisma.Branch$holidaysArgs<ExtArgs>
+  leavePolicyAssignments?: boolean | Prisma.Branch$leavePolicyAssignmentsArgs<ExtArgs>
   teams?: boolean | Prisma.Branch$teamsArgs<ExtArgs>
   projects?: boolean | Prisma.Branch$projectsArgs<ExtArgs>
   grants?: boolean | Prisma.Branch$grantsArgs<ExtArgs>
@@ -4517,6 +4784,7 @@ export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   shifts?: boolean | Prisma.Branch$shiftsArgs<ExtArgs>
   timesheets?: boolean | Prisma.Branch$timesheetsArgs<ExtArgs>
   holidays?: boolean | Prisma.Branch$holidaysArgs<ExtArgs>
+  leavePolicyAssignments?: boolean | Prisma.Branch$leavePolicyAssignmentsArgs<ExtArgs>
   teams?: boolean | Prisma.Branch$teamsArgs<ExtArgs>
   projects?: boolean | Prisma.Branch$projectsArgs<ExtArgs>
   grants?: boolean | Prisma.Branch$grantsArgs<ExtArgs>
@@ -4552,6 +4820,7 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     shifts: Prisma.$ShiftPayload<ExtArgs>[]
     timesheets: Prisma.$TimesheetPayload<ExtArgs>[]
     holidays: Prisma.$HolidayPayload<ExtArgs>[]
+    leavePolicyAssignments: Prisma.$LeavePolicyAssignmentPayload<ExtArgs>[]
     teams: Prisma.$TeamPayload<ExtArgs>[]
     projects: Prisma.$ProjectPayload<ExtArgs>[]
     grants: Prisma.$FederationGrantPayload<ExtArgs>[]
@@ -4984,6 +5253,7 @@ export interface Prisma__BranchClient<T, Null = never, ExtArgs extends runtime.T
   shifts<T extends Prisma.Branch$shiftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$shiftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   timesheets<T extends Prisma.Branch$timesheetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$timesheetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimesheetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   holidays<T extends Prisma.Branch$holidaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$holidaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HolidayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  leavePolicyAssignments<T extends Prisma.Branch$leavePolicyAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$leavePolicyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeavePolicyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   teams<T extends Prisma.Branch$teamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   projects<T extends Prisma.Branch$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   grants<T extends Prisma.Branch$grantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Branch$grantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FederationGrantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5676,6 +5946,30 @@ export type Branch$holidaysArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.HolidayScalarFieldEnum | Prisma.HolidayScalarFieldEnum[]
+}
+
+/**
+ * Branch.leavePolicyAssignments
+ */
+export type Branch$leavePolicyAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeavePolicyAssignment
+   */
+  select?: Prisma.LeavePolicyAssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeavePolicyAssignment
+   */
+  omit?: Prisma.LeavePolicyAssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeavePolicyAssignmentInclude<ExtArgs> | null
+  where?: Prisma.LeavePolicyAssignmentWhereInput
+  orderBy?: Prisma.LeavePolicyAssignmentOrderByWithRelationInput | Prisma.LeavePolicyAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.LeavePolicyAssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeavePolicyAssignmentScalarFieldEnum | Prisma.LeavePolicyAssignmentScalarFieldEnum[]
 }
 
 /**

@@ -32,6 +32,51 @@ type RecordInput = {
   metadata?: Record<string, unknown>;
 };
 
+export const STATUTORY_SCHEME_CATALOG = [
+  {
+    code: 'EPF_IN',
+    name: 'Employees’ Provident Fund (India)',
+    jurisdiction: 'IN',
+    employeeRatePercent: 12,
+    employerRatePercent: 12,
+    wageCeiling: 15000,
+    requiresRegistration: true,
+    notes:
+      'Baseline contribution reference. EPS, EDLI, administrative charges, and higher-wage options require payroll rules for the establishment.',
+  },
+  {
+    code: 'ESI_IN',
+    name: 'Employees’ State Insurance (India)',
+    jurisdiction: 'IN',
+    employeeRatePercent: 0.75,
+    employerRatePercent: 3.25,
+    wageCeiling: 21000,
+    requiresRegistration: true,
+    notes: 'Contribution eligibility and wage ceiling must be evaluated for each pay period.',
+  },
+  {
+    code: 'PT_IN',
+    name: 'Professional Tax (India)',
+    jurisdiction: 'IN',
+    employeeRatePercent: null,
+    employerRatePercent: null,
+    wageCeiling: null,
+    requiresRegistration: true,
+    notes: 'Rates, slabs, exemptions, and return cadence are state-specific.',
+  },
+  {
+    code: 'TDS_IN',
+    name: 'Salary TDS (India)',
+    jurisdiction: 'IN',
+    employeeRatePercent: null,
+    employerRatePercent: null,
+    wageCeiling: null,
+    requiresRegistration: true,
+    notes:
+      'Tax regime, declarations, deductions, exemptions, and annualised payroll determine withholding.',
+  },
+] as const;
+
 @Injectable()
 export class ComplianceService {
   constructor(
@@ -39,6 +84,11 @@ export class ComplianceService {
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
   ) {}
+
+  schemes(context: DomainContext) {
+    requirePermission(context, 'payroll.compliance.read');
+    return STATUTORY_SCHEME_CATALOG;
+  }
 
   async profiles(context: DomainContext, employeeId: string) {
     requirePermission(context, 'payroll.compliance.read');

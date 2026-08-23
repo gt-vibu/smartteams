@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
@@ -7,6 +7,7 @@ import {
   LeaveCancelDto,
   LeaveDecisionDto,
   LeaveRequestDto,
+  LeavePolicyAssignmentDto,
   LeaveTypeDto,
 } from './leave.dto';
 import { LeaveService } from './leave.service';
@@ -35,6 +36,25 @@ export class LeaveController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.leave.createType(context, body));
+  }
+  @Get('assignments') assignments(
+    @Param('organizationId') organizationId: string,
+    @Query('branchId') branchId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, branchId)
+      .then((context) => this.leave.listAssignments(context));
+  }
+  @Post('types/:code/assign') assignType(
+    @Param('organizationId') organizationId: string,
+    @Param('code') code: string,
+    @Body() body: LeavePolicyAssignmentDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, body.branchId)
+      .then((context) => this.leave.assignTypeToBranch(context, code));
   }
   @Post('requests') request(
     @Param('organizationId') organizationId: string,

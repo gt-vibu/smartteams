@@ -19,7 +19,11 @@ import {
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
-import { assertApprover } from '../approvals/approval-authorization';
+import {
+  assertApprover,
+  assertResolvableApprovers,
+  canApprove,
+} from '../approvals/approval-authorization';
 import { AttendanceLocationService, type WorkLocationInput } from './attendance-location.service';
 
 export type PunchInput = {
@@ -34,6 +38,8 @@ export type PunchInput = {
   externalId?: string;
   dayStatus?: AttendanceDayStatus;
   source: 'NATIVE' | 'FEDERATION';
+  capturedByUserId?: string;
+  manualEntry?: boolean;
 };
 @Injectable()
 export class AttendanceService {
@@ -153,7 +159,8 @@ export class AttendanceService {
           punchType: type,
           occurredAt: new Date(input.occurredAt),
           source: input.source,
-          capturedByUserId: context.actor.userId,
+          capturedByUserId: input.capturedByUserId ?? context.actor.userId,
+          metadata: input.manualEntry ? { captureMode: 'MANUAL' } : { captureMode: 'SELF_SERVICE' },
           externalId: input.externalId,
           latitude: input.latitude,
           longitude: input.longitude,
@@ -260,7 +267,10 @@ export class AttendanceService {
           },
         },
         include: {
-          punches: { orderBy: { occurredAt: 'asc' } },
+          punches: {
+            orderBy: { occurredAt: 'asc' },
+            include: { capturedBy: { select: { displayName: true } } },
+          },
           employee: {
             select: {
               id: true,
@@ -303,23 +313,44 @@ export class AttendanceService {
           organizationId: context.organizationId,
           ...(context.branchId ? { branchId: context.branchId } : {}),
         },
-        include: { punches: true },
+        include: {
+          punches: true,
+          employee: { include: { manager: { select: { userId: true } } } },
+        },
       });
       if (!record) throw new NotFoundError('Attendance record');
-      const policy = await tx.approvalPolicy.findFirst({
+      const activePolicies = await tx.approvalPolicy.findMany({
         where: {
           organizationId: context.organizationId,
           domain: 'ATTENDANCE_CORRECTION',
           isActive: true,
-          isDefault: true,
         },
-        orderBy: { createdAt: 'asc' },
+        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
       });
+      const policy =
+        activePolicies.find((candidate) => candidate.isDefault) ??
+        (activePolicies.length === 1 ? activePolicies[0] : undefined);
+      if (!policy)
+        throw new ConflictError(
+          'Configure a default attendance correction approval policy before submitting corrections',
+        );
+      const correctionBranchId = record.branchId ?? context.branchId;
+      if (!correctionBranchId)
+        throw new ConflictError('An outlet is required to resolve attendance approvers');
+      await assertResolvableApprovers(
+        tx,
+        context.organizationId,
+        correctionBranchId,
+        record.employee.manager?.userId,
+        record.employee.userId,
+        policy.steps,
+      );
       const correction = await tx.attendanceCorrection.create({
         data: {
           organizationId: context.organizationId,
           attendanceRecordId: record.id,
-          approvalPolicyId: policy?.id,
+          approvalPolicyId: policy.id,
           reason: input.reason,
           beforeSnapshot: jsonSnapshot(record),
           afterSnapshot: jsonSnapshot(input.afterSnapshot ?? record),
@@ -340,6 +371,155 @@ export class AttendanceService {
         tx,
       );
       return correction;
+    });
+  }
+
+  async listPendingCorrectionApprovals(context: DomainContext, approverUserId: string) {
+    requirePermission(context, 'attendance.read');
+    return this.database.run(context, async (tx) => {
+      const corrections = await tx.attendanceCorrection.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: 'PENDING',
+          ...(context.branchId ? { attendanceRecord: { branchId: context.branchId } } : {}),
+        },
+        include: {
+          approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
+          approvals: true,
+          attendanceRecord: {
+            select: {
+              id: true,
+              workDate: true,
+              branchId: true,
+              employee: {
+                select: {
+                  id: true,
+                  externalId: true,
+                  employeeNumber: true,
+                  firstName: true,
+                  lastName: true,
+                  userId: true,
+                  manager: { select: { userId: true } },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: 'asc' },
+        take: 500,
+      });
+      const items = [];
+      for (const correction of corrections) {
+        const pendingStep = correction.approvalPolicy?.steps.find(
+          (step) =>
+            !correction.approvals.some((approval) => approval.approvalPolicyStepId === step.id),
+        );
+        if (
+          !pendingStep ||
+          !(await canApprove(
+            tx,
+            context.organizationId,
+            approverUserId,
+            correction.attendanceRecord.employee.manager?.userId,
+            pendingStep.approverType,
+            pendingStep.roleId,
+            pendingStep.approverUserId,
+            correction.attendanceRecord.branchId ?? context.branchId,
+            correction.attendanceRecord.employee.userId,
+          ))
+        )
+          continue;
+        items.push({
+          id: correction.id,
+          attendanceId: correction.attendanceRecord.id,
+          status: correction.status,
+          reason: correction.reason,
+          beforeSnapshot: correction.beforeSnapshot,
+          afterSnapshot: correction.afterSnapshot,
+          createdAt: correction.createdAt,
+          workDate: correction.attendanceRecord.workDate,
+          branchId: correction.attendanceRecord.branchId,
+          externalEmployeeId: correction.attendanceRecord.employee.externalId,
+          employee: correction.attendanceRecord.employee,
+          currentStep: {
+            stepNumber: pendingStep.stepNumber,
+            approverType: pendingStep.approverType,
+            roleId: pendingStep.roleId,
+            approverUserId: pendingStep.approverUserId,
+          },
+        });
+      }
+      return { corrections: items };
+    });
+  }
+
+  async listCorrectionRequests(
+    context: DomainContext,
+    filters: {
+      employeeId?: string;
+      status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+      limit?: number;
+    },
+  ) {
+    requirePermission(context, 'attendance.read');
+    return this.database.run(context, async (tx) => {
+      const corrections = await tx.attendanceCorrection.findMany({
+        where: {
+          organizationId: context.organizationId,
+          ...(filters.status ? { status: filters.status } : {}),
+          attendanceRecord: {
+            ...(context.branchId ? { branchId: context.branchId } : {}),
+            ...(filters.employeeId ? { employeeId: filters.employeeId } : {}),
+          },
+        },
+        include: {
+          approvals: { orderBy: { stepNumber: 'asc' } },
+          attendanceRecord: {
+            include: {
+              punches: { orderBy: { occurredAt: 'asc' } },
+              employee: {
+                select: {
+                  id: true,
+                  externalId: true,
+                  employeeNumber: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: Math.min(filters.limit ?? 200, 500),
+      });
+      return {
+        corrections: corrections.map((correction) => ({
+          id: correction.id,
+          attendanceId: correction.attendanceRecordId,
+          status: correction.status,
+          reason: correction.reason,
+          beforeSnapshot: correction.beforeSnapshot,
+          afterSnapshot: correction.afterSnapshot,
+          createdAt: correction.createdAt,
+          workDate: correction.attendanceRecord.workDate,
+          branchId: correction.attendanceRecord.branchId,
+          externalEmployeeId: correction.attendanceRecord.employee.externalId,
+          employee: correction.attendanceRecord.employee,
+          approvals: correction.approvals.map((approval) => ({
+            status: approval.status,
+            stepNumber: approval.stepNumber,
+            comment: approval.comment,
+            createdAt: approval.createdAt,
+          })),
+          effectiveAttendance: {
+            status: correction.attendanceRecord.status,
+            dayStatus: correction.attendanceRecord.dayStatus,
+            workedMinutes: correction.attendanceRecord.workedMinutes,
+            overtimeMinutes: correction.attendanceRecord.overtimeMinutes,
+            punches: correction.attendanceRecord.punches.map((punch) => this.toPunchDto(punch)),
+          },
+        })),
+      };
     });
   }
 
@@ -365,7 +545,10 @@ export class AttendanceService {
           approvals: true,
           approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
           attendanceRecord: {
-            include: { employee: { include: { manager: { select: { userId: true } } } } },
+            include: {
+              punches: { orderBy: { occurredAt: 'asc' } },
+              employee: { include: { manager: { select: { userId: true } } } },
+            },
           },
         },
       });
@@ -378,18 +561,20 @@ export class AttendanceService {
         (step) =>
           !correction.approvals.some((approval) => approval.approvalPolicyStepId === step.id),
       );
-      if (pendingStep)
-        await assertApprover(
-          tx,
-          context.organizationId,
-          approverUserId,
-          correction.attendanceRecord.employee.manager?.userId,
-          pendingStep.approverType,
-          pendingStep.roleId,
-          pendingStep.approverUserId,
-          context.branchId,
-        );
-      const stepNumber = pendingStep?.stepNumber ?? 1;
+      if (!pendingStep)
+        throw new ConflictError('Attendance correction has no pending approval step');
+      await assertApprover(
+        tx,
+        context.organizationId,
+        approverUserId,
+        correction.attendanceRecord.employee.manager?.userId,
+        pendingStep.approverType,
+        pendingStep.roleId,
+        pendingStep.approverUserId,
+        correction.attendanceRecord.branchId ?? context.branchId,
+        correction.attendanceRecord.employee.userId,
+      );
+      const stepNumber = pendingStep.stepNumber;
       const hasMoreSteps = Boolean(
         correction.approvalPolicy?.steps.some((step) => step.stepNumber > stepNumber),
       );
@@ -402,7 +587,7 @@ export class AttendanceService {
             create: {
               organizationId: context.organizationId,
               approverUserId,
-              approvalPolicyStepId: pendingStep?.id,
+              approvalPolicyStepId: pendingStep.id,
               status,
               comment,
               stepNumber,
@@ -410,17 +595,43 @@ export class AttendanceService {
           },
         },
       });
-      const correctedDayStatus = dayStatusFromSnapshot(correction.afterSnapshot);
-      if (status === 'APPROVED' && !hasMoreSteps)
-        await tx.attendanceRecord.update({
+      let correctedRecord;
+      if (status === 'APPROVED' && !hasMoreSteps) {
+        const punchUpdates = correctionPunchUpdates(
+          correction.attendanceRecord.punches,
+          correction.afterSnapshot,
+        );
+        await Promise.all(
+          punchUpdates.map((update) =>
+            tx.attendancePunch.update({
+              where: { id: update.id },
+              data: { occurredAt: update.occurredAt },
+            }),
+          ),
+        );
+        const updatedTimes = new Map(punchUpdates.map((update) => [update.id, update.occurredAt]));
+        const correctedPunches = correction.attendanceRecord.punches.map((punch) => ({
+          punchType: punch.punchType,
+          occurredAt: updatedTimes.get(punch.id) ?? punch.occurredAt,
+        }));
+        const settings = await tx.organizationSettings.findUniqueOrThrow({
+          where: { organizationId: context.organizationId },
+          select: { standardDayMinutes: true },
+        });
+        const totals = attendanceTotals(correctedPunches, settings.standardDayMinutes);
+        const correctedDayStatus = dayStatusFromSnapshot(correction.afterSnapshot);
+        correctedRecord = await tx.attendanceRecord.update({
           where: { id: correction.attendanceRecordId },
           data: {
             status: AttendanceStatus.CORRECTED,
             correctionNote: correction.reason,
+            workedMinutes: totals.workedMinutes,
+            overtimeMinutes: totals.overtimeMinutes,
             ...(correctedDayStatus ? { dayStatus: correctedDayStatus } : {}),
             version: { increment: 1 },
           },
         });
+      }
       await this.audit.record(
         context,
         {
@@ -428,7 +639,7 @@ export class AttendanceService {
           entityId: correction.id,
           action: `ATTENDANCE_CORRECTION_${status}`,
           beforeState: jsonSnapshot(correction),
-          afterState: jsonSnapshot(updated),
+          afterState: jsonSnapshot({ correction: updated, attendanceRecord: correctedRecord }),
           reason: comment,
         },
         tx,
@@ -621,6 +832,9 @@ export class AttendanceService {
     id: string;
     punchType: string;
     occurredAt: Date;
+    source?: string;
+    metadata?: unknown;
+    capturedBy?: { displayName: string } | null;
     isWithinGeofence: boolean | null;
     distanceFromLocationMeters: unknown;
     biometricVerified: boolean;
@@ -630,12 +844,23 @@ export class AttendanceService {
       id: punch.id,
       punchType: punch.punchType,
       occurredAt: punch.occurredAt,
+      source: punch.source,
+      captureMode: attendanceCaptureMode(punch.metadata),
+      ...(punch.capturedBy ? { capturedBy: punch.capturedBy } : {}),
       isWithinGeofence: punch.isWithinGeofence,
       distanceFromLocationMeters: punch.distanceFromLocationMeters,
       biometricVerified: punch.biometricVerified,
       webauthnCredentialId: punch.webauthnCredentialId,
     };
   }
+}
+
+function attendanceCaptureMode(value: unknown) {
+  if (typeof value !== 'object' || value === null || !('captureMode' in value)) {
+    return undefined;
+  }
+  const captureMode = value.captureMode;
+  return typeof captureMode === 'string' ? captureMode : undefined;
 }
 
 function toPreferencesDto(value: {
@@ -715,4 +940,42 @@ function dayStatusFromSnapshot(value: unknown): AttendanceDayStatus | undefined 
     Object.values(AttendanceDayStatus).includes(status as AttendanceDayStatus)
     ? (status as AttendanceDayStatus)
     : undefined;
+}
+
+export function correctionPunchUpdates(
+  punches: Array<{ id: string; punchType: AttendancePunchType; occurredAt: Date }>,
+  snapshot: unknown,
+) {
+  const values = snapshotRecord(snapshot);
+  const correctedCheckIn = snapshotDate(values?.correctedCheckIn, 'check-in');
+  const correctedCheckOut = snapshotDate(values?.correctedCheckOut, 'check-out');
+  const sortedPunches = [...punches].sort(
+    (left, right) => left.occurredAt.getTime() - right.occurredAt.getTime(),
+  );
+  const checkIn = sortedPunches.find((punch) => punch.punchType === AttendancePunchType.IN);
+  const checkOut = sortedPunches.find((punch) => punch.punchType === AttendancePunchType.OUT);
+  if (correctedCheckIn && !checkIn) throw new ConflictError('Attendance check-in punch is missing');
+  if (correctedCheckOut && !checkOut)
+    throw new ConflictError('Attendance check-out punch is missing');
+  const effectiveCheckIn = correctedCheckIn ?? checkIn?.occurredAt;
+  const effectiveCheckOut = correctedCheckOut ?? checkOut?.occurredAt;
+  if (effectiveCheckIn && effectiveCheckOut && effectiveCheckOut < effectiveCheckIn)
+    throw new ConflictError('Attendance check-out must be after check-in');
+  return [
+    correctedCheckIn && checkIn ? { id: checkIn.id, occurredAt: correctedCheckIn } : null,
+    correctedCheckOut && checkOut ? { id: checkOut.id, occurredAt: correctedCheckOut } : null,
+  ].filter((update): update is { id: string; occurredAt: Date } => update !== null);
+}
+
+function snapshotRecord(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+}
+
+function snapshotDate(value: unknown, label: string) {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string' || !Number.isFinite(Date.parse(value)))
+    throw new ConflictError(`Attendance corrected ${label} must be a valid date`);
+  return new Date(value);
 }

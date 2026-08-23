@@ -58,16 +58,56 @@ export function sumTimesheets(entries: Array<{ regularMinutes: number; overtimeM
 }
 
 export function summarizeLeave(
-  requests: Array<{ requestedDays: Prisma.Decimal; leaveType: { paid: boolean } }>,
+  requests: Array<{
+    requestedDays: Prisma.Decimal;
+    startDate?: Date;
+    endDate?: Date;
+    leaveType: { paid: boolean };
+  }>,
+  periodStart?: Date,
+  periodEnd?: Date,
 ) {
   return requests.reduce(
     (summary, request) => {
-      const days = Number(request.requestedDays);
+      const days = proratedLeaveDays(request, periodStart, periodEnd);
       if (request.leaveType.paid) summary.paidDays += days;
       else summary.unpaidDays += days;
       return summary;
     },
     { paidDays: 0, unpaidDays: 0 },
+  );
+}
+
+function proratedLeaveDays(
+  request: {
+    requestedDays: Prisma.Decimal;
+    startDate?: Date;
+    endDate?: Date;
+  },
+  periodStart?: Date,
+  periodEnd?: Date,
+) {
+  const requestedDays = Number(request.requestedDays);
+  if (!periodStart || !periodEnd || !request.startDate || !request.endDate) return requestedDays;
+  const start = Math.max(request.startDate.getTime(), periodStart.getTime());
+  const end = Math.min(request.endDate.getTime(), periodEnd.getTime());
+  if (end < start) return 0;
+  const requestedRangeDays =
+    Math.floor((request.endDate.getTime() - request.startDate.getTime()) / 86_400_000) + 1;
+  const overlappingRangeDays = Math.floor((end - start) / 86_400_000) + 1;
+  return requestedRangeDays > 0
+    ? (requestedDays * overlappingRangeDays) / requestedRangeDays
+    : requestedDays;
+}
+
+export function summarizeAttendance(records: Array<{ dayStatus: string }>) {
+  return records.reduce(
+    (summary, record) => {
+      if (record.dayStatus === 'ABSENT') summary.absentDays += 1;
+      if (record.dayStatus === 'HALF_DAY') summary.halfDays += 1;
+      return summary;
+    },
+    { absentDays: 0, halfDays: 0 },
   );
 }
 
@@ -79,10 +119,14 @@ export function calculateComponent(
   },
   base: Prisma.Decimal,
 ) {
-  if (assignment.component.calculationType === PayComponentCalculationType.FIXED)
-    return assignment.amount ?? new Prisma.Decimal(0);
-  if (assignment.component.calculationType === PayComponentCalculationType.PERCENTAGE_OF_BASE)
-    return base.mul(assignment.percentage ?? 0).div(100);
+  if (assignment.component.calculationType === PayComponentCalculationType.FIXED) {
+    const defaultValue = formulaValue(assignment.component.formulaDefinition, 'FIXED');
+    return assignment.amount ?? defaultValue ?? new Prisma.Decimal(0);
+  }
+  if (assignment.component.calculationType === PayComponentCalculationType.PERCENTAGE_OF_BASE) {
+    const defaultValue = formulaValue(assignment.component.formulaDefinition, 'PERCENTAGE_OF_BASE');
+    return base.mul(assignment.percentage ?? defaultValue ?? 0).div(100);
+  }
   if (
     isFormula(assignment.component.formulaDefinition) &&
     assignment.component.formulaDefinition.operation === 'PERCENTAGE_OF_BASE'
@@ -94,6 +138,11 @@ export function calculateComponent(
   )
     return new Prisma.Decimal(assignment.component.formulaDefinition.value);
   throw new ConflictError('Unsupported payroll formula');
+}
+
+function formulaValue(value: unknown, operation: 'FIXED' | 'PERCENTAGE_OF_BASE') {
+  if (!isFormula(value) || value.operation !== operation) return null;
+  return new Prisma.Decimal(value.value);
 }
 
 function isFormula(

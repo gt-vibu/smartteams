@@ -93,6 +93,41 @@ enum PayFrequency {
   MONTHLY
 }
 
+enum PayrollRoundingMode {
+  HALF_UP
+  DOWN
+  UP
+}
+
+enum SalarySlipMode {
+  ENABLED
+  DISABLED
+}
+
+enum SalaryAdvanceStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+  PARTIALLY_RECOVERED
+  RECOVERED
+}
+
+enum PayrollPaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+enum PayrollPaymentMethod {
+  BANK_TRANSFER
+  CASH
+  UPI
+  CHEQUE
+  OTHER
+}
+
 enum GeofenceMode {
   DISABLED
   FLAG_ONLY

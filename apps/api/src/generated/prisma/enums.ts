@@ -149,6 +149,56 @@ export const PayFrequency = {
 export type PayFrequency = (typeof PayFrequency)[keyof typeof PayFrequency]
 
 
+export const PayrollRoundingMode = {
+  HALF_UP: 'HALF_UP',
+  DOWN: 'DOWN',
+  UP: 'UP'
+} as const
+
+export type PayrollRoundingMode = (typeof PayrollRoundingMode)[keyof typeof PayrollRoundingMode]
+
+
+export const SalarySlipMode = {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED'
+} as const
+
+export type SalarySlipMode = (typeof SalarySlipMode)[keyof typeof SalarySlipMode]
+
+
+export const SalaryAdvanceStatus = {
+  REQUESTED: 'REQUESTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED',
+  PARTIALLY_RECOVERED: 'PARTIALLY_RECOVERED',
+  RECOVERED: 'RECOVERED'
+} as const
+
+export type SalaryAdvanceStatus = (typeof SalaryAdvanceStatus)[keyof typeof SalaryAdvanceStatus]
+
+
+export const PayrollPaymentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type PayrollPaymentStatus = (typeof PayrollPaymentStatus)[keyof typeof PayrollPaymentStatus]
+
+
+export const PayrollPaymentMethod = {
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  CASH: 'CASH',
+  UPI: 'UPI',
+  CHEQUE: 'CHEQUE',
+  OTHER: 'OTHER'
+} as const
+
+export type PayrollPaymentMethod = (typeof PayrollPaymentMethod)[keyof typeof PayrollPaymentMethod]
+
+
 export const GeofenceMode = {
   DISABLED: 'DISABLED',
   FLAG_ONLY: 'FLAG_ONLY',

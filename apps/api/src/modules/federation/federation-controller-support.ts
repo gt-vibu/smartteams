@@ -24,8 +24,8 @@ export class FederationControllerSupport {
     return this.contexts.federation(
       target.organizationId,
       federation.clientInternalId,
-      new Set([scope]),
-      new Set([scope]),
+      target.permissions,
+      target.permissions,
       target.branchId,
       reason,
       actorUserId,

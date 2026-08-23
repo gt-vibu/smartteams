@@ -110,6 +110,12 @@ export class FederatedWebauthnCompleteDto {
 export class FederationReasonDto {
   @IsString() @MinLength(2) reason!: string;
 }
+export class FederatedLeaveAttachmentUploadDto {
+  @IsString() @MinLength(1) originalName!: string;
+  @IsString() @MinLength(1) contentType!: string;
+  @IsNumber() @Min(1) byteSize!: number;
+  @IsOptional() @IsString() checksumSha256?: string;
+}
 export class FederationDeviceLabelDto {
   @IsOptional() @IsString() deviceLabel?: string;
 }
@@ -143,6 +149,12 @@ export class FederatedAttendanceQueryDto {
   @IsOptional() @IsDateString() from?: string;
   @IsOptional() @IsDateString() to?: string;
   @IsOptional() @IsString() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+}
+export class FederatedAttendanceCorrectionQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsIn(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']) status?:
+    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
 }
 export class FederatedLeaveAdjustmentDto {

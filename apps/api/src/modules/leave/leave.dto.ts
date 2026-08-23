@@ -52,3 +52,7 @@ export class LeaveAdjustmentDto {
   @IsDateString() periodStart!: string;
   @IsDateString() periodEnd!: string;
 }
+
+export class LeavePolicyAssignmentDto {
+  @IsUUID() branchId!: string;
+}

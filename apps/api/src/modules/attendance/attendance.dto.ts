@@ -1,12 +1,14 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsNumber,
   IsInt,
   MaxLength,
   IsOptional,
+  IsObject,
   IsString,
   IsUUID,
   Max,
@@ -25,6 +27,8 @@ export class PunchDto {
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsString() @MinLength(1) @MaxLength(512) webauthnCredentialId?: string;
   @IsOptional() @IsString() externalId?: string;
+  @IsOptional() @IsBoolean() manualEntry?: boolean;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) managedByExternalEmployeeId?: string;
   @IsOptional() @IsEnum(AttendanceDayStatus) dayStatus?: AttendanceDayStatus;
 }
 
@@ -39,7 +43,7 @@ export class AttendanceQueryDto {
 
 export class AttendanceCorrectionDto {
   @IsString() @MinLength(10) @MaxLength(500) reason!: string;
-  @IsOptional() afterSnapshot?: Record<string, unknown>;
+  @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;
 }
 
 export class AttendanceDecisionDto {

@@ -289,6 +289,7 @@ export type LeaveTypeWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  policyAssignments?: Prisma.LeavePolicyAssignmentListRelationFilter
   balances?: Prisma.LeaveBalanceListRelationFilter
   requests?: Prisma.LeaveRequestListRelationFilter
 }
@@ -308,6 +309,7 @@ export type LeaveTypeOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  policyAssignments?: Prisma.LeavePolicyAssignmentOrderByRelationAggregateInput
   balances?: Prisma.LeaveBalanceOrderByRelationAggregateInput
   requests?: Prisma.LeaveRequestOrderByRelationAggregateInput
 }
@@ -331,6 +333,7 @@ export type LeaveTypeWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LeaveType"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  policyAssignments?: Prisma.LeavePolicyAssignmentListRelationFilter
   balances?: Prisma.LeaveBalanceListRelationFilter
   requests?: Prisma.LeaveRequestListRelationFilter
 }, "id" | "organizationId_code">
@@ -389,6 +392,7 @@ export type LeaveTypeCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
+  policyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutLeaveTypeInput
   balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
 }
@@ -407,6 +411,7 @@ export type LeaveTypeUncheckedCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutLeaveTypeInput
   balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
 }
@@ -425,6 +430,7 @@ export type LeaveTypeUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
+  policyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutLeaveTypeNestedInput
   balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
 }
@@ -443,6 +449,7 @@ export type LeaveTypeUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutLeaveTypeNestedInput
   balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
 }
@@ -578,6 +585,20 @@ export type EnumLeaveAccrualTypeFieldUpdateOperationsInput = {
   set?: $Enums.LeaveAccrualType
 }
 
+export type LeaveTypeCreateNestedOneWithoutPolicyAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutPolicyAssignmentsInput, Prisma.LeaveTypeUncheckedCreateWithoutPolicyAssignmentsInput>
+  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutPolicyAssignmentsInput
+  connect?: Prisma.LeaveTypeWhereUniqueInput
+}
+
+export type LeaveTypeUpdateOneRequiredWithoutPolicyAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutPolicyAssignmentsInput, Prisma.LeaveTypeUncheckedCreateWithoutPolicyAssignmentsInput>
+  connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutPolicyAssignmentsInput
+  upsert?: Prisma.LeaveTypeUpsertWithoutPolicyAssignmentsInput
+  connect?: Prisma.LeaveTypeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveTypeUpdateToOneWithWhereWithoutPolicyAssignmentsInput, Prisma.LeaveTypeUpdateWithoutPolicyAssignmentsInput>, Prisma.LeaveTypeUncheckedUpdateWithoutPolicyAssignmentsInput>
+}
+
 export type LeaveTypeCreateNestedOneWithoutBalancesInput = {
   create?: Prisma.XOR<Prisma.LeaveTypeCreateWithoutBalancesInput, Prisma.LeaveTypeUncheckedCreateWithoutBalancesInput>
   connectOrCreate?: Prisma.LeaveTypeCreateOrConnectWithoutBalancesInput
@@ -648,6 +669,94 @@ export type LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.LeaveTypeScalarWhereInput | Prisma.LeaveTypeScalarWhereInput[]
 }
 
+export type LeaveTypeCreateWithoutPolicyAssignmentsInput = {
+  id?: string
+  code: string
+  name: string
+  paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
+  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
+  balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
+  requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
+}
+
+export type LeaveTypeUncheckedCreateWithoutPolicyAssignmentsInput = {
+  id?: string
+  organizationId: string
+  code: string
+  name: string
+  paid?: boolean
+  accrualType: $Enums.LeaveAccrualType
+  annualAllowance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: boolean
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
+  requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
+}
+
+export type LeaveTypeCreateOrConnectWithoutPolicyAssignmentsInput = {
+  where: Prisma.LeaveTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutPolicyAssignmentsInput, Prisma.LeaveTypeUncheckedCreateWithoutPolicyAssignmentsInput>
+}
+
+export type LeaveTypeUpsertWithoutPolicyAssignmentsInput = {
+  update: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutPolicyAssignmentsInput, Prisma.LeaveTypeUncheckedUpdateWithoutPolicyAssignmentsInput>
+  create: Prisma.XOR<Prisma.LeaveTypeCreateWithoutPolicyAssignmentsInput, Prisma.LeaveTypeUncheckedCreateWithoutPolicyAssignmentsInput>
+  where?: Prisma.LeaveTypeWhereInput
+}
+
+export type LeaveTypeUpdateToOneWithWhereWithoutPolicyAssignmentsInput = {
+  where?: Prisma.LeaveTypeWhereInput
+  data: Prisma.XOR<Prisma.LeaveTypeUpdateWithoutPolicyAssignmentsInput, Prisma.LeaveTypeUncheckedUpdateWithoutPolicyAssignmentsInput>
+}
+
+export type LeaveTypeUpdateWithoutPolicyAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
+  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
+  balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
+  requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
+}
+
+export type LeaveTypeUncheckedUpdateWithoutPolicyAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  paid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accrualType?: Prisma.EnumLeaveAccrualTypeFieldUpdateOperationsInput | $Enums.LeaveAccrualType
+  annualAllowance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  monthlyAccrual?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  carryoverLimit?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  requiresAttachment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
+  requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
+}
+
 export type LeaveTypeCreateWithoutBalancesInput = {
   id?: string
   code: string
@@ -662,6 +771,7 @@ export type LeaveTypeCreateWithoutBalancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
+  policyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
 }
 
@@ -679,6 +789,7 @@ export type LeaveTypeUncheckedCreateWithoutBalancesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
 }
 
@@ -712,6 +823,7 @@ export type LeaveTypeUpdateWithoutBalancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
+  policyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
 }
 
@@ -729,6 +841,7 @@ export type LeaveTypeUncheckedUpdateWithoutBalancesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
 }
 
@@ -746,6 +859,7 @@ export type LeaveTypeCreateWithoutRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveTypesInput
+  policyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutLeaveTypeInput
   balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
 }
 
@@ -763,6 +877,7 @@ export type LeaveTypeUncheckedCreateWithoutRequestsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutLeaveTypeInput
   balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
 }
 
@@ -796,6 +911,7 @@ export type LeaveTypeUpdateWithoutRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveTypesNestedInput
+  policyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutLeaveTypeNestedInput
   balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
 }
 
@@ -813,6 +929,7 @@ export type LeaveTypeUncheckedUpdateWithoutRequestsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutLeaveTypeNestedInput
   balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
 }
 
@@ -829,6 +946,7 @@ export type LeaveTypeCreateWithoutOrganizationInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutLeaveTypeInput
   balances?: Prisma.LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestCreateNestedManyWithoutLeaveTypeInput
 }
@@ -846,6 +964,7 @@ export type LeaveTypeUncheckedCreateWithoutOrganizationInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutLeaveTypeInput
   balances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
   requests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
 }
@@ -923,6 +1042,7 @@ export type LeaveTypeUpdateWithoutOrganizationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutLeaveTypeNestedInput
   balances?: Prisma.LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
 }
@@ -940,6 +1060,7 @@ export type LeaveTypeUncheckedUpdateWithoutOrganizationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  policyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutLeaveTypeNestedInput
   balances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
   requests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
 }
@@ -965,11 +1086,13 @@ export type LeaveTypeUncheckedUpdateManyWithoutOrganizationInput = {
  */
 
 export type LeaveTypeCountOutputType = {
+  policyAssignments: number
   balances: number
   requests: number
 }
 
 export type LeaveTypeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  policyAssignments?: boolean | LeaveTypeCountOutputTypeCountPolicyAssignmentsArgs
   balances?: boolean | LeaveTypeCountOutputTypeCountBalancesArgs
   requests?: boolean | LeaveTypeCountOutputTypeCountRequestsArgs
 }
@@ -982,6 +1105,13 @@ export type LeaveTypeCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ex
    * Select specific fields to fetch from the LeaveTypeCountOutputType
    */
   select?: Prisma.LeaveTypeCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * LeaveTypeCountOutputType without action
+ */
+export type LeaveTypeCountOutputTypeCountPolicyAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeavePolicyAssignmentWhereInput
 }
 
 /**
@@ -1014,6 +1144,7 @@ export type LeaveTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  policyAssignments?: boolean | Prisma.LeaveType$policyAssignmentsArgs<ExtArgs>
   balances?: boolean | Prisma.LeaveType$balancesArgs<ExtArgs>
   requests?: boolean | Prisma.LeaveType$requestsArgs<ExtArgs>
   _count?: boolean | Prisma.LeaveTypeCountOutputTypeDefaultArgs<ExtArgs>
@@ -1072,6 +1203,7 @@ export type LeaveTypeSelectScalar = {
 export type LeaveTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "code" | "name" | "paid" | "accrualType" | "annualAllowance" | "monthlyAccrual" | "carryoverLimit" | "requiresAttachment" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["leaveType"]>
 export type LeaveTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  policyAssignments?: boolean | Prisma.LeaveType$policyAssignmentsArgs<ExtArgs>
   balances?: boolean | Prisma.LeaveType$balancesArgs<ExtArgs>
   requests?: boolean | Prisma.LeaveType$requestsArgs<ExtArgs>
   _count?: boolean | Prisma.LeaveTypeCountOutputTypeDefaultArgs<ExtArgs>
@@ -1087,6 +1219,7 @@ export type $LeaveTypePayload<ExtArgs extends runtime.Types.Extensions.InternalA
   name: "LeaveType"
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    policyAssignments: Prisma.$LeavePolicyAssignmentPayload<ExtArgs>[]
     balances: Prisma.$LeaveBalancePayload<ExtArgs>[]
     requests: Prisma.$LeaveRequestPayload<ExtArgs>[]
   }
@@ -1499,6 +1632,7 @@ readonly fields: LeaveTypeFieldRefs;
 export interface Prisma__LeaveTypeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  policyAssignments<T extends Prisma.LeaveType$policyAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveType$policyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeavePolicyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   balances<T extends Prisma.LeaveType$balancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveType$balancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveBalancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   requests<T extends Prisma.LeaveType$requestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveType$requestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1941,6 +2075,30 @@ export type LeaveTypeDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Limit how many LeaveTypes to delete.
    */
   limit?: number
+}
+
+/**
+ * LeaveType.policyAssignments
+ */
+export type LeaveType$policyAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeavePolicyAssignment
+   */
+  select?: Prisma.LeavePolicyAssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeavePolicyAssignment
+   */
+  omit?: Prisma.LeavePolicyAssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeavePolicyAssignmentInclude<ExtArgs> | null
+  where?: Prisma.LeavePolicyAssignmentWhereInput
+  orderBy?: Prisma.LeavePolicyAssignmentOrderByWithRelationInput | Prisma.LeavePolicyAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.LeavePolicyAssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeavePolicyAssignmentScalarFieldEnum | Prisma.LeavePolicyAssignmentScalarFieldEnum[]
 }
 
 /**

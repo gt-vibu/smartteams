@@ -32,6 +32,17 @@ export class FederationComplianceController {
     private readonly support: FederationControllerSupport,
   ) {}
 
+  @Get('federation/payroll/compliance/schemes')
+  @UseGuards(FederationAuthGuard)
+  async schemes(
+    @Headers('x-organization-id') organizationId: string,
+    @Req() request: FederationRequest,
+  ) {
+    return this.compliance.schemes(
+      await this.support.context(request, organizationId, 'payroll.compliance.read'),
+    );
+  }
+
   @Get('federation/payroll/compliance/profiles/:externalEmployeeId')
   @UseGuards(FederationAuthGuard)
   async profiles(

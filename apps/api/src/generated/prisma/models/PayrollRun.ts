@@ -345,6 +345,8 @@ export type PayrollRunWhereInput = {
   adjustments?: Prisma.PayrollAdjustmentListRelationFilter
   approvals?: Prisma.PayrollApprovalListRelationFilter
   payslips?: Prisma.PayslipListRelationFilter
+  payments?: Prisma.PayrollPaymentListRelationFilter
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryListRelationFilter
 }
 
 export type PayrollRunOrderByWithRelationInput = {
@@ -377,6 +379,8 @@ export type PayrollRunOrderByWithRelationInput = {
   adjustments?: Prisma.PayrollAdjustmentOrderByRelationAggregateInput
   approvals?: Prisma.PayrollApprovalOrderByRelationAggregateInput
   payslips?: Prisma.PayslipOrderByRelationAggregateInput
+  payments?: Prisma.PayrollPaymentOrderByRelationAggregateInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryOrderByRelationAggregateInput
 }
 
 export type PayrollRunWhereUniqueInput = Prisma.AtLeast<{
@@ -413,6 +417,8 @@ export type PayrollRunWhereUniqueInput = Prisma.AtLeast<{
   adjustments?: Prisma.PayrollAdjustmentListRelationFilter
   approvals?: Prisma.PayrollApprovalListRelationFilter
   payslips?: Prisma.PayslipListRelationFilter
+  payments?: Prisma.PayrollPaymentListRelationFilter
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryListRelationFilter
 }, "id" | "organizationId_periodStart_periodEnd">
 
 export type PayrollRunOrderByWithAggregationInput = {
@@ -495,6 +501,8 @@ export type PayrollRunCreateInput = {
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateInput = {
@@ -523,6 +531,8 @@ export type PayrollRunUncheckedCreateInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUpdateInput = {
@@ -551,6 +561,8 @@ export type PayrollRunUpdateInput = {
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateInput = {
@@ -579,6 +591,8 @@ export type PayrollRunUncheckedUpdateInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunCreateManyInput = {
@@ -871,6 +885,34 @@ export type PayrollRunUpdateOneRequiredWithoutLineItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PayrollRunUpdateToOneWithWhereWithoutLineItemsInput, Prisma.PayrollRunUpdateWithoutLineItemsInput>, Prisma.PayrollRunUncheckedUpdateWithoutLineItemsInput>
 }
 
+export type PayrollRunCreateNestedOneWithoutAdvanceRecoveriesInput = {
+  create?: Prisma.XOR<Prisma.PayrollRunCreateWithoutAdvanceRecoveriesInput, Prisma.PayrollRunUncheckedCreateWithoutAdvanceRecoveriesInput>
+  connectOrCreate?: Prisma.PayrollRunCreateOrConnectWithoutAdvanceRecoveriesInput
+  connect?: Prisma.PayrollRunWhereUniqueInput
+}
+
+export type PayrollRunUpdateOneRequiredWithoutAdvanceRecoveriesNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollRunCreateWithoutAdvanceRecoveriesInput, Prisma.PayrollRunUncheckedCreateWithoutAdvanceRecoveriesInput>
+  connectOrCreate?: Prisma.PayrollRunCreateOrConnectWithoutAdvanceRecoveriesInput
+  upsert?: Prisma.PayrollRunUpsertWithoutAdvanceRecoveriesInput
+  connect?: Prisma.PayrollRunWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PayrollRunUpdateToOneWithWhereWithoutAdvanceRecoveriesInput, Prisma.PayrollRunUpdateWithoutAdvanceRecoveriesInput>, Prisma.PayrollRunUncheckedUpdateWithoutAdvanceRecoveriesInput>
+}
+
+export type PayrollRunCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<Prisma.PayrollRunCreateWithoutPaymentsInput, Prisma.PayrollRunUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.PayrollRunCreateOrConnectWithoutPaymentsInput
+  connect?: Prisma.PayrollRunWhereUniqueInput
+}
+
+export type PayrollRunUpdateOneRequiredWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollRunCreateWithoutPaymentsInput, Prisma.PayrollRunUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.PayrollRunCreateOrConnectWithoutPaymentsInput
+  upsert?: Prisma.PayrollRunUpsertWithoutPaymentsInput
+  connect?: Prisma.PayrollRunWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PayrollRunUpdateToOneWithWhereWithoutPaymentsInput, Prisma.PayrollRunUpdateWithoutPaymentsInput>, Prisma.PayrollRunUncheckedUpdateWithoutPaymentsInput>
+}
+
 export type PayrollRunCreateNestedOneWithoutAdjustmentsInput = {
   create?: Prisma.XOR<Prisma.PayrollRunCreateWithoutAdjustmentsInput, Prisma.PayrollRunUncheckedCreateWithoutAdjustmentsInput>
   connectOrCreate?: Prisma.PayrollRunCreateOrConnectWithoutAdjustmentsInput
@@ -1022,6 +1064,8 @@ export type PayrollRunCreateWithoutCreatedByInput = {
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutCreatedByInput = {
@@ -1049,6 +1093,8 @@ export type PayrollRunUncheckedCreateWithoutCreatedByInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutCreatedByInput = {
@@ -1128,6 +1174,8 @@ export type PayrollRunCreateWithoutCorrectionsInput = {
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutCorrectionsInput = {
@@ -1155,6 +1203,8 @@ export type PayrollRunUncheckedCreateWithoutCorrectionsInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutCorrectionsInput = {
@@ -1187,6 +1237,8 @@ export type PayrollRunCreateWithoutCorrectionOfInput = {
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutCorrectionOfInput = {
@@ -1214,6 +1266,8 @@ export type PayrollRunUncheckedCreateWithoutCorrectionOfInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutCorrectionOfInput = {
@@ -1262,6 +1316,8 @@ export type PayrollRunUpdateWithoutCorrectionsInput = {
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutCorrectionsInput = {
@@ -1289,6 +1345,8 @@ export type PayrollRunUncheckedUpdateWithoutCorrectionsInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUpsertWithWhereUniqueWithoutCorrectionOfInput = {
@@ -1332,6 +1390,8 @@ export type PayrollRunCreateWithoutLineItemsInput = {
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutLineItemsInput = {
@@ -1359,6 +1419,8 @@ export type PayrollRunUncheckedCreateWithoutLineItemsInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutLineItemsInput = {
@@ -1402,6 +1464,8 @@ export type PayrollRunUpdateWithoutLineItemsInput = {
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutLineItemsInput = {
@@ -1429,6 +1493,272 @@ export type PayrollRunUncheckedUpdateWithoutLineItemsInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
+}
+
+export type PayrollRunCreateWithoutAdvanceRecoveriesInput = {
+  id?: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  payFrequency: $Enums.PayFrequency
+  currencyCode: string
+  status?: $Enums.PayrollRunStatus
+  calculationVersion: string
+  inputSnapshotHash: string
+  calculationHash?: string | null
+  calculatedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  releasedAt?: Date | string | null
+  lockedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollRunsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutPayrollRunsInput
+  correctionOf?: Prisma.PayrollRunCreateNestedOneWithoutCorrectionsInput
+  corrections?: Prisma.PayrollRunCreateNestedManyWithoutCorrectionOfInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedPayrollRunsInput
+  lineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutPayrollRunInput
+  adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
+  approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+}
+
+export type PayrollRunUncheckedCreateWithoutAdvanceRecoveriesInput = {
+  id?: string
+  organizationId: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  payFrequency: $Enums.PayFrequency
+  currencyCode: string
+  approvalPolicyId?: string | null
+  status?: $Enums.PayrollRunStatus
+  calculationVersion: string
+  inputSnapshotHash: string
+  calculationHash?: string | null
+  calculatedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  releasedAt?: Date | string | null
+  lockedAt?: Date | string | null
+  correctionOfRunId?: string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  corrections?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCorrectionOfInput
+  lineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutPayrollRunInput
+  adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
+  approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+}
+
+export type PayrollRunCreateOrConnectWithoutAdvanceRecoveriesInput = {
+  where: Prisma.PayrollRunWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollRunCreateWithoutAdvanceRecoveriesInput, Prisma.PayrollRunUncheckedCreateWithoutAdvanceRecoveriesInput>
+}
+
+export type PayrollRunUpsertWithoutAdvanceRecoveriesInput = {
+  update: Prisma.XOR<Prisma.PayrollRunUpdateWithoutAdvanceRecoveriesInput, Prisma.PayrollRunUncheckedUpdateWithoutAdvanceRecoveriesInput>
+  create: Prisma.XOR<Prisma.PayrollRunCreateWithoutAdvanceRecoveriesInput, Prisma.PayrollRunUncheckedCreateWithoutAdvanceRecoveriesInput>
+  where?: Prisma.PayrollRunWhereInput
+}
+
+export type PayrollRunUpdateToOneWithWhereWithoutAdvanceRecoveriesInput = {
+  where?: Prisma.PayrollRunWhereInput
+  data: Prisma.XOR<Prisma.PayrollRunUpdateWithoutAdvanceRecoveriesInput, Prisma.PayrollRunUncheckedUpdateWithoutAdvanceRecoveriesInput>
+}
+
+export type PayrollRunUpdateWithoutAdvanceRecoveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPayrollRunStatusFieldUpdateOperationsInput | $Enums.PayrollRunStatus
+  calculationVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
+  calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollRunsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutPayrollRunsNestedInput
+  correctionOf?: Prisma.PayrollRunUpdateOneWithoutCorrectionsNestedInput
+  corrections?: Prisma.PayrollRunUpdateManyWithoutCorrectionOfNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedPayrollRunsNestedInput
+  lineItems?: Prisma.PayrollLineItemUpdateManyWithoutPayrollRunNestedInput
+  adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
+  approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+}
+
+export type PayrollRunUncheckedUpdateWithoutAdvanceRecoveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPayrollRunStatusFieldUpdateOperationsInput | $Enums.PayrollRunStatus
+  calculationVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
+  calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  correctionOfRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  corrections?: Prisma.PayrollRunUncheckedUpdateManyWithoutCorrectionOfNestedInput
+  lineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutPayrollRunNestedInput
+  adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+}
+
+export type PayrollRunCreateWithoutPaymentsInput = {
+  id?: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  payFrequency: $Enums.PayFrequency
+  currencyCode: string
+  status?: $Enums.PayrollRunStatus
+  calculationVersion: string
+  inputSnapshotHash: string
+  calculationHash?: string | null
+  calculatedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  releasedAt?: Date | string | null
+  lockedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollRunsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutPayrollRunsInput
+  correctionOf?: Prisma.PayrollRunCreateNestedOneWithoutCorrectionsInput
+  corrections?: Prisma.PayrollRunCreateNestedManyWithoutCorrectionOfInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedPayrollRunsInput
+  lineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutPayrollRunInput
+  adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
+  approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
+}
+
+export type PayrollRunUncheckedCreateWithoutPaymentsInput = {
+  id?: string
+  organizationId: string
+  periodStart: Date | string
+  periodEnd: Date | string
+  payFrequency: $Enums.PayFrequency
+  currencyCode: string
+  approvalPolicyId?: string | null
+  status?: $Enums.PayrollRunStatus
+  calculationVersion: string
+  inputSnapshotHash: string
+  calculationHash?: string | null
+  calculatedAt?: Date | string | null
+  approvedAt?: Date | string | null
+  releasedAt?: Date | string | null
+  lockedAt?: Date | string | null
+  correctionOfRunId?: string | null
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  corrections?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCorrectionOfInput
+  lineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutPayrollRunInput
+  adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
+  approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
+}
+
+export type PayrollRunCreateOrConnectWithoutPaymentsInput = {
+  where: Prisma.PayrollRunWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollRunCreateWithoutPaymentsInput, Prisma.PayrollRunUncheckedCreateWithoutPaymentsInput>
+}
+
+export type PayrollRunUpsertWithoutPaymentsInput = {
+  update: Prisma.XOR<Prisma.PayrollRunUpdateWithoutPaymentsInput, Prisma.PayrollRunUncheckedUpdateWithoutPaymentsInput>
+  create: Prisma.XOR<Prisma.PayrollRunCreateWithoutPaymentsInput, Prisma.PayrollRunUncheckedCreateWithoutPaymentsInput>
+  where?: Prisma.PayrollRunWhereInput
+}
+
+export type PayrollRunUpdateToOneWithWhereWithoutPaymentsInput = {
+  where?: Prisma.PayrollRunWhereInput
+  data: Prisma.XOR<Prisma.PayrollRunUpdateWithoutPaymentsInput, Prisma.PayrollRunUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type PayrollRunUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPayrollRunStatusFieldUpdateOperationsInput | $Enums.PayrollRunStatus
+  calculationVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
+  calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollRunsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutPayrollRunsNestedInput
+  correctionOf?: Prisma.PayrollRunUpdateOneWithoutCorrectionsNestedInput
+  corrections?: Prisma.PayrollRunUpdateManyWithoutCorrectionOfNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedPayrollRunsNestedInput
+  lineItems?: Prisma.PayrollLineItemUpdateManyWithoutPayrollRunNestedInput
+  adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
+  approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
+}
+
+export type PayrollRunUncheckedUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  periodStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  periodEnd?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPayrollRunStatusFieldUpdateOperationsInput | $Enums.PayrollRunStatus
+  calculationVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
+  calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  correctionOfRunId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  corrections?: Prisma.PayrollRunUncheckedUpdateManyWithoutCorrectionOfNestedInput
+  lineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutPayrollRunNestedInput
+  adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunCreateWithoutAdjustmentsInput = {
@@ -1456,6 +1786,8 @@ export type PayrollRunCreateWithoutAdjustmentsInput = {
   lineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutAdjustmentsInput = {
@@ -1483,6 +1815,8 @@ export type PayrollRunUncheckedCreateWithoutAdjustmentsInput = {
   lineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutAdjustmentsInput = {
@@ -1526,6 +1860,8 @@ export type PayrollRunUpdateWithoutAdjustmentsInput = {
   lineItems?: Prisma.PayrollLineItemUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutAdjustmentsInput = {
@@ -1553,6 +1889,8 @@ export type PayrollRunUncheckedUpdateWithoutAdjustmentsInput = {
   lineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunCreateWithoutApprovalsInput = {
@@ -1580,6 +1918,8 @@ export type PayrollRunCreateWithoutApprovalsInput = {
   lineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutPayrollRunInput
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutApprovalsInput = {
@@ -1607,6 +1947,8 @@ export type PayrollRunUncheckedCreateWithoutApprovalsInput = {
   lineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutPayrollRunInput
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutApprovalsInput = {
@@ -1650,6 +1992,8 @@ export type PayrollRunUpdateWithoutApprovalsInput = {
   lineItems?: Prisma.PayrollLineItemUpdateManyWithoutPayrollRunNestedInput
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutApprovalsInput = {
@@ -1677,6 +2021,8 @@ export type PayrollRunUncheckedUpdateWithoutApprovalsInput = {
   lineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutPayrollRunNestedInput
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunCreateWithoutPayslipsInput = {
@@ -1704,6 +2050,8 @@ export type PayrollRunCreateWithoutPayslipsInput = {
   lineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutPayrollRunInput
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutPayslipsInput = {
@@ -1731,6 +2079,8 @@ export type PayrollRunUncheckedCreateWithoutPayslipsInput = {
   lineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutPayrollRunInput
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutPayslipsInput = {
@@ -1774,6 +2124,8 @@ export type PayrollRunUpdateWithoutPayslipsInput = {
   lineItems?: Prisma.PayrollLineItemUpdateManyWithoutPayrollRunNestedInput
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutPayslipsInput = {
@@ -1801,6 +2153,8 @@ export type PayrollRunUncheckedUpdateWithoutPayslipsInput = {
   lineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutPayrollRunNestedInput
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunCreateWithoutOrganizationInput = {
@@ -1828,6 +2182,8 @@ export type PayrollRunCreateWithoutOrganizationInput = {
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutOrganizationInput = {
@@ -1855,6 +2211,8 @@ export type PayrollRunUncheckedCreateWithoutOrganizationInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutOrganizationInput = {
@@ -1908,6 +2266,8 @@ export type PayrollRunCreateWithoutApprovalPolicyInput = {
   adjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunUncheckedCreateWithoutApprovalPolicyInput = {
@@ -1935,6 +2295,8 @@ export type PayrollRunUncheckedCreateWithoutApprovalPolicyInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutPayrollRunInput
   approvals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutPayrollRunInput
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutPayrollRunInput
+  payments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutPayrollRunInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutPayrollRunInput
 }
 
 export type PayrollRunCreateOrConnectWithoutApprovalPolicyInput = {
@@ -2010,6 +2372,8 @@ export type PayrollRunUpdateWithoutCreatedByInput = {
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutCreatedByInput = {
@@ -2037,6 +2401,8 @@ export type PayrollRunUncheckedUpdateWithoutCreatedByInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateManyWithoutCreatedByInput = {
@@ -2108,6 +2474,8 @@ export type PayrollRunUpdateWithoutCorrectionOfInput = {
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutCorrectionOfInput = {
@@ -2135,6 +2503,8 @@ export type PayrollRunUncheckedUpdateWithoutCorrectionOfInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateManyWithoutCorrectionOfInput = {
@@ -2206,6 +2576,8 @@ export type PayrollRunUpdateWithoutOrganizationInput = {
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutOrganizationInput = {
@@ -2233,6 +2605,8 @@ export type PayrollRunUncheckedUpdateWithoutOrganizationInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateManyWithoutOrganizationInput = {
@@ -2304,6 +2678,8 @@ export type PayrollRunUpdateWithoutApprovalPolicyInput = {
   adjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateWithoutApprovalPolicyInput = {
@@ -2331,6 +2707,8 @@ export type PayrollRunUncheckedUpdateWithoutApprovalPolicyInput = {
   adjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutPayrollRunNestedInput
   approvals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutPayrollRunNestedInput
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutPayrollRunNestedInput
+  payments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutPayrollRunNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutPayrollRunNestedInput
 }
 
 export type PayrollRunUncheckedUpdateManyWithoutApprovalPolicyInput = {
@@ -2366,6 +2744,8 @@ export type PayrollRunCountOutputType = {
   adjustments: number
   approvals: number
   payslips: number
+  payments: number
+  advanceRecoveries: number
 }
 
 export type PayrollRunCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2374,6 +2754,8 @@ export type PayrollRunCountOutputTypeSelect<ExtArgs extends runtime.Types.Extens
   adjustments?: boolean | PayrollRunCountOutputTypeCountAdjustmentsArgs
   approvals?: boolean | PayrollRunCountOutputTypeCountApprovalsArgs
   payslips?: boolean | PayrollRunCountOutputTypeCountPayslipsArgs
+  payments?: boolean | PayrollRunCountOutputTypeCountPaymentsArgs
+  advanceRecoveries?: boolean | PayrollRunCountOutputTypeCountAdvanceRecoveriesArgs
 }
 
 /**
@@ -2421,6 +2803,20 @@ export type PayrollRunCountOutputTypeCountPayslipsArgs<ExtArgs extends runtime.T
   where?: Prisma.PayslipWhereInput
 }
 
+/**
+ * PayrollRunCountOutputType without action
+ */
+export type PayrollRunCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayrollPaymentWhereInput
+}
+
+/**
+ * PayrollRunCountOutputType without action
+ */
+export type PayrollRunCountOutputTypeCountAdvanceRecoveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SalaryAdvanceRecoveryWhereInput
+}
+
 
 export type PayrollRunSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2452,6 +2848,8 @@ export type PayrollRunSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   adjustments?: boolean | Prisma.PayrollRun$adjustmentsArgs<ExtArgs>
   approvals?: boolean | Prisma.PayrollRun$approvalsArgs<ExtArgs>
   payslips?: boolean | Prisma.PayrollRun$payslipsArgs<ExtArgs>
+  payments?: boolean | Prisma.PayrollRun$paymentsArgs<ExtArgs>
+  advanceRecoveries?: boolean | Prisma.PayrollRun$advanceRecoveriesArgs<ExtArgs>
   _count?: boolean | Prisma.PayrollRunCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payrollRun"]>
 
@@ -2543,6 +2941,8 @@ export type PayrollRunInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   adjustments?: boolean | Prisma.PayrollRun$adjustmentsArgs<ExtArgs>
   approvals?: boolean | Prisma.PayrollRun$approvalsArgs<ExtArgs>
   payslips?: boolean | Prisma.PayrollRun$payslipsArgs<ExtArgs>
+  payments?: boolean | Prisma.PayrollRun$paymentsArgs<ExtArgs>
+  advanceRecoveries?: boolean | Prisma.PayrollRun$advanceRecoveriesArgs<ExtArgs>
   _count?: boolean | Prisma.PayrollRunCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PayrollRunIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2570,6 +2970,8 @@ export type $PayrollRunPayload<ExtArgs extends runtime.Types.Extensions.Internal
     adjustments: Prisma.$PayrollAdjustmentPayload<ExtArgs>[]
     approvals: Prisma.$PayrollApprovalPayload<ExtArgs>[]
     payslips: Prisma.$PayslipPayload<ExtArgs>[]
+    payments: Prisma.$PayrollPaymentPayload<ExtArgs>[]
+    advanceRecoveries: Prisma.$SalaryAdvanceRecoveryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2995,6 +3397,8 @@ export interface Prisma__PayrollRunClient<T, Null = never, ExtArgs extends runti
   adjustments<T extends Prisma.PayrollRun$adjustmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollRun$adjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   approvals<T extends Prisma.PayrollRun$approvalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollRun$approvalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payslips<T extends Prisma.PayrollRun$payslipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollRun$payslipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayslipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  payments<T extends Prisma.PayrollRun$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollRun$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  advanceRecoveries<T extends Prisma.PayrollRun$advanceRecoveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollRun$advanceRecoveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SalaryAdvanceRecoveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3619,6 +4023,54 @@ export type PayrollRun$payslipsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.PayslipScalarFieldEnum | Prisma.PayslipScalarFieldEnum[]
+}
+
+/**
+ * PayrollRun.payments
+ */
+export type PayrollRun$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayrollPayment
+   */
+  select?: Prisma.PayrollPaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PayrollPayment
+   */
+  omit?: Prisma.PayrollPaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayrollPaymentInclude<ExtArgs> | null
+  where?: Prisma.PayrollPaymentWhereInput
+  orderBy?: Prisma.PayrollPaymentOrderByWithRelationInput | Prisma.PayrollPaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PayrollPaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayrollPaymentScalarFieldEnum | Prisma.PayrollPaymentScalarFieldEnum[]
+}
+
+/**
+ * PayrollRun.advanceRecoveries
+ */
+export type PayrollRun$advanceRecoveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SalaryAdvanceRecovery
+   */
+  select?: Prisma.SalaryAdvanceRecoverySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SalaryAdvanceRecovery
+   */
+  omit?: Prisma.SalaryAdvanceRecoveryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SalaryAdvanceRecoveryInclude<ExtArgs> | null
+  where?: Prisma.SalaryAdvanceRecoveryWhereInput
+  orderBy?: Prisma.SalaryAdvanceRecoveryOrderByWithRelationInput | Prisma.SalaryAdvanceRecoveryOrderByWithRelationInput[]
+  cursor?: Prisma.SalaryAdvanceRecoveryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SalaryAdvanceRecoveryScalarFieldEnum | Prisma.SalaryAdvanceRecoveryScalarFieldEnum[]
 }
 
 /**

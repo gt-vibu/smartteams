@@ -73,8 +73,12 @@ export class FilesService {
       throw new ConflictError('File type or size is not allowed for this purpose');
     if (input.checksumSha256 && !/^[0-9a-f]{64}$/i.test(input.checksumSha256))
       throw new ConflictError('Checksum must be a SHA-256 hexadecimal digest');
-    if (input.purpose === FilePurpose.LEAVE_ATTACHMENT && !input.leaveRequestId)
-      throw new ConflictError('Leave attachments must reference a leave request');
+    if (
+      input.purpose === FilePurpose.LEAVE_ATTACHMENT &&
+      !input.employeeId &&
+      !input.leaveRequestId
+    )
+      throw new ConflictError('Leave attachments must reference an employee or leave request');
     const key = this.storage.createObjectKey(
       context.organizationId,
       input.purpose,
@@ -101,7 +105,7 @@ export class FilesService {
         data: {
           organizationId: context.organizationId,
           uploadedByUserId: context.actor.userId,
-          employeeId: input.employeeId,
+          employeeId: input.employeeId ?? leaveRequest?.employeeId,
           leaveRequestId: input.leaveRequestId,
           purpose: input.purpose,
           bucket: this.storage.getBucket(),
@@ -138,7 +142,7 @@ export class FilesService {
     return { fileId: file.id, objectKey: key, uploadUrl, expiresIn: 600 };
   }
 
-  async completeUpload(context: DomainContext, fileId: string) {
+  async completeUpload(context: DomainContext, fileId: string, employeeId?: string) {
     requirePermission(context, 'files.write');
     const file = await this.database.run(context, (tx) =>
       tx.fileObject.findFirst({
@@ -146,6 +150,7 @@ export class FilesService {
           id: fileId,
           organizationId: context.organizationId,
           status: FileStatus.PENDING_UPLOAD,
+          ...(employeeId ? { employeeId } : {}),
         },
       }),
     );
@@ -221,7 +226,13 @@ export class FilesService {
     };
   }
 
-  async softDelete(context: DomainContext, fileId: string, reason: string) {
+  async softDelete(
+    context: DomainContext,
+    fileId: string,
+    reason: string,
+    employeeId?: string,
+    purpose?: FilePurpose,
+  ) {
     requirePermission(context, 'files.write');
     requireReason({ ...context, reason }, 'File deletion requires a reason');
     return this.database.run(context, async (tx) => {
@@ -230,6 +241,8 @@ export class FilesService {
           id: fileId,
           organizationId: context.organizationId,
           status: { not: FileStatus.DELETED },
+          ...(employeeId ? { employeeId } : {}),
+          ...(purpose ? { purpose } : {}),
         },
       });
       if (!file) throw new NotFoundError('File');

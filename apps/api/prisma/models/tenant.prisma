@@ -14,6 +14,13 @@ model Organization {
   version       Int                @default(1)
 
   settings                  OrganizationSettings?
+  payrollPolicies           PayrollPolicy[]
+  statutoryRules            PayrollStatutoryRule[]
+  employeePayrollPolicies   EmployeePayrollPolicy[]
+  salaryAdvances            SalaryAdvance[]
+  advanceRecoveries         SalaryAdvanceRecovery[]
+  payrollPayments           PayrollPayment[]
+  payrollCalendars          PayrollCalendar[]
   branches                  Branch[]
   sourceChanges             OrganizationSourceChange[]
   users                     UserOrganization[]
@@ -45,6 +52,7 @@ model Organization {
   attendanceApprovals       AttendanceApproval[]
   holidays                  Holiday[]
   leaveTypes                LeaveType[]
+  leavePolicyAssignments    LeavePolicyAssignment[]
   leaveBalances             LeaveBalance[]
   leaveBalanceTransactions  LeaveBalanceTransaction[]
   leaveRequests             LeaveRequest[]
@@ -101,6 +109,27 @@ model OrganizationSettings {
   biometricOwnerClient FederationClient? @relation("OrganizationBiometricOwner", fields: [biometricOwnerClientId], references: [id], onDelete: SetNull)
 
   @@map("organization_settings")
+}
+
+model PayrollCalendar {
+  id                   String    @id @default(uuid()) @db.Uuid
+  organizationId       String    @map("organization_id") @db.Uuid
+  year                 Int       @db.SmallInt
+  month                Int       @db.SmallInt
+  periodStart          DateTime  @map("period_start") @db.Date
+  periodEnd            DateTime  @map("period_end") @db.Date
+  attendanceFreezeDate DateTime? @map("attendance_freeze_date") @db.Date
+  calculationDate      DateTime? @map("calculation_date") @db.Date
+  releaseDate          DateTime? @map("release_date") @db.Date
+  salaryCreditDate     DateTime? @map("salary_credit_date") @db.Date
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, year, month])
+  @@index([organizationId, periodStart, periodEnd])
+  @@map("payroll_calendars")
 }
 
 model ApprovalPolicy {
@@ -172,25 +201,26 @@ model Branch {
   createdAt                 DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                 DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  organization         Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  workLocations        WorkLocation[]
-  primaryEmployees     Employee[]                 @relation("EmployeePrimaryBranch")
-  employeeAssignments  EmployeeBranchAssignment[]
-  roles                Role[]                     @relation("BranchRoles")
-  userRoles            UserRole[]                 @relation("BranchUserRoles")
-  attendanceRecords    AttendanceRecord[]
-  leaveRequests        LeaveRequest[]
-  shifts               Shift[]
-  timesheets           Timesheet[]
-  holidays             Holiday[]
-  teams                Team[]
-  projects             Project[]
-  grants               FederationGrant[]
-  shiftAssignments     EmployeeShiftAssignment[]
-  requestRecords       FederationRequestRecord[]
-  auditLogs            AuditLog[]
-  geofenceOwnerClient  FederationClient?          @relation("BranchGeofenceOwner", fields: [geofenceOwnerClientId], references: [id], onDelete: SetNull)
-  biometricOwnerClient FederationClient?          @relation("BranchBiometricOwner", fields: [biometricOwnerClientId], references: [id], onDelete: SetNull)
+  organization           Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  workLocations          WorkLocation[]
+  primaryEmployees       Employee[]                 @relation("EmployeePrimaryBranch")
+  employeeAssignments    EmployeeBranchAssignment[]
+  roles                  Role[]                     @relation("BranchRoles")
+  userRoles              UserRole[]                 @relation("BranchUserRoles")
+  attendanceRecords      AttendanceRecord[]
+  leaveRequests          LeaveRequest[]
+  shifts                 Shift[]
+  timesheets             Timesheet[]
+  holidays               Holiday[]
+  leavePolicyAssignments LeavePolicyAssignment[]
+  teams                  Team[]
+  projects               Project[]
+  grants                 FederationGrant[]
+  shiftAssignments       EmployeeShiftAssignment[]
+  requestRecords         FederationRequestRecord[]
+  auditLogs              AuditLog[]
+  geofenceOwnerClient    FederationClient?          @relation("BranchGeofenceOwner", fields: [geofenceOwnerClientId], references: [id], onDelete: SetNull)
+  biometricOwnerClient   FederationClient?          @relation("BranchBiometricOwner", fields: [biometricOwnerClientId], references: [id], onDelete: SetNull)
 
   @@unique([organizationId, code])
   @@unique([organizationId, externalId])

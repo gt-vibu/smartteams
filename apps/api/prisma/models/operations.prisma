@@ -1,20 +1,20 @@
 model AttendanceRecord {
-  id               String           @id @default(uuid()) @db.Uuid
-  organizationId   String           @map("organization_id") @db.Uuid
-  employeeId       String           @map("employee_id") @db.Uuid
-  branchId         String?          @map("branch_id") @db.Uuid
-  workDate         DateTime         @map("work_date") @db.Date
-  status           AttendanceStatus @default(OPEN)
+  id               String              @id @default(uuid()) @db.Uuid
+  organizationId   String              @map("organization_id") @db.Uuid
+  employeeId       String              @map("employee_id") @db.Uuid
+  branchId         String?             @map("branch_id") @db.Uuid
+  workDate         DateTime            @map("work_date") @db.Date
+  status           AttendanceStatus    @default(OPEN)
   dayStatus        AttendanceDayStatus @default(PRESENT) @map("day_status")
-  scheduledMinutes Int?             @map("scheduled_minutes")
-  workedMinutes    Int              @default(0) @map("worked_minutes")
-  overtimeMinutes  Int              @default(0) @map("overtime_minutes")
-  sourceAccessMode AccessMode       @map("source_access_mode")
-  externalId       String?          @map("external_id")
-  correctionNote   String?          @map("correction_note")
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
-  version          Int              @default(1)
+  scheduledMinutes Int?                @map("scheduled_minutes")
+  workedMinutes    Int                 @default(0) @map("worked_minutes")
+  overtimeMinutes  Int                 @default(0) @map("overtime_minutes")
+  sourceAccessMode AccessMode          @map("source_access_mode")
+  externalId       String?             @map("external_id")
+  correctionNote   String?             @map("correction_note")
+  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version          Int                 @default(1)
 
   organization     Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   employee         Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
@@ -151,13 +151,32 @@ model LeaveType {
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  balances     LeaveBalance[]
-  requests     LeaveRequest[]
+  organization      Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  policyAssignments LeavePolicyAssignment[]
+  balances          LeaveBalance[]
+  requests          LeaveRequest[]
 
   @@unique([organizationId, code])
   @@index([organizationId, isActive])
   @@map("leave_types")
+}
+
+model LeavePolicyAssignment {
+  id               String     @id @default(uuid()) @db.Uuid
+  organizationId   String     @map("organization_id") @db.Uuid
+  branchId         String     @map("branch_id") @db.Uuid
+  leaveTypeId      String     @map("leave_type_id") @db.Uuid
+  sourceAccessMode AccessMode @map("source_access_mode")
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch       @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  leaveType    LeaveType    @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, branchId, leaveTypeId])
+  @@index([organizationId, branchId, createdAt])
+  @@map("leave_policy_assignments")
 }
 
 model LeaveBalance {
