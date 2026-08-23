@@ -235,6 +235,7 @@ deploy_web_org:
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
+        - .gitlab-ci.yml
   script: *deploy_script
 
 deploy_web_admin:
@@ -258,4 +259,5 @@ deploy_web_admin:
         - tsconfig.base.json
         - .npmrc
         - .nvmrc
+        - .gitlab-ci.yml
   script: *deploy_script
