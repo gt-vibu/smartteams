@@ -6,11 +6,17 @@ import {
   requireReason,
   type DomainContext,
 } from '../../common/context/domain-context';
-import { ConflictError, NotFoundError, StaleWriteError } from '../../common/errors/domain-error';
+import {
+  ConflictError,
+  ForbiddenDomainError,
+  NotFoundError,
+  StaleWriteError,
+} from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 import { FEDERATION_CAPABILITY_CATALOG } from '../federation/federation-capability.catalog';
+import { FEDERATION_GRANTABLE_SCOPES } from '../federation/federation-scope.catalog';
 import type { AuditContext } from '../audit/audit.service';
 
 @Injectable()
@@ -275,8 +281,8 @@ export class OrganizationsService {
     });
   }
 
-  async syncFederated(
-    context: DomainContext,
+  async bootstrapFederated(
+    clientId: string,
     externalId: string,
     input: {
       name: string;
@@ -285,58 +291,139 @@ export class OrganizationsService {
       status?: 'ACTIVE' | 'SUSPENDED';
     },
   ) {
-    requirePermission(context, 'tenants.write');
-    return this.database.runProvisioning(context, async (tx) => {
-      const existing = await tx.organization.findFirst({
-        where: { source: 'BLIZBOOKS', externalId },
+    const normalizedExternalId = externalId.trim();
+    if (!normalizedExternalId) throw new ConflictError('A BlizBooks tenant identifier is required');
+    return this.database.runFederationBootstrap(clientId, async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${clientId}:${normalizedExternalId}`}, 0))`;
+      const client = await tx.federationClient.findUnique({
+        where: { id: clientId },
+        select: { id: true, status: true, tenantProvisioningEnabled: true },
       });
+      if (!client || client.status !== 'ACTIVE' || !client.tenantProvisioningEnabled) {
+        throw new ForbiddenDomainError(
+          'This federation client is not authorized to provision BlizBooks tenants',
+        );
+      }
+      const existing = await tx.organization.findFirst({
+        where: { source: 'BLIZBOOKS', externalId: normalizedExternalId },
+      });
+      const desiredOrganization = {
+        name: input.name.trim(),
+        timezone: input.timezone,
+        currencyCode: input.currencyCode.toUpperCase(),
+        status: input.status ?? ('ACTIVE' as const),
+      };
+      const organizationChanged =
+        !existing ||
+        existing.name !== desiredOrganization.name ||
+        existing.timezone !== desiredOrganization.timezone ||
+        existing.currencyCode !== desiredOrganization.currencyCode ||
+        existing.status !== desiredOrganization.status;
       const organization = existing
-        ? await tx.organization.update({
-            where: { id: existing.id },
-            data: {
-              name: input.name,
-              timezone: input.timezone,
-              currencyCode: input.currencyCode.toUpperCase(),
-              status: input.status ?? 'ACTIVE',
-              version: { increment: 1 },
-            },
-          })
+        ? organizationChanged
+          ? await tx.organization.update({
+              where: { id: existing.id },
+              data: { ...desiredOrganization, version: { increment: 1 } },
+            })
+          : existing
         : await tx.organization.create({
             data: {
-              name: input.name,
+              name: desiredOrganization.name,
               slug: `federated-${randomUUID()}`,
               source: 'BLIZBOOKS',
-              externalId,
-              timezone: input.timezone,
-              currencyCode: input.currencyCode.toUpperCase(),
-              status: input.status ?? 'ACTIVE',
+              externalId: normalizedExternalId,
+              timezone: desiredOrganization.timezone,
+              currencyCode: desiredOrganization.currencyCode,
+              status: desiredOrganization.status,
               settings: { create: {} },
             },
           });
       await this.ensureFederationCapabilities(tx, organization.id);
-      const tenantContext = { ...context, organizationId: organization.id };
-      await this.audit.record(
-        tenantContext,
-        {
-          entityType: 'ORGANIZATION',
-          entityId: organization.id,
-          action: existing ? 'ORGANIZATION_SYNCED' : 'ORGANIZATION_PROVISIONED',
-          beforeState: existing ? jsonSnapshot(existing) : undefined,
-          afterState: jsonSnapshot(organization),
-        },
-        tx,
+      const scopeRows = await Promise.all(
+        FEDERATION_GRANTABLE_SCOPES.map((code) =>
+          tx.federationScope.upsert({
+            where: { code },
+            create: { code, description: code },
+            update: {},
+          }),
+        ),
       );
-      await this.outbox.append(
-        tenantContext,
-        {
-          aggregateType: 'Organization',
-          aggregateId: organization.id,
-          aggregateVersion: organization.version,
-          eventType: 'organization.changed',
-          payload: jsonSnapshot(this.toDto(organization)),
+      const existingGrant = await tx.federationGrant.findFirst({
+        where: {
+          clientId,
+          organizationId: organization.id,
+          branchId: null,
+          effect: 'ALLOW',
+          status: 'ACTIVE',
         },
-        tx,
-      );
+        orderBy: { createdAt: 'asc' },
+      });
+      const grant = existingGrant
+        ? existingGrant
+        : await tx.federationGrant.create({
+            data: {
+              clientId,
+              organizationId: organization.id,
+              effect: 'ALLOW',
+              status: 'ACTIVE',
+              startsAt: new Date(),
+              scopes: { create: scopeRows.map(({ id }) => ({ scopeId: id })) },
+            },
+          });
+      if (existingGrant) {
+        await tx.federationGrantScope.createMany({
+          data: scopeRows.map(({ id }) => ({ grantId: existingGrant.id, scopeId: id })),
+          skipDuplicates: true,
+        });
+      }
+      await tx.$executeRaw`SELECT set_config('app.organization_id', ${organization.id}, true)`;
+      const tenantContext = {
+        organizationId: organization.id,
+        accessMode: 'FEDERATION' as const,
+        actor: { type: 'FEDERATION_CLIENT' as const, clientId },
+        correlationId: randomUUID(),
+        requestId: randomUUID(),
+        permissions: new Set<string>(FEDERATION_GRANTABLE_SCOPES),
+        scopes: new Set<string>(FEDERATION_GRANTABLE_SCOPES),
+      } satisfies DomainContext;
+      if (organizationChanged) {
+        await this.audit.record(
+          tenantContext,
+          {
+            entityType: 'ORGANIZATION',
+            entityId: organization.id,
+            action: existing ? 'ORGANIZATION_SYNCED' : 'ORGANIZATION_PROVISIONED',
+            beforeState: existing ? jsonSnapshot(existing) : undefined,
+            afterState: jsonSnapshot(organization),
+          },
+          tx,
+        );
+      }
+      if (!existingGrant) {
+        await this.audit.record(
+          tenantContext,
+          {
+            entityType: 'FEDERATION_GRANT',
+            entityId: grant.id,
+            action: 'FEDERATION_GRANT_PROVISIONED',
+            afterState: jsonSnapshot(grant),
+          },
+          tx,
+        );
+      }
+      if (organizationChanged) {
+        await this.outbox.append(
+          tenantContext,
+          {
+            aggregateType: 'Organization',
+            aggregateId: organization.id,
+            aggregateVersion: organization.version,
+            eventType: 'organization.changed',
+            payload: jsonSnapshot(this.toDto(organization)),
+          },
+          tx,
+        );
+      }
       return this.toDto(organization);
     });
   }

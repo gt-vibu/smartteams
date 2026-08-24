@@ -16,6 +16,10 @@ export class FederationIdempotencyInterceptor implements NestInterceptor {
     const normalizedKey = idempotencyKey?.trim();
     if (!normalizedKey || normalizedKey.length < 16 || normalizedKey.length > 255)
       throw new ConflictError('Idempotency-Key is required for federation mutations');
+    // The first tenant request has no organization row where the normal
+    // idempotency record can be stored. Its bootstrap transaction is itself
+    // retry-safe and serialized by client + external tenant ID.
+    if (isTenantBootstrapRequest(request)) return next.handle();
     const response = executionContext.switchToHttp().getResponse<Response>();
     const organizationId = this.organization(request);
     const requestFingerprint = {
@@ -65,4 +69,8 @@ export class FederationIdempotencyInterceptor implements NestInterceptor {
     const value = request.headers[name];
     return Array.isArray(value) ? value[0] : value;
   }
+}
+
+export function isTenantBootstrapRequest(request: Pick<FederationRequest, 'method' | 'path'>) {
+  return request.method === 'PUT' && /^\/v1\/federation\/tenants\/[^/]+\/?$/.test(request.path);
 }

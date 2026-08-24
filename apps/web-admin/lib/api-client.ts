@@ -14,24 +14,34 @@ interface AuthTokenResponse extends AdminSession {
   refreshToken: string;
 }
 
-export interface OrganizationResult {
+export type FederationEnvironment = 'SANDBOX' | 'STAGING' | 'PRODUCTION';
+
+export interface FederationClient {
   id: string;
   name: string;
-  slug: string;
-  source: string;
-}
-
-export interface FederationClientResult {
-  client: { id: string; clientId: string; status: string };
-  credential: { id: string; keyId: string; clientSecret: string };
-}
-
-export interface FederationGrantResult {
-  id: string;
+  clientId: string;
+  environment: FederationEnvironment;
   status: string;
-  effect: string;
-  startsAt: string;
+  isActive: boolean;
+  mtlsRequired: boolean;
+  allowedCertificateFingerprints: string[];
+  createdAt: string;
+  updatedAt: string;
+  lastUsedAt: string | null;
 }
+
+export interface FederationClientSecret extends FederationClient {
+  clientSecret: string;
+}
+
+export type FederationClientInput = {
+  name: string;
+  clientId: string;
+  environment: FederationEnvironment;
+  isActive: boolean;
+  mtlsRequired: boolean;
+  allowedCertificateFingerprints: string[];
+};
 
 export class ApiClientError extends Error {
   constructor(
@@ -79,80 +89,87 @@ export async function logout(session: AdminSession) {
   await request('/v1/auth/logout', { method: 'POST', token: session.accessToken });
 }
 
-export async function createOrganization(
-  session: AdminSession,
-  input: {
-    name: string;
-    slug: string;
-    timezone: string;
-    currencyCode: string;
-    externalId?: string;
-    reason: string;
-  },
-) {
-  const payload = await request('/v1/organizations', {
-    method: 'POST',
+export async function listFederationClients(session: AdminSession) {
+  const payload = await request('/v1/platform/federation-clients', {
+    method: 'GET',
     token: session.accessToken,
-    body: {
-      name: input.name,
-      slug: input.slug,
-      timezone: input.timezone,
-      currencyCode: input.currencyCode,
-      source: 'BLIZBOOKS',
-      ...(input.externalId?.trim() ? { externalId: input.externalId.trim() } : {}),
-      reason: input.reason,
-    },
   });
-  if (!isOrganization(payload))
-    throw new ApiClientError('The organization response was not valid.', 502);
+  if (!Array.isArray(payload) || !payload.every(isFederationClient)) {
+    throw new ApiClientError('The federation client list was not valid.', 502);
+  }
   return payload;
 }
 
-export async function createFederationClient(
-  session: AdminSession,
-  input: { name: string; fingerprint: string; homeOrganizationId?: string; reason: string },
-) {
+export async function createFederationClient(session: AdminSession, input: FederationClientInput) {
   const payload = await request('/v1/platform/federation-clients', {
     method: 'POST',
     token: session.accessToken,
-    body: {
-      name: input.name,
-      mtlsRequired: true,
-      allowedCertificateFingerprints: [input.fingerprint],
-      homeOrganizationId: input.homeOrganizationId || undefined,
-      reason: input.reason,
-    },
+    body: input,
   });
-  if (!isFederationClient(payload))
-    throw new ApiClientError('The client response was not valid.', 502);
+  if (!isFederationClientSecret(payload))
+    throw new ApiClientError('The federation client response was not valid.', 502);
   return payload;
 }
 
-export async function createFederationGrant(
+export async function updateFederationClientCertificates(
   session: AdminSession,
-  input: {
-    clientId: string;
-    organizationId: string;
-    scopes: string[];
-    effect: 'ALLOW' | 'DENY';
-    startsAt: string;
-    endsAt?: string;
-    reason: string;
-  },
+  clientId: string,
+  input: Pick<FederationClientInput, 'mtlsRequired' | 'allowedCertificateFingerprints'>,
 ) {
-  const payload = await request('/v1/platform/federation-grants', {
-    method: 'POST',
-    token: session.accessToken,
-    body: { ...input, endsAt: input.endsAt || undefined },
-  });
-  if (!isGrant(payload)) throw new ApiClientError('The grant response was not valid.', 502);
+  const payload = await request(
+    `/v1/platform/federation-clients/${encodeURIComponent(clientId)}/certificate-fingerprints`,
+    {
+      method: 'PATCH',
+      token: session.accessToken,
+      body: input,
+    },
+  );
+  if (!isFederationClient(payload))
+    throw new ApiClientError('The updated federation client response was not valid.', 502);
   return payload;
+}
+
+export async function rotateFederationClientSecret(session: AdminSession, clientId: string) {
+  const payload = await request(
+    `/v1/platform/federation-clients/${encodeURIComponent(clientId)}/credentials/rotate`,
+    { method: 'POST', token: session.accessToken },
+  );
+  if (!isFederationClientSecret(payload))
+    throw new ApiClientError('The rotated federation secret response was not valid.', 502);
+  return payload;
+}
+
+export async function setFederationClientEnabled(
+  session: AdminSession,
+  clientId: string,
+  enabled: boolean,
+) {
+  const action = enabled ? 'enable' : 'disable';
+  const payload = await request(
+    `/v1/platform/federation-clients/${encodeURIComponent(clientId)}/${action}`,
+    { method: 'PATCH', token: session.accessToken },
+  );
+  if (!isFederationClient(payload))
+    throw new ApiClientError('The federation client status response was not valid.', 502);
+  return payload;
+}
+
+export async function deleteFederationClient(session: AdminSession, clientId: string) {
+  const payload = await request(`/v1/platform/federation-clients/${encodeURIComponent(clientId)}`, {
+    method: 'DELETE',
+    token: session.accessToken,
+  });
+  if (!isRecord(payload) || payload.deleted !== true) {
+    throw new ApiClientError('The federation client deletion response was not valid.', 502);
+  }
 }
 
 async function request(
   path: string,
-  options: { method: 'GET' | 'POST'; token?: string; body?: Record<string, unknown> } = {
-    method: 'GET',
+  options: {
+    method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+    token?: string;
+    body?: Record<string, unknown>;
   },
 ): Promise<unknown> {
   let response: Response;
@@ -197,39 +214,43 @@ function isSession(value: unknown): value is AdminSession {
 }
 
 function isAuthTokenResponse(value: unknown): value is AuthTokenResponse {
-  return isSession(value) && isRecord(value) && stringValue(value.refreshToken) !== undefined;
+  return (
+    isSession(value) && 'refreshToken' in value && stringValue(value.refreshToken) !== undefined
+  );
 }
 
-function isOrganization(value: unknown): value is OrganizationResult {
+function isFederationClient(value: unknown): value is FederationClient {
   return (
     isRecord(value) &&
     stringValue(value.id) !== undefined &&
     stringValue(value.name) !== undefined &&
-    stringValue(value.slug) !== undefined
-  );
-}
-
-function isFederationClient(value: unknown): value is FederationClientResult {
-  if (!isRecord(value) || !isRecord(value.client) || !isRecord(value.credential)) return false;
-  return (
-    stringValue(value.client.id) !== undefined &&
-    stringValue(value.client.clientId) !== undefined &&
-    stringValue(value.credential.clientSecret) !== undefined
-  );
-}
-
-function isGrant(value: unknown): value is FederationGrantResult {
-  return (
-    isRecord(value) &&
-    stringValue(value.id) !== undefined &&
+    stringValue(value.clientId) !== undefined &&
+    isEnvironment(value.environment) &&
     stringValue(value.status) !== undefined &&
-    stringValue(value.effect) !== undefined &&
-    stringValue(value.startsAt) !== undefined
+    typeof value.isActive === 'boolean' &&
+    typeof value.mtlsRequired === 'boolean' &&
+    Array.isArray(value.allowedCertificateFingerprints) &&
+    value.allowedCertificateFingerprints.every((item) => typeof item === 'string') &&
+    stringValue(value.createdAt) !== undefined &&
+    stringValue(value.updatedAt) !== undefined &&
+    (value.lastUsedAt === null || stringValue(value.lastUsedAt) !== undefined)
   );
+}
+
+function isFederationClientSecret(value: unknown): value is FederationClientSecret {
+  return (
+    isFederationClient(value) &&
+    'clientSecret' in value &&
+    stringValue(value.clientSecret) !== undefined
+  );
+}
+
+function isEnvironment(value: unknown): value is FederationEnvironment {
+  return value === 'SANDBOX' || value === 'STAGING' || value === 'PRODUCTION';
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function stringValue(value: unknown) {

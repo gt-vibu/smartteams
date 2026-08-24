@@ -1,13 +1,18 @@
-import { Body, Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
-import {
-  FederationClientDto,
-  ClientStatusDto,
-  CredentialRevokeDto,
-  CredentialRotationDto,
-  GrantDto,
-} from './platform-admin.dto';
+import { FederationClientDto, FederationClientCertificateDto } from './platform-admin.dto';
 import { PlatformAuthGuard } from './platform-auth.guard';
 import { PlatformService } from './platform.service';
 
@@ -15,6 +20,12 @@ import { PlatformService } from './platform.service';
 @UseGuards(NativeJwtGuard, PlatformAuthGuard)
 export class PlatformAdminController {
   constructor(private readonly platform: PlatformService) {}
+
+  @Get('federation-clients')
+  clients(@Req() request: Request & { user: NativeRequestUser }) {
+    return this.platform.listClients(request.user.userId);
+  }
+
   @Post('federation-clients') client(
     @Body() body: FederationClientDto,
     @Req() request: Request & { user: NativeRequestUser },
@@ -22,35 +33,38 @@ export class PlatformAdminController {
     return this.platform.createClient(request.user.userId, body);
   }
   @Post('federation-clients/:clientId/credentials/rotate') rotate(
-    @Param('clientId') clientId: string,
-    @Body() body: CredentialRotationDto,
+    @Param('clientId', ParseUUIDPipe) clientId: string,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
-    return this.platform.rotateCredential(request.user.userId, clientId, body.reason);
+    return this.platform.rotateCredential(request.user.userId, clientId);
   }
-  @Post('federation-credentials/:credentialId/revoke') revoke(
-    @Param('credentialId') credentialId: string,
-    @Body() body: CredentialRevokeDto,
+
+  @Patch('federation-clients/:clientId/certificate-fingerprints') certificates(
+    @Param('clientId', ParseUUIDPipe) clientId: string,
+    @Body() body: FederationClientCertificateDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
-    return this.platform.revokeCredential(request.user.userId, credentialId, body.reason);
+    return this.platform.updateCertificateFingerprints(request.user.userId, clientId, body);
   }
-  @Post('federation-clients/:clientId/status') status(
-    @Param('clientId') clientId: string,
-    @Body() body: ClientStatusDto,
+
+  @Patch('federation-clients/:clientId/enable') enable(
+    @Param('clientId', ParseUUIDPipe) clientId: string,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
-    return this.platform.changeClientStatus(
-      request.user.userId,
-      clientId,
-      body.status,
-      body.reason,
-    );
+    return this.platform.setClientEnabled(request.user.userId, clientId, true);
   }
-  @Post('federation-grants') grant(
-    @Body() body: GrantDto,
+
+  @Patch('federation-clients/:clientId/disable') disable(
+    @Param('clientId', ParseUUIDPipe) clientId: string,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
-    return this.platform.createGrant(request.user.userId, body);
+    return this.platform.setClientEnabled(request.user.userId, clientId, false);
+  }
+
+  @Delete('federation-clients/:clientId') delete(
+    @Param('clientId', ParseUUIDPipe) clientId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.platform.deleteClient(request.user.userId, clientId);
   }
 }

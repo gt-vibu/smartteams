@@ -38,8 +38,10 @@ export type FederationClientMinAggregateOutputType = {
   id: string | null
   name: string | null
   clientId: string | null
+  environment: $Enums.FederationEnvironment | null
   homeOrganizationId: string | null
   status: $Enums.FederationClientStatus | null
+  tenantProvisioningEnabled: boolean | null
   tokenVersion: number | null
   expiresAt: Date | null
   mtlsRequired: boolean | null
@@ -54,8 +56,10 @@ export type FederationClientMaxAggregateOutputType = {
   id: string | null
   name: string | null
   clientId: string | null
+  environment: $Enums.FederationEnvironment | null
   homeOrganizationId: string | null
   status: $Enums.FederationClientStatus | null
+  tenantProvisioningEnabled: boolean | null
   tokenVersion: number | null
   expiresAt: Date | null
   mtlsRequired: boolean | null
@@ -70,8 +74,10 @@ export type FederationClientCountAggregateOutputType = {
   id: number
   name: number
   clientId: number
+  environment: number
   homeOrganizationId: number
   status: number
+  tenantProvisioningEnabled: number
   tokenVersion: number
   expiresAt: number
   mtlsRequired: number
@@ -97,8 +103,10 @@ export type FederationClientMinAggregateInputType = {
   id?: true
   name?: true
   clientId?: true
+  environment?: true
   homeOrganizationId?: true
   status?: true
+  tenantProvisioningEnabled?: true
   tokenVersion?: true
   expiresAt?: true
   mtlsRequired?: true
@@ -113,8 +121,10 @@ export type FederationClientMaxAggregateInputType = {
   id?: true
   name?: true
   clientId?: true
+  environment?: true
   homeOrganizationId?: true
   status?: true
+  tenantProvisioningEnabled?: true
   tokenVersion?: true
   expiresAt?: true
   mtlsRequired?: true
@@ -129,8 +139,10 @@ export type FederationClientCountAggregateInputType = {
   id?: true
   name?: true
   clientId?: true
+  environment?: true
   homeOrganizationId?: true
   status?: true
+  tenantProvisioningEnabled?: true
   tokenVersion?: true
   expiresAt?: true
   mtlsRequired?: true
@@ -233,8 +245,10 @@ export type FederationClientGroupByOutputType = {
   id: string
   name: string
   clientId: string
+  environment: $Enums.FederationEnvironment
   homeOrganizationId: string | null
   status: $Enums.FederationClientStatus
+  tenantProvisioningEnabled: boolean
   tokenVersion: number
   expiresAt: Date | null
   mtlsRequired: boolean
@@ -273,8 +287,10 @@ export type FederationClientWhereInput = {
   id?: Prisma.UuidFilter<"FederationClient"> | string
   name?: Prisma.StringFilter<"FederationClient"> | string
   clientId?: Prisma.StringFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolFilter<"FederationClient"> | boolean
@@ -308,8 +324,10 @@ export type FederationClientOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -346,8 +364,10 @@ export type FederationClientWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.FederationClientWhereInput[]
   NOT?: Prisma.FederationClientWhereInput | Prisma.FederationClientWhereInput[]
   name?: Prisma.StringFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolFilter<"FederationClient"> | boolean
@@ -381,8 +401,10 @@ export type FederationClientOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -406,8 +428,10 @@ export type FederationClientScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"FederationClient"> | string
   name?: Prisma.StringWithAggregatesFilter<"FederationClient"> | string
   clientId?: Prisma.StringWithAggregatesFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentWithAggregatesFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableWithAggregatesFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusWithAggregatesFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolWithAggregatesFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntWithAggregatesFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolWithAggregatesFilter<"FederationClient"> | boolean
@@ -423,7 +447,9 @@ export type FederationClientCreateInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -456,8 +482,10 @@ export type FederationClientUncheckedCreateInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -489,7 +517,9 @@ export type FederationClientUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -522,8 +552,10 @@ export type FederationClientUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -555,8 +587,10 @@ export type FederationClientCreateManyInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -572,7 +606,9 @@ export type FederationClientUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -587,8 +623,10 @@ export type FederationClientUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -614,8 +652,10 @@ export type FederationClientCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -635,8 +675,10 @@ export type FederationClientMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -651,8 +693,10 @@ export type FederationClientMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -753,6 +797,10 @@ export type FederationClientUpdateOneWithoutAuditLogsNestedInput = {
 
 export type FederationClientCreateallowedCertificateFingerprintsInput = {
   set: string[]
+}
+
+export type EnumFederationEnvironmentFieldUpdateOperationsInput = {
+  set?: $Enums.FederationEnvironment
 }
 
 export type EnumFederationClientStatusFieldUpdateOperationsInput = {
@@ -1026,7 +1074,9 @@ export type FederationClientCreateWithoutIdempotencyRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1058,8 +1108,10 @@ export type FederationClientUncheckedCreateWithoutIdempotencyRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1106,7 +1158,9 @@ export type FederationClientUpdateWithoutIdempotencyRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1138,8 +1192,10 @@ export type FederationClientUncheckedUpdateWithoutIdempotencyRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1170,7 +1226,9 @@ export type FederationClientCreateWithoutRequestRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1202,8 +1260,10 @@ export type FederationClientUncheckedCreateWithoutRequestRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1250,7 +1310,9 @@ export type FederationClientUpdateWithoutRequestRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1282,8 +1344,10 @@ export type FederationClientUncheckedUpdateWithoutRequestRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1314,7 +1378,9 @@ export type FederationClientCreateWithoutWebhookSigningKeysInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1346,8 +1412,10 @@ export type FederationClientUncheckedCreateWithoutWebhookSigningKeysInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1394,7 +1462,9 @@ export type FederationClientUpdateWithoutWebhookSigningKeysInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1426,8 +1496,10 @@ export type FederationClientUncheckedUpdateWithoutWebhookSigningKeysInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1458,7 +1530,9 @@ export type FederationClientCreateWithoutWebhookSubscriptionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1490,8 +1564,10 @@ export type FederationClientUncheckedCreateWithoutWebhookSubscriptionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1538,7 +1614,9 @@ export type FederationClientUpdateWithoutWebhookSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1570,8 +1648,10 @@ export type FederationClientUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1602,7 +1682,9 @@ export type FederationClientCreateWithoutAuditLogsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1634,8 +1716,10 @@ export type FederationClientUncheckedCreateWithoutAuditLogsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1682,7 +1766,9 @@ export type FederationClientUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1714,8 +1800,10 @@ export type FederationClientUncheckedUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1746,7 +1834,9 @@ export type FederationClientCreateWithoutCredentialsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1778,8 +1868,10 @@ export type FederationClientUncheckedCreateWithoutCredentialsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1826,7 +1918,9 @@ export type FederationClientUpdateWithoutCredentialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1858,8 +1952,10 @@ export type FederationClientUncheckedUpdateWithoutCredentialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1890,7 +1986,9 @@ export type FederationClientCreateWithoutGrantsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1922,8 +2020,10 @@ export type FederationClientUncheckedCreateWithoutGrantsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1970,7 +2070,9 @@ export type FederationClientUpdateWithoutGrantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2002,8 +2104,10 @@ export type FederationClientUncheckedUpdateWithoutGrantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2034,7 +2138,9 @@ export type FederationClientCreateWithoutExternalMappingsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2066,8 +2172,10 @@ export type FederationClientUncheckedCreateWithoutExternalMappingsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2114,7 +2222,9 @@ export type FederationClientUpdateWithoutExternalMappingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2146,8 +2256,10 @@ export type FederationClientUncheckedUpdateWithoutExternalMappingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2178,7 +2290,9 @@ export type FederationClientCreateWithoutCreatedByInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2210,8 +2324,10 @@ export type FederationClientUncheckedCreateWithoutCreatedByInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2271,8 +2387,10 @@ export type FederationClientScalarWhereInput = {
   id?: Prisma.UuidFilter<"FederationClient"> | string
   name?: Prisma.StringFilter<"FederationClient"> | string
   clientId?: Prisma.StringFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolFilter<"FederationClient"> | boolean
@@ -2288,7 +2406,9 @@ export type FederationClientCreateWithoutAttendanceCorrectionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2320,8 +2440,10 @@ export type FederationClientUncheckedCreateWithoutAttendanceCorrectionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2368,7 +2490,9 @@ export type FederationClientUpdateWithoutAttendanceCorrectionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2400,8 +2524,10 @@ export type FederationClientUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2432,7 +2558,9 @@ export type FederationClientCreateWithoutLeaveBalanceTransactionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2464,8 +2592,10 @@ export type FederationClientUncheckedCreateWithoutLeaveBalanceTransactionsInput 
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2512,7 +2642,9 @@ export type FederationClientUpdateWithoutLeaveBalanceTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2544,8 +2676,10 @@ export type FederationClientUncheckedUpdateWithoutLeaveBalanceTransactionsInput 
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2576,7 +2710,9 @@ export type FederationClientCreateWithoutPayrollAdjustmentsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2608,8 +2744,10 @@ export type FederationClientUncheckedCreateWithoutPayrollAdjustmentsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2656,7 +2794,9 @@ export type FederationClientUpdateWithoutPayrollAdjustmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2688,8 +2828,10 @@ export type FederationClientUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2720,7 +2862,9 @@ export type FederationClientCreateWithoutHomeOrganizationInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2752,7 +2896,9 @@ export type FederationClientUncheckedCreateWithoutHomeOrganizationInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2810,7 +2956,9 @@ export type FederationClientCreateWithoutOrganizationGeofenceSettingsOwnedInput 
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2842,8 +2990,10 @@ export type FederationClientUncheckedCreateWithoutOrganizationGeofenceSettingsOw
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2879,7 +3029,9 @@ export type FederationClientCreateWithoutOrganizationBiometricSettingsOwnedInput
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2911,8 +3063,10 @@ export type FederationClientUncheckedCreateWithoutOrganizationBiometricSettingsO
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2959,7 +3113,9 @@ export type FederationClientUpdateWithoutOrganizationGeofenceSettingsOwnedInput 
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2991,8 +3147,10 @@ export type FederationClientUncheckedUpdateWithoutOrganizationGeofenceSettingsOw
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3034,7 +3192,9 @@ export type FederationClientUpdateWithoutOrganizationBiometricSettingsOwnedInput
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3066,8 +3226,10 @@ export type FederationClientUncheckedUpdateWithoutOrganizationBiometricSettingsO
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3098,7 +3260,9 @@ export type FederationClientCreateWithoutBranchGeofenceSettingsOwnedInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3130,8 +3294,10 @@ export type FederationClientUncheckedCreateWithoutBranchGeofenceSettingsOwnedInp
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3167,7 +3333,9 @@ export type FederationClientCreateWithoutBranchBiometricSettingsOwnedInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3199,8 +3367,10 @@ export type FederationClientUncheckedCreateWithoutBranchBiometricSettingsOwnedIn
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3247,7 +3417,9 @@ export type FederationClientUpdateWithoutBranchGeofenceSettingsOwnedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3279,8 +3451,10 @@ export type FederationClientUncheckedUpdateWithoutBranchGeofenceSettingsOwnedInp
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3322,7 +3496,9 @@ export type FederationClientUpdateWithoutBranchBiometricSettingsOwnedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3354,8 +3530,10 @@ export type FederationClientUncheckedUpdateWithoutBranchBiometricSettingsOwnedIn
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3386,7 +3564,9 @@ export type FederationClientCreateWithoutFieldOwnershipsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3418,8 +3598,10 @@ export type FederationClientUncheckedCreateWithoutFieldOwnershipsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3466,7 +3648,9 @@ export type FederationClientUpdateWithoutFieldOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3498,8 +3682,10 @@ export type FederationClientUncheckedUpdateWithoutFieldOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3530,8 +3716,10 @@ export type FederationClientCreateManyCreatedByInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3546,7 +3734,9 @@ export type FederationClientUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3578,8 +3768,10 @@ export type FederationClientUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3610,8 +3802,10 @@ export type FederationClientUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3626,7 +3820,9 @@ export type FederationClientCreateManyHomeOrganizationInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -3642,7 +3838,9 @@ export type FederationClientUpdateWithoutHomeOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3674,7 +3872,9 @@ export type FederationClientUncheckedUpdateWithoutHomeOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3706,7 +3906,9 @@ export type FederationClientUncheckedUpdateManyWithoutHomeOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3888,8 +4090,10 @@ export type FederationClientSelect<ExtArgs extends runtime.Types.Extensions.Inte
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -3924,8 +4128,10 @@ export type FederationClientSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -3943,8 +4149,10 @@ export type FederationClientSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -3962,8 +4170,10 @@ export type FederationClientSelectScalar = {
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -3975,7 +4185,7 @@ export type FederationClientSelectScalar = {
   revocationReason?: boolean
 }
 
-export type FederationClientOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "clientId" | "homeOrganizationId" | "status" | "tokenVersion" | "expiresAt" | "mtlsRequired" | "allowedCertificateFingerprints" | "createdByUserId" | "createdAt" | "updatedAt" | "revokedAt" | "revocationReason", ExtArgs["result"]["federationClient"]>
+export type FederationClientOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "clientId" | "environment" | "homeOrganizationId" | "status" | "tenantProvisioningEnabled" | "tokenVersion" | "expiresAt" | "mtlsRequired" | "allowedCertificateFingerprints" | "createdByUserId" | "createdAt" | "updatedAt" | "revokedAt" | "revocationReason", ExtArgs["result"]["federationClient"]>
 export type FederationClientInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   homeOrganization?: boolean | Prisma.FederationClient$homeOrganizationArgs<ExtArgs>
   createdBy?: boolean | Prisma.FederationClient$createdByArgs<ExtArgs>
@@ -4032,8 +4242,10 @@ export type $FederationClientPayload<ExtArgs extends runtime.Types.Extensions.In
     id: string
     name: string
     clientId: string
+    environment: $Enums.FederationEnvironment
     homeOrganizationId: string | null
     status: $Enums.FederationClientStatus
+    tenantProvisioningEnabled: boolean
     tokenVersion: number
     expiresAt: Date | null
     mtlsRequired: boolean
@@ -4487,8 +4699,10 @@ export interface FederationClientFieldRefs {
   readonly id: Prisma.FieldRef<"FederationClient", 'String'>
   readonly name: Prisma.FieldRef<"FederationClient", 'String'>
   readonly clientId: Prisma.FieldRef<"FederationClient", 'String'>
+  readonly environment: Prisma.FieldRef<"FederationClient", 'FederationEnvironment'>
   readonly homeOrganizationId: Prisma.FieldRef<"FederationClient", 'String'>
   readonly status: Prisma.FieldRef<"FederationClient", 'FederationClientStatus'>
+  readonly tenantProvisioningEnabled: Prisma.FieldRef<"FederationClient", 'Boolean'>
   readonly tokenVersion: Prisma.FieldRef<"FederationClient", 'Int'>
   readonly expiresAt: Prisma.FieldRef<"FederationClient", 'DateTime'>
   readonly mtlsRequired: Prisma.FieldRef<"FederationClient", 'Boolean'>

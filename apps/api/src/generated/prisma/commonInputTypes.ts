@@ -498,6 +498,13 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
 }
 
+export type EnumFederationEnvironmentFilter<$PrismaModel = never> = {
+  equals?: $Enums.FederationEnvironment | Prisma.EnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  in?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFederationEnvironmentFilter<$PrismaModel> | $Enums.FederationEnvironment
+}
+
 export type EnumFederationClientStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.FederationClientStatus | Prisma.EnumFederationClientStatusFieldRefInput<$PrismaModel>
   in?: $Enums.FederationClientStatus[] | Prisma.ListEnumFederationClientStatusFieldRefInput<$PrismaModel>
@@ -508,6 +515,16 @@ export type EnumFederationClientStatusFilter<$PrismaModel = never> = {
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type EnumFederationEnvironmentWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FederationEnvironment | Prisma.EnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  in?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFederationEnvironmentWithAggregatesFilter<$PrismaModel> | $Enums.FederationEnvironment
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFederationEnvironmentFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFederationEnvironmentFilter<$PrismaModel>
 }
 
 export type EnumFederationClientStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -1911,6 +1928,13 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
 }
 
+export type NestedEnumFederationEnvironmentFilter<$PrismaModel = never> = {
+  equals?: $Enums.FederationEnvironment | Prisma.EnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  in?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFederationEnvironmentFilter<$PrismaModel> | $Enums.FederationEnvironment
+}
+
 export type NestedEnumFederationClientStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.FederationClientStatus | Prisma.EnumFederationClientStatusFieldRefInput<$PrismaModel>
   in?: $Enums.FederationClientStatus[] | Prisma.ListEnumFederationClientStatusFieldRefInput<$PrismaModel>
@@ -1921,6 +1945,16 @@ export type NestedEnumFederationClientStatusFilter<$PrismaModel = never> = {
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type NestedEnumFederationEnvironmentWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FederationEnvironment | Prisma.EnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  in?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FederationEnvironment[] | Prisma.ListEnumFederationEnvironmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFederationEnvironmentWithAggregatesFilter<$PrismaModel> | $Enums.FederationEnvironment
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFederationEnvironmentFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFederationEnvironmentFilter<$PrismaModel>
 }
 
 export type NestedEnumFederationClientStatusWithAggregatesFilter<$PrismaModel = never> = {

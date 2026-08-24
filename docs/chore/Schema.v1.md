@@ -1256,8 +1256,10 @@ Represents an application such as BlizBooks. It is not a human user. A client is
 | `id`                               | `uuid`                     |   No | Internal primary key.                                  |
 | `name`                             | `text`                     |   No | Operator-facing client name.                           |
 | `client_id`                        | `text`                     |   No | Public OAuth client identifier.                        |
+| `environment`                      | `federation_environment`   |   No | Sandbox, staging, or production classification.        |
 | `home_organization_id`             | `uuid`                     |  Yes | Optional FK `organizations.id`; display metadata only. |
 | `status`                           | `federation_client_status` |   No | Credential/client lifecycle.                           |
+| `tenant_provisioning_enabled`      | `boolean`                  |   No | Authorizes atomic BlizBooks tenant/grant bootstrap.     |
 | `token_version`                    | `integer`                  |   No | Incremented to invalidate issued tokens.               |
 | `expires_at`                       | `timestamptz`              |  Yes | Client-level expiry.                                   |
 | `mtls_required`                    | `boolean`                  |   No | Whether mTLS is required.                              |

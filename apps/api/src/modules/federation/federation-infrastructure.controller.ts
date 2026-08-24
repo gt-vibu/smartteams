@@ -93,12 +93,8 @@ export class FederationInfrastructureController {
     @Body() body: ProvisionTenantDto,
     @Req() request: FederationRequest,
   ) {
-    const target = await this.support.target(request, organizationId, undefined, 'tenants.write');
-    return this.organizations.syncFederated(
-      await this.support.context(request, target.organizationId, 'tenants.write'),
-      organizationId,
-      body,
-    );
+    const federation = this.support.requireFederation(request);
+    return this.organizations.bootstrapFederated(federation.clientInternalId, organizationId, body);
   }
 
   @Put('federation/tenants/:organizationId/branches/:branchId')

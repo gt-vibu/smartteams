@@ -1,40 +1,34 @@
 import {
-  ArrayNotEmpty,
+  ArrayMaxSize,
   IsArray,
-  IsDateString,
+  IsBoolean,
   IsEnum,
-  IsIn,
-  IsOptional,
   IsString,
-  IsUUID,
+  Matches,
+  MaxLength,
   MinLength,
 } from 'class-validator';
+import { FederationEnvironment } from '../../generated/prisma/enums';
+
+const clientIdPattern = /^[a-zA-Z0-9._:-]+$/;
+const certificateFingerprintPattern = /^(?:[a-fA-F0-9]{64}|(?:[a-fA-F0-9]{2}:){31}[a-fA-F0-9]{2})$/;
+
 export class FederationClientDto {
-  @IsString() @MinLength(2) name!: string;
-  @IsIn([true]) mtlsRequired!: true;
-  @IsArray() @ArrayNotEmpty() @IsString({ each: true }) allowedCertificateFingerprints!: string[];
-  @IsOptional() @IsUUID() homeOrganizationId?: string;
-  @IsString() @MinLength(5) reason!: string;
+  @IsString() @MinLength(2) @MaxLength(120) name!: string;
+  @IsString() @MinLength(3) @MaxLength(120) @Matches(clientIdPattern) clientId!: string;
+  @IsEnum(FederationEnvironment) environment!: FederationEnvironment;
+  @IsBoolean() isActive!: boolean;
+  @IsBoolean() mtlsRequired!: boolean;
+  @IsArray()
+  @ArrayMaxSize(10)
+  @Matches(certificateFingerprintPattern, { each: true })
+  allowedCertificateFingerprints!: string[];
 }
-export class CredentialRotationDto {
-  @IsString() @MinLength(5) reason!: string;
+
+export class FederationClientCertificateDto {
+  @IsBoolean() mtlsRequired!: boolean;
+  @IsArray()
+  @ArrayMaxSize(10)
+  @Matches(certificateFingerprintPattern, { each: true })
+  allowedCertificateFingerprints!: string[];
 }
-export class CredentialRevokeDto {
-  @IsString() @MinLength(5) reason!: string;
-}
-export class ClientStatusDto {
-  @IsEnum(['ACTIVE', 'SUSPENDED', 'REVOKED', 'EXPIRED']) status!: FederationClientStatus;
-  @IsString() @MinLength(5) reason!: string;
-}
-export class GrantDto {
-  @IsUUID() clientId!: string;
-  @IsUUID() organizationId!: string;
-  @IsOptional() @IsUUID() branchId?: string;
-  @IsArray() @ArrayNotEmpty() @IsString({ each: true }) scopes!: string[];
-  @IsOptional() @IsArray() @IsUUID('4', { each: true }) roleIds?: string[];
-  @IsEnum(['ALLOW', 'DENY']) effect!: GrantEffect;
-  @IsDateString() startsAt!: string;
-  @IsOptional() @IsDateString() endsAt?: string;
-  @IsString() @MinLength(5) reason!: string;
-}
-import type { FederationClientStatus, GrantEffect } from '../../generated/prisma/enums';

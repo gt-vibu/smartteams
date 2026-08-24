@@ -433,6 +433,15 @@ export const FederationClientStatus = {
 export type FederationClientStatus = (typeof FederationClientStatus)[keyof typeof FederationClientStatus]
 
 
+export const FederationEnvironment = {
+  SANDBOX: 'SANDBOX',
+  STAGING: 'STAGING',
+  PRODUCTION: 'PRODUCTION'
+} as const
+
+export type FederationEnvironment = (typeof FederationEnvironment)[keyof typeof FederationEnvironment]
+
+
 export const CredentialStatus = {
   ACTIVE: 'ACTIVE',
   REVOKED: 'REVOKED',

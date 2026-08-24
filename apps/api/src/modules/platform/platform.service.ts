@@ -1,15 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import {
   CredentialStatus,
   FederationClientStatus,
-  GrantEffect,
+  FederationEnvironment,
   GrantStatus,
+  WebhookSubscriptionStatus,
 } from '../../generated/prisma/enums';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
-import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { AuditService, jsonSnapshot, type AuditContext } from '../audit/audit.service';
 import { FederationAuthService } from '../federation/federation-auth.service';
-import type { AuditContext } from '../audit/audit.service';
+
+type ClientTransportInput = {
+  mtlsRequired: boolean;
+  allowedCertificateFingerprints: string[];
+};
+
+type ClientRow = {
+  id: string;
+  name: string;
+  clientId: string;
+  environment: FederationEnvironment;
+  status: FederationClientStatus;
+  mtlsRequired: boolean;
+  allowedCertificateFingerprints: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  credentials?: Array<{ lastUsedAt: Date | null }>;
+};
 
 @Injectable()
 export class PlatformService {
@@ -19,94 +38,208 @@ export class PlatformService {
     private readonly audit: AuditService,
   ) {}
 
-  async createClient(
-    userId: string,
-    input: {
-      name: string;
-      mtlsRequired: true;
-      allowedCertificateFingerprints: string[];
-      homeOrganizationId?: string;
-      reason: string;
-    },
-  ) {
-    const context = this.platformContext(userId, input.reason, input.homeOrganizationId);
+  async listClients(userId: string) {
+    const context = this.platformContext(userId, 'List federation clients');
     return this.database.runPlatform(context, async (tx) => {
-      const client = await tx.federationClient.create({
-        data: {
-          name: input.name.trim(),
-          clientId: `smarteam-${cryptoRandom()}`,
-          mtlsRequired: input.mtlsRequired,
-          allowedCertificateFingerprints:
-            input.allowedCertificateFingerprints.map(normalizeFingerprint),
-          homeOrganizationId: input.homeOrganizationId,
-          createdByUserId: userId,
+      const clients = await tx.federationClient.findMany({
+        where: { status: { not: FederationClientStatus.REVOKED } },
+        orderBy: [{ createdAt: 'desc' }, { clientId: 'asc' }],
+        include: {
+          credentials: {
+            where: { lastUsedAt: { not: null } },
+            orderBy: { lastUsedAt: 'desc' },
+            take: 1,
+            select: { lastUsedAt: true },
+          },
         },
       });
+      return clients.map((client) => this.serialize(client));
+    });
+  }
+
+  async createClient(
+    userId: string,
+    input: ClientTransportInput & {
+      name: string;
+      clientId: string;
+      environment: FederationEnvironment;
+      isActive: boolean;
+    },
+  ) {
+    const reason = `Create federation client ${input.clientId.trim()}`;
+    const context = this.platformContext(userId, reason);
+    const fingerprints = validateTransport(input.environment, input);
+    try {
+      return await this.database.runPlatform(context, async (tx) => {
+        const duplicate = await tx.federationClient.findUnique({
+          where: { clientId: input.clientId.trim() },
+          select: { id: true },
+        });
+        if (duplicate) throw new ConflictError('A federation client already uses this client ID');
+
+        const client = await tx.federationClient.create({
+          data: {
+            name: input.name.trim(),
+            clientId: input.clientId.trim(),
+            environment: input.environment,
+            status: input.isActive
+              ? FederationClientStatus.ACTIVE
+              : FederationClientStatus.SUSPENDED,
+            mtlsRequired: input.mtlsRequired,
+            allowedCertificateFingerprints: fingerprints,
+            tenantProvisioningEnabled: true,
+            createdByUserId: userId,
+          },
+        });
+        const credential = await this.auth.createCredential(client.id, userId, undefined, tx);
+        await this.audit.record(
+          context,
+          {
+            entityType: 'FEDERATION_CLIENT',
+            entityId: client.id,
+            action: 'FEDERATION_CLIENT_CREATED',
+            afterState: jsonSnapshot(client),
+          },
+          tx,
+        );
+        return { ...this.serialize(client), clientSecret: credential.clientSecret };
+      });
+    } catch (error) {
+      if (isUniqueError(error)) {
+        throw new ConflictError('A federation client already uses this client ID');
+      }
+      throw error;
+    }
+  }
+
+  async rotateCredential(userId: string, clientId: string) {
+    const reason = 'Rotate federation client secret';
+    const context = this.platformContext(userId, reason);
+    return this.database.runPlatform(context, async (tx) => {
+      const client = await tx.federationClient.findUnique({ where: { id: clientId } });
+      if (!client || client.status === FederationClientStatus.REVOKED)
+        throw new NotFoundError('Federation client');
+
       const credential = await this.auth.createCredential(client.id, userId, undefined, tx);
+      const now = new Date();
+      await Promise.all([
+        tx.federationClientCredential.updateMany({
+          where: {
+            clientId: client.id,
+            id: { not: credential.id },
+            status: CredentialStatus.ACTIVE,
+          },
+          data: { status: CredentialStatus.REVOKED, revokedAt: now },
+        }),
+        tx.federationClient.update({
+          where: { id: client.id },
+          data: { tokenVersion: { increment: 1 } },
+        }),
+      ]);
       await this.audit.record(
         context,
         {
           entityType: 'FEDERATION_CLIENT',
           entityId: client.id,
-          action: 'FEDERATION_CLIENT_CREATED',
-          afterState: jsonSnapshot(client),
-          reason: input.reason,
+          action: 'FEDERATION_CLIENT_CREDENTIAL_ROTATED',
+          afterState: jsonSnapshot({ credentialId: credential.id, keyId: credential.keyId }),
         },
         tx,
       );
-      return {
-        client: { id: client.id, clientId: client.clientId, status: client.status },
-        credential,
-      };
+      return { ...this.serialize(client), clientSecret: credential.clientSecret };
     });
   }
 
-  async rotateCredential(userId: string, clientId: string, reason: string) {
+  async updateCertificateFingerprints(
+    userId: string,
+    clientId: string,
+    input: ClientTransportInput,
+  ) {
+    const reason = 'Update federation client certificate configuration';
     const context = this.platformContext(userId, reason);
     return this.database.runPlatform(context, async (tx) => {
       const client = await tx.federationClient.findUnique({ where: { id: clientId } });
-      if (!client) throw new NotFoundError('Federation client');
-      const credential = await this.auth.createCredential(client.id, userId, undefined, tx);
+      if (!client || client.status === FederationClientStatus.REVOKED)
+        throw new NotFoundError('Federation client');
+      const fingerprints = validateTransport(client.environment, input);
+      const updated = await tx.federationClient.update({
+        where: { id: client.id },
+        data: {
+          mtlsRequired: input.mtlsRequired,
+          allowedCertificateFingerprints: fingerprints,
+          tokenVersion: { increment: 1 },
+        },
+      });
       await this.audit.record(
-        { ...context, organizationId: client.homeOrganizationId ?? undefined },
+        context,
         {
           entityType: 'FEDERATION_CLIENT',
           entityId: client.id,
-          action: 'FEDERATION_CLIENT_CREDENTIAL_ROTATED',
-          afterState: jsonSnapshot({ credentialId: credential.id, keyId: credential.keyId }),
-          reason,
+          action: 'FEDERATION_CLIENT_CERTIFICATES_UPDATED',
+          beforeState: jsonSnapshot(client),
+          afterState: jsonSnapshot(updated),
         },
         tx,
       );
-      return credential;
+      return this.serialize(updated);
     });
   }
 
-  async revokeCredential(userId: string, credentialId: string, reason: string) {
+  setClientEnabled(userId: string, clientId: string, enabled: boolean) {
+    return this.changeClientStatus(
+      userId,
+      clientId,
+      enabled ? FederationClientStatus.ACTIVE : FederationClientStatus.SUSPENDED,
+      enabled ? 'Enable federation client' : 'Disable federation client',
+    );
+  }
+
+  async deleteClient(userId: string, clientId: string) {
+    const reason = 'Delete federation client';
     const context = this.platformContext(userId, reason);
     return this.database.runPlatform(context, async (tx) => {
-      const credential = await tx.federationClientCredential.findUnique({
-        where: { id: credentialId },
-        include: { client: true },
-      });
-      if (!credential) throw new NotFoundError('Federation credential');
-      const updated = await tx.federationClientCredential.update({
-        where: { id: credential.id },
-        data: { status: CredentialStatus.REVOKED, revokedAt: new Date() },
+      const client = await tx.federationClient.findUnique({ where: { id: clientId } });
+      if (!client || client.status === FederationClientStatus.REVOKED)
+        throw new NotFoundError('Federation client');
+      if (client.status === FederationClientStatus.ACTIVE)
+        throw new ConflictError('Disable the federation client before deleting it');
+
+      const now = new Date();
+      await Promise.all([
+        tx.federationClientCredential.updateMany({
+          where: { clientId: client.id, status: CredentialStatus.ACTIVE },
+          data: { status: CredentialStatus.REVOKED, revokedAt: now },
+        }),
+        tx.federationGrant.updateMany({
+          where: { clientId: client.id, status: GrantStatus.ACTIVE },
+          data: { status: GrantStatus.REVOKED, revokedAt: now },
+        }),
+        tx.webhookSubscription.updateMany({
+          where: { clientId: client.id, status: WebhookSubscriptionStatus.ACTIVE },
+          data: { status: WebhookSubscriptionStatus.REVOKED, revokedAt: now },
+        }),
+      ]);
+      const revoked = await tx.federationClient.update({
+        where: { id: client.id },
+        data: {
+          status: FederationClientStatus.REVOKED,
+          tokenVersion: { increment: 1 },
+          revokedAt: now,
+          revocationReason: reason,
+        },
       });
       await this.audit.record(
-        { ...context, organizationId: credential.client.homeOrganizationId ?? undefined },
+        context,
         {
-          entityType: 'FEDERATION_CLIENT_CREDENTIAL',
-          entityId: credential.id,
-          action: 'FEDERATION_CLIENT_CREDENTIAL_REVOKED',
-          beforeState: jsonSnapshot(credential),
-          afterState: jsonSnapshot(updated),
-          reason,
+          entityType: 'FEDERATION_CLIENT',
+          entityId: client.id,
+          action: 'FEDERATION_CLIENT_DELETED',
+          beforeState: jsonSnapshot(client),
+          afterState: jsonSnapshot(revoked),
         },
         tx,
       );
-      return { id: updated.id, status: updated.status, revokedBy: userId, reason };
+      return { id: client.id, deleted: true };
     });
   }
 
@@ -119,145 +252,80 @@ export class PlatformService {
     const context = this.platformContext(userId, reason);
     return this.database.runPlatform(context, async (tx) => {
       const client = await tx.federationClient.findUnique({ where: { id: clientId } });
-      if (!client) throw new NotFoundError('Federation client');
+      if (!client || client.status === FederationClientStatus.REVOKED)
+        throw new NotFoundError('Federation client');
+      if (status === FederationClientStatus.REVOKED)
+        throw new ConflictError('Use the delete operation to revoke a federation client');
       if (client.status === status)
         throw new ConflictError('Federation client already has this status');
       const updated = await tx.federationClient.update({
         where: { id: client.id },
-        data: {
-          status,
-          tokenVersion: { increment: 1 },
-          revokedAt: status === FederationClientStatus.REVOKED ? new Date() : undefined,
-          revocationReason: status === FederationClientStatus.REVOKED ? reason : undefined,
-        },
+        data: { status, tokenVersion: { increment: 1 } },
       });
       await this.audit.record(
-        { ...context, organizationId: client.homeOrganizationId ?? undefined },
+        context,
         {
           entityType: 'FEDERATION_CLIENT',
           entityId: client.id,
           action: 'FEDERATION_CLIENT_STATUS_CHANGED',
           beforeState: jsonSnapshot(client),
           afterState: jsonSnapshot(updated),
-          reason,
         },
         tx,
       );
-      return updated;
+      return this.serialize(updated);
     });
   }
 
-  async createGrant(
-    userId: string,
-    input: {
-      clientId: string;
-      organizationId: string;
-      branchId?: string;
-      scopes: string[];
-      roleIds?: string[];
-      effect: GrantEffect;
-      startsAt: string;
-      endsAt?: string;
-      reason: string;
-    },
-  ) {
-    const context = {
-      organizationId: input.organizationId,
-      accessMode: 'PLATFORM' as const,
-      actor: { type: 'PLATFORM_OPERATOR' as const, userId },
-      correlationId: cryptoRandom(),
-      requestId: cryptoRandom(),
-      permissions: new Set(['*']),
-      reason: input.reason,
+  private serialize(client: ClientRow) {
+    return {
+      id: client.id,
+      name: client.name,
+      clientId: client.clientId,
+      environment: client.environment,
+      status: client.status,
+      isActive: client.status === FederationClientStatus.ACTIVE,
+      mtlsRequired: client.mtlsRequired,
+      allowedCertificateFingerprints: client.allowedCertificateFingerprints,
+      createdAt: client.createdAt.toISOString(),
+      updatedAt: client.updatedAt.toISOString(),
+      lastUsedAt: client.credentials?.[0]?.lastUsedAt?.toISOString() ?? null,
     };
-    return this.database.runPlatform(context, async (tx) => {
-      const [client, organization, branch] = await Promise.all([
-        tx.federationClient.findUnique({ where: { id: input.clientId } }),
-        tx.organization.findUnique({ where: { id: input.organizationId } }),
-        input.branchId
-          ? tx.branch.findFirst({
-              where: { id: input.branchId, organizationId: input.organizationId },
-            })
-          : Promise.resolve(true),
-      ]);
-      if (!client) throw new NotFoundError('Federation client');
-      if (!organization) throw new NotFoundError('Organization');
-      if (input.branchId && !branch) throw new NotFoundError('Branch');
-      const startsAt = new Date(input.startsAt);
-      const endsAt = input.endsAt ? new Date(input.endsAt) : undefined;
-      if (endsAt && endsAt <= startsAt)
-        throw new ConflictError('Federation grant end must be after its start');
-      const scopeRows = await Promise.all(
-        input.scopes.map((code) =>
-          tx.federationScope.upsert({
-            where: { code },
-            create: { code, description: code },
-            update: {},
-          }),
-        ),
-      );
-      const roles = input.roleIds?.length
-        ? await tx.role.findMany({
-            where: {
-              id: { in: input.roleIds },
-              OR: [{ organizationId: organization.id }, { organizationId: null }],
-            },
-            select: { id: true },
-          })
-        : [];
-      if (roles.length !== (input.roleIds?.length ?? 0))
-        throw new NotFoundError('One or more federation grant roles');
-      const grant = await tx.federationGrant.create({
-        data: {
-          clientId: client.id,
-          organizationId: organization.id,
-          branchId: input.branchId,
-          effect: input.effect,
-          status: GrantStatus.ACTIVE,
-          startsAt,
-          endsAt,
-          createdByUserId: userId,
-          scopes: { create: scopeRows.map((scope) => ({ scopeId: scope.id })) },
-          roleMappings: { create: roles.map((role, priority) => ({ roleId: role.id, priority })) },
-        },
-        include: { scopes: { include: { scope: true } }, roleMappings: true },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'FEDERATION_GRANT',
-          entityId: grant.id,
-          action: 'FEDERATION_GRANT_CREATED',
-          afterState: jsonSnapshot(grant),
-          reason: input.reason,
-        },
-        tx,
-      );
-      return grant;
-    });
   }
 
   private platformContext(
     userId: string,
     reason: string,
-    organizationId?: string,
   ): Omit<AuditContext, 'organizationId'> & { organizationId?: string } {
     return {
-      organizationId,
       accessMode: 'PLATFORM',
       actor: { type: 'PLATFORM_OPERATOR', userId },
-      correlationId: cryptoRandom(),
-      requestId: cryptoRandom(),
+      correlationId: randomUUID(),
+      requestId: randomUUID(),
       permissions: new Set(['*']),
       reason,
     };
   }
 }
 
-function cryptoRandom() {
-  return crypto.randomUUID();
+function validateTransport(environment: FederationEnvironment, input: ClientTransportInput) {
+  if (environment === FederationEnvironment.PRODUCTION && !input.mtlsRequired) {
+    throw new BadRequestException('Production federation clients must require mTLS');
+  }
+  if (input.mtlsRequired && input.allowedCertificateFingerprints.length === 0) {
+    throw new BadRequestException(
+      'At least one client certificate fingerprint is required when mTLS is enabled',
+    );
+  }
+  return input.mtlsRequired
+    ? [...new Set(input.allowedCertificateFingerprints.map(normalizeFingerprint))]
+    : [];
 }
 
 function normalizeFingerprint(value: string) {
   return value.replaceAll(':', '').trim().toLowerCase();
+}
+
+function isUniqueError(error: unknown): error is { code: 'P2002' } {
+  return Boolean(error && typeof error === 'object' && 'code' in error && error.code === 'P2002');
 }

@@ -69,6 +69,22 @@ export class TenantDatabaseService {
     });
   }
 
+  async runFederationBootstrap<T>(
+    clientId: string,
+    callback: (tx: Prisma.TransactionClient) => Promise<T>,
+  ): Promise<T> {
+    if (!clientId.trim())
+      throw new ForbiddenDomainError('Federation bootstrap requires a client actor');
+    return this.prisma.system.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.organization_id', '', true)`;
+      await tx.$executeRaw`SELECT set_config('app.user_id', '', true)`;
+      await tx.$executeRaw`SELECT set_config('app.client_id', ${clientId}, true)`;
+      await tx.$executeRaw`SELECT set_config('app.access_mode', 'FEDERATION', true)`;
+      await tx.$executeRaw`SELECT set_config('app.platform_bypass', 'false', true)`;
+      return callback(tx);
+    });
+  }
+
   async runSystem<T>(
     organizationId: string | undefined,
     callback: (tx: Prisma.TransactionClient) => Promise<T>,

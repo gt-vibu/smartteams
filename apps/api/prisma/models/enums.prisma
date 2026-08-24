@@ -293,6 +293,12 @@ enum FederationClientStatus {
   EXPIRED
 }
 
+enum FederationEnvironment {
+  SANDBOX
+  STAGING
+  PRODUCTION
+}
+
 enum CredentialStatus {
   ACTIVE
   REVOKED
