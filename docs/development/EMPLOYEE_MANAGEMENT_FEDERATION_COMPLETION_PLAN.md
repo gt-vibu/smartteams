@@ -40,7 +40,7 @@ The compliance model intentionally stores configurable scheme profiles and perio
 
 The workstream and gate sections below are retained as the implementation checklist and acceptance record. Their “must” language describes the required design contract, not an indication that the corresponding code was skipped. The remaining gates are operational: apply and verify migrations, configure federation grants/capabilities, rehearse/backfill existing tenants, and complete jurisdiction-specific legal configuration before enabling statutory calculations.
 
-Explicitly outside this implementation are binary employee-document storage, performance-management workflows, onboarding workflows, bank disbursement/payment reconciliation, and jurisdiction-specific filing submission. No existing Smarteam federation contract for those domains was available, so they are not represented as hidden local BlizBooks fallbacks or falsely marked complete.
+Explicitly outside this implementation are performance-management workflows, onboarding workflows, bank disbursement/payment reconciliation, and jurisdiction-specific filing submission. Employee document storage and retrieval are now implemented through SmartTeams' native file lifecycle and federation contract; the remaining items are not represented as hidden local BlizBooks fallbacks or falsely marked complete.
 
 ---
 
@@ -61,6 +61,7 @@ The implemented architecture is provider-first for Smarteam-managed organization
 | Organization/branch mapping | Shared contract; Smarteam stores the mapped organization/branch | Maintain the BlizBooks-to-Smarteam external mapping and select the authenticated tenant |
 | Employee identity and lifecycle | Smarteam | Render and proxy commands through federation |
 | Employee profile and employment records | Smarteam | Render and proxy commands through federation |
+| Employee documents | Smarteam private file storage | Begin, complete, list, download, and soft-delete through the employee document federation routes |
 | Employee access inside Smarteam | Smarteam RBAC, with explicit federated grant mapping | Request access changes through federation; retain BlizBooks application authorization separately if required |
 | Attendance | Smarteam | Capture UI actions through the BFF and display Smarteam results |
 | Leave | Smarteam | Capture UI actions through the BFF and display Smarteam results |
@@ -86,6 +87,7 @@ These capabilities are present and should be preserved, hardened, and covered by
 - Webhook registration, signature verification, durable inbound event storage, replay, and reconciliation.
 - Correlation IDs, idempotency handling, audit infrastructure, and outbox/event patterns.
 - Smarteam native employee domain, employee compensation models, employee employment records, emergency contacts, and manager assignment.
+- Smarteam native employee document storage, private object-storage lifecycle, document-type validation, and employee-scoped federation file routes.
 - Smarteam attendance storage, punches, policies, preferences, corrections, and WebAuthn.
 - Smarteam leave types, balances, requests, decisions, cancellation, and adjustments.
 - Smarteam payroll components, calendars, payroll runs, calculation, adjustments, lifecycle actions, detailed line items, payslips, and ledger data.
@@ -117,7 +119,6 @@ The implementation closed the identified code-level gaps across both repositorie
 
 These are not silently treated as complete because no corresponding Smarteam federation contract exists in this release:
 
-- Binary employee-document storage and document workflows.
 - Performance-management workflows.
 - Onboarding workflows.
 - Bank disbursement, payment-provider integration, and payment reconciliation.
@@ -158,7 +159,7 @@ Add and test federation operations for:
 - Manager assignment.
 - Compensation history and effective-dated salary records.
 - Employee pay-component assignment.
-- Employee documents or document metadata if required by the employee-management scope.
+- Employee document upload, listing, download, and soft-delete through SmartTeams' file service and `employees.documents.read/write` scopes.
 - Sensitive employee profile data required for payroll, tax, statutory, or compliance workflows, with explicit classification and access rules.
 
 Use Smarteam's existing native employee services as the business-logic source. Federation controllers must be thin adapters and must not duplicate native rules.

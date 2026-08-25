@@ -11,6 +11,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { StorageService } from '../../infrastructure/storage/storage.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import type { EmployeeDocumentType } from './file.constants';
 import type { Queue } from 'bullmq';
 
 const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> = {
@@ -61,9 +62,10 @@ export class FilesService {
       checksumSha256?: string;
       employeeId?: string;
       leaveRequestId?: string;
+      documentType?: EmployeeDocumentType;
     },
   ) {
-    requirePermission(context, 'files.write');
+    this.requireFilePermission(context, 'write');
     const rule = limits[input.purpose];
     if (
       !rule.types.includes(input.contentType) ||
@@ -73,6 +75,10 @@ export class FilesService {
       throw new ConflictError('File type or size is not allowed for this purpose');
     if (input.checksumSha256 && !/^[0-9a-f]{64}$/i.test(input.checksumSha256))
       throw new ConflictError('Checksum must be a SHA-256 hexadecimal digest');
+    if (input.purpose === FilePurpose.EMPLOYEE_DOCUMENT && !input.documentType)
+      throw new ConflictError('Employee documents must include a document type');
+    if (input.purpose === FilePurpose.PROFILE_IMAGE && input.documentType !== 'PROFILE_PICTURE')
+      throw new ConflictError('Employee profile images must use the profile picture type');
     if (
       input.purpose === FilePurpose.LEAVE_ATTACHMENT &&
       !input.employeeId &&
@@ -114,6 +120,7 @@ export class FilesService {
           contentType: input.contentType,
           byteSize: BigInt(input.byteSize),
           checksumSha256: input.checksumSha256,
+          ...(input.documentType ? { metadata: { documentType: input.documentType } } : {}),
         },
       });
       await this.audit.record(
@@ -142,8 +149,13 @@ export class FilesService {
     return { fileId: file.id, objectKey: key, uploadUrl, expiresIn: 600 };
   }
 
-  async completeUpload(context: DomainContext, fileId: string, employeeId?: string) {
-    requirePermission(context, 'files.write');
+  async completeUpload(
+    context: DomainContext,
+    fileId: string,
+    employeeId?: string,
+    purpose?: FilePurpose | FilePurpose[],
+  ) {
+    this.requireFilePermission(context, 'write');
     const file = await this.database.run(context, (tx) =>
       tx.fileObject.findFirst({
         where: {
@@ -151,6 +163,7 @@ export class FilesService {
           organizationId: context.organizationId,
           status: FileStatus.PENDING_UPLOAD,
           ...(employeeId ? { employeeId } : {}),
+          ...(purpose ? { purpose: Array.isArray(purpose) ? { in: purpose } : purpose } : {}),
         },
       }),
     );
@@ -206,8 +219,13 @@ export class FilesService {
     });
   }
 
-  async download(context: DomainContext, fileId: string) {
-    requirePermission(context, 'files.read');
+  async download(
+    context: DomainContext,
+    fileId: string,
+    employeeId?: string,
+    purpose?: FilePurpose | FilePurpose[],
+  ) {
+    this.requireFilePermission(context, 'read');
     const file = await this.database.run(context, (tx) =>
       tx.fileObject.findFirst({
         where: {
@@ -215,6 +233,8 @@ export class FilesService {
           organizationId: context.organizationId,
           status: FileStatus.AVAILABLE,
           deletedAt: null,
+          ...(employeeId ? { employeeId } : {}),
+          ...(purpose ? { purpose: Array.isArray(purpose) ? { in: purpose } : purpose } : {}),
         },
       }),
     );
@@ -226,14 +246,50 @@ export class FilesService {
     };
   }
 
+  async listEmployeeDocuments(context: DomainContext, employeeId: string) {
+    this.requireFilePermission(context, 'read');
+    const files = await this.database.run(context, (tx) =>
+      tx.fileObject.findMany({
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          purpose: { in: [FilePurpose.EMPLOYEE_DOCUMENT, FilePurpose.PROFILE_IMAGE] },
+          status: FileStatus.AVAILABLE,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          purpose: true,
+          originalName: true,
+          contentType: true,
+          byteSize: true,
+          metadata: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+    );
+    return files.map((file) => ({
+      id: file.id,
+      purpose: file.purpose,
+      documentType: documentTypeFromMetadata(file.metadata),
+      originalName: file.originalName,
+      contentType: file.contentType,
+      byteSize: Number(file.byteSize),
+      uploadedAt: file.createdAt.toISOString(),
+      updatedAt: file.updatedAt.toISOString(),
+    }));
+  }
+
   async softDelete(
     context: DomainContext,
     fileId: string,
     reason: string,
     employeeId?: string,
-    purpose?: FilePurpose,
+    purpose?: FilePurpose | FilePurpose[],
   ) {
-    requirePermission(context, 'files.write');
+    this.requireFilePermission(context, 'write');
     requireReason({ ...context, reason }, 'File deletion requires a reason');
     return this.database.run(context, async (tx) => {
       const file = await tx.fileObject.findFirst({
@@ -242,7 +298,7 @@ export class FilesService {
           organizationId: context.organizationId,
           status: { not: FileStatus.DELETED },
           ...(employeeId ? { employeeId } : {}),
-          ...(purpose ? { purpose } : {}),
+          ...(purpose ? { purpose: Array.isArray(purpose) ? { in: purpose } : purpose } : {}),
         },
       });
       if (!file) throw new NotFoundError('File');
@@ -295,4 +351,29 @@ export class FilesService {
     );
     if (file) await this.storage.delete(file.objectKey);
   }
+
+  private requireFilePermission(context: DomainContext, operation: 'read' | 'write') {
+    const permission = operation === 'read' ? 'files.read' : 'files.write';
+    const employeeDocumentPermission =
+      operation === 'read' ? 'employees.documents.read' : 'employees.documents.write';
+    if (
+      !context.permissions.has(permission) &&
+      !context.permissions.has(employeeDocumentPermission) &&
+      !context.permissions.has('*')
+    ) {
+      requirePermission(context, permission);
+    }
+  }
+}
+
+function documentTypeFromMetadata(metadata: unknown) {
+  if (
+    typeof metadata === 'object' &&
+    metadata !== null &&
+    'documentType' in metadata &&
+    typeof metadata.documentType === 'string'
+  ) {
+    return metadata.documentType;
+  }
+  return null;
 }

@@ -38,6 +38,8 @@ export const FEDERATION_GRANTABLE_SCOPES = [
   'approval-policies.read',
   'approval-policies.write',
   'files.write',
+  'employees.documents.read',
+  'employees.documents.write',
   'payroll.components.read',
   'payroll.components.write',
   'payroll.payslips.read',

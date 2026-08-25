@@ -112,7 +112,21 @@ graph TD
 | `POST` | `/v1/federation/timesheets/{timesheetId}/submit` | **Submit Timesheet**: Submits a draft for approval. |
 | `POST` | `/v1/federation/timesheets/{timesheetId}/decision` | **Timesheet Decision**: Approves or rejects a submitted timesheet. |
 
-### 3.5 Biometric & WebAuthn Verification
+### 3.5 Employee Document Storage
+
+Employee documents are stored by SmartTeams in its configured private object storage. BlizBooks only receives short-lived presigned URLs and never receives provider credentials or exposes bucket names/object keys to the browser.
+
+| Method | Endpoint | Role & Purpose |
+| :--- | :--- | :--- |
+| `GET` | `/v1/federation/employees/{employeeId}/documents` | **Document List**: Lists available employee documents without storage paths or provider metadata. Requires `employees.documents.read`. |
+| `POST` | `/v1/federation/employees/{employeeId}/documents` | **Upload Begin**: Validates document type, MIME type, and size, creates a pending SmartTeams file, and returns a short-lived presigned upload URL. Requires `employees.documents.write`. |
+| `POST` | `/v1/federation/employees/{employeeId}/documents/{fileId}/complete` | **Upload Complete**: Verifies the object exists with the declared size before making it available. Requires `employees.documents.write`. |
+| `POST` | `/v1/federation/employees/{employeeId}/documents/{fileId}/download` | **Download URL**: Returns a short-lived URL only after organization and employee ownership checks. Requires `employees.documents.read`. |
+| `POST` | `/v1/federation/employees/{employeeId}/documents/{fileId}/delete` | **Soft Delete**: Audited, reason-required deletion with employee and organization checks. Requires `employees.documents.write`. |
+
+Supported document types are `PROFILE_PICTURE`, `AADHAAR`, `PAN`, `DRIVER_LICENSE`, and `PASSPORT`. Employee documents accept PDF/JPEG/PNG up to 25 MB; profile pictures accept JPEG/PNG/WebP up to 5 MB. Requests require `x-organization-id` and should include the mapped `x-branch-id` when the client grant is branch-scoped. Uploads must use the begin → presigned PUT → complete sequence. Abandoned pending uploads are cleaned up by the existing file lifecycle worker.
+
+### 3.6 Biometric & WebAuthn Verification
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |
@@ -121,7 +135,7 @@ graph TD
 | `POST` | `/v1/federation/attendance/assertions/begin` | **Assertion Begin**: Generates a biometric clock-in verification challenge. |
 | `POST` | `/v1/federation/attendance/assertions/complete` | **Assertion Complete**: Verifies the biometric signature response from the device. |
 
-### 3.6 Leave Management
+### 3.7 Leave Management
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |
@@ -137,7 +151,7 @@ graph TD
 | `POST` | `/v1/federation/leave/requests/{id}/cancel` | **Cancel Leave**: Withdraws an active leave request. |
 | `POST` | `/v1/federation/leave/balances/adjustments` | **Balance Override**: Manually adjusts an employee's leave balance. |
 
-### 3.7 Approval Policies
+### 3.8 Approval Policies
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |
@@ -148,7 +162,7 @@ graph TD
 
 Federated approval decisions must include `decidedByExternalEmployeeId` alongside the decision status and comment. SmartTeams resolves that employee within the authenticated organization and branch to an active user account, then applies the configured approval policy. Missing, inactive, cross-tenant, or unauthorized approvers are rejected; the federation client is not treated as a substitute for a human approver.
 
-### 3.8 Payroll Processing & Financial Accounting
+### 3.9 Payroll Processing & Financial Accounting
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |
@@ -179,7 +193,7 @@ Federated approval decisions must include `decidedByExternalEmployeeId` alongsid
 
 Payroll preview and calculation are gross-based. SmartTeams calculates `Base = min(Gross, max(Gross × base%, minimum base))`, caps HRA at the remaining gross, and treats the remainder as other allowance. Attendance and unpaid leave prorate the original monthly structure over the configured day basis; they never rebuild the structure from a reduced gross. Statutory values are stored as effective-dated jurisdiction rule snapshots and are not hard-coded in BlizBooks.
 
-### 3.9 Statutory Compliance
+### 3.10 Statutory Compliance
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |
@@ -193,7 +207,7 @@ The compliance API is jurisdiction-neutral until the organization's jurisdiction
 
 Compliance records follow a controlled lifecycle: `DRAFT` → `READY` → `SUBMITTED` → `ACCEPTED`, with `REJECTED` records returning to `DRAFT` or `READY`. Submitted and accepted records require a filing reference and submission timestamp; accepted records are immutable.
 
-### 3.10 Webhooks & Replay
+### 3.11 Webhooks & Replay
 
 | Method | Endpoint | Role & Purpose |
 | :--- | :--- | :--- |

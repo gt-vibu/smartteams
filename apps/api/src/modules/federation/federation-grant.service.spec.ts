@@ -3,6 +3,8 @@ import { capabilityForScope, effectiveFederationPermissions } from './federation
 describe('federation capability mapping', () => {
   it('maps workforce scopes to their organization capability', () => {
     expect(capabilityForScope('employees.write')).toBe('employees');
+    expect(capabilityForScope('employees.documents.read')).toBe('employees');
+    expect(capabilityForScope('employees.documents.write')).toBe('employees');
     expect(capabilityForScope('attendance.webauthn.assert')).toBe('device_verification');
     expect(capabilityForScope('approval-policies.write')).toBe('approval_policies');
     expect(capabilityForScope('files.write')).toBe('leave');

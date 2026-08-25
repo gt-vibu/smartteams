@@ -10,11 +10,13 @@ import {
   IsString,
   IsUUID,
   Max,
+  MaxLength,
   Min,
   MinLength,
   ValidateNested,
 } from 'class-validator';
 import { EmployeeStatus, EmploymentType } from '../../generated/prisma/enums';
+import { EMPLOYEE_DOCUMENT_TYPES, type EmployeeDocumentType } from '../files/file.constants';
 
 export class FederationTokenDto {
   @IsIn(['client_credentials']) grant_type!: 'client_credentials';
@@ -114,6 +116,13 @@ export class FederatedLeaveAttachmentUploadDto {
   @IsString() @MinLength(1) originalName!: string;
   @IsString() @MinLength(1) contentType!: string;
   @IsNumber() @Min(1) byteSize!: number;
+  @IsOptional() @IsString() checksumSha256?: string;
+}
+export class FederatedEmployeeDocumentUploadDto {
+  @IsString() @MinLength(1) @MaxLength(255) originalName!: string;
+  @IsString() @MinLength(1) contentType!: string;
+  @IsNumber() @Min(1) byteSize!: number;
+  @IsIn(EMPLOYEE_DOCUMENT_TYPES) documentType!: EmployeeDocumentType;
   @IsOptional() @IsString() checksumSha256?: string;
 }
 export class FederationDeviceLabelDto {
