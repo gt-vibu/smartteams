@@ -1,0 +1,91 @@
+{
+  "projects": [
+    {
+      "id": "proj-001",
+      "code": "EMS-2026",
+      "name": "Employee Management System v2",
+      "description": "Full rewrite of the EMS portal with modern design system, mobile responsiveness, and real-time attendance features.",
+      "status": "ACTIVE",
+      "startDate": "2026-01-01",
+      "endDate": "2026-09-30",
+      "branchId": "branch-hq",
+      "branchName": "HQ – Bengaluru",
+      "createdAt": "2025-12-15",
+      "members": [
+        { "id": "pm-001", "employeeId": "emp-001", "firstName": "Arjun", "lastName": "Mehta", "employeeNumber": "EMP-001", "projectRole": "Tech Lead", "allocationPercentage": "80.00", "startsOn": "2026-01-01", "endsOn": null, "avatarInitials": "AM" },
+        { "id": "pm-002", "employeeId": "emp-002", "firstName": "Priya", "lastName": "Sharma", "employeeNumber": "EMP-002", "projectRole": "UI/UX Lead", "allocationPercentage": "100.00", "startsOn": "2026-01-01", "endsOn": null, "avatarInitials": "PS" },
+        { "id": "pm-003", "employeeId": "emp-003", "firstName": "Rahul", "lastName": "Verma", "employeeNumber": "EMP-003", "projectRole": "Frontend Developer", "allocationPercentage": "100.00", "startsOn": "2026-02-01", "endsOn": null, "avatarInitials": "RV" },
+        { "id": "pm-004", "employeeId": "emp-010", "firstName": "Rohan", "lastName": "Das", "employeeNumber": "EMP-010", "projectRole": "Backend Lead", "allocationPercentage": "50.00", "startsOn": "2026-01-01", "endsOn": null, "avatarInitials": "RD" },
+        { "id": "pm-005", "employeeId": "emp-011", "firstName": "Meera", "lastName": "Iyer", "employeeNumber": "EMP-011", "projectRole": "Backend Developer", "allocationPercentage": "100.00", "startsOn": "2026-02-15", "endsOn": null, "avatarInitials": "MI" },
+        { "id": "pm-006", "employeeId": "emp-020", "firstName": "Kavita", "lastName": "Joshi", "employeeNumber": "EMP-020", "projectRole": "Product Owner", "allocationPercentage": "30.00", "startsOn": "2026-01-01", "endsOn": null, "avatarInitials": "KJ" },
+        { "id": "pm-064", "employeeId": "emp_064", "firstName": "Mithun", "lastName": "Gowda H", "employeeNumber": "64", "projectRole": "Software Engineer", "allocationPercentage": "100.00", "startsOn": "2026-01-01", "endsOn": null, "avatarInitials": "MG" }
+      ]
+    },
+    {
+      "id": "proj-002",
+      "code": "PAY-Q2",
+      "name": "Payroll Automation Q2",
+      "description": "Automate statutory deductions (PF, ESI, PT) and integrate with bank transfer APIs for seamless payroll disbursement.",
+      "status": "ACTIVE",
+      "startDate": "2026-04-01",
+      "endDate": "2026-06-30",
+      "branchId": "branch-hq",
+      "branchName": "HQ – Bengaluru",
+      "createdAt": "2026-03-10",
+      "members": [
+        { "id": "pm-010", "employeeId": "emp-010", "firstName": "Rohan", "lastName": "Das", "employeeNumber": "EMP-010", "projectRole": "Project Lead", "allocationPercentage": "50.00", "startsOn": "2026-04-01", "endsOn": null, "avatarInitials": "RD" },
+        { "id": "pm-011", "employeeId": "emp-012", "firstName": "Suresh", "lastName": "Babu", "employeeNumber": "EMP-012", "projectRole": "Backend Developer", "allocationPercentage": "100.00", "startsOn": "2026-04-01", "endsOn": null, "avatarInitials": "SB" },
+        { "id": "pm-012", "employeeId": "emp-013", "firstName": "Lakshmi", "lastName": "Pillai", "employeeNumber": "EMP-013", "projectRole": "Data Engineer", "allocationPercentage": "80.00", "startsOn": "2026-04-01", "endsOn": null, "avatarInitials": "LP" },
+        { "id": "pm-013", "employeeId": "emp-021", "firstName": "Aditya", "lastName": "Ghosh", "employeeNumber": "EMP-021", "projectRole": "Business Analyst", "allocationPercentage": "40.00", "startsOn": "2026-04-01", "endsOn": null, "avatarInitials": "AG" }
+      ]
+    },
+    {
+      "id": "proj-003",
+      "code": "MOB-APP",
+      "name": "Smarteam Mobile App",
+      "description": "Native mobile applications for iOS and Android allowing employees to clock in/out, view payslips and apply for leave.",
+      "status": "PLANNED",
+      "startDate": "2026-10-01",
+      "endDate": "2027-03-31",
+      "branchId": "branch-hq",
+      "branchName": "HQ – Bengaluru",
+      "createdAt": "2026-07-01",
+      "members": [
+        { "id": "pm-020", "employeeId": "emp-004", "firstName": "Sneha", "lastName": "Patil", "employeeNumber": "EMP-004", "projectRole": "Mobile Lead", "allocationPercentage": null, "startsOn": "2026-10-01", "endsOn": null, "avatarInitials": "SP" },
+        { "id": "pm-021", "employeeId": "emp-020", "firstName": "Kavita", "lastName": "Joshi", "employeeNumber": "EMP-020", "projectRole": "Product Manager", "allocationPercentage": null, "startsOn": "2026-10-01", "endsOn": null, "avatarInitials": "KJ" },
+        { "id": "pm-065", "employeeId": "emp_064", "firstName": "Mithun", "lastName": "Gowda H", "employeeNumber": "64", "projectRole": "Frontend Developer", "allocationPercentage": "50.00", "startsOn": "2026-10-01", "endsOn": null, "avatarInitials": "MG" }
+      ]
+    },
+    {
+      "id": "proj-004",
+      "code": "SEC-AUDIT",
+      "name": "Security Compliance Audit 2025",
+      "description": "Annual SOC2 readiness audit covering access controls, encryption, logging, and incident response.",
+      "status": "COMPLETED",
+      "startDate": "2025-09-01",
+      "endDate": "2025-12-31",
+      "branchId": "branch-hq",
+      "branchName": "HQ – Bengaluru",
+      "createdAt": "2025-08-15",
+      "members": [
+        { "id": "pm-030", "employeeId": "emp-015", "firstName": "Nalini", "lastName": "Bose", "employeeNumber": "EMP-015", "projectRole": "Security Lead", "allocationPercentage": "100.00", "startsOn": "2025-09-01", "endsOn": "2025-12-31", "avatarInitials": "NB" },
+        { "id": "pm-031", "employeeId": "emp-014", "firstName": "Harish", "lastName": "Rao", "employeeNumber": "EMP-014", "projectRole": "DevOps Reviewer", "allocationPercentage": "30.00", "startsOn": "2025-09-01", "endsOn": "2025-12-31", "avatarInitials": "HR" }
+      ]
+    },
+    {
+      "id": "proj-005",
+      "code": "LEGACY-MIG",
+      "name": "Legacy System Migration",
+      "description": "Migration of on-premise HR data to the new cloud-native Smarteam platform.",
+      "status": "CANCELLED",
+      "startDate": "2025-03-01",
+      "endDate": "2025-08-31",
+      "branchId": "branch-del",
+      "branchName": "Delhi Office",
+      "createdAt": "2025-02-01",
+      "members": [
+        { "id": "pm-040", "employeeId": "emp-030", "firstName": "Pooja", "lastName": "Agarwal", "employeeNumber": "EMP-030", "projectRole": "Project Manager", "allocationPercentage": "50.00", "startsOn": "2025-03-01", "endsOn": "2025-06-15", "avatarInitials": "PA" }
+      ]
+    }
+  ]
+}

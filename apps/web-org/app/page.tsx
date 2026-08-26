@@ -1,5 +1,7 @@
-import { WelcomePage } from '@smarteam/ui';
+'use client';
+
+import { EmsWorkspace } from '../modules/ems';
 
 export default function Page() {
-  return <WelcomePage audience="organization" />;
+  return <EmsWorkspace />;
 }

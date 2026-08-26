@@ -1,0 +1,36 @@
+{
+  "holidays": [
+    {
+      "id": "hol_01",
+      "name": "Independence Day",
+      "holidayDate": "15-Aug-2026",
+      "dayOfWeek": "Saturday",
+      "isOptional": false,
+      "isActive": true
+    },
+    {
+      "id": "hol_02",
+      "name": "Onam",
+      "holidayDate": "26-Aug-2026",
+      "dayOfWeek": "Wednesday",
+      "isOptional": true,
+      "isActive": true
+    },
+    {
+      "id": "hol_03",
+      "name": "Ganesh Chaturthi",
+      "holidayDate": "14-Sep-2026",
+      "dayOfWeek": "Monday",
+      "isOptional": false,
+      "isActive": true
+    },
+    {
+      "id": "hol_04",
+      "name": "Mahatma Gandhi Jayanti",
+      "holidayDate": "02-Oct-2026",
+      "dayOfWeek": "Friday",
+      "isOptional": false,
+      "isActive": true
+    }
+  ]
+}

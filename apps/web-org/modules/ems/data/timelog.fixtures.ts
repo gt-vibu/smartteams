@@ -1,0 +1,94 @@
+import { DateGroupedTimeLogs, TimeTrackerSummaryStats } from '../types/timelog.types';
+
+export const mockGroupedTimeLogs: DateGroupedTimeLogs[] = [
+  {
+    date: 'Aug 3, 2026',
+    totalDayHours: '08:00',
+    entries: [
+      {
+        id: 'entry_01',
+        jobName: 'Prepare, Explore, Blueprint',
+        projectName: 'Luxasia 2026',
+        description: 'Explored SAP S/4HANA Business Contexts, BADIs, and enhancement options for key-user extensibility',
+        isBillable: true,
+        duration: '02:00',
+        durationMinutes: 120,
+      },
+      {
+        id: 'entry_02',
+        jobName: 'Deployment Cutover',
+        projectName: 'Luxasia 2026',
+        description: 'Production deployment',
+        isBillable: true,
+        duration: '01:00',
+        durationMinutes: 60,
+      },
+      {
+        id: 'entry_03',
+        jobName: 'Testing',
+        projectName: 'Luxasia 2026',
+        description: 'QAS application testing',
+        isBillable: true,
+        duration: '01:00',
+        durationMinutes: 60,
+      },
+      {
+        id: 'entry_04',
+        jobName: 'Development',
+        projectName: 'Luxasia 2026',
+        description: 'Code refactoring and cleanup',
+        isBillable: true,
+        duration: '02:00',
+        durationMinutes: 120,
+      },
+      {
+        id: 'entry_05',
+        jobName: 'Internal Meeting',
+        projectName: 'Luxasia 2026',
+        description: 'Doubt clarification meeting',
+        isBillable: true,
+        duration: '01:00',
+        durationMinutes: 60,
+      },
+      {
+        id: 'entry_06',
+        jobName: 'Internal Meeting',
+        projectName: 'Luxasia 2026',
+        description: 'Internal meeting for In-App Extension discussion',
+        isBillable: true,
+        duration: '01:00',
+        durationMinutes: 60,
+      },
+    ],
+  },
+  {
+    date: 'Aug 4, 2026',
+    totalDayHours: '08:00',
+    entries: [
+      {
+        id: 'entry_07',
+        jobName: 'Learning and Knowledge Sharing',
+        projectName: 'Internal-Project 2026',
+        description: 'Explored Eclipse ADT, Behavior Definitions, Service Definitions',
+        isBillable: true,
+        duration: '02:00',
+        durationMinutes: 120,
+      },
+      {
+        id: 'entry_08',
+        jobName: 'Development',
+        projectName: 'Luxasia 2026',
+        description: 'Performed code cleanup in the package and verified test suites',
+        isBillable: true,
+        duration: '06:00',
+        durationMinutes: 360,
+      },
+    ],
+  },
+];
+
+export const mockTimeTrackerSummary: TimeTrackerSummaryStats = {
+  totalHours: '120:00 Hrs',
+  submittedHours: '00:00 Hrs',
+  notSubmittedHours: '120:00 Hrs',
+};
