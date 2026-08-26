@@ -12,6 +12,7 @@ import {
   type FederationClientSecret,
 } from '../../lib/api-client';
 import { FederationClientDialog, FederationSecretDialog } from './federation-client-dialogs';
+import { FederationGrantDialog } from './federation-grant-dialog';
 
 export function FederationClients({ session }: { session: AdminSession }) {
   const [clients, setClients] = useState<FederationClient[]>([]);
@@ -20,6 +21,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
   const [error, setError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<FederationClient | null>(null);
+  const [accessClient, setAccessClient] = useState<FederationClient | null>(null);
   const [oneTimeSecret, setOneTimeSecret] = useState<FederationClientSecret | null>(null);
 
   const load = useCallback(async () => {
@@ -132,6 +134,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
                   key={client.id}
                   onDelete={() => void remove(client)}
                   onEdit={() => setEditingClient(client)}
+                  onAccess={() => setAccessClient(client)}
                   onRotate={() => void rotate(client)}
                   onToggle={() => void toggle(client)}
                 />
@@ -171,6 +174,12 @@ export function FederationClients({ session }: { session: AdminSession }) {
         session={session}
       />
       <FederationSecretDialog onClose={() => setOneTimeSecret(null)} secret={oneTimeSecret} />
+      <FederationGrantDialog
+        client={accessClient}
+        onClose={() => setAccessClient(null)}
+        onSaved={load}
+        session={session}
+      />
     </>
   );
 }
@@ -179,6 +188,7 @@ function ClientRow({
   client,
   action,
   onEdit,
+  onAccess,
   onRotate,
   onToggle,
   onDelete,
@@ -186,6 +196,7 @@ function ClientRow({
   client: FederationClient;
   action: string | null;
   onEdit: () => void;
+  onAccess: () => void;
   onRotate: () => void;
   onToggle: () => void;
   onDelete: () => void;
@@ -214,6 +225,12 @@ function ClientRow({
       <td className="px-5 py-5">
         <div className="flex justify-end gap-2">
           <ActionButton disabled={busy} icon="edit" label="Update certificates" onClick={onEdit} />
+          <ActionButton
+            disabled={busy}
+            icon="shield"
+            label="Manage grant access"
+            onClick={onAccess}
+          />
           <ActionButton disabled={busy} icon="refresh" label="Rotate secret" onClick={onRotate} />
           <ActionButton
             disabled={busy}
@@ -241,7 +258,7 @@ function ActionButton({
   disabled,
   onClick,
 }: {
-  icon: 'edit' | 'refresh' | 'power' | 'trash';
+  icon: 'edit' | 'refresh' | 'power' | 'shield' | 'trash';
   label: string;
   danger?: boolean;
   disabled: boolean;

@@ -113,14 +113,14 @@ export function FederationClientDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-foreground/45 px-4 py-8">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-foreground/45 p-3 sm:p-6">
       <section
         aria-labelledby="federation-client-dialog-title"
         aria-modal="true"
-        className="w-full max-w-2xl rounded-xl border border-border bg-card p-6 shadow-2xl sm:p-8"
+        className="flex max-h-[min(760px,calc(100svh-1.5rem))] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-2xl sm:max-h-[calc(100svh-3rem)]"
         role="dialog"
       >
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-border bg-card px-6 py-5 sm:px-8">
           <h2
             className="text-2xl font-semibold tracking-[-0.035em]"
             id="federation-client-dialog-title"
@@ -138,96 +138,104 @@ export function FederationClientDialog({
           </Button>
         </div>
 
-        <form className="mt-7 grid gap-5" onSubmit={submit}>
-          {error && (
-            <Alert className="border-destructive/25 bg-destructive/5 text-destructive">
-              <AlertTitle>Could not save client</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+        <form className="flex min-h-0 flex-1 flex-col overflow-hidden" onSubmit={submit}>
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5 sm:px-8">
+            <div className="grid gap-5">
+              {error && (
+                <Alert className="border-destructive/25 bg-destructive/5 text-destructive">
+                  <AlertTitle>Could not save client</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-          {!client && (
-            <>
-              <FormField id="client-name" label="Name">
-                <Input
-                  autoFocus
-                  id="client-name"
-                  maxLength={120}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, name: event.target.value }))
-                  }
-                  required
-                  value={form.name}
-                />
-              </FormField>
-              <FormField id="client-id" label="Client ID">
-                <Input
-                  autoComplete="off"
-                  id="client-id"
-                  maxLength={120}
-                  minLength={3}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, clientId: event.target.value }))
-                  }
-                  pattern="[a-zA-Z0-9._:-]+"
-                  required
-                  value={form.clientId}
-                />
-              </FormField>
-              <FormField id="client-environment" label="Environment">
-                <Select
-                  id="client-environment"
-                  onChange={(event) => {
-                    const environment = event.target.value as FederationEnvironment;
-                    setForm((current) => ({
-                      ...current,
-                      environment,
-                      mtlsRequired: environment === 'PRODUCTION' ? true : current.mtlsRequired,
-                    }));
-                  }}
-                  value={form.environment}
-                >
-                  {environments.map((environment) => (
-                    <option key={environment} value={environment}>
-                      {environment}
-                    </option>
-                  ))}
-                </Select>
-              </FormField>
+              {!client && (
+                <>
+                  <FormField id="client-name" label="Name">
+                    <Input
+                      autoFocus
+                      id="client-name"
+                      maxLength={120}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, name: event.target.value }))
+                      }
+                      required
+                      value={form.name}
+                    />
+                  </FormField>
+                  <FormField id="client-id" label="Client ID">
+                    <Input
+                      autoComplete="off"
+                      id="client-id"
+                      maxLength={120}
+                      minLength={3}
+                      onChange={(event) =>
+                        setForm((current) => ({ ...current, clientId: event.target.value }))
+                      }
+                      pattern="[a-zA-Z0-9._:-]+"
+                      required
+                      value={form.clientId}
+                    />
+                  </FormField>
+                  <FormField id="client-environment" label="Environment">
+                    <Select
+                      id="client-environment"
+                      onChange={(event) => {
+                        const environment = event.target.value as FederationEnvironment;
+                        setForm((current) => ({
+                          ...current,
+                          environment,
+                          mtlsRequired: environment === 'PRODUCTION' ? true : current.mtlsRequired,
+                        }));
+                      }}
+                      value={form.environment}
+                    >
+                      {environments.map((environment) => (
+                        <option key={environment} value={environment}>
+                          {environment}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormField>
+                  <CheckField
+                    checked={form.isActive}
+                    label="Active"
+                    onChange={(checked) =>
+                      setForm((current) => ({ ...current, isActive: checked }))
+                    }
+                  />
+                </>
+              )}
+
               <CheckField
-                checked={form.isActive}
-                label="Active"
-                onChange={(checked) => setForm((current) => ({ ...current, isActive: checked }))}
+                checked={form.mtlsRequired}
+                description="Keep enabled for secure federation. OAuth-only is available only for non-production UAT."
+                disabled={form.environment === 'PRODUCTION'}
+                label="Require certificate-bound mTLS"
+                onChange={(checked) =>
+                  setForm((current) => ({ ...current, mtlsRequired: checked }))
+                }
               />
-            </>
-          )}
 
-          <CheckField
-            checked={form.mtlsRequired}
-            description="Keep enabled for secure federation. OAuth-only is available only for non-production UAT."
-            disabled={form.environment === 'PRODUCTION'}
-            label="Require certificate-bound mTLS"
-            onChange={(checked) => setForm((current) => ({ ...current, mtlsRequired: checked }))}
-          />
+              <FormField id="client-fingerprints" label="BlizBooks client certificate fingerprint">
+                <textarea
+                  className="min-h-28 w-full resize-y rounded-lg border border-input bg-background px-3 py-2.5 font-mono text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/20"
+                  id="client-fingerprints"
+                  onChange={(event) =>
+                    setForm((current) => ({ ...current, fingerprintsText: event.target.value }))
+                  }
+                  placeholder="SHA-256 fingerprint, with or without colons"
+                  required={form.mtlsRequired}
+                  value={form.fingerprintsText}
+                />
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  Paste the SHA-256 fingerprint of the certificate BlizBooks presents to SmarTeam.
+                  Separate multiple fingerprints with spaces, commas, or new lines.
+                </p>
+              </FormField>
+            </div>
+          </div>
 
-          <FormField id="client-fingerprints" label="BlizBooks client certificate fingerprint">
-            <textarea
-              className="min-h-28 w-full resize-y rounded-lg border border-input bg-background px-3 py-2.5 font-mono text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/20"
-              id="client-fingerprints"
-              onChange={(event) =>
-                setForm((current) => ({ ...current, fingerprintsText: event.target.value }))
-              }
-              placeholder="SHA-256 fingerprint, with or without colons"
-              required={form.mtlsRequired}
-              value={form.fingerprintsText}
-            />
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Paste the SHA-256 fingerprint of the certificate BlizBooks presents to SmarTeam.
-              Separate multiple fingerprints with spaces, commas, or new lines.
-            </p>
-          </FormField>
-
-          <div className="mt-2 flex justify-end gap-3">
+          <div className="flex shrink-0 justify-end gap-3 border-t border-border bg-card px-6 py-4 sm:px-8">
             <Button disabled={busy} onClick={onClose} type="button" variant="outline">
               Cancel
             </Button>

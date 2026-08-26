@@ -34,6 +34,40 @@ export interface FederationClientSecret extends FederationClient {
   clientSecret: string;
 }
 
+export type FederationGrantEffect = 'ALLOW' | 'DENY';
+
+export interface FederationGrantBranch {
+  id: string;
+  name: string;
+  code: string;
+  status: string;
+}
+
+export interface FederationGrantOrganization {
+  id: string;
+  name: string;
+  externalId: string | null;
+  status: string;
+  branches: FederationGrantBranch[];
+}
+
+export interface FederationGrant {
+  id: string;
+  organizationId: string;
+  organizationName: string;
+  branchId: string | null;
+  branchName: string | null;
+  branchCode: string | null;
+  effect: FederationGrantEffect;
+  scopeCodes: string[];
+}
+
+export interface FederationGrantAccess {
+  scopes: string[];
+  organizations: FederationGrantOrganization[];
+  grants: FederationGrant[];
+}
+
 export type FederationClientInput = {
   name: string;
   clientId: string;
@@ -164,10 +198,39 @@ export async function deleteFederationClient(session: AdminSession, clientId: st
   }
 }
 
+export async function listFederationClientGrants(
+  session: AdminSession,
+  clientId: string,
+): Promise<FederationGrantAccess> {
+  const payload = await request(
+    `/v1/platform/federation-clients/${encodeURIComponent(clientId)}/grants`,
+    { method: 'GET', token: session.accessToken },
+  );
+  if (!isFederationGrantAccess(payload)) {
+    throw new ApiClientError('The federation grant access response was not valid.', 502);
+  }
+  return payload;
+}
+
+export async function updateFederationClientGrant(
+  session: AdminSession,
+  clientId: string,
+  input: { organizationId: string; branchId?: string; scopeCodes: string[] },
+) {
+  const payload = await request(
+    `/v1/platform/federation-clients/${encodeURIComponent(clientId)}/grants`,
+    { method: 'PUT', token: session.accessToken, body: input },
+  );
+  if (!isFederationGrantUpdate(payload)) {
+    throw new ApiClientError('The federation grant update response was not valid.', 502);
+  }
+  return payload;
+}
+
 async function request(
   path: string,
   options: {
-    method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+    method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
     token?: string;
     body?: Record<string, unknown>;
   },
@@ -245,6 +308,72 @@ function isFederationClientSecret(value: unknown): value is FederationClientSecr
   );
 }
 
+function isFederationGrantAccess(value: unknown): value is FederationGrantAccess {
+  return (
+    isRecord(value) &&
+    isStringArray(value.scopes) &&
+    Array.isArray(value.organizations) &&
+    value.organizations.every(isFederationGrantOrganization) &&
+    Array.isArray(value.grants) &&
+    value.grants.every(isFederationGrant)
+  );
+}
+
+function isFederationGrantOrganization(value: unknown): value is FederationGrantOrganization {
+  return (
+    isRecord(value) &&
+    stringValue(value.id) !== undefined &&
+    stringValue(value.name) !== undefined &&
+    (value.externalId === null || stringValue(value.externalId) !== undefined) &&
+    stringValue(value.status) !== undefined &&
+    Array.isArray(value.branches) &&
+    value.branches.every(isFederationGrantBranch)
+  );
+}
+
+function isFederationGrantBranch(value: unknown): value is FederationGrantBranch {
+  return (
+    isRecord(value) &&
+    stringValue(value.id) !== undefined &&
+    stringValue(value.name) !== undefined &&
+    stringValue(value.code) !== undefined &&
+    stringValue(value.status) !== undefined
+  );
+}
+
+function isFederationGrant(value: unknown): value is FederationGrant {
+  return (
+    isRecord(value) &&
+    stringValue(value.id) !== undefined &&
+    stringValue(value.organizationId) !== undefined &&
+    stringValue(value.organizationName) !== undefined &&
+    (value.branchId === null || stringValue(value.branchId) !== undefined) &&
+    (value.branchName === null || stringValue(value.branchName) !== undefined) &&
+    (value.branchCode === null || stringValue(value.branchCode) !== undefined) &&
+    isGrantEffect(value.effect) &&
+    isStringArray(value.scopeCodes)
+  );
+}
+
+function isFederationGrantUpdate(value: unknown): value is {
+  organizationId: string;
+  organizationName: string;
+  branchId: string | null;
+  scopeCodes: string[];
+} {
+  return (
+    isRecord(value) &&
+    stringValue(value.organizationId) !== undefined &&
+    stringValue(value.organizationName) !== undefined &&
+    (value.branchId === null || stringValue(value.branchId) !== undefined) &&
+    isStringArray(value.scopeCodes)
+  );
+}
+
+function isGrantEffect(value: unknown): value is FederationGrantEffect {
+  return value === 'ALLOW' || value === 'DENY';
+}
+
 function isEnvironment(value: unknown): value is FederationEnvironment {
   return value === 'SANDBOX' || value === 'STAGING' || value === 'PRODUCTION';
 }
@@ -255,4 +384,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function stringValue(value: unknown) {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === 'string');
 }

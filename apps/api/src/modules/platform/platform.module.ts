@@ -4,10 +4,16 @@ import { TeamsProjectsService } from './teams-projects.service';
 import { PlatformService } from './platform.service';
 import { PlatformAuthGuard } from './platform-auth.guard';
 import { PlatformAdminController } from './platform-admin.controller';
+import { FederationGrantAdminService } from './federation-grant-admin.service';
 
 @Module({
   controllers: [PlatformController, PlatformAdminController],
   exports: [TeamsProjectsService, PlatformService],
-  providers: [TeamsProjectsService, PlatformService, PlatformAuthGuard],
+  providers: [
+    TeamsProjectsService,
+    PlatformService,
+    PlatformAuthGuard,
+    FederationGrantAdminService,
+  ],
 })
 export class PlatformModule {}

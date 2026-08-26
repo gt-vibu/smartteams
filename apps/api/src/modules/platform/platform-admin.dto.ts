@@ -3,7 +3,9 @@ import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsOptional,
   IsString,
+  IsUUID,
   Matches,
   MaxLength,
   MinLength,
@@ -31,4 +33,18 @@ export class FederationClientCertificateDto {
   @ArrayMaxSize(10)
   @Matches(certificateFingerprintPattern, { each: true })
   allowedCertificateFingerprints!: string[];
+}
+
+export class FederationGrantAccessDto {
+  @IsUUID()
+  organizationId!: string;
+
+  @IsOptional()
+  @IsUUID()
+  branchId?: string;
+
+  @IsArray()
+  @ArrayMaxSize(100)
+  @IsString({ each: true })
+  scopeCodes!: string[];
 }

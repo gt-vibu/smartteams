@@ -8649,14 +8649,14 @@ export type ListEnumAccessModeFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'FederationEnvironment'
  */
 export type EnumFederationEnvironmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FederationEnvironment'>
-
+    
 
 
 /**
  * Reference to a field of type 'FederationEnvironment[]'
  */
 export type ListEnumFederationEnvironmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FederationEnvironment[]'>
-
+    
 
 
 /**
@@ -9678,3 +9678,4 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
+
