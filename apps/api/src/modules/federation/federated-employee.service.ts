@@ -318,6 +318,46 @@ export class FederatedEmployeeService {
     );
   }
 
+  async personalProfile(context: DomainContext, externalId: string) {
+    return this.records.getPersonalProfile(context, await this.internalId(context, externalId));
+  }
+
+  async updatePersonalProfile(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['upsertPersonalProfile']>[2],
+  ) {
+    return this.records.upsertPersonalProfile(
+      context,
+      await this.internalId(context, externalId),
+      input,
+    );
+  }
+
+  async bankAccounts(context: DomainContext, externalId: string) {
+    return this.records.listBankAccounts(context, await this.internalId(context, externalId));
+  }
+
+  async addBankAccount(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['addBankAccount']>[2],
+  ) {
+    return this.records.addBankAccount(context, await this.internalId(context, externalId), input);
+  }
+
+  async references(context: DomainContext, externalId: string) {
+    return this.records.listReferences(context, await this.internalId(context, externalId));
+  }
+
+  async addReference(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['addReference']>[2],
+  ) {
+    return this.records.addReference(context, await this.internalId(context, externalId), input);
+  }
+
   async employment(context: DomainContext, externalId: string) {
     const employee = await this.findRaw(context, externalId);
     return employee.employmentRecords;

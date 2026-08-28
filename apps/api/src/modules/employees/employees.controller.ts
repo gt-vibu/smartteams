@@ -11,9 +11,13 @@ import {
   EmploymentRecordDto,
   ManagerAssignmentDto,
   UpdateEmployeeDto,
+  EmployeePersonalProfileDto,
+  EmployeeBankAccountDto,
+  EmployeeReferenceDto,
 } from './employees.dto';
 import { ConflictError } from '../../common/errors/domain-error';
 import { EmployeesService } from './employees.service';
+import { EmployeeRecordsService } from './employee-records.service';
 
 @Controller('v1/organizations/:organizationId/employees')
 @UseGuards(NativeJwtGuard)
@@ -21,6 +25,7 @@ export class EmployeesController {
   constructor(
     private readonly employees: EmployeesService,
     private readonly contexts: DomainContextFactory,
+    private readonly records: EmployeeRecordsService,
   ) {}
 
   @Get()
@@ -101,6 +106,63 @@ export class EmployeesController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.employees.addEmergencyContact(context, employeeId, body));
+  }
+  @Get(':employeeId/personal-profile') personalProfile(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.getPersonalProfile(context, employeeId));
+  }
+  @Put(':employeeId/personal-profile') updatePersonalProfile(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: EmployeePersonalProfileDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.upsertPersonalProfile(context, employeeId, body));
+  }
+  @Get(':employeeId/bank-accounts') bankAccounts(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.listBankAccounts(context, employeeId));
+  }
+  @Post(':employeeId/bank-accounts') addBankAccount(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: EmployeeBankAccountDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.addBankAccount(context, employeeId, body));
+  }
+  @Get(':employeeId/references') references(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.listReferences(context, employeeId));
+  }
+  @Post(':employeeId/references') addReference(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: EmployeeReferenceDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.addReference(context, employeeId, body));
   }
   @Post(':employeeId/employment-records') employment(
     @Param('organizationId') organizationId: string,

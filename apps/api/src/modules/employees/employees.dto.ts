@@ -98,3 +98,29 @@ export class CompensationDto {
 export class ManagerAssignmentDto {
   @IsUUID() managerEmployeeId!: string;
 }
+
+export class EmployeePersonalProfileDto {
+  @IsOptional() @IsString() fatherName?: string | null;
+  @IsOptional() @IsString() motherName?: string | null;
+  @IsOptional() @IsString() spouseName?: string | null;
+  @IsOptional() @IsString() aadhaarNumber?: string | null;
+  @IsOptional() @IsString() panNumber?: string | null;
+  @IsOptional() @IsString() presentAddress?: string | null;
+  @IsOptional() @IsString() permanentAddress?: string | null;
+}
+
+export class EmployeeBankAccountDto {
+  @IsOptional() @IsString() bankName?: string | null;
+  @IsOptional() @IsString() accountNumber?: string | null;
+  @IsOptional() @IsString() ifscCode?: string | null;
+  @IsOptional() @IsString() accountHolderName?: string | null;
+  @IsOptional() @IsDateString() effectiveFrom?: string;
+}
+
+export class EmployeeReferenceDto {
+  @IsString() @MinLength(2) name!: string;
+  @IsOptional() @IsString() relationship?: string | null;
+  @IsString() @MinLength(5) phone!: string;
+  @IsOptional() @IsString() referenceType?: string;
+  @IsOptional() @IsNumber() sortOrder?: number;
+}
