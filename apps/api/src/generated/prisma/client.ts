@@ -400,6 +400,21 @@ export type WebauthnChallenge = Prisma.WebauthnChallengeModel
  */
 export type Employee = Prisma.EmployeeModel
 /**
+ * Model EmployeePersonalProfile
+ * 
+ */
+export type EmployeePersonalProfile = Prisma.EmployeePersonalProfileModel
+/**
+ * Model EmployeeBankAccount
+ * 
+ */
+export type EmployeeBankAccount = Prisma.EmployeeBankAccountModel
+/**
+ * Model EmployeeReference
+ * 
+ */
+export type EmployeeReference = Prisma.EmployeeReferenceModel
+/**
  * Model EmployeeEmergencyContact
  * 
  */

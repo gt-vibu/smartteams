@@ -298,6 +298,9 @@ export type OrganizationWhereInput = {
   roles?: Prisma.RoleListRelationFilter
   userRoles?: Prisma.UserRoleListRelationFilter
   employees?: Prisma.EmployeeListRelationFilter
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileListRelationFilter
+  employeeBankAccounts?: Prisma.EmployeeBankAccountListRelationFilter
+  employeeReferences?: Prisma.EmployeeReferenceListRelationFilter
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileListRelationFilter
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordListRelationFilter
   emergencyContacts?: Prisma.EmployeeEmergencyContactListRelationFilter
@@ -382,6 +385,9 @@ export type OrganizationOrderByWithRelationInput = {
   roles?: Prisma.RoleOrderByRelationAggregateInput
   userRoles?: Prisma.UserRoleOrderByRelationAggregateInput
   employees?: Prisma.EmployeeOrderByRelationAggregateInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileOrderByRelationAggregateInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountOrderByRelationAggregateInput
+  employeeReferences?: Prisma.EmployeeReferenceOrderByRelationAggregateInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileOrderByRelationAggregateInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordOrderByRelationAggregateInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactOrderByRelationAggregateInput
@@ -470,6 +476,9 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   roles?: Prisma.RoleListRelationFilter
   userRoles?: Prisma.UserRoleListRelationFilter
   employees?: Prisma.EmployeeListRelationFilter
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileListRelationFilter
+  employeeBankAccounts?: Prisma.EmployeeBankAccountListRelationFilter
+  employeeReferences?: Prisma.EmployeeReferenceListRelationFilter
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileListRelationFilter
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordListRelationFilter
   emergencyContacts?: Prisma.EmployeeEmergencyContactListRelationFilter
@@ -594,6 +603,9 @@ export type OrganizationCreateInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -678,6 +690,9 @@ export type OrganizationUncheckedCreateInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -762,6 +777,9 @@ export type OrganizationUpdateInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -846,6 +864,9 @@ export type OrganizationUncheckedUpdateInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1789,6 +1810,48 @@ export type OrganizationUpdateOneRequiredWithoutEmployeesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeesInput, Prisma.OrganizationUpdateWithoutEmployeesInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeesInput>
 }
 
+export type OrganizationCreateNestedOneWithoutEmployeePersonalProfilesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePersonalProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeePersonalProfilesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutEmployeePersonalProfilesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePersonalProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeePersonalProfilesInput
+  upsert?: Prisma.OrganizationUpsertWithoutEmployeePersonalProfilesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeePersonalProfilesInput, Prisma.OrganizationUpdateWithoutEmployeePersonalProfilesInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput>
+}
+
+export type OrganizationCreateNestedOneWithoutEmployeeBankAccountsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeBankAccountsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeBankAccountsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutEmployeeBankAccountsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeBankAccountsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeBankAccountsInput
+  upsert?: Prisma.OrganizationUpsertWithoutEmployeeBankAccountsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeeBankAccountsInput, Prisma.OrganizationUpdateWithoutEmployeeBankAccountsInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutEmployeeReferencesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeReferencesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeReferencesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeReferencesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutEmployeeReferencesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeReferencesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeReferencesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeReferencesInput
+  upsert?: Prisma.OrganizationUpsertWithoutEmployeeReferencesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeeReferencesInput, Prisma.OrganizationUpdateWithoutEmployeeReferencesInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeeReferencesInput>
+}
+
 export type OrganizationCreateNestedOneWithoutEmergencyContactsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmergencyContactsInput, Prisma.OrganizationUncheckedCreateWithoutEmergencyContactsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmergencyContactsInput
@@ -2017,6 +2080,9 @@ export type OrganizationCreateWithoutIdempotencyRecordsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -2100,6 +2166,9 @@ export type OrganizationUncheckedCreateWithoutIdempotencyRecordsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2199,6 +2268,9 @@ export type OrganizationUpdateWithoutIdempotencyRecordsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -2282,6 +2354,9 @@ export type OrganizationUncheckedUpdateWithoutIdempotencyRecordsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -2365,6 +2440,9 @@ export type OrganizationCreateWithoutRequestRecordsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -2448,6 +2526,9 @@ export type OrganizationUncheckedCreateWithoutRequestRecordsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2547,6 +2628,9 @@ export type OrganizationUpdateWithoutRequestRecordsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -2630,6 +2714,9 @@ export type OrganizationUncheckedUpdateWithoutRequestRecordsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -2713,6 +2800,9 @@ export type OrganizationCreateWithoutWebhookSubscriptionsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -2796,6 +2886,9 @@ export type OrganizationUncheckedCreateWithoutWebhookSubscriptionsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2895,6 +2988,9 @@ export type OrganizationUpdateWithoutWebhookSubscriptionsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -2978,6 +3074,9 @@ export type OrganizationUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3061,6 +3160,9 @@ export type OrganizationCreateWithoutOutboxEventsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -3144,6 +3246,9 @@ export type OrganizationUncheckedCreateWithoutOutboxEventsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3243,6 +3348,9 @@ export type OrganizationUpdateWithoutOutboxEventsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -3326,6 +3434,9 @@ export type OrganizationUncheckedUpdateWithoutOutboxEventsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3409,6 +3520,9 @@ export type OrganizationCreateWithoutWebhookDeliveriesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -3492,6 +3606,9 @@ export type OrganizationUncheckedCreateWithoutWebhookDeliveriesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3591,6 +3708,9 @@ export type OrganizationUpdateWithoutWebhookDeliveriesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -3674,6 +3794,9 @@ export type OrganizationUncheckedUpdateWithoutWebhookDeliveriesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3757,6 +3880,9 @@ export type OrganizationCreateWithoutAuditLogsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -3840,6 +3966,9 @@ export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3939,6 +4068,9 @@ export type OrganizationUpdateWithoutAuditLogsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -4022,6 +4154,9 @@ export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4105,6 +4240,9 @@ export type OrganizationCreateWithoutHomeFederationClientsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -4188,6 +4326,9 @@ export type OrganizationUncheckedCreateWithoutHomeFederationClientsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -4287,6 +4428,9 @@ export type OrganizationUpdateWithoutHomeFederationClientsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -4370,6 +4514,9 @@ export type OrganizationUncheckedUpdateWithoutHomeFederationClientsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4453,6 +4600,9 @@ export type OrganizationCreateWithoutFederationGrantsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -4536,6 +4686,9 @@ export type OrganizationUncheckedCreateWithoutFederationGrantsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -4635,6 +4788,9 @@ export type OrganizationUpdateWithoutFederationGrantsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -4718,6 +4874,9 @@ export type OrganizationUncheckedUpdateWithoutFederationGrantsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4801,6 +4960,9 @@ export type OrganizationCreateWithoutOrganizationCapabilitiesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -4884,6 +5046,9 @@ export type OrganizationUncheckedCreateWithoutOrganizationCapabilitiesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -4983,6 +5148,9 @@ export type OrganizationUpdateWithoutOrganizationCapabilitiesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -5066,6 +5234,9 @@ export type OrganizationUncheckedUpdateWithoutOrganizationCapabilitiesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5149,6 +5320,9 @@ export type OrganizationCreateWithoutExternalIdMappingsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -5232,6 +5406,9 @@ export type OrganizationUncheckedCreateWithoutExternalIdMappingsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5331,6 +5508,9 @@ export type OrganizationUpdateWithoutExternalIdMappingsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -5414,6 +5594,9 @@ export type OrganizationUncheckedUpdateWithoutExternalIdMappingsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5497,6 +5680,9 @@ export type OrganizationCreateWithoutFilesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -5580,6 +5766,9 @@ export type OrganizationUncheckedCreateWithoutFilesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5679,6 +5868,9 @@ export type OrganizationUpdateWithoutFilesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -5762,6 +5954,9 @@ export type OrganizationUncheckedUpdateWithoutFilesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5844,6 +6039,9 @@ export type OrganizationCreateWithoutInvitationsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -5927,6 +6125,9 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6026,6 +6227,9 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -6109,6 +6313,9 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6192,6 +6399,9 @@ export type OrganizationCreateWithoutUsersInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -6275,6 +6485,9 @@ export type OrganizationUncheckedCreateWithoutUsersInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6374,6 +6587,9 @@ export type OrganizationUpdateWithoutUsersInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -6457,6 +6673,9 @@ export type OrganizationUncheckedUpdateWithoutUsersInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6540,6 +6759,9 @@ export type OrganizationCreateWithoutSessionsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -6623,6 +6845,9 @@ export type OrganizationUncheckedCreateWithoutSessionsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6722,6 +6947,9 @@ export type OrganizationUpdateWithoutSessionsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -6805,6 +7033,9 @@ export type OrganizationUncheckedUpdateWithoutSessionsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6889,6 +7120,9 @@ export type OrganizationCreateWithoutAttendanceRecordsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -6972,6 +7206,9 @@ export type OrganizationUncheckedCreateWithoutAttendanceRecordsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7071,6 +7308,9 @@ export type OrganizationUpdateWithoutAttendanceRecordsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -7154,6 +7394,9 @@ export type OrganizationUncheckedUpdateWithoutAttendanceRecordsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7237,6 +7480,9 @@ export type OrganizationCreateWithoutAttendancePunchesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -7320,6 +7566,9 @@ export type OrganizationUncheckedCreateWithoutAttendancePunchesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7419,6 +7668,9 @@ export type OrganizationUpdateWithoutAttendancePunchesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -7502,6 +7754,9 @@ export type OrganizationUncheckedUpdateWithoutAttendancePunchesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7585,6 +7840,9 @@ export type OrganizationCreateWithoutAttendanceCorrectionsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -7668,6 +7926,9 @@ export type OrganizationUncheckedCreateWithoutAttendanceCorrectionsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7767,6 +8028,9 @@ export type OrganizationUpdateWithoutAttendanceCorrectionsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -7850,6 +8114,9 @@ export type OrganizationUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7933,6 +8200,9 @@ export type OrganizationCreateWithoutAttendanceApprovalsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -8016,6 +8286,9 @@ export type OrganizationUncheckedCreateWithoutAttendanceApprovalsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8115,6 +8388,9 @@ export type OrganizationUpdateWithoutAttendanceApprovalsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -8198,6 +8474,9 @@ export type OrganizationUncheckedUpdateWithoutAttendanceApprovalsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8281,6 +8560,9 @@ export type OrganizationCreateWithoutHolidaysInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -8364,6 +8646,9 @@ export type OrganizationUncheckedCreateWithoutHolidaysInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8463,6 +8748,9 @@ export type OrganizationUpdateWithoutHolidaysInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -8546,6 +8834,9 @@ export type OrganizationUncheckedUpdateWithoutHolidaysInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8629,6 +8920,9 @@ export type OrganizationCreateWithoutLeaveTypesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -8712,6 +9006,9 @@ export type OrganizationUncheckedCreateWithoutLeaveTypesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8811,6 +9108,9 @@ export type OrganizationUpdateWithoutLeaveTypesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -8894,6 +9194,9 @@ export type OrganizationUncheckedUpdateWithoutLeaveTypesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8977,6 +9280,9 @@ export type OrganizationCreateWithoutLeavePolicyAssignmentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -9060,6 +9366,9 @@ export type OrganizationUncheckedCreateWithoutLeavePolicyAssignmentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9159,6 +9468,9 @@ export type OrganizationUpdateWithoutLeavePolicyAssignmentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -9242,6 +9554,9 @@ export type OrganizationUncheckedUpdateWithoutLeavePolicyAssignmentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9325,6 +9640,9 @@ export type OrganizationCreateWithoutLeaveBalancesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -9408,6 +9726,9 @@ export type OrganizationUncheckedCreateWithoutLeaveBalancesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9507,6 +9828,9 @@ export type OrganizationUpdateWithoutLeaveBalancesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -9590,6 +9914,9 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalancesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9673,6 +10000,9 @@ export type OrganizationCreateWithoutLeaveBalanceTransactionsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -9756,6 +10086,9 @@ export type OrganizationUncheckedCreateWithoutLeaveBalanceTransactionsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9855,6 +10188,9 @@ export type OrganizationUpdateWithoutLeaveBalanceTransactionsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -9938,6 +10274,9 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalanceTransactionsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10021,6 +10360,9 @@ export type OrganizationCreateWithoutLeaveRequestsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -10104,6 +10446,9 @@ export type OrganizationUncheckedCreateWithoutLeaveRequestsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10203,6 +10548,9 @@ export type OrganizationUpdateWithoutLeaveRequestsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -10286,6 +10634,9 @@ export type OrganizationUncheckedUpdateWithoutLeaveRequestsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10369,6 +10720,9 @@ export type OrganizationCreateWithoutLeaveApprovalsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -10452,6 +10806,9 @@ export type OrganizationUncheckedCreateWithoutLeaveApprovalsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10551,6 +10908,9 @@ export type OrganizationUpdateWithoutLeaveApprovalsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -10634,6 +10994,9 @@ export type OrganizationUncheckedUpdateWithoutLeaveApprovalsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10717,6 +11080,9 @@ export type OrganizationCreateWithoutShiftsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -10800,6 +11166,9 @@ export type OrganizationUncheckedCreateWithoutShiftsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10899,6 +11268,9 @@ export type OrganizationUpdateWithoutShiftsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -10982,6 +11354,9 @@ export type OrganizationUncheckedUpdateWithoutShiftsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11065,6 +11440,9 @@ export type OrganizationCreateWithoutShiftAssignmentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -11148,6 +11526,9 @@ export type OrganizationUncheckedCreateWithoutShiftAssignmentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11247,6 +11628,9 @@ export type OrganizationUpdateWithoutShiftAssignmentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -11330,6 +11714,9 @@ export type OrganizationUncheckedUpdateWithoutShiftAssignmentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11413,6 +11800,9 @@ export type OrganizationCreateWithoutTimesheetPeriodsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -11496,6 +11886,9 @@ export type OrganizationUncheckedCreateWithoutTimesheetPeriodsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11595,6 +11988,9 @@ export type OrganizationUpdateWithoutTimesheetPeriodsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -11678,6 +12074,9 @@ export type OrganizationUncheckedUpdateWithoutTimesheetPeriodsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11761,6 +12160,9 @@ export type OrganizationCreateWithoutTimesheetsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -11844,6 +12246,9 @@ export type OrganizationUncheckedCreateWithoutTimesheetsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11943,6 +12348,9 @@ export type OrganizationUpdateWithoutTimesheetsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -12026,6 +12434,9 @@ export type OrganizationUncheckedUpdateWithoutTimesheetsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12109,6 +12520,9 @@ export type OrganizationCreateWithoutTimesheetEntriesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -12192,6 +12606,9 @@ export type OrganizationUncheckedCreateWithoutTimesheetEntriesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12291,6 +12708,9 @@ export type OrganizationUpdateWithoutTimesheetEntriesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -12374,6 +12794,9 @@ export type OrganizationUncheckedUpdateWithoutTimesheetEntriesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12457,6 +12880,9 @@ export type OrganizationCreateWithoutTimesheetApprovalsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -12540,6 +12966,9 @@ export type OrganizationUncheckedCreateWithoutTimesheetApprovalsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12639,6 +13068,9 @@ export type OrganizationUpdateWithoutTimesheetApprovalsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -12722,6 +13154,9 @@ export type OrganizationUncheckedUpdateWithoutTimesheetApprovalsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12805,6 +13240,9 @@ export type OrganizationCreateWithoutPayrollRunsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -12888,6 +13326,9 @@ export type OrganizationUncheckedCreateWithoutPayrollRunsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12987,6 +13428,9 @@ export type OrganizationUpdateWithoutPayrollRunsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -13070,6 +13514,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollRunsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13152,6 +13599,9 @@ export type OrganizationCreateWithoutPayrollPoliciesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -13235,6 +13685,9 @@ export type OrganizationUncheckedCreateWithoutPayrollPoliciesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13334,6 +13787,9 @@ export type OrganizationUpdateWithoutPayrollPoliciesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -13417,6 +13873,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollPoliciesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13500,6 +13959,9 @@ export type OrganizationCreateWithoutStatutoryRulesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -13583,6 +14045,9 @@ export type OrganizationUncheckedCreateWithoutStatutoryRulesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13682,6 +14147,9 @@ export type OrganizationUpdateWithoutStatutoryRulesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -13765,6 +14233,9 @@ export type OrganizationUncheckedUpdateWithoutStatutoryRulesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13849,6 +14320,9 @@ export type OrganizationCreateWithoutPayrollLineItemsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -13932,6 +14406,9 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14031,6 +14508,9 @@ export type OrganizationUpdateWithoutPayrollLineItemsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -14114,6 +14594,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14196,6 +14679,9 @@ export type OrganizationCreateWithoutSalaryAdvancesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -14279,6 +14765,9 @@ export type OrganizationUncheckedCreateWithoutSalaryAdvancesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14378,6 +14867,9 @@ export type OrganizationUpdateWithoutSalaryAdvancesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -14461,6 +14953,9 @@ export type OrganizationUncheckedUpdateWithoutSalaryAdvancesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14544,6 +15039,9 @@ export type OrganizationCreateWithoutAdvanceRecoveriesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -14627,6 +15125,9 @@ export type OrganizationUncheckedCreateWithoutAdvanceRecoveriesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14726,6 +15227,9 @@ export type OrganizationUpdateWithoutAdvanceRecoveriesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -14809,6 +15313,9 @@ export type OrganizationUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14892,6 +15399,9 @@ export type OrganizationCreateWithoutPayrollPaymentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -14975,6 +15485,9 @@ export type OrganizationUncheckedCreateWithoutPayrollPaymentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15074,6 +15587,9 @@ export type OrganizationUpdateWithoutPayrollPaymentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -15157,6 +15673,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollPaymentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15241,6 +15760,9 @@ export type OrganizationCreateWithoutPayrollLineItemComponentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -15324,6 +15846,9 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemComponentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15423,6 +15948,9 @@ export type OrganizationUpdateWithoutPayrollLineItemComponentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -15506,6 +16034,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemComponentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15589,6 +16120,9 @@ export type OrganizationCreateWithoutPayrollAdjustmentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -15672,6 +16206,9 @@ export type OrganizationUncheckedCreateWithoutPayrollAdjustmentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15771,6 +16308,9 @@ export type OrganizationUpdateWithoutPayrollAdjustmentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -15854,6 +16394,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15937,6 +16480,9 @@ export type OrganizationCreateWithoutPayrollApprovalsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -16020,6 +16566,9 @@ export type OrganizationUncheckedCreateWithoutPayrollApprovalsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16119,6 +16668,9 @@ export type OrganizationUpdateWithoutPayrollApprovalsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -16202,6 +16754,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollApprovalsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16285,6 +16840,9 @@ export type OrganizationCreateWithoutPayslipsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -16368,6 +16926,9 @@ export type OrganizationUncheckedCreateWithoutPayslipsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16467,6 +17028,9 @@ export type OrganizationUpdateWithoutPayslipsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -16550,6 +17114,9 @@ export type OrganizationUncheckedUpdateWithoutPayslipsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16632,6 +17199,9 @@ export type OrganizationCreateWithoutRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -16715,6 +17285,9 @@ export type OrganizationUncheckedCreateWithoutRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16814,6 +17387,9 @@ export type OrganizationUpdateWithoutRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -16897,6 +17473,9 @@ export type OrganizationUncheckedUpdateWithoutRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16980,6 +17559,9 @@ export type OrganizationCreateWithoutUserRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -17063,6 +17645,9 @@ export type OrganizationUncheckedCreateWithoutUserRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17162,6 +17747,9 @@ export type OrganizationUpdateWithoutUserRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -17245,6 +17833,9 @@ export type OrganizationUncheckedUpdateWithoutUserRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17328,6 +17919,9 @@ export type OrganizationCreateWithoutSettingsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -17411,6 +18005,9 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17510,6 +18107,9 @@ export type OrganizationUpdateWithoutSettingsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -17593,6 +18193,9 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17676,6 +18279,9 @@ export type OrganizationCreateWithoutPayrollCalendarsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -17759,6 +18365,9 @@ export type OrganizationUncheckedCreateWithoutPayrollCalendarsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17858,6 +18467,9 @@ export type OrganizationUpdateWithoutPayrollCalendarsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -17941,6 +18553,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollCalendarsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18024,6 +18639,9 @@ export type OrganizationCreateWithoutApprovalPoliciesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -18107,6 +18725,9 @@ export type OrganizationUncheckedCreateWithoutApprovalPoliciesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18206,6 +18827,9 @@ export type OrganizationUpdateWithoutApprovalPoliciesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -18289,6 +18913,9 @@ export type OrganizationUncheckedUpdateWithoutApprovalPoliciesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18372,6 +18999,9 @@ export type OrganizationCreateWithoutApprovalPolicyStepsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -18455,6 +19085,9 @@ export type OrganizationUncheckedCreateWithoutApprovalPolicyStepsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18554,6 +19187,9 @@ export type OrganizationUpdateWithoutApprovalPolicyStepsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -18637,6 +19273,9 @@ export type OrganizationUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18720,6 +19359,9 @@ export type OrganizationCreateWithoutBranchesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -18803,6 +19445,9 @@ export type OrganizationUncheckedCreateWithoutBranchesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18902,6 +19547,9 @@ export type OrganizationUpdateWithoutBranchesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -18985,6 +19633,9 @@ export type OrganizationUncheckedUpdateWithoutBranchesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19069,6 +19720,9 @@ export type OrganizationCreateWithoutWorkLocationsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -19152,6 +19806,9 @@ export type OrganizationUncheckedCreateWithoutWorkLocationsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19251,6 +19908,9 @@ export type OrganizationUpdateWithoutWorkLocationsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -19334,6 +19994,9 @@ export type OrganizationUncheckedUpdateWithoutWorkLocationsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19416,6 +20079,9 @@ export type OrganizationCreateWithoutSourceChangesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -19499,6 +20165,9 @@ export type OrganizationUncheckedCreateWithoutSourceChangesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19598,6 +20267,9 @@ export type OrganizationUpdateWithoutSourceChangesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -19681,6 +20353,9 @@ export type OrganizationUncheckedUpdateWithoutSourceChangesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19765,6 +20440,9 @@ export type OrganizationCreateWithoutWebauthnCredentialsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -19848,6 +20526,9 @@ export type OrganizationUncheckedCreateWithoutWebauthnCredentialsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19947,6 +20628,9 @@ export type OrganizationUpdateWithoutWebauthnCredentialsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -20030,6 +20714,9 @@ export type OrganizationUncheckedUpdateWithoutWebauthnCredentialsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20113,6 +20800,9 @@ export type OrganizationCreateWithoutWebauthnChallengesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -20196,6 +20886,9 @@ export type OrganizationUncheckedCreateWithoutWebauthnChallengesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20295,6 +20988,9 @@ export type OrganizationUpdateWithoutWebauthnChallengesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -20378,6 +21074,9 @@ export type OrganizationUncheckedUpdateWithoutWebauthnChallengesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20460,6 +21159,9 @@ export type OrganizationCreateWithoutEmployeesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -20543,6 +21245,9 @@ export type OrganizationUncheckedCreateWithoutEmployeesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20642,6 +21347,9 @@ export type OrganizationUpdateWithoutEmployeesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -20725,6 +21433,1089 @@ export type OrganizationUncheckedUpdateWithoutEmployeesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutEmployeePersonalProfilesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutEmployeePersonalProfilesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePersonalProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput>
+}
+
+export type OrganizationUpsertWithoutEmployeePersonalProfilesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeePersonalProfilesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePersonalProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutEmployeePersonalProfilesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeePersonalProfilesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput>
+}
+
+export type OrganizationUpdateWithoutEmployeePersonalProfilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutEmployeeBankAccountsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutEmployeeBankAccountsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeBankAccountsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput>
+}
+
+export type OrganizationUpsertWithoutEmployeeBankAccountsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeBankAccountsInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeBankAccountsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutEmployeeBankAccountsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeBankAccountsInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput>
+}
+
+export type OrganizationUpdateWithoutEmployeeBankAccountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutEmployeeReferencesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutEmployeeReferencesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutEmployeeReferencesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeReferencesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeReferencesInput>
+}
+
+export type OrganizationUpsertWithoutEmployeeReferencesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeReferencesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeReferencesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeReferencesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeReferencesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutEmployeeReferencesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeReferencesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeReferencesInput>
+}
+
+export type OrganizationUpdateWithoutEmployeeReferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutEmployeeReferencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20809,6 +22600,9 @@ export type OrganizationCreateWithoutEmergencyContactsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
@@ -20892,6 +22686,9 @@ export type OrganizationUncheckedCreateWithoutEmergencyContactsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20991,6 +22788,9 @@ export type OrganizationUpdateWithoutEmergencyContactsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
@@ -21074,6 +22874,9 @@ export type OrganizationUncheckedUpdateWithoutEmergencyContactsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21157,6 +22960,9 @@ export type OrganizationCreateWithoutEmployeeBranchAssignmentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -21240,6 +23046,9 @@ export type OrganizationUncheckedCreateWithoutEmployeeBranchAssignmentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21339,6 +23148,9 @@ export type OrganizationUpdateWithoutEmployeeBranchAssignmentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -21422,6 +23234,9 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBranchAssignmentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21505,6 +23320,9 @@ export type OrganizationCreateWithoutEmployeeFieldOwnershipInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -21588,6 +23406,9 @@ export type OrganizationUncheckedCreateWithoutEmployeeFieldOwnershipInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21687,6 +23508,9 @@ export type OrganizationUpdateWithoutEmployeeFieldOwnershipInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -21770,6 +23594,9 @@ export type OrganizationUncheckedUpdateWithoutEmployeeFieldOwnershipInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21853,6 +23680,9 @@ export type OrganizationCreateWithoutEmploymentRecordsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -21936,6 +23766,9 @@ export type OrganizationUncheckedCreateWithoutEmploymentRecordsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22035,6 +23868,9 @@ export type OrganizationUpdateWithoutEmploymentRecordsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -22118,6 +23954,9 @@ export type OrganizationUncheckedUpdateWithoutEmploymentRecordsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22201,6 +24040,9 @@ export type OrganizationCreateWithoutCompensationsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -22284,6 +24126,9 @@ export type OrganizationUncheckedCreateWithoutCompensationsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22383,6 +24228,9 @@ export type OrganizationUpdateWithoutCompensationsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -22466,6 +24314,9 @@ export type OrganizationUncheckedUpdateWithoutCompensationsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22548,6 +24399,9 @@ export type OrganizationCreateWithoutEmployeePayrollPoliciesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -22631,6 +24485,9 @@ export type OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22730,6 +24587,9 @@ export type OrganizationUpdateWithoutEmployeePayrollPoliciesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -22813,6 +24673,9 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22897,6 +24760,9 @@ export type OrganizationCreateWithoutEmployeeStatutoryProfilesInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
@@ -22980,6 +24846,9 @@ export type OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23079,6 +24948,9 @@ export type OrganizationUpdateWithoutEmployeeStatutoryProfilesInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
@@ -23162,6 +25034,9 @@ export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23245,6 +25120,9 @@ export type OrganizationCreateWithoutEmployeeStatutoryRecordsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
@@ -23328,6 +25206,9 @@ export type OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23427,6 +25308,9 @@ export type OrganizationUpdateWithoutEmployeeStatutoryRecordsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
@@ -23510,6 +25394,9 @@ export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23593,6 +25480,9 @@ export type OrganizationCreateWithoutPayComponentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -23676,6 +25566,9 @@ export type OrganizationUncheckedCreateWithoutPayComponentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23775,6 +25668,9 @@ export type OrganizationUpdateWithoutPayComponentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -23858,6 +25754,9 @@ export type OrganizationUncheckedUpdateWithoutPayComponentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23941,6 +25840,9 @@ export type OrganizationCreateWithoutEmployeePayComponentsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -24024,6 +25926,9 @@ export type OrganizationUncheckedCreateWithoutEmployeePayComponentsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24123,6 +26028,9 @@ export type OrganizationUpdateWithoutEmployeePayComponentsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -24206,6 +26114,9 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayComponentsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24289,6 +26200,9 @@ export type OrganizationCreateWithoutTeamsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -24372,6 +26286,9 @@ export type OrganizationUncheckedCreateWithoutTeamsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24471,6 +26388,9 @@ export type OrganizationUpdateWithoutTeamsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -24554,6 +26474,9 @@ export type OrganizationUncheckedUpdateWithoutTeamsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24637,6 +26560,9 @@ export type OrganizationCreateWithoutTeamMembersInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -24720,6 +26646,9 @@ export type OrganizationUncheckedCreateWithoutTeamMembersInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24819,6 +26748,9 @@ export type OrganizationUpdateWithoutTeamMembersInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -24902,6 +26834,9 @@ export type OrganizationUncheckedUpdateWithoutTeamMembersInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24985,6 +26920,9 @@ export type OrganizationCreateWithoutProjectsInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -25068,6 +27006,9 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25167,6 +27108,9 @@ export type OrganizationUpdateWithoutProjectsInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -25250,6 +27194,9 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25333,6 +27280,9 @@ export type OrganizationCreateWithoutProjectMembersInput = {
   roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
@@ -25416,6 +27366,9 @@ export type OrganizationUncheckedCreateWithoutProjectMembersInput = {
   roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
   employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25515,6 +27468,9 @@ export type OrganizationUpdateWithoutProjectMembersInput = {
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
@@ -25598,6 +27554,9 @@ export type OrganizationUncheckedUpdateWithoutProjectMembersInput = {
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25672,6 +27631,9 @@ export type OrganizationCountOutputType = {
   roles: number
   userRoles: number
   employees: number
+  employeePersonalProfiles: number
+  employeeBankAccounts: number
+  employeeReferences: number
   employeeStatutoryProfiles: number
   employeeStatutoryRecords: number
   emergencyContacts: number
@@ -25742,6 +27704,9 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   roles?: boolean | OrganizationCountOutputTypeCountRolesArgs
   userRoles?: boolean | OrganizationCountOutputTypeCountUserRolesArgs
   employees?: boolean | OrganizationCountOutputTypeCountEmployeesArgs
+  employeePersonalProfiles?: boolean | OrganizationCountOutputTypeCountEmployeePersonalProfilesArgs
+  employeeBankAccounts?: boolean | OrganizationCountOutputTypeCountEmployeeBankAccountsArgs
+  employeeReferences?: boolean | OrganizationCountOutputTypeCountEmployeeReferencesArgs
   employeeStatutoryProfiles?: boolean | OrganizationCountOutputTypeCountEmployeeStatutoryProfilesArgs
   employeeStatutoryRecords?: boolean | OrganizationCountOutputTypeCountEmployeeStatutoryRecordsArgs
   emergencyContacts?: boolean | OrganizationCountOutputTypeCountEmergencyContactsArgs
@@ -25921,6 +27886,27 @@ export type OrganizationCountOutputTypeCountUserRolesArgs<ExtArgs extends runtim
  */
 export type OrganizationCountOutputTypeCountEmployeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.EmployeeWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountEmployeePersonalProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeePersonalProfileWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountEmployeeBankAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeBankAccountWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountEmployeeReferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeReferenceWhereInput
 }
 
 /**
@@ -26306,6 +28292,9 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   roles?: boolean | Prisma.Organization$rolesArgs<ExtArgs>
   userRoles?: boolean | Prisma.Organization$userRolesArgs<ExtArgs>
   employees?: boolean | Prisma.Organization$employeesArgs<ExtArgs>
+  employeePersonalProfiles?: boolean | Prisma.Organization$employeePersonalProfilesArgs<ExtArgs>
+  employeeBankAccounts?: boolean | Prisma.Organization$employeeBankAccountsArgs<ExtArgs>
+  employeeReferences?: boolean | Prisma.Organization$employeeReferencesArgs<ExtArgs>
   employeeStatutoryProfiles?: boolean | Prisma.Organization$employeeStatutoryProfilesArgs<ExtArgs>
   employeeStatutoryRecords?: boolean | Prisma.Organization$employeeStatutoryRecordsArgs<ExtArgs>
   emergencyContacts?: boolean | Prisma.Organization$emergencyContactsArgs<ExtArgs>
@@ -26427,6 +28416,9 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   roles?: boolean | Prisma.Organization$rolesArgs<ExtArgs>
   userRoles?: boolean | Prisma.Organization$userRolesArgs<ExtArgs>
   employees?: boolean | Prisma.Organization$employeesArgs<ExtArgs>
+  employeePersonalProfiles?: boolean | Prisma.Organization$employeePersonalProfilesArgs<ExtArgs>
+  employeeBankAccounts?: boolean | Prisma.Organization$employeeBankAccountsArgs<ExtArgs>
+  employeeReferences?: boolean | Prisma.Organization$employeeReferencesArgs<ExtArgs>
   employeeStatutoryProfiles?: boolean | Prisma.Organization$employeeStatutoryProfilesArgs<ExtArgs>
   employeeStatutoryRecords?: boolean | Prisma.Organization$employeeStatutoryRecordsArgs<ExtArgs>
   emergencyContacts?: boolean | Prisma.Organization$emergencyContactsArgs<ExtArgs>
@@ -26503,6 +28495,9 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     roles: Prisma.$RolePayload<ExtArgs>[]
     userRoles: Prisma.$UserRolePayload<ExtArgs>[]
     employees: Prisma.$EmployeePayload<ExtArgs>[]
+    employeePersonalProfiles: Prisma.$EmployeePersonalProfilePayload<ExtArgs>[]
+    employeeBankAccounts: Prisma.$EmployeeBankAccountPayload<ExtArgs>[]
+    employeeReferences: Prisma.$EmployeeReferencePayload<ExtArgs>[]
     employeeStatutoryProfiles: Prisma.$EmployeeStatutoryProfilePayload<ExtArgs>[]
     employeeStatutoryRecords: Prisma.$EmployeeStatutoryRecordPayload<ExtArgs>[]
     emergencyContacts: Prisma.$EmployeeEmergencyContactPayload<ExtArgs>[]
@@ -26980,6 +28975,9 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   roles<T extends Prisma.Organization$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   userRoles<T extends Prisma.Organization$userRolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$userRolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   employees<T extends Prisma.Organization$employeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employeePersonalProfiles<T extends Prisma.Organization$employeePersonalProfilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$employeePersonalProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeePersonalProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employeeBankAccounts<T extends Prisma.Organization$employeeBankAccountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$employeeBankAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeBankAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employeeReferences<T extends Prisma.Organization$employeeReferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$employeeReferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeReferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   employeeStatutoryProfiles<T extends Prisma.Organization$employeeStatutoryProfilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$employeeStatutoryProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeStatutoryProfilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   employeeStatutoryRecords<T extends Prisma.Organization$employeeStatutoryRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$employeeStatutoryRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeStatutoryRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   emergencyContacts<T extends Prisma.Organization$emergencyContactsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$emergencyContactsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeEmergencyContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -27889,6 +29887,78 @@ export type Organization$employeesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.EmployeeScalarFieldEnum | Prisma.EmployeeScalarFieldEnum[]
+}
+
+/**
+ * Organization.employeePersonalProfiles
+ */
+export type Organization$employeePersonalProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeePersonalProfile
+   */
+  select?: Prisma.EmployeePersonalProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeePersonalProfile
+   */
+  omit?: Prisma.EmployeePersonalProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeePersonalProfileInclude<ExtArgs> | null
+  where?: Prisma.EmployeePersonalProfileWhereInput
+  orderBy?: Prisma.EmployeePersonalProfileOrderByWithRelationInput | Prisma.EmployeePersonalProfileOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeePersonalProfileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeePersonalProfileScalarFieldEnum | Prisma.EmployeePersonalProfileScalarFieldEnum[]
+}
+
+/**
+ * Organization.employeeBankAccounts
+ */
+export type Organization$employeeBankAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeBankAccount
+   */
+  select?: Prisma.EmployeeBankAccountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeBankAccount
+   */
+  omit?: Prisma.EmployeeBankAccountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeBankAccountInclude<ExtArgs> | null
+  where?: Prisma.EmployeeBankAccountWhereInput
+  orderBy?: Prisma.EmployeeBankAccountOrderByWithRelationInput | Prisma.EmployeeBankAccountOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeBankAccountWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeBankAccountScalarFieldEnum | Prisma.EmployeeBankAccountScalarFieldEnum[]
+}
+
+/**
+ * Organization.employeeReferences
+ */
+export type Organization$employeeReferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeReference
+   */
+  select?: Prisma.EmployeeReferenceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeReference
+   */
+  omit?: Prisma.EmployeeReferenceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeReferenceInclude<ExtArgs> | null
+  where?: Prisma.EmployeeReferenceWhereInput
+  orderBy?: Prisma.EmployeeReferenceOrderByWithRelationInput | Prisma.EmployeeReferenceOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeReferenceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeReferenceScalarFieldEnum | Prisma.EmployeeReferenceScalarFieldEnum[]
 }
 
 /**

@@ -1,2 +1,37 @@
 #!/usr/bin/env sh
-pnpm exec commitlint --edit "$1"
+
+if command -v cygpath >/dev/null 2>&1; then
+  if [ -n "${APPDATA:-}" ]; then
+    export PATH="$(cygpath -u "$APPDATA")/npm:$PATH"
+  fi
+  if [ -n "${ProgramFiles:-}" ]; then
+    export PATH="$(cygpath -u "$ProgramFiles")/nodejs:$PATH"
+  fi
+fi
+
+run_pnpm() {
+  if command -v pnpm.cmd >/dev/null 2>&1; then
+    pnpm.cmd "$@"
+  elif command -v cygpath >/dev/null 2>&1 && [ -n "${LOCALAPPDATA:-}" ] && [ -n "${ProgramFiles:-}" ]; then
+    pnpm_version=$(sed -n 's/.*"packageManager"[[:space:]]*:[[:space:]]*"pnpm@\([^"]*\)".*/\1/p' package.json | head -n 1)
+    pnpm_root="$(cygpath -u "$LOCALAPPDATA")/node/corepack/v1/pnpm"
+    node_bin="$(cygpath -u "$ProgramFiles")/nodejs/node.exe"
+    for pnpm_entry in "$pnpm_root/$pnpm_version/bin/pnpm.cjs" "$pnpm_root/$pnpm_version/bin/pnpm.mjs"; do
+      if [ -f "$pnpm_entry" ]; then
+        "$node_bin" "$pnpm_entry" "$@"
+        return $?
+      fi
+    done
+    echo "commit-msg: the configured Corepack pnpm version was not found." >&2
+    return 127
+  elif command -v pnpm >/dev/null 2>&1; then
+    pnpm "$@"
+  elif command -v corepack >/dev/null 2>&1; then
+    corepack pnpm "$@"
+  else
+    echo "commit-msg: pnpm was not found. Install pnpm or enable Corepack." >&2
+    return 127
+  fi
+}
+
+run_pnpm exec commitlint --edit "$1"

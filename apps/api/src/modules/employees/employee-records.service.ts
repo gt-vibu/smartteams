@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Prisma } from '../../generated/prisma/client';
 import { EmployeeStatus, EmploymentType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
@@ -6,13 +7,223 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { dateOnly, toEmployeeDto } from './employee-mappers';
+import {
+  decryptEmployeeSecret,
+  encryptEmployeeSecret,
+  maskEmployeeSecret,
+} from './employee-sensitive-data';
 
 @Injectable()
 export class EmployeeRecordsService {
   constructor(
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
+    private readonly config: ConfigService,
   ) {}
+
+  async getPersonalProfile(context: DomainContext, employeeId: string) {
+    requirePermission(context, 'employees.personal_details.read');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      const profile = await tx.employeePersonalProfile.findUnique({ where: { employeeId } });
+      if (!profile) return null;
+      const canReveal = context.permissions.has('employees.personal_details.write');
+      return {
+        ...profile,
+        aadhaarNumber: canReveal
+          ? decryptEmployeeSecret(this.config, profile.aadhaarNumberEncrypted)
+          : maskEmployeeSecret(decryptEmployeeSecret(this.config, profile.aadhaarNumberEncrypted)),
+        panNumber: canReveal
+          ? decryptEmployeeSecret(this.config, profile.panNumberEncrypted)
+          : maskEmployeeSecret(decryptEmployeeSecret(this.config, profile.panNumberEncrypted)),
+        aadhaarNumberEncrypted: undefined,
+        panNumberEncrypted: undefined,
+      };
+    });
+  }
+
+  async upsertPersonalProfile(
+    context: DomainContext,
+    employeeId: string,
+    input: {
+      fatherName?: string | null;
+      motherName?: string | null;
+      spouseName?: string | null;
+      aadhaarNumber?: string | null;
+      panNumber?: string | null;
+      presentAddress?: string | null;
+      permanentAddress?: string | null;
+    },
+  ) {
+    requirePermission(context, 'employees.personal_details.write');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      const profile = await tx.employeePersonalProfile.upsert({
+        where: { employeeId },
+        create: {
+          organizationId: context.organizationId,
+          employeeId,
+          fatherName: input.fatherName?.trim() || null,
+          motherName: input.motherName?.trim() || null,
+          spouseName: input.spouseName?.trim() || null,
+          presentAddress: input.presentAddress?.trim() || null,
+          permanentAddress: input.permanentAddress?.trim() || null,
+          aadhaarNumberEncrypted: input.aadhaarNumber?.trim()
+            ? encryptEmployeeSecret(this.config, input.aadhaarNumber.trim())
+            : null,
+          panNumberEncrypted: input.panNumber?.trim()
+            ? encryptEmployeeSecret(this.config, input.panNumber.trim().toUpperCase())
+            : null,
+        },
+        update: {
+          fatherName: input.fatherName?.trim() || null,
+          motherName: input.motherName?.trim() || null,
+          spouseName: input.spouseName?.trim() || null,
+          presentAddress: input.presentAddress?.trim() || null,
+          permanentAddress: input.permanentAddress?.trim() || null,
+          ...(input.aadhaarNumber !== undefined
+            ? {
+                aadhaarNumberEncrypted: input.aadhaarNumber?.trim()
+                  ? encryptEmployeeSecret(this.config, input.aadhaarNumber.trim())
+                  : null,
+              }
+            : {}),
+          ...(input.panNumber !== undefined
+            ? {
+                panNumberEncrypted: input.panNumber?.trim()
+                  ? encryptEmployeeSecret(this.config, input.panNumber.trim().toUpperCase())
+                  : null,
+              }
+            : {}),
+        },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'EMPLOYEE_PERSONAL_PROFILE',
+          entityId: profile.id,
+          action: 'EMPLOYEE_PERSONAL_PROFILE_UPDATED',
+          afterState: { id: profile.id, employeeId },
+        },
+        tx,
+      );
+      return {
+        ...profile,
+        aadhaarNumber: '[stored]',
+        panNumber: '[stored]',
+        aadhaarNumberEncrypted: undefined,
+        panNumberEncrypted: undefined,
+      };
+    });
+  }
+
+  async listBankAccounts(context: DomainContext, employeeId: string) {
+    requirePermission(context, 'employees.bank_details.read');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      const accounts = await tx.employeeBankAccount.findMany({
+        where: { organizationId: context.organizationId, employeeId },
+        orderBy: { effectiveFrom: 'desc' },
+      });
+      const canReveal = context.permissions.has('employees.bank_details.write');
+      return accounts.map((account) => ({
+        ...account,
+        accountNumber: canReveal
+          ? decryptEmployeeSecret(this.config, account.accountNumberEncrypted)
+          : maskEmployeeSecret(decryptEmployeeSecret(this.config, account.accountNumberEncrypted)),
+        accountNumberEncrypted: undefined,
+      }));
+    });
+  }
+
+  async addBankAccount(
+    context: DomainContext,
+    employeeId: string,
+    input: {
+      bankName?: string | null;
+      accountNumber?: string | null;
+      ifscCode?: string | null;
+      accountHolderName?: string | null;
+      effectiveFrom?: string;
+    },
+  ) {
+    requirePermission(context, 'employees.bank_details.write');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      const account = await tx.employeeBankAccount.create({
+        data: {
+          organizationId: context.organizationId,
+          employeeId,
+          bankName: input.bankName?.trim() || null,
+          accountNumberEncrypted: input.accountNumber?.trim()
+            ? encryptEmployeeSecret(this.config, input.accountNumber.trim())
+            : null,
+          ifscCode: input.ifscCode?.trim().toUpperCase() || null,
+          accountHolderName: input.accountHolderName?.trim() || null,
+          effectiveFrom: dateOnly(input.effectiveFrom ?? new Date().toISOString().slice(0, 10)),
+        },
+      });
+      await tx.employeeBankAccount.updateMany({
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          id: { not: account.id },
+          isPrimary: true,
+        },
+        data: { isPrimary: false },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'EMPLOYEE_BANK_ACCOUNT',
+          entityId: account.id,
+          action: 'EMPLOYEE_BANK_ACCOUNT_CREATED',
+          afterState: { id: account.id, employeeId },
+        },
+        tx,
+      );
+      return { ...account, accountNumber: '[stored]', accountNumberEncrypted: undefined };
+    });
+  }
+
+  async listReferences(context: DomainContext, employeeId: string) {
+    requirePermission(context, 'employees.personal_details.read');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      return tx.employeeReference.findMany({
+        where: { organizationId: context.organizationId, employeeId },
+        orderBy: { sortOrder: 'asc' },
+      });
+    });
+  }
+
+  async addReference(
+    context: DomainContext,
+    employeeId: string,
+    input: {
+      name: string;
+      relationship?: string | null;
+      phone: string;
+      referenceType?: string;
+      sortOrder?: number;
+    },
+  ) {
+    requirePermission(context, 'employees.personal_details.write');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      return tx.employeeReference.create({
+        data: {
+          organizationId: context.organizationId,
+          employeeId,
+          name: input.name.trim(),
+          relationship: input.relationship?.trim() || null,
+          phone: input.phone.trim(),
+          referenceType: input.referenceType?.trim() || 'FAMILY',
+          sortOrder: input.sortOrder ?? 0,
+        },
+      });
+    });
+  }
 
   async listEmergencyContacts(context: DomainContext, employeeId: string) {
     requirePermission(context, 'employees.read');

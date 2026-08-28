@@ -34,6 +34,11 @@ import {
   FederatedEmployeePatchDto,
   FederatedEmployeeQueryDto,
 } from './federation.dto';
+import {
+  EmployeeBankAccountDto,
+  EmployeePersonalProfileDto,
+  EmployeeReferenceDto,
+} from '../employees/employees.dto';
 import type { FederationRequest } from './federation.types';
 import { FederationIdempotencyInterceptor } from './federation-idempotency.interceptor';
 import { FederationRateLimitInterceptor } from './federation-rate-limit.interceptor';
@@ -240,6 +245,116 @@ export class FederationEmployeesController {
   ) {
     return this.federatedEmployees.addContact(
       await this.support.context(request, organizationId, 'employees.write', branchId),
+      externalId,
+      body,
+    );
+  }
+
+  @Get('federation/employees/:externalId/personal-profile')
+  @UseGuards(FederationAuthGuard)
+  async personalProfile(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.personalProfile(
+      await this.support.context(
+        request,
+        organizationId,
+        'employees.personal_details.read',
+        branchId,
+      ),
+      externalId,
+    );
+  }
+
+  @Put('federation/employees/:externalId/personal-profile')
+  @UseGuards(FederationAuthGuard)
+  async updatePersonalProfile(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Body() body: EmployeePersonalProfileDto,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.updatePersonalProfile(
+      await this.support.context(
+        request,
+        organizationId,
+        'employees.personal_details.write',
+        branchId,
+      ),
+      externalId,
+      body,
+    );
+  }
+
+  @Get('federation/employees/:externalId/bank-accounts')
+  @UseGuards(FederationAuthGuard)
+  async bankAccounts(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.bankAccounts(
+      await this.support.context(request, organizationId, 'employees.bank_details.read', branchId),
+      externalId,
+    );
+  }
+
+  @Post('federation/employees/:externalId/bank-accounts')
+  @UseGuards(FederationAuthGuard)
+  async addBankAccount(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Body() body: EmployeeBankAccountDto,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.addBankAccount(
+      await this.support.context(request, organizationId, 'employees.bank_details.write', branchId),
+      externalId,
+      body,
+    );
+  }
+
+  @Get('federation/employees/:externalId/references')
+  @UseGuards(FederationAuthGuard)
+  async references(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.references(
+      await this.support.context(
+        request,
+        organizationId,
+        'employees.personal_details.read',
+        branchId,
+      ),
+      externalId,
+    );
+  }
+
+  @Post('federation/employees/:externalId/references')
+  @UseGuards(FederationAuthGuard)
+  async addReference(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Body() body: EmployeeReferenceDto,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.addReference(
+      await this.support.context(
+        request,
+        organizationId,
+        'employees.personal_details.write',
+        branchId,
+      ),
       externalId,
       body,
     );
