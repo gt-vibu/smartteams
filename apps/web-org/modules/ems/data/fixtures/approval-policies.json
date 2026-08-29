@@ -1,0 +1,197 @@
+{
+  "domains": [
+    {
+      "code": "LEAVE",
+      "name": "Leave Applications",
+      "description": "Paid/unpaid leave requests, casual leaves, maternity and medical leave approvals."
+    },
+    {
+      "code": "ATTENDANCE_CORRECTION",
+      "name": "Attendance Regularization",
+      "description": "Punch corrections, missed check-ins, biometric failure disputes, and outdoor duty regularizations."
+    },
+    {
+      "code": "TIMESHEET",
+      "name": "Timesheets & Overtime",
+      "description": "Weekly / bi-weekly project hour submissions and overtime hour authorizations."
+    },
+    {
+      "code": "PAYROLL",
+      "name": "Payroll Runs & Release",
+      "description": "Monthly payroll lock, calculation verification, bank transfer file release, and payslip dispatch."
+    },
+    {
+      "code": "SALARY_REVISION",
+      "name": "Compensation & Salary Revisions",
+      "description": "Annual appraisal hikes, off-cycle increments, promotion CTC restructuring, and allowance updates."
+    },
+    {
+      "code": "EXPENSES_ADVANCES",
+      "name": "Salary Advances & Reimbursable Expenses",
+      "description": "Employee emergency salary advance requests and travel/reimbursement claim sign-offs."
+    }
+  ],
+  "policies": [
+    {
+      "id": "policy-leave-std",
+      "domain": "LEAVE",
+      "code": "POLICY_LEAVE_STD",
+      "name": "Standard Two-Tier Leave Approval Workflow",
+      "description": "Default organization-wide 2-tier approval requiring direct manager recommendation and HR sign-off.",
+      "isDefault": true,
+      "isActive": true,
+      "precedenceLevel": "ORGANIZATION_DEFAULT",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "name": "Manager Review",
+          "approverType": "MANAGER",
+          "targetRole": null,
+          "targetUserId": null,
+          "targetUserName": null,
+          "required": true,
+          "autoEscalateHours": 48
+        },
+        {
+          "stepNumber": 2,
+          "name": "HR Operations Sign-off",
+          "approverType": "ROLE",
+          "targetRole": "HR Manager",
+          "targetUserId": null,
+          "targetUserName": null,
+          "required": true,
+          "autoEscalateHours": 72
+        }
+      ]
+    },
+    {
+      "id": "policy-att-std",
+      "domain": "ATTENDANCE_CORRECTION",
+      "code": "POLICY_ATTENDANCE_STD",
+      "name": "Direct Manager Attendance Regularization",
+      "description": "Single-step approval by employee's immediate reporting manager.",
+      "isDefault": true,
+      "isActive": true,
+      "precedenceLevel": "ORGANIZATION_DEFAULT",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "name": "Reporting Manager Sign-off",
+          "approverType": "MANAGER",
+          "targetRole": null,
+          "targetUserId": null,
+          "targetUserName": null,
+          "required": true,
+          "autoEscalateHours": 24
+        }
+      ]
+    },
+    {
+      "id": "policy-ts-std",
+      "domain": "TIMESHEET",
+      "code": "POLICY_TIMESHEET_STD",
+      "name": "Engineering Team Timesheet Sign-off",
+      "description": "2-step project billability review by Team Lead followed by Department Head sign-off.",
+      "isDefault": true,
+      "isActive": true,
+      "precedenceLevel": "DEPARTMENT_RULE",
+      "targetDepartment": "Engineering & Technology",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "name": "Designated Team Lead",
+          "approverType": "USER",
+          "targetRole": null,
+          "targetUserId": "user-010",
+          "targetUserName": "Rohan Das (Principal Engineer)",
+          "required": true,
+          "autoEscalateHours": 36
+        },
+        {
+          "stepNumber": 2,
+          "name": "Engineering Department Head",
+          "approverType": "USER",
+          "targetRole": null,
+          "targetUserId": "user-009",
+          "targetUserName": "Ranjith Kumar C (Engineering Manager)",
+          "required": true,
+          "autoEscalateHours": 48
+        }
+      ]
+    },
+    {
+      "id": "policy-pay-std",
+      "domain": "PAYROLL",
+      "code": "POLICY_PAYROLL_RELEASE",
+      "name": "Executive Payroll Audit & Disbursement Authorization",
+      "description": "Rigorous 2-stage verification: Finance Lead audit followed by Tenant Admin / VP of People release.",
+      "isDefault": true,
+      "isActive": true,
+      "precedenceLevel": "ORGANIZATION_DEFAULT",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "name": "Finance & Compliance Audit",
+          "approverType": "ROLE",
+          "targetRole": "Finance Controller",
+          "targetUserId": null,
+          "targetUserName": null,
+          "required": true,
+          "autoEscalateHours": 24
+        },
+        {
+          "stepNumber": 2,
+          "name": "Tenant Administrator Final Release",
+          "approverType": "USER",
+          "targetRole": "Tenant Administrator",
+          "targetUserId": "user-040",
+          "targetUserName": "Vikramaditya Sengupta (VP of People Operations)",
+          "required": true,
+          "autoEscalateHours": 24
+        }
+      ]
+    },
+    {
+      "id": "policy-sal-rev",
+      "domain": "SALARY_REVISION",
+      "code": "POLICY_SALARY_REVISION_EXEC",
+      "name": "3-Tier Compensation Revision & Increment Workflow",
+      "description": "Comprehensive appraisal and off-cycle increment governance flow.",
+      "isDefault": true,
+      "isActive": true,
+      "precedenceLevel": "ORGANIZATION_DEFAULT",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "name": "Department Head Recommendation",
+          "approverType": "MANAGER",
+          "targetRole": null,
+          "targetUserId": null,
+          "targetUserName": null,
+          "required": true,
+          "autoEscalateHours": 72
+        },
+        {
+          "stepNumber": 2,
+          "name": "Head of People & Compensation Review",
+          "approverType": "USER",
+          "targetRole": null,
+          "targetUserId": "user-040",
+          "targetUserName": "Vikramaditya Sengupta (VP of People Operations)",
+          "required": true,
+          "autoEscalateHours": 72
+        },
+        {
+          "stepNumber": 3,
+          "name": "Executive Leadership Sign-off",
+          "approverType": "ROLE",
+          "targetRole": "Tenant Administrator",
+          "targetUserId": null,
+          "targetUserName": null,
+          "required": true,
+          "autoEscalateHours": 96
+        }
+      ]
+    }
+  ]
+}

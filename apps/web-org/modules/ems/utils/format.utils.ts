@@ -17,8 +17,12 @@ export function formatSecondsToTime(seconds: number): {
   secs: string;
 } {
   const safeSeconds = Math.max(0, seconds);
-  const hrs = Math.floor(safeSeconds / 3600).toString().padStart(2, '0');
-  const mins = Math.floor((safeSeconds % 3600) / 60).toString().padStart(2, '0');
+  const hrs = Math.floor(safeSeconds / 3600)
+    .toString()
+    .padStart(2, '0');
+  const mins = Math.floor((safeSeconds % 3600) / 60)
+    .toString()
+    .padStart(2, '0');
   const secs = (safeSeconds % 60).toString().padStart(2, '0');
   return { hrs, mins, secs };
 }

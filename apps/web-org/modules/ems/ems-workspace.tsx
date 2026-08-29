@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { EmsLayout } from './components/layout/ems-layout';
 import { Screen1Overview } from './components/screen-1-overview/screen-1-overview';
 import { Screen2Timeline } from './components/screen-2-attendance/screen-2-timeline';
@@ -10,61 +10,148 @@ import { Screen5TimeTracker } from './components/screen-5-timetracker/screen-5-t
 import { Screen7TimeOff } from './components/screen-7-timeoff/screen-7-timeoff';
 import { ScreenTeams } from './components/screen-teams/screen-teams';
 import { ScreenProjects } from './components/screen-projects/screen-projects';
-
-type ActiveModule = 'home' | 'attendance' | 'timesheet' | 'time-off' | 'teams' | 'projects';
+import { ScreenPayroll } from './components/screen-payroll/screen-payroll';
+import { ScreenApprovals } from './components/screen-approvals/screen-approvals';
+import { ScreenFiles } from './components/screen-files/screen-files';
+import { OrganizationWorkspace } from './components/organization/organization-workspace';
+import { ScreenOnboarding } from './components/screen-onboarding/screen-onboarding';
+import { ScreenLeaveAdmin } from './components/screen-leave/screen-leave-admin';
+import { ScreenAttendanceAdmin } from './components/screen-attendance/screen-attendance-admin';
+import { ScreenTimesheetsAdmin } from './components/screen-timesheet/screen-timesheets-admin';
+import { ScreenPayrollAdmin } from './components/screen-payroll/screen-payroll-admin';
+import { LoginScreen } from './components/auth/login-screen';
+import { useEmsNavigation } from './hooks/use-ems-navigation';
+import { useAuth } from './hooks/use-auth';
+import { useTheme, ThemeProvider } from './hooks/use-theme';
 
 export function EmsWorkspace() {
-  const [activeModule, setActiveModule] = useState<ActiveModule>('home');
-  const [activeSpace, setActiveSpace] = useState('My Space');
-  const [attendanceViewMode, setAttendanceViewMode] = useState<'timeline' | 'table' | 'calendar'>('timeline');
+  return (
+    <ThemeProvider>
+      <EmsWorkspaceInner />
+    </ThemeProvider>
+  );
+}
+
+function EmsWorkspaceInner() {
+  const {
+    isAuthenticated,
+    loginWithCredentials,
+    canAccessSpace,
+    canAccessModule,
+    workspaceContext,
+  } = useAuth();
+  useTheme(); // Initialize and apply persisted theme (dark / light) on mount
+
+  const {
+    activeSpace,
+    activeModule,
+    attendanceViewMode,
+    orgActiveTab,
+    navigateToSpace,
+    navigateToModule,
+    navigateToOrgTab,
+    setAttendanceViewMode,
+  } = useEmsNavigation();
+
+  if (!isAuthenticated) {
+    return (
+      <LoginScreen
+        onLogin={(email, password) => {
+          const result = loginWithCredentials(email, password);
+          return result !== null;
+        }}
+      />
+    );
+  }
+
+  // Safety fallback if active space is not permitted in current context
+  const defaultFallbackSpace = workspaceContext === 'ADMIN' ? 'Organization' : 'My Space';
+  const effectiveSpace = canAccessSpace(activeSpace) ? activeSpace : defaultFallbackSpace;
+  const effectiveModule = canAccessModule(activeModule) ? activeModule : 'home';
 
   return (
     <EmsLayout
-      activeModule={activeModule}
-      onSelectModule={(mod) => setActiveModule(mod as ActiveModule)}
-      activeSpace={activeSpace}
-      onSelectSpace={setActiveSpace}
+      activeModule={effectiveModule}
+      onSelectModule={navigateToModule}
+      activeSpace={effectiveSpace}
+      onSelectSpace={navigateToSpace}
+      attendanceViewMode={attendanceViewMode}
+      orgActiveTab={orgActiveTab}
     >
-      {activeModule === 'home' && (
-        <Screen1Overview
-          onNavigateModule={(mod, sub) => {
-            setActiveModule(mod as ActiveModule);
-            if (sub) setAttendanceViewMode(sub);
-          }}
-        />
-      )}
-
-      {activeModule === 'attendance' && (
+      {/* 1. Organization Space (Admin Governance Hub with Sidebar Modules) */}
+      {effectiveSpace === 'Organization' && (
         <>
-          {attendanceViewMode === 'timeline' && (
-            <Screen2Timeline onToggleView={setAttendanceViewMode} />
+          {effectiveModule === 'home' && (
+            <OrganizationWorkspace
+              activeTab={orgActiveTab}
+              onSelectTab={navigateToOrgTab}
+              onNavigateModule={(moduleId) => {
+                navigateToModule(moduleId);
+              }}
+            />
           )}
-          {attendanceViewMode === 'table' && (
-            <Screen3Table onToggleView={setAttendanceViewMode} />
-          )}
-          {attendanceViewMode === 'calendar' && (
-            <Screen4Calendar onToggleView={setAttendanceViewMode} />
-          )}
+
+          {effectiveModule === 'onboarding' && <ScreenOnboarding />}
+
+          {effectiveModule === 'time-off' && <ScreenLeaveAdmin />}
+
+          {effectiveModule === 'attendance' && <ScreenAttendanceAdmin />}
+
+          {effectiveModule === 'timesheet' && <ScreenTimesheetsAdmin />}
+
+          {effectiveModule === 'teams' && <ScreenTeams />}
+
+          {effectiveModule === 'projects' && <ScreenProjects />}
+
+          {effectiveModule === 'payroll' && <ScreenPayrollAdmin />}
+
+          {effectiveModule === 'approvals' && <ScreenApprovals />}
+
+          {effectiveModule === 'files' && <ScreenFiles />}
         </>
       )}
 
-      {activeModule === 'timesheet' && (
-        <Screen5TimeTracker />
-      )}
+      {/* 2. Team Space (Assigned Squad Roster) */}
+      {effectiveSpace === 'Team' && <ScreenTeams />}
 
-      {activeModule === 'time-off' && (
-        <Screen7TimeOff />
-      )}
+      {/* 3. My Space (Personal Self-Service Space with Side Navbar Modules) */}
+      {effectiveSpace === 'My Space' && (
+        <>
+          {effectiveModule === 'home' && (
+            <Screen1Overview
+              onNavigateModule={(mod, sub) => {
+                navigateToModule(mod, sub as any);
+              }}
+            />
+          )}
 
-      {activeModule === 'teams' && (
-        <ScreenTeams />
-      )}
+          {effectiveModule === 'attendance' && (
+            <>
+              {attendanceViewMode === 'timeline' && (
+                <Screen2Timeline onToggleView={setAttendanceViewMode} />
+              )}
+              {attendanceViewMode === 'table' && (
+                <Screen3Table onToggleView={setAttendanceViewMode} />
+              )}
+              {attendanceViewMode === 'calendar' && (
+                <Screen4Calendar onToggleView={setAttendanceViewMode} />
+              )}
+            </>
+          )}
 
-      {activeModule === 'projects' && (
-        <ScreenProjects />
+          {effectiveModule === 'timesheet' && <Screen5TimeTracker />}
+
+          {effectiveModule === 'time-off' && <Screen7TimeOff />}
+
+          {effectiveModule === 'projects' && <ScreenProjects />}
+
+          {effectiveModule === 'payroll' && <ScreenPayroll />}
+
+          {effectiveModule === 'approvals' && <ScreenApprovals />}
+
+          {effectiveModule === 'files' && <ScreenFiles />}
+        </>
       )}
     </EmsLayout>
   );
 }
-
-

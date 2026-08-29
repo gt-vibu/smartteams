@@ -7,11 +7,7 @@ interface CalendarDetailDrawerProps {
   onClose: () => void;
 }
 
-export function CalendarDetailDrawer({
-  day,
-  isOpen,
-  onClose,
-}: CalendarDetailDrawerProps) {
+export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -31,18 +27,20 @@ export function CalendarDetailDrawer({
           {/* Header */}
           <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
             <div>
-              <h2 className="!text-sm !font-bold !text-slate-900 !m-0">
-                Shift & Day Schedule
-              </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {day.date}
-              </p>
+              <h2 className="!text-sm !font-bold !text-slate-900 !m-0">Shift & Day Schedule</h2>
+              <p className="text-xs text-slate-500 mt-0.5">{day.date}</p>
             </div>
             <button
               onClick={onClose}
               className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>

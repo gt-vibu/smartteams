@@ -40,7 +40,9 @@ export function Screen7TimeOff() {
         ) : (
           <div className="bg-white rounded-[6px] border border-slate-200/90 p-8 text-center space-y-2 shadow-xs">
             <div className="text-sm font-bold text-slate-700">No leave applications found</div>
-            <p className="text-xs text-slate-500">Click "Apply Leave" above to submit a new time-off request.</p>
+            <p className="text-xs text-slate-500">
+              Click "Apply Leave" above to submit a new time-off request.
+            </p>
           </div>
         )}
       </div>

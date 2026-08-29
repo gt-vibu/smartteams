@@ -28,9 +28,8 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
   };
 
   return (
-    <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-x-auto no-scrollbar">
-      <table className="w-full text-left text-xs border-collapse min-w-[850px]">
-
+    <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
+      <table className="w-full text-left text-xs border-collapse min-w-[650px] sm:min-w-[850px]">
         <tbody>
           {groupedLogs.map((group) => {
             const allGroupSelected = group.entries.every((e) => selectedIds.has(e.id));
@@ -50,7 +49,10 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                   <td colSpan={3} className="py-2.5 px-3 font-bold text-slate-800 text-xs">
                     {group.date}
                   </td>
-                  <td className="py-2.5 px-4 text-right font-mono font-bold text-emerald-600 text-xs" colSpan={2}>
+                  <td
+                    className="py-2.5 px-4 text-right font-mono font-bold text-emerald-600 text-xs"
+                    colSpan={2}
+                  >
                     {group.totalDayHours}
                   </td>
                 </tr>
@@ -86,7 +88,8 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                       {/* Job Name · Project Name */}
                       <td className="py-3 px-3 max-w-[280px]">
                         <div className="font-semibold text-slate-800 group-hover:text-[#0284C7] transition-colors truncate">
-                          {entry.jobName} <span className="text-slate-400 font-normal">· {entry.projectName}</span>
+                          {entry.jobName}{' '}
+                          <span className="text-slate-400 font-normal">· {entry.projectName}</span>
                         </div>
                       </td>
 
@@ -109,9 +112,23 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
 
                       {/* Location Pin Icon */}
                       <td className="py-3 px-3 w-10 text-center text-slate-400 hover:text-slate-600">
-                        <svg className="h-3.5 w-3.5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <svg
+                          className="h-3.5 w-3.5 inline-block"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
                         </svg>
                       </td>
                     </tr>

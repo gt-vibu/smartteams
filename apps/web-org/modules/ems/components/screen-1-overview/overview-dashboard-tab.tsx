@@ -1,15 +1,16 @@
-'use client';
-
 import React from 'react';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import { useLeave } from '../../hooks/use-leave';
+import { useAuth } from '../../hooks/use-auth';
 
 interface OverviewDashboardTabProps {
-  onNavigateModule?: (module: 'home' | 'attendance' | 'timesheet' | 'time-off', subView?: 'timeline' | 'table' | 'calendar') => void;
+  onNavigateModule?: (module: string, subView?: 'timeline' | 'table' | 'calendar') => void;
 }
 
 export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabProps) {
+  const { persona, hasPermission } = useAuth();
+  const isAdmin = hasPermission('*') || persona.badge.includes('Admin');
   const { records } = useAttendance();
   const { summary } = useTimesheet();
   const { balances } = useLeave();
@@ -27,25 +28,37 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
         <div className="bg-white rounded-[6px] border border-slate-200 p-4 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>Attendance Rate</span>
-            <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold">This Month</span>
+            <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold">
+              This Month
+            </span>
           </div>
           <div className="text-xl font-bold text-slate-900 mt-2">{attendanceRate}%</div>
-          <p className="text-[11px] text-slate-400 mt-1">{presentCount} of {totalDays} work days recorded</p>
+          <p className="text-[11px] text-slate-400 mt-1">
+            {presentCount} of {totalDays} work days recorded
+          </p>
         </div>
 
         <div className="bg-white rounded-[6px] border border-slate-200 p-4 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>Hours Logged</span>
-            <span className="text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded text-[10px] font-bold">Timesheet</span>
+            <span className="text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded text-[10px] font-bold">
+              Timesheet
+            </span>
           </div>
-          <div className="text-xl font-bold font-mono text-slate-900 mt-2">{summary.totalHours}</div>
-          <p className="text-[11px] text-slate-400 mt-1">{summary.submittedHours} submitted, {summary.notSubmittedHours} pending</p>
+          <div className="text-xl font-bold font-mono text-slate-900 mt-2">
+            {summary.totalHours}
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1">
+            {summary.submittedHours} submitted, {summary.notSubmittedHours} pending
+          </p>
         </div>
 
         <div className="bg-white rounded-[6px] border border-slate-200 p-4 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>Leave Balance</span>
-            <span className="text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded text-[10px] font-bold">Available</span>
+            <span className="text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded text-[10px] font-bold">
+              Available
+            </span>
           </div>
           <div className="text-xl font-bold text-slate-900 mt-2">{totalLeaveAvailable} Days</div>
           <p className="text-[11px] text-slate-400 mt-1">Across Casual, Sick, and Earned Leaves</p>
@@ -54,7 +67,9 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
         <div className="bg-white rounded-[6px] border border-slate-200 p-4 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs font-medium">
             <span>Shift Status</span>
-            <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold">On Schedule</span>
+            <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold">
+              On Schedule
+            </span>
           </div>
           <div className="text-sm font-bold text-slate-900 mt-2">10:00 AM - 6:00 PM</div>
           <p className="text-[11px] text-slate-400 mt-1">General Shift · Mon to Fri</p>
@@ -124,13 +139,23 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
               <div className="font-semibold text-slate-800">Log & Submit Timesheets</div>
               <span className="text-sky-600 font-bold text-[11px]">Go →</span>
             </button>
-            <button
-              onClick={() => onNavigateModule?.('time-off')}
-              className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
-            >
-              <div className="font-semibold text-slate-800">Apply for Time Off / Leave</div>
-              <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-            </button>
+            {isAdmin ? (
+              <button
+                onClick={() => onNavigateModule?.('approvals')}
+                className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
+              >
+                <div className="font-semibold text-slate-800">Review Managerial Approvals</div>
+                <span className="text-sky-600 font-bold text-[11px]">Go →</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => onNavigateModule?.('time-off')}
+                className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
+              >
+                <div className="font-semibold text-slate-800">Apply for Time Off / Leave</div>
+                <span className="text-sky-600 font-bold text-[11px]">Go →</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

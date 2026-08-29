@@ -1,0 +1,151 @@
+{
+  "header": {
+    "title": "Statutory Rules & Legal Compliance Engine",
+    "description": "Jurisdiction rules, state Professional Tax slabs, and organization registrations governing payroll calculations.",
+    "badgePrefix": "Tax Year",
+    "badgeSuffix": "Compliant"
+  },
+  "tabs": {
+    "rules": "Statutory Rule Sets",
+    "companyProfile": "Company Registrations",
+    "ptSlabs": "State PT Slabs"
+  },
+  "defaultConfig": {
+    "registeredState": "Karnataka",
+    "panNumber": "AAHCS4921K",
+    "tanNumber": "BLRS09123D",
+    "epfRegCode": "KN/BNG/0019283/000",
+    "esiRegCode": "53000918230001001",
+    "ptRegCode": "PT/KA/091823",
+    "payFrequency": "MONTHLY",
+    "cutOffDay": 25,
+    "payoutDay": 30,
+    "lopMethod": "CALENDAR_DAYS",
+    "epfEnabled": true,
+    "esiEnabled": true,
+    "ptEnabled": true,
+    "gratuityEnabled": true,
+    "defaultTaxRegime": "NEW_115BAC",
+    "taxYear": "2026-27"
+  },
+  "rulesCatalog": [
+    {
+      "id": "rule-epf",
+      "shortName": "EPF Scheme",
+      "category": "Social Security",
+      "ruleName": "Employees’ Provident Funds Scheme (EPF)",
+      "authority": "EPFO (Ministry of Labour & Employment)",
+      "act": "Employees’ Provident Funds & Misc. Provisions Act, 1952",
+      "jurisdiction": "National (India)",
+      "employeeRate": "12% of Basic",
+      "employerRate": "12% (EPF + EPS)",
+      "wageThreshold": "Cap ₹1,800/mo",
+      "employeeContribution": "12% of PF Wage (Basic + DA)",
+      "employerContribution": "12% (3.67% EPF + 8.33% EPS + 0.5% EDLI)",
+      "wageCeiling": "₹15,000 / month (Standard Statutory Cap = ₹1,800/mo)",
+      "applicability": "Establishments with 20+ employees. Mandatory for wages up to ₹15,000; optional above ceiling.",
+      "effectiveDate": "Active (Rule Ver 2026.1)"
+    },
+    {
+      "id": "rule-esi",
+      "shortName": "ESI Health",
+      "category": "Medical Benefit",
+      "ruleName": "Employees’ State Insurance (ESI)",
+      "authority": "ESIC (Ministry of Labour & Employment)",
+      "act": "Employees’ State Insurance Act, 1948",
+      "jurisdiction": "Industrial Areas",
+      "employeeRate": "0.75% of Gross",
+      "employerRate": "3.25% of Gross",
+      "wageThreshold": "Gross ≤ ₹21,000",
+      "employeeContribution": "0.75% of Gross Wage",
+      "employerContribution": "3.25% of Gross Wage",
+      "wageCeiling": "₹21,000 / month Gross Wage (₹25,000 for Persons with Disabilities)",
+      "applicability": "Applicable when monthly gross wages ≤ ₹21,000. Exempt if gross > ₹21,000.",
+      "effectiveDate": "Active (Rule Ver 2026.1)"
+    },
+    {
+      "id": "rule-pt",
+      "shortName": "Professional Tax (PT)",
+      "category": "State Tax",
+      "ruleName": "State Professional Tax (PT)",
+      "authority": "State Commercial Taxes Departments",
+      "act": "State-specific Professions, Trades, Callings & Employments Tax Acts",
+      "jurisdiction": "Karnataka (State)",
+      "employeeRate": "₹200 / month",
+      "employerRate": "Nil",
+      "wageThreshold": "Gross > ₹25,000",
+      "employeeContribution": "State Slab (e.g. Karnataka ₹200/mo for > ₹25k)",
+      "employerContribution": "Nil (Employee-side statutory deduction)",
+      "wageCeiling": "Varies by State Slabs",
+      "applicability": "Automatically derived from employee work location.",
+      "effectiveDate": "Active (State Slabs 2026-27)"
+    },
+    {
+      "id": "rule-gratuity",
+      "shortName": "Gratuity Provision",
+      "category": "Retirement",
+      "ruleName": "Gratuity Provisioning",
+      "authority": "Ministry of Labour & Employment",
+      "act": "Payment of Gratuity Act, 1972 & Code on Social Security",
+      "jurisdiction": "National (India)",
+      "employeeRate": "Nil",
+      "employerRate": "4.81% of Basic",
+      "wageThreshold": "Cap ₹20 Lakh",
+      "employeeContribution": "Nil",
+      "employerContribution": "4.81% of Basic Salary ((15/26) * Basic / 12)",
+      "wageCeiling": "₹20,00,000 lifetime statutory cap",
+      "applicability": "Employer-side liability provision. Payable on completion of 5 years service (or 1 year for fixed-term).",
+      "effectiveDate": "Active (Rule Ver 2026.1)"
+    },
+    {
+      "id": "rule-tds",
+      "shortName": "Income Tax (TDS)",
+      "category": "Direct Tax",
+      "ruleName": "Salary Tax Deduction at Source (TDS)",
+      "authority": "Central Board of Direct Taxes (CBDT)",
+      "act": "Section 392(1), Income Tax Act, 2025 (Tax Year 2026-27)",
+      "jurisdiction": "National (India)",
+      "employeeRate": "Slab-based",
+      "employerRate": "Nil",
+      "wageThreshold": "> ₹3,00,000/yr",
+      "employeeContribution": "Calculated using annual projected income & regime slabs",
+      "employerContribution": "Nil",
+      "wageCeiling": "Basic exemption threshold: ₹3,00,000 (Old) / ₹3,00,000 (New)",
+      "applicability": "Mandatory deduction on estimated taxable salary exceeding threshold.",
+      "effectiveDate": "Tax Year 2026-27"
+    }
+  ],
+  "statePtSlabs": [
+    {
+      "state": "Karnataka",
+      "ruleCode": "PT_KA_2026",
+      "slabs": [
+        { "min": 0, "max": 24999, "monthlyAmount": 0, "notes": "Exempt" },
+        { "min": 25000, "max": null, "monthlyAmount": 200, "notes": "Standard monthly deduction" }
+      ]
+    },
+    {
+      "state": "Maharashtra",
+      "ruleCode": "PT_MH_2026",
+      "slabs": [
+        { "min": 0, "max": 7500, "monthlyAmount": 0, "notes": "Exempt" },
+        { "min": 7501, "max": 10000, "monthlyAmount": 175, "notes": "Monthly deduction" },
+        {
+          "min": 10001,
+          "max": null,
+          "monthlyAmount": 200,
+          "notes": "₹200 for 11 months, ₹300 for February"
+        }
+      ]
+    },
+    {
+      "state": "Telangana",
+      "ruleCode": "PT_TS_2026",
+      "slabs": [
+        { "min": 0, "max": 15000, "monthlyAmount": 0, "notes": "Exempt" },
+        { "min": 15001, "max": 20000, "monthlyAmount": 150, "notes": "Monthly deduction" },
+        { "min": 20001, "max": null, "monthlyAmount": 200, "notes": "Monthly deduction" }
+      ]
+    }
+  ]
+}

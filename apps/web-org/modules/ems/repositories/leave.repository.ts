@@ -7,20 +7,22 @@ export interface ILeaveRepository {
   getBalances(): LeaveBalanceItem[];
   getApplications(): LeaveApplicationItem[];
   applyLeave(data: ApplyLeaveFormData): LeaveApplicationItem[];
+  approveApplication(id: string): LeaveApplicationItem[];
+  rejectApplication(id: string): LeaveApplicationItem[];
 }
 
 export class LocalLeaveRepository implements ILeaveRepository {
   getBalances(): LeaveBalanceItem[] {
     return emsStorageAdapter.getItem<LeaveBalanceItem[]>(
       EMS_STORAGE_KEYS.LEAVE_BALANCES,
-      leaveFixture.balances as LeaveBalanceItem[]
+      leaveFixture.balances as LeaveBalanceItem[],
     );
   }
 
   getApplications(): LeaveApplicationItem[] {
     return emsStorageAdapter.getItem<LeaveApplicationItem[]>(
       EMS_STORAGE_KEYS.LEAVE_APPLICATIONS,
-      leaveFixture.applications as LeaveApplicationItem[]
+      leaveFixture.applications as LeaveApplicationItem[],
     );
   }
 
@@ -28,8 +30,22 @@ export class LocalLeaveRepository implements ILeaveRepository {
     const apps = this.getApplications();
     const balances = this.getBalances();
 
-    const leaveTypeName = data.leaveTypeId === 'lt_cl' ? 'Casual Leave' : data.leaveTypeId === 'lt_el' ? 'Earned / Privilege Leave' : data.leaveTypeId === 'lt_sl' ? 'Sick Leave' : 'Compensatory Off';
-    const code = data.leaveTypeId === 'lt_cl' ? 'CL' : data.leaveTypeId === 'lt_el' ? 'EL' : data.leaveTypeId === 'lt_sl' ? 'SL' : 'COMP';
+    const leaveTypeName =
+      data.leaveTypeId === 'lt_cl'
+        ? 'Casual Leave'
+        : data.leaveTypeId === 'lt_el'
+          ? 'Earned / Privilege Leave'
+          : data.leaveTypeId === 'lt_sl'
+            ? 'Sick Leave'
+            : 'Compensatory Off';
+    const code =
+      data.leaveTypeId === 'lt_cl'
+        ? 'CL'
+        : data.leaveTypeId === 'lt_el'
+          ? 'EL'
+          : data.leaveTypeId === 'lt_sl'
+            ? 'SL'
+            : 'COMP';
 
     const newApp: LeaveApplicationItem = {
       id: `app_${Date.now()}`,
@@ -41,7 +57,9 @@ export class LocalLeaveRepository implements ILeaveRepository {
       reason: data.reason,
       approverName: '009 · Ranjith Kumar C',
       status: 'PENDING',
-      appliedOn: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-'),
+      appliedOn: new Date()
+        .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+        .replace(/ /g, '-'),
     };
 
     const updatedApps = [newApp, ...apps];
@@ -60,6 +78,20 @@ export class LocalLeaveRepository implements ILeaveRepository {
     emsStorageAdapter.setItem(EMS_STORAGE_KEYS.LEAVE_BALANCES, updatedBalances);
 
     return updatedApps;
+  }
+
+  approveApplication(id: string): LeaveApplicationItem[] {
+    const apps = this.getApplications();
+    const updated = apps.map((a) => (a.id === id ? { ...a, status: 'APPROVED' as const } : a));
+    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.LEAVE_APPLICATIONS, updated);
+    return updated;
+  }
+
+  rejectApplication(id: string): LeaveApplicationItem[] {
+    const apps = this.getApplications();
+    const updated = apps.map((a) => (a.id === id ? { ...a, status: 'REJECTED' as const } : a));
+    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.LEAVE_APPLICATIONS, updated);
+    return updated;
   }
 }
 

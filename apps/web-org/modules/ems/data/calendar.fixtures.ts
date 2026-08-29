@@ -94,9 +94,7 @@ const generateAugust2026Days = (): CalendarDayItem[] => {
         dayStatus: 'PRESENT',
         hoursLabel: '03:53 Hrs',
         shiftName: 'General Shift',
-        punches: [
-          { type: 'IN', time: '09:43 AM', source: 'NATIVE' },
-        ],
+        punches: [{ type: 'IN', time: '09:43 AM', source: 'NATIVE' }],
       });
     } else {
       // Upcoming future days

@@ -20,12 +20,8 @@ export function AttendanceActionBar() {
     <div className="bg-white rounded-[6px] border border-slate-200/90 p-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-wrap items-center justify-between gap-3">
       {/* Shift Badge & Timing */}
       <div className="flex items-center gap-2">
-        <span className="text-xs font-bold text-slate-800">
-          General Shift
-        </span>
-        <span className="text-xs text-slate-500 font-medium">
-          [ 10:00 AM - 6:00 PM ]
-        </span>
+        <span className="text-xs font-bold text-slate-800">General Shift</span>
+        <span className="text-xs text-slate-500 font-medium">[ 10:00 AM - 6:00 PM ]</span>
       </div>
 
       {/* Note Input & Action Button */}

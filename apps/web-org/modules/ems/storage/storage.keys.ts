@@ -14,5 +14,4 @@ export const EMS_STORAGE_KEYS = {
   ACTIVE_SCENARIO: 'ems_active_scenario',
 } as const;
 
-export const EMS_STORAGE_VERSION = '1.0.0';
-
+export const EMS_STORAGE_VERSION = '2.1.0';

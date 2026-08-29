@@ -1,5 +1,4 @@
 import { EMS_STORAGE_KEYS, EMS_STORAGE_VERSION } from './storage.keys';
-import employeesFixture from '../data/fixtures/employees.json';
 import attendanceFixture from '../data/fixtures/attendance.json';
 import shiftsFixture from '../data/fixtures/shifts.json';
 import holidaysFixture from '../data/fixtures/holidays.json';
@@ -24,15 +23,31 @@ class EmsStorageAdapter {
       if (!storedVersion || storedVersion !== EMS_STORAGE_VERSION || forceReset) {
         // Seed from JSON fixtures
         localStorage.setItem(EMS_STORAGE_KEYS.VERSION, EMS_STORAGE_VERSION);
-        localStorage.setItem(EMS_STORAGE_KEYS.EMPLOYEE, JSON.stringify(employeesFixture.currentEmployee));
-        localStorage.setItem(EMS_STORAGE_KEYS.ATTENDANCE_STATE, JSON.stringify(attendanceFixture.liveState));
-        localStorage.setItem(EMS_STORAGE_KEYS.ATTENDANCE_RECORDS, JSON.stringify(attendanceFixture.records));
-        localStorage.setItem(EMS_STORAGE_KEYS.ATTENDANCE_PUNCHES, JSON.stringify(attendanceFixture.punches));
+        // NOTE: EMPLOYEE profile is NOT seeded here — it is written exclusively by
+        // auth.repository.switchPersona() so it always reflects the logged-in persona.
+        localStorage.setItem(
+          EMS_STORAGE_KEYS.ATTENDANCE_STATE,
+          JSON.stringify(attendanceFixture.liveState),
+        );
+        localStorage.setItem(
+          EMS_STORAGE_KEYS.ATTENDANCE_RECORDS,
+          JSON.stringify(attendanceFixture.records),
+        );
+        localStorage.setItem(
+          EMS_STORAGE_KEYS.ATTENDANCE_PUNCHES,
+          JSON.stringify(attendanceFixture.punches),
+        );
         localStorage.setItem(EMS_STORAGE_KEYS.SHIFTS, JSON.stringify(shiftsFixture.shifts));
         localStorage.setItem(EMS_STORAGE_KEYS.HOLIDAYS, JSON.stringify(holidaysFixture.holidays));
         localStorage.setItem(EMS_STORAGE_KEYS.TIMESHEETS, JSON.stringify(timesheetsFixture));
-        localStorage.setItem(EMS_STORAGE_KEYS.LEAVE_BALANCES, JSON.stringify(leaveFixture.balances));
-        localStorage.setItem(EMS_STORAGE_KEYS.LEAVE_APPLICATIONS, JSON.stringify(leaveFixture.applications));
+        localStorage.setItem(
+          EMS_STORAGE_KEYS.LEAVE_BALANCES,
+          JSON.stringify(leaveFixture.balances),
+        );
+        localStorage.setItem(
+          EMS_STORAGE_KEYS.LEAVE_APPLICATIONS,
+          JSON.stringify(leaveFixture.applications),
+        );
       }
     } catch {
       // Ignore storage errors in restricted iframe environments
@@ -53,8 +68,10 @@ class EmsStorageAdapter {
     if (!this.isBrowser) return;
     try {
       localStorage.setItem(key, JSON.stringify(value));
-      // Dispatch custom storage event for in-tab cross-component reactivity
-      window.dispatchEvent(new CustomEvent('ems:storage:change', { detail: { key } }));
+      // Dispatch custom storage event asynchronously so active render passes are never interrupted
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('ems:storage:change', { detail: { key } }));
+      }, 0);
     } catch {
       // Quota exceeded or private mode fallback
     }
@@ -64,7 +81,9 @@ class EmsStorageAdapter {
     if (!this.isBrowser) return;
     try {
       localStorage.removeItem(key);
-      window.dispatchEvent(new CustomEvent('ems:storage:change', { detail: { key } }));
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('ems:storage:change', { detail: { key } }));
+      }, 0);
     } catch {
       // Ignore
     }
@@ -73,11 +92,15 @@ class EmsStorageAdapter {
   public resetToDefaults(): void {
     this.initSeed(true);
     if (this.isBrowser) {
-      window.dispatchEvent(new CustomEvent('ems:storage:reset'));
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('ems:storage:reset'));
+      }, 0);
     }
   }
 
-  public seedScenario(scenario: 'fresh' | 'checked-in' | 'checked-out' | 'pending-approvals' | 'empty-state'): void {
+  public seedScenario(
+    scenario: 'fresh' | 'checked-in' | 'checked-out' | 'pending-approvals' | 'empty-state',
+  ): void {
     if (!this.isBrowser) return;
     this.setItem(EMS_STORAGE_KEYS.ACTIVE_SCENARIO, scenario);
 
@@ -96,7 +119,7 @@ class EmsStorageAdapter {
         lastNote: '',
       };
       this.setItem(EMS_STORAGE_KEYS.ATTENDANCE_STATE, liveState);
-      
+
       const records = this.getItem(EMS_STORAGE_KEYS.ATTENDANCE_RECORDS, attendanceFixture.records);
       const updated = records.map((r: any) => {
         if (r.isToday) {
@@ -112,7 +135,11 @@ class EmsStorageAdapter {
         return r;
       });
       this.setItem(EMS_STORAGE_KEYS.ATTENDANCE_RECORDS, updated);
-      window.dispatchEvent(new CustomEvent('ems:storage:change', { detail: { key: EMS_STORAGE_KEYS.ATTENDANCE_STATE } }));
+      window.dispatchEvent(
+        new CustomEvent('ems:storage:change', {
+          detail: { key: EMS_STORAGE_KEYS.ATTENDANCE_STATE },
+        }),
+      );
     } else if (scenario === 'checked-out') {
       const liveState = {
         isCheckedIn: false,
@@ -139,7 +166,11 @@ class EmsStorageAdapter {
         return r;
       });
       this.setItem(EMS_STORAGE_KEYS.ATTENDANCE_RECORDS, updated);
-      window.dispatchEvent(new CustomEvent('ems:storage:change', { detail: { key: EMS_STORAGE_KEYS.ATTENDANCE_STATE } }));
+      window.dispatchEvent(
+        new CustomEvent('ems:storage:change', {
+          detail: { key: EMS_STORAGE_KEYS.ATTENDANCE_STATE },
+        }),
+      );
     } else if (scenario === 'pending-approvals') {
       const pendingLeaveApp = {
         id: `app_pending_${Date.now()}`,
@@ -166,10 +197,18 @@ class EmsStorageAdapter {
           notSubmittedHours: '80:00 Hrs',
         },
       });
-      window.dispatchEvent(new CustomEvent('ems:storage:change', { detail: { key: EMS_STORAGE_KEYS.LEAVE_APPLICATIONS } }));
+      window.dispatchEvent(
+        new CustomEvent('ems:storage:change', {
+          detail: { key: EMS_STORAGE_KEYS.LEAVE_APPLICATIONS },
+        }),
+      );
     } else if (scenario === 'empty-state') {
       this.setItem(EMS_STORAGE_KEYS.TIMESHEETS, {
-        summary: { totalHours: '00:00 Hrs', submittedHours: '00:00 Hrs', notSubmittedHours: '00:00 Hrs' },
+        summary: {
+          totalHours: '00:00 Hrs',
+          submittedHours: '00:00 Hrs',
+          notSubmittedHours: '00:00 Hrs',
+        },
         approvedNotification: null,
         groupedLogs: [],
       });

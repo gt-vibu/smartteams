@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useAuth } from '../../hooks/use-auth';
 
 interface ApprovalItem {
   id: string;
@@ -13,6 +14,13 @@ interface ApprovalItem {
 }
 
 export function OverviewApprovalsTab() {
+  const { hasExplicitPermission } = useAuth();
+
+  const isManagerApprover =
+    hasExplicitPermission('leave.approve') ||
+    hasExplicitPermission('timesheets.approve') ||
+    hasExplicitPermission('attendance.approve');
+
   const [approvals, setApprovals] = useState<ApprovalItem[]>([
     {
       id: 'appr-1',
@@ -20,7 +28,8 @@ export function OverviewApprovalsTab() {
       requesterName: 'Mithun Gowda H',
       requesterRole: 'Software Engineer',
       date: 'Aug 24, 2026',
-      details: 'Missed Check-out punch due to offsite network maintenance. Requested payable hours: 8.0 hrs.',
+      details:
+        'Missed Check-out punch due to offsite network maintenance. Requested payable hours: 8.0 hrs.',
       status: 'PENDING',
     },
     {
@@ -43,9 +52,23 @@ export function OverviewApprovalsTab() {
     },
   ]);
 
+  if (!isManagerApprover) {
+    return (
+      <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-2xs p-8 text-center space-y-2">
+        <div className="text-2xl">📋</div>
+        <h4 className="text-xs font-bold text-slate-800">No Approvals Assigned</h4>
+        <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
+          You are currently in Individual Contributor mode. Managerial approvals for team
+          timesheets, leave requests, and attendance corrections are assigned exclusively to
+          designated reporting managers.
+        </p>
+      </div>
+    );
+  }
+
   const handleAction = (id: string, newStatus: 'APPROVED' | 'REJECTED') => {
     setApprovals((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
+      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item)),
     );
   };
 
@@ -56,10 +79,11 @@ export function OverviewApprovalsTab() {
       <div className="p-4 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
         <div>
           <h3 className="!text-xs !font-bold !text-slate-800 !m-0">
-            Pending Approvals & Action Requests
+            Pending Team Approvals & Action Requests
           </h3>
           <p className="text-[11px] text-slate-500 mt-0.5">
-            Review and take action on attendance corrections, leave requests, and timesheets.
+            Review and take action on direct reports' attendance corrections, leave requests, and
+            timesheets.
           </p>
         </div>
         <span className="text-xs font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded border border-sky-200">
@@ -69,7 +93,10 @@ export function OverviewApprovalsTab() {
 
       <div className="divide-y divide-slate-100">
         {approvals.map((item) => (
-          <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div
+            key={item.id}
+            className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+          >
             <div className="space-y-1 max-w-xl">
               <div className="flex items-center gap-2">
                 <span
@@ -77,8 +104,8 @@ export function OverviewApprovalsTab() {
                     item.type === 'LEAVE'
                       ? 'bg-amber-50 text-amber-700 border-amber-200'
                       : item.type === 'ATTENDANCE_REGULARIZATION'
-                      ? 'bg-purple-50 text-purple-700 border-purple-200'
-                      : 'bg-sky-50 text-sky-700 border-sky-200'
+                        ? 'bg-purple-50 text-purple-700 border-purple-200'
+                        : 'bg-sky-50 text-sky-700 border-sky-200'
                   }`}
                 >
                   {item.type.replace('_', ' ')}
@@ -87,7 +114,9 @@ export function OverviewApprovalsTab() {
                 <span className="text-[11px] text-slate-400">({item.requesterRole})</span>
               </div>
               <div className="text-xs text-slate-700 font-medium">{item.details}</div>
-              <div className="text-[11px] text-slate-400 font-mono">Date / Duration: {item.date}</div>
+              <div className="text-[11px] text-slate-400 font-mono">
+                Date / Duration: {item.date}
+              </div>
             </div>
 
             {/* Status / Action Buttons */}

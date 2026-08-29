@@ -1,0 +1,66 @@
+{
+  "categories": [
+    { "id": "all", "label": "All Documents" },
+    { "id": "company", "label": "Company Policies" },
+    { "id": "statutory", "label": "Statutory & Tax (Form 16)" },
+    { "id": "letters", "label": "Employment Letters" },
+    { "id": "identity", "label": "Identity & KYC Proofs" }
+  ],
+  "files": [
+    {
+      "id": "file-01",
+      "name": "Smarteam_Employee_Handbook_2026.pdf",
+      "category": "company",
+      "size": "2.4 MB",
+      "fileType": "PDF",
+      "uploadedAt": "15-Jan-2026",
+      "uploadedBy": "HR Operations",
+      "security": "CONFIDENTIAL",
+      "downloadUrl": "#"
+    },
+    {
+      "id": "file-02",
+      "name": "Form_16_FY25_26_PartA_PartB.pdf",
+      "category": "statutory",
+      "size": "680 KB",
+      "fileType": "PDF",
+      "uploadedAt": "10-Jun-2026",
+      "uploadedBy": "Payroll Admin",
+      "security": "RESTRICTED",
+      "downloadUrl": "#"
+    },
+    {
+      "id": "file-03",
+      "name": "Appointment_Letter_Mithun_Gowda.pdf",
+      "category": "letters",
+      "size": "420 KB",
+      "fileType": "PDF",
+      "uploadedAt": "15-Mar-2024",
+      "uploadedBy": "Talent Acquisition",
+      "security": "RESTRICTED",
+      "downloadUrl": "#"
+    },
+    {
+      "id": "file-04",
+      "name": "Information_Security_Acceptable_Use_Policy.pdf",
+      "category": "company",
+      "size": "1.1 MB",
+      "fileType": "PDF",
+      "uploadedAt": "22-Aug-2026",
+      "uploadedBy": "Security Team",
+      "security": "INTERNAL",
+      "downloadUrl": "#"
+    },
+    {
+      "id": "file-05",
+      "name": "PAN_Card_Copy_Verified.pdf",
+      "category": "identity",
+      "size": "310 KB",
+      "fileType": "PDF",
+      "uploadedAt": "15-Mar-2024",
+      "uploadedBy": "Self",
+      "security": "CONFIDENTIAL",
+      "downloadUrl": "#"
+    }
+  ]
+}

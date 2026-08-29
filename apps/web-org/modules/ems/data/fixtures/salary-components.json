@@ -1,0 +1,176 @@
+{
+  "statutoryComponents": [
+    {
+      "id": "comp-basic",
+      "code": "BASIC",
+      "name": "Basic Salary",
+      "category": "EARNING",
+      "isStatutory": true,
+      "taxability": "TAXABLE",
+      "defaultCalculationType": "PERCENTAGE_OF_CTC",
+      "defaultValue": 50,
+      "description": "Core taxable wage component. Base for PF, Gratuity, and Leave Encashment calculations under Indian labour laws.",
+      "statutoryActs": ["Code on Wages, 2019", "EPF Act, 1952", "Payment of Gratuity Act, 1972"]
+    },
+    {
+      "id": "comp-hra",
+      "code": "HRA",
+      "name": "House Rent Allowance",
+      "category": "EARNING",
+      "isStatutory": false,
+      "taxability": "PARTIALLY_EXEMPT",
+      "defaultCalculationType": "PERCENTAGE_OF_BASIC",
+      "defaultValue": 40,
+      "description": "Rental accommodation allowance eligible for tax exemption under Section 10(13A) of Income Tax Act under Old Tax Regime.",
+      "statutoryActs": ["Income Tax Act, 1961 - Sec 10(13A)"]
+    },
+    {
+      "id": "comp-special",
+      "code": "SPECIAL_ALLOWANCE",
+      "name": "Special Allowance",
+      "category": "EARNING",
+      "isStatutory": false,
+      "taxability": "TAXABLE",
+      "defaultCalculationType": "REMAINING_BALANCE",
+      "defaultValue": 0,
+      "description": "Flexible balancing allowance component absorbing remainder CTC. Fully taxable under both tax regimes.",
+      "statutoryActs": ["Income Tax Act, 1961"]
+    },
+    {
+      "id": "comp-conveyance",
+      "code": "CONVEYANCE",
+      "name": "Conveyance Allowance",
+      "category": "EARNING",
+      "isStatutory": false,
+      "taxability": "TAXABLE",
+      "defaultCalculationType": "FIXED",
+      "defaultValue": 1600,
+      "description": "Commute allowance. Merged under standard deduction since Budget 2018 for individual taxpayers.",
+      "statutoryActs": ["Income Tax Act, 1961"]
+    },
+    {
+      "id": "comp-lta",
+      "code": "LTA",
+      "name": "Leave Travel Allowance",
+      "category": "EARNING",
+      "isStatutory": false,
+      "taxability": "PARTIALLY_EXEMPT",
+      "defaultCalculationType": "PERCENTAGE_OF_BASIC",
+      "defaultValue": 8.33,
+      "description": "Domestic travel assistance eligible for tax exemption twice in a 4-year block under Old Tax Regime.",
+      "statutoryActs": ["Income Tax Act, 1961 - Sec 10(5)"]
+    },
+    {
+      "id": "comp-stat-bonus",
+      "code": "STATUTORY_BONUS",
+      "name": "Statutory Annual Bonus",
+      "category": "EARNING",
+      "isStatutory": true,
+      "taxability": "TAXABLE",
+      "defaultCalculationType": "PERCENTAGE_OF_BASIC",
+      "defaultValue": 8.33,
+      "description": "Mandatory annual bonus between 8.33% and 20% for eligible establishments under Payment of Bonus Act / Code on Wages.",
+      "statutoryActs": ["Payment of Bonus Act, 1965", "Code on Wages, 2019"]
+    },
+    {
+      "id": "comp-ot",
+      "code": "OVERTIME",
+      "name": "Overtime Wages",
+      "category": "EARNING",
+      "isStatutory": true,
+      "taxability": "TAXABLE",
+      "defaultCalculationType": "FORMULA",
+      "defaultValue": 200,
+      "description": "Premium wages paid at double ordinary rate (2.0x) for hours worked beyond 9 hrs/day or 48 hrs/week.",
+      "statutoryActs": [
+        "Factories Act, 1948",
+        "State Shops & Establishments Acts",
+        "Code on Wages, 2019"
+      ]
+    },
+    {
+      "id": "comp-pf-emp",
+      "code": "EPF_EMP",
+      "name": "Employee Provident Fund (EPF)",
+      "category": "DEDUCTION",
+      "isStatutory": true,
+      "taxability": "EXEMPT_CONTRIBUTION",
+      "defaultCalculationType": "PERCENTAGE_OF_BASIC",
+      "defaultValue": 12,
+      "description": "Mandatory employee retirement saving deduction (12% of Basic + DA up to ₹15,000 wage ceiling or actual).",
+      "statutoryActs": ["Employees' Provident Funds and Miscellaneous Provisions Act, 1952"]
+    },
+    {
+      "id": "comp-esi-emp",
+      "code": "ESI_EMP",
+      "name": "Employee State Insurance (ESI)",
+      "category": "DEDUCTION",
+      "isStatutory": true,
+      "taxability": "EXEMPT_CONTRIBUTION",
+      "defaultCalculationType": "PERCENTAGE_OF_GROSS",
+      "defaultValue": 0.75,
+      "description": "Healthcare coverage contribution (0.75% of Gross) for employees with monthly gross wages up to ₹21,000.",
+      "statutoryActs": ["Employees' State Insurance Act, 1948", "Code on Social Security, 2020"]
+    },
+    {
+      "id": "comp-pt",
+      "code": "PROFESSIONAL_TAX",
+      "name": "Professional Tax (PT)",
+      "category": "DEDUCTION",
+      "isStatutory": true,
+      "taxability": "TAX_DEDUCTIBLE",
+      "defaultCalculationType": "SLAB_BASED",
+      "defaultValue": 200,
+      "description": "State-level municipal tax on profession/employment (max ₹2,500/year under Article 276 of Indian Constitution).",
+      "statutoryActs": ["State Professional Tax Acts (KA, MH, TS, TN, WB, etc.)"]
+    },
+    {
+      "id": "comp-tds",
+      "code": "TDS",
+      "name": "Income Tax TDS (Sec 192)",
+      "category": "DEDUCTION",
+      "isStatutory": true,
+      "taxability": "TAX_DEDUCTION",
+      "defaultCalculationType": "TAX_ENGINE_ESTIMATE",
+      "defaultValue": 0,
+      "description": "Withholding tax deducted at source under Sec 192 based on employee declared regime and investment proofs.",
+      "statutoryActs": ["Income Tax Act, 1961 - Sec 192", "Finance Act (New Tax Regime Sec 115BAC)"]
+    },
+    {
+      "id": "comp-pf-empr",
+      "code": "EPF_EMPR",
+      "name": "Employer Provident Fund (PF / EPS / EDLI)",
+      "category": "EMPLOYER_CONTRIBUTION",
+      "isStatutory": true,
+      "taxability": "EXEMPT_UP_TO_LIMIT",
+      "defaultCalculationType": "PERCENTAGE_OF_BASIC",
+      "defaultValue": 12,
+      "description": "12% Employer PF split into 8.33% EPS (pension up to ₹1,250), 3.67% EPF, 0.50% EDLI, and 0.50% Admin charges.",
+      "statutoryActs": ["EPF Act, 1952", "EPS 1995", "EDLI Scheme 1976"]
+    },
+    {
+      "id": "comp-esi-empr",
+      "code": "ESI_EMPR",
+      "name": "Employer State Insurance (ESI)",
+      "category": "EMPLOYER_CONTRIBUTION",
+      "isStatutory": true,
+      "taxability": "BUSINESS_EXPENSE",
+      "defaultCalculationType": "PERCENTAGE_OF_GROSS",
+      "defaultValue": 3.25,
+      "description": "3.25% Employer health coverage contribution for gross wages <= ₹21,000/month.",
+      "statutoryActs": ["ESI Act, 1948", "Code on Social Security, 2020"]
+    },
+    {
+      "id": "comp-gratuity",
+      "code": "GRATUITY_PROVISION",
+      "name": "Gratuity Provision (Actuarial)",
+      "category": "EMPLOYER_CONTRIBUTION",
+      "isStatutory": true,
+      "taxability": "STATUTORY_BENEFIT",
+      "defaultCalculationType": "PERCENTAGE_OF_BASIC",
+      "defaultValue": 4.81,
+      "description": "Statutory gratuity accrual (15 days basic per year of service = 15/26/12 ≈ 4.81% of Basic) payable upon 5+ years tenure.",
+      "statutoryActs": ["Payment of Gratuity Act, 1972", "Code on Social Security, 2020"]
+    }
+  ]
+}

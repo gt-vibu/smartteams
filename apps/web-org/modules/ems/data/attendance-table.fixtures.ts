@@ -1,106 +1,38 @@
+import attendanceFixture from './fixtures/attendance.json';
 import { AttendanceTableRow } from '../types/attendance-table.types';
 
-export const mockAttendanceTableRows: AttendanceTableRow[] = [
-  {
-    id: 'row_sun_23',
-    date: 'Sun, 23-Aug-2026',
-    firstIn: '11:32 AM',
-    lastOut: '11:32 AM',
-    totalHours: '-',
-    payableHours: '08:00',
-    overtime: '00:00',
-    status: 'Weekend, Present',
-    statusType: 'weekend-present',
-    shift: 'General Shift',
-    canRegularize: false,
-    punches: [
-      { type: 'IN', time: '11:32 AM', source: 'NATIVE' },
-      { type: 'OUT', time: '11:32 AM', source: 'NATIVE' },
-    ],
-  },
-  {
-    id: 'row_mon_24',
-    date: 'Mon, 24-Aug-2026',
-    firstIn: '09:47 AM',
-    lastOut: '06:35 PM',
-    totalHours: '08:48',
-    payableHours: '08:00',
-    overtime: '00:48',
-    status: 'Present',
-    statusType: 'present',
-    shift: 'General Shift',
-    canRegularize: false,
-    punches: [
-      { type: 'IN', time: '09:47 AM', source: 'NATIVE' },
-      { type: 'OUT', time: '06:35 PM', source: 'NATIVE' },
-    ],
-  },
-  {
-    id: 'row_tue_25',
-    date: 'Tue, 25-Aug-2026',
-    firstIn: '09:43 AM',
-    lastOut: '-',
-    totalHours: '03:53',
-    payableHours: '-',
-    overtime: '08:00',
-    status: 'Present',
-    statusType: 'present',
-    shift: 'General Shift',
-    canRegularize: false,
-    punches: [
-      { type: 'IN', time: '09:43 AM', source: 'NATIVE' },
-    ],
-  },
-  {
-    id: 'row_wed_26',
-    date: 'Wed, 26-Aug-2026',
-    firstIn: '-',
-    lastOut: '-',
-    totalHours: '-',
-    payableHours: '-',
-    overtime: '-',
-    status: 'Onam(Restricted holiday)',
-    statusType: 'holiday',
-    shift: 'General Shift',
-    canRegularize: false,
-  },
-  {
-    id: 'row_thu_27',
-    date: 'Thu, 27-Aug-2026',
-    firstIn: '-',
-    lastOut: '-',
-    totalHours: '-',
-    payableHours: '-',
-    overtime: '-',
-    status: '-',
-    statusType: 'empty',
-    shift: 'General Shift',
-    canRegularize: true,
-  },
-  {
-    id: 'row_fri_28',
-    date: 'Fri, 28-Aug-2026',
-    firstIn: '-',
-    lastOut: '-',
-    totalHours: '-',
-    payableHours: '-',
-    overtime: '-',
-    status: '-',
-    statusType: 'empty',
-    shift: 'General Shift',
-    canRegularize: true,
-  },
-  {
-    id: 'row_sat_29',
-    date: 'Sat, 29-Aug-2026',
-    firstIn: '-',
-    lastOut: '-',
-    totalHours: '-',
-    payableHours: '08:00',
-    overtime: '-',
-    status: 'Weekend',
-    statusType: 'weekend',
-    shift: 'General Shift',
-    canRegularize: false,
-  },
-];
+export const mockAttendanceTableRows: AttendanceTableRow[] = attendanceFixture.records.map(
+  (r: any) => ({
+    id: r.id,
+    date: `${r.dayLabel}, ${r.workDate}`,
+    firstIn: r.firstInTime || '-',
+    lastOut: r.lastOutTime || '-',
+    totalHours:
+      r.workedMinutes > 0
+        ? `${Math.floor(r.workedMinutes / 60)
+            .toString()
+            .padStart(2, '0')}:${(r.workedMinutes % 60).toString().padStart(2, '0')}`
+        : '-',
+    payableHours: r.payableHours,
+    overtime: r.overtime,
+    status:
+      r.holidayName ||
+      (r.statusType === 'weekend'
+        ? 'Weekend'
+        : r.statusType === 'weekend-present'
+          ? 'Weekend, Present'
+          : r.dayStatus === 'PRESENT'
+            ? 'Present'
+            : '-'),
+    statusType: r.statusType,
+    shift: r.shiftName,
+    canRegularize: r.canRegularize,
+    punches: attendanceFixture.punches
+      .filter((p: any) => p.date === r.workDate)
+      .map((p: any) => ({
+        type: p.type,
+        time: p.time,
+        source: p.source,
+      })),
+  }),
+);

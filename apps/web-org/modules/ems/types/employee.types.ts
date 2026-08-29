@@ -12,14 +12,14 @@ export interface EmployeeProfile {
   phone?: string;
   employmentType?: 'FULL_TIME' | 'PART_TIME' | 'CONTRACTOR' | 'INTERN';
   status?: 'ACTIVE' | 'INACTIVE' | 'TERMINATED';
-  manager: {
+  manager?: {
     id: string;
     employeeNumber: string;
     firstName: string;
     lastName: string;
     jobTitle?: string;
     isOnline: boolean;
-  };
+  } | null;
   departmentMembers: Array<{
     id: string;
     employeeNumber: string;
@@ -29,4 +29,3 @@ export interface EmployeeProfile {
     isOnline: boolean;
   }>;
 }
-

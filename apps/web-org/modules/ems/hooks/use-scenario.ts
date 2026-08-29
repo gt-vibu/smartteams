@@ -5,15 +5,11 @@ import { emsStorageAdapter } from '../storage/storage.adapter';
 import { EMS_STORAGE_KEYS } from '../storage/storage.keys';
 
 export type EmsScenarioType =
-  | 'fresh'
-  | 'checked-in'
-  | 'checked-out'
-  | 'pending-approvals'
-  | 'empty-state';
+  'fresh' | 'checked-in' | 'checked-out' | 'pending-approvals' | 'empty-state';
 
 export function useScenario() {
   const [activeScenario, setActiveScenario] = useState<EmsScenarioType>(() =>
-    emsStorageAdapter.getItem<EmsScenarioType>(EMS_STORAGE_KEYS.ACTIVE_SCENARIO, 'fresh')
+    emsStorageAdapter.getItem<EmsScenarioType>(EMS_STORAGE_KEYS.ACTIVE_SCENARIO, 'fresh'),
   );
 
   const setScenario = useCallback((scenario: EmsScenarioType) => {
@@ -29,7 +25,7 @@ export function useScenario() {
   useEffect(() => {
     const handleStorage = () => {
       setActiveScenario(
-        emsStorageAdapter.getItem<EmsScenarioType>(EMS_STORAGE_KEYS.ACTIVE_SCENARIO, 'fresh')
+        emsStorageAdapter.getItem<EmsScenarioType>(EMS_STORAGE_KEYS.ACTIVE_SCENARIO, 'fresh'),
       );
     };
     window.addEventListener('ems:storage:reset', handleStorage);

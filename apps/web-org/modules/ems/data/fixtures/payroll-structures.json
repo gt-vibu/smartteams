@@ -1,0 +1,330 @@
+{
+  "structures": [
+    {
+      "id": "struct-default-org",
+      "code": "ORG_DEFAULT_2026",
+      "name": "Standard Organization Structure (50-40-Balance)",
+      "description": "Default baseline structure for all white-collar full-time staff across India branches.",
+      "level": "ORGANIZATION_DEFAULT",
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-04-01",
+      "components": [
+        {
+          "code": "BASIC",
+          "calculationType": "PERCENTAGE_OF_CTC",
+          "value": 50,
+          "isStatutory": true
+        },
+        {
+          "code": "HRA",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 40,
+          "isStatutory": false
+        },
+        {
+          "code": "SPECIAL_ALLOWANCE",
+          "calculationType": "REMAINING_BALANCE",
+          "value": 0,
+          "isStatutory": false
+        },
+        {
+          "code": "EPF_EMP",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "EPF_EMPR",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "PROFESSIONAL_TAX",
+          "calculationType": "SLAB_BASED",
+          "value": 200,
+          "isStatutory": true
+        },
+        {
+          "code": "GRATUITY_PROVISION",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 4.81,
+          "isStatutory": true
+        }
+      ],
+      "assignedRoles": [],
+      "assignedDepartments": [],
+      "assignedBranches": []
+    },
+    {
+      "id": "struct-role-eng",
+      "code": "ROLE_SOFTWARE_ENG",
+      "name": "Software Engineering Track Structure",
+      "description": "Tailored structure for individual contributor Software Engineers with standard remote allowance.",
+      "level": "ROLE_SPECIFIC",
+      "targetRole": "Software Engineer",
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-04-01",
+      "components": [
+        {
+          "code": "BASIC",
+          "calculationType": "PERCENTAGE_OF_CTC",
+          "value": 50,
+          "isStatutory": true
+        },
+        {
+          "code": "HRA",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 40,
+          "isStatutory": false
+        },
+        { "code": "CONVEYANCE", "calculationType": "FIXED", "value": 2000, "isStatutory": false },
+        {
+          "code": "SPECIAL_ALLOWANCE",
+          "calculationType": "REMAINING_BALANCE",
+          "value": 0,
+          "isStatutory": false
+        },
+        {
+          "code": "EPF_EMP",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "EPF_EMPR",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "PROFESSIONAL_TAX",
+          "calculationType": "SLAB_BASED",
+          "value": 200,
+          "isStatutory": true
+        },
+        {
+          "code": "GRATUITY_PROVISION",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 4.81,
+          "isStatutory": true
+        }
+      ],
+      "assignedRoles": ["Software Engineer", "React Developer", "Backend Engineer"],
+      "assignedDepartments": ["Engineering & Technology"],
+      "assignedBranches": []
+    },
+    {
+      "id": "struct-role-sr-eng",
+      "code": "ROLE_SR_PRINCIPAL",
+      "name": "Senior & Principal Engineering Track",
+      "description": "Optimized structure for high-CTC tech leads with LTA & enhanced flexible allowance.",
+      "level": "ROLE_SPECIFIC",
+      "targetRole": "Principal Engineer",
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-04-01",
+      "components": [
+        {
+          "code": "BASIC",
+          "calculationType": "PERCENTAGE_OF_CTC",
+          "value": 40,
+          "isStatutory": true
+        },
+        {
+          "code": "HRA",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 50,
+          "isStatutory": false
+        },
+        {
+          "code": "LTA",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 8.33,
+          "isStatutory": false
+        },
+        {
+          "code": "SPECIAL_ALLOWANCE",
+          "calculationType": "REMAINING_BALANCE",
+          "value": 0,
+          "isStatutory": false
+        },
+        {
+          "code": "EPF_EMP",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "EPF_EMPR",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "PROFESSIONAL_TAX",
+          "calculationType": "SLAB_BASED",
+          "value": 200,
+          "isStatutory": true
+        },
+        {
+          "code": "GRATUITY_PROVISION",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 4.81,
+          "isStatutory": true
+        }
+      ],
+      "assignedRoles": ["Principal Engineer", "Senior Frontend Engineer", "Engineering Lead"],
+      "assignedDepartments": ["Engineering & Technology"],
+      "assignedBranches": []
+    },
+    {
+      "id": "struct-role-executive",
+      "code": "ROLE_EXECUTIVE_LEADERSHIP",
+      "name": "Executive Leadership Compensation Structure",
+      "description": "High executive compensation structure with statutory bonus and maximum allowable HRA.",
+      "level": "ROLE_SPECIFIC",
+      "targetRole": "VP of People Operations",
+      "status": "ACTIVE",
+      "effectiveFrom": "2026-01-01",
+      "components": [
+        {
+          "code": "BASIC",
+          "calculationType": "PERCENTAGE_OF_CTC",
+          "value": 40,
+          "isStatutory": true
+        },
+        {
+          "code": "HRA",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 50,
+          "isStatutory": false
+        },
+        {
+          "code": "STATUTORY_BONUS",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 8.33,
+          "isStatutory": true
+        },
+        {
+          "code": "SPECIAL_ALLOWANCE",
+          "calculationType": "REMAINING_BALANCE",
+          "value": 0,
+          "isStatutory": false
+        },
+        {
+          "code": "EPF_EMP",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "EPF_EMPR",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 12,
+          "isStatutory": true,
+          "ceilingLimit": 15000
+        },
+        {
+          "code": "PROFESSIONAL_TAX",
+          "calculationType": "SLAB_BASED",
+          "value": 200,
+          "isStatutory": true
+        },
+        {
+          "code": "GRATUITY_PROVISION",
+          "calculationType": "PERCENTAGE_OF_BASIC",
+          "value": 4.81,
+          "isStatutory": true
+        }
+      ],
+      "assignedRoles": ["VP of People Operations", "Head of Product", "Chief Technology Officer"],
+      "assignedDepartments": ["People & Operations", "Executive Leadership"],
+      "assignedBranches": []
+    }
+  ],
+  "employeeAssignments": [
+    {
+      "id": "asgn-064",
+      "employeeId": "user-064",
+      "employeeNumber": "EMP-064",
+      "employeeName": "Mithun Gowda H",
+      "jobTitle": "Software Engineer",
+      "department": "Engineering & Technology",
+      "branchName": "HQ – Bengaluru",
+      "structureId": "struct-role-eng",
+      "structureName": "Software Engineering Track Structure",
+      "annualCtc": 1380000,
+      "assignmentType": "INHERITED_FROM_ROLE",
+      "isOverride": false,
+      "effectiveDate": "2026-04-01"
+    },
+    {
+      "id": "asgn-002",
+      "employeeId": "user-002",
+      "employeeNumber": "EMP-002",
+      "employeeName": "Priya Sharma",
+      "jobTitle": "Senior UI/UX Designer",
+      "department": "Product & Design",
+      "branchName": "HQ – Bengaluru",
+      "structureId": "struct-role-eng",
+      "structureName": "Software Engineering Track Structure",
+      "annualCtc": 1500000,
+      "assignmentType": "INHERITED_FROM_ROLE",
+      "isOverride": false,
+      "effectiveDate": "2026-04-01"
+    },
+    {
+      "id": "asgn-010",
+      "employeeId": "user-010",
+      "employeeNumber": "EMP-010",
+      "employeeName": "Rohan Das",
+      "jobTitle": "Principal Engineer",
+      "department": "Engineering & Technology",
+      "branchName": "HQ – Bengaluru",
+      "structureId": "struct-role-sr-eng",
+      "structureName": "Senior & Principal Engineering Track",
+      "annualCtc": 2340000,
+      "assignmentType": "INHERITED_FROM_ROLE",
+      "isOverride": false,
+      "effectiveDate": "2026-04-01"
+    },
+    {
+      "id": "asgn-009",
+      "employeeId": "user-009",
+      "employeeNumber": "EMP-009",
+      "employeeName": "Ranjith Kumar C",
+      "jobTitle": "Engineering Lead",
+      "department": "Engineering & Technology",
+      "branchName": "HQ – Bengaluru",
+      "structureId": "struct-role-sr-eng",
+      "structureName": "Senior & Principal Engineering Track",
+      "annualCtc": 2520000,
+      "assignmentType": "INHERITED_FROM_ROLE",
+      "isOverride": false,
+      "effectiveDate": "2026-04-01"
+    },
+    {
+      "id": "asgn-040",
+      "employeeId": "user-040",
+      "employeeNumber": "EMP-040",
+      "employeeName": "Vikramaditya Sengupta",
+      "jobTitle": "VP of People Operations",
+      "department": "People & Operations",
+      "branchName": "HQ – Bengaluru",
+      "structureId": "struct-role-executive",
+      "structureName": "Executive Leadership Compensation Structure",
+      "annualCtc": 3000000,
+      "assignmentType": "EMPLOYEE_SPECIFIC_OVERRIDE",
+      "isOverride": true,
+      "overrideReason": "Executive employment agreement with customized annual bonus provisioning.",
+      "effectiveDate": "2026-01-01"
+    }
+  ]
+}

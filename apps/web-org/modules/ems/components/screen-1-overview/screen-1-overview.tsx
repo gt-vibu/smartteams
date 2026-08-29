@@ -12,6 +12,9 @@ import { OverviewFeedsTab } from './overview-feeds-tab';
 import { OverviewProfileTab } from './overview-profile-tab';
 import { OverviewApprovalsTab } from './overview-approvals-tab';
 import { OverviewDashboardTab } from './overview-dashboard-tab';
+import { OverviewLeavePreviewTab } from './overview-leave-preview-tab';
+import { OverviewAttendancePreviewTab } from './overview-attendance-preview-tab';
+import { OverviewTimesheetPreviewTab } from './overview-timesheet-preview-tab';
 import { Screen4Calendar } from '../screen-4-calendar/screen-4-calendar';
 import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
@@ -19,7 +22,7 @@ import { useTimesheet } from '../../hooks/use-timesheet';
 import holidaysFixture from '../../data/fixtures/holidays.json';
 
 interface Screen1OverviewProps {
-  onNavigateModule?: (module: 'home' | 'attendance' | 'timesheet' | 'time-off', subView?: 'timeline' | 'table' | 'calendar') => void;
+  onNavigateModule?: (module: string, subView?: 'timeline' | 'table' | 'calendar') => void;
 }
 
 export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
@@ -49,14 +52,8 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   }));
 
   const handleSelectSubTab = (tab: string) => {
+    // Retain inline preview state without forcefully redirecting away
     setActiveSubTab(tab);
-    if (tab === 'Attendance') {
-      onNavigateModule?.('attendance', 'timeline');
-    } else if (tab === 'Leave') {
-      onNavigateModule?.('time-off');
-    } else if (tab === 'Time Logs' || tab === 'Timesheets') {
-      onNavigateModule?.('timesheet');
-    }
   };
 
   const handleSelectTopTab = (tab: string) => {
@@ -64,12 +61,9 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   };
 
   return (
-    <div className="w-full max-w-full pb-14 bg-[#EEF2F6] min-h-full">
+    <div className="w-full max-w-full pb-14 bg-[#F0F4F8] min-h-full">
       {/* 1. Full-Width Hero Banner */}
-      <HeroBanner
-        activeTab={activeTopTab}
-        onSelectTab={handleSelectTopTab}
-      />
+      <HeroBanner activeTab={activeTopTab} onSelectTab={handleSelectTopTab} />
 
       {/* 2. Top-Level Tab: Calendar */}
       {activeTopTab === 'Calendar' ? (
@@ -99,10 +93,7 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
 
             {/* Right Column: Sub-Nav Tabs + Dynamic Content */}
             <div className="lg:col-span-8 xl:col-span-9 space-y-4 min-w-0">
-              <SubNavTabs
-                activeTab={activeSubTab}
-                onSelectTab={handleSelectSubTab}
-              />
+              <SubNavTabs activeTab={activeSubTab} onSelectTab={handleSelectSubTab} />
 
               {/* Tab 1: Activities (Default Home Feed) */}
               {activeSubTab === 'Activities' && (
@@ -125,18 +116,23 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
               )}
 
               {/* Tab 2: Feeds */}
-              {activeSubTab === 'Feeds' && (
-                <OverviewFeedsTab />
-              )}
+              {activeSubTab === 'Feeds' && <OverviewFeedsTab />}
 
               {/* Tab 3: Full Profile */}
-              {activeSubTab === 'Profile' && (
-                <OverviewProfileTab />
-              )}
+              {activeSubTab === 'Profile' && <OverviewProfileTab />}
 
-              {/* Tab 4: Approvals */}
-              {activeSubTab === 'Approvals' && (
-                <OverviewApprovalsTab />
+              {/* Tab 4: Approvals (Manager Only) */}
+              {activeSubTab === 'Approvals' && <OverviewApprovalsTab />}
+
+              {/* Tab 5: Leave Preview */}
+              {activeSubTab === 'Leave' && <OverviewLeavePreviewTab />}
+
+              {/* Tab 6: Attendance Preview */}
+              {activeSubTab === 'Attendance' && <OverviewAttendancePreviewTab />}
+
+              {/* Tab 7: Time Logs / Timesheets Preview */}
+              {(activeSubTab === 'Time Logs' || activeSubTab === 'Timesheets') && (
+                <OverviewTimesheetPreviewTab />
               )}
             </div>
           </div>
@@ -145,5 +141,3 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
     </div>
   );
 }
-
-

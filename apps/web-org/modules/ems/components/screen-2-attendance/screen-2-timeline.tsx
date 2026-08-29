@@ -27,11 +27,12 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     holidayName: r.holidayName,
     isRestrictedHoliday: r.isRestrictedHoliday,
     spanStartPercent: r.spanStartPercent ?? (r.firstInTime ? 0 : undefined),
-    spanEndPercent: r.spanEndPercent ?? (r.lastOutTime ? 100 : (r.isToday ? 48 : undefined)),
+    spanEndPercent: r.spanEndPercent ?? (r.lastOutTime ? 100 : r.isToday ? 48 : undefined),
   }));
 
   const stats = {
-    payableDays: records.filter((r) => r.dayStatus === 'PRESENT' || r.dayStatus === 'WEEKEND').length,
+    payableDays: records.filter((r) => r.dayStatus === 'PRESENT' || r.dayStatus === 'WEEKEND')
+      .length,
     presentDays: records.filter((r) => r.dayStatus === 'PRESENT').length,
     onDutyDays: 0,
     paidLeaveDays: records.filter((r) => r.dayStatus === 'LEAVE').length,
@@ -65,4 +66,3 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     </div>
   );
 }
-

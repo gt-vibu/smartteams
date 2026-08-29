@@ -83,4 +83,3 @@ export class LocalTimesheetRepository implements ITimesheetRepository {
 }
 
 export const timesheetRepository = new LocalTimesheetRepository();
-

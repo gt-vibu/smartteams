@@ -30,7 +30,6 @@ export function AttendanceDetailDrawer({
     }, 1000);
   };
 
-
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop */}
@@ -45,18 +44,20 @@ export function AttendanceDetailDrawer({
           {/* Header */}
           <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
             <div>
-              <h2 className="!text-sm !font-bold !text-slate-900 !m-0">
-                Attendance Details
-              </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {row.date}
-              </p>
+              <h2 className="!text-sm !font-bold !text-slate-900 !m-0">Attendance Details</h2>
+              <p className="text-xs text-slate-500 mt-0.5">{row.date}</p>
             </div>
             <button
               onClick={onClose}
               className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
             >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -76,11 +77,15 @@ export function AttendanceDetailDrawer({
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-500 font-medium">Total Worked</span>
-                <span className="font-mono font-bold text-slate-900">{row.totalHours !== '-' ? `${row.totalHours} Hrs` : '-'}</span>
+                <span className="font-mono font-bold text-slate-900">
+                  {row.totalHours !== '-' ? `${row.totalHours} Hrs` : '-'}
+                </span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-500 font-medium">Payable Hours</span>
-                <span className="font-mono font-semibold text-slate-800">{row.payableHours !== '-' ? `${row.payableHours} Hrs` : '-'}</span>
+                <span className="font-mono font-semibold text-slate-800">
+                  {row.payableHours !== '-' ? `${row.payableHours} Hrs` : '-'}
+                </span>
               </div>
             </div>
 
@@ -124,9 +129,7 @@ export function AttendanceDetailDrawer({
 
             {/* Regularization Form */}
             <div className="pt-2 border-t border-slate-100">
-              <div className="text-xs font-bold text-slate-800 mb-1.5">
-                Request Regularization
-              </div>
+              <div className="text-xs font-bold text-slate-800 mb-1.5">Request Regularization</div>
               <p className="text-[11px] text-slate-500 mb-2.5">
                 Submit an attendance correction request for your reporting manager to review.
               </p>
@@ -156,10 +159,10 @@ export function AttendanceDetailDrawer({
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+          <div className="p-4 border-t border-slate-200 dark:border-[#262F3D] bg-slate-50 dark:bg-[#161B22] flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-1.5 rounded text-xs font-semibold border border-slate-300 text-slate-700 hover:bg-white transition-colors shadow-2xs"
+              className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold rounded border border-transparent dark:border-slate-700 transition-colors cursor-pointer"
             >
               Close
             </button>

@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "clean": "rm -rf .next",
-    "dev": "next dev --port 3000",
+    "dev": "next dev --webpack --port 3000",
     "lint": "eslint . --max-warnings=0",
     "start": "next start --port 3000",
     "test": "node --test",

@@ -5,11 +5,13 @@ import { employeeRepository, EmployeeProfile } from '../repositories/employee.re
 
 export function useEmployee() {
   const [employee, setEmployee] = useState<EmployeeProfile>(() =>
-    employeeRepository.getCurrentEmployee()
+    employeeRepository.getCurrentEmployee(),
   );
 
   const refresh = useCallback(() => {
-    setEmployee(employeeRepository.getCurrentEmployee());
+    setTimeout(() => {
+      setEmployee(employeeRepository.getCurrentEmployee());
+    }, 0);
   }, []);
 
   useEffect(() => {

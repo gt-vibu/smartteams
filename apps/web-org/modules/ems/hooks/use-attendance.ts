@@ -10,13 +10,13 @@ import {
 
 export function useAttendance() {
   const [liveState, setLiveState] = useState<AttendanceLiveState>(() =>
-    attendanceRepository.getLiveState()
+    attendanceRepository.getLiveState(),
   );
   const [records, setRecords] = useState<AttendanceRecordItem[]>(() =>
-    attendanceRepository.getRecords()
+    attendanceRepository.getRecords(),
   );
   const [punches, setPunches] = useState<AttendancePunchItem[]>(() =>
-    attendanceRepository.getPunches()
+    attendanceRepository.getPunches(),
   );
 
   const [timerDisplay, setTimerDisplay] = useState<{
@@ -27,9 +27,11 @@ export function useAttendance() {
   }>({ hrs: '00', mins: '00', secs: '00', totalSeconds: 0 });
 
   const refresh = useCallback(() => {
-    setLiveState(attendanceRepository.getLiveState());
-    setRecords(attendanceRepository.getRecords());
-    setPunches(attendanceRepository.getPunches());
+    setTimeout(() => {
+      setLiveState(attendanceRepository.getLiveState());
+      setRecords(attendanceRepository.getRecords());
+      setPunches(attendanceRepository.getPunches());
+    }, 0);
   }, []);
 
   // Sync with storage events across components and tabs

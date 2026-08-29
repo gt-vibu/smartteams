@@ -10,9 +10,7 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
   if (!day.isCurrentMonth) {
     return (
       <div className="min-h-[72px] p-1.5 bg-slate-50/50 border-b border-r border-slate-100 opacity-40 select-none">
-        <span className="text-[11px] font-medium text-slate-400">
-          {day.dayNumber}
-        </span>
+        <span className="text-[11px] font-medium text-slate-400">{day.dayNumber}</span>
       </div>
     );
   }
@@ -26,8 +24,8 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
         day.isToday
           ? 'bg-sky-50/30 ring-1 ring-inset ring-sky-300'
           : isWeekend
-          ? 'bg-amber-50/20 hover:bg-amber-50/40'
-          : 'bg-white hover:bg-slate-50/80'
+            ? 'bg-amber-50/20 hover:bg-amber-50/40'
+            : 'bg-white hover:bg-slate-50/80'
       }`}
     >
       {/* Top Header with Day Number */}
@@ -43,9 +41,7 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
         )}
 
         {day.shiftName && !isWeekend && day.dayStatus !== 'HOLIDAY' && (
-          <span className="text-[9px] text-slate-400 font-medium hidden sm:inline">
-            GEN
-          </span>
+          <span className="text-[9px] text-slate-400 font-medium hidden sm:inline">GEN</span>
         )}
       </div>
 
@@ -55,9 +51,7 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
         {day.dayStatus === 'PRESENT' && (
           <div className="p-0.5 px-1 rounded bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-[9.5px] font-semibold flex items-center gap-1 shadow-2xs">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-            <span className="truncate">
-              Present {day.hoursLabel ? `· ${day.hoursLabel}` : ''}
-            </span>
+            <span className="truncate">Present {day.hoursLabel ? `· ${day.hoursLabel}` : ''}</span>
           </div>
         )}
 
@@ -65,17 +59,13 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
         {day.dayStatus === 'HOLIDAY' && (
           <div className="p-0.5 px-1 rounded bg-cyan-50 border border-cyan-200/80 text-cyan-900 text-[9.5px] font-semibold flex items-center gap-1 shadow-2xs">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 shrink-0" />
-            <span className="truncate">
-              {day.holidayName}
-            </span>
+            <span className="truncate">{day.holidayName}</span>
           </div>
         )}
 
         {/* Case 3: Weekend */}
         {isWeekend && (
-          <div className="text-[9.5px] font-medium text-amber-700/80 pl-0.5">
-            Weekend
-          </div>
+          <div className="text-[9.5px] font-medium text-amber-700/80 pl-0.5">Weekend</div>
         )}
       </div>
 

@@ -1,0 +1,183 @@
+{
+  "dates": {
+    "2026-08-27": {
+      "summary": {
+        "totalEmployees": 24,
+        "present": 20,
+        "absent": 2,
+        "onLeave": 2,
+        "holiday": 0,
+        "weekend": 0
+      },
+      "records": [
+        {
+          "id": "att-27-064",
+          "employeeId": "user-064",
+          "employeeNumber": "EMP-064",
+          "employeeName": "Mithun Gowda H",
+          "jobTitle": "Software Engineer",
+          "department": "Engineering & Technology",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "PRESENT",
+          "firstIn": "09:43 AM",
+          "lastOut": "06:15 PM",
+          "workedMinutes": 512,
+          "overtimeMinutes": 32,
+          "source": "NATIVE"
+        },
+        {
+          "id": "att-27-002",
+          "employeeId": "user-002",
+          "employeeNumber": "EMP-002",
+          "employeeName": "Priya Sharma",
+          "jobTitle": "Senior UI/UX Designer",
+          "department": "Product & Design",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "PRESENT",
+          "firstIn": "09:55 AM",
+          "lastOut": "06:05 PM",
+          "workedMinutes": 490,
+          "overtimeMinutes": 10,
+          "source": "NATIVE"
+        },
+        {
+          "id": "att-27-010",
+          "employeeId": "user-010",
+          "employeeNumber": "EMP-010",
+          "employeeName": "Rohan Das",
+          "jobTitle": "Principal Backend Engineer",
+          "department": "Engineering & Technology",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "PRESENT",
+          "firstIn": "10:02 AM",
+          "lastOut": "07:10 PM",
+          "workedMinutes": 548,
+          "overtimeMinutes": 68,
+          "source": "NATIVE"
+        },
+        {
+          "id": "att-27-009",
+          "employeeId": "user-009",
+          "employeeNumber": "EMP-009",
+          "employeeName": "Ranjith Kumar C",
+          "jobTitle": "Engineering Manager",
+          "department": "Engineering & Technology",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "PRESENT",
+          "firstIn": "09:30 AM",
+          "lastOut": "06:30 PM",
+          "workedMinutes": 540,
+          "overtimeMinutes": 60,
+          "source": "NATIVE"
+        },
+        {
+          "id": "att-27-040",
+          "employeeId": "user-040",
+          "employeeNumber": "EMP-040",
+          "employeeName": "Vikramaditya Sengupta",
+          "jobTitle": "VP of People Operations",
+          "department": "People & Operations",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "PRESENT",
+          "firstIn": "09:15 AM",
+          "lastOut": "06:00 PM",
+          "workedMinutes": 525,
+          "overtimeMinutes": 45,
+          "source": "NATIVE"
+        },
+        {
+          "id": "att-27-042",
+          "employeeId": "user-042",
+          "employeeNumber": "EMP-042",
+          "employeeName": "Swati Pande",
+          "jobTitle": "Growth Analyst",
+          "department": "Marketing & Growth",
+          "branchName": "Mumbai Office",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "ON_LEAVE",
+          "firstIn": null,
+          "lastOut": null,
+          "workedMinutes": 0,
+          "overtimeMinutes": 0,
+          "source": "NATIVE"
+        },
+        {
+          "id": "att-27-003",
+          "employeeId": "user-003",
+          "employeeNumber": "EMP-003",
+          "employeeName": "Rahul Verma",
+          "jobTitle": "React Developer",
+          "department": "Engineering & Technology",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "ABSENT",
+          "firstIn": null,
+          "lastOut": null,
+          "workedMinutes": 0,
+          "overtimeMinutes": 0,
+          "source": "NATIVE"
+        }
+      ]
+    },
+    "2026-08-26": {
+      "summary": {
+        "totalEmployees": 24,
+        "present": 21,
+        "absent": 1,
+        "onLeave": 2,
+        "holiday": 0,
+        "weekend": 0
+      },
+      "records": [
+        {
+          "id": "att-26-064",
+          "employeeId": "user-064",
+          "employeeNumber": "EMP-064",
+          "employeeName": "Mithun Gowda H",
+          "jobTitle": "Software Engineer",
+          "department": "Engineering & Technology",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "PRESENT",
+          "firstIn": "09:48 AM",
+          "lastOut": "06:10 PM",
+          "workedMinutes": 502,
+          "overtimeMinutes": 22,
+          "source": "NATIVE"
+        },
+        {
+          "id": "att-26-010",
+          "employeeId": "user-010",
+          "employeeNumber": "EMP-010",
+          "employeeName": "Rohan Das",
+          "jobTitle": "Principal Backend Engineer",
+          "department": "Engineering & Technology",
+          "branchName": "HQ – Bengaluru",
+          "shiftName": "General Shift (10:00 AM - 06:00 PM)",
+          "dayStatus": "PRESENT",
+          "firstIn": "10:05 AM",
+          "lastOut": "06:30 PM",
+          "workedMinutes": 505,
+          "overtimeMinutes": 25,
+          "source": "NATIVE"
+        }
+      ]
+    },
+    "2026-08-25": {
+      "summary": {
+        "totalEmployees": 24,
+        "present": 0,
+        "absent": 0,
+        "onLeave": 0,
+        "holiday": 24,
+        "weekend": 0
+      },
+      "records": []
+    }
+  }
+}

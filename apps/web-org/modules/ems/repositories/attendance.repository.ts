@@ -53,27 +53,31 @@ export class LocalAttendanceRepository implements IAttendanceRepository {
   getLiveState(): AttendanceLiveState {
     return emsStorageAdapter.getItem<AttendanceLiveState>(
       EMS_STORAGE_KEYS.ATTENDANCE_STATE,
-      attendanceFixture.liveState as AttendanceLiveState
+      attendanceFixture.liveState as AttendanceLiveState,
     );
   }
 
   getRecords(): AttendanceRecordItem[] {
     return emsStorageAdapter.getItem<AttendanceRecordItem[]>(
       EMS_STORAGE_KEYS.ATTENDANCE_RECORDS,
-      attendanceFixture.records as AttendanceRecordItem[]
+      attendanceFixture.records as AttendanceRecordItem[],
     );
   }
 
   getPunches(): AttendancePunchItem[] {
     return emsStorageAdapter.getItem<AttendancePunchItem[]>(
       EMS_STORAGE_KEYS.ATTENDANCE_PUNCHES,
-      attendanceFixture.punches as AttendancePunchItem[]
+      attendanceFixture.punches as AttendancePunchItem[],
     );
   }
 
   checkIn(note: string = ''): AttendanceLiveState {
     const now = new Date();
-    const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const timeString = now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
     const dateString = now.toISOString().slice(0, 10);
 
     const newState: AttendanceLiveState = {
@@ -118,7 +122,11 @@ export class LocalAttendanceRepository implements IAttendanceRepository {
 
   checkOut(note: string = ''): AttendanceLiveState {
     const now = new Date();
-    const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const timeString = now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
     const dateString = now.toISOString().slice(0, 10);
 
     const currentLiveState = this.getLiveState();

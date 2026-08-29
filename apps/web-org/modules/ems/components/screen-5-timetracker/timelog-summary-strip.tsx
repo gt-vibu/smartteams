@@ -11,12 +11,8 @@ export function TimeLogSummaryStrip({ summary }: TimeLogSummaryStripProps) {
       <div className="flex items-center gap-8 text-right">
         {/* Total */}
         <div className="border-l-2 border-sky-500 pl-3 text-left">
-          <div className="text-xs font-mono font-bold text-sky-600">
-            {summary.totalHours}
-          </div>
-          <div className="text-[10px] text-slate-500 font-medium">
-            Total
-          </div>
+          <div className="text-xs font-mono font-bold text-sky-600">{summary.totalHours}</div>
+          <div className="text-[10px] text-slate-500 font-medium">Total</div>
         </div>
 
         {/* Submitted */}
@@ -24,9 +20,7 @@ export function TimeLogSummaryStrip({ summary }: TimeLogSummaryStripProps) {
           <div className="text-xs font-mono font-bold text-emerald-600">
             {summary.submittedHours}
           </div>
-          <div className="text-[10px] text-slate-500 font-medium">
-            Submitted
-          </div>
+          <div className="text-[10px] text-slate-500 font-medium">Submitted</div>
         </div>
 
         {/* Not Submitted */}
@@ -35,11 +29,14 @@ export function TimeLogSummaryStrip({ summary }: TimeLogSummaryStripProps) {
             <div className="text-xs font-mono font-bold text-amber-600">
               {summary.notSubmittedHours}
             </div>
-            <div className="text-[10px] text-slate-500 font-medium">
-              Not Submitted
-            </div>
+            <div className="text-[10px] text-slate-500 font-medium">Not Submitted</div>
           </div>
-          <svg className="h-4 w-4 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            className="h-4 w-4 text-slate-400 ml-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </div>

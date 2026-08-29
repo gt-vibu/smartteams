@@ -32,7 +32,9 @@ export function AttendanceSummaryFooter({
           <button
             onClick={() => setUnitMode('days')}
             className={`px-2 py-0.5 rounded transition-colors ${
-              unitMode === 'days' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+              unitMode === 'days'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             Days
@@ -40,7 +42,9 @@ export function AttendanceSummaryFooter({
           <button
             onClick={() => setUnitMode('hours')}
             className={`px-2 py-0.5 rounded transition-colors ${
-              unitMode === 'hours' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
+              unitMode === 'hours'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             Hours
@@ -51,12 +55,8 @@ export function AttendanceSummaryFooter({
         <div className="flex flex-wrap items-center gap-5">
           {metrics.map((m) => (
             <div key={m.label} className={`border-l-2 ${m.color} pl-2.5`}>
-              <div className="text-[10px] text-slate-500 font-medium">
-                {m.label}
-              </div>
-              <div className="text-xs font-bold text-slate-900">
-                {m.value}
-              </div>
+              <div className="text-[10px] text-slate-500 font-medium">{m.label}</div>
+              <div className="text-xs font-bold text-slate-900">{m.value}</div>
             </div>
           ))}
         </div>

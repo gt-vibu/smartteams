@@ -41,7 +41,8 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
 
       // Find if holiday
       const holiday = holidaysFixture.holidays.find(
-        (h) => h.holidayDate.startsWith(String(d).padStart(2, '0')) && h.holidayDate.includes('Aug')
+        (h) =>
+          h.holidayDate.startsWith(String(d).padStart(2, '0')) && h.holidayDate.includes('Aug'),
       );
 
       // Find matching attendance record
@@ -56,7 +57,12 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         hoursLabel = liveState.isCheckedIn ? 'In (Active)' : '08:00 Hrs';
       } else if (record) {
         dayStatus = record.dayStatus as any;
-        hoursLabel = record.workedMinutes > 0 ? `${Math.floor(record.workedMinutes / 60).toString().padStart(2, '0')}:${(record.workedMinutes % 60).toString().padStart(2, '0')} Hrs` : undefined;
+        hoursLabel =
+          record.workedMinutes > 0
+            ? `${Math.floor(record.workedMinutes / 60)
+                .toString()
+                .padStart(2, '0')}:${(record.workedMinutes % 60).toString().padStart(2, '0')} Hrs`
+            : undefined;
       } else if (holiday) {
         dayStatus = 'HOLIDAY';
       } else if (isWeekend) {
@@ -78,21 +84,22 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         holidayName: holiday?.name || record?.holidayName,
         isRestrictedHoliday: holiday?.isOptional || record?.isRestrictedHoliday,
         shiftName: 'General Shift [ 10:00 AM - 6:00 PM ]',
-        punches: dayPunches.length > 0
-          ? dayPunches.map((p) => ({
-              type: p.type,
-              time: p.time,
-              source: p.source,
-            }))
-          : isToday && liveState.firstPunchInTime
-          ? [
-              {
-                type: 'IN',
-                time: liveState.firstPunchInTime,
-                source: 'NATIVE',
-              },
-            ]
-          : undefined,
+        punches:
+          dayPunches.length > 0
+            ? dayPunches.map((p) => ({
+                type: p.type,
+                time: p.time,
+                source: p.source,
+              }))
+            : isToday && liveState.firstPunchInTime
+              ? [
+                  {
+                    type: 'IN',
+                    time: liveState.firstPunchInTime,
+                    source: 'NATIVE',
+                  },
+                ]
+              : undefined,
       });
     }
 
@@ -131,10 +138,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
       {/* 2. Scrollable content below toolbar */}
       <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-6 pb-6 pt-3 space-y-2.5">
         {/* Full Month 7-Column Calendar Grid */}
-        <CalendarGrid
-          days={calendarDays}
-          onSelectDay={handleSelectDay}
-        />
+        <CalendarGrid days={calendarDays} onSelectDay={handleSelectDay} />
       </div>
 
       {/* 3. Detail Slide-In Drawer */}
@@ -146,5 +150,3 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     </div>
   );
 }
-
-

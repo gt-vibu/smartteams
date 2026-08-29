@@ -68,7 +68,8 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
             Smarteam EMS — All Screens Unified Gallery
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Complete high-fidelity suite built with Zoho People UX fidelity & Smarteam enterprise backend models.
+            Complete high-fidelity suite built with Zoho People UX fidelity & Smarteam enterprise
+            backend models.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -91,9 +92,7 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
                 <span className="h-6 w-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
                   {index + 1}
                 </span>
-                <h2 className="!text-xs !font-bold !text-slate-900 !m-0">
-                  {s.title}
-                </h2>
+                <h2 className="!text-xs !font-bold !text-slate-900 !m-0">{s.title}</h2>
               </div>
 
               <div className="flex items-center gap-3">
@@ -105,8 +104,18 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
                   className="text-xs font-bold text-[#0284C7] hover:underline flex items-center gap-1"
                 >
                   <span>Focus View</span>
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <svg
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
                   </svg>
                 </button>
               </div>
@@ -114,9 +123,7 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
 
             {/* Embedded Live Screen Canvas */}
             <div className="flex-1 bg-[#EEF2F6] overflow-x-auto p-3 max-h-[620px] overflow-y-auto">
-              <div className="min-w-[720px] transform origin-top">
-                {s.component}
-              </div>
+              <div className="min-w-[720px] transform origin-top">{s.component}</div>
             </div>
           </div>
         ))}

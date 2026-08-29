@@ -6,19 +6,21 @@ import { DateGroupedTimeLogs, TimeTrackerSummaryStats } from '../types/timelog.t
 
 export function useTimesheet() {
   const [groupedLogs, setGroupedLogs] = useState<DateGroupedTimeLogs[]>(() =>
-    timesheetRepository.getGroupedLogs()
+    timesheetRepository.getGroupedLogs(),
   );
   const [summary, setSummary] = useState<TimeTrackerSummaryStats>(() =>
-    timesheetRepository.getSummary()
+    timesheetRepository.getSummary(),
   );
   const [approvedNotification, setApprovedNotification] = useState<any>(() =>
-    timesheetRepository.getApprovedNotification()
+    timesheetRepository.getApprovedNotification(),
   );
 
   const refresh = useCallback(() => {
-    setGroupedLogs(timesheetRepository.getGroupedLogs());
-    setSummary(timesheetRepository.getSummary());
-    setApprovedNotification(timesheetRepository.getApprovedNotification());
+    setTimeout(() => {
+      setGroupedLogs(timesheetRepository.getGroupedLogs());
+      setSummary(timesheetRepository.getSummary());
+      setApprovedNotification(timesheetRepository.getApprovedNotification());
+    }, 0);
   }, []);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function useTimesheet() {
       setGroupedLogs(updated);
       return updated;
     },
-    []
+    [],
   );
 
   return {

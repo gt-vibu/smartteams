@@ -47,8 +47,12 @@ export function Screen5TimeTracker() {
           <GroupedTimeLogTable groupedLogs={groupedLogs} />
         ) : (
           <div className="bg-white rounded-[6px] border border-slate-200/90 p-8 text-center space-y-2 shadow-xs">
-            <div className="text-sm font-bold text-slate-700">No time logs recorded for this period</div>
-            <p className="text-xs text-slate-500">Use "Log Time" or start the quick timer above to record work hours.</p>
+            <div className="text-sm font-bold text-slate-700">
+              No time logs recorded for this period
+            </div>
+            <p className="text-xs text-slate-500">
+              Use "Log Time" or start the quick timer above to record work hours.
+            </p>
           </div>
         )}
 

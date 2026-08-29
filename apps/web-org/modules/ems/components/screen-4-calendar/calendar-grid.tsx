@@ -11,8 +11,8 @@ export function CalendarGrid({ days, onSelectDay }: CalendarGridProps) {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white rounded-[6px] border-t border-l border-slate-200 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-x-auto no-scrollbar w-full">
-      <div className="min-w-[560px]">
+    <div className="bg-white dark:bg-[#161B22] rounded-lg border-t border-l border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
+      <div className="min-w-[480px] sm:min-w-[560px]">
         {/* Weekday Column Headers */}
         <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50/80 text-center text-xs font-bold text-slate-700">
           {weekDays.map((wd) => (
@@ -25,15 +25,10 @@ export function CalendarGrid({ days, onSelectDay }: CalendarGridProps) {
         {/* 42 Calendar Cells Grid */}
         <div className="grid grid-cols-7">
           {days.map((day, idx) => (
-            <CalendarDayCell
-              key={`${day.date}-${idx}`}
-              day={day}
-              onClick={onSelectDay}
-            />
+            <CalendarDayCell key={`${day.date}-${idx}`} day={day} onClick={onSelectDay} />
           ))}
         </div>
       </div>
     </div>
   );
 }
-

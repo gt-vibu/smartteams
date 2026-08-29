@@ -24,7 +24,8 @@ export function OverviewFeedsTab() {
       role: 'VP of Engineering',
       time: '2 hours ago',
       type: 'ANNOUNCEMENT',
-      content: '🚀 Great news team! The Q3 Product Release has officially reached 100% test coverage. Kudos to the entire Smarteam Engineering squad for the relentless hard work!',
+      content:
+        '🚀 Great news team! The Q3 Product Release has officially reached 100% test coverage. Kudos to the entire Smarteam Engineering squad for the relentless hard work!',
       likes: 18,
       commentsCount: 4,
     },
@@ -35,7 +36,8 @@ export function OverviewFeedsTab() {
       role: 'Engineering Manager',
       time: 'Yesterday at 4:30 PM',
       type: 'KUDOS',
-      content: '⭐ Huge shoutout to Mithun Gowda H for quickly diagnosing and resolving the attendance clock sync bottleneck. Excellent ownership!',
+      content:
+        '⭐ Huge shoutout to Mithun Gowda H for quickly diagnosing and resolving the attendance clock sync bottleneck. Excellent ownership!',
       likes: 12,
       commentsCount: 2,
     },
@@ -46,7 +48,8 @@ export function OverviewFeedsTab() {
       role: 'HR Operations',
       time: '2 days ago',
       type: 'EVENT',
-      content: '🎉 Upcoming Townhall & Tech All-Hands is scheduled for Friday at 4:00 PM. Please ensure your timesheets for the current sprint are logged before Thursday EOD.',
+      content:
+        '🎉 Upcoming Townhall & Tech All-Hands is scheduled for Friday at 4:00 PM. Please ensure your timesheets for the current sprint are logged before Thursday EOD.',
       likes: 24,
       commentsCount: 7,
     },
@@ -66,7 +69,7 @@ export function OverviewFeedsTab() {
           };
         }
         return p;
-      })
+      }),
     );
   };
 
@@ -137,7 +140,9 @@ export function OverviewFeedsTab() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-slate-900">{post.author}</div>
-                  <div className="text-[10px] text-slate-500">{post.role} · {post.time}</div>
+                  <div className="text-[10px] text-slate-500">
+                    {post.role} · {post.time}
+                  </div>
                 </div>
               </div>
               <span
@@ -145,8 +150,8 @@ export function OverviewFeedsTab() {
                   post.type === 'ANNOUNCEMENT'
                     ? 'bg-sky-50 text-sky-700 border-sky-200'
                     : post.type === 'KUDOS'
-                    ? 'bg-amber-50 text-amber-700 border-amber-200'
-                    : 'bg-purple-50 text-purple-700 border-purple-200'
+                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                      : 'bg-purple-50 text-purple-700 border-purple-200'
                 }`}
               >
                 {post.type}
@@ -166,15 +171,32 @@ export function OverviewFeedsTab() {
                   post.hasLiked ? 'text-sky-600 font-bold' : 'hover:text-slate-800'
                 }`}
               >
-                <svg className="h-4 w-4" fill={post.hasLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                <svg
+                  className="h-4 w-4"
+                  fill={post.hasLiked ? 'currentColor' : 'none'}
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                  />
                 </svg>
-                <span>{post.likes} {post.likes === 1 ? 'Like' : 'Likes'}</span>
+                <span>
+                  {post.likes} {post.likes === 1 ? 'Like' : 'Likes'}
+                </span>
               </button>
 
               <div className="flex items-center gap-1.5 font-medium hover:text-slate-800 cursor-pointer">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
                 </svg>
                 <span>{post.commentsCount} Comments</span>
               </div>

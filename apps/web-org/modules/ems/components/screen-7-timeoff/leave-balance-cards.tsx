@@ -18,9 +18,7 @@ export function LeaveBalanceCards({ balances }: LeaveBalanceCardsProps) {
           >
             {/* Header with Type & Code Pill */}
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold text-slate-850 truncate">
-                {b.leaveTypeName}
-              </span>
+              <span className="text-xs font-bold text-slate-850 truncate">{b.leaveTypeName}</span>
               <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                 {b.code}
               </span>
@@ -46,8 +44,12 @@ export function LeaveBalanceCards({ balances }: LeaveBalanceCardsProps) {
 
             {/* Sub-Metric Breakdown */}
             <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
-              <span>Used: <strong className="text-slate-700">{b.usedDays}</strong></span>
-              <span>Pending: <strong className="text-slate-700">{b.pendingDays}</strong></span>
+              <span>
+                Used: <strong className="text-slate-700">{b.usedDays}</strong>
+              </span>
+              <span>
+                Pending: <strong className="text-slate-700">{b.pendingDays}</strong>
+              </span>
             </div>
           </div>
         );

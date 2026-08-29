@@ -5,16 +5,16 @@ import { leaveRepository } from '../repositories/leave.repository';
 import { LeaveBalanceItem, LeaveApplicationItem, ApplyLeaveFormData } from '../types/leave.types';
 
 export function useLeave() {
-  const [balances, setBalances] = useState<LeaveBalanceItem[]>(() =>
-    leaveRepository.getBalances()
-  );
+  const [balances, setBalances] = useState<LeaveBalanceItem[]>(() => leaveRepository.getBalances());
   const [applications, setApplications] = useState<LeaveApplicationItem[]>(() =>
-    leaveRepository.getApplications()
+    leaveRepository.getApplications(),
   );
 
   const refresh = useCallback(() => {
-    setBalances(leaveRepository.getBalances());
-    setApplications(leaveRepository.getApplications());
+    setTimeout(() => {
+      setBalances(leaveRepository.getBalances());
+      setApplications(leaveRepository.getApplications());
+    }, 0);
   }, []);
 
   useEffect(() => {
@@ -34,10 +34,26 @@ export function useLeave() {
     return updatedApps;
   }, []);
 
+  const approveLeave = useCallback((id: string) => {
+    const updated = leaveRepository.approveApplication(id);
+    setApplications(updated);
+    setBalances(leaveRepository.getBalances());
+    return updated;
+  }, []);
+
+  const rejectLeave = useCallback((id: string) => {
+    const updated = leaveRepository.rejectApplication(id);
+    setApplications(updated);
+    setBalances(leaveRepository.getBalances());
+    return updated;
+  }, []);
+
   return {
     balances,
     applications,
     applyLeave,
+    approveLeave,
+    rejectLeave,
     refresh,
   };
 }

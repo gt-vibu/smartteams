@@ -47,8 +47,18 @@ export function AttendancePunchBar({ initialSeconds = 14242 }: AttendancePunchBa
             : 'bg-emerald-600 hover:bg-emerald-500 text-white'
         }`}
       >
-        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg
+          className="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
         <span>
           {isCheckedIn ? 'Check-out' : 'Check-in'} ({hrs}:{mins}:{secs} Hrs)

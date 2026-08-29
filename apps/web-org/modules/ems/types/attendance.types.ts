@@ -1,4 +1,5 @@
-export type DayStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'HALF_DAY' | 'ON_LEAVE' | 'WEEKEND' | 'HOLIDAY';
+export type DayStatus =
+  'PRESENT' | 'ABSENT' | 'LATE' | 'HALF_DAY' | 'ON_LEAVE' | 'WEEKEND' | 'HOLIDAY';
 
 export interface DailyAttendanceItem {
   id: string;

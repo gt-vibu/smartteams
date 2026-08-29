@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { Select, Input } from '@smarteam/ui';
 import { AttendanceToolbar } from '../screen-2-attendance/attendance-toolbar';
 import { AttendanceTableView } from './attendance-table-view';
 import { AttendanceDetailDrawer } from './attendance-detail-drawer';
@@ -28,10 +29,21 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
         date: `${r.dayLabel}-${r.workDate.slice(0, 4)}`,
         firstIn: r.firstInTime || '-',
         lastOut: r.lastOutTime || (r.isToday && r.firstInTime ? 'Active (In)' : '-'),
-        totalHours: r.workedMinutes > 0 ? `${Math.floor(r.workedMinutes / 60).toString().padStart(2, '0')}:${(r.workedMinutes % 60).toString().padStart(2, '0')}` : '-',
+        totalHours:
+          r.workedMinutes > 0
+            ? `${Math.floor(r.workedMinutes / 60)
+                .toString()
+                .padStart(2, '0')}:${(r.workedMinutes % 60).toString().padStart(2, '0')}`
+            : '-',
         payableHours: r.payableHours,
         overtime: r.overtime,
-        status: r.holidayName || (r.dayStatus === 'PRESENT' ? 'Present' : r.dayStatus === 'WEEKEND' ? 'Weekend' : r.dayStatus),
+        status:
+          r.holidayName ||
+          (r.dayStatus === 'PRESENT'
+            ? 'Present'
+            : r.dayStatus === 'WEEKEND'
+              ? 'Weekend'
+              : r.dayStatus),
         statusType: r.statusType,
         shift: r.shiftName || 'General Shift',
         canRegularize: r.canRegularize,
@@ -62,7 +74,8 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   }, [rows, statusFilter, searchQuery]);
 
   const stats = {
-    payableDays: records.filter((r) => r.dayStatus === 'PRESENT' || r.dayStatus === 'WEEKEND').length,
+    payableDays: records.filter((r) => r.dayStatus === 'PRESENT' || r.dayStatus === 'WEEKEND')
+      .length,
     presentDays: records.filter((r) => r.dayStatus === 'PRESENT').length,
     onDutyDays: 0,
     paidLeaveDays: records.filter((r) => r.dayStatus === 'LEAVE').length,
@@ -76,9 +89,9 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   };
 
   return (
-    <div className="w-full flex flex-col relative">
+    <div className="w-full max-w-full flex flex-col relative overflow-x-hidden">
       {/* 1. Header Toolbar — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-[#EEF2F6]">
+      <div className="sticky top-0 z-20 px-3 sm:px-6 bg-[#EEF2F6] dark:bg-[#0A0D12]">
         <AttendanceToolbar
           title="Attendance Summary"
           dateRange="23-Aug-2026 - 29-Aug-2026"
@@ -90,32 +103,32 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
       </div>
 
       {/* 2. Scrollable content below toolbar */}
-      <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-6 pb-6 space-y-3.5 pt-3.5">
+      <div className="w-full min-w-0 max-w-[1380px] mx-auto px-3 sm:px-6 pb-6 space-y-3.5 pt-3.5">
         {/* Optional Filter Controls Bar */}
         {isFilterActive && (
           <div className="bg-white border border-slate-200 rounded-[6px] p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-600">Filter Status:</span>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="text-xs border border-slate-200 rounded px-2.5 py-1 bg-slate-50 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="present">Present</option>
-                <option value="holiday">Holiday</option>
-                <option value="weekend">Weekend</option>
-                <option value="empty">Missed / Empty</option>
-              </select>
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                Filter Status:
+              </span>
+              <div className="w-40">
+                <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                  <option value="ALL">All Statuses</option>
+                  <option value="present">Present</option>
+                  <option value="holiday">Holiday</option>
+                  <option value="weekend">Weekend</option>
+                  <option value="empty">Missed / Empty</option>
+                </Select>
+              </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <input
+              <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search table..."
-                className="text-xs border border-slate-200 rounded px-3 py-1 bg-slate-50 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                className="w-48"
               />
               {(statusFilter !== 'ALL' || searchQuery) && (
                 <button
@@ -134,10 +147,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
 
         {/* 2. 9-Column Attendance Data Table */}
         {filteredRows.length > 0 ? (
-          <AttendanceTableView
-            rows={filteredRows}
-            onSelectRow={(row) => setSelectedRow(row)}
-          />
+          <AttendanceTableView rows={filteredRows} onSelectRow={(row) => setSelectedRow(row)} />
         ) : (
           <div className="bg-white rounded-[6px] border border-slate-200/90 p-8 text-center space-y-2">
             <div className="text-sm font-bold text-slate-700">No attendance records found</div>
@@ -159,4 +169,3 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
     </div>
   );
 }
-

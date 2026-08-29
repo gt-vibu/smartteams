@@ -46,16 +46,19 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
         {/* Drawer Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
           <div>
-            <h2 className="!text-sm !font-bold !text-slate-900 !m-0">
-              Edit Employee Profile
-            </h2>
+            <h2 className="!text-sm !font-bold !text-slate-900 !m-0">Edit Employee Profile</h2>
             <p className="text-[11px] text-slate-500 font-medium mt-0.5">
               Update editable contact and personal details
             </p>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-700 p-1 rounded">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -102,9 +105,7 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Contact Phone
-            </label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Contact Phone</label>
             <input
               type="tel"
               value={phone}
@@ -115,9 +116,7 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Work Location
-            </label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Work Location</label>
             <input
               type="text"
               value={location}
@@ -141,8 +140,18 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
 
           {isSaved && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded font-semibold flex items-center gap-2">
-              <svg className="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              <svg
+                className="h-4 w-4 text-emerald-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
               <span>Profile details updated successfully!</span>
             </div>

@@ -20,14 +20,12 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
   ];
 
   return (
-    <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-x-auto no-scrollbar">
-      <div className="min-w-[660px]">
+    <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
+      <div className="min-w-[580px] sm:min-w-[660px]">
         {/* Top Header Time Scale Ruler */}
         <div className="grid grid-cols-12 border-b border-slate-200 bg-slate-50/70 text-[11px] font-semibold text-slate-500 py-2.5 px-4">
           {/* Left Day Header */}
-          <div className="col-span-2 text-xs font-bold text-slate-700">
-            Day
-          </div>
+          <div className="col-span-2 text-xs font-bold text-slate-700">Day</div>
 
           {/* 9 Time Hours Markers */}
           <div className="col-span-8 grid grid-cols-9 text-center">
@@ -39,9 +37,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
           </div>
 
           {/* Right Worked Hours Header */}
-          <div className="col-span-2 text-right text-xs font-bold text-slate-700">
-            Total Hours
-          </div>
+          <div className="col-span-2 text-right text-xs font-bold text-slate-700">Total Hours</div>
         </div>
 
         {/* Daily Timeline Rows */}
@@ -51,7 +47,8 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
 
           {days.map((day) => {
             const durationStr = formatMinutesToDuration(day.workedMinutes);
-            const isSameTime = day.firstInTime && day.lastOutTime && day.firstInTime === day.lastOutTime;
+            const isSameTime =
+              day.firstInTime && day.lastOutTime && day.firstInTime === day.lastOutTime;
 
             return (
               <div
@@ -67,9 +64,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
                       {day.dayLabel}
                     </span>
                   ) : (
-                    <span className="text-xs font-bold text-slate-800">
-                      {day.dayLabel}
-                    </span>
+                    <span className="text-xs font-bold text-slate-800">{day.dayLabel}</span>
                   )}
                 </div>
 
@@ -137,9 +132,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
                   )}
 
                   {/* Case 4: Empty Track */}
-                  {day.status === 'EMPTY' && (
-                    <div className="w-full h-0.5 bg-slate-200/60" />
-                  )}
+                  {day.status === 'EMPTY' && <div className="w-full h-0.5 bg-slate-200/60" />}
                 </div>
 
                 {/* Right Total Worked Hours Column */}
@@ -156,4 +149,3 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
     </div>
   );
 }
-
