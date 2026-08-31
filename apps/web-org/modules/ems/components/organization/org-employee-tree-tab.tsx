@@ -1,8 +1,10 @@
 'use client';
 
+import { Button, Input } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import { Select } from '@smarteam/ui';
-import { OrgEmployeeNode } from '../../types/organization.types';
+import type { OrgEmployeeNode } from '../../types/organization.types';
 
 interface OrgEmployeeTreeTabProps {
   treeRoot: OrgEmployeeNode | null;
@@ -23,7 +25,7 @@ function TreeNodeItem({
   searchQuery,
   selectedBranch,
 }: TreeNodeComponentProps) {
-  const hasChildren = node.children && node.children.length > 0;
+  const hasChildren = node.children.length > 0;
   const isExpanded = expandedIds.has(node.id);
 
   // Check if this node or any child matches search/filter
@@ -67,7 +69,7 @@ function TreeNodeItem({
                 {node.employeeNumber}
               </span>
             </div>
-            <p className="text-[10px] font-semibold text-[#0284C7] truncate mt-0.5">
+            <p className="text-[10px] font-semibold text-primary truncate mt-0.5">
               {node.jobTitle}
             </p>
             <div className="text-[9px] text-slate-500 truncate mt-1">
@@ -82,7 +84,7 @@ function TreeNodeItem({
             <span className="text-[10px] font-semibold text-slate-500">
               👥 {node.children.length} direct report{node.children.length !== 1 ? 's' : ''}
             </span>
-            <button
+            <Button
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleExpand(node.id);
@@ -91,7 +93,7 @@ function TreeNodeItem({
             >
               <span>{isExpanded ? 'Collapse' : 'Expand'}</span>
               <span>{isExpanded ? '▲' : '▼'}</span>
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -166,7 +168,7 @@ export function OrgEmployeeTreeTab({ treeRoot }: OrgEmployeeTreeTabProps) {
     const all = new Set<string>();
     function collect(node: OrgEmployeeNode) {
       all.add(node.id);
-      node.children?.forEach(collect);
+      node.children.forEach(collect);
     }
     if (treeRoot) collect(treeRoot);
     setExpandedIds(all);
@@ -200,12 +202,12 @@ export function OrgEmployeeTreeTab({ treeRoot }: OrgEmployeeTreeTabProps) {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <input
+            <Input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search employee in hierarchy…"
-              className="w-full pl-8 pr-3 py-1 text-xs bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0284C7]"
+              className="w-full pl-8 pr-3 py-1 text-xs bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
 
@@ -222,19 +224,19 @@ export function OrgEmployeeTreeTab({ treeRoot }: OrgEmployeeTreeTabProps) {
 
         {/* Right: Expand/Collapse & Print Actions */}
         <div className="flex items-center gap-2">
-          <button
+          <Button
             onClick={handleExpandAll}
             className="px-2.5 py-1 text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded shadow-2xs transition-colors cursor-pointer"
           >
             Expand All
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleCollapseAll}
             className="px-2.5 py-1 text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded shadow-2xs transition-colors cursor-pointer"
           >
             Collapse All
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handlePrint}
             className="p-1.5 text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50 rounded shadow-2xs transition-colors cursor-pointer"
             title="Print Organization Hierarchy"
@@ -253,7 +255,7 @@ export function OrgEmployeeTreeTab({ treeRoot }: OrgEmployeeTreeTabProps) {
                 d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
               />
             </svg>
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
+import { Button } from '@smarteam/ui';
 import React from 'react';
-import { EmployeeProfile } from '../../types/employee.types';
+import type { EmployeeProfile } from '../../types/employee.types';
 
 interface ManagerTeamCardProps {
   employee: EmployeeProfile;
@@ -50,9 +51,7 @@ export function ManagerTeamCard({ employee }: ManagerTeamCardProps) {
           ))}
 
           <div className="pt-1">
-            <button className="text-xs font-semibold text-[#0284C7] hover:underline">
-              +8 More
-            </button>
+            <Button className="text-xs font-semibold text-primary hover:underline">+8 More</Button>
           </div>
         </div>
       </div>

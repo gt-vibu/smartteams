@@ -53,7 +53,7 @@ export function OverviewTimesheetPreviewTab() {
             <div key={group.date} className="p-3.5 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-xs text-slate-800">{group.date}</span>
-                <span className="font-mono text-xs font-bold text-[#0284C7]">
+                <span className="font-mono text-xs font-bold text-primary">
                   {group.totalDayHours} logged
                 </span>
               </div>

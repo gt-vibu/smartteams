@@ -1,4 +1,4 @@
-import { Persona, WorkspaceContext } from '../types/auth.types';
+import type { Persona, WorkspaceContext } from '../types/auth.types';
 
 export interface NavigationSpaceItem {
   id: 'My Space' | 'Team' | 'Organization';
@@ -40,7 +40,7 @@ export function getVisibleSpaces(
   workspace: WorkspaceContext,
   hasAssignedTeams: boolean,
 ): NavigationSpaceItem[] {
-  const permSet = new Set(persona.permissions || []);
+  const permSet = new Set(persona.permissions);
   const isWildcard = permSet.has('*');
 
   return ALL_NAVIGATION_SPACES.filter((space) => {

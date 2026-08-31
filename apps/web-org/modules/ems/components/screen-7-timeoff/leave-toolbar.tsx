@@ -1,3 +1,4 @@
+import { Button } from '@smarteam/ui';
 import React from 'react';
 
 interface LeaveToolbarProps {
@@ -22,17 +23,17 @@ export function LeaveToolbar({
         {tabs.map((tab) => {
           const isActive = activeSubTab === tab;
           return (
-            <button
+            <Button
               key={tab}
               onClick={() => onSelectSubTab(tab)}
               className={`text-xs font-semibold pb-1 transition-colors relative whitespace-nowrap ${
                 isActive
-                  ? 'text-[#0284C7] border-b-2 border-[#0284C7]'
+                  ? 'text-primary border-b-2 border-primary'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {tab}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -41,7 +42,7 @@ export function LeaveToolbar({
       <div className="flex items-center gap-3">
         {/* Year Navigator */}
         <div className="flex items-center bg-white border border-slate-200 rounded px-2 py-1 shadow-xs text-xs font-semibold text-slate-700">
-          <button className="p-0.5 hover:text-slate-900 text-slate-400" title="Previous Year">
+          <Button className="p-0.5 hover:text-slate-900 text-slate-400" title="Previous Year">
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -51,7 +52,7 @@ export function LeaveToolbar({
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-          </button>
+          </Button>
           <div className="flex items-center gap-1.5 px-3 font-bold text-slate-800">
             <svg
               className="h-3.5 w-3.5 text-slate-400"
@@ -68,7 +69,7 @@ export function LeaveToolbar({
             </svg>
             <span>{yearLabel}</span>
           </div>
-          <button className="p-0.5 hover:text-slate-900 text-slate-400" title="Next Year">
+          <Button className="p-0.5 hover:text-slate-900 text-slate-400" title="Next Year">
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -78,13 +79,13 @@ export function LeaveToolbar({
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
-          </button>
+          </Button>
         </div>
 
         {/* Primary Action Button: + Apply Leave */}
-        <button
+        <Button
           onClick={onOpenApplyLeave}
-          className="px-3 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors"
+          className="px-3 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors"
         >
           <svg
             className="h-3.5 w-3.5"
@@ -96,7 +97,7 @@ export function LeaveToolbar({
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
           <span>Apply Leave</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

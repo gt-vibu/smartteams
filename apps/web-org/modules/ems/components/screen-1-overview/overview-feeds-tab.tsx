@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Textarea } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 
 interface FeedPost {
@@ -100,7 +102,7 @@ export function OverviewFeedsTab() {
             <div className="h-8 w-8 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
               M
             </div>
-            <textarea
+            <Textarea
               value={newPostContent}
               onChange={(e) => setNewPostContent(e.target.value)}
               placeholder="Share an update, shoutout, or announcement with your team..."
@@ -114,13 +116,13 @@ export function OverviewFeedsTab() {
                 Public · Smarteam Org
               </span>
             </div>
-            <button
+            <Button
               type="submit"
               disabled={!newPostContent.trim()}
-              className="px-3.5 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] disabled:opacity-50 text-white text-xs font-semibold rounded shadow-2xs transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-xs font-semibold rounded shadow-2xs transition-colors cursor-pointer"
             >
               Post Update
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -165,7 +167,7 @@ export function OverviewFeedsTab() {
 
             {/* Action Bar */}
             <div className="flex items-center gap-4 pt-2 border-t border-slate-100 text-xs text-slate-500">
-              <button
+              <Button
                 onClick={() => handleLike(post.id)}
                 className={`flex items-center gap-1.5 font-medium transition-colors cursor-pointer ${
                   post.hasLiked ? 'text-sky-600 font-bold' : 'hover:text-slate-800'
@@ -187,7 +189,7 @@ export function OverviewFeedsTab() {
                 <span>
                   {post.likes} {post.likes === 1 ? 'Like' : 'Likes'}
                 </span>
-              </button>
+              </Button>
 
               <div className="flex items-center gap-1.5 font-medium hover:text-slate-800 cursor-pointer">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

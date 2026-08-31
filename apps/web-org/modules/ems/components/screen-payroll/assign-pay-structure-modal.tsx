@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Checkbox, Input } from '@smarteam/ui';
+
 import React, { useState, useEffect } from 'react';
 import { DatePicker, Select } from '@smarteam/ui';
 
@@ -194,12 +196,12 @@ export function AssignPayStructureModal({
               Set annual CTC, custom component splits, and statutory rules.
             </p>
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         {/* Modal Form */}
@@ -228,7 +230,7 @@ export function AssignPayStructureModal({
               <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] mb-1">
                 Annual CTC (INR)
               </label>
-              <input
+              <Input
                 type="number"
                 min="100000"
                 step="10000"
@@ -260,7 +262,7 @@ export function AssignPayStructureModal({
               Compensation Scheme Template
             </label>
             <div className="grid grid-cols-3 gap-2.5">
-              <button
+              <Button
                 type="button"
                 onClick={() => handleSchemeChange('STANDARD_50_20_30')}
                 className={`p-2.5 rounded border text-left cursor-pointer transition-all ${
@@ -271,9 +273,9 @@ export function AssignPayStructureModal({
               >
                 <div className="font-bold text-[11px]">Standard FTE</div>
                 <div className="text-[10px] text-slate-500">50% Basic · 20% HRA · 30% Special</div>
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
                 onClick={() => handleSchemeChange('LEADERSHIP_40_30_30')}
                 className={`p-2.5 rounded border text-left cursor-pointer transition-all ${
@@ -284,9 +286,9 @@ export function AssignPayStructureModal({
               >
                 <div className="font-bold text-[11px]">Executive Package</div>
                 <div className="text-[10px] text-slate-500">40% Basic · 30% HRA · 30% Special</div>
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
                 onClick={() => handleSchemeChange('CUSTOM')}
                 className={`p-2.5 rounded border text-left cursor-pointer transition-all ${
@@ -297,7 +299,7 @@ export function AssignPayStructureModal({
               >
                 <div className="font-bold text-[11px]">Custom Split</div>
                 <div className="text-[10px] text-slate-500">Adjust percentages freely</div>
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -375,10 +377,9 @@ export function AssignPayStructureModal({
             </label>
             <div className="grid grid-cols-2 gap-3">
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={epfEnrolled}
-                  onChange={(e) => setEpfEnrolled(e.target.checked)}
+                  onCheckedChange={setEpfEnrolled}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>
@@ -390,10 +391,9 @@ export function AssignPayStructureModal({
               </label>
 
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={esiEnrolled}
-                  onChange={(e) => setEsiEnrolled(e.target.checked)}
+                  onCheckedChange={setEsiEnrolled}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>
@@ -405,10 +405,9 @@ export function AssignPayStructureModal({
               </label>
 
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={ptEnrolled}
-                  onChange={(e) => setPtEnrolled(e.target.checked)}
+                  onCheckedChange={setPtEnrolled}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>
@@ -420,10 +419,9 @@ export function AssignPayStructureModal({
               </label>
 
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={gratuityEnrolled}
-                  onChange={(e) => setGratuityEnrolled(e.target.checked)}
+                  onCheckedChange={setGratuityEnrolled}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>
@@ -438,19 +436,19 @@ export function AssignPayStructureModal({
 
           {/* Footer Actions */}
           <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="px-3.5 py-1.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="px-4 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold rounded shadow-xs cursor-pointer"
+              className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold rounded shadow-xs cursor-pointer"
             >
               {initialStructure ? 'Update Pay Structure' : 'Assign Pay Structure'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

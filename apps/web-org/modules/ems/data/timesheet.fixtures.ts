@@ -1,4 +1,4 @@
-import { ApprovedTimesheetNotification } from '../types/timesheet.types';
+import type { ApprovedTimesheetNotification } from '../types/timesheet.types';
 
 export const mockTimesheetNotification: ApprovedTimesheetNotification = {
   id: 'ts_jul_2026',

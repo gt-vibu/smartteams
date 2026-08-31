@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Input } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import credentialsFixture from '../../data/fixtures/credentials.json';
 
@@ -16,7 +18,7 @@ type Account = {
   initials: string;
 };
 
-const accounts: Account[] = credentialsFixture.accounts as Account[];
+const accounts: Account[] = credentialsFixture.accounts;
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [email, setEmail] = useState('');
@@ -80,7 +82,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       <div className="relative w-full max-w-sm">
         {/* Brand Mark */}
         <div className="flex flex-col items-center mb-8 select-none">
-          <div className="h-12 w-12 rounded-[10px] bg-[#0284C7] flex items-center justify-center shadow-lg shadow-sky-500/30 mb-3">
+          <div className="h-12 w-12 rounded-[10px] bg-primary flex items-center justify-center shadow-lg shadow-sky-500/30 mb-3">
             <svg className="h-6 w-6 fill-white" viewBox="0 0 24 24">
               <path d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
@@ -105,7 +107,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               <label className="block text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
                 Work Email
               </label>
-              <input
+              <Input
                 type="email"
                 autoComplete="email"
                 value={email}
@@ -125,7 +127,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 Password
               </label>
               <div className="relative">
-                <input
+                <Input
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   value={password}
@@ -137,7 +139,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                   required
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/60 focus:border-sky-500/60 transition-all pr-10"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
@@ -177,7 +179,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                       />
                     </svg>
                   )}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -202,10 +204,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             )}
 
             {/* Submit */}
-            <button
+            <Button
               type="submit"
               disabled={isLoading || !email || !password}
-              className="w-full py-2.5 rounded-lg bg-[#0284C7] hover:bg-[#0369A1] disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -229,13 +231,13 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               ) : (
                 'Sign In'
               )}
-            </button>
+            </Button>
           </form>
         </div>
 
         {/* Demo Credentials Panel */}
         <div className="mt-4 bg-[#111827]/80 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-          <button
+          <Button
             type="button"
             onClick={() => setShowCredentials(!showCredentials)}
             className="w-full flex items-center justify-between px-5 py-3.5 text-left cursor-pointer hover:bg-slate-800/40 transition-colors"
@@ -255,7 +257,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
-          </button>
+          </Button>
 
           {showCredentials && (
             <div className="border-t border-slate-800">
@@ -304,13 +306,13 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                       </div>
 
                       {/* Quick-fill button */}
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleQuickFill(account)}
                         className="shrink-0 px-2.5 py-1 text-[10px] font-bold rounded border border-sky-500/40 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 transition-all cursor-pointer whitespace-nowrap"
                       >
                         Use →
-                      </button>
+                      </Button>
                     </div>
                   );
                 })}

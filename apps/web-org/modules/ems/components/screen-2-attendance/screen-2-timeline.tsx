@@ -6,6 +6,7 @@ import { AttendanceActionBar } from './attendance-action-bar';
 import { TimelineTrackView } from './timeline-track-view';
 import { AttendanceSummaryFooter } from './attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
+import { formatDateRangeFromValues } from '../../utils/formatters';
 
 interface Screen2TimelineProps {
   onToggleView?: (view: 'timeline' | 'table' | 'calendar') => void;
@@ -23,7 +24,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     firstInTime: r.firstInTime || undefined,
     lastOutTime: r.lastOutTime || undefined,
     workedMinutes: r.workedMinutes,
-    status: r.dayStatus as any,
+    status: r.dayStatus === 'ON_DUTY' ? 'PRESENT' : r.dayStatus,
     holidayName: r.holidayName,
     isRestrictedHoliday: r.isRestrictedHoliday,
     spanStartPercent: r.spanStartPercent ?? (r.firstInTime ? 0 : undefined),
@@ -39,14 +40,15 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     holidayDays: records.filter((r) => r.dayStatus === 'HOLIDAY').length,
     weekendDays: records.filter((r) => r.dayStatus === 'WEEKEND').length,
   };
+  const dateRange = formatDateRangeFromValues(records.map((record) => record.workDate));
 
   return (
     <div className="w-full flex flex-col">
       {/* 1. Header Toolbar — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-[#EEF2F6]">
+      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-muted">
         <AttendanceToolbar
           title="Attendance Summary"
-          dateRange="23-Aug-2026 - 29-Aug-2026"
+          dateRange={dateRange || 'Current period'}
           viewMode="timeline"
           onChangeViewMode={onToggleView}
         />

@@ -1,6 +1,6 @@
 // employee.repository.ts — profile always derived from persona, only avatar persisted
 import { emsStorageAdapter } from '../storage/storage.adapter';
-import { EmployeeProfile } from '../types/employee.types';
+import type { EmployeeProfile } from '../types/employee.types';
 import { authRepository } from './auth.repository';
 
 export type { EmployeeProfile };

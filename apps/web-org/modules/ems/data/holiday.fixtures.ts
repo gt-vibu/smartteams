@@ -1,4 +1,4 @@
 import holidaysFixture from './fixtures/holidays.json';
-import { HolidayItem } from '../types/holiday.types';
+import type { HolidayItem } from '../types/holiday.types';
 
-export const mockUpcomingHolidays: HolidayItem[] = holidaysFixture.holidays as HolidayItem[];
+export const mockUpcomingHolidays: HolidayItem[] = holidaysFixture.holidays;

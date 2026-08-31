@@ -1,4 +1,4 @@
-import { CalendarDayItem, MonthCalendarData } from '../types/calendar.types';
+import type { CalendarDayItem, MonthCalendarData } from '../types/calendar.types';
 
 // Generate August 2026 Calendar Grid (42 cells: 6 weeks x 7 days)
 const generateAugust2026Days = (): CalendarDayItem[] => {

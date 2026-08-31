@@ -5,7 +5,7 @@ import { CalendarToolbar } from './calendar-toolbar';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarDetailDrawer } from './calendar-detail-drawer';
 import { useAttendance } from '../../hooks/use-attendance';
-import { CalendarDayItem } from '../../types/calendar.types';
+import type { CalendarDayItem } from '../../types/calendar.types';
 import holidaysFixture from '../../data/fixtures/holidays.json';
 
 interface Screen4CalendarProps {
@@ -16,33 +16,37 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
   const { records, punches, liveState } = useAttendance();
   const [selectedDay, setSelectedDay] = useState<CalendarDayItem | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [viewDate, setViewDate] = useState(() => new Date(2026, 7, 1));
 
-  // Generate August 2026 dynamic calendar days
+  // Generate the visible month from attendance and holiday data.
   const calendarDays: CalendarDayItem[] = useMemo(() => {
     const days: CalendarDayItem[] = [];
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
+    const firstDayOffset = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const demoToday = records.find((record) => record.isToday)?.workDate;
 
-    // Preceding padding days from July 2026 (Sun Jul 26 - Fri Jul 31)
-    const prevDays = [26, 27, 28, 29, 30, 31];
-    prevDays.forEach((d) => {
+    for (let offset = firstDayOffset; offset > 0; offset -= 1) {
+      const date = new Date(year, month, 1 - offset);
       days.push({
-        date: `2026-07-${d}`,
-        dayNumber: d,
+        date: date.toISOString().slice(0, 10),
+        dayNumber: date.getDate(),
         isCurrentMonth: false,
         dayStatus: 'EMPTY',
       });
-    });
+    }
 
-    // August 2026 days (Aug 1 to Aug 31)
-    for (let d = 1; d <= 31; d++) {
-      const dateStr = `2026-08-${String(d).padStart(2, '0')}`;
-      const dayOfWeekNum = new Date(2026, 7, d).getDay(); // 0 is Sun, 6 is Sat
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const dayOfWeekNum = new Date(year, month, d).getDay();
       const isWeekend = dayOfWeekNum === 0 || dayOfWeekNum === 6;
-      const isToday = d === 25;
+      const isToday = dateStr === demoToday;
+      const monthName = new Date(year, month, d).toLocaleDateString('en-US', { month: 'short' });
 
-      // Find if holiday
       const holiday = holidaysFixture.holidays.find(
         (h) =>
-          h.holidayDate.startsWith(String(d).padStart(2, '0')) && h.holidayDate.includes('Aug'),
+          h.holidayDate.startsWith(String(d).padStart(2, '0')) && h.holidayDate.includes(monthName),
       );
 
       // Find matching attendance record
@@ -56,7 +60,12 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         dayStatus = 'PRESENT';
         hoursLabel = liveState.isCheckedIn ? 'In (Active)' : '08:00 Hrs';
       } else if (record) {
-        dayStatus = record.dayStatus as any;
+        dayStatus =
+          record.dayStatus === 'ON_DUTY'
+            ? 'PRESENT'
+            : record.dayStatus === 'LEAVE'
+              ? 'ABSENT'
+              : record.dayStatus;
         hoursLabel =
           record.workedMinutes > 0
             ? `${Math.floor(record.workedMinutes / 60)
@@ -67,7 +76,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         dayStatus = 'HOLIDAY';
       } else if (isWeekend) {
         dayStatus = 'WEEKEND';
-      } else if (d < 25) {
+      } else if (demoToday && dateStr < demoToday) {
         dayStatus = 'PRESENT';
         hoursLabel = '08:00 Hrs';
       } else {
@@ -103,19 +112,27 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
       });
     }
 
-    // Following padding days from Sept 2026 (Tue Sep 1 - Sat Sep 5)
-    const nextDays = [1, 2, 3, 4, 5];
-    nextDays.forEach((d) => {
+    while (days.length % 7 !== 0) {
+      const date = new Date(
+        year,
+        month,
+        daysInMonth + (days.length - firstDayOffset - daysInMonth) + 1,
+      );
       days.push({
-        date: `2026-09-0${d}`,
-        dayNumber: d,
+        date: date.toISOString().slice(0, 10),
+        dayNumber: date.getDate(),
         isCurrentMonth: false,
         dayStatus: 'EMPTY',
       });
-    });
+    }
 
     return days;
-  }, [records, punches, liveState]);
+  }, [records, punches, liveState, viewDate]);
+
+  const handleToday = () => {
+    const today = records.find((record) => record.isToday)?.workDate;
+    setViewDate(today ? new Date(`${today}T00:00:00`) : new Date());
+  };
 
   const handleSelectDay = (day: CalendarDayItem) => {
     if (!day.isCurrentMonth) return;
@@ -126,10 +143,16 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
   return (
     <div className="w-full flex flex-col">
       {/* 1. Month Navigator & View Switcher — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-[#EEF2F6]">
+      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-muted">
         <CalendarToolbar
-          monthName="Aug 2026"
-          onToday={() => {}}
+          monthName={viewDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+          onPrevMonth={() =>
+            setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))
+          }
+          onNextMonth={() =>
+            setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))
+          }
+          onToday={handleToday}
           viewMode="calendar"
           onChangeViewMode={onToggleView}
         />

@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import '@smarteam/ui/theme.css';
+@source '../../../packages/ui/src/**/*.{js,ts,jsx,tsx}';
 
 /* ─── Custom Dark Mode Variant (Tailwind v4 class-based toggle) ─── */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -14,6 +16,65 @@
   --paper: oklch(0.96 0.018 92);
   --accent: oklch(0.68 0.14 46);
   --line: oklch(0.2 0.03 165 / 0.17);
+
+  /* Canonical Smarteam semantic tokens consumed by @smarteam/ui. */
+  --background: oklch(0.96 0.018 92);
+  --foreground: oklch(0.2 0.03 165);
+  --card: oklch(0.995 0.006 88);
+  --card-foreground: oklch(0.2 0.03 165);
+  --popover: oklch(0.995 0.006 88);
+  --popover-foreground: oklch(0.2 0.03 165);
+  --primary: var(--smarteam-primary);
+  --primary-foreground: var(--smarteam-primary-foreground);
+  --secondary: oklch(0.92 0.025 220);
+  --secondary-foreground: oklch(0.28 0.05 230);
+  --muted: oklch(0.93 0.018 220);
+  --muted-foreground: oklch(0.48 0.035 220);
+  --accent-foreground: oklch(0.25 0.045 72);
+  --destructive: oklch(0.56 0.17 27);
+  --destructive-foreground: oklch(0.985 0.01 88);
+  --success: oklch(0.61 0.13 153);
+  --success-foreground: oklch(0.3 0.07 153);
+  --border: oklch(0.2 0.03 165 / 0.14);
+  --input: oklch(0.2 0.03 165 / 0.2);
+  --ring: var(--smarteam-primary);
+  --sidebar: oklch(0.17 0.045 245);
+  --sidebar-foreground: oklch(0.9 0.025 220);
+  --sidebar-border: oklch(0.27 0.06 245);
+  --sidebar-accent: var(--smarteam-primary);
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  --radius-md: calc(var(--radius) - 0.125rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.25rem);
 }
 
 * {
@@ -257,8 +318,8 @@ a {
    EMS THEME SYSTEM (Light / Dark Mode Engine)
    ═══════════════════════════════════════════════════════════════ */
 body {
-  background-color: #f0f4f8;
-  color: #0f172a;
+  background-color: var(--background);
+  color: var(--foreground);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -266,14 +327,29 @@ body {
 
 html.dark body,
 html[data-theme='dark'] body {
-  background-color: #12151a !important;
-  color: #f8fafc !important;
+  --background: oklch(0.16 0.025 245);
+  --foreground: oklch(0.96 0.01 220);
+  --card: oklch(0.21 0.025 245);
+  --card-foreground: oklch(0.96 0.01 220);
+  --popover: oklch(0.21 0.025 245);
+  --popover-foreground: oklch(0.96 0.01 220);
+  --secondary: oklch(0.25 0.035 245);
+  --secondary-foreground: oklch(0.92 0.015 220);
+  --muted: oklch(0.25 0.035 245);
+  --muted-foreground: oklch(0.7 0.025 220);
+  --border: oklch(0.33 0.04 245 / 0.8);
+  --input: oklch(0.33 0.04 245);
+  --sidebar: oklch(0.13 0.03 245);
+  --sidebar-foreground: oklch(0.9 0.025 220);
+  --sidebar-border: oklch(0.25 0.04 245);
+  --sidebar-accent: var(--smarteam-primary);
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
 }
 
 /* Dark Mode Canvas & App Background */
 html.dark #ems-main-canvas,
-html.dark .bg-\[\#F0F4F8\],
-html.dark .bg-\[\#EEF2F6\] {
+html.dark #ems-main-canvas {
   background-color: #12151a !important;
 }
 
@@ -312,8 +388,7 @@ html.dark .bg-slate-100\/80,
 html.dark .bg-slate-100\/75,
 html.dark .bg-slate-100\/70,
 html.dark .bg-slate-100\/60,
-html.dark .bg-slate-100\/50,
-html.dark .bg-\[\#EEF2F6\]\/60 {
+html.dark .bg-slate-100\/50 {
   background-color: #161b22 !important;
 }
 

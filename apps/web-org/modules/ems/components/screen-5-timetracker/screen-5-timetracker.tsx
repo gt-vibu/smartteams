@@ -1,22 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TimeTrackerToolbar } from './timetracker-toolbar';
 import { QuickTimerBar } from './quick-timer-bar';
 import { GroupedTimeLogTable } from './grouped-timelog-table';
 import { TimeLogSummaryStrip } from './timelog-summary-strip';
 import { LogTimeModal } from '../screen-6-logtime/logtime-modal';
 import { useTimesheet } from '../../hooks/use-timesheet';
-import { LogTimeFormData } from '../../types/logtime-form.types';
+import type { LogTimeFormData } from '../../types/logtime-form.types';
 
 export function Screen5TimeTracker() {
   const [activeSubTab, setActiveSubTab] = useState('Time Logs');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const { groupedLogs, summary, addTimeLog } = useTimesheet();
+  const monthName = useMemo(
+    () => currentMonth.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+    [currentMonth],
+  );
 
   const handleSaveLog = (data: LogTimeFormData) => {
     addTimeLog({
-      date: 'Aug 25, 2026',
+      date: data.date,
       projectName: data.projectName,
       jobName: data.jobName,
       description: data.description,
@@ -28,12 +33,18 @@ export function Screen5TimeTracker() {
   return (
     <div className="w-full flex flex-col">
       {/* 1. Sub-Tabs & Date Navigator Toolbar — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-[#EEF2F6]">
+      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-muted">
         <TimeTrackerToolbar
           activeSubTab={activeSubTab}
           onSelectSubTab={setActiveSubTab}
           onOpenLogTime={() => setIsModalOpen(true)}
-          monthName="Aug 2026"
+          monthName={monthName}
+          onPrevMonth={() =>
+            setCurrentMonth((date) => new Date(date.getFullYear(), date.getMonth() - 1, 1))
+          }
+          onNextMonth={() =>
+            setCurrentMonth((date) => new Date(date.getFullYear(), date.getMonth() + 1, 1))
+          }
         />
       </div>
 

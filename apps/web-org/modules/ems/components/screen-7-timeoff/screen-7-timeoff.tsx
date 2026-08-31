@@ -6,7 +6,7 @@ import { LeaveBalanceCards } from './leave-balance-cards';
 import { LeaveApplicationsTable } from './leave-applications-table';
 import { ApplyLeaveModal } from './apply-leave-modal';
 import { useLeave } from '../../hooks/use-leave';
-import { ApplyLeaveFormData } from '../../types/leave.types';
+import type { ApplyLeaveFormData } from '../../types/leave.types';
 
 export function Screen7TimeOff() {
   const [activeSubTab, setActiveSubTab] = useState('Leave Summary');
@@ -20,7 +20,7 @@ export function Screen7TimeOff() {
   return (
     <div className="w-full flex flex-col">
       {/* 1. Sub-Tabs & Actions Toolbar — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-[#EEF2F6]">
+      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-muted">
         <LeaveToolbar
           activeSubTab={activeSubTab}
           onSelectSubTab={setActiveSubTab}

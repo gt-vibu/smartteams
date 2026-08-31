@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React from 'react';
 
 interface BotanicalCoverProps {
@@ -103,7 +105,7 @@ export function BotanicalCover({
       {/* 4. Edit Cover Photo Button (Single clean button on top right) */}
       {onEditCover && (
         <div className="absolute top-3 right-3 sm:right-6 z-10">
-          <button
+          <Button
             onClick={onEditCover}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-[5px] bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white text-[11px] font-semibold transition-all shadow-md cursor-pointer"
             title="Update cover photo"
@@ -127,7 +129,7 @@ export function BotanicalCover({
               />
             </svg>
             <span>Edit Cover Photo</span>
-          </button>
+          </Button>
         </div>
       )}
 

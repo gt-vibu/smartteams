@@ -20,6 +20,8 @@ import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import holidaysFixture from '../../data/fixtures/holidays.json';
+import type { DailyAttendanceItem } from '../../types/attendance.types';
+import { formatDateLabel } from '../../utils/formatters';
 
 interface Screen1OverviewProps {
   onNavigateModule?: (module: string, subView?: 'timeline' | 'table' | 'calendar') => void;
@@ -41,15 +43,27 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   };
 
   // Convert attendance records to week schedule format
-  const weekScheduleDays = records.map((r) => ({
+  const weekScheduleDays: DailyAttendanceItem[] = records.map((r) => ({
     id: r.id,
     workDate: r.workDate,
     dayOfWeek: r.dayOfWeek,
     dayNumber: r.dayNumber,
-    dayStatus: r.dayStatus as any,
+    dayStatus:
+      r.dayStatus === 'LEAVE'
+        ? 'ON_LEAVE'
+        : r.dayStatus === 'ON_DUTY'
+          ? 'PRESENT'
+          : r.dayStatus === 'EMPTY'
+            ? 'ABSENT'
+            : r.dayStatus,
     workedMinutes: r.workedMinutes,
     isToday: r.isToday,
   }));
+  const scheduleDates = records.map((record) => record.workDate).sort();
+  const scheduleStartDate = scheduleDates[0] ? formatDateLabel(scheduleDates[0]) : 'Current period';
+  const scheduleEndDate = scheduleDates[scheduleDates.length - 1]
+    ? formatDateLabel(scheduleDates[scheduleDates.length - 1]!)
+    : '';
 
   const handleSelectSubTab = (tab: string) => {
     // Retain inline preview state without forcefully redirecting away
@@ -61,7 +75,7 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   };
 
   return (
-    <div className="w-full max-w-full pb-14 bg-[#F0F4F8] min-h-full">
+    <div className="w-full max-w-full pb-14 bg-background min-h-full">
       {/* 1. Full-Width Hero Banner */}
       <HeroBanner activeTab={activeTopTab} onSelectTab={handleSelectTopTab} />
 
@@ -106,12 +120,12 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
 
                   <WorkScheduleCard
                     shift={shiftInfo}
-                    startDate="23-Aug-2026"
-                    endDate="29-Aug-2026"
+                    startDate={scheduleStartDate}
+                    endDate={scheduleEndDate}
                     attendanceDays={weekScheduleDays}
                   />
 
-                  <UpcomingHolidaysCard holidays={holidaysFixture.holidays as any} />
+                  <UpcomingHolidaysCard holidays={holidaysFixture.holidays} />
                 </>
               )}
 

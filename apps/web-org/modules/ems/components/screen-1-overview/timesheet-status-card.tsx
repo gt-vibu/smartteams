@@ -1,5 +1,5 @@
 import React from 'react';
-import { ApprovedTimesheetNotification } from '../../types/timesheet.types';
+import type { ApprovedTimesheetNotification } from '../../types/timesheet.types';
 
 interface TimesheetStatusCardProps {
   notification: ApprovedTimesheetNotification;
@@ -7,7 +7,7 @@ interface TimesheetStatusCardProps {
 
 export function TimesheetStatusCard({ notification }: TimesheetStatusCardProps) {
   return (
-    <div className="bg-[#FFFDF7] dark:bg-[#1B2028] rounded-lg border border-amber-200/90 dark:border-amber-500/30 p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full min-w-0">
+    <div className="bg-[#FFFDF7] dark:bg-card rounded-lg border border-amber-200/90 dark:border-amber-500/30 p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full min-w-0">
       <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
         {/* Amber Clock Icon Container */}
         <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-amber-100/90 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200/60 dark:border-amber-700/50 mt-0.5 sm:mt-0">

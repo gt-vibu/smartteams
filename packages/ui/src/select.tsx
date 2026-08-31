@@ -12,6 +12,7 @@ interface SelectContextType {
   triggerRef: React.RefObject<HTMLButtonElement | null>;
   selectedLabel: string;
   setSelectedLabel: (label: string) => void;
+  listboxId: string;
 }
 
 const SelectContext = React.createContext<SelectContextType | null>(null);
@@ -57,6 +58,7 @@ export function Select({
   const [selectedLabel, setSelectedLabel] = React.useState<string>('');
   const triggerRef = React.useRef<HTMLButtonElement | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const listboxId = React.useId();
 
   const activeValue = controlledValue !== undefined ? controlledValue : internalValue;
 
@@ -115,7 +117,7 @@ export function Select({
     const options: Array<{ value: string; label: React.ReactNode; disabled?: boolean }> = [];
     React.Children.forEach(children, (child) => {
       if (React.isValidElement(child) && child.type === 'option') {
-        const props = child.props as any;
+        const props = child.props as React.OptionHTMLAttributes<HTMLOptionElement>;
         options.push({
           value: String(props.value ?? ''),
           label: props.children,
@@ -139,12 +141,20 @@ export function Select({
           disabled={disabled}
           onClick={() => !disabled && setOpen(!open)}
           className={cn(
-            'flex h-8 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 shadow-2xs transition-all hover:bg-slate-50/80 focus:outline-none focus:ring-1 focus:ring-[#0284C7] focus:border-[#0284C7] disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-[#161B22] dark:text-slate-100 dark:hover:bg-slate-800/80 cursor-pointer',
-            open && 'ring-1 ring-[#0284C7] border-[#0284C7]',
+            'flex h-8 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 shadow-2xs transition-all hover:bg-slate-50/80 focus:outline-none focus:ring-1 focus:ring-ring focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-card dark:text-slate-100 dark:hover:bg-slate-800/80 cursor-pointer',
+            open && 'ring-1 ring-primary border-primary',
             !currentOption && 'text-slate-400 dark:text-slate-500',
           )}
           aria-haspopup="listbox"
           aria-expanded={open}
+          aria-controls={listboxId}
+          onKeyDown={(event) => {
+            if (disabled) return;
+            if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setOpen(true);
+            }
+          }}
         >
           <span className="truncate pr-2">{displayText}</span>
           <svg
@@ -163,8 +173,10 @@ export function Select({
 
         {open && (
           <div
-            className="absolute left-0 mt-1 z-50 min-w-full w-max max-w-sm rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-[#1B2028] dark:text-slate-100 animate-in fade-in zoom-in-95"
+            className="absolute left-0 mt-1 z-50 min-w-full w-max max-w-sm rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-card dark:text-slate-100 animate-in fade-in zoom-in-95"
             role="listbox"
+            id={listboxId}
+            tabIndex={-1}
           >
             <div className="max-h-60 overflow-y-auto space-y-0.5">
               {options.map((opt) => {
@@ -174,6 +186,14 @@ export function Select({
                     key={opt.value}
                     role="option"
                     aria-selected={isSelected}
+                    aria-disabled={opt.disabled || undefined}
+                    tabIndex={opt.disabled ? -1 : 0}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        if (!opt.disabled) handleValueChange(opt.value);
+                      }
+                    }}
                     onClick={() => {
                       if (!opt.disabled) {
                         handleValueChange(opt.value);
@@ -182,7 +202,7 @@ export function Select({
                     className={cn(
                       'relative flex items-center justify-between w-full px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer select-none',
                       isSelected
-                        ? 'bg-sky-50 dark:bg-sky-950/50 text-[#0284C7] dark:text-sky-400 font-semibold'
+                        ? 'bg-sky-50 dark:bg-sky-950/50 text-primary dark:text-sky-400 font-semibold'
                         : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80',
                       opt.disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
                     )}
@@ -190,7 +210,7 @@ export function Select({
                     <span className="truncate pr-4">{opt.label}</span>
                     {isSelected && (
                       <svg
-                        className="h-3.5 w-3.5 text-[#0284C7] dark:text-sky-400 shrink-0"
+                        className="h-3.5 w-3.5 text-primary dark:text-sky-400 shrink-0"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -221,6 +241,7 @@ export function Select({
         triggerRef,
         selectedLabel,
         setSelectedLabel,
+        listboxId,
       }}
     >
       <div
@@ -240,7 +261,7 @@ export const SelectTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, children, ...props }, ref) => {
-  const { open, setOpen, disabled, triggerRef } = useSelect();
+  const { open, setOpen, disabled, triggerRef, listboxId } = useSelect();
 
   return (
     <button
@@ -253,12 +274,20 @@ export const SelectTrigger = React.forwardRef<
       disabled={disabled}
       onClick={() => !disabled && setOpen(!open)}
       className={cn(
-        'flex h-8 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 shadow-2xs transition-all hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-[#0284C7] focus:border-[#0284C7] disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-[#161B22] dark:text-slate-100 dark:hover:bg-slate-800/80 cursor-pointer',
-        open && 'ring-1 ring-[#0284C7] border-[#0284C7]',
+        'flex h-8 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 shadow-2xs transition-all hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-ring focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-card dark:text-slate-100 dark:hover:bg-slate-800/80 cursor-pointer',
+        open && 'ring-1 ring-primary border-primary',
         className,
       )}
       aria-haspopup="listbox"
       aria-expanded={open}
+      aria-controls={listboxId}
+      onKeyDown={(event) => {
+        if (disabled) return;
+        if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          setOpen(true);
+        }
+      }}
       {...props}
     >
       {children}
@@ -297,17 +326,19 @@ export function SelectContent({
   className?: string;
   children: React.ReactNode;
 }) {
-  const { open } = useSelect();
+  const { open, listboxId } = useSelect();
 
   if (!open) return null;
 
   return (
     <div
       className={cn(
-        'absolute left-0 mt-1 z-50 min-w-full w-max max-w-sm rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-[#1B2028] dark:text-slate-100 animate-in fade-in zoom-in-95',
+        'absolute left-0 mt-1 z-50 min-w-full w-max max-w-sm rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-card dark:text-slate-100 animate-in fade-in zoom-in-95',
         className,
       )}
       role="listbox"
+      id={listboxId}
+      tabIndex={-1}
     >
       <div className="max-h-60 overflow-y-auto space-y-0.5">{children}</div>
     </div>
@@ -338,6 +369,17 @@ export function SelectItem({
     <div
       role="option"
       aria-selected={isSelected}
+      aria-disabled={disabled || undefined}
+      tabIndex={disabled ? -1 : 0}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          if (!disabled) {
+            if (typeof children === 'string') setSelectedLabel(children);
+            onValueChange?.(value);
+          }
+        }
+      }}
       onClick={() => {
         if (!disabled) {
           if (typeof children === 'string') {
@@ -349,7 +391,7 @@ export function SelectItem({
       className={cn(
         'relative flex items-center justify-between w-full px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer select-none',
         isSelected
-          ? 'bg-sky-50 dark:bg-sky-950/50 text-[#0284C7] dark:text-sky-400 font-semibold'
+          ? 'bg-sky-50 dark:bg-sky-950/50 text-primary dark:text-sky-400 font-semibold'
           : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80',
         disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
         className,
@@ -358,7 +400,7 @@ export function SelectItem({
       <span className="truncate pr-4">{children}</span>
       {isSelected && (
         <svg
-          className="h-3.5 w-3.5 text-[#0284C7] dark:text-sky-400 shrink-0"
+          className="h-3.5 w-3.5 text-primary dark:text-sky-400 shrink-0"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

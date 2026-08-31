@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Button } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 import { useTeams } from '../../hooks/use-teams';
 
@@ -48,7 +49,7 @@ export function ContextBar({
   };
 
   return (
-    <div className="w-full bg-white dark:bg-[#16191E] border-b border-slate-200/80 dark:border-[#262F3D] px-3 sm:px-6 py-2 flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 shrink-0 select-none min-w-0">
+    <div className="w-full bg-white dark:bg-card border-b border-slate-200/80 dark:border-border px-3 sm:px-6 py-2 flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 shrink-0 select-none min-w-0">
       {/* Left: Breadcrumbs Path */}
       <nav
         aria-label="Context Breadcrumbs"
@@ -58,23 +59,23 @@ export function ContextBar({
         <span className="text-slate-300 dark:text-slate-600 shrink-0">/</span>
 
         {/* Space */}
-        <button
+        <Button
           onClick={() => onNavigateSpace?.(activeSpace)}
           className="hover:text-slate-900 dark:hover:text-white font-medium cursor-pointer transition-colors text-slate-600 dark:text-slate-300"
         >
           {activeSpace}
-        </button>
+        </Button>
 
         {/* Module in My Space */}
         {activeSpace === 'My Space' && (
           <>
             <span className="text-slate-300 dark:text-slate-600">/</span>
-            <button
+            <Button
               onClick={() => onNavigateModule?.(activeModule)}
               className="text-slate-900 dark:text-white font-semibold truncate hover:underline cursor-pointer"
             >
               {getModuleLabel(activeModule)}
-            </button>
+            </Button>
           </>
         )}
 
@@ -120,7 +121,7 @@ export function ContextBar({
       {/* Right: Operational Scope Indicator */}
       <div className="hidden sm:flex items-center space-x-2 shrink-0">
         <span className="text-[11px] text-slate-400 dark:text-slate-500">Context:</span>
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[10px] font-semibold bg-slate-100 dark:bg-[#1C222B] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#282F3D]">
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[10px] font-semibold bg-slate-100 dark:bg-card text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[var(--border)]">
           <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
           {workspaceContext === 'ADMIN'
             ? 'Admin Workspace (Governance)'

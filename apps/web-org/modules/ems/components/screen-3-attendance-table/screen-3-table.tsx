@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Select, Input } from '@smarteam/ui';
+import { Button, Select, Input } from '@smarteam/ui';
 import { AttendanceToolbar } from '../screen-2-attendance/attendance-toolbar';
 import { AttendanceTableView } from './attendance-table-view';
 import { AttendanceDetailDrawer } from './attendance-detail-drawer';
 import { AttendanceSummaryFooter } from '../screen-2-attendance/attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
-import { AttendanceTableRow } from '../../types/attendance-table.types';
+import type { AttendanceTableRow } from '../../types/attendance-table.types';
+import { formatDateRangeFromValues } from '../../utils/formatters';
 
 interface Screen3TableProps {
   onToggleView?: (view: 'timeline' | 'table' | 'calendar') => void;
@@ -82,6 +83,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
     holidayDays: records.filter((r) => r.dayStatus === 'HOLIDAY').length,
     weekendDays: records.filter((r) => r.dayStatus === 'WEEKEND').length,
   };
+  const dateRange = formatDateRangeFromValues(records.map((record) => record.workDate));
 
   const handleRegularize = (recordId: string, reason: string) => {
     regularize(recordId, reason);
@@ -91,10 +93,10 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   return (
     <div className="w-full max-w-full flex flex-col relative overflow-x-hidden">
       {/* 1. Header Toolbar — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-3 sm:px-6 bg-[#EEF2F6] dark:bg-[#0A0D12]">
+      <div className="sticky top-0 z-20 px-3 sm:px-6 bg-muted dark:bg-background">
         <AttendanceToolbar
           title="Attendance Summary"
-          dateRange="23-Aug-2026 - 29-Aug-2026"
+          dateRange={dateRange || 'Current period'}
           viewMode="table"
           onChangeViewMode={onToggleView}
           onFilterToggle={() => setIsFilterActive(!isFilterActive)}
@@ -131,7 +133,9 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
                 className="w-48"
               />
               {(statusFilter !== 'ALL' || searchQuery) && (
-                <button
+                <Button
+                  type="button"
+                  variant="link"
                   onClick={() => {
                     setStatusFilter('ALL');
                     setSearchQuery('');
@@ -139,7 +143,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
                   className="text-xs text-sky-600 font-semibold hover:underline"
                 >
                   Reset
-                </button>
+                </Button>
               )}
             </div>
           </div>

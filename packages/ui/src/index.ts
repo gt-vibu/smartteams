@@ -1,4 +1,6 @@
 export * from './button';
+export * from './brand';
+export * from './theme';
 export * from './badge';
 export * from './card';
 export * from './table';
@@ -17,6 +19,8 @@ export * from './dropdown-menu';
 export * from './select';
 export * from './switch';
 export * from './checkbox';
+export * from './radio-group';
 export * from './cn';
+export * from './focus-trap';
 export * from './standard-data-table';
 export * from './welcome-page';

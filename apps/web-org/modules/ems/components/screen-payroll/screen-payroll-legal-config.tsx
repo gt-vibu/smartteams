@@ -103,7 +103,14 @@ export function ScreenPayrollLegalConfig() {
       </div>
 
       {/* Tabbed Experience */}
-      <Tabs value={activeTab} onValueChange={(val: any) => setActiveTab(val)}>
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => {
+          if (value === 'RULES' || value === 'COMPANY_PROFILE' || value === 'PT_SLABS') {
+            setActiveTab(value);
+          }
+        }}
+      >
         <TabsList className="grid grid-cols-3 w-full max-w-lg">
           <TabsTrigger value="RULES">
             Statutory Rule Sets ({STATUTORY_RULES_CATALOG.length})
@@ -288,7 +295,7 @@ export function ScreenPayrollLegalConfig() {
                   {stateRule.slabs.map((slab, idx) => (
                     <div
                       key={idx}
-                      className="p-2 bg-slate-50 dark:bg-[#161B22] rounded border border-slate-200 dark:border-slate-800 flex justify-between items-center"
+                      className="p-2 bg-slate-50 dark:bg-card rounded border border-slate-200 dark:border-slate-800 flex justify-between items-center"
                     >
                       <div>
                         <div className="font-sans font-medium text-slate-700 dark:text-slate-300">
@@ -320,7 +327,7 @@ export function ScreenPayrollLegalConfig() {
             </DialogHeader>
 
             <div className="space-y-3 py-2 text-xs">
-              <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+              <div className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Statutory Authority:</span>
                   <span className="font-semibold">{selectedRuleModal.authority}</span>
@@ -343,7 +350,7 @@ export function ScreenPayrollLegalConfig() {
                 </div>
               </div>
 
-              <div className="p-3 bg-sky-50 dark:bg-[#152438] rounded-lg border border-sky-200 dark:border-sky-800/60 space-y-1">
+              <div className="p-3 bg-sky-50 dark:bg-card rounded-lg border border-sky-200 dark:border-sky-800/60 space-y-1">
                 <span className="font-bold text-sky-900 dark:text-sky-300 text-[11px] block">
                   Applicability Criteria:
                 </span>

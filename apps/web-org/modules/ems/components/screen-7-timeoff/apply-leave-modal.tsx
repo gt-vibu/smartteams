@@ -15,7 +15,7 @@ import {
   Textarea,
   DatePicker,
 } from '@smarteam/ui';
-import { ApplyLeaveFormData } from '../../types/leave.types';
+import type { ApplyLeaveFormData } from '../../types/leave.types';
 
 interface ApplyLeaveModalProps {
   isOpen: boolean;
@@ -106,7 +106,7 @@ export function ApplyLeaveModal({ isOpen, onClose, onSubmitLeave }: ApplyLeaveMo
           </div>
 
           {/* Applied Duration Summary */}
-          <div className="bg-sky-50 dark:bg-[#152438] border border-sky-200 dark:border-sky-800/60 rounded-md px-3 py-2 flex items-center justify-between text-xs text-sky-900 dark:text-sky-300">
+          <div className="bg-sky-50 dark:bg-card border border-sky-200 dark:border-sky-800/60 rounded-md px-3 py-2 flex items-center justify-between text-xs text-sky-900 dark:text-sky-300">
             <span className="font-medium">Applied Duration:</span>
             <span className="font-bold font-mono">3 Working Days</span>
           </div>

@@ -29,16 +29,47 @@ import {
 import approvalsFixture from '../../data/fixtures/approvals.json';
 import { ApprovalPolicyBuilder } from './approval-policy-builder';
 
+type ApprovalFilter = 'ALL' | 'LEAVE_REQUEST' | 'TIMESHEET' | 'ATTENDANCE_CORRECTION' | 'COMPLETED';
+
+interface ApprovalItem {
+  id: string;
+  domain: Exclude<ApprovalFilter, 'ALL' | 'COMPLETED'>;
+  title?: string;
+  applicant?: string;
+  applicantName?: string;
+  applicantAvatar?: string;
+  applicantRole?: string;
+  employeeName?: string;
+  jobTitle?: string;
+  employeeNumber?: string;
+  details?: string;
+  reason?: string;
+  description?: string;
+  appliedAt?: string;
+  submittedDate?: string;
+  currentApprover?: string;
+  rejectionReason?: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  actionDate?: string;
+}
+
+const approvalData = approvalsFixture as unknown as {
+  pendingApprovals: ApprovalItem[];
+  completedApprovals: ApprovalItem[];
+};
+
 export function ScreenApprovals() {
   const [mainView, setMainView] = useState<'queue' | 'policies'>('queue');
   const [activeFilter, setActiveFilter] = useState<
     'ALL' | 'LEAVE_REQUEST' | 'TIMESHEET' | 'ATTENDANCE_CORRECTION' | 'COMPLETED'
   >('ALL');
-  const [pendingList, setPendingList] = useState(approvalsFixture.pendingApprovals);
-  const [completedList, setCompletedList] = useState(approvalsFixture.completedApprovals);
+  const [pendingList, setPendingList] = useState<ApprovalItem[]>(approvalData.pendingApprovals);
+  const [completedList, setCompletedList] = useState<ApprovalItem[]>(
+    approvalData.completedApprovals,
+  );
 
   // Rejection Reason Modal State (shadcn)
-  const [rejectingItem, setRejectingItem] = useState<any | null>(null);
+  const [rejectingItem, setRejectingItem] = useState<ApprovalItem | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [rejectError, setRejectError] = useState<string | null>(null);
 
@@ -60,15 +91,15 @@ export function ScreenApprovals() {
         ...item,
         status: 'APPROVED',
         actionDate: 'Just now',
-      } as any,
+      },
       ...prev,
     ]);
     showToast(
-      `Request by ${(item as any).applicantName || (item as any).employeeName || 'staff'} approved.`,
+      `Request by ${item.applicantName || item.employeeName || item.applicant || 'staff'} approved.`,
     );
   };
 
-  const handleInitiateReject = (item: any) => {
+  const handleInitiateReject = (item: ApprovalItem) => {
     setRejectingItem(item);
     setRejectReason('');
     setRejectError(null);
@@ -91,7 +122,7 @@ export function ScreenApprovals() {
         status: 'REJECTED',
         rejectionReason: rejectReason.trim(),
         actionDate: 'Just now',
-      } as any,
+      },
       ...prev,
     ]);
     showToast(`Request rejected with notification sent to applicant.`);
@@ -130,8 +161,13 @@ export function ScreenApprovals() {
           </p>
         </div>
 
-        <Tabs value={mainView} onValueChange={(v: any) => setMainView(v)}>
-          <TabsList className="grid grid-cols-2 w-64 bg-slate-100 dark:bg-[#161B22] p-0.5 rounded-lg">
+        <Tabs
+          value={mainView}
+          onValueChange={(value) => {
+            if (value === 'queue' || value === 'policies') setMainView(value);
+          }}
+        >
+          <TabsList className="grid grid-cols-2 w-64 bg-slate-100 dark:bg-card p-0.5 rounded-lg">
             <TabsTrigger value="queue" className="text-xs font-semibold">
               Approval Queue ({pendingList.length})
             </TabsTrigger>
@@ -157,7 +193,17 @@ export function ScreenApprovals() {
                 key={tab.id}
                 variant={activeFilter === tab.id ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setActiveFilter(tab.id as any)}
+                onClick={() => {
+                  if (
+                    tab.id === 'ALL' ||
+                    tab.id === 'LEAVE_REQUEST' ||
+                    tab.id === 'TIMESHEET' ||
+                    tab.id === 'ATTENDANCE_CORRECTION' ||
+                    tab.id === 'COMPLETED'
+                  ) {
+                    setActiveFilter(tab.id);
+                  }
+                }}
                 className="text-xs"
               >
                 {tab.label}
@@ -205,12 +251,13 @@ export function ScreenApprovals() {
                     <TableRow key={item.id}>
                       <TableCell className="px-4">
                         <div className="font-bold text-slate-900 dark:text-white">
-                          {(item as any).applicantName ||
-                            (item as any).employeeName ||
+                          {item.applicantName ||
+                            item.employeeName ||
+                            item.applicant ||
                             'Staff Member'}
                         </div>
                         <div className="text-[11px] text-slate-500 font-mono">
-                          {(item as any).applicantRole || (item as any).jobTitle || 'Engineering'}
+                          {item.applicantRole || item.jobTitle || 'Engineering'}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -218,23 +265,24 @@ export function ScreenApprovals() {
                       </TableCell>
                       <TableCell className="text-xs max-w-xs text-slate-700 dark:text-slate-300">
                         <div className="truncate">
-                          {(item as any).reason ||
-                            (item as any).title ||
-                            (item as any).description ||
+                          {item.reason ||
+                            item.title ||
+                            item.description ||
+                            item.details ||
                             'Pending managerial review'}
                         </div>
-                        {(item as any).rejectionReason && (
+                        {item.rejectionReason && (
                           <div className="text-[10px] text-rose-600 dark:text-rose-400 mt-0.5 flex items-center gap-1 font-medium">
                             <span>Reason:</span>
-                            <span className="italic">{(item as any).rejectionReason}</span>
+                            <span className="italic">{item.rejectionReason}</span>
                           </div>
                         )}
                       </TableCell>
                       <TableCell className="text-[11px] text-slate-500">
-                        {(item as any).submittedDate || 'Today'}
+                        {item.submittedDate || item.appliedAt || 'Today'}
                       </TableCell>
                       <TableCell className="text-xs font-medium">
-                        {(item as any).currentApprover || 'Reporting Manager'}
+                        {item.currentApprover || 'Reporting Manager'}
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -270,7 +318,7 @@ export function ScreenApprovals() {
                           </div>
                         ) : (
                           <span className="text-[11px] text-slate-400 font-mono">
-                            {(item as any).actionDate || 'Resolved'}
+                            {item.actionDate || 'Resolved'}
                           </span>
                         )}
                       </TableCell>
@@ -300,8 +348,9 @@ export function ScreenApprovals() {
                 Provide a reason for rejecting this{' '}
                 {rejectingItem.domain.replace('_', ' ').toLowerCase()} for{' '}
                 <span className="font-semibold text-slate-900 dark:text-white">
-                  {(rejectingItem as any).applicantName ||
-                    (rejectingItem as any).employeeName ||
+                  {rejectingItem.applicantName ||
+                    rejectingItem.employeeName ||
+                    rejectingItem.applicant ||
                     'the applicant'}
                 </span>
                 .

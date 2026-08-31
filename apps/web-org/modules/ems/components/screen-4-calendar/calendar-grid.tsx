@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDayItem } from '../../types/calendar.types';
+import type { CalendarDayItem } from '../../types/calendar.types';
 import { CalendarDayCell } from './calendar-day-cell';
 
 interface CalendarGridProps {
@@ -11,7 +11,7 @@ export function CalendarGrid({ days, onSelectDay }: CalendarGridProps) {
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white dark:bg-[#161B22] rounded-lg border-t border-l border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
+    <div className="bg-white dark:bg-card rounded-lg border-t border-l border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
       <div className="min-w-[480px] sm:min-w-[560px]">
         {/* Weekday Column Headers */}
         <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50/80 text-center text-xs font-bold text-slate-700">

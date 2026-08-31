@@ -90,7 +90,7 @@ function buildUrl(state: EmsNavState): string {
   const params = new URLSearchParams();
   if (state.space === 'Organization') {
     params.set('space', 'organization');
-    if (state.module && state.module !== 'home') {
+    if (state.module !== 'home') {
       params.set('module', state.module);
     }
     if (state.orgTab && state.orgTab !== 'Overview') {
@@ -100,7 +100,7 @@ function buildUrl(state: EmsNavState): string {
     params.set('space', 'team');
   } else {
     params.set('space', 'my-space');
-    if (state.module && state.module !== 'home') {
+    if (state.module !== 'home') {
       params.set('module', state.module);
     }
     if (state.module === 'attendance' && state.attendanceView !== 'timeline') {
@@ -122,7 +122,7 @@ export function useEmsNavigation() {
       const newUrl = buildUrl(merged);
       if (
         typeof window !== 'undefined' &&
-        window.location.search !== newUrl.replace(/^[^\?]*/, '')
+        window.location.search !== newUrl.replace(/^[^?]*/, '')
       ) {
         window.history.pushState(merged, '', newUrl);
       }

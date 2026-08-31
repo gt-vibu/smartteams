@@ -66,6 +66,26 @@ const DOMAINS_LIST = [
   { id: 'EXPENSE_REIMBURSEMENT', label: 'Expense Reimbursement' },
 ];
 
+const PRECEDENCE_LEVELS: Array<{
+  value: ApprovalPolicy['precedenceLevel'];
+  label: string;
+}> = [
+  { value: 'ORGANIZATION_DEFAULT', label: 'Org Default' },
+  { value: 'ROLE_RULE', label: 'Role Rule' },
+  { value: 'EMPLOYEE_OVERRIDE', label: 'Employee' },
+];
+
+const APPROVER_PRESETS: Array<{
+  type: ApprovalStep['approverType'];
+  label: string;
+  role: string | null;
+}> = [
+  { type: 'MANAGER', label: '👔 Direct Manager', role: null },
+  { type: 'SELF_ADMIN', label: '👑 Admin (Myself)', role: 'Tenant Admin' },
+  { type: 'HR_HEAD', label: '🛡 Head of HR', role: 'VP of People Ops' },
+  { type: 'ROLE', label: '👥 Specific Role', role: 'Finance Controller' },
+];
+
 export function ApprovalPolicyBuilder() {
   const [policies, setPolicies] = useState<ApprovalPolicy[]>(() => {
     return emsStorageAdapter.getItem<ApprovalPolicy[]>(
@@ -85,7 +105,10 @@ export function ApprovalPolicyBuilder() {
   };
 
   const handleEditPolicy = (policy: ApprovalPolicy) => {
-    setEditingPolicy(JSON.parse(JSON.stringify(policy)));
+    setEditingPolicy({
+      ...policy,
+      steps: policy.steps.map((step) => ({ ...step })),
+    });
     setShowAdvancedSettings(false);
   };
 
@@ -282,25 +305,21 @@ export function ApprovalPolicyBuilder() {
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { value: 'ORGANIZATION_DEFAULT', label: 'Org Default' },
-                    { value: 'ROLE_RULE', label: 'Role Rule' },
-                    { value: 'EMPLOYEE_OVERRIDE', label: 'Employee' },
-                  ].map((opt) => (
-                    <button
+                  {PRECEDENCE_LEVELS.map((opt) => (
+                    <Button
                       key={opt.value}
                       type="button"
                       onClick={() =>
-                        setEditingPolicy({ ...editingPolicy, precedenceLevel: opt.value as any })
+                        setEditingPolicy({ ...editingPolicy, precedenceLevel: opt.value })
                       }
                       className={`p-2 rounded border text-xs font-semibold text-center cursor-pointer transition-all ${
                         editingPolicy.precedenceLevel === opt.value
                           ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-2xs'
-                          : 'bg-slate-50 dark:bg-[#161B22] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                          : 'bg-slate-50 dark:bg-card text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
                       }`}
                     >
                       {opt.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -320,32 +339,27 @@ export function ApprovalPolicyBuilder() {
                   {editingPolicy.steps.map((step, idx) => (
                     <div
                       key={idx}
-                      className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2"
+                      className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2"
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-xs">
                           Step {idx + 1}: {step.name}
                         </span>
                         {editingPolicy.steps.length > 1 && (
-                          <button
+                          <Button
                             type="button"
                             onClick={() => handleRemoveStep(idx)}
                             className="text-slate-400 hover:text-rose-600 text-xs cursor-pointer"
                           >
                             ✕
-                          </button>
+                          </Button>
                         )}
                       </div>
 
                       {/* Quick 1-Click Approver Presets */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                        {[
-                          { type: 'MANAGER', label: '👔 Direct Manager', role: null },
-                          { type: 'SELF_ADMIN', label: '👑 Admin (Myself)', role: 'Tenant Admin' },
-                          { type: 'HR_HEAD', label: '🛡 Head of HR', role: 'VP of People Ops' },
-                          { type: 'ROLE', label: '👥 Specific Role', role: 'Finance Controller' },
-                        ].map((preset) => (
-                          <button
+                        {APPROVER_PRESETS.map((preset) => (
+                          <Button
                             key={preset.type}
                             type="button"
                             onClick={() => {
@@ -355,7 +369,7 @@ export function ApprovalPolicyBuilder() {
                                 updatedSteps[idx] = {
                                   stepNumber: currentStep.stepNumber,
                                   name: currentStep.name,
-                                  approverType: preset.type as any,
+                                  approverType: preset.type,
                                   targetRole: preset.role,
                                   targetUserId: currentStep.targetUserId,
                                   targetUserName: currentStep.targetUserName,
@@ -367,12 +381,12 @@ export function ApprovalPolicyBuilder() {
                             }}
                             className={`p-1.5 text-[11px] rounded border font-medium cursor-pointer text-center truncate ${
                               step.approverType === preset.type
-                                ? 'bg-sky-50 dark:bg-[#152438] text-[#0284C7] dark:text-sky-300 border-[#0284C7]'
-                                : 'bg-white dark:bg-[#1B2028] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                                ? 'bg-sky-50 dark:bg-card text-primary dark:text-sky-300 border-primary'
+                                : 'bg-white dark:bg-card text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
                             }`}
                           >
                             {preset.label}
-                          </button>
+                          </Button>
                         ))}
                       </div>
                     </div>
@@ -382,17 +396,17 @@ export function ApprovalPolicyBuilder() {
 
               {/* Progressive Disclosure: Advanced Workflow Settings */}
               <div className="pt-1">
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-                  className="text-xs text-[#0284C7] hover:underline flex items-center gap-1 cursor-pointer font-medium"
+                  className="text-xs text-primary hover:underline flex items-center gap-1 cursor-pointer font-medium"
                 >
                   <span>{showAdvancedSettings ? '▼' : '▶'}</span>
                   <span>Advanced Workflow Settings (SLA, Auto-Escalation, Delegation)</span>
-                </button>
+                </Button>
 
                 {showAdvancedSettings && (
-                  <div className="mt-2.5 p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2.5">
+                  <div className="mt-2.5 p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2.5">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1">
                         <Label className="text-[11px]">Auto-Escalate SLA (Hours)</Label>

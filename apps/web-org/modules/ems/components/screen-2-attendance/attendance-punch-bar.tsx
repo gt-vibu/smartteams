@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Button, Input } from '@smarteam/ui';
 import { formatSecondsToTime } from '../../utils/format.utils';
 
 interface AttendancePunchBarProps {
@@ -29,23 +30,21 @@ export function AttendancePunchBar({ initialSeconds = 14242 }: AttendancePunchBa
 
       {/* Note Input */}
       <div className="flex-1 w-full max-w-md">
-        <input
+        <Input
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="Add notes for check-out"
-          className="w-full bg-slate-50 border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:bg-white transition-colors"
+          className="w-full bg-slate-50 focus:bg-white"
         />
       </div>
 
       {/* Check-out Action Button with Live Timer */}
-      <button
+      <Button
+        type="button"
+        variant={isCheckedIn ? 'destructive' : 'success'}
         onClick={() => setIsCheckedIn(!isCheckedIn)}
-        className={`px-4 py-1.5 rounded-[4px] text-xs font-semibold flex items-center gap-2 shadow-xs transition-all shrink-0 ${
-          isCheckedIn
-            ? 'bg-[#EF4444] hover:bg-[#DC2626] text-white'
-            : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-        }`}
+        className="shrink-0 px-4 py-1.5"
       >
         <svg
           className="h-3.5 w-3.5"
@@ -63,7 +62,7 @@ export function AttendancePunchBar({ initialSeconds = 14242 }: AttendancePunchBa
         <span>
           {isCheckedIn ? 'Check-out' : 'Check-in'} ({hrs}:{mins}:{secs} Hrs)
         </span>
-      </button>
+      </Button>
     </div>
   );
 }

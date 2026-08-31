@@ -1,6 +1,7 @@
 import React from 'react';
-import { StandardDataTable, ColumnDef } from '@smarteam/ui';
-import { TimeLogItem } from '../../types/timelog.types';
+import type { ColumnDef } from '@smarteam/ui';
+import { StandardDataTable } from '@smarteam/ui';
+import type { TimeLogItem } from '../../types/timelog.types';
 
 interface TimeLogTableProps {
   logs: TimeLogItem[];

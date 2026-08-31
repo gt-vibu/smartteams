@@ -56,11 +56,10 @@ export function Popover({
 }
 
 export function PopoverTrigger({
-  asChild,
   children,
   className,
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }) {
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const ctx = React.useContext(PopoverContext);
   if (!ctx) throw new Error('PopoverTrigger must be inside Popover');
 
@@ -95,7 +94,7 @@ export function PopoverContent({
   return (
     <div
       className={cn(
-        'absolute mt-1.5 z-50 rounded-xl border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-800 dark:bg-[#1B2028] dark:text-slate-100 animate-in fade-in zoom-in-95',
+        'absolute mt-1.5 z-50 rounded-xl border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-800 dark:bg-card dark:text-slate-100 animate-in fade-in zoom-in-95',
         alignClass,
         className,
       )}

@@ -16,7 +16,8 @@ import {
   Switch,
   DatePicker,
 } from '@smarteam/ui';
-import { LogTimeFormData } from '../../types/logtime-form.types';
+import type { LogTimeFormData } from '../../types/logtime-form.types';
+import { formatLocalIsoDate } from '../../utils/formatters';
 
 interface LogTimeModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ interface LogTimeModalProps {
 }
 
 export function LogTimeModal({ isOpen, onClose, onSave }: LogTimeModalProps) {
-  const [date, setDate] = useState('2026-08-25');
+  const [date, setDate] = useState(formatLocalIsoDate);
   const [projectName, setProjectName] = useState('Luxasia 2026');
   const [jobName, setJobName] = useState('Development');
   const [workItem, setWorkItem] = useState('');
@@ -146,7 +147,7 @@ export function LogTimeModal({ isOpen, onClose, onSave }: LogTimeModalProps) {
             </div>
 
             <div className="space-y-1 pt-4">
-              <div className="flex items-center justify-between p-2 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22]">
+              <div className="flex items-center justify-between p-2 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-card">
                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Client Billable
                 </span>

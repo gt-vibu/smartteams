@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { DepartmentData } from '../../types/organization.types';
+import type { DepartmentData } from '../../types/organization.types';
 
 interface OrgDepartmentTreeTabProps {
   departments: DepartmentData[];
@@ -27,7 +27,7 @@ export function OrgDepartmentTreeTab({ departments }: OrgDepartmentTreeTabProps)
       <div className="flex-1 p-8 overflow-auto bg-[#F8FAFC] flex flex-col items-center">
         {/* Top Root: Smarteam Organization Node */}
         <div className="w-72 p-4 rounded-[8px] bg-slate-900 text-white shadow-lg border border-slate-800 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-[6px] bg-[#0284C7] flex items-center justify-center font-bold text-lg shadow-sm">
+          <div className="h-10 w-10 rounded-[6px] bg-primary flex items-center justify-center font-bold text-lg shadow-sm">
             🏢
           </div>
           <div>
@@ -48,7 +48,7 @@ export function OrgDepartmentTreeTab({ departments }: OrgDepartmentTreeTabProps)
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
-                      <span className="text-[9px] font-bold bg-sky-100 text-[#0284C7] px-1.5 py-0.2 rounded uppercase">
+                      <span className="text-[9px] font-bold bg-sky-100 text-primary px-1.5 py-0.2 rounded uppercase">
                         {dept.code}
                       </span>
                       <h4 className="text-xs font-bold text-slate-900 mt-1.5 line-clamp-1">

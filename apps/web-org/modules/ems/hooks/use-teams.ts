@@ -72,7 +72,7 @@ export function useTeams() {
   // Compute teams assigned to the currently logged in employee / persona
   const myAssignedTeams = teams.filter((t) => {
     // 1. Direct persona assignment mapping (if explicitly configured)
-    if (persona?.assignedTeamIds && persona.assignedTeamIds.length > 0) {
+    if (persona.assignedTeamIds.length > 0) {
       return persona.assignedTeamIds.includes(t.id);
     }
 
@@ -80,25 +80,15 @@ export function useTeams() {
     const isMember = t.members.some((m) => {
       if (m.leftAt) return false;
       const idMatch =
-        (m.employeeId && employee?.id && m.employeeId === employee.id) ||
-        (m.employeeId && persona?.user?.id && m.employeeId === persona.user.id) ||
-        (m.employeeId && persona?.id && m.employeeId === persona.id);
+        m.employeeId === employee.id ||
+        m.employeeId === persona.user.id ||
+        m.employeeId === persona.id;
 
       const numMatch =
-        Boolean(
-          m.employeeNumber &&
-          employee?.employeeNumber &&
-          m.employeeNumber === employee.employeeNumber,
-        ) ||
-        Boolean(
-          m.employeeNumber &&
-          persona?.employeeNumber &&
-          m.employeeNumber === persona.employeeNumber,
-        );
+        Boolean(m.employeeNumber === employee.employeeNumber) ||
+        Boolean(m.employeeNumber === persona.employeeNumber);
 
       const nameMatch = Boolean(
-        employee?.firstName &&
-        employee?.lastName &&
         m.firstName.toLowerCase() === employee.firstName.toLowerCase() &&
         m.lastName.toLowerCase() === employee.lastName.toLowerCase(),
       );
@@ -107,10 +97,9 @@ export function useTeams() {
     });
 
     const isLead = Boolean(
-      t.teamLeadEmployeeId &&
-      (t.teamLeadEmployeeId === employee?.id ||
-        t.teamLeadEmployeeId === persona?.user?.id ||
-        t.teamLeadEmployeeId === persona?.id),
+      t.teamLeadEmployeeId === employee.id ||
+      t.teamLeadEmployeeId === persona.user.id ||
+      t.teamLeadEmployeeId === persona.id,
     );
 
     return isMember || isLead;

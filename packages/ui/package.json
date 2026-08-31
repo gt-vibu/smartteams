@@ -16,6 +16,15 @@
       "import": "./src/button.tsx",
       "require": "./dist/button.js",
       "default": "./src/button.tsx"
+    },
+    "./theme.css": {
+      "default": "./src/theme.css"
+    },
+    "./theme": {
+      "types": "./src/theme.ts",
+      "import": "./src/theme.ts",
+      "require": "./dist/theme.js",
+      "default": "./src/theme.ts"
     }
   },
   "scripts": {

@@ -1,8 +1,10 @@
 'use client';
 
+import { Button, Checkbox, Input, Textarea } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import { Select } from '@smarteam/ui';
-import { AnnouncementData } from '../../types/organization.types';
+import type { AnnouncementData } from '../../types/organization.types';
 import { useAuth } from '../../hooks/use-auth';
 
 interface OrgAnnouncementsTabProps {
@@ -76,29 +78,29 @@ export function OrgAnnouncementsTab({
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
             return (
-              <button
+              <Button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? 'bg-[#0284C7] text-white shadow-2xs'
+                    ? 'bg-primary text-white shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
                 {cat.label}
-              </button>
+              </Button>
             );
           })}
         </div>
 
         {hasPermission('organizations.write') && (
-          <button
+          <Button
             onClick={() => setIsCreateModalOpen(true)}
-            className="px-3.5 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto shrink-0"
+            className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto shrink-0"
           >
             <span>+</span>
             <span>New Announcement</span>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -168,7 +170,7 @@ export function OrgAnnouncementsTab({
 
                 {/* Action Bar */}
                 <div className="flex items-center gap-4 pt-2.5 border-t border-slate-100 text-xs text-slate-500">
-                  <button
+                  <Button
                     onClick={() => handleLike(ann.id)}
                     className={`flex items-center gap-1.5 font-medium transition-colors cursor-pointer ${
                       isLiked ? 'text-sky-600 font-bold' : 'hover:text-slate-800'
@@ -188,7 +190,7 @@ export function OrgAnnouncementsTab({
                       />
                     </svg>
                     <span>{likeCount} Likes</span>
-                  </button>
+                  </Button>
 
                   <div className="flex items-center gap-1.5 font-medium hover:text-slate-800 cursor-pointer">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,7 +223,7 @@ export function OrgAnnouncementsTab({
             <form onSubmit={handleCreate} className="space-y-3.5">
               <div>
                 <label className="text-[11px] font-bold text-slate-600 block mb-1">Title</label>
-                <input
+                <Input
                   type="text"
                   required
                   value={newTitle}
@@ -233,7 +235,20 @@ export function OrgAnnouncementsTab({
 
               <div>
                 <label className="text-[11px] font-bold text-slate-600 block mb-1">Category</label>
-                <Select value={newCategory} onChange={(e) => setNewCategory(e.target.value as any)}>
+                <Select
+                  value={newCategory}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (
+                      value === 'ALL_HANDS' ||
+                      value === 'POLICY' ||
+                      value === 'EVENT' ||
+                      value === 'SECURITY'
+                    ) {
+                      setNewCategory(value);
+                    }
+                  }}
+                >
                   <option value="ALL_HANDS">All-Hands & Townhalls</option>
                   <option value="POLICY">Policies & Updates</option>
                   <option value="SECURITY">Security & Compliance</option>
@@ -243,7 +258,7 @@ export function OrgAnnouncementsTab({
 
               <div>
                 <label className="text-[11px] font-bold text-slate-600 block mb-1">Content</label>
-                <textarea
+                <Textarea
                   required
                   rows={4}
                   value={newContent}
@@ -254,12 +269,12 @@ export function OrgAnnouncementsTab({
               </div>
 
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
+                <Checkbox
                   id="pinNotice"
                   checked={isPinned}
-                  onChange={(e) => setIsPinned(e.target.checked)}
-                  className="rounded text-sky-600 focus:ring-sky-500 h-3.5 w-3.5 cursor-pointer"
+                  onCheckedChange={setIsPinned}
+                  aria-label="Pin this announcement to the top"
+                  className="h-3.5 w-3.5"
                 />
                 <label
                   htmlFor="pinNotice"
@@ -270,19 +285,19 @@ export function OrgAnnouncementsTab({
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button
+                <Button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
                   className="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded font-medium cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="px-4 py-1.5 text-xs bg-[#0284C7] hover:bg-[#0369A1] text-white rounded font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-1.5 text-xs bg-primary hover:bg-primary/90 text-white rounded font-semibold transition-colors cursor-pointer"
                 >
                   Publish Announcement
-                </button>
+                </Button>
               </div>
             </form>
           </div>

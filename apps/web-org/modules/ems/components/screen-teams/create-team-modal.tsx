@@ -354,7 +354,7 @@ export function CreateTeamModal({ isOpen, onClose, onSubmit }: CreateTeamModalPr
               <Label className="text-xs">Team Members ({selectedMemberIds.length} selected)</Label>
               <span className="text-[10px] text-slate-400">Click to add/remove</span>
             </div>
-            <div className="max-h-36 overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-md p-2 bg-slate-50/50 dark:bg-[#161B22] space-y-1">
+            <div className="max-h-36 overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-md p-2 bg-slate-50/50 dark:bg-card space-y-1">
               {AVAILABLE_EMPLOYEES.map((emp) => {
                 const isSelected = selectedMemberIds.includes(emp.id);
                 const isLead = teamLeadId === emp.id;

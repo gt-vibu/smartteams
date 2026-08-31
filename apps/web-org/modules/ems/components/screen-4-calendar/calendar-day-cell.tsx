@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDayItem } from '../../types/calendar.types';
+import type { CalendarDayItem } from '../../types/calendar.types';
 
 interface CalendarDayCellProps {
   day: CalendarDayItem;
@@ -31,11 +31,11 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
       {/* Top Header with Day Number */}
       <div className="flex items-center justify-between">
         {day.isToday ? (
-          <span className="h-5 w-5 rounded-full bg-[#0284C7] text-white text-[11px] font-bold flex items-center justify-center shadow-xs">
+          <span className="h-5 w-5 rounded-full bg-primary text-white text-[11px] font-bold flex items-center justify-center shadow-xs">
             {day.dayNumber}
           </span>
         ) : (
-          <span className="text-[11px] font-semibold text-slate-800 group-hover:text-[#0284C7] transition-colors">
+          <span className="text-[11px] font-semibold text-slate-800 group-hover:text-primary transition-colors">
             {day.dayNumber}
           </span>
         )}

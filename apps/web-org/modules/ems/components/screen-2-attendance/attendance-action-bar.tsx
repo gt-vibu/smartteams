@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Button, Input } from '@smarteam/ui';
 import { useAttendance } from '../../hooks/use-attendance';
 
 export function AttendanceActionBar() {
@@ -26,28 +27,26 @@ export function AttendanceActionBar() {
 
       {/* Note Input & Action Button */}
       <div className="flex items-center gap-2.5 flex-1 max-w-md justify-end">
-        <input
+        <Input
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder={liveState.isCheckedIn ? 'Add notes for check-out' : 'Add notes for check-in'}
-          className="w-full max-w-xs bg-slate-50 border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
+          className="w-full max-w-xs bg-slate-50 focus:bg-white"
         />
 
-        <button
+        <Button
+          type="button"
+          variant={liveState.isCheckedIn ? 'destructive' : 'default'}
           onClick={handleAction}
-          className={`px-3.5 py-1.5 rounded text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ${
-            liveState.isCheckedIn
-              ? 'bg-[#E11D48] hover:bg-[#BE123C] text-white'
-              : 'bg-[#0284C7] hover:bg-[#0369A1] text-white'
-          }`}
+          className="shrink-0 px-3.5 py-1.5"
         >
           <svg className="h-3.5 w-3.5 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth={2}>
             <circle cx="12" cy="12" r="9" />
             <path d="M12 7v5l3 3" />
           </svg>
           <span>{liveState.isCheckedIn ? 'Check-out' : 'Check-in'}</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

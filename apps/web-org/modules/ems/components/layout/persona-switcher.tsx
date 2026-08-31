@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 
@@ -26,14 +28,14 @@ export function PersonaSwitcher() {
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Avatar Pill Button */}
-      <button
+      <Button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-2.5 py-1 rounded-[5px] bg-[#112340] hover:bg-[#182E52] text-white border border-[#1E3860] transition-all cursor-pointer shadow-xs group"
         title="Account"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <div className="h-5 w-5 rounded-full bg-[#0284C7] text-white font-bold text-[10px] flex items-center justify-center shadow-xs">
+        <div className="h-5 w-5 rounded-full bg-primary text-white font-bold text-[10px] flex items-center justify-center shadow-xs">
           {persona.avatarInitials}
         </div>
         <div className="text-left hidden lg:block">
@@ -51,14 +53,14 @@ export function PersonaSwitcher() {
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
-      </button>
+      </Button>
 
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-[10px] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
           {/* Profile Header */}
           <div className="p-4 bg-slate-50 flex items-center gap-3 border-b border-slate-100">
-            <div className="h-10 w-10 rounded-full bg-[#0284C7] text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+            <div className="h-10 w-10 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
               {persona.avatarInitials}
             </div>
             <div className="min-w-0">
@@ -145,7 +147,7 @@ export function PersonaSwitcher() {
 
           {/* Sign Out */}
           <div className="border-t border-slate-100 p-2">
-            <button
+            <Button
               onClick={() => {
                 setIsOpen(false);
                 logout();
@@ -166,7 +168,7 @@ export function PersonaSwitcher() {
                 />
               </svg>
               <span>Sign out</span>
-            </button>
+            </Button>
           </div>
         </div>
       )}

@@ -1,7 +1,17 @@
 'use client';
 
 import { useEffect, useState, type FormEvent } from 'react';
-import { Alert, AlertDescription, AlertTitle, Button, Icon, Input, Select } from '@smarteam/ui';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Checkbox,
+  Icon,
+  Input,
+  Select,
+  Textarea,
+} from '@smarteam/ui';
 import {
   createFederationClient,
   updateFederationClientCertificates,
@@ -211,7 +221,7 @@ export function FederationClientDialog({
           />
 
           <FormField id="client-fingerprints" label="BlizBooks client certificate fingerprint">
-            <textarea
+            <Textarea
               className="min-h-28 w-full resize-y rounded-lg border border-input bg-background px-3 py-2.5 font-mono text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/20"
               id="client-fingerprints"
               onChange={(event) =>
@@ -305,12 +315,11 @@ function CheckField({
 }) {
   return (
     <label className="flex items-start gap-3 text-sm font-medium">
-      <input
+      <Checkbox
         checked={checked}
         className="mt-0.5 size-4 accent-primary"
         disabled={disabled}
-        onChange={(event) => onChange(event.target.checked)}
-        type="checkbox"
+        onCheckedChange={onChange}
       />
       <span>
         {label}

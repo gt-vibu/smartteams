@@ -17,9 +17,12 @@ export function DatePicker({
   placeholder = 'Select date',
   className,
   disabled = false,
+  min,
+  max,
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const calendarId = React.useId();
 
   // Parse current selected date or fallback to today
   const selectedDate = React.useMemo(() => {
@@ -81,6 +84,7 @@ export function DatePicker({
     const mm = String(month + 1).padStart(2, '0');
     const dd = String(day).padStart(2, '0');
     const formatted = `${year}-${mm}-${dd}`;
+    if ((min && formatted < min) || (max && formatted > max)) return;
     onChange?.(formatted);
     setIsOpen(false);
   };
@@ -101,11 +105,12 @@ export function DatePicker({
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
-          'flex h-8 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 shadow-2xs transition-colors hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-[#0284C7] disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-[#161B22] dark:text-slate-100 dark:hover:bg-slate-800/80 cursor-pointer',
-          !selectedDate && 'text-slate-400 dark:text-slate-500',
+          'flex min-h-9 w-full items-center justify-between rounded-md border border-input bg-background px-2.5 py-1 text-xs text-foreground shadow-2xs transition-colors hover:bg-muted focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer',
+          !selectedDate && 'text-muted-foreground',
         )}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
+        aria-controls={calendarId}
       >
         <span className="truncate">{displayFormatted}</span>
         <svg
@@ -125,7 +130,12 @@ export function DatePicker({
 
       {/* Popover Calendar Grid */}
       {isOpen && (
-        <div className="absolute left-0 mt-1.5 z-50 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-800 dark:bg-[#1B2028] dark:text-slate-100 animate-in fade-in zoom-in-95">
+        <div
+          id={calendarId}
+          role="dialog"
+          aria-label="Choose date"
+          className="absolute left-0 mt-1.5 z-50 w-64 rounded-xl border border-border bg-card p-3 text-card-foreground shadow-xl animate-in fade-in zoom-in-95"
+        >
           {/* Month & Year Navigation Header */}
           <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 text-xs">
             <button
@@ -176,6 +186,8 @@ export function DatePicker({
                 selectedDate.getMonth() === month &&
                 selectedDate.getDate() === day;
 
+              const formatted = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+              const isOutsideRange = Boolean((min && formatted < min) || (max && formatted > max));
               const isToday =
                 new Date().getFullYear() === year &&
                 new Date().getMonth() === month &&
@@ -185,14 +197,16 @@ export function DatePicker({
                 <button
                   key={`day-${day}`}
                   type="button"
+                  disabled={isOutsideRange}
                   onClick={() => handleSelectDay(day)}
                   className={cn(
                     'h-7 w-7 rounded-md text-xs font-medium flex items-center justify-center transition-all cursor-pointer select-none',
                     isSelected
-                      ? 'bg-[#0284C7] text-white font-bold shadow-xs'
+                      ? 'bg-primary text-primary-foreground font-bold shadow-xs'
                       : isToday
-                        ? 'border border-[#0284C7] text-[#0284C7] dark:text-sky-400 font-bold'
-                        : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200',
+                        ? 'border border-primary text-primary font-bold'
+                        : 'hover:bg-muted text-foreground',
+                    isOutsideRange && 'cursor-not-allowed opacity-30 hover:bg-transparent',
                   )}
                 >
                   {day}
@@ -212,7 +226,7 @@ export function DatePicker({
                 onChange?.(`${today.getFullYear()}-${mm}-${dd}`);
                 setIsOpen(false);
               }}
-              className="text-[#0284C7] hover:underline cursor-pointer font-semibold"
+              className="text-primary hover:underline cursor-pointer font-semibold"
             >
               Today
             </button>

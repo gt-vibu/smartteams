@@ -1,7 +1,11 @@
 import { EMS_STORAGE_KEYS } from '../storage/storage.keys';
 import { emsStorageAdapter } from '../storage/storage.adapter';
 import leaveFixture from '../data/fixtures/leave.json';
-import { LeaveBalanceItem, LeaveApplicationItem, ApplyLeaveFormData } from '../types/leave.types';
+import type {
+  LeaveBalanceItem,
+  LeaveApplicationItem,
+  ApplyLeaveFormData,
+} from '../types/leave.types';
 
 export interface ILeaveRepository {
   getBalances(): LeaveBalanceItem[];
@@ -15,7 +19,7 @@ export class LocalLeaveRepository implements ILeaveRepository {
   getBalances(): LeaveBalanceItem[] {
     return emsStorageAdapter.getItem<LeaveBalanceItem[]>(
       EMS_STORAGE_KEYS.LEAVE_BALANCES,
-      leaveFixture.balances as LeaveBalanceItem[],
+      leaveFixture.balances,
     );
   }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { EmployeeProfile } from '../../types/employee.types';
+import type { EmployeeProfile } from '../../types/employee.types';
 
 interface GreetingCardProps {
   employee: EmployeeProfile;
@@ -7,7 +7,7 @@ interface GreetingCardProps {
 
 export function GreetingCard({ employee }: GreetingCardProps) {
   return (
-    <div className="bg-white dark:bg-[#1B2028] rounded-lg border border-slate-200/90 dark:border-[#262F3D] p-4 sm:p-5 shadow-xs flex items-center justify-between gap-3 w-full min-w-0">
+    <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-border p-4 sm:p-5 shadow-xs flex items-center justify-between gap-3 w-full min-w-0">
       <div className="flex items-center gap-3 sm:gap-6 min-w-0 flex-1">
         {/* Org Logo Mark */}
         <div className="hidden sm:flex items-center gap-2 pr-4 sm:pr-6 border-r border-slate-200 dark:border-slate-700 shrink-0">

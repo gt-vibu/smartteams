@@ -3,6 +3,9 @@
 import React, { useState, useMemo } from 'react';
 import {
   Button,
+  Checkbox,
+  RadioGroup,
+  RadioGroupItem,
   Badge,
   Card,
   CardHeader,
@@ -34,11 +37,10 @@ import componentsFixture from '../../data/fixtures/salary-components.json';
 import { formatINR } from '../../utils/formatters';
 import { useAuth } from '../../hooks/use-auth';
 import { emsStorageAdapter } from '../../storage/storage.adapter';
-import { PayslipDocumentModal, PayslipData } from './payslip-document-modal';
-import {
-  SalaryStructureDocumentModal,
-  SalaryStructureDocumentData,
-} from './salary-structure-document-modal';
+import type { PayslipData } from './payslip-document-modal';
+import { PayslipDocumentModal } from './payslip-document-modal';
+import type { SalaryStructureDocumentData } from './salary-structure-document-modal';
+import { SalaryStructureDocumentModal } from './salary-structure-document-modal';
 
 const STORAGE_KEY_STRUCTURES = 'ems_salary_structures_list';
 const STORAGE_KEY_ASSIGNMENTS = 'ems_structure_assignments_list';
@@ -100,7 +102,50 @@ export interface EmployeeStructureAssignment {
   customHraPct?: number;
 }
 
-function normalizeComponents(rawComps: any[]): StructureComponentConfig[] {
+interface RawStructureComponent {
+  code: string;
+  name?: string;
+  category?: string;
+  calculationType?: string;
+  value?: number | string;
+  isStatutory?: boolean;
+  tooltipInfo?: string;
+}
+
+interface RawSalaryStructure {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  level: SalaryStructure['level'];
+  status: SalaryStructure['status'];
+  effectiveFrom: string;
+  components?: RawStructureComponent[];
+  payStructureMode?: SalaryStructure['payStructureMode'];
+  consolidatedMonthlyPay?: number;
+  epfCapEnabled?: boolean;
+  ptEnabled?: boolean;
+  tdsEnabled?: boolean;
+  ptState?: string;
+  esicEnabled?: boolean;
+  gratuityEnabled?: boolean;
+}
+
+const CALCULATION_TYPES: StructureComponentConfig['calculationType'][] = [
+  'PERCENTAGE_OF_CTC',
+  'PERCENTAGE_OF_BASIC',
+  'PERCENTAGE_OF_GROSS',
+  'FIXED',
+  'REMAINING_BALANCE',
+];
+
+function parseCalculationType(value: string): StructureComponentConfig['calculationType'] {
+  return CALCULATION_TYPES.includes(value as StructureComponentConfig['calculationType'])
+    ? (value as StructureComponentConfig['calculationType'])
+    : 'PERCENTAGE_OF_CTC';
+}
+
+function normalizeComponents(rawComps: RawStructureComponent[]): StructureComponentConfig[] {
   if (!Array.isArray(rawComps)) return [];
 
   const defaultNames: Record<
@@ -141,18 +186,21 @@ function normalizeComponents(rawComps: any[]): StructureComponentConfig[] {
   };
 
   return rawComps.map((c) => {
-    const meta = defaultNames[c.code] || {
-      name: c.name || c.code.replace(/_/g, ' '),
-      category: (c.category ||
-        (c.code.includes('DEDUCT') || c.code.includes('TAX') ? 'DEDUCTION' : 'EARNING')) as any,
-      tooltip: undefined,
-    };
+    const meta: { name: string; category: StructureComponentConfig['category']; tooltip?: string } =
+      defaultNames[c.code] || {
+        name: c.name || c.code.replace(/_/g, ' '),
+        category: c.code.includes('DEDUCT') || c.code.includes('TAX') ? 'DEDUCTION' : 'EARNING',
+        tooltip: undefined,
+      };
+
+    const category: StructureComponentConfig['category'] =
+      c.category === 'DEDUCTION' || c.category === 'EMPLOYER_CONTRIBUTION' ? c.category : 'EARNING';
 
     return {
       code: c.code,
       name: c.name || meta.name,
-      category: c.category || meta.category,
-      calculationType: c.calculationType || 'PERCENTAGE_OF_CTC',
+      category: c.category ? category : meta.category,
+      calculationType: parseCalculationType(c.calculationType || 'PERCENTAGE_OF_CTC'),
       value: c.value !== undefined ? Number(c.value) : 0,
       isStatutory: Boolean(c.isStatutory),
       tooltipInfo: c.tooltipInfo || meta.tooltip,
@@ -160,13 +208,21 @@ function normalizeComponents(rawComps: any[]): StructureComponentConfig[] {
   });
 }
 
-function normalizeStructures(rawStructures: any[]): SalaryStructure[] {
+function normalizeStructures(rawStructures: RawSalaryStructure[]): SalaryStructure[] {
   return rawStructures.map((s) => ({
-    ...s,
+    id: s.id,
+    code: s.code,
+    name: s.name,
+    description: s.description,
+    level: s.level,
+    status: s.status,
+    effectiveFrom: s.effectiveFrom,
     payStructureMode: s.payStructureMode || 'DETAILED',
     consolidatedMonthlyPay: s.consolidatedMonthlyPay || 10000,
-    components: normalizeComponents(s.components),
+    components: normalizeComponents(s.components || []),
     epfCapEnabled: s.epfCapEnabled !== undefined ? s.epfCapEnabled : true,
+    ptEnabled: s.ptEnabled,
+    tdsEnabled: s.tdsEnabled,
     ptState: s.ptState || 'KARNATAKA',
     esicEnabled: Boolean(s.esicEnabled),
     gratuityEnabled: s.gratuityEnabled !== undefined ? s.gratuityEnabled : true,
@@ -245,9 +301,9 @@ export function PayrollStructureBuilder() {
     workspaceContext === 'ADMIN' || hasPermission('*') || hasPermission('payroll.policy.write');
 
   const [structures, setStructures] = useState<SalaryStructure[]>(() => {
-    const cached = emsStorageAdapter.getItem<any[]>(
+    const cached = emsStorageAdapter.getItem<RawSalaryStructure[]>(
       STORAGE_KEY_STRUCTURES,
-      structuresFixture.structures,
+      structuresFixture.structures as unknown as RawSalaryStructure[],
     );
     return normalizeStructures(cached);
   });
@@ -551,7 +607,10 @@ export function PayrollStructureBuilder() {
 
   // Open Configuration Editor for Existing Structure
   const handleOpenEdit = (struct: SalaryStructure) => {
-    setEditingForm(JSON.parse(JSON.stringify(struct)));
+    setEditingForm({
+      ...struct,
+      components: struct.components.map((component) => ({ ...component })),
+    });
     setEditorMode('EDIT');
   };
 
@@ -874,7 +933,7 @@ export function PayrollStructureBuilder() {
       {editorMode && editingForm ? (
         <div className="space-y-4">
           {/* Action Bar */}
-          <div className="p-3.5 bg-slate-100 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-3.5 bg-slate-100 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-xs text-slate-900 dark:text-white">
@@ -928,23 +987,24 @@ export function PayrollStructureBuilder() {
                 {/* Structure Mode Switch */}
                 <div className="space-y-1.5">
                   <Label className="text-xs">Pay Structure Mode</Label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <RadioGroup
+                    value={editingForm.payStructureMode}
+                    onValueChange={(value) =>
+                      setEditingForm({
+                        ...editingForm,
+                        payStructureMode: value as SalaryStructure['payStructureMode'],
+                      })
+                    }
+                    className="grid grid-cols-2 gap-2"
+                  >
                     <label
                       className={`p-2.5 rounded-lg border text-xs font-semibold cursor-pointer flex items-center gap-2 ${
                         editingForm.payStructureMode === 'DETAILED'
-                          ? 'border-[#0284C7] bg-sky-50 dark:bg-[#152438] text-[#0284C7] dark:text-sky-300'
-                          : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1B2028] text-slate-700 dark:text-slate-300'
+                          ? 'border-primary bg-sky-50 dark:bg-card text-primary dark:text-sky-300'
+                          : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-card text-slate-700 dark:text-slate-300'
                       }`}
                     >
-                      <input
-                        type="radio"
-                        name="pay_mode"
-                        checked={editingForm.payStructureMode === 'DETAILED'}
-                        onChange={() =>
-                          setEditingForm({ ...editingForm, payStructureMode: 'DETAILED' })
-                        }
-                        className="accent-[#0284C7]"
-                      />
+                      <RadioGroupItem value="DETAILED" aria-label="Detailed Structure" />
                       <div>
                         <div>Detailed Structure</div>
                         <div className="text-[10px] text-slate-500 font-normal">
@@ -956,19 +1016,11 @@ export function PayrollStructureBuilder() {
                     <label
                       className={`p-2.5 rounded-lg border text-xs font-semibold cursor-pointer flex items-center gap-2 ${
                         editingForm.payStructureMode === 'CONSOLIDATED'
-                          ? 'border-[#0284C7] bg-sky-50 dark:bg-[#152438] text-[#0284C7] dark:text-sky-300'
-                          : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-[#1B2028] text-slate-700 dark:text-slate-300'
+                          ? 'border-primary bg-sky-50 dark:bg-card text-primary dark:text-sky-300'
+                          : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-card text-slate-700 dark:text-slate-300'
                       }`}
                     >
-                      <input
-                        type="radio"
-                        name="pay_mode"
-                        checked={editingForm.payStructureMode === 'CONSOLIDATED'}
-                        onChange={() =>
-                          setEditingForm({ ...editingForm, payStructureMode: 'CONSOLIDATED' })
-                        }
-                        className="accent-[#0284C7]"
-                      />
+                      <RadioGroupItem value="CONSOLIDATED" aria-label="Consolidated Pay" />
                       <div>
                         <div>Consolidated Pay</div>
                         <div className="text-[10px] text-slate-500 font-normal">
@@ -976,11 +1028,11 @@ export function PayrollStructureBuilder() {
                         </div>
                       </div>
                     </label>
-                  </div>
+                  </RadioGroup>
                 </div>
 
                 {editingForm.payStructureMode === 'CONSOLIDATED' ? (
-                  <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+                  <div className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
                     <Label className="text-xs">Fixed Monthly Consolidated Pay (₹)</Label>
                     <Input
                       type="number"
@@ -1030,18 +1082,23 @@ export function PayrollStructureBuilder() {
                       { value: 'ROLE_SPECIFIC', label: 'Role' },
                       { value: 'INDIVIDUAL_OVERRIDE', label: 'Individual' },
                     ].map((opt) => (
-                      <button
+                      <Button
                         type="button"
                         key={opt.value}
-                        onClick={() => setEditingForm({ ...editingForm, level: opt.value as any })}
+                        onClick={() =>
+                          setEditingForm({
+                            ...editingForm,
+                            level: opt.value as SalaryStructure['level'],
+                          })
+                        }
                         className={`py-1.5 px-2 text-xs font-semibold rounded-md border transition-all text-center cursor-pointer ${
                           editingForm.level === opt.value
                             ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-2xs'
-                            : 'bg-slate-50 dark:bg-[#161B22] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
+                            : 'bg-slate-50 dark:bg-card text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
                         }`}
                       >
                         {opt.label}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -1130,19 +1187,19 @@ export function PayrollStructureBuilder() {
                   <div className="flex items-center gap-1.5 flex-wrap pb-1">
                     <span className="text-[10px] text-slate-400 font-semibold">Quick add:</span>
                     {PRESET_ALLOWANCES.slice(0, 4).map((p) => (
-                      <button
+                      <Button
                         key={p.code}
                         type="button"
                         onClick={() => handleQuickAddPreset(p, 'EARNING')}
                         className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 cursor-pointer"
                       >
                         + {p.name}
-                      </button>
+                      </Button>
                     ))}
                   </div>
 
                   {/* Basic Salary Component Card */}
-                  <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+                  <div className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1177,7 +1234,7 @@ export function PayrollStructureBuilder() {
                                     code: 'BASIC',
                                     name: 'Basic Salary',
                                     category: 'EARNING',
-                                    calculationType: e.target.value as any,
+                                    calculationType: parseCalculationType(e.target.value),
                                     value: 50,
                                     isStatutory: true,
                                   },
@@ -1186,7 +1243,7 @@ export function PayrollStructureBuilder() {
                               });
                             } else {
                               handleUpdateComponent('BASIC', {
-                                calculationType: e.target.value as any,
+                                calculationType: parseCalculationType(e.target.value),
                               });
                             }
                           }}
@@ -1235,7 +1292,7 @@ export function PayrollStructureBuilder() {
                   </div>
 
                   {/* HRA Component Card */}
-                  <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+                  <div className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1268,7 +1325,7 @@ export function PayrollStructureBuilder() {
                                     code: 'HRA',
                                     name: 'House Rent Allowance (HRA)',
                                     category: 'EARNING',
-                                    calculationType: e.target.value as any,
+                                    calculationType: parseCalculationType(e.target.value),
                                     value: 40,
                                     isStatutory: false,
                                   },
@@ -1276,7 +1333,7 @@ export function PayrollStructureBuilder() {
                               });
                             } else {
                               handleUpdateComponent('HRA', {
-                                calculationType: e.target.value as any,
+                                calculationType: parseCalculationType(e.target.value),
                               });
                             }
                           }}
@@ -1334,19 +1391,19 @@ export function PayrollStructureBuilder() {
                     .map((comp) => (
                       <div
                         key={comp.code}
-                        className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2 relative"
+                        className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2 relative"
                       >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-slate-900 dark:text-white">
                             {comp.name}
                           </span>
-                          <button
+                          <Button
                             type="button"
                             onClick={() => handleRemoveComponent(comp.code)}
                             className="text-slate-400 hover:text-rose-600 p-1 text-xs cursor-pointer"
                           >
                             ✕
-                          </button>
+                          </Button>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
@@ -1356,7 +1413,7 @@ export function PayrollStructureBuilder() {
                               value={comp.calculationType}
                               onChange={(e) =>
                                 handleUpdateComponent(comp.code, {
-                                  calculationType: e.target.value as any,
+                                  calculationType: parseCalculationType(e.target.value),
                                 })
                               }
                             >
@@ -1384,7 +1441,7 @@ export function PayrollStructureBuilder() {
                     ))}
 
                   {/* Special Allowance (Balancing Residual) */}
-                  <div className="p-3 bg-sky-50/70 dark:bg-[#152438]/70 rounded-lg border border-sky-200 dark:border-sky-800/60 space-y-1">
+                  <div className="p-3 bg-sky-50/70 dark:bg-card/70 rounded-lg border border-sky-200 dark:border-sky-800/60 space-y-1">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-bold text-sky-900 dark:text-sky-300">
@@ -1440,19 +1497,19 @@ export function PayrollStructureBuilder() {
                 <div className="flex items-center gap-1.5 flex-wrap pb-1">
                   <span className="text-[10px] text-slate-400 font-semibold">Quick add:</span>
                   {PRESET_DEDUCTIONS.map((p) => (
-                    <button
+                    <Button
                       key={p.code}
                       type="button"
                       onClick={() => handleQuickAddPreset(p, 'DEDUCTION')}
                       className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 cursor-pointer"
                     >
                       + {p.name}
-                    </button>
+                    </Button>
                   ))}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+                  <div className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs font-bold text-slate-900 dark:text-white">
                         Employee PF (12%)
@@ -1465,19 +1522,18 @@ export function PayrollStructureBuilder() {
                       </span>
                     </div>
                     <label className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={editingForm.epfCapEnabled}
-                        onChange={(e) =>
-                          setEditingForm({ ...editingForm, epfCapEnabled: e.target.checked })
+                        onCheckedChange={(checked) =>
+                          setEditingForm({ ...editingForm, epfCapEnabled: checked })
                         }
-                        className="accent-[#0284C7]"
+                        className="accent-primary"
                       />
                       <span>₹15,000 wage ceiling (₹1,800/mo cap)</span>
                     </label>
                   </div>
 
-                  <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+                  <div className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1498,19 +1554,18 @@ export function PayrollStructureBuilder() {
                       </Badge>
                     </div>
                     <label className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={editingForm.ptEnabled !== false}
-                        onChange={(e) =>
-                          setEditingForm({ ...editingForm, ptEnabled: e.target.checked })
+                        onCheckedChange={(checked) =>
+                          setEditingForm({ ...editingForm, ptEnabled: checked })
                         }
-                        className="accent-[#0284C7]"
+                        className="accent-primary"
                       />
                       <span>Enable PT deduction (₹200 / month)</span>
                     </label>
                   </div>
 
-                  <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+                  <div className="p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
@@ -1531,13 +1586,12 @@ export function PayrollStructureBuilder() {
                       </Badge>
                     </div>
                     <label className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={editingForm.tdsEnabled !== false}
-                        onChange={(e) =>
-                          setEditingForm({ ...editingForm, tdsEnabled: e.target.checked })
+                        onCheckedChange={(checked) =>
+                          setEditingForm({ ...editingForm, tdsEnabled: checked })
                         }
-                        className="accent-[#0284C7]"
+                        className="accent-primary"
                       />
                       <span>Enable TDS withholding (10% of Gross)</span>
                     </label>
@@ -1561,13 +1615,13 @@ export function PayrollStructureBuilder() {
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
                           {comp.name}
                         </span>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => handleRemoveComponent(comp.code)}
                           className="text-slate-400 hover:text-rose-600 p-1 text-xs cursor-pointer"
                         >
                           ✕
-                        </button>
+                        </Button>
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
@@ -1577,7 +1631,7 @@ export function PayrollStructureBuilder() {
                             value={comp.calculationType}
                             onChange={(e) =>
                               handleUpdateComponent(comp.code, {
-                                calculationType: e.target.value as any,
+                                calculationType: parseCalculationType(e.target.value),
                               })
                             }
                           >
@@ -1626,7 +1680,7 @@ export function PayrollStructureBuilder() {
                 </div>
 
                 {/* Synced CTC Number Input & Range Slider */}
-                <div className="space-y-2 p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800">
+                <div className="space-y-2 p-3 bg-slate-50 dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800">
                   <div className="flex items-center justify-between">
                     <Label className="text-xs font-medium">Annual CTC (₹):</Label>
                     <Input
@@ -1644,7 +1698,7 @@ export function PayrollStructureBuilder() {
                     step={50000}
                     value={simulatedCtc}
                     onChange={(e) => setSimulatedCtc(Number(e.target.value))}
-                    className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#0284C7]"
+                    className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
                   />
 
                   <div className="flex justify-between text-[11px] font-mono text-slate-500">
@@ -1660,7 +1714,7 @@ export function PayrollStructureBuilder() {
                   <div className="space-y-2.5 text-xs font-mono">
                     <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
                       {/* Earnings */}
-                      <div className="p-2.5 bg-slate-50/50 dark:bg-[#161B22]/50 space-y-1">
+                      <div className="p-2.5 bg-slate-50/50 dark:bg-card/50 space-y-1">
                         <div className="text-[10px] font-sans font-bold text-slate-400 uppercase tracking-wider">
                           Earnings
                         </div>
@@ -1699,7 +1753,7 @@ export function PayrollStructureBuilder() {
                       </div>
 
                       {/* Employee Deductions */}
-                      <div className="p-2.5 bg-slate-50/50 dark:bg-[#161B22]/50 space-y-1">
+                      <div className="p-2.5 bg-slate-50/50 dark:bg-card/50 space-y-1">
                         <div className="text-[10px] font-sans font-bold text-slate-400 uppercase tracking-wider">
                           Employee Deductions
                         </div>
@@ -1733,7 +1787,7 @@ export function PayrollStructureBuilder() {
                       </div>
 
                       {/* Employer Costs */}
-                      <div className="p-2.5 bg-slate-50/50 dark:bg-[#161B22]/50 space-y-1">
+                      <div className="p-2.5 bg-slate-50/50 dark:bg-card/50 space-y-1">
                         <div className="text-[10px] font-sans font-bold text-slate-400 uppercase tracking-wider">
                           Employer Costs (CTC)
                         </div>
@@ -1808,7 +1862,7 @@ export function PayrollStructureBuilder() {
                     return (
                       <TableRow
                         key={s.id}
-                        className={isSelected ? 'bg-sky-50/50 dark:bg-[#152438]/50' : ''}
+                        className={isSelected ? 'bg-sky-50/50 dark:bg-card/50' : ''}
                       >
                         <TableCell className="px-4">
                           <Badge
@@ -2003,7 +2057,7 @@ export function PayrollStructureBuilder() {
                       <div className="flex justify-between text-slate-500 dark:text-slate-400">
                         <span>Legal Act:</span>
                         <span className="font-semibold text-slate-700 dark:text-slate-200">
-                          {(comp.statutoryActs && comp.statutoryActs[0]) || 'Code on Wages, 2019'}
+                          {comp.statutoryActs[0] || 'Code on Wages, 2019'}
                         </span>
                       </div>
                       <div className="flex justify-between text-slate-500 dark:text-slate-400">
@@ -2056,7 +2110,7 @@ export function PayrollStructureBuilder() {
                   <Label>Calculation Method</Label>
                   <Select
                     value={newCompCalcType}
-                    onChange={(e) => setNewCompCalcType(e.target.value as any)}
+                    onChange={(e) => setNewCompCalcType(parseCalculationType(e.target.value))}
                   >
                     <option value="PERCENTAGE_OF_BASIC">% of Basic Salary</option>
                     <option value="PERCENTAGE_OF_CTC">% of Total CTC</option>
@@ -2107,7 +2161,7 @@ export function PayrollStructureBuilder() {
             </DialogHeader>
 
             {/* Inheritance Badge */}
-            <div className="p-2.5 bg-sky-50 dark:bg-[#152438] rounded-md border border-sky-200 dark:border-sky-800/60 text-xs text-sky-900 dark:text-sky-300">
+            <div className="p-2.5 bg-sky-50 dark:bg-card rounded-md border border-sky-200 dark:border-sky-800/60 text-xs text-sky-900 dark:text-sky-300">
               <span className="font-bold">Inherited Base Template: </span>
               <span>
                 {selectedEmployeeForOverride.jobTitle} Standard Structure (50% Basic / 40% HRA)

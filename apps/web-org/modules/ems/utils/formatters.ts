@@ -3,7 +3,7 @@
  */
 
 export function formatINR(amount: number): string {
-  if (isNaN(amount) || amount === null || amount === undefined) return '₹0';
+  if (Number.isNaN(amount)) return '₹0';
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -12,19 +12,33 @@ export function formatINR(amount: number): string {
 }
 
 export function formatDateRange(startDate: string, endDate: string): string {
-  try {
-    const start = new Date(startDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-    const end = new Date(endDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-    return `${start} – ${end}`;
-  } catch {
-    return `${startDate} – ${endDate}`;
-  }
+  const start = formatDateLabel(startDate);
+  const end = formatDateLabel(endDate);
+  return start && end ? `${start} – ${end}` : `${startDate} – ${endDate}`;
+}
+
+export function formatDateLabel(dateValue: string): string {
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return '';
+
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+export function formatDateRangeFromValues(values: string[]): string {
+  const dates = values.filter((value) => !Number.isNaN(new Date(value).getTime())).sort();
+  if (dates.length === 0) return '';
+  const first = dates[0];
+  const last = dates[dates.length - 1];
+  return first && last ? formatDateRange(first, last) : '';
+}
+
+export function formatLocalIsoDate(date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }

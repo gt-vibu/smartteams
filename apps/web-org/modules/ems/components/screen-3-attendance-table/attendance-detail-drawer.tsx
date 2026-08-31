@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { AttendanceTableRow } from '../../types/attendance-table.types';
+import React, { useRef, useState } from 'react';
+import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
+import type { AttendanceTableRow } from '../../types/attendance-table.types';
 
 interface AttendanceDetailDrawerProps {
   row: AttendanceTableRow | null;
@@ -16,13 +17,13 @@ export function AttendanceDetailDrawer({
 }: AttendanceDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(isOpen, panelRef, onClose);
 
   if (!isOpen || !row) return null;
 
   const handleSubmitRegularization = () => {
-    if (onSubmitRegularization && row) {
-      onSubmitRegularization(row.id, reason);
-    }
+    onSubmitRegularization?.(row.id, reason);
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
@@ -31,7 +32,7 @@ export function AttendanceDetailDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true">
       {/* Backdrop */}
       <div
         onClick={onClose}
@@ -40,16 +41,31 @@ export function AttendanceDetailDrawer({
 
       {/* Slide-In Panel */}
       <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl border-l border-slate-200 flex flex-col justify-between">
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-labelledby="attendance-details-title"
+          tabIndex={-1}
+          className="flex w-screen max-w-md flex-col justify-between border-l border-slate-200 bg-white shadow-2xl"
+        >
           {/* Header */}
           <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
             <div>
-              <h2 className="!text-sm !font-bold !text-slate-900 !m-0">Attendance Details</h2>
+              <h2
+                id="attendance-details-title"
+                className="!m-0 !text-sm !font-bold !text-slate-900"
+              >
+                Attendance Details
+              </h2>
               <p className="text-xs text-slate-500 mt-0.5">{row.date}</p>
             </div>
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Close attendance details"
               onClick={onClose}
-              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
+              className="h-8 w-8 text-slate-400 hover:text-slate-700"
             >
               <svg
                 className="h-5 w-5"
@@ -60,7 +76,7 @@ export function AttendanceDetailDrawer({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </Button>
           </div>
 
           {/* Body Content */}
@@ -139,33 +155,31 @@ export function AttendanceDetailDrawer({
                 </div>
               ) : (
                 <div className="space-y-2.5">
-                  <textarea
+                  <Textarea
                     rows={3}
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Reason for regularization (min 10 characters)..."
-                    className="w-full text-xs p-2.5 border border-slate-200 rounded focus:ring-1 focus:ring-sky-500 focus:outline-none bg-slate-50 focus:bg-white"
+                    className="bg-slate-50 focus:bg-white"
                   />
-                  <button
+                  <Button
+                    type="button"
                     disabled={reason.length < 5}
                     onClick={handleSubmitRegularization}
-                    className="w-full py-1.5 px-3 rounded text-xs font-semibold bg-[#0284C7] hover:bg-[#0369A1] disabled:opacity-50 text-white transition-colors cursor-pointer"
+                    className="w-full"
                   >
                     Submit Correction Request
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-200 dark:border-[#262F3D] bg-slate-50 dark:bg-[#161B22] flex justify-end">
-            <button
-              onClick={onClose}
-              className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold rounded border border-transparent dark:border-slate-700 transition-colors cursor-pointer"
-            >
+          <div className="p-4 border-t border-slate-200 dark:border-border bg-slate-50 dark:bg-card flex justify-end">
+            <Button type="button" variant="secondary" onClick={onClose}>
               Close
-            </button>
+            </Button>
           </div>
         </div>
       </div>

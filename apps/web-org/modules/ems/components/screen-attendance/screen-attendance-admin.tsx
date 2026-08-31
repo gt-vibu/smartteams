@@ -1,9 +1,11 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React, { useState, useMemo } from 'react';
-import { StandardDataTable, ColumnDef } from '@smarteam/ui';
+import type { ColumnDef } from '@smarteam/ui';
+import { DatePicker, StandardDataTable } from '@smarteam/ui';
 import attendanceRecordsFixture from '../../data/fixtures/attendance-records.json';
-import { DatePicker } from '../common/date-picker';
 
 interface AttendanceRow {
   id: string;
@@ -22,21 +24,41 @@ interface AttendanceRow {
   source: string;
 }
 
+interface AttendanceDateData {
+  summary: {
+    totalEmployees: number;
+    present: number;
+    absent: number;
+    onLeave: number;
+    holiday: number;
+    weekend: number;
+  };
+  records: AttendanceRow[];
+}
+
+const datesFixture = attendanceRecordsFixture.dates as unknown as Record<
+  string,
+  AttendanceDateData
+>;
+const availableAttendanceDates = Object.keys(datesFixture).sort();
+
 export function ScreenAttendanceAdmin() {
-  const [selectedDate, setSelectedDate] = useState('2026-08-27');
+  const [selectedDate, setSelectedDate] = useState(
+    availableAttendanceDates[availableAttendanceDates.length - 1] || '',
+  );
   const [selectedRow, setSelectedRow] = useState<AttendanceRow | null>(null);
 
-  const datesData = attendanceRecordsFixture.dates as Record<string, any>;
+  const datesData = datesFixture;
   const activeDateData = datesData[selectedDate] || {
     summary: { totalEmployees: 24, present: 0, absent: 0, onLeave: 0, holiday: 0, weekend: 0 },
     records: [],
   };
 
   const records: AttendanceRow[] = useMemo(() => {
-    return activeDateData.records as AttendanceRow[];
+    return activeDateData.records;
   }, [activeDateData]);
 
-  const availableDates = Object.keys(datesData).sort();
+  const availableDates = availableAttendanceDates;
 
   const handlePrevDate = () => {
     const idx = availableDates.indexOf(selectedDate);
@@ -146,15 +168,15 @@ export function ScreenAttendanceAdmin() {
       pinned: 'right',
       sortable: false,
       cell: (row) => (
-        <button
+        <Button
           onClick={(e) => {
             e.stopPropagation();
             setSelectedRow(row);
           }}
-          className="text-[11px] font-bold text-[#0284C7] hover:underline cursor-pointer"
+          className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
         >
           Inspect
-        </button>
+        </Button>
       ),
     },
   ];
@@ -178,7 +200,7 @@ export function ScreenAttendanceAdmin() {
 
         {/* Custom Date Picker + Prev/Next Steppers */}
         <div className="flex items-center gap-2 shrink-0">
-          <button
+          <Button
             onClick={handlePrevDate}
             disabled={availableDates.indexOf(selectedDate) <= 0}
             className="p-1.5 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
@@ -193,16 +215,16 @@ export function ScreenAttendanceAdmin() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-          </button>
+          </Button>
 
           <DatePicker
             value={selectedDate}
             onChange={setSelectedDate}
-            minDate={availableDates[0]}
-            maxDate={availableDates[availableDates.length - 1]}
+            min={availableDates[0]}
+            max={availableDates[availableDates.length - 1]}
           />
 
-          <button
+          <Button
             onClick={handleNextDate}
             disabled={availableDates.indexOf(selectedDate) >= availableDates.length - 1}
             className="p-1.5 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
@@ -217,13 +239,13 @@ export function ScreenAttendanceAdmin() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Summary KPI Cards for Selected Date */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Present
           </div>
@@ -231,7 +253,7 @@ export function ScreenAttendanceAdmin() {
             {activeDateData.summary.present}
           </div>
         </div>
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Absent
           </div>
@@ -239,7 +261,7 @@ export function ScreenAttendanceAdmin() {
             {activeDateData.summary.absent}
           </div>
         </div>
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             On Leave
           </div>
@@ -247,7 +269,7 @@ export function ScreenAttendanceAdmin() {
             {activeDateData.summary.onLeave}
           </div>
         </div>
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Holiday
           </div>
@@ -255,7 +277,7 @@ export function ScreenAttendanceAdmin() {
             {activeDateData.summary.holiday}
           </div>
         </div>
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Total Rostered
           </div>
@@ -283,8 +305,8 @@ export function ScreenAttendanceAdmin() {
             className="absolute inset-0 bg-slate-900/50 backdrop-blur-xs"
           />
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white dark:bg-[#1B2028] shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col justify-between">
-              <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-[#161B22] flex items-start justify-between">
+            <div className="w-screen max-w-md bg-white dark:bg-card shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+              <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-card flex items-start justify-between">
                 <div>
                   <span className="text-[10px] font-mono font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-1.5 py-0.5 rounded">
                     {selectedRow.employeeNumber}
@@ -296,16 +318,16 @@ export function ScreenAttendanceAdmin() {
                     {selectedRow.jobTitle} · {selectedRow.department}
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={() => setSelectedRow(null)}
                   className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
                 >
                   ✕
-                </button>
+                </Button>
               </div>
 
               <div className="p-5 space-y-4 flex-1 overflow-y-auto text-xs">
-                <div className="bg-slate-50 dark:bg-[#161B22] p-3 rounded-lg border border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-card p-3 rounded-lg border border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-3">
                   <div>
                     <span className="text-[10px] text-slate-400 font-bold uppercase">Date</span>
                     <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
@@ -356,7 +378,7 @@ export function ScreenAttendanceAdmin() {
                   <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
                     Punch Stream Source
                   </h3>
-                  <div className="p-3 bg-slate-50 dark:bg-[#161B22] border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-between">
+                  <div className="p-3 bg-slate-50 dark:bg-card border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-between">
                     <div>
                       <div className="font-semibold text-slate-800 dark:text-slate-200">
                         Native Mobile / Web Punch
@@ -372,13 +394,13 @@ export function ScreenAttendanceAdmin() {
                 </div>
               </div>
 
-              <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#161B22]">
-                <button
+              <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-card">
+                <Button
                   onClick={() => setSelectedRow(null)}
-                  className="w-full py-2 bg-slate-800 hover:bg-slate-700 dark:bg-[#0284C7] dark:hover:bg-[#0369A1] text-white font-bold rounded text-xs cursor-pointer transition-colors"
+                  className="w-full py-2 bg-slate-800 hover:bg-slate-700 dark:bg-primary dark:hover:bg-primary/90 text-white font-bold rounded text-xs cursor-pointer transition-colors"
                 >
                   Close Inspection
-                </button>
+                </Button>
               </div>
             </div>
           </div>

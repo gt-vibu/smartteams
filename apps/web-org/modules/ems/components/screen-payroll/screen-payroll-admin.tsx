@@ -14,14 +14,6 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  Label,
-  Select,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -31,8 +23,9 @@ import payrollDataFixture from '../../data/fixtures/payroll-runs.json';
 import { useAuth } from '../../hooks/use-auth';
 import { ScreenPayrollLegalConfig } from './screen-payroll-legal-config';
 import { PayrollStructureBuilder } from './payroll-structure-builder';
-import { EditPayrollLineItemModal, EditablePayrollLineItem } from './edit-payroll-line-item-modal';
-import { PayslipDocumentModal, PayslipData } from './payslip-document-modal';
+import type { EditablePayrollLineItem } from './edit-payroll-line-item-modal';
+import type { PayslipData } from './payslip-document-modal';
+import { PayrollAdminDialogs } from './payroll-admin-dialogs';
 import { emsStorageAdapter } from '../../storage/storage.adapter';
 import { formatINR, formatDateRange } from '../../utils/formatters';
 
@@ -72,7 +65,7 @@ export function ScreenPayrollAdmin() {
   const [lineItems, setLineItems] = useState<EditablePayrollLineItem[]>(() => {
     return emsStorageAdapter.getItem<EditablePayrollLineItem[]>(
       STORAGE_KEY_PAYROLL_ITEMS,
-      payrollDataFixture.lineItems as EditablePayrollLineItem[],
+      payrollDataFixture.lineItems,
     );
   });
   const [selectedRun, setSelectedRun] = useState<PayrollRun | null>(runs[0] || null);
@@ -181,13 +174,13 @@ export function ScreenPayrollAdmin() {
   // Convert line item to full payslip modal data
   const handleOpenPayslipForLineItem = (item: EditablePayrollLineItem) => {
     const basicAmount =
-      item.earnings?.find((e) => e.code === 'BASIC')?.amount || Math.round(item.grossAmount * 0.5);
+      item.earnings.find((e) => e.code === 'BASIC')?.amount || Math.round(item.grossAmount * 0.5);
     const hraAmount =
-      item.earnings?.find((e) => e.code === 'HRA')?.amount || Math.round(basicAmount * 0.4);
+      item.earnings.find((e) => e.code === 'HRA')?.amount || Math.round(basicAmount * 0.4);
     const epfAmount =
-      item.deductions?.find((d) => d.code === 'EPF_EMP')?.amount ||
+      item.deductions.find((d) => d.code === 'EPF_EMP')?.amount ||
       Math.min(1800, Math.round(basicAmount * 0.12));
-    const ptAmount = item.deductions?.find((d) => d.code === 'PT')?.amount || 200;
+    const ptAmount = item.deductions.find((d) => d.code === 'PT')?.amount || 200;
 
     const payslip: PayslipData = {
       id: item.id,
@@ -205,7 +198,7 @@ export function ScreenPayrollAdmin() {
       paidDays: item.regularDays + (item.paidLeaves || 0),
       lossOfPayDays: item.lossOfPayDays || 0,
       earnings:
-        item.earnings && item.earnings.length > 0
+        item.earnings.length > 0
           ? item.earnings.map((e) => ({ name: e.name, amount: e.amount }))
           : [
               { name: 'Basic Salary', amount: basicAmount },
@@ -216,7 +209,7 @@ export function ScreenPayrollAdmin() {
               },
             ],
       deductions:
-        item.deductions && item.deductions.length > 0
+        item.deductions.length > 0
           ? item.deductions.map((d) => ({ name: d.name, amount: d.amount }))
           : [
               { name: 'Employee Provident Fund (12%)', amount: epfAmount },
@@ -279,8 +272,20 @@ export function ScreenPayrollAdmin() {
       </div>
 
       {/* 4-Pillar Main Tabs */}
-      <Tabs value={activeMainTab} onValueChange={(v: any) => setActiveMainTab(v)}>
-        <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full max-w-xl bg-slate-100 dark:bg-[#161B22] p-0.5 rounded-lg">
+      <Tabs
+        value={activeMainTab}
+        onValueChange={(value) => {
+          if (
+            value === 'RUNS' ||
+            value === 'COMPENSATION' ||
+            value === 'STATUTORY' ||
+            value === 'EMPLOYEE_PAY'
+          ) {
+            setActiveMainTab(value);
+          }
+        }}
+      >
+        <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full max-w-xl bg-slate-100 dark:bg-card p-0.5 rounded-lg">
           <TabsTrigger value="RUNS" className="text-xs font-semibold py-1.5">
             1. Payroll Runs
           </TabsTrigger>
@@ -301,12 +306,12 @@ export function ScreenPayrollAdmin() {
         <TabsContent value="RUNS" className="space-y-4 mt-3">
           {/* Executive Active Cycle Card */}
           {selectedRun && (
-            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-[#12161D] shadow-sm overflow-hidden">
+            <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-card shadow-sm overflow-hidden">
               {/* Header: Cycle Details, Stepper, Primary Action */}
-              <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800/80 flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-gradient-to-r from-slate-50/70 via-white to-sky-50/20 dark:from-[#151B26] dark:via-[#12161D] dark:to-[#151B26]">
+              <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800/80 flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-gradient-to-r from-slate-50/70 via-white to-sky-50/20 dark:from-[var(--card)] dark:via-[var(--card)] dark:to-[var(--card)]">
                 {/* Left: Cycle Identity */}
                 <div className="flex items-center gap-3.5">
-                  <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-[#0284C7] to-sky-700 text-white font-bold flex items-center justify-center text-lg shrink-0 shadow-md shadow-sky-600/20 ring-4 ring-sky-50 dark:ring-sky-950/40">
+                  <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-primary to-sky-700 text-white font-bold flex items-center justify-center text-lg shrink-0 shadow-md shadow-sky-600/20 ring-4 ring-sky-50 dark:ring-sky-950/40">
                     ₹
                   </div>
                   <div>
@@ -379,7 +384,7 @@ export function ScreenPayrollAdmin() {
                           s.done
                             ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/40'
                             : s.current
-                              ? 'text-[#0284C7] dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 ring-1 ring-sky-300/60 dark:ring-sky-800'
+                              ? 'text-primary dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 ring-1 ring-sky-300/60 dark:ring-sky-800'
                               : 'text-slate-400 dark:text-slate-600'
                         }`}
                       >
@@ -400,7 +405,7 @@ export function ScreenPayrollAdmin() {
                     <Button
                       size="sm"
                       onClick={() => handleCalculatePayroll(selectedRun.id)}
-                      className="bg-[#0284C7] hover:bg-[#0369A1] text-white font-semibold text-xs h-9 px-4 shadow-sm shadow-sky-600/20 rounded-lg flex items-center gap-1.5 transition-all hover:scale-[1.02]"
+                      className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-4 shadow-sm shadow-sky-600/20 rounded-lg flex items-center gap-1.5 transition-all hover:scale-[1.02]"
                     >
                       <span>▶</span>
                       <span>Compute Payroll Run</span>
@@ -436,14 +441,14 @@ export function ScreenPayrollAdmin() {
               </div>
 
               {/* 4 Clean Metric Stat Tiles */}
-              <div className="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50/40 dark:bg-[#0F141C]/60">
+              <div className="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50/40 dark:bg-background/60">
                 {/* Stat 1: Headcount */}
                 <div className="p-4 rounded-xl bg-white dark:bg-[#161D27] border border-slate-200/80 dark:border-slate-800 shadow-2xs flex flex-col justify-between hover:border-slate-300 dark:hover:border-slate-700 transition-colors">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       Headcount
                     </span>
-                    <span className="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/50 text-[#0284C7] dark:text-sky-400 text-xs">
+                    <span className="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/50 text-primary dark:text-sky-400 text-xs">
                       👥
                     </span>
                   </div>
@@ -520,7 +525,7 @@ export function ScreenPayrollAdmin() {
               </div>
 
               {/* Pre-Flight Health & Validation Checklist Strip */}
-              <div className="px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#12161D] text-xs">
+              <div className="px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-card text-xs">
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 font-semibold text-[11px]">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />4 of 5 automated
@@ -538,7 +543,7 @@ export function ScreenPayrollAdmin() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsVerificationModalOpen(true)}
-                  className="text-xs text-[#0284C7] dark:text-sky-400 border-sky-200 dark:border-sky-800/60 hover:bg-sky-50 dark:hover:bg-sky-950/50 font-semibold h-7 px-3 shrink-0 rounded-lg"
+                  className="text-xs text-primary dark:text-sky-400 border-sky-200 dark:border-sky-800/60 hover:bg-sky-50 dark:hover:bg-sky-950/50 font-semibold h-7 px-3 shrink-0 rounded-lg"
                 >
                   View Validation Checklist →
                 </Button>
@@ -715,158 +720,23 @@ export function ScreenPayrollAdmin() {
         </TabsContent>
       </Tabs>
 
-      {/* Start New Payroll Run Dialog */}
-      {isStartRunModalOpen && (
-        <Dialog open={isStartRunModalOpen} onOpenChange={setIsStartRunModalOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Initialize New Payroll Run</DialogTitle>
-              <DialogDescription>
-                Select the pay period to aggregate biometric attendance, approved leaves, and role
-                salary templates.
-              </DialogDescription>
-            </DialogHeader>
-
-            <form onSubmit={handleStartNewRun} className="space-y-3.5 py-2">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label>Month</Label>
-                  <Select
-                    value={newPeriodMonth}
-                    onChange={(e) => setNewPeriodMonth(e.target.value)}
-                  >
-                    <option value="07">July</option>
-                    <option value="08">August</option>
-                    <option value="09">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label>Year</Label>
-                  <Select value={newPeriodYear} onChange={(e) => setNewPeriodYear(e.target.value)}>
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="p-3 bg-sky-50 dark:bg-[#152438] rounded-lg border border-sky-200 dark:border-sky-800/60 text-xs text-sky-900 dark:text-sky-300">
-                <span>
-                  The system will automatically run pre-run verification on 42 active workforce
-                  members.
-                </span>
-              </div>
-
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsStartRunModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">Create Draft Run</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      )}
-
-      {/* Line Item Adjust Modal */}
-      {editingLineItem && (
-        <EditPayrollLineItemModal
-          isOpen={Boolean(editingLineItem)}
-          onClose={() => setEditingLineItem(null)}
-          item={editingLineItem}
-          onSave={handleSaveLineItem}
-        />
-      )}
-
-      {/* Verification Checklist Inspection Dialog */}
-      {isVerificationModalOpen && (
-        <Dialog open={isVerificationModalOpen} onOpenChange={setIsVerificationModalOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                <DialogTitle>Pre-Flight Payroll Integrity Checklist</DialogTitle>
-              </div>
-              <DialogDescription>
-                Automated compliance and data reconciliation checks for cycle {selectedRun?.code}.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-3 py-2 text-xs">
-              <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 space-y-2.5">
-                <div className="flex items-start gap-2 text-emerald-600 dark:text-emerald-400">
-                  <span className="font-bold">✓</span>
-                  <div>
-                    <div className="font-semibold text-slate-900 dark:text-white">
-                      Attendance & Timesheets Synchronized
-                    </div>
-                    <div className="text-[11px] text-slate-500">
-                      Biometric punch records and project timesheets reconciled for 24 staff.
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2 text-emerald-600 dark:text-emerald-400">
-                  <span className="font-bold">✓</span>
-                  <div>
-                    <div className="font-semibold text-slate-900 dark:text-white">
-                      Leave Balances & Loss of Pay (LOP)
-                    </div>
-                    <div className="text-[11px] text-slate-500">
-                      0 unpaid absence days detected across active departments.
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2 text-emerald-600 dark:text-emerald-400">
-                  <span className="font-bold">✓</span>
-                  <div>
-                    <div className="font-semibold text-slate-900 dark:text-white">
-                      Role Salary Formulas & Grade Structures
-                    </div>
-                    <div className="text-[11px] text-slate-500">
-                      Basic, HRA, and statutory ceilings resolved without formula errors.
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20 p-2 rounded border border-amber-200 dark:border-amber-900/40">
-                  <span className="font-bold">⚠️</span>
-                  <div>
-                    <div className="font-semibold text-amber-900 dark:text-amber-300">
-                      3 Staff Missing PAN (Non-blocking Warning)
-                    </div>
-                    <div className="text-[11px] text-amber-800 dark:text-amber-400">
-                      Higher TDS rate (20%) under Section 206AA will apply if PAN is not submitted
-                      before payout.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button onClick={() => setIsVerificationModalOpen(false)} size="sm">
-                Close Checklist
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-      {/* Official Real-World Payslip Modal */}
-      {activePayslipModalData && (
-        <PayslipDocumentModal
-          isOpen={Boolean(activePayslipModalData)}
-          onClose={() => setActivePayslipModalData(null)}
-          payslip={activePayslipModalData}
-        />
-      )}
+      <PayrollAdminDialogs
+        isStartRunModalOpen={isStartRunModalOpen}
+        setIsStartRunModalOpen={setIsStartRunModalOpen}
+        handleStartNewRun={handleStartNewRun}
+        newPeriodMonth={newPeriodMonth}
+        setNewPeriodMonth={setNewPeriodMonth}
+        newPeriodYear={newPeriodYear}
+        setNewPeriodYear={setNewPeriodYear}
+        editingLineItem={editingLineItem}
+        setEditingLineItem={setEditingLineItem}
+        handleSaveLineItem={handleSaveLineItem}
+        isVerificationModalOpen={isVerificationModalOpen}
+        setIsVerificationModalOpen={setIsVerificationModalOpen}
+        selectedRun={selectedRun}
+        activePayslipModalData={activePayslipModalData}
+        setActivePayslipModalData={setActivePayslipModalData}
+      />
     </div>
   );
 }

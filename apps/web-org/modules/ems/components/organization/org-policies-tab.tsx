@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ApprovalPolicyData } from '../../types/organization.types';
+import type { ApprovalPolicyData } from '../../types/organization.types';
 
 interface OrgPoliciesTabProps {
   approvalPolicies: ApprovalPolicyData[];
@@ -86,7 +86,7 @@ export function OrgPoliciesTab({ approvalPolicies }: OrgPoliciesTabProps) {
                         key={step.stepNumber}
                         className="flex items-center gap-2.5 p-2 bg-slate-50 rounded-[4px] border border-slate-100 text-xs"
                       >
-                        <span className="h-5 w-5 rounded-full bg-[#0284C7] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                        <span className="h-5 w-5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center shrink-0">
                           {step.stepNumber}
                         </span>
                         <div className="flex-1 min-w-0">

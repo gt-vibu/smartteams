@@ -1,5 +1,5 @@
 import attendanceFixture from './fixtures/attendance.json';
-import { DailyAttendanceItem, LivePunchState } from '../types/attendance.types';
+import type { DailyAttendanceItem, LivePunchState } from '../types/attendance.types';
 
 export const mockLivePunch: LivePunchState = {
   isCheckedIn: attendanceFixture.liveState.isCheckedIn,

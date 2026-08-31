@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Select, Input } from '@smarteam/ui';
+import { Button, Select, Input } from '@smarteam/ui';
 import { formatSecondsToTime } from '../../utils/format.utils';
+import { formatDateLabel, formatLocalIsoDate } from '../../utils/formatters';
 import { useTimesheet } from '../../hooks/use-timesheet';
 
 export function QuickTimerBar() {
@@ -32,7 +33,7 @@ export function QuickTimerBar() {
       if (seconds > 0) {
         const durationStr = `${hrs}:${mins}`;
         addTimeLog({
-          date: 'Aug 25, 2026',
+          date: formatLocalIsoDate(),
           projectName: project || 'Luxasia 2026',
           jobName: job || 'Development',
           description: workDescription || 'Quick timer work session',
@@ -50,7 +51,7 @@ export function QuickTimerBar() {
   };
 
   return (
-    <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200/90 dark:border-slate-800 p-3 sm:p-2.5 shadow-xs flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 w-full min-w-0">
+    <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 p-3 sm:p-2.5 shadow-xs flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 w-full min-w-0">
       {/* 1. Select Project Dropdown */}
       <div className="w-full sm:w-44">
         <Select value={project} onChange={(e) => setProject(e.target.value)}>
@@ -91,9 +92,11 @@ export function QuickTimerBar() {
       </div>
 
       {/* 5. Green Timer Action Button Widget */}
-      <button
+      <Button
+        type="button"
+        variant="success"
         onClick={handleToggleTimer}
-        className="bg-[#10B981] hover:bg-[#059669] text-white px-3.5 py-1.5 rounded-md text-xs font-mono font-bold flex items-center justify-center gap-2 shadow-xs transition-colors shrink-0 cursor-pointer w-full sm:w-auto"
+        className="w-full shrink-0 px-3.5 py-1.5 font-mono sm:w-auto"
       >
         <span>
           {hrs}:{mins}:{secs}
@@ -107,12 +110,12 @@ export function QuickTimerBar() {
             </svg>
           )}
         </div>
-      </button>
+      </Button>
 
       {/* Save Notification Toast */}
       {showSavedNotification && (
         <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
-          ✓ Logged to Aug 25
+          ✓ Logged to {formatDateLabel(formatLocalIsoDate()) || 'today'}
         </span>
       )}
     </div>

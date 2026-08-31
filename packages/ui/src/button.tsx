@@ -7,25 +7,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          'bg-[#0284C7] text-white hover:bg-[#0369A1] shadow-xs dark:bg-[#0284C7] dark:hover:bg-[#0369A1]',
-        destructive:
-          'bg-rose-600 text-white hover:bg-rose-700 shadow-xs dark:bg-rose-600 dark:hover:bg-rose-700',
-        outline:
-          'border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161B22] hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs',
-        secondary:
-          'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700',
-        ghost:
-          'hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 text-slate-600 dark:text-slate-400',
-        link: 'text-[#0284C7] underline-offset-4 hover:underline',
-        success: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs',
-        quiet: 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs',
+        outline: 'border border-border bg-background hover:bg-muted text-foreground shadow-2xs',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-muted hover:text-foreground text-muted-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
+        success: 'bg-success text-success-foreground hover:bg-success/90 shadow-xs',
+        quiet: 'hover:bg-muted text-foreground',
       },
       size: {
-        default: 'h-8 px-3 py-1.5',
-        sm: 'h-7 rounded-md px-2.5 text-[11px]',
-        lg: 'h-9 rounded-md px-4 text-xs',
-        icon: 'h-8 w-8',
+        default: 'min-h-9 px-3 py-1.5',
+        sm: 'min-h-9 rounded-md px-2.5 text-[11px]',
+        lg: 'min-h-10 rounded-md px-4 text-xs',
+        icon: 'h-9 w-9',
       },
     },
     defaultVariants: {
@@ -41,9 +36,18 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ asChild = false, children, className, variant, size, ...props }, ref) => {
+    if (asChild && React.isValidElement<{ className?: string }>(children)) {
+      return React.cloneElement(children, {
+        ...props,
+        className: cn(buttonVariants({ variant, size }), className, children.props.className),
+      });
+    }
+
     return (
-      <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+      <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+        {children}
+      </button>
     );
   },
 );

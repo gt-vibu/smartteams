@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { timesheetRepository } from '../repositories/timesheet.repository';
-import { DateGroupedTimeLogs, TimeTrackerSummaryStats } from '../types/timelog.types';
+import type {
+  ApprovedTimesheetNotification,
+  DateGroupedTimeLogs,
+  TimeTrackerSummaryStats,
+} from '../types/timelog.types';
 
 export function useTimesheet() {
   const [groupedLogs, setGroupedLogs] = useState<DateGroupedTimeLogs[]>(() =>
@@ -11,9 +15,10 @@ export function useTimesheet() {
   const [summary, setSummary] = useState<TimeTrackerSummaryStats>(() =>
     timesheetRepository.getSummary(),
   );
-  const [approvedNotification, setApprovedNotification] = useState<any>(() =>
-    timesheetRepository.getApprovedNotification(),
-  );
+  const [approvedNotification, setApprovedNotification] =
+    useState<ApprovedTimesheetNotification | null>(() =>
+      timesheetRepository.getApprovedNotification(),
+    );
 
   const refresh = useCallback(() => {
     setTimeout(() => {

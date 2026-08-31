@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Input } from '@smarteam/ui';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { useAttendance } from '../../hooks/use-attendance';
@@ -22,6 +24,14 @@ interface CommandItem {
   icon: React.ReactNode;
   badge?: string;
   onSelect: () => void;
+}
+
+interface ProjectSearchRecord {
+  id: string;
+  name: string;
+  code: string;
+  branchName: string;
+  status: string;
 }
 
 export function CommandPalette({
@@ -377,7 +387,7 @@ export function CommandPalette({
   ];
 
   // Add Projects Search Items
-  const projects: CommandItem[] = (projectsFixture.projects as any[]).map((p) => ({
+  const projects: CommandItem[] = (projectsFixture.projects as ProjectSearchRecord[]).map((p) => ({
     id: p.id,
     title: p.name,
     subtitle: `${p.code} · ${p.branchName} · ${p.status}`,
@@ -395,7 +405,24 @@ export function CommandPalette({
     },
   }));
 
-  const allSearchable = [...allItems, ...people, ...projects];
+  const moduleByNavigationId: Record<string, string> = {
+    'nav-home': 'home',
+    'nav-attendance': 'attendance',
+    'nav-time-off': 'time-off',
+    'nav-timesheet': 'timesheet',
+    'nav-projects': 'projects',
+    'nav-payroll': 'payroll',
+  };
+  const scopedItems = allItems.filter((item) => {
+    if (item.id === 'act-admin-payroll') return canAccessModule('payroll');
+    const module = moduleByNavigationId[item.id];
+    return !module || canAccessModule(module);
+  });
+  const allSearchable = [
+    ...scopedItems,
+    ...(canAccessModule('projects') ? projects : []),
+    ...people,
+  ];
 
   const filtered = query.trim()
     ? allSearchable.filter((item) => {
@@ -406,7 +433,11 @@ export function CommandPalette({
           item.category.toLowerCase().includes(q)
         );
       })
-    : allItems;
+    : scopedItems;
+
+  useEffect(() => {
+    setSelectedIndex((index) => Math.min(index, Math.max(0, filtered.length - 1)));
+  }, [filtered.length]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
@@ -434,10 +465,13 @@ export function CommandPalette({
         className="w-full max-w-xl bg-white border border-slate-200 rounded-[10px] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-100"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
       >
         {/* Search Input Bar with Glowing Accent */}
         <div className="p-3.5 border-b border-slate-200 bg-slate-50/80 flex items-center gap-3">
-          <div className="h-6 w-6 rounded bg-sky-100 border border-sky-300 flex items-center justify-center text-[#0284C7] shrink-0">
+          <div className="h-6 w-6 rounded bg-sky-100 border border-sky-300 flex items-center justify-center text-primary shrink-0">
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -452,7 +486,7 @@ export function CommandPalette({
               />
             </svg>
           </div>
-          <input
+          <Input
             ref={inputRef}
             type="text"
             value={query}
@@ -468,12 +502,14 @@ export function CommandPalette({
             className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none font-medium"
           />
           {query && (
-            <button
+            <Button
+              type="button"
+              aria-label="Clear command search"
               onClick={() => setQuery('')}
               className="text-slate-400 hover:text-slate-700 text-xs cursor-pointer px-1"
             >
               ✕
-            </button>
+            </Button>
           )}
           <kbd className="hidden sm:inline-block text-[10px] font-mono font-bold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200 shadow-2xs">
             ESC
@@ -489,17 +525,18 @@ export function CommandPalette({
             const isCatActive =
               query.toLowerCase() === cat.toLowerCase() || (cat === 'All' && !query);
             return (
-              <button
+              <Button
+                type="button"
                 key={cat}
                 onClick={() => setQuery(cat === 'All' ? '' : cat)}
                 className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer whitespace-nowrap border ${
                   isCatActive
-                    ? 'bg-[#0284C7] text-white border-[#0284C7] shadow-2xs'
+                    ? 'bg-primary text-white border-primary shadow-2xs'
                     : 'bg-white text-slate-600 border-slate-200 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
                 {cat}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -530,7 +567,8 @@ export function CommandPalette({
               };
 
               return (
-                <button
+                <Button
+                  type="button"
                   key={item.id}
                   onClick={item.onSelect}
                   onMouseEnter={() => setSelectedIndex(idx)}
@@ -566,7 +604,7 @@ export function CommandPalette({
                       {item.category}
                     </span>
                   </div>
-                </button>
+                </Button>
               );
             })
           )}

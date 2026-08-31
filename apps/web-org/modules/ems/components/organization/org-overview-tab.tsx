@@ -1,15 +1,17 @@
 'use client';
 
+import { Button, Input } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import { Select } from '@smarteam/ui';
-import { OrganizationData, BranchData } from '../../types/organization.types';
-import { QuickLinkItem } from '../../hooks/use-organization';
+import type { OrganizationData, BranchData } from '../../types/organization.types';
+import type { QuickLinkItem } from '../../hooks/use-organization';
 
 interface OrgOverviewTabProps {
   organization: OrganizationData;
   branches: BranchData[];
   quickLinks: QuickLinkItem[];
-  onNavigateModule?: (module: string, subView?: any) => void;
+  onNavigateModule?: (module: string, subView?: string) => void;
   onSelectSubTab?: (tab: string) => void;
   onAddQuickLink?: (link: Omit<QuickLinkItem, 'id'>) => void;
   onRemoveQuickLink?: (id: string) => void;
@@ -311,14 +313,14 @@ export function OrgOverviewTab({
       {/* ── Left Column: Org Logo Card + Quick Links ── */}
       <div className="lg:col-span-4 xl:col-span-3 space-y-4">
         {/* 1. Organization Logo & Identity Card */}
-        <div className="bg-white dark:bg-[#1B2028] rounded-[8px] border border-slate-200/90 dark:border-[#282F3D] p-6 shadow-xs flex flex-col items-center justify-center text-center">
+        <div className="bg-white dark:bg-card rounded-[8px] border border-slate-200/90 dark:border-[var(--border)] p-6 shadow-xs flex flex-col items-center justify-center text-center">
           {/* Zoho-style Interlocking Colorful Cube/Loop Logo */}
           <div className="relative h-20 w-20 flex items-center justify-center mb-3">
             <svg viewBox="0 0 100 100" className="h-16 w-16 drop-shadow-sm">
-              <circle cx="50" cy="30" r="12" fill="#0070BA" />
+              <circle cx="50" cy="30" r="12" fill="hsl(var(--primary))" />
               <path
                 d="M50 42 C 40 42 35 48 35 56 L 35 70 C 35 74 39 77 43 77 L 57 77 C 61 77 65 74 65 70 L 65 56 C 65 48 60 42 50 42 Z"
-                fill="#0070BA"
+                fill="hsl(var(--primary))"
               />
               <circle
                 cx="28"
@@ -359,16 +361,16 @@ export function OrgOverviewTab({
         </div>
 
         {/* 2. Quick Links Card */}
-        <div className="bg-white dark:bg-[#1B2028] rounded-[8px] border border-slate-200/90 dark:border-[#282F3D] p-4 shadow-xs min-h-[140px] flex flex-col justify-between">
+        <div className="bg-white dark:bg-card rounded-[8px] border border-slate-200/90 dark:border-[var(--border)] p-4 shadow-xs min-h-[140px] flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200">Quick Links</h3>
-            <button
+            <Button
               onClick={() => setIsAddLinkModalOpen(true)}
-              className="h-5 w-5 rounded border border-[#0284C7] text-[#0284C7] hover:bg-[#0284C7]/10 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
+              className="h-5 w-5 rounded border border-primary text-primary hover:bg-primary/10 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
               title="Add Quick Link"
             >
               +
-            </button>
+            </Button>
           </div>
 
           {quickLinks.length === 0 ? (
@@ -384,10 +386,10 @@ export function OrgOverviewTab({
                   onClick={() => link.moduleId && onNavigateModule?.(link.moduleId)}
                 >
                   <span className="flex items-center gap-2 truncate">
-                    <span className="text-[#0284C7] font-bold">→</span>
-                    <span className="truncate group-hover:text-[#0284C7]">{link.title}</span>
+                    <span className="text-primary font-bold">→</span>
+                    <span className="truncate group-hover:text-primary">{link.title}</span>
                   </span>
-                  <button
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       onRemoveQuickLink?.(link.id);
@@ -395,7 +397,7 @@ export function OrgOverviewTab({
                     className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 text-[10px] p-0.5"
                   >
                     ✕
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -406,27 +408,27 @@ export function OrgOverviewTab({
       {/* ── Right Column: Services & Location Sub-tabs ── */}
       <div className="lg:col-span-8 xl:col-span-9 space-y-3 min-w-0">
         {/* Sub-Tabs Selector Header Strip */}
-        <div className="border-b border-slate-200 dark:border-[#282F3D] pb-1 flex items-center gap-6">
-          <button
+        <div className="border-b border-slate-200 dark:border-[var(--border)] pb-1 flex items-center gap-6">
+          <Button
             onClick={() => setActiveSubTab('Services')}
             className={`text-xs font-semibold pb-2 transition-colors relative cursor-pointer ${
               activeSubTab === 'Services'
-                ? 'text-[#0284C7] dark:text-[#38BDF8] border-b-2 border-[#0284C7] dark:border-[#38BDF8]'
+                ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Services
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveSubTab('Location')}
             className={`text-xs font-semibold pb-2 transition-colors relative cursor-pointer ${
               activeSubTab === 'Location'
-                ? 'text-[#0284C7] dark:text-[#38BDF8] border-b-2 border-[#0284C7] dark:border-[#38BDF8]'
+                ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Location
-          </button>
+          </Button>
         </div>
 
         {/* 1. Services 2-Column Grid (Only real existing modules) */}
@@ -436,13 +438,13 @@ export function OrgOverviewTab({
               <div
                 key={svc.id}
                 onClick={() => handleServiceClick(svc)}
-                className="bg-white dark:bg-[#1B2028] hover:bg-slate-50 dark:hover:bg-[#222834] rounded-[6px] border border-slate-200/90 dark:border-[#282F3D] px-4 py-3 shadow-xs transition-all cursor-pointer flex items-center gap-3 group"
+                className="bg-white dark:bg-card hover:bg-slate-50 dark:hover:bg-[var(--muted)] rounded-[6px] border border-slate-200/90 dark:border-[var(--border)] px-4 py-3 shadow-xs transition-all cursor-pointer flex items-center gap-3 group"
               >
                 <div className={`p-2 rounded-[5px] border ${svc.iconColor} shrink-0`}>
                   {svc.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#0284C7] dark:group-hover:text-[#38BDF8] transition-colors truncate">
+                  <h3 className="text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover:text-primary dark:group-hover:text-[var(--primary)] transition-colors truncate">
                     {svc.title}
                   </h3>
                 </div>
@@ -455,7 +457,7 @@ export function OrgOverviewTab({
         {activeSubTab === 'Location' && (
           <div className="space-y-3">
             {branches.length === 0 ? (
-              <div className="bg-white dark:bg-[#1B2028] rounded-[6px] border border-slate-200 dark:border-[#282F3D] p-10 text-center shadow-xs">
+              <div className="bg-white dark:bg-card rounded-[6px] border border-slate-200 dark:border-[var(--border)] p-10 text-center shadow-xs">
                 <div className="text-xs text-slate-400">No locations configured</div>
               </div>
             ) : (
@@ -463,14 +465,14 @@ export function OrgOverviewTab({
                 {branches.map((branch) => (
                   <div
                     key={branch.id}
-                    className="bg-white dark:bg-[#1B2028] rounded-[6px] border border-slate-200 dark:border-[#282F3D] p-3.5 shadow-xs"
+                    className="bg-white dark:bg-card rounded-[6px] border border-slate-200 dark:border-[var(--border)] p-3.5 shadow-xs"
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <h4 className="text-xs font-bold text-slate-900 dark:text-white">
                         {branch.name}
                       </h4>
                       {branch.isHQ && (
-                        <span className="text-[9px] font-bold bg-sky-100 dark:bg-sky-950 text-[#0284C7] px-1.5 py-0.2 rounded">
+                        <span className="text-[9px] font-bold bg-sky-100 dark:bg-sky-950 text-primary px-1.5 py-0.2 rounded">
                           HQ
                         </span>
                       )}
@@ -492,7 +494,7 @@ export function OrgOverviewTab({
       {/* Add Quick Link Modal */}
       {isAddLinkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-[#1B2028] rounded-[8px] max-w-sm w-full p-5 shadow-2xl border border-slate-200 dark:border-[#282F3D]">
+          <div className="bg-white dark:bg-card rounded-[8px] max-w-sm w-full p-5 shadow-2xl border border-slate-200 dark:border-[var(--border)]">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
               Add Quick Link
             </h3>
@@ -504,7 +506,7 @@ export function OrgOverviewTab({
                 <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block mb-1">
                   Link Title
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   value={newLinkTitle}
@@ -530,19 +532,19 @@ export function OrgOverviewTab({
                 </Select>
               </div>
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <button
+                <Button
                   type="button"
                   onClick={() => setIsAddLinkModalOpen(false)}
                   className="px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded font-medium cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="px-3.5 py-1.5 text-xs bg-[#0284C7] hover:bg-[#0369A1] text-white rounded font-semibold transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 text-xs bg-primary hover:bg-primary/90 text-white rounded font-semibold transition-colors cursor-pointer"
                 >
                   Add Shortcut
-                </button>
+                </Button>
               </div>
             </form>
           </div>

@@ -1,6 +1,8 @@
+import { Button } from '@smarteam/ui';
 import React from 'react';
-import { StandardDataTable, ColumnDef } from '@smarteam/ui';
-import { LeaveApplicationItem } from '../../types/leave.types';
+import type { ColumnDef } from '@smarteam/ui';
+import { StandardDataTable } from '@smarteam/ui';
+import type { LeaveApplicationItem } from '../../types/leave.types';
 
 interface LeaveApplicationsTableProps {
   applications: LeaveApplicationItem[];
@@ -21,7 +23,7 @@ export function LeaveApplicationsTable({
       pinned: 'left',
       cell: (app) => (
         <div>
-          <div className="font-semibold text-slate-900 group-hover:text-[#0284C7] transition-colors">
+          <div className="font-semibold text-slate-900 group-hover:text-primary transition-colors">
             {app.leaveTypeName}
           </div>
           <div className="text-[10px] text-slate-400 font-mono mt-0.5">
@@ -113,15 +115,15 @@ export function LeaveApplicationsTable({
       pinned: 'right',
       sortable: false,
       cell: (app) => (
-        <button
+        <Button
           onClick={(e) => {
             e.stopPropagation();
-            onSelectApplication && onSelectApplication(app);
+            onSelectApplication?.(app);
           }}
-          className="text-xs font-semibold text-[#0284C7] hover:underline cursor-pointer"
+          className="text-xs font-semibold text-primary hover:underline cursor-pointer"
         >
           View Details
-        </button>
+        </Button>
       ),
     },
   ];

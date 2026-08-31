@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Input } from '@smarteam/ui';
+
 import React, { useState, useEffect } from 'react';
 
 export interface EditablePayrollLineItem {
@@ -46,8 +48,8 @@ export function EditPayrollLineItemModal({
     if (item) {
       setRegularDays(item.regularDays);
       setLossOfPayDays(item.lossOfPayDays);
-      setEarnings(item.earnings ? item.earnings.map((e) => ({ ...e })) : []);
-      setDeductions(item.deductions ? item.deductions.map((d) => ({ ...d })) : []);
+      setEarnings(item.earnings.map((e) => ({ ...e })));
+      setDeductions(item.deductions.map((d) => ({ ...d })));
     }
   }, [item]);
 
@@ -60,7 +62,7 @@ export function EditPayrollLineItemModal({
   const handleEarningChange = (index: number, newAmount: number) => {
     const next = [...earnings];
     if (next[index]) {
-      next[index]!.amount = Math.max(0, newAmount);
+      next[index].amount = Math.max(0, newAmount);
       setEarnings(next);
     }
   };
@@ -68,7 +70,7 @@ export function EditPayrollLineItemModal({
   const handleDeductionChange = (index: number, newAmount: number) => {
     const next = [...deductions];
     if (next[index]) {
-      next[index]!.amount = Math.max(0, newAmount);
+      next[index].amount = Math.max(0, newAmount);
       setDeductions(next);
     }
   };
@@ -106,12 +108,12 @@ export function EditPayrollLineItemModal({
               {item.jobTitle} · {item.department}
             </p>
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         {/* Modal Body */}
@@ -122,7 +124,7 @@ export function EditPayrollLineItemModal({
               <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] mb-1">
                 Regular Working Days
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="31"
@@ -135,7 +137,7 @@ export function EditPayrollLineItemModal({
               <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] mb-1">
                 Loss of Pay (LOP) Days
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 max="31"
@@ -162,7 +164,7 @@ export function EditPayrollLineItemModal({
                   <span className="font-medium text-slate-700 dark:text-slate-300">{e.name}</span>
                   <div className="flex items-center gap-1">
                     <span className="text-slate-400 font-mono">₹</span>
-                    <input
+                    <Input
                       type="number"
                       min="0"
                       value={e.amount}
@@ -191,7 +193,7 @@ export function EditPayrollLineItemModal({
                   <span className="font-medium text-slate-700 dark:text-slate-300">{d.name}</span>
                   <div className="flex items-center gap-1">
                     <span className="text-slate-400 font-mono">₹</span>
-                    <input
+                    <Input
                       type="number"
                       min="0"
                       value={d.amount}
@@ -221,19 +223,19 @@ export function EditPayrollLineItemModal({
 
           {/* Footer Actions */}
           <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="px-3.5 py-1.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="px-4 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold rounded shadow-xs cursor-pointer"
+              className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold rounded shadow-xs cursor-pointer"
             >
               Save Changes
-            </button>
+            </Button>
           </div>
         </form>
       </div>

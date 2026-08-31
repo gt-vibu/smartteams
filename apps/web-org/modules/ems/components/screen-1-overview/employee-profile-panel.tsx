@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
@@ -29,12 +31,12 @@ export function EmployeeProfilePanel() {
 
   return (
     <>
-      <div className="bg-white dark:bg-[#1B2028] rounded-[6px] border border-slate-200/90 dark:border-[#262F3D] shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 space-y-4 relative z-30">
+      <div className="bg-white dark:bg-card rounded-[6px] border border-slate-200/90 dark:border-border shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 space-y-4 relative z-30">
         {/* Profile Avatar Header */}
         <div className="flex flex-col items-center text-center pt-2">
           {/* Avatar with Photo Upload Trigger */}
           <div className="relative -mt-16 mb-2.5 group">
-            <button
+            <Button
               onClick={() => setIsPhotoModalOpen(true)}
               className="relative h-20 w-20 rounded-full border-4 border-white dark:border-slate-800 shadow-md bg-[#1E293B] text-white flex items-center justify-center font-bold text-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
               title="Click to change profile photo"
@@ -70,7 +72,7 @@ export function EmployeeProfilePanel() {
                   />
                 </svg>
               </div>
-            </button>
+            </Button>
           </div>
 
           <h2 className="text-sm font-bold text-slate-900 dark:text-white m-0">
@@ -80,16 +82,16 @@ export function EmployeeProfilePanel() {
             {employee.jobTitle}
           </p>
 
-          <button
+          <Button
             onClick={() => setIsEditDrawerOpen(true)}
-            className="text-[11px] font-semibold text-[#0284C7] dark:text-[#38BDF8] hover:underline mt-1 cursor-pointer"
+            className="text-[11px] font-semibold text-primary dark:text-primary hover:underline mt-1 cursor-pointer"
           >
             Edit Profile
-          </button>
+          </Button>
         </div>
 
         {/* Live Attendance / Timer Card */}
-        <div className="bg-slate-50 dark:bg-[#161B22] rounded-md border border-slate-100 dark:border-[#262F3D] p-3 flex flex-col items-center space-y-2">
+        <div className="bg-slate-50 dark:bg-card rounded-md border border-slate-100 dark:border-border p-3 flex flex-col items-center space-y-2">
           <div className="flex items-center gap-1.5 text-xs font-bold">
             <span
               className={`h-2 w-2 rounded-full ${
@@ -114,21 +116,21 @@ export function EmployeeProfilePanel() {
               : '00 : 00 : 00'}
           </div>
 
-          <button
+          <Button
             onClick={handleToggleAttendance}
             className={`w-full py-1.5 px-3 rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
               isCheckedIn
                 ? 'bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
-                : 'bg-[#0284C7] hover:bg-[#0369A1] text-white'
+                : 'bg-primary hover:bg-primary/90 text-white'
             }`}
           >
             {isCheckedIn ? 'Check out' : 'Check in'}
-          </button>
+          </Button>
         </div>
 
         {/* Reporting Manager Section */}
         {employee.manager ? (
-          <div className="pt-2 border-t border-slate-100 dark:border-[#262F3D]">
+          <div className="pt-2 border-t border-slate-100 dark:border-border">
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block mb-2">
               Reporting Manager
             </span>
@@ -149,7 +151,7 @@ export function EmployeeProfilePanel() {
             </div>
           </div>
         ) : (
-          <div className="pt-2 border-t border-slate-100 dark:border-[#262F3D]">
+          <div className="pt-2 border-t border-slate-100 dark:border-border">
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block mb-1">
               Reporting Manager
             </span>
@@ -160,7 +162,7 @@ export function EmployeeProfilePanel() {
         )}
 
         {/* Department Members Section */}
-        <div className="pt-2 border-t border-slate-100 dark:border-[#262F3D]">
+        <div className="pt-2 border-t border-slate-100 dark:border-border">
           <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block mb-2">
             Department Members ({employee.departmentMembers.length})
           </span>
@@ -185,7 +187,7 @@ export function EmployeeProfilePanel() {
         </div>
 
         {/* Tax & Statutory Identity Section */}
-        <div className="pt-2 border-t border-slate-100 dark:border-[#262F3D] space-y-2">
+        <div className="pt-2 border-t border-slate-100 dark:border-border space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">
               Tax & Statutory Identity
@@ -195,7 +197,7 @@ export function EmployeeProfilePanel() {
             </span>
           </div>
 
-          <div className="p-2.5 bg-slate-50 dark:bg-[#161B22] rounded-md border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs font-mono">
+          <div className="p-2.5 bg-slate-50 dark:bg-card rounded-md border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs font-mono">
             <div className="flex justify-between text-slate-700 dark:text-slate-300">
               <span className="font-sans text-[11px] text-slate-500">PAN:</span>
               <span className="font-bold">AAAPM0192L</span>

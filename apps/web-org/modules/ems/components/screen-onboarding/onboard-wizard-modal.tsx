@@ -1,8 +1,10 @@
 'use client';
 
+import { Button, Checkbox, Input } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import { DatePicker, Select } from '@smarteam/ui';
-import { CandidateRecord } from '../../types/onboarding.types';
+import type { CandidateRecord } from '../../types/onboarding.types';
 
 interface OnboardWizardModalProps {
   isOpen: boolean;
@@ -54,8 +56,13 @@ const LAPTOP_OPTIONS = [
   'Dell XPS 15 (i9 14th Gen, 32GB RAM, RTX 4060)',
 ];
 
+type WizardStep = 1 | 2 | 3 | 4 | 5 | 6;
+const previousWizardStep = (step: WizardStep): WizardStep => Math.max(1, step - 1) as WizardStep;
+
+const nextWizardStep = (step: WizardStep): WizardStep => Math.min(6, step + 1) as WizardStep;
+
 export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizardModalProps) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+  const [step, setStep] = useState<WizardStep>(1);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   // Form State
@@ -278,7 +285,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs">
-      <div className="bg-white dark:bg-[#161B22] rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-3xl overflow-hidden flex flex-col max-h-[94vh] min-w-0">
+      <div className="bg-white dark:bg-card rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-3xl overflow-hidden flex flex-col max-h-[94vh] min-w-0">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-[#12161E] flex items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -295,7 +302,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
               Onboard New Team Member
             </h2>
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
           >
@@ -308,28 +315,30 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          </Button>
         </div>
 
         {/* Stepper Progress Indicator */}
         <div className="px-3 sm:px-6 py-2.5 bg-slate-100/70 dark:bg-[#10141B] border-b border-slate-200 dark:border-slate-800 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          {[
-            { num: 1, label: 'Candidate Profile' },
-            { num: 2, label: 'Job & Role' },
-            { num: 3, label: 'Team & Project' },
-            { num: 4, label: 'Compensation' },
-            { num: 5, label: 'Hardware & IT' },
-            { num: 6, label: 'Review & Launch' },
-          ].map((s) => (
+          {(
+            [
+              { num: 1, label: 'Candidate Profile' },
+              { num: 2, label: 'Job & Role' },
+              { num: 3, label: 'Team & Project' },
+              { num: 4, label: 'Compensation' },
+              { num: 5, label: 'Hardware & IT' },
+              { num: 6, label: 'Review & Launch' },
+            ] as Array<{ num: WizardStep; label: string }>
+          ).map((s) => (
             <div
               key={s.num}
               onClick={() => {
                 // allow clicking previous completed steps
-                if (s.num < step) setStep(s.num as any);
+                if (s.num < step) setStep(s.num);
               }}
               className={`flex items-center gap-1.5 shrink-0 cursor-pointer ${
                 step === s.num
-                  ? 'text-[#0284C7] font-bold'
+                  ? 'text-primary font-bold'
                   : step > s.num
                     ? 'text-emerald-700 dark:text-emerald-400 font-semibold'
                     : 'text-slate-400'
@@ -338,7 +347,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
               <div
                 className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                   step === s.num
-                    ? 'bg-[#0284C7] text-white shadow-xs'
+                    ? 'bg-primary text-white shadow-xs'
                     : step > s.num
                       ? 'bg-emerald-600 text-white'
                       : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
@@ -375,7 +384,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     First Name <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Siddharth"
@@ -389,7 +398,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Last Name <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Nambiar"
@@ -403,7 +412,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Personal Email Address <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="email"
                     required
                     placeholder="siddharth.nambiar@gmail.com"
@@ -417,7 +426,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Phone / Mobile <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="tel"
                     required
                     placeholder="+91 98450 12345"
@@ -448,7 +457,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Emergency Contact Name
                   </label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="e.g. Radhika Nambiar (Spouse)"
                     value={emergencyContactName}
@@ -461,7 +470,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Emergency Contact Number
                   </label>
-                  <input
+                  <Input
                     type="tel"
                     placeholder="+91 99887 76655"
                     value={emergencyContactPhone}
@@ -474,7 +483,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
               {/* Auto-generated work email preview badge */}
               <div className="bg-sky-50 border border-sky-200 rounded-[6px] p-3 flex items-center justify-between text-xs">
                 <span className="text-slate-600">Company Work Email to be provisioned:</span>
-                <span className="font-mono font-bold text-[#0284C7] bg-white px-2 py-0.5 rounded border border-sky-100">
+                <span className="font-mono font-bold text-primary bg-white px-2 py-0.5 rounded border border-sky-100">
                   {calculatedWorkEmail}
                 </span>
               </div>
@@ -498,7 +507,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Employee ID / Code <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     value={employeeNumber}
@@ -511,7 +520,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Designation / Job Title <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Lead Frontend Architect"
@@ -583,7 +592,12 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   </label>
                   <Select
                     value={employmentType}
-                    onChange={(e) => setEmploymentType(e.target.value as any)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === 'FULL_TIME' || value === 'CONTRACT' || value === 'INTERN') {
+                        setEmploymentType(value);
+                      }
+                    }}
                   >
                     <option value="FULL_TIME">Full-Time Permanent (FTE)</option>
                     <option value="CONTRACT">Contractor / Consultant</option>
@@ -595,7 +609,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Assigned Work Shift
                   </label>
-                  <input
+                  <Input
                     type="text"
                     value={shiftName}
                     onChange={(e) => setShiftName(e.target.value)}
@@ -652,7 +666,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Project Role
                   </label>
-                  <input
+                  <Input
                     type="text"
                     value={projectRole}
                     onChange={(e) => setProjectRole(e.target.value)}
@@ -664,7 +678,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Allocation Percentage:{' '}
-                    <span className="text-[#0284C7] font-mono font-bold">{allocation}%</span>
+                    <span className="text-primary font-mono font-bold">{allocation}%</span>
                   </label>
                   <input
                     type="range"
@@ -706,7 +720,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Annual CTC (₹) <span className="text-rose-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="number"
                     required
                     min="300000"
@@ -799,30 +813,27 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
 
               <div className="space-y-2.5 pt-2">
                 <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={includeMonitor}
-                    onChange={(e) => setIncludeMonitor(e.target.checked)}
+                    onCheckedChange={setIncludeMonitor}
                     className="rounded text-sky-600"
                   />
                   <span>Include Dell UltraSharp 27" 4K USB-C Hub Monitor</span>
                 </label>
 
                 <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={includeAccessCard}
-                    onChange={(e) => setIncludeAccessCard(e.target.checked)}
+                    onCheckedChange={setIncludeAccessCard}
                     className="rounded text-sky-600"
                   />
                   <span>Provision Smarteam Smart NFC Office Access Card & YubiKey 5C NFC</span>
                 </label>
 
                 <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={includeWelcomeKit}
-                    onChange={(e) => setIncludeWelcomeKit(e.target.checked)}
+                    onCheckedChange={setIncludeWelcomeKit}
                     className="rounded text-sky-600"
                   />
                   <span>
@@ -931,22 +942,22 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
           {/* Footer Actions */}
           <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
             {step > 1 ? (
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setValidationError(null);
-                  setStep((s) => (s - 1) as any);
+                  setStep(previousWizardStep);
                 }}
                 className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-[5px] transition-colors cursor-pointer"
               >
                 ← Back
-              </button>
+              </Button>
             ) : (
               <div />
             )}
 
             {step < 6 ? (
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   if (
@@ -961,19 +972,19 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                     return;
                   }
                   setValidationError(null);
-                  setStep((s) => (s + 1) as any);
+                  setStep(nextWizardStep);
                 }}
-                className="px-5 py-2 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold rounded-[5px] shadow-xs transition-colors cursor-pointer"
+                className="px-5 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-[5px] shadow-xs transition-colors cursor-pointer"
               >
                 Continue to Step {step + 1} →
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="submit"
                 className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-[5px] shadow-md transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <span>🚀 Launch Onboarding</span>
-              </button>
+              </Button>
             )}
           </div>
         </form>

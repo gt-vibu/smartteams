@@ -1,11 +1,13 @@
 'use client';
 
+import { Button, Checkbox, Input, RadioGroup, RadioGroupItem, Textarea } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import { DatePicker, Select } from '@smarteam/ui';
 import leavePoliciesFixture from '../../data/fixtures/leave-policies.json';
 import { useLeave } from '../../hooks/use-leave';
 import { useAuth } from '../../hooks/use-auth';
-import { LeaveApplicationItem } from '../../types/leave.types';
+import type { LeaveApplicationItem } from '../../types/leave.types';
 
 interface HolidayItem {
   id: string;
@@ -320,7 +322,7 @@ export function ScreenLeaveAdmin() {
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-[6px] border border-slate-200 shrink-0 overflow-x-auto no-scrollbar">
-          <button
+          <Button
             onClick={() => setActiveTab('POLICIES')}
             className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'POLICIES'
@@ -329,8 +331,8 @@ export function ScreenLeaveAdmin() {
             }`}
           >
             Leave Policies ({policies.length})
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('HOLIDAYS')}
             className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'HOLIDAYS'
@@ -339,8 +341,8 @@ export function ScreenLeaveAdmin() {
             }`}
           >
             Holiday Templates ({holidayTemplates.length})
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('REQUESTS')}
             className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'REQUESTS'
@@ -349,7 +351,7 @@ export function ScreenLeaveAdmin() {
             }`}
           >
             Leave Requests ({applications.length})
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -361,13 +363,13 @@ export function ScreenLeaveAdmin() {
               Configure statutory and custom leave schemes, annual allocations, and branch
               entitlements.
             </p>
-            <button
+            <Button
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-3.5 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
             >
               <span>+</span>
               <span>Create Leave Policy</span>
-            </button>
+            </Button>
           </div>
 
           <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.05)] overflow-hidden">
@@ -453,13 +455,13 @@ export function ScreenLeaveAdmin() {
               Manage statutory public holidays, regional state calendars (Bengaluru HQ, Mumbai,
               Delhi), and optional floating lists.
             </p>
-            <button
+            <Button
               onClick={() => setIsCreateHolidayModalOpen(true)}
-              className="px-3.5 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5 shrink-0"
+              className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5 shrink-0"
             >
               <span>+</span>
               <span>Add Holiday to Template</span>
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -614,18 +616,18 @@ export function ScreenLeaveAdmin() {
                         {req.status === 'PENDING' ? (
                           isAuthorized ? (
                             <div className="flex items-center justify-end gap-1.5">
-                              <button
+                              <Button
                                 onClick={() => approveLeave(req.id)}
                                 className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] rounded transition-colors shadow-2xs cursor-pointer"
                               >
                                 Approve
-                              </button>
-                              <button
+                              </Button>
+                              <Button
                                 onClick={() => rejectLeave(req.id)}
                                 className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[10px] rounded transition-colors shadow-2xs cursor-pointer"
                               >
                                 Reject
-                              </button>
+                              </Button>
                             </div>
                           ) : (
                             <span className="text-[10px] text-slate-400 italic">
@@ -651,12 +653,12 @@ export function ScreenLeaveAdmin() {
           <div className="w-full max-w-lg bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden">
             <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
               <h2 className="text-sm font-bold text-slate-900">Create New Leave Policy</h2>
-              <button
+              <Button
                 onClick={() => setIsCreateModalOpen(false)}
                 className="text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 ✕
-              </button>
+              </Button>
             </div>
 
             <form onSubmit={handleCreatePolicy} className="p-5 space-y-4 text-xs">
@@ -665,7 +667,7 @@ export function ScreenLeaveAdmin() {
                   <label className="block font-bold text-slate-700 uppercase text-[10px] mb-1">
                     Policy Code
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. ML, BER"
@@ -678,7 +680,7 @@ export function ScreenLeaveAdmin() {
                   <label className="block font-bold text-slate-700 uppercase text-[10px] mb-1">
                     Policy Name
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Maternity Leave"
@@ -707,7 +709,7 @@ export function ScreenLeaveAdmin() {
                   <label className="block font-bold text-slate-700 uppercase text-[10px] mb-1">
                     Annual Allowance (Days)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     min="1"
                     max="180"
@@ -723,7 +725,7 @@ export function ScreenLeaveAdmin() {
                   <label className="block font-bold text-slate-700 uppercase text-[10px] mb-1">
                     Carryover Limit (Days)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     min="0"
                     max="60"
@@ -734,10 +736,9 @@ export function ScreenLeaveAdmin() {
                 </div>
                 <div className="flex items-center pt-4">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={newPaid}
-                      onChange={(e) => setNewPaid(e.target.checked)}
+                      onCheckedChange={setNewPaid}
                       className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     />
                     <span className="font-bold text-slate-700">Paid Leave Benefit</span>
@@ -749,7 +750,7 @@ export function ScreenLeaveAdmin() {
                 <label className="block font-bold text-slate-700 uppercase text-[10px] mb-1">
                   Policy Description
                 </label>
-                <textarea
+                <Textarea
                   rows={2}
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
@@ -765,19 +766,19 @@ export function ScreenLeaveAdmin() {
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <button
+                <Button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
                   className="px-3 py-1.5 border border-slate-300 text-slate-700 font-bold rounded hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="px-4 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold rounded shadow-xs cursor-pointer"
+                  className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold rounded shadow-xs cursor-pointer"
                 >
                   Save Policy
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -808,12 +809,12 @@ export function ScreenLeaveAdmin() {
                       {selectedTemplate.name} · 2026
                     </p>
                   </div>
-                  <button
+                  <Button
                     onClick={() => setIsCreateHolidayModalOpen(false)}
                     className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
                   >
                     ✕
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Modal Body */}
@@ -826,7 +827,7 @@ export function ScreenLeaveAdmin() {
                     <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] mb-1">
                       Holiday Name <span className="text-rose-500">*</span>
                     </label>
-                    <input
+                    <Input
                       type="text"
                       placeholder="e.g. Karnataka Rajyotsava / Good Friday"
                       value={newHolidayName}
@@ -889,7 +890,16 @@ export function ScreenLeaveAdmin() {
                       </label>
                       <Select
                         value={newHolidayType}
-                        onChange={(e) => setNewHolidayType(e.target.value as any)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (
+                            value === 'MANDATORY' ||
+                            value === 'RESTRICTED' ||
+                            value === 'COMPANY_OPTIONAL'
+                          ) {
+                            setNewHolidayType(value);
+                          }
+                        }}
                       >
                         <option value="MANDATORY">Mandatory statutory holiday</option>
                         <option value="RESTRICTED">Restricted / optional holiday</option>
@@ -911,32 +921,28 @@ export function ScreenLeaveAdmin() {
                     <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px]">
                       Applicability Scope
                     </label>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
+                    <RadioGroup
+                      value={newHolidayScope}
+                      onValueChange={(value) => {
+                        if (value === 'ALL_LOCATIONS' || value === 'SPECIFIC_BRANCHES') {
+                          setNewHolidayScope(value);
+                        }
+                      }}
+                      className="grid grid-cols-2 gap-2 text-xs"
+                    >
                       <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
-                        <input
-                          type="radio"
-                          name="scope"
-                          checked={newHolidayScope === 'ALL_LOCATIONS'}
-                          onChange={() => setNewHolidayScope('ALL_LOCATIONS')}
-                          className="text-sky-600 focus:ring-sky-500"
-                        />
+                        <RadioGroupItem value="ALL_LOCATIONS" aria-label="Template Default" />
                         <span className="font-semibold text-slate-800 dark:text-slate-200">
                           Template Default
                         </span>
                       </label>
                       <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
-                        <input
-                          type="radio"
-                          name="scope"
-                          checked={newHolidayScope === 'SPECIFIC_BRANCHES'}
-                          onChange={() => setNewHolidayScope('SPECIFIC_BRANCHES')}
-                          className="text-sky-600 focus:ring-sky-500"
-                        />
+                        <RadioGroupItem value="SPECIFIC_BRANCHES" aria-label="Specific Branches" />
                         <span className="font-semibold text-slate-800 dark:text-slate-200">
                           Specific Branches
                         </span>
                       </label>
-                    </div>
+                    </RadioGroup>
 
                     {newHolidayScope === 'SPECIFIC_BRANCHES' && (
                       <div className="flex flex-wrap gap-1.5 pt-1">
@@ -948,7 +954,7 @@ export function ScreenLeaveAdmin() {
                         ].map((branch) => {
                           const isChecked = selectedBranches.includes(branch);
                           return (
-                            <button
+                            <Button
                               key={branch}
                               type="button"
                               onClick={() => {
@@ -965,7 +971,7 @@ export function ScreenLeaveAdmin() {
                               }`}
                             >
                               {isChecked ? '✓ ' : '+ '} {branch}
-                            </button>
+                            </Button>
                           );
                         })}
                       </div>
@@ -983,7 +989,7 @@ export function ScreenLeaveAdmin() {
 
                   {/* Modal Footer Actions */}
                   <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-200 dark:border-slate-700">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         setIsCreateHolidayModalOpen(false);
@@ -992,13 +998,13 @@ export function ScreenLeaveAdmin() {
                       className="px-3.5 py-1.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-[6px] hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                     >
                       Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="submit"
-                      className="px-4 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white font-semibold rounded-[6px] shadow-xs cursor-pointer"
+                      className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-[6px] shadow-xs cursor-pointer"
                     >
                       Save Holiday
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>

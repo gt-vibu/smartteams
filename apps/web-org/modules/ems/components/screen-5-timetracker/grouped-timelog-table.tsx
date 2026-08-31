@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { DateGroupedTimeLogs } from '../../types/timelog.types';
+import { Checkbox } from '@smarteam/ui';
+import type { DateGroupedTimeLogs } from '../../types/timelog.types';
 
 interface GroupedTimeLogTableProps {
   groupedLogs: DateGroupedTimeLogs[];
@@ -28,7 +29,7 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
   };
 
   return (
-    <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
+    <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
       <table className="w-full text-left text-xs border-collapse min-w-[650px] sm:min-w-[850px]">
         <tbody>
           {groupedLogs.map((group) => {
@@ -39,11 +40,11 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                 {/* Date Group Header Row */}
                 <tr className="bg-slate-50/90 border-t border-b border-slate-200/90 text-slate-800">
                   <td className="py-2.5 px-4 w-10">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={allGroupSelected}
-                      onChange={() => toggleGroup(group)}
-                      className="rounded border-slate-300 text-[#0284C7] focus:ring-sky-500 cursor-pointer h-3.5 w-3.5"
+                      aria-label={`Select all time logs for ${group.date}`}
+                      onCheckedChange={() => toggleGroup(group)}
+                      className="h-3.5 w-3.5"
                     />
                   </td>
                   <td colSpan={3} className="py-2.5 px-3 font-bold text-slate-800 text-xs">
@@ -77,17 +78,17 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                           toggleSelect(entry.id);
                         }}
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={isChecked}
-                          onChange={() => toggleSelect(entry.id)}
-                          className="rounded border-slate-300 text-[#0284C7] focus:ring-sky-500 cursor-pointer h-3.5 w-3.5"
+                          aria-label={`Select ${entry.jobName}`}
+                          onCheckedChange={() => toggleSelect(entry.id)}
+                          className="h-3.5 w-3.5"
                         />
                       </td>
 
                       {/* Job Name · Project Name */}
                       <td className="py-3 px-3 max-w-[280px]">
-                        <div className="font-semibold text-slate-800 group-hover:text-[#0284C7] transition-colors truncate">
+                        <div className="font-semibold text-slate-800 group-hover:text-primary transition-colors truncate">
                           {entry.jobName}{' '}
                           <span className="text-slate-400 font-normal">· {entry.projectName}</span>
                         </div>

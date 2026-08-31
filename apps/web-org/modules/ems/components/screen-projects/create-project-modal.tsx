@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
   Button,
+  Checkbox,
   Label,
   Input,
   Select,
@@ -126,7 +127,7 @@ export function CreateProjectModal({ isOpen, onClose, onSubmit }: CreateProjectM
     const branch = BRANCH_OPTIONS.find((b) => b.id === branchId) || BRANCH_OPTIONS[0];
 
     const selectedList: AssignedMemberInput[] = Object.entries(assignedMembers)
-      .filter(([_, val]) => val.selected)
+      .filter(([, val]) => val.selected)
       .map(([empId, val]) => ({
         employeeId: empId,
         projectRole: val.role.trim() || 'Contributor',
@@ -288,7 +289,7 @@ export function CreateProjectModal({ isOpen, onClose, onSubmit }: CreateProjectM
               <Label className="text-xs">Assigned Team ({selectedCount} members)</Label>
               <span className="text-[10px] text-slate-400">Select & set % allocation</span>
             </div>
-            <div className="max-h-48 overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-md p-2 bg-slate-50/50 dark:bg-[#161B22] space-y-1.5">
+            <div className="max-h-48 overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-md p-2 bg-slate-50/50 dark:bg-card space-y-1.5">
               {AVAILABLE_EMPLOYEES.map((emp) => {
                 const assigned = assignedMembers[emp.id];
                 const isSelected = assigned?.selected || false;
@@ -306,11 +307,11 @@ export function CreateProjectModal({ isOpen, onClose, onSubmit }: CreateProjectM
                         onClick={() => handleToggleMember(emp.id)}
                         className="flex items-center gap-2 cursor-pointer flex-1"
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={isSelected}
-                          onChange={() => {}}
-                          className="h-3.5 w-3.5 rounded text-[#0284C7] focus:ring-0 cursor-pointer"
+                          onCheckedChange={() => {}}
+                          aria-label={`Assign ${emp.firstName} ${emp.lastName} to this project`}
+                          className="h-3.5 w-3.5"
                         />
                         <span className="font-semibold text-slate-900 dark:text-white">
                           {emp.firstName} {emp.lastName}
@@ -320,15 +321,15 @@ export function CreateProjectModal({ isOpen, onClose, onSubmit }: CreateProjectM
 
                       {isSelected && (
                         <div className="flex items-center gap-2">
-                          <input
+                          <Input
                             type="text"
                             value={assigned?.role || 'Developer'}
                             onChange={(e) => handleUpdateRole(emp.id, e.target.value)}
                             placeholder="Role"
-                            className="text-[11px] px-2 py-0.5 border border-slate-200 dark:border-slate-700 rounded bg-slate-50 dark:bg-[#161B22] w-28 text-slate-800 dark:text-slate-200"
+                            className="text-[11px] w-28"
                           />
                           <div className="flex items-center gap-1">
-                            <input
+                            <Input
                               type="number"
                               min={10}
                               max={100}
@@ -337,7 +338,7 @@ export function CreateProjectModal({ isOpen, onClose, onSubmit }: CreateProjectM
                               onChange={(e) =>
                                 handleUpdateAllocation(emp.id, parseInt(e.target.value, 10) || 0)
                               }
-                              className="text-[11px] px-1.5 py-0.5 border border-slate-200 dark:border-slate-700 rounded bg-slate-50 dark:bg-[#161B22] w-14 text-center font-mono text-slate-800 dark:text-slate-200"
+                              className="text-[11px] w-14 text-center font-mono"
                             />
                             <span className="text-[10px] text-slate-400">%</span>
                           </div>

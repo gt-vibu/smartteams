@@ -20,8 +20,8 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         ref={ref}
         onClick={() => !disabled && onCheckedChange?.(!checked)}
         className={cn(
-          'peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0284C7] disabled:cursor-not-allowed disabled:opacity-50',
-          checked ? 'bg-[#0284C7]' : 'bg-slate-200 dark:bg-slate-700',
+          'peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50',
+          checked ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700',
           className,
         )}
         {...props}

@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { EmsTopAppBar } from './ems-top-app-bar';
 import { EmsLeftRail } from './ems-left-rail';
-import { EmsMobileDrawer } from './ems-mobile-drawer';
 import { EmsMobileBottomNav } from './ems-mobile-bottom-nav';
 import { ContextBar } from './context-bar';
 import { CommandPalette } from './command-palette';
 import { NotificationDrawer } from './notification-drawer';
-import { EntityDetailDrawer, EmployeeDetailData } from '../common/entity-detail-drawer';
+import type { EmployeeDetailData } from '../common/entity-detail-drawer';
+import { EntityDetailDrawer } from '../common/entity-detail-drawer';
 
 interface EmsLayoutProps {
   children: React.ReactNode;
@@ -31,7 +31,6 @@ export function EmsLayout({
 }: EmsLayoutProps) {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [selectedEmployeeDetail, setSelectedEmployeeDetail] = useState<EmployeeDetailData | null>(
     null,
   );
@@ -39,15 +38,16 @@ export function EmsLayout({
   // Global event listeners
   useEffect(() => {
     const handleOpenCommand = () => setIsCommandPaletteOpen(true);
-    const handleOpenEmployee = (e: CustomEvent<EmployeeDetailData>) => {
-      if (e.detail) setSelectedEmployeeDetail(e.detail);
+    const handleOpenEmployee = (event: Event) => {
+      const detail = (event as CustomEvent<EmployeeDetailData>).detail;
+      setSelectedEmployeeDetail(detail);
     };
 
     window.addEventListener('ems:open:command-palette', handleOpenCommand);
-    window.addEventListener('ems:open:employee-drawer' as any, handleOpenEmployee);
+    window.addEventListener('ems:open:employee-drawer', handleOpenEmployee);
     return () => {
       window.removeEventListener('ems:open:command-palette', handleOpenCommand);
-      window.removeEventListener('ems:open:employee-drawer' as any, handleOpenEmployee);
+      window.removeEventListener('ems:open:employee-drawer', handleOpenEmployee);
     };
   }, []);
 
@@ -122,7 +122,7 @@ export function EmsLayout({
   const showLeftRail = activeSpace === 'My Space' || activeSpace === 'Organization';
 
   return (
-    <div className="h-screen w-full flex flex-col bg-[#F0F4F8] text-slate-800 antialiased overflow-hidden font-sans">
+    <div className="h-screen w-full flex flex-col bg-background text-slate-800 antialiased overflow-hidden font-sans">
       {/* 1. Global Top App Bar */}
       <EmsTopAppBar
         activeSpace={activeSpace}
@@ -132,7 +132,7 @@ export function EmsLayout({
       />
 
       {/* 2. Workspace Body (Left Rail + Main Canvas) */}
-      <div className="flex-1 flex min-h-0 w-full overflow-hidden relative bg-slate-100 dark:bg-[#0A0D12]">
+      <div className="flex-1 flex min-h-0 w-full overflow-hidden relative bg-slate-100 dark:bg-background">
         {/* Desktop Left Rail (hidden on mobile — bottom nav handles mobile) */}
         {showLeftRail && (
           <div className="hidden md:flex shrink-0 h-full">
@@ -147,7 +147,7 @@ export function EmsLayout({
         {/* Dedicated Scrollable Main Content Canvas with Context Bar */}
         <main
           id="ems-main-canvas"
-          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[72px] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col bg-slate-50 dark:bg-[#0F141C]"
+          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[72px] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col bg-slate-50 dark:bg-background"
         >
           {/* Context Breadcrumbs & Scope Indicator */}
           <ContextBar
@@ -174,17 +174,7 @@ export function EmsLayout({
         />
       )}
 
-      {/* 4. Legacy Mobile Navigation Sheet (desktop-breakpoint overflow only, kept for edge cases) */}
-      <EmsMobileDrawer
-        isOpen={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        activeSpace={activeSpace}
-        onSelectSpace={onSelectSpace}
-        activeModule={activeModule}
-        onSelectModule={onSelectModule}
-      />
-
-      {/* 5. Global Command Palette (⌘K) */}
+      {/* 4. Global Command Palette (⌘K) */}
       <CommandPalette
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
@@ -193,13 +183,13 @@ export function EmsLayout({
         onSelectEmployee={handleSelectEmployee}
       />
 
-      {/* 6. Notifications Drawer */}
+      {/* 5. Notifications Drawer */}
       <NotificationDrawer
         isOpen={isNotificationDrawerOpen}
         onClose={() => setIsNotificationDrawerOpen(false)}
       />
 
-      {/* 7. Entity Detail Drawer */}
+      {/* 6. Entity Detail Drawer */}
       <EntityDetailDrawer
         isOpen={!!selectedEmployeeDetail}
         onClose={() => setSelectedEmployeeDetail(null)}

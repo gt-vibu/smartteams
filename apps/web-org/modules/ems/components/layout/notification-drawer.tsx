@@ -1,6 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import {
+  Button,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 
 interface NotificationItem {
@@ -57,136 +65,82 @@ export function NotificationDrawer({ isOpen, onClose }: NotificationDrawerProps)
   const { persona } = useAuth();
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const [filter, setFilter] = useState<'ALL' | 'UNREAD'>('ALL');
+  const unreadCount = notifications.filter((notification) => !notification.isRead).length;
+  const filtered = notifications.filter((notification) => filter === 'ALL' || !notification.isRead);
 
-  if (!isOpen) return null;
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
-  const handleMarkAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const filtered = notifications.filter((n) => {
-    if (filter === 'UNREAD') return !n.isRead;
-    return true;
-  });
-
-  const getCategoryIcon = (cat: NotificationItem['category']) => {
-    switch (cat) {
-      case 'APPROVAL':
-        return <span className="text-emerald-500">✓</span>;
-      case 'TIMESHEET':
-        return <span className="text-sky-500">⏱</span>;
-      case 'ANNOUNCEMENT':
-        return <span className="text-amber-500">📢</span>;
-      case 'ATTENDANCE':
-        return <span className="text-indigo-500">📅</span>;
-    }
-  };
+  const markAllRead = () =>
+    setNotifications((previous) =>
+      previous.map((notification) => ({ ...notification, isRead: true })),
+    );
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-2xs flex justify-end animate-in fade-in duration-150"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-sm bg-white h-full shadow-2xl flex flex-col z-50 overflow-hidden animate-in slide-in-from-right duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-          <div>
-            <h2 className="text-sm font-bold text-slate-900 !m-0">Notifications</h2>
-            <p className="text-[11px] text-slate-500 mt-0.5">
-              Activity & updates for {persona.name.split(' ')[0]}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllRead}
-                className="text-[11px] font-semibold text-[#0284C7] hover:underline cursor-pointer"
-              >
-                Mark all read
-              </button>
-            )}
-            <button
-              onClick={onClose}
-              className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200 rounded transition-colors cursor-pointer"
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetHeader>
+        <SheetTitle>Notifications</SheetTitle>
+        <SheetDescription>Activity and updates for {persona.name.split(' ')[0]}.</SheetDescription>
+        {unreadCount > 0 && (
+          <Button variant="link" size="sm" className="self-start px-0" onClick={markAllRead}>
+            Mark all read
+          </Button>
+        )}
+      </SheetHeader>
+      <SheetContent className="p-3">
+        <div
+          role="tablist"
+          aria-label="Notification filter"
+          className="mb-3 flex gap-2 border-b border-border pb-2"
+        >
+          {(['ALL', 'UNREAD'] as const).map((option) => (
+            <Button
+              key={option}
+              type="button"
+              size="sm"
+              variant={filter === option ? 'secondary' : 'ghost'}
+              role="tab"
+              aria-selected={filter === option}
+              onClick={() => setFilter(option)}
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              {option === 'ALL' ? 'All' : `Unread${unreadCount ? ` (${unreadCount})` : ''}`}
+            </Button>
+          ))}
+        </div>
+        {filtered.length === 0 ? (
+          <div className="p-12 text-center text-xs text-muted-foreground" role="status">
+            You are all caught up.
           </div>
-        </div>
-
-        {/* Filter Tab Strip */}
-        <div className="p-2 border-b border-slate-100 flex items-center gap-2 bg-white">
-          <button
-            onClick={() => setFilter('ALL')}
-            className={`px-3 py-1 rounded text-xs font-semibold cursor-pointer ${
-              filter === 'ALL' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setFilter('UNREAD')}
-            className={`px-3 py-1 rounded text-xs font-semibold cursor-pointer flex items-center gap-1.5 ${
-              filter === 'UNREAD' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'
-            }`}
-          >
-            <span>Unread</span>
-            {unreadCount > 0 && (
-              <span className="h-4 w-4 rounded-full bg-sky-500 text-white text-[10px] flex items-center justify-center font-bold">
-                {unreadCount}
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* Notification List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2 no-scrollbar">
-          {filtered.length === 0 ? (
-            <div className="p-12 text-center text-slate-400 text-xs">
-              No notifications to display.
-            </div>
-          ) : (
-            filtered.map((item) => (
-              <div
+        ) : (
+          <div className="space-y-2">
+            {filtered.map((item) => (
+              <article
                 key={item.id}
-                className={`p-3 rounded-[6px] border transition-all flex items-start gap-3 shadow-xs ${
-                  item.isRead
-                    ? 'bg-white border-slate-200/80 text-slate-600'
-                    : 'bg-sky-50/40 border-sky-200 text-slate-900'
-                }`}
+                className={`flex items-start gap-3 rounded-md border p-3 shadow-xs ${item.isRead ? 'border-border bg-card' : 'border-primary/30 bg-primary/10'}`}
               >
-                <div className="h-7 w-7 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-2xs text-sm">
-                  {getCategoryIcon(item.category)}
+                <div
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background text-sm"
+                  aria-hidden="true"
+                >
+                  {item.category === 'APPROVAL'
+                    ? '✓'
+                    : item.category === 'TIMESHEET'
+                      ? '⏱'
+                      : item.category === 'ANNOUNCEMENT'
+                        ? '📢'
+                        : '📅'}
                 </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-xs font-bold truncate">{item.title}</span>
-                    <span className="text-[10px] text-slate-400 shrink-0">{item.time}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate text-xs font-bold">{item.title}</span>
+                    <time className="shrink-0 text-[10px] text-muted-foreground">{item.time}</time>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
                     {item.description}
                   </p>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-    </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }

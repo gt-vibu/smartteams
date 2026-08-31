@@ -1,14 +1,46 @@
 import { emsStorageAdapter } from '../storage/storage.adapter';
 import { EMS_STORAGE_KEYS } from '../storage/storage.keys';
 import mockUsersFixture from '../data/fixtures/mock-users.json';
-import { Persona, AuthSession, WorkspaceContext, ApprovalDomainType } from '../types/auth.types';
+import type {
+  Persona,
+  AuthSession,
+  WorkspaceContext,
+  ApprovalDomainType,
+} from '../types/auth.types';
 
 const STORAGE_KEY_PERSONA = 'ems_active_persona';
 const STORAGE_KEY_AUTH_STATUS = 'ems_auth_status';
 const STORAGE_KEY_WORKSPACE = 'ems_workspace_context';
 
+interface MockUserFixture {
+  id: string;
+  email: string;
+  password?: string;
+  displayName: string;
+  employeeNumber: string;
+  jobTitle: string;
+  department: string;
+  branchId: string;
+  branchName: string;
+  avatarInitials: string;
+  avatarUrl: string | null;
+  scenarioTitle?: string;
+  description?: string;
+  roles: Persona['roles'];
+  permissions: string[];
+  assignedTeamIds: string[];
+  assignedProjectIds: string[];
+  directReportEmployeeIds: string[];
+  managerEmployeeId: string | null;
+  managerName: string | null;
+  canSwitchWorkspace?: boolean;
+  defaultWorkspace?: WorkspaceContext;
+}
+
+const fixtureUsers = mockUsersFixture as unknown as MockUserFixture[];
+
 export class LocalAuthRepository {
-  private users: Persona[] = mockUsersFixture.map((u: any) => ({
+  private users: Persona[] = fixtureUsers.map((u) => ({
     ...u,
     name: u.displayName,
     badge: u.scenarioTitle || u.jobTitle,
@@ -21,7 +53,7 @@ export class LocalAuthRepository {
       identityType: 'NATIVE',
       isActive: true,
     },
-  })) as Persona[];
+  }));
 
   getAllPersonas(): Persona[] {
     return this.users;
@@ -33,7 +65,7 @@ export class LocalAuthRepository {
 
   getCurrentPersona(): Persona {
     const savedId = emsStorageAdapter.getItem<string>(STORAGE_KEY_PERSONA, 'user-040');
-    const found = this.users.find((p) => p.id === savedId || p.user?.id === savedId);
+    const found = this.users.find((p) => p.id === savedId || p.user.id === savedId);
     return found || this.users[0]!;
   }
 
@@ -61,7 +93,7 @@ export class LocalAuthRepository {
     const found = this.users.find(
       (u) =>
         u.email.toLowerCase() === email.toLowerCase() ||
-        (u.user?.email && u.user.email.toLowerCase() === email.toLowerCase()),
+        u.user.email.toLowerCase() === email.toLowerCase(),
     );
 
     if (!found) {
@@ -69,9 +101,7 @@ export class LocalAuthRepository {
     }
 
     // Verify fixture password if provided
-    const fixtureUser = (mockUsersFixture as any[]).find(
-      (f) => f.id === found.id || f.email === found.email,
-    );
+    const fixtureUser = fixtureUsers.find((f) => f.id === found.id || f.email === found.email);
     if (password && fixtureUser?.password && fixtureUser.password !== password) {
       return null;
     }
@@ -90,7 +120,7 @@ export class LocalAuthRepository {
   }
 
   switchPersona(personaId: string): Persona {
-    const found = this.users.find((p) => p.id === personaId || p.user?.id === personaId);
+    const found = this.users.find((p) => p.id === personaId || p.user.id === personaId);
     if (!found) {
       throw new Error(`Persona not found: ${personaId}`);
     }
@@ -181,10 +211,7 @@ export class LocalAuthRepository {
 
     // Check if manager of the requester (always valid regardless of workspace)
     if (resource && resource.employeeId) {
-      if (
-        persona.directReportEmployeeIds &&
-        persona.directReportEmployeeIds.includes(resource.employeeId)
-      ) {
+      if (persona.directReportEmployeeIds.includes(resource.employeeId)) {
         return true;
       }
     }
@@ -200,25 +227,18 @@ export class LocalAuthRepository {
     };
 
     if (workspaceContext === 'EMPLOYEE') {
-      const perms = explicitApprovalPermissions[domain] || [];
+      const perms = explicitApprovalPermissions[domain];
       return perms.some((p) => this.hasPermission(p));
     }
 
     // In Admin Workspace: full authority check including wildcard
-    if (domain === 'LEAVE') {
-      return this.hasAnyPermission(['leave.approve', 'leave.write', '*']);
-    }
-    if (domain === 'TIMESHEET') {
-      return this.hasAnyPermission(['timesheets.approve', 'timesheets.write', '*']);
-    }
-    if (domain === 'ATTENDANCE_CORRECTION') {
-      return this.hasAnyPermission(['attendance.approve', 'attendance.write', '*']);
-    }
-    if (domain === 'PAYROLL') {
-      return this.hasAnyPermission(['payroll.approve', 'payroll.write', '*']);
-    }
-
-    return false;
+    const adminApprovalPermissions: Record<ApprovalDomainType, string[]> = {
+      LEAVE: ['leave.approve', 'leave.write', '*'],
+      TIMESHEET: ['timesheets.approve', 'timesheets.write', '*'],
+      ATTENDANCE_CORRECTION: ['attendance.approve', 'attendance.write', '*'],
+      PAYROLL: ['payroll.approve', 'payroll.write', '*'],
+    };
+    return this.hasAnyPermission(adminApprovalPermissions[domain]);
   }
 }
 

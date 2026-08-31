@@ -9,8 +9,8 @@ import {
   Button,
   Icon,
   StandardDataTable,
-  ColumnDef,
 } from '@smarteam/ui';
+import type { ColumnDef } from '@smarteam/ui';
 
 import {
   deleteFederationClient,
@@ -280,7 +280,7 @@ function ActionButton({
   onClick: () => void;
 }) {
   return (
-    <button
+    <Button
       aria-label={label}
       className={`grid size-10 place-items-center rounded-lg border border-border transition-colors disabled:cursor-wait disabled:opacity-45 ${
         danger
@@ -293,7 +293,7 @@ function ActionButton({
       type="button"
     >
       <Icon className="size-4" name={icon} />
-    </button>
+    </Button>
   );
 }
 

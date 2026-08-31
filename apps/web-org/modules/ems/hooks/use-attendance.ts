@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  attendanceRepository,
+import type {
   AttendanceLiveState,
   AttendanceRecordItem,
   AttendancePunchItem,
 } from '../repositories/attendance.repository';
+import { attendanceRepository } from '../repositories/attendance.repository';
 
 export function useAttendance() {
   const [liveState, setLiveState] = useState<AttendanceLiveState>(() =>

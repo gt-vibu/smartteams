@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
+import { SMARTEAM_BRAND_PRIMARY } from '@smarteam/ui/theme';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const size = {
   width: 32,
   height: 32,
@@ -12,7 +13,7 @@ export default function Icon() {
     <div
       style={{
         fontSize: 20,
-        background: '#0284C7',
+        background: SMARTEAM_BRAND_PRIMARY,
         width: '100%',
         height: '100%',
         display: 'flex',

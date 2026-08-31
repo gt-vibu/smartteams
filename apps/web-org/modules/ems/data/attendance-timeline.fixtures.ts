@@ -1,7 +1,23 @@
 import attendanceFixture from './fixtures/attendance.json';
-import { TimelineDayRecord, AttendanceSummaryStats } from '../types/attendance-timeline.types';
+import type { TimelineDayRecord, AttendanceSummaryStats } from '../types/attendance-timeline.types';
 
-export const mockTimelineDays: TimelineDayRecord[] = attendanceFixture.records.map((r: any) => ({
+const attendanceRecords = attendanceFixture.records as unknown as Array<{
+  id: string;
+  dayLabel: string;
+  dayOfWeek: string;
+  dayNumber: number;
+  isToday?: boolean;
+  firstInTime?: string;
+  lastOutTime?: string;
+  workedMinutes: number;
+  dayStatus: TimelineDayRecord['status'];
+  spanStartPercent?: number;
+  spanEndPercent?: number;
+  holidayName?: string;
+  isRestrictedHoliday?: boolean;
+}>;
+
+export const mockTimelineDays: TimelineDayRecord[] = attendanceRecords.map((r) => ({
   id: r.id,
   dayLabel: r.dayLabel,
   dayOfWeek: r.dayOfWeek,

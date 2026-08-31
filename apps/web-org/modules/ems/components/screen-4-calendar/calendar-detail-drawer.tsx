@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { CalendarDayItem } from '../../types/calendar.types';
+import React, { useRef, useState } from 'react';
+import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
+import type { CalendarDayItem } from '../../types/calendar.types';
 
 interface CalendarDetailDrawerProps {
   day: CalendarDayItem | null;
@@ -10,11 +11,13 @@ interface CalendarDetailDrawerProps {
 export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(isOpen, panelRef, onClose);
 
   if (!isOpen || !day) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true">
       {/* Backdrop */}
       <div
         onClick={onClose}
@@ -23,16 +26,28 @@ export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDra
 
       {/* Slide-In Panel */}
       <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl border-l border-slate-200 flex flex-col justify-between">
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-labelledby="calendar-details-title"
+          tabIndex={-1}
+          className="flex w-screen max-w-md flex-col justify-between border-l border-slate-200 bg-white shadow-2xl"
+        >
           {/* Header */}
           <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
             <div>
-              <h2 className="!text-sm !font-bold !text-slate-900 !m-0">Shift & Day Schedule</h2>
+              <h2 id="calendar-details-title" className="!m-0 !text-sm !font-bold !text-slate-900">
+                Shift & Day Schedule
+              </h2>
               <p className="text-xs text-slate-500 mt-0.5">{day.date}</p>
             </div>
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Close day schedule"
               onClick={onClose}
-              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors"
+              className="h-8 w-8 text-slate-400 hover:text-slate-700"
             >
               <svg
                 className="h-5 w-5"
@@ -43,7 +58,7 @@ export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDra
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </Button>
           </div>
 
           {/* Body Content */}
@@ -123,20 +138,21 @@ export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDra
                   </div>
                 ) : (
                   <div className="space-y-2.5">
-                    <textarea
+                    <Textarea
                       rows={3}
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       placeholder="Reason for regularization..."
-                      className="w-full text-xs p-2.5 border border-slate-200 rounded focus:ring-1 focus:ring-sky-500 focus:outline-none bg-slate-50 focus:bg-white"
+                      className="bg-slate-50 focus:bg-white"
                     />
-                    <button
+                    <Button
+                      type="button"
                       disabled={reason.length < 5}
                       onClick={() => setSubmitted(true)}
-                      className="w-full py-1.5 px-3 rounded text-xs font-semibold bg-[#0284C7] hover:bg-[#0369A1] disabled:opacity-50 text-white transition-colors"
+                      className="w-full"
                     >
                       Submit Correction Request
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -145,12 +161,9 @@ export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDra
 
           {/* Footer */}
           <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
-            <button
-              onClick={onClose}
-              className="px-4 py-1.5 rounded text-xs font-semibold border border-slate-300 text-slate-700 hover:bg-white transition-colors shadow-2xs"
-            >
+            <Button type="button" variant="secondary" onClick={onClose}>
               Close
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -18,17 +18,36 @@ import {
 } from '@smarteam/ui';
 import filesFixture from '../../data/fixtures/files.json';
 
+interface FileItem {
+  id: string;
+  name: string;
+  category: string;
+  size: string;
+  fileType: string;
+  uploadedAt: string;
+  uploadedBy: string;
+  security: string;
+  downloadUrl: string;
+}
+
+interface FileCategory {
+  id: string;
+  label: string;
+}
+
+const fileData: { files: FileItem[]; categories: FileCategory[] } = filesFixture;
+
 export function ScreenFiles() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
-  const [fileList, setFileList] = useState(filesFixture.files);
+  const [fileList, setFileList] = useState<FileItem[]>(fileData.files);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [deletingFile, setDeletingFile] = useState<any | null>(null);
+  const [deletingFile, setDeletingFile] = useState<FileItem | null>(null);
   const [newFileName, setNewFileName] = useState('');
   const [newFileCategory, setNewFileCategory] = useState('company');
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
 
-  const { categories } = filesFixture;
+  const { categories } = fileData;
 
   const filteredFiles = fileList.filter((f) => {
     const matchesCat = activeCategory === 'all' || f.category === activeCategory;
@@ -172,7 +191,7 @@ export function ScreenFiles() {
                 </Badge>
               </div>
 
-              <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-[#0284C7] dark:group-hover:text-sky-400 transition-colors">
+              <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-primary dark:group-hover:text-sky-400 transition-colors">
                 {file.name}
               </h3>
               <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 space-y-0.5 font-mono">
@@ -196,7 +215,7 @@ export function ScreenFiles() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleDownload(file.name)}
-                className="text-xs text-[#0284C7] dark:text-sky-400"
+                className="text-xs text-primary dark:text-sky-400"
               >
                 Download File ↓
               </Button>

@@ -17,13 +17,57 @@ export interface EmployeeAssignmentState {
   projectAllocations: EmployeeProjectAssignment[];
 }
 
+export interface AssignmentTeamMember {
+  id?: string;
+  employeeId?: string;
+  employeeNumber?: string;
+  firstName?: string;
+  lastName?: string;
+  jobTitle?: string;
+  joinedAt?: string;
+  avatarInitials?: string;
+  leftAt?: string | null;
+}
+
+export interface AssignmentTeam {
+  id: string;
+  name: string;
+  branchName?: string;
+  memberCount: number;
+  teamLeadEmployeeId?: string;
+  members: AssignmentTeamMember[];
+}
+
+export interface AssignmentProjectMember {
+  id?: string;
+  employeeId?: string;
+  employeeNumber?: string;
+  firstName?: string;
+  lastName?: string;
+  projectRole?: string;
+  allocationPercentage?: string;
+  startsOn?: string;
+  endsOn?: string | null;
+  avatarInitials?: string;
+}
+
+export interface AssignmentProject {
+  id: string;
+  code: string;
+  name: string;
+  members: AssignmentProjectMember[];
+}
+
 export class LocalAssignmentRepository {
-  getTeams() {
-    return emsStorageAdapter.getItem(STORAGE_KEY_TEAMS, teamsFixture.teams as any[]);
+  getTeams(): AssignmentTeam[] {
+    return emsStorageAdapter.getItem(STORAGE_KEY_TEAMS, teamsFixture.teams);
   }
 
-  getProjects() {
-    return emsStorageAdapter.getItem(STORAGE_KEY_PROJECTS, projectsFixture.projects as any[]);
+  getProjects(): AssignmentProject[] {
+    return emsStorageAdapter.getItem(
+      STORAGE_KEY_PROJECTS,
+      projectsFixture.projects as AssignmentProject[],
+    );
   }
 
   getAllEmployees() {
@@ -38,7 +82,7 @@ export class LocalAssignmentRepository {
       .filter(
         (t) =>
           t.members.some(
-            (m: any) =>
+            (m) =>
               (m.employeeId === employeeId || m.employeeNumber === employeeNumber) && !m.leftAt,
           ) || t.teamLeadEmployeeId === employeeId,
       )
@@ -47,7 +91,7 @@ export class LocalAssignmentRepository {
     const projectAllocations: EmployeeProjectAssignment[] = [];
     projects.forEach((p) => {
       const member = p.members.find(
-        (m: any) => m.employeeId === employeeId || m.employeeNumber === employeeNumber,
+        (m) => m.employeeId === employeeId || m.employeeNumber === employeeNumber,
       );
       if (member) {
         projectAllocations.push({
@@ -82,10 +126,10 @@ export class LocalAssignmentRepository {
     const updatedTeams = teams.map((team) => {
       const shouldBeMember = teamIds.includes(team.id);
       const existingMemberIndex = team.members.findIndex(
-        (m: any) => m.employeeId === employee.id || m.employeeNumber === employee.employeeNumber,
+        (m) => m.employeeId === employee.id || m.employeeNumber === employee.employeeNumber,
       );
 
-      let newMembers = [...team.members];
+      const newMembers = [...team.members];
 
       if (shouldBeMember && existingMemberIndex === -1) {
         // Add member
@@ -118,10 +162,10 @@ export class LocalAssignmentRepository {
     const updatedProjects = projects.map((proj) => {
       const alloc = projectAllocations.find((a) => a.projectId === proj.id);
       const existingMemberIndex = proj.members.findIndex(
-        (m: any) => m.employeeId === employee.id || m.employeeNumber === employee.employeeNumber,
+        (m) => m.employeeId === employee.id || m.employeeNumber === employee.employeeNumber,
       );
 
-      let newMembers = [...proj.members];
+      const newMembers = [...proj.members];
 
       if (alloc && existingMemberIndex === -1) {
         // Add project member

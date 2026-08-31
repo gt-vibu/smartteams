@@ -1,5 +1,5 @@
 import React from 'react';
-import { LeaveBalanceItem } from '../../types/leave.types';
+import type { LeaveBalanceItem } from '../../types/leave.types';
 
 interface LeaveBalanceCardsProps {
   balances: LeaveBalanceItem[];

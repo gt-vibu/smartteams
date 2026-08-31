@@ -1,7 +1,9 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React, { useState } from 'react';
-import { MilestoneData } from '../../types/organization.types';
+import type { MilestoneData } from '../../types/organization.types';
 
 interface OrgMilestonesTabProps {
   milestones: MilestoneData[];
@@ -36,17 +38,26 @@ export function OrgMilestonesTab({ milestones }: OrgMilestonesTabProps) {
         {filterTabs.map((tab) => {
           const isActive = activeFilter === tab.id;
           return (
-            <button
+            <Button
               key={tab.id}
-              onClick={() => setActiveFilter(tab.id as any)}
+              onClick={() => {
+                if (
+                  tab.id === 'ALL' ||
+                  tab.id === 'NEW_HIRE' ||
+                  tab.id === 'BIRTHDAY' ||
+                  tab.id === 'ANNIVERSARY'
+                ) {
+                  setActiveFilter(tab.id);
+                }
+              }}
               className={`px-3 py-1 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'bg-[#0284C7] text-white shadow-2xs'
+                  ? 'bg-primary text-white shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
               {tab.label}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -88,7 +99,7 @@ export function OrgMilestonesTab({ milestones }: OrgMilestonesTabProps) {
                       {item.employeeName}
                     </h4>
                     <p className="text-[10px] text-slate-500 truncate">{item.jobTitle}</p>
-                    <p className="text-[10px] text-[#0284C7] font-medium truncate">
+                    <p className="text-[10px] text-primary font-medium truncate">
                       {item.department}
                     </p>
                   </div>
@@ -101,17 +112,17 @@ export function OrgMilestonesTab({ milestones }: OrgMilestonesTabProps) {
 
               <div className="border-t border-slate-100 pt-3 mt-3 flex items-center justify-between">
                 <span className="text-[10px] text-slate-400 font-mono">{item.employeeNumber}</span>
-                <button
+                <Button
                   onClick={() => handleWish(item.id)}
                   disabled={isWished}
                   className={`px-3 py-1 text-xs font-semibold rounded transition-colors cursor-pointer ${
                     isWished
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-[#0284C7] hover:bg-[#0369A1] text-white shadow-2xs'
+                      : 'bg-primary hover:bg-primary/90 text-white shadow-2xs'
                   }`}
                 >
                   {isWished ? '✓ Sent Wishes' : 'Send Wishes 🎊'}
-                </button>
+                </Button>
               </div>
             </div>
           );

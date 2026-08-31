@@ -1,12 +1,18 @@
 import { EMS_STORAGE_KEYS } from '../storage/storage.keys';
 import { emsStorageAdapter } from '../storage/storage.adapter';
 import timesheetsFixture from '../data/fixtures/timesheets.json';
-import { DateGroupedTimeLogs, TimeLogItem, TimeTrackerSummaryStats } from '../types/timelog.types';
+import type {
+  ApprovedTimesheetNotification,
+  DateGroupedTimeLogs,
+  TimeLogItem,
+  TimeTrackerSummaryStats,
+  TimesheetStorageData,
+} from '../types/timelog.types';
 
 export interface ITimesheetRepository {
   getGroupedLogs(): DateGroupedTimeLogs[];
   getSummary(): TimeTrackerSummaryStats;
-  getApprovedNotification(): any;
+  getApprovedNotification(): ApprovedTimesheetNotification | null;
   addEntry(data: {
     date: string;
     projectName: string;
@@ -18,19 +24,22 @@ export interface ITimesheetRepository {
 }
 
 export class LocalTimesheetRepository implements ITimesheetRepository {
-  private getStoredData() {
-    return emsStorageAdapter.getItem(EMS_STORAGE_KEYS.TIMESHEETS, timesheetsFixture);
+  private getStoredData(): TimesheetStorageData {
+    return emsStorageAdapter.getItem<TimesheetStorageData>(
+      EMS_STORAGE_KEYS.TIMESHEETS,
+      timesheetsFixture as unknown as TimesheetStorageData,
+    );
   }
 
   getGroupedLogs(): DateGroupedTimeLogs[] {
-    return this.getStoredData().groupedLogs as DateGroupedTimeLogs[];
+    return this.getStoredData().groupedLogs;
   }
 
   getSummary(): TimeTrackerSummaryStats {
-    return this.getStoredData().summary as TimeTrackerSummaryStats;
+    return this.getStoredData().summary;
   }
 
-  getApprovedNotification(): any {
+  getApprovedNotification(): ApprovedTimesheetNotification | null {
     return this.getStoredData().approvedNotification;
   }
 
@@ -58,7 +67,7 @@ export class LocalTimesheetRepository implements ITimesheetRepository {
     // Find if date group exists
     const groupIndex = groupedLogs.findIndex((g) => g.date === data.date);
     if (groupIndex >= 0 && groupedLogs[groupIndex]) {
-      const existingGroup = groupedLogs[groupIndex]!;
+      const existingGroup = groupedLogs[groupIndex];
       groupedLogs[groupIndex] = {
         date: existingGroup.date,
         totalDayHours: existingGroup.totalDayHours,

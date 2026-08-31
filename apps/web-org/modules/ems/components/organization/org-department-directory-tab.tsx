@@ -1,7 +1,9 @@
 'use client';
 
+import { Button, Input } from '@smarteam/ui';
+
 import React, { useState } from 'react';
-import { DepartmentData } from '../../types/organization.types';
+import type { DepartmentData } from '../../types/organization.types';
 
 interface OrgDepartmentDirectoryTabProps {
   departments: DepartmentData[];
@@ -34,11 +36,11 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
   });
 
   return (
-    <div className="bg-white dark:bg-[#1B2028] rounded-[8px] border border-slate-200 dark:border-[#262F3D] shadow-xs overflow-hidden flex flex-col md:flex-row min-h-[580px]">
+    <div className="bg-white dark:bg-card rounded-[8px] border border-slate-200 dark:border-border shadow-xs overflow-hidden flex flex-col md:flex-row min-h-[580px]">
       {/* ── Left Pane: Department Search & List ── */}
-      <div className="w-full md:w-72 lg:w-80 border-r border-slate-200 dark:border-[#262F3D] flex flex-col shrink-0 bg-slate-50/50 dark:bg-[#161B22]">
+      <div className="w-full md:w-72 lg:w-80 border-r border-slate-200 dark:border-border flex flex-col shrink-0 bg-slate-50/50 dark:bg-card">
         {/* Search Bar */}
-        <div className="p-3 border-b border-slate-200 dark:border-[#262F3D] bg-white dark:bg-[#161B22]">
+        <div className="p-3 border-b border-slate-200 dark:border-border bg-white dark:bg-card">
           <div className="relative">
             <svg
               className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 dark:text-slate-500"
@@ -53,20 +55,20 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <input
+            <Input
               type="text"
               value={deptSearch}
               onChange={(e) => setDeptSearch(e.target.value)}
               placeholder="Search Department"
-              className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50 dark:bg-[#12151A] text-slate-900 dark:text-white border border-slate-200 dark:border-[#262F3D] rounded focus:bg-white dark:focus:bg-[#1B2028] focus:outline-none focus:ring-1 focus:ring-[#0284C7]"
+              className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50 dark:bg-background text-slate-900 dark:text-white border border-slate-200 dark:border-border rounded focus:bg-white dark:focus:bg-[#1B2028] focus:outline-none focus:ring-1 focus:ring-ring"
             />
             {deptSearch && (
-              <button
+              <Button
                 onClick={() => setDeptSearch('')}
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs"
               >
                 ✕
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -79,7 +81,7 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
             filteredDepts.map((dept) => {
               const isSelected = selectedDepartment?.id === dept.id;
               return (
-                <button
+                <Button
                   key={dept.id}
                   onClick={() => {
                     setSelectedDeptId(dept.id);
@@ -87,7 +89,7 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
                   }}
                   className={`w-full text-left p-3 rounded-[6px] transition-all flex items-center justify-between cursor-pointer border ${
                     isSelected
-                      ? 'bg-sky-50/80 dark:bg-[#1E2E44] border-sky-200 dark:border-[#0284C7]/40 text-[#0284C7] dark:text-[#38BDF8] font-bold shadow-2xs'
+                      ? 'bg-sky-50/80 dark:bg-[#1E2E44] border-sky-200 dark:border-primary/40 text-primary dark:text-primary font-bold shadow-2xs'
                       : 'hover:bg-white dark:hover:bg-[#1E2530] hover:border-slate-200 dark:hover:border-[#262F3D] border-transparent text-slate-700 dark:text-slate-300 font-medium'
                   }`}
                 >
@@ -100,13 +102,13 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
                   <span
                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       isSelected
-                        ? 'bg-sky-200/60 dark:bg-[#0284C7]/20 text-[#0284C7] dark:text-[#38BDF8]'
+                        ? 'bg-sky-200/60 dark:bg-primary/20 text-primary dark:text-primary'
                         : 'bg-slate-200/80 dark:bg-[#222A36] text-slate-600 dark:text-slate-400'
                     }`}
                   >
                     {dept.memberCount}
                   </span>
-                </button>
+                </Button>
               );
             })
           )}
@@ -114,11 +116,11 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
       </div>
 
       {/* ── Right Pane: Department Details & Members Roster ── */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-[#1B2028]">
+      <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-card">
         {selectedDepartment ? (
           <>
             {/* Department Top Header Strip */}
-            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-[#262F3D] bg-slate-50/60 dark:bg-[#161B22] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-border bg-slate-50/60 dark:bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -134,7 +136,7 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
               </div>
 
               <div className="flex items-center gap-2 self-start sm:self-auto">
-                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-[#1B2028] border border-slate-200 dark:border-[#262F3D] px-3 py-1.5 rounded-[4px] shadow-2xs">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-card border border-slate-200 dark:border-border px-3 py-1.5 rounded-[4px] shadow-2xs">
                   {selectedDepartment.memberCount} Total Members
                 </span>
               </div>
@@ -144,8 +146,8 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
             <div className="p-4 sm:p-5 pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               {/* Department Head Badge */}
               {selectedDepartment.headEmployeeName ? (
-                <div className="flex items-center gap-2.5 p-2 bg-slate-50 dark:bg-[#161B22] border border-slate-200 dark:border-[#262F3D] rounded-[6px] max-w-md">
-                  <div className="h-8 w-8 rounded-full bg-[#0284C7] text-white text-xs font-bold flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2.5 p-2 bg-slate-50 dark:bg-card border border-slate-200 dark:border-border rounded-[6px] max-w-md">
+                  <div className="h-8 w-8 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
                     {selectedDepartment.headEmployeeAvatar || 'DH'}
                   </div>
                   <div className="truncate">
@@ -176,12 +178,12 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-                <input
+                <Input
                   type="text"
                   value={memberSearch}
                   onChange={(e) => setMemberSearch(e.target.value)}
                   placeholder="Search members in department…"
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-[#12151A] text-slate-900 dark:text-white border border-slate-200 dark:border-[#262F3D] rounded focus:bg-white dark:focus:bg-[#1B2028] focus:outline-none focus:ring-1 focus:ring-[#0284C7]"
+                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-background text-slate-900 dark:text-white border border-slate-200 dark:border-border rounded focus:bg-white dark:focus:bg-[#1B2028] focus:outline-none focus:ring-1 focus:ring-ring"
                 />
               </div>
             </div>
@@ -190,7 +192,7 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
             <div className="p-4 sm:p-5 flex-1 overflow-y-auto">
               {filteredMembers.length === 0 ? (
                 <div className="p-12 text-center">
-                  <div className="h-14 w-14 rounded-full bg-slate-100 dark:bg-[#161B22] text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+                  <div className="h-14 w-14 rounded-full bg-slate-100 dark:bg-card text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
                     👥
                   </div>
                   <div className="text-sm font-bold text-slate-700 dark:text-slate-300">
@@ -252,7 +254,7 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
                           }),
                         );
                       }}
-                      className="p-3.5 bg-white dark:bg-[#161B22] rounded-[6px] border border-slate-200/90 dark:border-[#262F3D] shadow-2xs hover:border-sky-300 dark:hover:border-sky-500 hover:shadow-xs transition-all flex items-start gap-3 cursor-pointer group"
+                      className="p-3.5 bg-white dark:bg-card rounded-[6px] border border-slate-200/90 dark:border-border shadow-2xs hover:border-sky-300 dark:hover:border-sky-500 hover:shadow-xs transition-all flex items-start gap-3 cursor-pointer group"
                       title="Click to view detailed employee relationship & project allocation profile"
                     >
                       <div className="relative shrink-0">
@@ -265,17 +267,17 @@ export function OrgDepartmentDirectoryTab({ departments }: OrgDepartmentDirector
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-[#0284C7] dark:group-hover:text-[#38BDF8] transition-colors">
+                          <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-primary dark:group-hover:text-[var(--primary)] transition-colors">
                             {emp.firstName} {emp.lastName}
                           </h4>
                           <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                             {emp.employeeNumber}
                           </span>
                         </div>
-                        <p className="text-[11px] font-semibold text-[#0284C7] dark:text-[#38BDF8] truncate mt-0.5">
+                        <p className="text-[11px] font-semibold text-primary dark:text-primary truncate mt-0.5">
                           {emp.jobTitle}
                         </p>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 space-y-0.5 mt-2 border-t border-slate-100 dark:border-[#262F3D] pt-2">
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 space-y-0.5 mt-2 border-t border-slate-100 dark:border-border pt-2">
                           <div className="truncate">📍 {emp.branchName}</div>
                           <div className="truncate text-slate-400 dark:text-slate-500 font-mono">
                             ✉ {emp.workEmail}

@@ -1,5 +1,6 @@
 import React from 'react';
-import { HolidayItem } from '../../types/holiday.types';
+import { Button } from '@smarteam/ui';
+import type { HolidayItem } from '../../types/holiday.types';
 
 interface UpcomingHolidaysCardProps {
   holidays: HolidayItem[];
@@ -7,7 +8,7 @@ interface UpcomingHolidaysCardProps {
 
 export function UpcomingHolidaysCard({ holidays }: UpcomingHolidaysCardProps) {
   return (
-    <div className="bg-white dark:bg-[#1B2028] rounded-[6px] border border-slate-200/90 dark:border-[#262F3D] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+    <div className="bg-white dark:bg-card rounded-[6px] border border-slate-200/90 dark:border-border p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
@@ -31,9 +32,9 @@ export function UpcomingHolidaysCard({ holidays }: UpcomingHolidaysCardProps) {
           </h2>
         </div>
 
-        <button className="text-xs font-semibold text-[#0284C7] dark:text-[#38BDF8] hover:underline cursor-pointer">
+        <Button className="text-xs font-semibold text-primary dark:text-primary hover:underline cursor-pointer">
           View all
-        </button>
+        </Button>
       </div>
 
       {/* 3 Holiday Cards Grid */}

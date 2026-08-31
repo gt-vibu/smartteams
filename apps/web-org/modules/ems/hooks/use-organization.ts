@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import orgFixture from '../data/fixtures/organization.json';
-import {
+import type {
   OrganizationData,
   BranchData,
   DepartmentData,
@@ -99,23 +99,21 @@ export function useOrganization() {
       });
     });
 
-    let rootNode: OrgEmployeeNode | null = null;
-
     allEmployees.forEach((emp) => {
       const currentNode = nodeMap.get(emp.id)!;
       if (emp.managerEmployeeId && nodeMap.has(emp.managerEmployeeId)) {
         const parentNode = nodeMap.get(emp.managerEmployeeId)!;
         parentNode.children.push(currentNode);
         parentNode.directReportsCount += 1;
-      } else {
-        // Candidate root (e.g. Rohan Das or executive with no manager above them)
-        if (!rootNode) {
-          rootNode = currentNode;
-        }
       }
     });
 
-    return rootNode || nodeMap.values().next().value || null;
+    const rootEmployee = allEmployees.find(
+      (emp) => !emp.managerEmployeeId || !nodeMap.has(emp.managerEmployeeId),
+    );
+    return rootEmployee
+      ? (nodeMap.get(rootEmployee.id) ?? null)
+      : (Array.from(nodeMap.values())[0] ?? null);
   }, [allEmployees]);
 
   const updateCoverUrl = useCallback((newUrl: string) => {

@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { leaveRepository } from '../repositories/leave.repository';
-import { LeaveBalanceItem, LeaveApplicationItem, ApplyLeaveFormData } from '../types/leave.types';
+import type {
+  LeaveBalanceItem,
+  LeaveApplicationItem,
+  ApplyLeaveFormData,
+} from '../types/leave.types';
 
 export function useLeave() {
   const [balances, setBalances] = useState<LeaveBalanceItem[]>(() => leaveRepository.getBalances());

@@ -5,6 +5,19 @@ import holidaysFixture from '../data/fixtures/holidays.json';
 import timesheetsFixture from '../data/fixtures/timesheets.json';
 import leaveFixture from '../data/fixtures/leave.json';
 
+interface AttendanceStorageRecord {
+  isToday?: boolean;
+  dayStatus: string;
+  statusType: string;
+  firstInTime: string | null;
+  lastOutTime: string | null;
+  workedMinutes: number;
+  payableHours?: string;
+  overtime?: string;
+}
+
+const attendanceStorageRecords = attendanceFixture.records as unknown as AttendanceStorageRecord[];
+
 class EmsStorageAdapter {
   private isBrowser: boolean;
 
@@ -120,8 +133,11 @@ class EmsStorageAdapter {
       };
       this.setItem(EMS_STORAGE_KEYS.ATTENDANCE_STATE, liveState);
 
-      const records = this.getItem(EMS_STORAGE_KEYS.ATTENDANCE_RECORDS, attendanceFixture.records);
-      const updated = records.map((r: any) => {
+      const records = this.getItem<AttendanceStorageRecord[]>(
+        EMS_STORAGE_KEYS.ATTENDANCE_RECORDS,
+        attendanceStorageRecords,
+      );
+      const updated = records.map((r) => {
         if (r.isToday) {
           return {
             ...r,
@@ -149,8 +165,11 @@ class EmsStorageAdapter {
       };
       this.setItem(EMS_STORAGE_KEYS.ATTENDANCE_STATE, liveState);
 
-      const records = this.getItem(EMS_STORAGE_KEYS.ATTENDANCE_RECORDS, attendanceFixture.records);
-      const updated = records.map((r: any) => {
+      const records = this.getItem<AttendanceStorageRecord[]>(
+        EMS_STORAGE_KEYS.ATTENDANCE_RECORDS,
+        attendanceStorageRecords,
+      );
+      const updated = records.map((r) => {
         if (r.isToday) {
           return {
             ...r,
@@ -202,7 +221,7 @@ class EmsStorageAdapter {
           detail: { key: EMS_STORAGE_KEYS.LEAVE_APPLICATIONS },
         }),
       );
-    } else if (scenario === 'empty-state') {
+    } else {
       this.setItem(EMS_STORAGE_KEYS.TIMESHEETS, {
         summary: {
           totalHours: '00:00 Hrs',

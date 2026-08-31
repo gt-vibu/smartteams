@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimelineDayRecord } from '../../types/attendance-timeline.types';
+import type { TimelineDayRecord } from '../../types/attendance-timeline.types';
 import { formatMinutesToDuration } from '../../utils/format.utils';
 
 interface TimelineTrackViewProps {
@@ -20,7 +20,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
   ];
 
   return (
-    <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
+    <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
       <div className="min-w-[580px] sm:min-w-[660px]">
         {/* Top Header Time Scale Ruler */}
         <div className="grid grid-cols-12 border-b border-slate-200 bg-slate-50/70 text-[11px] font-semibold text-slate-500 py-2.5 px-4">
@@ -60,7 +60,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
                 {/* Left Day Label Column */}
                 <div className="col-span-2 flex items-center gap-2">
                   {day.isToday ? (
-                    <span className="h-6 px-2 rounded-[4px] bg-[#0284C7] text-white text-xs font-bold flex items-center justify-center shadow-xs">
+                    <span className="h-6 px-2 rounded-[4px] bg-primary text-white text-xs font-bold flex items-center justify-center shadow-xs">
                       {day.dayLabel}
                     </span>
                   ) : (

@@ -14,7 +14,7 @@ import {
   Select,
   DatePicker,
 } from '@smarteam/ui';
-import { ProjectData } from './screen-projects';
+import type { ProjectData } from './screen-projects';
 import { AVAILABLE_EMPLOYEES } from '../screen-teams/create-team-modal';
 
 export interface AssignProjectMemberPayload {
@@ -176,10 +176,10 @@ export function AssignProjectMemberModal({
           </div>
 
           {/* 4. Allocation Percentage */}
-          <div className="bg-slate-50 dark:bg-[#161B22] p-3 rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
+          <div className="bg-slate-50 dark:bg-card p-3 rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-xs">Staffing Allocation:</Label>
-              <span className="font-mono font-bold text-xs text-[#0284C7] bg-white dark:bg-[#1B2028] border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded">
+              <span className="font-mono font-bold text-xs text-primary bg-white dark:bg-card border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded">
                 {allocation}% Time Commitment
               </span>
             </div>

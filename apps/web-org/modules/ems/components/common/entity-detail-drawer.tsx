@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Button, Sheet, SheetContent } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 import { AssignEmployeeModal } from './assign-employee-modal';
 
@@ -72,14 +73,8 @@ export function EntityDetailDrawer({
 
   return (
     <>
-      <div
-        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-2xs flex justify-end animate-in fade-in duration-150"
-        onClick={onClose}
-      >
-        <div
-          className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col z-50 overflow-hidden animate-in slide-in-from-right duration-200"
-          onClick={(e) => e.stopPropagation()}
-        >
+      <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <SheetContent className="max-w-md p-0">
           {/* Drawer Header */}
           <div className="p-5 border-b border-slate-200 flex items-start justify-between bg-slate-50/70">
             <div className="flex items-center gap-3.5">
@@ -107,21 +102,15 @@ export function EntityDetailDrawer({
               </div>
             </div>
 
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
               onClick={onClose}
-              className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200 rounded transition-colors cursor-pointer"
-              title="Close Drawer"
+              aria-label="Close employee details"
             >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              ✕
+            </Button>
           </div>
 
           {/* Admin Assignment Banner Action */}
@@ -133,12 +122,9 @@ export function EntityDetailDrawer({
                   Manage Squads & Allocations
                 </span>
               </div>
-              <button
-                onClick={() => setIsAssignModalOpen(true)}
-                className="px-2.5 py-1 bg-[#0284C7] hover:bg-[#0369A1] text-white text-[11px] font-bold rounded shadow-2xs transition-colors cursor-pointer flex items-center gap-1"
-              >
+              <Button type="button" onClick={() => setIsAssignModalOpen(true)} size="sm">
                 <span>⚙ Assign</span>
-              </button>
+              </Button>
             </div>
           )}
 
@@ -235,12 +221,14 @@ export function EntityDetailDrawer({
                   Assigned Teams & Squads ({employee.teams.length})
                 </h3>
                 {canManageAssignments && (
-                  <button
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
                     onClick={() => setIsAssignModalOpen(true)}
-                    className="text-[10px] font-bold text-[#0284C7] hover:underline cursor-pointer"
                   >
                     + Assign Squad
-                  </button>
+                  </Button>
                 )}
               </div>
               {employee.teams.length === 0 ? (
@@ -256,7 +244,7 @@ export function EntityDetailDrawer({
                     >
                       <span className="text-xs font-semibold text-slate-800">{t.name}</span>
                       {t.isLead ? (
-                        <span className="text-[9px] font-bold uppercase bg-sky-50 text-[#0284C7] border border-sky-200 px-2 py-0.5 rounded">
+                        <span className="text-[9px] font-bold uppercase bg-sky-50 text-primary border border-sky-200 px-2 py-0.5 rounded">
                           Team Lead
                         </span>
                       ) : (
@@ -281,12 +269,14 @@ export function EntityDetailDrawer({
                     Total: {employee.projects.reduce((acc, p) => acc + p.allocationPercentage, 0)}%
                   </span>
                   {canManageAssignments && (
-                    <button
+                    <Button
+                      type="button"
+                      variant="link"
+                      size="sm"
                       onClick={() => setIsAssignModalOpen(true)}
-                      className="text-[10px] font-bold text-[#0284C7] hover:underline cursor-pointer"
                     >
                       + Allocate
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -342,7 +332,7 @@ export function EntityDetailDrawer({
                 </span>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-[#161B22] rounded-[6px] border border-slate-200 dark:border-slate-800 space-y-2 text-xs font-mono">
+              <div className="p-3 bg-slate-50 dark:bg-card rounded-[6px] border border-slate-200 dark:border-slate-800 space-y-2 text-xs font-mono">
                 <div className="flex justify-between">
                   <span className="font-sans text-slate-500">PAN Number:</span>
                   <span className="font-bold text-slate-900 dark:text-white">AAAPM0192L</span>
@@ -387,27 +377,26 @@ export function EntityDetailDrawer({
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-200 dark:border-[#262F3D] bg-slate-50 dark:bg-[#161B22] flex items-center justify-between">
+          <div className="p-4 border-t border-slate-200 dark:border-border bg-slate-50 dark:bg-card flex items-center justify-between">
             {canManageAssignments ? (
-              <button
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => setIsAssignModalOpen(true)}
-                className="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/40 dark:hover:bg-sky-950/70 text-[#0284C7] dark:text-[#38BDF8] border border-sky-200 dark:border-sky-800 text-xs font-bold rounded-[4px] flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <span>⚙ Edit Assignments</span>
-              </button>
+              </Button>
             ) : (
               <div />
             )}
 
-            <button
-              onClick={onClose}
-              className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold rounded-[4px] border border-transparent dark:border-slate-700 transition-colors cursor-pointer"
-            >
+            <Button type="button" variant="secondary" onClick={onClose}>
               Close
-            </button>
+            </Button>
           </div>
-        </div>
-      </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Assignment Modal */}
       {isAssignModalOpen && (

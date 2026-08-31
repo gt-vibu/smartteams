@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Button } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 
 interface EmsLeftRailProps {
@@ -15,12 +16,6 @@ export function EmsLeftRail({
   activeSpace = 'My Space',
 }: EmsLeftRailProps) {
   const { canAccessModule } = useAuth();
-  const [isMounted, setIsMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const isOrgSpace = activeSpace === 'Organization';
 
   // Employee workspace items
@@ -374,24 +369,26 @@ export function EmsLeftRail({
   ];
 
   const candidateItems = isOrgSpace ? adminItems : employeeItems;
-  const visibleItems = isMounted
-    ? candidateItems.filter((item) => (isOrgSpace ? true : canAccessModule(item.id)))
-    : candidateItems;
+  const visibleItems = candidateItems.filter((item) => canAccessModule(item.id));
 
   return (
-    <aside className="w-[74px] h-full bg-[#06152D] dark:bg-[#12151A] text-slate-300 flex flex-col justify-between py-2 shrink-0 z-20 border-r border-[#0F2444] dark:border-[#262F3D] select-none">
+    <aside className="w-[74px] h-full bg-sidebar dark:bg-background text-slate-300 flex flex-col justify-between py-2 shrink-0 z-20 border-r border-sidebar-border dark:border-border select-none">
       <div className="space-y-1 overflow-y-auto no-scrollbar px-1.5">
         {visibleItems.map((item) => {
           const isActive = activeModule === item.id;
           return (
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               key={item.id}
               onClick={() => onSelectModule(item.id)}
               title={item.label}
+              aria-current={isActive ? 'page' : undefined}
               className={`w-full flex flex-col items-center justify-center py-2 px-0.5 rounded-[8px] transition-all relative cursor-pointer group ${
                 isActive
-                  ? 'bg-[#0284C7] text-white font-bold shadow-xs'
-                  : 'hover:bg-[#112340] dark:hover:bg-[#1C222B] text-slate-400 hover:text-white'
+                  ? 'bg-primary text-white font-bold shadow-xs'
+                  : 'hover:bg-sidebar-accent/20 dark:hover:bg-sidebar-accent/20 text-slate-400 hover:text-white'
               }`}
             >
               <div
@@ -404,17 +401,21 @@ export function EmsLeftRail({
               >
                 {item.label}
               </span>
-            </button>
+            </Button>
           );
         })}
       </div>
 
       {/* Bottom Rail Controls */}
       <div className="flex flex-col items-center space-y-2 pb-2 text-slate-400">
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => onSelectModule('files')}
-          className="p-1.5 hover:text-white hover:bg-[#112340] dark:hover:bg-[#1C222B] rounded transition-colors cursor-pointer"
+          className="p-1.5 hover:text-white hover:bg-sidebar-accent/20 dark:hover:bg-sidebar-accent/20 rounded transition-colors cursor-pointer"
           title="Files & Documents"
+          aria-label="Files and documents"
         >
           <svg
             className="h-4 w-4"
@@ -429,7 +430,7 @@ export function EmsLeftRail({
               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
             />
           </svg>
-        </button>
+        </Button>
       </div>
     </aside>
   );

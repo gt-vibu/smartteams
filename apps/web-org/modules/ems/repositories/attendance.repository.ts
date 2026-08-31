@@ -28,6 +28,7 @@ export interface AttendanceRecordItem {
   shiftCode: string;
   shiftName: string;
   canRegularize: boolean;
+  regularizationReason?: string;
   spanStartPercent?: number;
   spanEndPercent?: number;
 }
@@ -53,7 +54,7 @@ export class LocalAttendanceRepository implements IAttendanceRepository {
   getLiveState(): AttendanceLiveState {
     return emsStorageAdapter.getItem<AttendanceLiveState>(
       EMS_STORAGE_KEYS.ATTENDANCE_STATE,
-      attendanceFixture.liveState as AttendanceLiveState,
+      attendanceFixture.liveState,
     );
   }
 
@@ -173,7 +174,7 @@ export class LocalAttendanceRepository implements IAttendanceRepository {
     return newState;
   }
 
-  regularize(recordId: string, _reason: string): boolean {
+  regularize(recordId: string, reason: string): boolean {
     const records = this.getRecords();
     const updatedRecords = records.map((r) => {
       if (r.id === recordId) {
@@ -186,6 +187,7 @@ export class LocalAttendanceRepository implements IAttendanceRepository {
           workedMinutes: 480,
           payableHours: '08:00',
           canRegularize: false,
+          regularizationReason: reason.trim(),
         };
       }
       return r;

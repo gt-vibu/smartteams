@@ -1,11 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  assignmentRepository,
+import type {
+  AssignmentProject,
+  AssignmentTeam,
   EmployeeProjectAssignment,
 } from '../../repositories/assignment.repository';
-import { EmployeeDetailData } from './entity-detail-drawer';
+import { assignmentRepository } from '../../repositories/assignment.repository';
+import type { EmployeeDetailData } from './entity-detail-drawer';
+import { Button, Checkbox, Dialog, DialogContent, Input, Label } from '@smarteam/ui';
 
 interface AssignEmployeeModalProps {
   isOpen: boolean;
@@ -20,8 +23,8 @@ export function AssignEmployeeModal({
   employee,
   onAssignmentsUpdated,
 }: AssignEmployeeModalProps) {
-  const [availableTeams, setAvailableTeams] = useState<any[]>([]);
-  const [availableProjects, setAvailableProjects] = useState<any[]>([]);
+  const [availableTeams, setAvailableTeams] = useState<AssignmentTeam[]>([]);
+  const [availableProjects, setAvailableProjects] = useState<AssignmentProject[]>([]);
   const [selectedTeamIds, setSelectedTeamIds] = useState<string[]>([]);
   const [projectAllocations, setProjectAllocations] = useState<EmployeeProjectAssignment[]>([]);
   const [isSavedToast, setIsSavedToast] = useState(false);
@@ -87,6 +90,7 @@ export function AssignEmployeeModal({
   };
 
   const handleSave = () => {
+    if (totalAllocation > 100) return;
     assignmentRepository.saveEmployeeAssignments(
       {
         id: employee.id,
@@ -133,14 +137,8 @@ export function AssignEmployeeModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-2xs flex items-center justify-center p-4 animate-in fade-in duration-150"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-2xl bg-white rounded-[10px] shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl p-0">
         {/* Modal Header */}
         <div className="p-5 border-b border-slate-200 bg-slate-50/80 flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -162,12 +160,15 @@ export function AssignEmployeeModal({
             </div>
           </div>
 
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-700 rounded transition-colors cursor-pointer"
+            aria-label="Close assignment dialog"
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         {/* Scrollable Content */}
@@ -190,7 +191,7 @@ export function AssignEmployeeModal({
                   Select which functional teams this staff member belongs to.
                 </p>
               </div>
-              <span className="text-xs font-bold bg-sky-50 text-[#0284C7] px-2.5 py-1 rounded-[4px] border border-sky-200">
+              <span className="text-xs font-bold bg-sky-50 text-primary px-2.5 py-1 rounded-[4px] border border-sky-200">
                 {selectedTeamIds.length} Squads Selected
               </span>
             </div>
@@ -207,12 +208,7 @@ export function AssignEmployeeModal({
                         : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => toggleTeam(team.id)}
-                      className="mt-0.5 rounded text-[#0284C7] focus:ring-[#0284C7]"
-                    />
+                    <Checkbox checked={isSelected} onCheckedChange={() => toggleTeam(team.id)} />
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-bold text-slate-900 truncate">{team.name}</div>
                       <div className="text-[10px] text-slate-500 mt-0.5">
@@ -267,11 +263,9 @@ export function AssignEmployeeModal({
                   >
                     <div className="flex items-start justify-between gap-3">
                       <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={isSelected}
-                          onChange={() => toggleProject(proj.id)}
-                          className="rounded text-[#0284C7] focus:ring-[#0284C7]"
+                          onCheckedChange={() => toggleProject(proj.id)}
                         />
                         <div>
                           <span className="text-xs font-bold text-slate-900">{proj.name}</span>
@@ -282,20 +276,23 @@ export function AssignEmployeeModal({
                       </label>
 
                       {isSelected && (
-                        <span className="text-xs font-mono font-bold text-[#0284C7]">
-                          {alloc?.allocationPercentage}%
+                        <span className="text-xs font-mono font-bold text-primary">
+                          {alloc.allocationPercentage}%
                         </span>
                       )}
                     </div>
 
-                    {isSelected && alloc && (
+                    {alloc && (
                       <div className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          <Label
+                            htmlFor={`assignment-role-${proj.id}`}
+                            className="mb-1 block uppercase tracking-wider"
+                          >
                             Project Role
-                          </label>
-                          <input
-                            type="text"
+                          </Label>
+                          <Input
+                            id={`assignment-role-${proj.id}`}
                             value={alloc.role}
                             onChange={(e) => updateProjectRole(proj.id, e.target.value)}
                             placeholder="e.g. Frontend Lead, Contributor"
@@ -304,10 +301,14 @@ export function AssignEmployeeModal({
                         </div>
 
                         <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          <Label
+                            htmlFor={`assignment-allocation-${proj.id}`}
+                            className="mb-1 block uppercase tracking-wider"
+                          >
                             Allocation Percentage ({alloc.allocationPercentage}%)
-                          </label>
+                          </Label>
                           <input
+                            id={`assignment-allocation-${proj.id}`}
                             type="range"
                             min="10"
                             max="100"
@@ -316,7 +317,7 @@ export function AssignEmployeeModal({
                             onChange={(e) =>
                               updateProjectAllocation(proj.id, parseInt(e.target.value, 10))
                             }
-                            className="w-full accent-[#0284C7] cursor-pointer"
+                            className="w-full accent-primary cursor-pointer"
                           />
                         </div>
                       </div>
@@ -339,21 +340,15 @@ export function AssignEmployeeModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-[4px] transition-colors cursor-pointer"
-            >
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              className="px-4 py-1.5 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold rounded-[4px] shadow-sm transition-colors cursor-pointer"
-            >
+            </Button>
+            <Button type="button" onClick={handleSave} disabled={totalAllocation > 100}>
               Save Assignments
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

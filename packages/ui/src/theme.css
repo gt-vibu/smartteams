@@ -1,0 +1,5 @@
+/* Shared Smarteam brand tokens. App shells may extend the semantic surface tokens. */
+:root {
+  --smarteam-primary: #0284c7;
+  --smarteam-primary-foreground: #ffffff;
+}

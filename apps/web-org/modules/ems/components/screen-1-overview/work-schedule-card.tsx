@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { DailyAttendanceItem } from '../../types/attendance.types';
-import { ShiftInfo } from '../../types/shift.types';
+import type { DailyAttendanceItem } from '../../types/attendance.types';
+import type { ShiftInfo } from '../../types/shift.types';
 import { formatMinutesToDuration } from '../../utils/format.utils';
 
 interface WorkScheduleCardProps {
@@ -25,7 +25,7 @@ export function WorkScheduleCard({
   }, []);
 
   return (
-    <div className="bg-white dark:bg-[#1B2028] rounded-lg border border-slate-200/90 dark:border-[#262F3D] p-4 sm:p-5 shadow-xs w-full min-w-0 max-w-full overflow-hidden">
+    <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-border p-4 sm:p-5 shadow-xs w-full min-w-0 max-w-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-4">
         <div className="h-7 w-7 rounded-full bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 flex items-center justify-center border border-sky-100 dark:border-sky-800 shrink-0">
@@ -81,7 +81,7 @@ export function WorkScheduleCard({
                       {item.dayOfWeek}
                     </span>
                     {item.isToday ? (
-                      <span className="h-5 px-1.5 rounded-full bg-[#0284C7] text-white text-[11px] font-bold flex items-center justify-center shadow-xs">
+                      <span className="h-5 px-1.5 rounded-full bg-primary text-white text-[11px] font-bold flex items-center justify-center shadow-xs">
                         {item.dayNumber}
                       </span>
                     ) : (

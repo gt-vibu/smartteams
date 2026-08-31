@@ -52,7 +52,7 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border border-slate-200 dark:border-slate-800">
         {/* Document Action Header */}
-        <div className="p-4 bg-slate-50 dark:bg-[#161B22] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div className="p-4 bg-slate-50 dark:bg-card border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-slate-900 dark:text-white">
               Official Salary Statement
@@ -74,12 +74,12 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
         </div>
 
         {/* Printable Document Paper */}
-        <div className="p-6 space-y-5 bg-white dark:bg-[#1B2028] text-slate-900 dark:text-slate-100 text-xs">
+        <div className="p-6 space-y-5 bg-white dark:bg-card text-slate-900 dark:text-slate-100 text-xs">
           {/* Company Branding & Statement Title */}
           <div className="flex items-start justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded bg-[#0284C7] text-white font-bold flex items-center justify-center text-xs">
+                <div className="h-6 w-6 rounded bg-primary text-white font-bold flex items-center justify-center text-xs">
                   S
                 </div>
                 <span className="font-bold text-sm tracking-tight">
@@ -108,7 +108,7 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
           </div>
 
           {/* Employee & Attendance Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 dark:bg-card p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px]">
             <div>
               <span className="text-slate-400 text-[10px] block">Employee Name</span>
               <span className="font-bold text-slate-900 dark:text-white">
@@ -173,7 +173,7 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
             {/* Left: Earnings */}
             <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden flex flex-col justify-between">
               <div>
-                <div className="bg-slate-100 dark:bg-[#12171F] px-3.5 py-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 flex justify-between">
+                <div className="bg-slate-100 dark:bg-card px-3.5 py-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 flex justify-between">
                   <span>Earnings & Allowances</span>
                   <span>Amount (₹)</span>
                 </div>
@@ -189,7 +189,7 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
                 </div>
               </div>
 
-              <div className="bg-sky-50/70 dark:bg-[#152438] px-3.5 py-2.5 border-t border-sky-200 dark:border-sky-800/60 flex justify-between font-bold text-xs">
+              <div className="bg-sky-50/70 dark:bg-card px-3.5 py-2.5 border-t border-sky-200 dark:border-sky-800/60 flex justify-between font-bold text-xs">
                 <span>Gross Earnings:</span>
                 <span className="font-mono text-sky-700 dark:text-sky-300">
                   {formatINR(payslip.grossEarnings)}
@@ -200,7 +200,7 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
             {/* Right: Employee Deductions */}
             <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden flex flex-col justify-between">
               <div>
-                <div className="bg-slate-100 dark:bg-[#12171F] px-3.5 py-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 flex justify-between">
+                <div className="bg-slate-100 dark:bg-card px-3.5 py-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 flex justify-between">
                   <span>Employee Deductions</span>
                   <span>Amount (₹)</span>
                 </div>
@@ -243,7 +243,7 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
           </div>
 
           {/* Employer Contributions & CTC Provisions */}
-          <div className="border border-slate-200 dark:border-slate-800 rounded-lg p-3.5 bg-slate-50/50 dark:bg-[#161B22]/50 space-y-2">
+          <div className="border border-slate-200 dark:border-slate-800 rounded-lg p-3.5 bg-slate-50/50 dark:bg-card/50 space-y-2">
             <div className="flex items-center justify-between text-[11px]">
               <span className="font-bold text-slate-700 dark:text-slate-300">
                 Employer Statutory Contributions & Provisions (Not Deducted from Pay):

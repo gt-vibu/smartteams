@@ -1,9 +1,16 @@
 'use client';
 
+import { Button, Checkbox, Input, Textarea } from '@smarteam/ui';
+
 import React, { useState, useEffect } from 'react';
 import { Select } from '@smarteam/ui';
 import onboardingFixture from '../../data/fixtures/onboarding.json';
-import { CandidateRecord, CandidateStage, OnboardingDocument } from '../../types/onboarding.types';
+import type {
+  CandidateRecord,
+  CandidateStage,
+  OnboardingDocument,
+  ProvisionedAsset,
+} from '../../types/onboarding.types';
 import { OnboardWizardModal } from './onboard-wizard-modal';
 import { emsStorageAdapter } from '../../storage/storage.adapter';
 
@@ -118,7 +125,7 @@ export function ScreenOnboarding() {
         ...c,
         checklist: updatedChecklist,
         progressPercentage: progress,
-        stage: progress === 100 ? ('COMPLETED' as CandidateStage) : c.stage,
+        stage: progress === 100 ? 'COMPLETED' : c.stage,
       };
     });
 
@@ -205,7 +212,7 @@ export function ScreenOnboarding() {
   return (
     <div className="p-3.5 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl mx-auto w-full min-w-0">
       {/* Header Banner */}
-      <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <span className="text-[10px] uppercase font-bold tracking-wider text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/60 px-2 py-0.5 rounded border border-sky-100 dark:border-sky-900">
@@ -223,19 +230,19 @@ export function ScreenOnboarding() {
 
         {/* Action Button */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <button
+          <Button
             onClick={() => setIsWizardOpen(true)}
-            className="w-full sm:w-auto justify-center px-4 py-2 bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold rounded-md shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-md shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
           >
             <span>+</span>
             <span>Onboard New Hire</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Active Pipeline
           </div>
@@ -245,7 +252,7 @@ export function ScreenOnboarding() {
           <div className="text-[10px] text-slate-400 mt-0.5">{totalCandidates} total tracked</div>
         </div>
 
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Docs Pending Audit
           </div>
@@ -255,7 +262,7 @@ export function ScreenOnboarding() {
           <div className="text-[10px] text-slate-400 mt-0.5">KYC & academic degrees</div>
         </div>
 
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Hardware Dispatched
           </div>
@@ -265,7 +272,7 @@ export function ScreenOnboarding() {
           <div className="text-[10px] text-slate-400 mt-0.5">MacBooks & 4K Monitors</div>
         </div>
 
-        <div className="bg-white dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
+        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Ready for Day 1
           </div>
@@ -278,63 +285,63 @@ export function ScreenOnboarding() {
       </div>
 
       {/* Sub-Navigation Tabs Bar */}
-      <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200 dark:border-slate-800 p-1.5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 overflow-hidden">
+      <div className="bg-white dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 p-1.5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 overflow-hidden">
         <div className="flex items-center space-x-1.5">
-          <button
+          <Button
             onClick={() => setActiveTab('PIPELINE')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'PIPELINE'
-                ? 'bg-[#0284C7] text-white shadow-2xs'
+                ? 'bg-primary text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Candidate Pipeline ({candidates.length})
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('CHECKLISTS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'CHECKLISTS'
-                ? 'bg-[#0284C7] text-white shadow-2xs'
+                ? 'bg-primary text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Onboarding Checklists
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('DOCUMENTS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'DOCUMENTS'
-                ? 'bg-[#0284C7] text-white shadow-2xs'
+                ? 'bg-primary text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Document Verification {pendingDocsCount > 0 && `(${pendingDocsCount})`}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('ASSETS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'ASSETS'
-                ? 'bg-[#0284C7] text-white shadow-2xs'
+                ? 'bg-primary text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Asset & Kit Allocation
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab('WORKFLOWS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'WORKFLOWS'
-                ? 'bg-[#0284C7] text-white shadow-2xs'
+                ? 'bg-primary text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
             Templates & Policies
-          </button>
+          </Button>
         </div>
 
         {/* Search */}
         <div className="relative shrink-0 max-w-xs">
-          <input
+          <Input
             type="text"
             placeholder="Search candidate or role..."
             value={searchQuery}
@@ -362,7 +369,7 @@ export function ScreenOnboarding() {
         <div className="space-y-4">
           {/* Stage Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs">
-            <button
+            <Button
               onClick={() => setSelectedStageFilter('ALL')}
               className={`px-3 py-1 rounded-[4px] font-semibold border transition-all cursor-pointer ${
                 selectedStageFilter === 'ALL'
@@ -371,11 +378,11 @@ export function ScreenOnboarding() {
               }`}
             >
               All Stages ({candidates.length})
-            </button>
+            </Button>
             {STAGES.map((st) => {
               const count = candidates.filter((c) => c.stage === st.id).length;
               return (
-                <button
+                <Button
                   key={st.id}
                   onClick={() => setSelectedStageFilter(st.id)}
                   className={`px-3 py-1 rounded-[4px] font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
@@ -387,13 +394,13 @@ export function ScreenOnboarding() {
                   <span className={`h-1.5 w-1.5 rounded-full ${st.dotCls}`} />
                   <span>{st.label}</span>
                   <span className="text-[10px] opacity-70">({count})</span>
-                </button>
+                </Button>
               );
             })}
           </div>
 
           {/* Candidate Table */}
-          <div className="bg-white dark:bg-[#161B22] rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto">
+          <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
@@ -483,7 +490,7 @@ export function ScreenOnboarding() {
                         </td>
 
                         <td className="py-3 px-3 text-right">
-                          <span className="text-xs font-semibold text-[#0284C7] group-hover:underline">
+                          <span className="text-xs font-semibold text-primary group-hover:underline">
                             View Dossier →
                           </span>
                         </td>
@@ -522,7 +529,7 @@ export function ScreenOnboarding() {
                       {c.jobTitle} · Starts {c.joiningDate}
                     </div>
                   </div>
-                  <span className="text-xs font-bold font-mono text-[#0284C7]">
+                  <span className="text-xs font-bold font-mono text-primary">
                     {c.progressPercentage}%
                   </span>
                 </div>
@@ -572,13 +579,13 @@ export function ScreenOnboarding() {
                 <div className="space-y-1.5 bg-slate-50 p-3 rounded-[6px] border border-slate-100">
                   <div className="flex justify-between text-xs font-semibold text-slate-700">
                     <span>Overall Completion</span>
-                    <span className="font-mono text-[#0284C7]">
+                    <span className="font-mono text-primary">
                       {selectedCandidate.progressPercentage}%
                     </span>
                   </div>
                   <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#0284C7] transition-all rounded-full"
+                      className="h-full bg-primary transition-all rounded-full"
                       style={{ width: `${selectedCandidate.progressPercentage}%` }}
                     />
                   </div>
@@ -598,11 +605,11 @@ export function ScreenOnboarding() {
                           task.isCompleted ? 'bg-emerald-50/30' : 'bg-white'
                         }`}
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={task.isCompleted}
-                          onChange={() => {}} // handled by row click
-                          className="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 cursor-pointer"
+                          onCheckedChange={() => {}} // handled by row click
+                          aria-label={`Mark ${task.title} complete`}
+                          className="mt-0.5"
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
@@ -694,12 +701,12 @@ export function ScreenOnboarding() {
                         {d.reviewerRemarks || 'Pending compliance audit'}
                       </td>
                       <td className="py-3 px-3 text-right">
-                        <button
+                        <Button
                           onClick={() => setReviewingDoc({ candidateId: c.id, doc: d })}
                           className="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded transition-colors cursor-pointer"
                         >
                           Audit & Verify
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   )),
@@ -765,9 +772,9 @@ export function ScreenOnboarding() {
                         {a.trackingNumber || 'In Bengaluru HQ Locker'}
                       </td>
                       <td className="py-3 px-3 text-right">
-                        <button
+                        <Button
                           onClick={() => {
-                            const nextStatus =
+                            const nextStatus: ProvisionedAsset['status'] =
                               a.status === 'ORDERED'
                                 ? 'ASSIGNED'
                                 : a.status === 'ASSIGNED'
@@ -778,9 +785,7 @@ export function ScreenOnboarding() {
                                 ? {
                                     ...can,
                                     assets: can.assets.map((item) =>
-                                      item.id === a.id
-                                        ? { ...item, status: nextStatus as any }
-                                        : item,
+                                      item.id === a.id ? { ...item, status: nextStatus } : item,
                                     ),
                                   }
                                 : can,
@@ -790,7 +795,7 @@ export function ScreenOnboarding() {
                           className="px-2 py-0.5 text-[11px] font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded border border-sky-200 cursor-pointer"
                         >
                           Update Status →
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   )),
@@ -864,12 +869,12 @@ export function ScreenOnboarding() {
                     {selectedCandidate.jobTitle} · {selectedCandidate.department}
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={() => setSelectedCandidate(null)}
                   className="p-1 rounded text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                 >
                   ✕
-                </button>
+                </Button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-5 space-y-5 text-xs">
@@ -952,7 +957,7 @@ export function ScreenOnboarding() {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       Checklist Completion
                     </span>
-                    <span className="font-mono font-bold text-[#0284C7]">
+                    <span className="font-mono font-bold text-primary">
                       {selectedCandidate.progressPercentage}%
                     </span>
                   </div>
@@ -1006,7 +1011,7 @@ export function ScreenOnboarding() {
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Auditor / Review Remarks
               </label>
-              <textarea
+              <Textarea
                 rows={2}
                 value={reviewerRemarks}
                 onChange={(e) => setReviewerRemarks(e.target.value)}
@@ -1016,14 +1021,14 @@ export function ScreenOnboarding() {
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => setReviewingDoc(null)}
                 className="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() =>
                   handleVerifyDocument(
@@ -1036,8 +1041,8 @@ export function ScreenOnboarding() {
                 className="px-3 py-1.5 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded"
               >
                 Reject Document
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() =>
                   handleVerifyDocument(
@@ -1050,7 +1055,7 @@ export function ScreenOnboarding() {
                 className="px-3.5 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded shadow-xs"
               >
                 ✓ Approve & Verify
-              </button>
+              </Button>
             </div>
           </div>
         </div>

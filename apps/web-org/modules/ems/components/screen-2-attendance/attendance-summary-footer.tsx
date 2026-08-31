@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AttendanceSummaryStats } from '../../types/attendance-timeline.types';
+import { Button } from '@smarteam/ui';
+import type { AttendanceSummaryStats } from '../../types/attendance-timeline.types';
 
 interface AttendanceSummaryFooterProps {
   stats: AttendanceSummaryStats;
@@ -29,7 +30,9 @@ export function AttendanceSummaryFooter({
       <div className="flex flex-wrap items-center gap-6">
         {/* Toggle Switch */}
         <div className="flex flex-col bg-slate-100 rounded p-0.5 border border-slate-200 text-[10px] font-bold">
-          <button
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => setUnitMode('days')}
             className={`px-2 py-0.5 rounded transition-colors ${
               unitMode === 'days'
@@ -38,8 +41,10 @@ export function AttendanceSummaryFooter({
             }`}
           >
             Days
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => setUnitMode('hours')}
             className={`px-2 py-0.5 rounded transition-colors ${
               unitMode === 'hours'
@@ -48,7 +53,7 @@ export function AttendanceSummaryFooter({
             }`}
           >
             Hours
-          </button>
+          </Button>
         </div>
 
         {/* Metrics List */}

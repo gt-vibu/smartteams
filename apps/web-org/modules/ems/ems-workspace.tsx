@@ -120,7 +120,7 @@ function EmsWorkspaceInner() {
           {effectiveModule === 'home' && (
             <Screen1Overview
               onNavigateModule={(mod, sub) => {
-                navigateToModule(mod, sub as any);
+                navigateToModule(mod, sub);
               }}
             />
           )}

@@ -13,7 +13,7 @@ export function GreetingActivityCard() {
       {/* Greeting Banner */}
       <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-between">
         <div className="flex items-center space-x-3.5">
-          <div className="h-9 w-9 rounded-md bg-[#0284C7] flex items-center justify-center text-white font-bold text-sm shadow-xs">
+          <div className="h-9 w-9 rounded-md bg-primary flex items-center justify-center text-white font-bold text-sm shadow-xs">
             <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
               <path d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>

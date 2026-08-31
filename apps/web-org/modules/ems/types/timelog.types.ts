@@ -21,3 +21,11 @@ export interface TimeTrackerSummaryStats {
   submittedHours: string; // "00:00 Hrs"
   notSubmittedHours: string; // "120:00 Hrs"
 }
+
+export interface TimesheetStorageData {
+  summary: TimeTrackerSummaryStats;
+  approvedNotification: ApprovedTimesheetNotification | null;
+  groupedLogs: DateGroupedTimeLogs[];
+}
+import type { ApprovedTimesheetNotification } from './timesheet.types';
+export type { ApprovedTimesheetNotification } from './timesheet.types';

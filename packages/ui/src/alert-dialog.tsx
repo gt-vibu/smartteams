@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { cn } from './cn';
 import { Button } from './button';
+import { useFocusTrap } from './focus-trap';
 
 export interface AlertDialogProps {
   open: boolean;
@@ -9,15 +10,8 @@ export interface AlertDialogProps {
 }
 
 export function AlertDialog({ open, onOpenChange, children }: AlertDialogProps) {
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
-        onOpenChange(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, onOpenChange]);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  useFocusTrap(open, contentRef, () => onOpenChange(false));
 
   if (!open) return null;
 
@@ -26,13 +20,16 @@ export function AlertDialog({ open, onOpenChange, children }: AlertDialogProps) 
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity animate-in fade-in"
-        onClick={() => onOpenChange(false)}
         aria-hidden="true"
       />
       {/* Dialog container */}
       <div
         className="relative z-50 w-full max-w-md animate-in fade-in zoom-in-95"
         role="alertdialog"
+        aria-modal="true"
+        aria-label="Confirmation"
+        tabIndex={-1}
+        ref={contentRef}
       >
         {children}
       </div>
@@ -47,7 +44,7 @@ export const AlertDialogContent = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'w-full rounded-xl border border-slate-200 bg-white p-5 shadow-2xl transition-all dark:border-slate-800 dark:bg-[#1B2028] dark:text-slate-100',
+      'w-full rounded-xl border border-slate-200 bg-white p-5 shadow-2xl transition-all dark:border-slate-800 dark:bg-card dark:text-slate-100',
       className,
     )}
     {...props}

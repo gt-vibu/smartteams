@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimeTrackerSummaryStats } from '../../types/timelog.types';
+import type { TimeTrackerSummaryStats } from '../../types/timelog.types';
 
 interface TimeLogSummaryStripProps {
   summary: TimeTrackerSummaryStats;

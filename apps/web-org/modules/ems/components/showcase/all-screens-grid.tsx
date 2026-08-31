@@ -1,3 +1,4 @@
+import { Button } from '@smarteam/ui';
 import React from 'react';
 import { Screen1Overview } from '../screen-1-overview/screen-1-overview';
 import { Screen2Timeline } from '../screen-2-attendance/screen-2-timeline';
@@ -99,9 +100,9 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
                 <span className="text-[11px] font-semibold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
                   {s.badge}
                 </span>
-                <button
+                <Button
                   onClick={() => onSelectScreen(s.id)}
-                  className="text-xs font-bold text-[#0284C7] hover:underline flex items-center gap-1"
+                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
                 >
                   <span>Focus View</span>
                   <svg
@@ -117,12 +118,12 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
                       d="M14 5l7 7m0 0l-7 7m7-7H3"
                     />
                   </svg>
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Embedded Live Screen Canvas */}
-            <div className="flex-1 bg-[#EEF2F6] overflow-x-auto p-3 max-h-[620px] overflow-y-auto">
+            <div className="flex-1 bg-muted overflow-x-auto p-3 max-h-[620px] overflow-y-auto">
               <div className="min-w-[720px] transform origin-top">{s.component}</div>
             </div>
           </div>

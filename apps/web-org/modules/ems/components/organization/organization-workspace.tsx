@@ -17,7 +17,7 @@ import { ScreenTimesheetsAdmin } from '../screen-timesheet/screen-timesheets-adm
 import { ScreenPayrollAdmin } from '../screen-payroll/screen-payroll-admin';
 
 interface OrganizationWorkspaceProps {
-  onNavigateModule?: (module: string, subView?: any) => void;
+  onNavigateModule?: (module: string, subView?: string) => void;
   activeTab?: string;
   onSelectTab?: (tab: string) => void;
 }
@@ -46,7 +46,7 @@ export function OrganizationWorkspace({
   } = useOrganization();
 
   return (
-    <div className="w-full max-w-full pb-14 bg-[#F0F4F8] dark:bg-[#12151A] min-h-full">
+    <div className="w-full max-w-full pb-14 bg-background dark:bg-background min-h-full">
       {/* 1. Full-Width Botanical Cover Hero Banner + Sticky Sub-Nav */}
       <OrgHeroBanner
         organization={organization}

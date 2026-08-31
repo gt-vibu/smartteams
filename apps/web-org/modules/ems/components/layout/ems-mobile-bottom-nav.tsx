@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 
@@ -417,13 +419,13 @@ export function EmsMobileBottomNav({
       {isMoreOpen && (
         <div
           ref={moreRef}
-          className="fixed bottom-[57px] left-0 right-0 z-50 md:hidden bg-white dark:bg-[#161B22] border-t border-slate-200 dark:border-slate-800 rounded-t-2xl shadow-2xl px-4 pt-4 pb-3 animate-in slide-in-from-bottom-4 duration-200"
+          className="fixed bottom-[57px] left-0 right-0 z-50 md:hidden bg-white dark:bg-card border-t border-slate-200 dark:border-slate-800 rounded-t-2xl shadow-2xl px-4 pt-4 pb-3 animate-in slide-in-from-bottom-4 duration-200"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               More
             </span>
-            <button
+            <Button
               onClick={() => setIsMoreOpen(false)}
               className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
@@ -436,28 +438,28 @@ export function EmsMobileBottomNav({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </Button>
           </div>
           <div className="grid grid-cols-4 gap-1.5">
             {overflowItems.map((item) => {
               const isActive = activeModule === item.id;
               return (
-                <button
+                <Button
                   key={item.id}
                   onClick={() => handleSelect(item.id)}
                   className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#0284C7]/10 text-[#0284C7] dark:text-sky-400'
+                      ? 'bg-primary/10 text-primary dark:text-sky-400'
                       : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <div className={isActive ? 'text-[#0284C7] dark:text-sky-400' : ''}>
+                  <div className={isActive ? 'text-primary dark:text-sky-400' : ''}>
                     {item.icon}
                   </div>
                   <span className="text-[10px] font-semibold text-center leading-tight break-words max-w-[56px]">
                     {item.label}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -465,11 +467,11 @@ export function EmsMobileBottomNav({
       )}
 
       {/* Bottom Nav Bar — only visible on mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#161B22] border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.3)] flex items-stretch">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-card border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.3)] flex items-stretch">
         {primaryItems.map((item) => {
           const isActive = activeModule === item.id;
           return (
-            <button
+            <Button
               key={item.id}
               onClick={() => {
                 onSelectModule(item.id);
@@ -477,34 +479,34 @@ export function EmsMobileBottomNav({
               }}
               className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative ${
                 isActive
-                  ? 'text-[#0284C7] dark:text-sky-400'
+                  ? 'text-primary dark:text-sky-400'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {/* Active indicator line */}
               {isActive && (
-                <span className="absolute top-0 left-3 right-3 h-[2px] bg-[#0284C7] dark:bg-sky-400 rounded-full" />
+                <span className="absolute top-0 left-3 right-3 h-[2px] bg-primary dark:bg-sky-400 rounded-full" />
               )}
-              <div className={isActive ? 'text-[#0284C7] dark:text-sky-400' : ''}>{item.icon}</div>
+              <div className={isActive ? 'text-primary dark:text-sky-400' : ''}>{item.icon}</div>
               <span className="text-[10px] font-semibold leading-tight truncate max-w-[56px] text-center">
                 {item.label}
               </span>
-            </button>
+            </Button>
           );
         })}
 
         {/* More Button */}
         {hasOverflow && (
-          <button
+          <Button
             onClick={() => setIsMoreOpen(!isMoreOpen)}
             className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative ${
               isOverflowActive || isMoreOpen
-                ? 'text-[#0284C7] dark:text-sky-400'
+                ? 'text-primary dark:text-sky-400'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             {(isOverflowActive || isMoreOpen) && (
-              <span className="absolute top-0 left-3 right-3 h-[2px] bg-[#0284C7] dark:bg-sky-400 rounded-full" />
+              <span className="absolute top-0 left-3 right-3 h-[2px] bg-primary dark:bg-sky-400 rounded-full" />
             )}
             <svg
               className="h-5 w-5"
@@ -520,7 +522,7 @@ export function EmsMobileBottomNav({
               />
             </svg>
             <span className="text-[10px] font-semibold leading-tight">More</span>
-          </button>
+          </Button>
         )}
       </nav>
     </>

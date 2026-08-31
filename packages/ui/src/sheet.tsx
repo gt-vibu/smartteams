@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cn } from './cn';
+import { useFocusTrap } from './focus-trap';
 
 export interface SheetProps {
   open: boolean;
@@ -10,24 +11,17 @@ export interface SheetProps {
 }
 
 export function Sheet({ open, onOpenChange, children, side = 'right', className }: SheetProps) {
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
-        onOpenChange(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [open, onOpenChange]);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  useFocusTrap(open, contentRef, () => onOpenChange(false));
 
   if (!open) return null;
 
   const sideClasses = {
     right:
-      'fixed inset-y-0 right-0 h-full w-full sm:max-w-md md:max-w-lg border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161B22] text-slate-900 dark:text-slate-100 shadow-2xl transition-transform duration-200 ease-in-out',
-    left: 'fixed inset-y-0 left-0 h-full w-full sm:max-w-md md:max-w-lg border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161B22] text-slate-900 dark:text-slate-100 shadow-2xl transition-transform duration-200 ease-in-out',
+      'fixed inset-y-0 right-0 h-full w-full sm:max-w-md md:max-w-lg border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-card text-slate-900 dark:text-slate-100 shadow-2xl transition-transform duration-200 ease-in-out',
+    left: 'fixed inset-y-0 left-0 h-full w-full sm:max-w-md md:max-w-lg border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-card text-slate-900 dark:text-slate-100 shadow-2xl transition-transform duration-200 ease-in-out',
     bottom:
-      'fixed inset-x-0 bottom-0 max-h-[85vh] w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#161B22] text-slate-900 dark:text-slate-100 shadow-2xl rounded-t-xl',
+      'fixed inset-x-0 bottom-0 max-h-[85vh] w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-card text-slate-900 dark:text-slate-100 shadow-2xl rounded-t-xl',
   };
 
   return (
@@ -42,6 +36,10 @@ export function Sheet({ open, onOpenChange, children, side = 'right', className 
       <div
         className={cn(sideClasses[side], 'relative z-50 flex flex-col', className)}
         role="dialog"
+        aria-modal="true"
+        aria-label="Details"
+        tabIndex={-1}
+        ref={contentRef}
       >
         {children}
       </div>
@@ -93,7 +91,7 @@ export function SheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDi
   return (
     <div
       className={cn(
-        'flex items-center justify-end gap-2 p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#12161D]',
+        'flex items-center justify-end gap-2 p-4 border-t border-border bg-muted',
         className,
       )}
       {...props}

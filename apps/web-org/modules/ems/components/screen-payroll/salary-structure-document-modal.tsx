@@ -43,7 +43,7 @@ export function SalaryStructureDocumentModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border border-slate-200 dark:border-slate-800">
         {/* Document Action Header */}
-        <div className="p-4 bg-slate-50 dark:bg-[#161B22] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div className="p-4 bg-slate-50 dark:bg-card border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-slate-900 dark:text-white">
               Official Compensation Structure Statement
@@ -65,12 +65,12 @@ export function SalaryStructureDocumentModal({
         </div>
 
         {/* Printable Document Paper */}
-        <div className="p-6 space-y-5 bg-white dark:bg-[#1B2028] text-slate-900 dark:text-slate-100 text-xs">
+        <div className="p-6 space-y-5 bg-white dark:bg-card text-slate-900 dark:text-slate-100 text-xs">
           {/* Header */}
           <div className="flex items-start justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded bg-[#0284C7] text-white font-bold flex items-center justify-center text-xs">
+                <div className="h-6 w-6 rounded bg-primary text-white font-bold flex items-center justify-center text-xs">
                   S
                 </div>
                 <span className="font-bold text-sm tracking-tight">
@@ -95,7 +95,7 @@ export function SalaryStructureDocumentModal({
           </div>
 
           {/* Employee & Structure Meta */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 dark:bg-[#161B22] p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 dark:bg-card p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px]">
             <div>
               <span className="text-slate-400 text-[10px] block">Staff Name</span>
               <span className="font-bold text-slate-900 dark:text-white">
@@ -118,7 +118,7 @@ export function SalaryStructureDocumentModal({
 
           {/* Itemized Table */}
           <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
-            <div className="bg-slate-100 dark:bg-[#12171F] px-4 py-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 flex justify-between">
+            <div className="bg-slate-100 dark:bg-card px-4 py-2 font-bold text-[11px] uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 flex justify-between">
               <span>Salary Component</span>
               <div className="flex gap-12">
                 <span>Monthly (₹)</span>
@@ -185,7 +185,7 @@ export function SalaryStructureDocumentModal({
             </div>
 
             {/* Employer Costs Section */}
-            <div className="p-3.5 space-y-2 bg-slate-50/50 dark:bg-[#161B22]/50">
+            <div className="p-3.5 space-y-2 bg-slate-50/50 dark:bg-card/50">
               <div className="text-[10px] font-bold text-slate-400 uppercase">
                 3. Employer Statutory Contributions (CTC)
               </div>

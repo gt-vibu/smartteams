@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { employeeRepository, EmployeeProfile } from '../repositories/employee.repository';
+import type { EmployeeProfile } from '../repositories/employee.repository';
+import { employeeRepository } from '../repositories/employee.repository';
 
 export function useEmployee() {
   const [employee, setEmployee] = useState<EmployeeProfile>(() =>

@@ -1,8 +1,10 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React, { useState } from 'react';
+import { Brand } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
-import { PhotoUploadModal } from '../profile/photo-upload-modal';
 import { PersonaSwitcher } from './persona-switcher';
 import { useTheme } from '../../hooks/use-theme';
 
@@ -21,7 +23,6 @@ export function EmsTopAppBar({
 }: EmsTopAppBarProps) {
   const { workspaceContext, canSwitchWorkspace, switchWorkspace, visibleSpaces } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
 
   // Compute visible top navigation spaces (strictly My Space, Team, Organization based on context and role)
@@ -39,27 +40,21 @@ export function EmsTopAppBar({
 
   return (
     <>
-      <header className="h-10 sm:h-12 w-full bg-[#06152D] border-b border-[#0F2444] px-2.5 sm:px-4 flex items-center justify-between z-40 sticky top-0 shrink-0 shadow-xs text-white">
+      <header className="h-10 sm:h-12 w-full bg-sidebar border-b border-sidebar-border px-2.5 sm:px-4 flex items-center justify-between z-40 sticky top-0 shrink-0 shadow-xs text-sidebar-foreground">
         {/* Left: Brand + Workspace Switcher + Desktop Space Selector */}
         <div className="flex items-center space-x-2 sm:space-x-3.5 min-w-0">
           {/* Brand Logo */}
-          <div className="flex items-center space-x-2 shrink-0">
-            <div className="h-7 w-7 rounded-[6px] bg-[#0284C7] flex items-center justify-center text-white shadow-xs">
-              <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
-                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-white tracking-tight hidden sm:inline">
-              Smarteam
-            </span>
-          </div>
+          <Brand
+            compact
+            className="shrink-0 text-white [&>span:first-child]:size-7 [&>span:first-child]:rounded-[6px] [&>span:first-child>svg]:size-4"
+          />
 
           {/* Operating Context Switcher */}
           {canSwitchWorkspace && (
             <div className="relative">
-              <button
+              <Button
                 onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-[#0E2038] hover:bg-[#152845] text-sky-300 border border-sky-800/60 rounded text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer max-w-[140px] sm:max-w-none truncate"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-sidebar/80 hover:bg-sidebar-accent/20 text-primary border border-sidebar-border rounded text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer max-w-[140px] sm:max-w-none truncate"
                 title="Switch Operating Workspace"
                 aria-haspopup="true"
                 aria-expanded={isWorkspaceMenuOpen}
@@ -77,7 +72,7 @@ export function EmsTopAppBar({
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </Button>
 
               {isWorkspaceMenuOpen && (
                 <>
@@ -85,15 +80,15 @@ export function EmsTopAppBar({
                     onClick={() => setIsWorkspaceMenuOpen(false)}
                     className="fixed inset-0 z-40"
                   />
-                  <div className="absolute left-0 mt-1.5 w-52 bg-[#0E2038] border border-[#1A3358] rounded-md shadow-xl z-50 py-1 text-xs text-white">
-                    <div className="px-3 py-1.5 border-b border-[#1A3358] text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                  <div className="absolute left-0 mt-1.5 w-52 bg-sidebar border border-sidebar-border rounded-md shadow-xl z-50 py-1 text-xs text-sidebar-foreground">
+                    <div className="px-3 py-1.5 border-b border-sidebar-border text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
                       Operating Context
                     </div>
-                    <button
+                    <Button
                       onClick={() => handleToggleWorkspace('ADMIN')}
-                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-[#152A4A] cursor-pointer ${
+                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-sidebar-accent/20 cursor-pointer ${
                         workspaceContext === 'ADMIN'
-                          ? 'text-sky-400 font-bold bg-[#152A4A]'
+                          ? 'text-primary font-bold bg-sidebar-accent/20'
                           : 'text-slate-200'
                       }`}
                     >
@@ -102,12 +97,12 @@ export function EmsTopAppBar({
                         <span>Admin Workspace</span>
                       </div>
                       {workspaceContext === 'ADMIN' && <span className="text-sky-400">✓</span>}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => handleToggleWorkspace('EMPLOYEE')}
-                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-[#152A4A] cursor-pointer ${
+                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-sidebar-accent/20 cursor-pointer ${
                         workspaceContext === 'EMPLOYEE'
-                          ? 'text-sky-400 font-bold bg-[#152A4A]'
+                          ? 'text-primary font-bold bg-sidebar-accent/20'
                           : 'text-slate-200'
                       }`}
                     >
@@ -116,7 +111,7 @@ export function EmsTopAppBar({
                         <span>Employee Workspace</span>
                       </div>
                       {workspaceContext === 'EMPLOYEE' && <span className="text-sky-400">✓</span>}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -129,17 +124,17 @@ export function EmsTopAppBar({
               {spaces.map((space) => {
                 const isActive = activeSpace === space;
                 return (
-                  <button
+                  <Button
                     key={space}
                     onClick={() => onSelectSpace(space)}
                     className={`px-3 py-1 text-xs font-semibold rounded-[5px] transition-all cursor-pointer whitespace-nowrap ${
                       isActive
-                        ? 'bg-[#112340] text-white border border-sky-500/30 shadow-xs'
-                        : 'text-slate-300 hover:text-white hover:bg-[#112340]/50'
+                        ? 'bg-sidebar-accent/20 text-white border border-primary/30 shadow-xs'
+                        : 'text-sidebar-foreground/80 hover:text-white hover:bg-sidebar-accent/20'
                     }`}
                   >
                     {space}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -150,8 +145,9 @@ export function EmsTopAppBar({
         <div className="flex items-center space-x-1.5 sm:space-x-2 text-slate-300 shrink-0">
           {/* Quick Create + Action (Strictly for ADMIN context) */}
           {workspaceContext === 'ADMIN' && (
-            <button
-              className="hidden sm:flex h-7 w-7 rounded-[5px] bg-[#0284C7] hover:bg-[#0369A1] text-white items-center justify-center transition-colors shadow-xs cursor-pointer"
+            <Button
+              onClick={() => window.dispatchEvent(new CustomEvent('ems:open:command-palette'))}
+              className="hidden sm:flex h-9 w-9 rounded-[5px] bg-primary hover:bg-primary/90 text-primary-foreground items-center justify-center transition-colors shadow-xs cursor-pointer"
               title="Quick Action"
               aria-label="Quick Action"
             >
@@ -164,13 +160,13 @@ export function EmsTopAppBar({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
-            </button>
+            </Button>
           )}
 
           {/* Search Icon with Keyboard Hint */}
-          <button
+          <Button
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 p-1.5 text-slate-300 hover:text-white hover:bg-[#112340] rounded transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 p-1.5 text-sidebar-foreground/80 hover:text-white hover:bg-sidebar-accent/20 rounded transition-colors cursor-pointer"
             title="Open Command & Search (⌘K / Ctrl+K)"
             aria-label="Search"
           >
@@ -190,12 +186,12 @@ export function EmsTopAppBar({
             <span className="hidden lg:inline text-[10px] font-mono text-slate-300 bg-[#0E2038] px-1.5 py-0.5 rounded border border-slate-700/60">
               ⌘K
             </span>
-          </button>
+          </Button>
 
           {/* Notification Bell */}
-          <button
+          <Button
             onClick={onOpenNotifications}
-            className="p-1.5 text-slate-300 hover:text-white hover:bg-[#112340] rounded transition-colors cursor-pointer relative"
+            className="p-1.5 text-sidebar-foreground/80 hover:text-white hover:bg-sidebar-accent/20 rounded transition-colors cursor-pointer relative"
             title="Notifications"
             aria-label="Notifications"
           >
@@ -212,11 +208,11 @@ export function EmsTopAppBar({
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-sky-400 ring-2 ring-[#06152D]" />
-          </button>
+            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary ring-2 ring-sidebar" />
+          </Button>
 
           {/* Dark / Light Mode Switcher */}
-          <button
+          <Button
             onClick={toggleTheme}
             className={`p-1.5 sm:px-2.5 sm:py-1 rounded-[5px] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
               isDark
@@ -265,15 +261,12 @@ export function EmsTopAppBar({
                 <span className="hidden sm:inline text-[11px] font-bold text-sky-200">Light</span>
               </>
             )}
-          </button>
+          </Button>
 
           {/* Persona Switcher & Current User Identity */}
           <PersonaSwitcher />
         </div>
       </header>
-
-      {/* Profile Photo Upload Modal */}
-      <PhotoUploadModal isOpen={isPhotoModalOpen} onClose={() => setIsPhotoModalOpen(false)} />
     </>
   );
 }

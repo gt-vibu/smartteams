@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { StandardDataTable, ColumnDef } from '@smarteam/ui';
-import { AttendanceTableRow } from '../../types/attendance-table.types';
+import type { ColumnDef } from '@smarteam/ui';
+import { Button, StandardDataTable } from '@smarteam/ui';
+import type { AttendanceTableRow } from '../../types/attendance-table.types';
 
 interface AttendanceTableViewProps {
   rows: AttendanceTableRow[];
@@ -50,7 +51,7 @@ function StatusBadge({ row }: { row: AttendanceTableRow }) {
 function AttendanceMobileCards({ rows, onSelectRow }: AttendanceTableViewProps) {
   if (rows.length === 0) {
     return (
-      <div className="bg-white dark:bg-[#1B2028] rounded-xl border border-slate-200/90 dark:border-[#262F3D] p-8 text-center space-y-2">
+      <div className="bg-white dark:bg-card rounded-xl border border-slate-200/90 dark:border-border p-8 text-center space-y-2">
         <div className="text-sm font-bold text-slate-700 dark:text-white">
           No attendance records found
         </div>
@@ -73,10 +74,10 @@ function AttendanceMobileCards({ rows, onSelectRow }: AttendanceTableViewProps) 
           <div
             key={row.id}
             onClick={() => onSelectRow(row)}
-            className="bg-white dark:bg-[#1B2028] rounded-xl border border-slate-200/80 dark:border-[#262F3D] shadow-xs overflow-hidden cursor-pointer active:bg-sky-50/40 dark:active:bg-slate-800/60 transition-colors"
+            className="bg-white dark:bg-card rounded-xl border border-slate-200/80 dark:border-border shadow-xs overflow-hidden cursor-pointer active:bg-sky-50/40 dark:active:bg-slate-800/60 transition-colors"
           >
             {/* Card header: Date + Status */}
-            <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50/80 dark:bg-[#161B22] border-b border-slate-100 dark:border-[#262F3D]">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50/80 dark:bg-card border-b border-slate-100 dark:border-border">
               <span className="text-xs font-bold text-slate-900 dark:text-white tracking-tight">
                 {row.date}
               </span>
@@ -149,15 +150,15 @@ function AttendanceMobileCards({ rows, onSelectRow }: AttendanceTableViewProps) 
             {/* Regularization footer — only when available */}
             {row.canRegularize && (
               <div className="px-4 pb-3">
-                <button
+                <Button
                   onClick={(e) => {
                     e.stopPropagation();
                     onSelectRow(row);
                   }}
-                  className="w-full py-1.5 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 text-xs font-semibold text-[#0284C7] dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors cursor-pointer"
+                  className="w-full py-1.5 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/30 text-xs font-semibold text-primary dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors cursor-pointer"
                 >
                   Regularize →
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -177,7 +178,7 @@ function AttendanceDesktopTable({ rows, onSelectRow }: AttendanceTableViewProps)
       sortable: true,
       pinned: 'left',
       cell: (row) => (
-        <span className="font-semibold text-slate-900 dark:text-white group-hover:text-[#0284C7] transition-colors whitespace-nowrap">
+        <span className="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors whitespace-nowrap">
           {row.date}
         </span>
       ),
@@ -271,15 +272,15 @@ function AttendanceDesktopTable({ rows, onSelectRow }: AttendanceTableViewProps)
       sortable: false,
       cell: (row) =>
         row.canRegularize ? (
-          <button
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               onSelectRow(row);
             }}
-            className="text-[11px] font-semibold text-[#0284C7] hover:text-[#0369A1] hover:underline cursor-pointer whitespace-nowrap"
+            className="text-[11px] font-semibold text-primary hover:text-primary hover:underline cursor-pointer whitespace-nowrap"
           >
             Regularize
-          </button>
+          </Button>
         ) : (
           <span className="text-slate-400 dark:text-slate-600">-</span>
         ),

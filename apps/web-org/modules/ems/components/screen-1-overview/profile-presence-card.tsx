@@ -1,6 +1,7 @@
+import { Button } from '@smarteam/ui';
 import React, { useState, useEffect } from 'react';
-import { EmployeeProfile } from '../../types/employee.types';
-import { LivePunchState } from '../../types/attendance.types';
+import type { EmployeeProfile } from '../../types/employee.types';
+import type { LivePunchState } from '../../types/attendance.types';
 
 interface ProfilePresenceCardProps {
   employee: EmployeeProfile;
@@ -68,7 +69,7 @@ export function ProfilePresenceCard({ employee, initialPunch }: ProfilePresenceC
       </div>
 
       {/* Check-Out / Check-In Button */}
-      <button
+      <Button
         onClick={() => setIsCheckedIn(!isCheckedIn)}
         className={`w-full py-1.5 px-4 text-xs font-semibold rounded transition-colors ${
           isCheckedIn
@@ -77,7 +78,7 @@ export function ProfilePresenceCard({ employee, initialPunch }: ProfilePresenceC
         }`}
       >
         {isCheckedIn ? 'Check-out' : 'Check-in'}
-      </button>
+      </Button>
     </div>
   );
 }

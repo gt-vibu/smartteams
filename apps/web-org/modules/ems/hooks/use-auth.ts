@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { authRepository } from '../repositories/auth.repository';
-import { Persona, WorkspaceContext, ApprovalDomainType } from '../types/auth.types';
+import type { Persona, WorkspaceContext, ApprovalDomainType } from '../types/auth.types';
 import { getVisibleSpaces } from '../services/navigation.service';
 
 export function useAuth() {
@@ -102,7 +102,7 @@ export function useAuth() {
   );
 
   const isAssignedToAnyTeam = useMemo(() => {
-    return currentPersona.assignedTeamIds && currentPersona.assignedTeamIds.length > 0;
+    return currentPersona.assignedTeamIds.length > 0;
   }, [currentPersona]);
 
   const visibleSpaces = useMemo(() => {

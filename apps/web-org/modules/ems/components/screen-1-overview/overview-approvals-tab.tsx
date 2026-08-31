@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@smarteam/ui';
+
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 
@@ -123,18 +125,18 @@ export function OverviewApprovalsTab() {
             <div className="shrink-0 flex items-center gap-2">
               {item.status === 'PENDING' ? (
                 <>
-                  <button
+                  <Button
                     onClick={() => handleAction(item.id, 'APPROVED')}
                     className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded shadow-2xs transition-colors cursor-pointer"
                   >
                     Approve
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleAction(item.id, 'REJECTED')}
                     className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold rounded shadow-2xs transition-colors cursor-pointer"
                   >
                     Reject
-                  </button>
+                  </Button>
                 </>
               ) : item.status === 'APPROVED' ? (
                 <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded border border-emerald-200">

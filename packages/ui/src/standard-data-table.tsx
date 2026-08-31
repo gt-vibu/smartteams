@@ -3,11 +3,26 @@
 import React, { useState, useMemo } from 'react';
 import { Select } from './select';
 import { Checkbox } from './form';
+import { StandardDataTablePagination } from './standard-data-table-pagination';
+
+function displayValue(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  if (value instanceof Date) return value.toISOString();
+  if (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'bigint'
+  ) {
+    return String(value);
+  }
+  return '';
+}
 
 export interface ColumnDef<T> {
   id: string;
   header: React.ReactNode;
-  accessorKey?: keyof T | ((row: T) => any);
+  accessorKey?: keyof T | ((row: T) => unknown);
   cell?: (row: T, index: number) => React.ReactNode;
   sortable?: boolean;
   sortFn?: (a: T, b: T, direction: 'asc' | 'desc') => number;
@@ -91,7 +106,7 @@ export function StandardDataTable<T>({
   const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
   // Helper to extract value for a row & column
-  const getCellValue = (row: T, col: ColumnDef<T>): any => {
+  const getCellValue = (row: T, col: ColumnDef<T>): unknown => {
     if (typeof col.accessorKey === 'function') {
       return col.accessorKey(row);
     }
@@ -114,7 +129,7 @@ export function StandardDataTable<T>({
         data.forEach((row) => {
           const val = getCellValue(row, col);
           if (val !== null && val !== undefined && val !== '') {
-            unique.add(String(val));
+            unique.add(displayValue(val));
           }
         });
         optionsMap[col.id] = Array.from(unique)
@@ -142,9 +157,7 @@ export function StandardDataTable<T>({
           // Search across all columns
           matches = initialColumns.some((col) => {
             const val = getCellValue(row, col);
-            return String(val ?? '')
-              .toLowerCase()
-              .includes(q);
+            return displayValue(val).toLowerCase().includes(q);
           });
         }
 
@@ -162,7 +175,7 @@ export function StandardDataTable<T>({
         if (col.filterFn) {
           if (!col.filterFn(row, filterVal)) return false;
         } else {
-          const cellVal = String(getCellValue(row, col) ?? '');
+          const cellVal = displayValue(getCellValue(row, col));
           if (cellVal !== filterVal) return false;
         }
       }
@@ -195,7 +208,7 @@ export function StandardDataTable<T>({
       if (typeof valA === 'number' && typeof valB === 'number') {
         cmp = valA - valB;
       } else {
-        cmp = String(valA).localeCompare(String(valB), undefined, {
+        cmp = displayValue(valA).localeCompare(displayValue(valB), undefined, {
           numeric: true,
           sensitivity: 'base',
         });
@@ -211,6 +224,10 @@ export function StandardDataTable<T>({
   const totalItems = sortedData.length;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
   const validCurrentPage = Math.min(currentPage, totalPages);
+
+  React.useEffect(() => {
+    if (currentPage !== validCurrentPage) setCurrentPage(validCurrentPage);
+  }, [currentPage, validCurrentPage]);
 
   const paginatedData = useMemo(() => {
     const start = (validCurrentPage - 1) * pageSize;
@@ -263,7 +280,7 @@ export function StandardDataTable<T>({
 
   return (
     <div
-      className={`w-full flex flex-col bg-white dark:bg-[#1B2028] rounded-[6px] border border-slate-200/90 dark:border-[#262F3D] shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden ${className}`}
+      className={`w-full flex flex-col bg-white dark:bg-card rounded-[6px] border border-slate-200/90 dark:border-border shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden ${className}`}
     >
       {/* ─── Top Control Toolbar ─────────────────────────────────────────── */}
       {(title ||
@@ -271,7 +288,7 @@ export function StandardDataTable<T>({
         Object.keys(resolvedFilterOptions).length > 0 ||
         actions ||
         showColumnVisibilityToggle) && (
-        <div className="p-3.5 sm:p-4 border-b border-slate-200/90 dark:border-[#262F3D] bg-slate-50/70 dark:bg-[#161B22] space-y-3">
+        <div className="p-3.5 sm:p-4 border-b border-slate-200/90 dark:border-border bg-slate-50/70 dark:bg-card space-y-3">
           {/* Header row with Title & Custom Actions */}
           {(title || actions) && (
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -310,16 +327,19 @@ export function StandardDataTable<T>({
                   </span>
                   <input
                     type="text"
+                    aria-label={searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
                       setCurrentPage(1);
                     }}
                     placeholder={searchPlaceholder}
-                    className="w-full pl-8 pr-7 py-1.5 text-xs bg-white dark:bg-[#1B2028] border border-slate-200 dark:border-[#262F3D] rounded-md text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-all"
+                    className="w-full pl-8 pr-7 py-1.5 text-xs bg-white dark:bg-card border border-slate-200 dark:border-border rounded-md text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-all"
                   />
                   {searchQuery && (
                     <button
+                      type="button"
+                      aria-label="Clear search"
                       onClick={() => setSearchQuery('')}
                       className="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                     >
@@ -373,6 +393,7 @@ export function StandardDataTable<T>({
               {/* Active Filter Clear Button */}
               {hasActiveFilters && (
                 <button
+                  type="button"
                   onClick={handleResetFilters}
                   className="inline-flex items-center gap-1 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-950/70 border border-sky-200 dark:border-sky-800 rounded-md px-2.5 py-1.5 transition-colors cursor-pointer"
                 >
@@ -398,8 +419,11 @@ export function StandardDataTable<T>({
             {showColumnVisibilityToggle && (
               <div className="relative">
                 <button
+                  type="button"
+                  aria-expanded={isColumnMenuOpen}
+                  aria-haspopup="menu"
                   onClick={() => setIsColumnMenuOpen(!isColumnMenuOpen)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-[#1B2028] hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-[#262F3D] rounded-md px-3 py-1.5 cursor-pointer shadow-2xs transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-card hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-border rounded-md px-3 py-1.5 cursor-pointer shadow-2xs transition-colors"
                 >
                   <svg
                     className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400"
@@ -418,7 +442,7 @@ export function StandardDataTable<T>({
                 </button>
 
                 {isColumnMenuOpen && (
-                  <div className="absolute right-0 mt-1 w-52 bg-white dark:bg-[#1B2028] border border-slate-200 dark:border-[#262F3D] rounded-lg shadow-xl z-30 p-2 text-xs space-y-1">
+                  <div className="absolute right-0 mt-1 w-52 bg-white dark:bg-card border border-slate-200 dark:border-border rounded-lg shadow-xl z-30 p-2 text-xs space-y-1">
                     <div className="font-bold text-slate-500 dark:text-slate-400 text-[10px] uppercase tracking-wider px-2 py-1 border-b border-slate-100 dark:border-slate-800">
                       Toggle Columns & Pin
                     </div>
@@ -472,7 +496,7 @@ export function StandardDataTable<T>({
         <table className="w-full text-left text-xs border-collapse">
           {/* Sticky Table Header */}
           <thead className="sticky top-0 z-20">
-            <tr className="bg-slate-100/90 dark:bg-[#161B22] border-b border-slate-200 dark:border-[#262F3D] backdrop-blur-xs text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider shadow-2xs">
+            <tr className="bg-slate-100/90 dark:bg-card border-b border-slate-200 dark:border-border backdrop-blur-xs text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider shadow-2xs">
               {displayColumns.map((col) => {
                 const isSortable = col.sortable !== false;
                 const isSorted = sortState?.columnId === col.id;
@@ -483,10 +507,10 @@ export function StandardDataTable<T>({
                 let pinStyle = '';
                 if (pin === 'left') {
                   pinStyle =
-                    'sticky left-0 bg-slate-100/95 dark:bg-[#161B22] z-20 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)]';
+                    'sticky left-0 bg-slate-100/95 dark:bg-card z-20 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)]';
                 } else if (pin === 'right') {
                   pinStyle =
-                    'sticky right-0 bg-slate-100/95 dark:bg-[#161B22] z-20 shadow-[-2px_0_4px_-1px_rgba(0,0,0,0.06)]';
+                    'sticky right-0 bg-slate-100/95 dark:bg-card z-20 shadow-[-2px_0_4px_-1px_rgba(0,0,0,0.06)]';
                 }
 
                 return (
@@ -502,12 +526,15 @@ export function StandardDataTable<T>({
                     } ${isSorted ? 'bg-sky-50/80 dark:bg-sky-950/40 text-sky-900 dark:text-sky-300 font-bold' : ''} ${pinStyle} ${
                       col.headerClassName || ''
                     }`}
+                    aria-sort={isSorted ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}
                   >
-                    <div
+                    <button
+                      type="button"
+                      disabled={!isSortable}
                       className={`inline-flex items-center gap-1.5 ${
                         isSortable
                           ? 'cursor-pointer select-none hover:text-sky-700 dark:hover:text-sky-300'
-                          : ''
+                          : 'cursor-default'
                       }`}
                       onClick={() => isSortable && handleSortToggle(col.id)}
                     >
@@ -568,7 +595,7 @@ export function StandardDataTable<T>({
                           {pin}
                         </span>
                       )}
-                    </div>
+                    </button>
                   </th>
                 );
               })}
@@ -602,6 +629,7 @@ export function StandardDataTable<T>({
                     <p className="text-xs text-slate-500 dark:text-slate-400">{emptyMessage}</p>
                     {hasActiveFilters && (
                       <button
+                        type="button"
                         onClick={handleResetFilters}
                         className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline"
                       >
@@ -629,10 +657,10 @@ export function StandardDataTable<T>({
                       let pinStyle = '';
                       if (pin === 'left') {
                         pinStyle =
-                          'sticky left-0 bg-white dark:bg-[#1B2028] group-hover:bg-sky-50/90 dark:group-hover:bg-slate-800 z-10 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)]';
+                          'sticky left-0 bg-white dark:bg-card group-hover:bg-sky-50/90 dark:group-hover:bg-slate-800 z-10 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)]';
                       } else if (pin === 'right') {
                         pinStyle =
-                          'sticky right-0 bg-white dark:bg-[#1B2028] group-hover:bg-sky-50/90 dark:group-hover:bg-slate-800 z-10 shadow-[-2px_0_4px_-1px_rgba(0,0,0,0.06)]';
+                          'sticky right-0 bg-white dark:bg-card group-hover:bg-sky-50/90 dark:group-hover:bg-slate-800 z-10 shadow-[-2px_0_4px_-1px_rgba(0,0,0,0.06)]';
                       }
 
                       return (
@@ -646,7 +674,7 @@ export function StandardDataTable<T>({
                                 : 'text-left'
                           } ${isSorted ? 'bg-sky-50/30 dark:bg-sky-950/20' : ''} ${pinStyle} ${col.className || ''}`}
                         >
-                          {col.cell ? col.cell(row, idx) : String(getCellValue(row, col) ?? '')}
+                          {col.cell ? col.cell(row, idx) : displayValue(getCellValue(row, col))}
                         </td>
                       );
                     })}
@@ -658,130 +686,18 @@ export function StandardDataTable<T>({
         </table>
       </div>
 
-      {/* ─── Bottom Pagination Toolbar ───────────────────────────────────── */}
-      <div className="p-3 sm:px-4 border-t border-slate-200/90 dark:border-[#262F3D] bg-slate-50/70 dark:bg-[#161B22] flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-300 font-medium">
-        {/* Left: Summary & Rows Per Page */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div>
-            Showing{' '}
-            <span className="font-bold text-slate-900 dark:text-white">
-              {totalItems > 0 ? (validCurrentPage - 1) * pageSize + 1 : 0}
-            </span>{' '}
-            to{' '}
-            <span className="font-bold text-slate-900 dark:text-white">
-              {Math.min(validCurrentPage * pageSize, totalItems)}
-            </span>{' '}
-            of <span className="font-bold text-slate-900 dark:text-white">{totalItems}</span>{' '}
-            entries
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <span className="text-slate-400 dark:text-slate-600">|</span>
-            <span className="text-slate-500 dark:text-slate-400">Rows:</span>
-            <div className="w-20">
-              <Select
-                value={String(pageSize)}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setCurrentPage(1);
-                }}
-              >
-                {rowsPerPageOptions.map((opt) => (
-                  <option key={opt} value={String(opt)}>
-                    {opt}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Page Navigation Buttons */}
-        <div className="flex items-center gap-1">
-          {/* First Page */}
-          <button
-            onClick={() => setCurrentPage(1)}
-            disabled={validCurrentPage <= 1}
-            className="p-1.5 rounded border border-slate-200 dark:border-[#262F3D] bg-white dark:bg-[#1B2028] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-2xs"
-            title="First Page"
-          >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-              />
-            </svg>
-          </button>
-
-          {/* Previous Page */}
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={validCurrentPage <= 1}
-            className="p-1.5 rounded border border-slate-200 dark:border-[#262F3D] bg-white dark:bg-[#1B2028] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-2xs"
-            title="Previous Page"
-          >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          {/* Page Counter */}
-          <span className="px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Page{' '}
-            <span className="font-bold text-slate-900 dark:text-white">{validCurrentPage}</span> of{' '}
-            <span className="font-bold text-slate-900 dark:text-white">{totalPages}</span>
-          </span>
-
-          {/* Next Page */}
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            disabled={validCurrentPage >= totalPages}
-            className="p-1.5 rounded border border-slate-200 dark:border-[#262F3D] bg-white dark:bg-[#1B2028] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-2xs"
-            title="Next Page"
-          >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Last Page */}
-          <button
-            onClick={() => setCurrentPage(totalPages)}
-            disabled={validCurrentPage >= totalPages}
-            className="p-1.5 rounded border border-slate-200 dark:border-[#262F3D] bg-white dark:bg-[#1B2028] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-2xs"
-            title="Last Page"
-          >
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M6 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      </div>
+      <StandardDataTablePagination
+        totalItems={totalItems}
+        currentPage={validCurrentPage}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        rowsPerPageOptions={rowsPerPageOptions}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={(nextPageSize) => {
+          setPageSize(nextPageSize);
+          setCurrentPage(1);
+        }}
+      />
     </div>
   );
 }

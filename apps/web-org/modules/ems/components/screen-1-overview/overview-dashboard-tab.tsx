@@ -1,3 +1,4 @@
+import { Button } from '@smarteam/ui';
 import React from 'react';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useTimesheet } from '../../hooks/use-timesheet';
@@ -88,7 +89,7 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
                 <span className="font-mono font-semibold">24.5 Hrs (65%)</span>
               </div>
               <div className="w-full bg-slate-100 rounded-full h-2">
-                <div className="bg-[#0284C7] h-2 rounded-full" style={{ width: '65%' }} />
+                <div className="bg-primary h-2 rounded-full" style={{ width: '65%' }} />
               </div>
             </div>
 
@@ -118,43 +119,43 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
         <div className="lg:col-span-5 bg-white rounded-[6px] border border-slate-200 p-5 shadow-xs space-y-3">
           <h4 className="text-xs font-bold text-slate-800">Quick Module Navigation</h4>
           <div className="space-y-2 text-xs">
-            <button
+            <Button
               onClick={() => onNavigateModule?.('attendance', 'timeline')}
               className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
             >
               <div className="font-semibold text-slate-800">View Attendance Timeline</div>
               <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => onNavigateModule?.('attendance', 'calendar')}
               className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
             >
               <div className="font-semibold text-slate-800">Open Shift & Month Calendar</div>
               <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => onNavigateModule?.('timesheet')}
               className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
             >
               <div className="font-semibold text-slate-800">Log & Submit Timesheets</div>
               <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-            </button>
+            </Button>
             {isAdmin ? (
-              <button
+              <Button
                 onClick={() => onNavigateModule?.('approvals')}
                 className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
               >
                 <div className="font-semibold text-slate-800">Review Managerial Approvals</div>
                 <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 onClick={() => onNavigateModule?.('time-off')}
                 className="w-full p-2.5 bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
               >
                 <div className="font-semibold text-slate-800">Apply for Time Off / Leave</div>
                 <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-              </button>
+              </Button>
             )}
           </div>
         </div>

@@ -56,9 +56,8 @@ export function DropdownMenu({
 export function DropdownMenuTrigger({
   children,
   className,
-  asChild,
   ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }) {
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const ctx = React.useContext(DropdownMenuContext);
   if (!ctx) throw new Error('DropdownMenuTrigger must be in DropdownMenu');
 
@@ -93,7 +92,7 @@ export function DropdownMenuContent({
   return (
     <div
       className={cn(
-        'absolute mt-1.5 z-50 min-w-[160px] rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-[#1B2028] dark:text-slate-100 animate-in fade-in zoom-in-95',
+        'absolute mt-1.5 z-50 min-w-[160px] rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-card dark:text-slate-100 animate-in fade-in zoom-in-95',
         alignClass,
         className,
       )}
