@@ -17,6 +17,7 @@ export function InfoTooltip({ content, label, side = 'top', className = '' }: In
     <Tooltip content={content} side={side} className={className}>
       <Button
         type="button"
+        variant="ghost"
         className="inline-flex items-center justify-center h-4 w-4 rounded-full text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-help ml-1 align-middle"
         aria-label={label || 'Information'}
       >

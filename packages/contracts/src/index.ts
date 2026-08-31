@@ -46,3 +46,5 @@ export const problemDetailsSchema = z.object({
 export type ApiError = z.infer<typeof apiErrorSchema>;
 export type HealthResponse = z.infer<typeof healthResponseSchema>;
 export type ProblemDetails = z.infer<typeof problemDetailsSchema>;
+
+export * from './auth';

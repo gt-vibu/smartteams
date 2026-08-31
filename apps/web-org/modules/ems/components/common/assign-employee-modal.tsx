@@ -8,7 +8,7 @@ import type {
 } from '../../repositories/assignment.repository';
 import { assignmentRepository } from '../../repositories/assignment.repository';
 import type { EmployeeDetailData } from './entity-detail-drawer';
-import { Button, Checkbox, Dialog, DialogContent, Input, Label } from '@smarteam/ui';
+import { Button, Checkbox, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 
 interface AssignEmployeeModalProps {
   isOpen: boolean;
@@ -139,6 +139,7 @@ export function AssignEmployeeModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl p-0">
+        <DialogTitle className="sr-only">Assign employee</DialogTitle>
         {/* Modal Header */}
         <div className="p-5 border-b border-slate-200 bg-slate-50/80 flex items-start justify-between">
           <div className="flex items-center gap-3">

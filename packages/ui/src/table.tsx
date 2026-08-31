@@ -1,9 +1,23 @@
 import * as React from 'react';
 import { cn } from './cn';
 
-const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
-  ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto rounded-md border border-border">
+export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
+  /**
+   * Classes for the scroll container that wraps the table. Exposed so a screen can control
+   * elevation and corner radius without re-declaring its own wrapper element, which is how
+   * duplicate borders crept in previously.
+   */
+  containerClassName?: string;
+}
+
+const Table = React.forwardRef<HTMLTableElement, TableProps>(
+  ({ className, containerClassName, ...props }, ref) => (
+    <div
+      className={cn(
+        'relative w-full overflow-auto rounded-lg border border-border bg-card',
+        containerClassName,
+      )}
+    >
       <table ref={ref} className={cn('w-full caption-bottom text-xs', className)} {...props} />
     </div>
   ),

@@ -2,7 +2,19 @@
 
 import { useRef } from 'react';
 import type { ColumnDef } from '@smarteam/ui';
-import { Button, StandardDataTable, useFocusTrap } from '@smarteam/ui';
+import {
+  Button,
+  Progress,
+  StandardDataTable,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  progressTone,
+  useFocusTrap,
+} from '@smarteam/ui';
 import { AVAILABLE_EMPLOYEES } from '../screen-teams/create-team-modal';
 import type { ProjectStatus } from './create-project-modal';
 import type { ProjectData, ProjectMemberData } from './screen-projects';
@@ -304,17 +316,17 @@ export function StaffingMatrixView({
       </div>
 
       <div className="bg-white rounded-[6px] border border-slate-200 shadow-xs overflow-hidden">
-        <table className="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-              <th className="py-2.5 px-4">Employee</th>
-              <th className="py-2.5 px-3">Designation</th>
-              <th className="py-2.5 px-3">Allocated Projects</th>
-              <th className="py-2.5 px-3">Total Utilization</th>
-              {canManage && <th className="py-2.5 px-3 text-right">Action</th>}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+              <TableHead className="py-2.5 px-4">Employee</TableHead>
+              <TableHead className="py-2.5 px-3">Designation</TableHead>
+              <TableHead className="py-2.5 px-3">Allocated Projects</TableHead>
+              <TableHead className="py-2.5 px-3">Total Utilization</TableHead>
+              {canManage && <TableHead className="py-2.5 px-3 text-right">Action</TableHead>}
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-slate-100">
             {AVAILABLE_EMPLOYEES.map((emp) => {
               const empProjects = projects.flatMap((p) =>
                 p.members
@@ -334,13 +346,13 @@ export function StaffingMatrixView({
               const totalPercentage = empProjects.reduce((acc, p) => acc + p.percentage, 0);
 
               return (
-                <tr key={emp.id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-3 px-4 font-semibold text-slate-900">
+                <TableRow key={emp.id} className="hover:bg-slate-50/60 transition-colors">
+                  <TableCell className="py-3 px-4 font-semibold text-slate-900">
                     {emp.firstName} {emp.lastName}
                     <div className="text-[10px] text-slate-400 font-mono">{emp.employeeNumber}</div>
-                  </td>
-                  <td className="py-3 px-3 text-slate-600">{emp.jobTitle}</td>
-                  <td className="py-3 px-3">
+                  </TableCell>
+                  <TableCell className="py-3 px-3 text-slate-600">{emp.jobTitle}</TableCell>
+                  <TableCell className="py-3 px-3">
                     {empProjects.length === 0 ? (
                       <span className="text-slate-400 italic text-[11px]">Bench / Unassigned</span>
                     ) : (
@@ -356,8 +368,8 @@ export function StaffingMatrixView({
                         ))}
                       </div>
                     )}
-                  </td>
-                  <td className="py-3 px-3">
+                  </TableCell>
+                  <TableCell className="py-3 px-3">
                     <div className="w-28 space-y-1">
                       <div className="flex justify-between text-[10px] font-mono">
                         <span
@@ -375,35 +387,28 @@ export function StaffingMatrixView({
                               : 'Available'}
                         </span>
                       </div>
-                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${
-                            totalPercentage > 100
-                              ? 'bg-rose-500'
-                              : totalPercentage === 100
-                                ? 'bg-emerald-500'
-                                : 'bg-sky-500'
-                          }`}
-                          style={{ width: `${Math.min(totalPercentage, 100)}%` }}
-                        />
-                      </div>
+                      <Progress
+                        aria-label={`Allocated ${totalPercentage}%`}
+                        tone={totalPercentage > 100 ? 'destructive' : progressTone(totalPercentage)}
+                        value={totalPercentage}
+                      />
                     </div>
-                  </td>
+                  </TableCell>
                   {canManage && (
-                    <td className="py-3 px-3 text-right">
+                    <TableCell className="py-3 px-3 text-right">
                       <Button
                         onClick={onOpenAssign}
                         className="px-2 py-1 text-[11px] font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded border border-sky-200 cursor-pointer"
                       >
                         + Assign
                       </Button>
-                    </td>
+                    </TableCell>
                   )}
-                </tr>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

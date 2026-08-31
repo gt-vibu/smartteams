@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Icon } from '@smarteam/ui';
 import {
   ApiClientError,
-  clearSession,
   logout,
   platformLogin,
   readSession,
-  writeSession,
   type AdminSession,
 } from '../lib/api-client';
 import { LoginScreen } from './auth/login-screen';
@@ -20,44 +18,61 @@ export function AdminConsole() {
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
+  // The session lives in HttpOnly cookies the browser cannot read, so it is restored by asking
+  // the API who we are rather than by reading local storage.
   useEffect(() => {
-    setSession(readSession());
-    setMounted(true);
+    let active = true;
+    readSession()
+      .then((restored) => {
+        if (active) setSession(restored);
+      })
+      .catch(() => {
+        if (active) setSession(null);
+      })
+      .finally(() => {
+        if (active) setMounted(true);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
-  async function signIn(email: string, password: string) {
+  const signIn = useCallback(async (email: string, password: string) => {
     setLoginBusy(true);
     setLoginError(null);
     try {
-      const nextSession = await platformLogin(email, password);
-      writeSession(nextSession);
-      setSession(nextSession);
+      setSession(await platformLogin(email, password));
     } catch (caught) {
-      setLoginError(
-        caught instanceof ApiClientError && caught.status === 401
-          ? 'Those credentials do not have platform access.'
-          : caught instanceof Error
-            ? caught.message
-            : 'Unable to sign in.',
-      );
+      // No fallback session: a failed sign-in leaves the operator signed out.
+      setSession(null);
+      setLoginError(describeLoginFailure(caught));
     } finally {
       setLoginBusy(false);
     }
-  }
+  }, []);
 
-  async function signOut() {
-    if (!session) return;
+  const signOut = useCallback(async () => {
     try {
-      await logout(session);
+      await logout();
     } finally {
-      clearSession();
       setSession(null);
     }
-  }
+  }, []);
 
   if (!mounted) return <LoadingScreen />;
   if (!session) return <LoginScreen busy={loginBusy} error={loginError} onSubmit={signIn} />;
   return <IntegrationDashboard onLogout={signOut} session={session} />;
+}
+
+function describeLoginFailure(caught: unknown): string {
+  if (caught instanceof ApiClientError) {
+    if (caught.status === 401 || caught.status === 403) {
+      return 'Those credentials do not have platform access.';
+    }
+    if (caught.status === 429) return 'Too many attempts. Wait a moment and try again.';
+    return caught.message;
+  }
+  return caught instanceof Error ? caught.message : 'Unable to sign in.';
 }
 
 function LoadingScreen() {

@@ -21,25 +21,24 @@ import { ScreenTimesheetsAdmin } from './components/screen-timesheet/screen-time
 import { ScreenPayrollAdmin } from './components/screen-payroll/screen-payroll-admin';
 import { LoginScreen } from './components/auth/login-screen';
 import { useEmsNavigation } from './hooks/use-ems-navigation';
-import { useAuth } from './hooks/use-auth';
+import { AuthProvider, useSession } from './hooks/auth-context';
 import { useTheme, ThemeProvider } from './hooks/use-theme';
 
 export function EmsWorkspace() {
   return (
     <ThemeProvider>
-      <EmsWorkspaceInner />
+      <AuthProvider>
+        <EmsWorkspaceInner />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
 
 function EmsWorkspaceInner() {
-  const {
-    isAuthenticated,
-    loginWithCredentials,
-    canAccessSpace,
-    canAccessModule,
-    workspaceContext,
-  } = useAuth();
+  // The shell is the one place the unauthenticated case is expected, so it reads the session
+  // directly rather than through `useAuth`, which asserts a signed-in persona.
+  const { isAuthenticated, isRestoring, login, canAccessSpace, canAccessModule, workspaceContext } =
+    useSession();
   useTheme(); // Initialize and apply persisted theme (dark / light) on mount
 
   const {
@@ -53,15 +52,11 @@ function EmsWorkspaceInner() {
     setAttendanceViewMode,
   } = useEmsNavigation();
 
+  // Avoid flashing the sign-in screen while the session is being restored from the API.
+  if (isRestoring) return <WorkspaceLoading />;
+
   if (!isAuthenticated) {
-    return (
-      <LoginScreen
-        onLogin={(email, password) => {
-          const result = loginWithCredentials(email, password);
-          return result !== null;
-        }}
-      />
-    );
+    return <LoginScreen onLogin={login} />;
   }
 
   // Safety fallback if active space is not permitted in current context
@@ -153,5 +148,13 @@ function EmsWorkspaceInner() {
         </>
       )}
     </EmsLayout>
+  );
+}
+
+function WorkspaceLoading() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#0B1120] text-sm text-slate-400">
+      Restoring your session…
+    </div>
   );
 }

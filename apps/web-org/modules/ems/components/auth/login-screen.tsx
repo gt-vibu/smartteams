@@ -3,62 +3,52 @@
 import { Button, Input } from '@smarteam/ui';
 
 import React, { useState } from 'react';
-import credentialsFixture from '../../data/fixtures/credentials.json';
+import type { OrganizationMembership } from '@smarteam/contracts';
+
+export type LoginAttempt =
+  | { status: 'AUTHENTICATED' }
+  | { status: 'SELECT_ORGANIZATION'; organizations: OrganizationMembership[] }
+  | { status: 'FAILED'; message: string };
 
 interface LoginScreenProps {
-  onLogin: (email: string, password: string) => boolean;
+  onLogin: (email: string, password: string, organizationId?: string) => Promise<LoginAttempt>;
 }
 
-type Account = {
-  email: string;
-  password: string;
-  name: string;
-  role: string;
-  access: string;
-  initials: string;
-};
-
-const accounts: Account[] = credentialsFixture.accounts;
-
+/**
+ * Sign-in for the organization workspace.
+ *
+ * The credentials are verified by the API and nowhere else. The demo-credential panel that
+ * previously rendered committed fixture passwords as click-to-fill buttons has been removed:
+ * it published working sign-ins for accounts holding the tenant wildcard.
+ */
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
-  const [showCredentials, setShowCredentials] = useState(false);
+  const [organizations, setOrganizations] = useState<OrganizationMembership[]>([]);
+  const [organizationId, setOrganizationId] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || !password) return;
     setError('');
     setIsLoading(true);
-
-    // Simulate small network delay
-    await new Promise((r) => setTimeout(r, 600));
-
-    const success = onLogin(email.trim(), password);
-    if (!success) {
-      setError('Invalid email or password. Please check the credentials below.');
+    try {
+      const result = await onLogin(email.trim(), password, organizationId || undefined);
+      if (result.status === 'SELECT_ORGANIZATION') {
+        // The server refuses to choose a tenant for a multi-organization account.
+        setOrganizations(result.organizations);
+        setError('Select which organization to sign in to.');
+      } else if (result.status === 'FAILED') {
+        setError(result.message);
+      }
+    } catch {
+      setError('Unable to authenticate. Please check your network connection.');
+    } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleQuickFill = (account: Account) => {
-    setSelectedAccount(account);
-    setEmail(account.email);
-    setPassword(account.password);
-    setError('');
-    setShowCredentials(false);
-  };
-
-  const accessBadgeClass = (access: string) => {
-    if (access.includes('Admin + Employee'))
-      return 'bg-violet-500/20 text-violet-300 border-violet-500/40';
-    if (access.includes('Admin Only')) return 'bg-rose-500/20 text-rose-300 border-rose-500/40';
-    if (access.includes('Manager')) return 'bg-amber-500/20 text-amber-300 border-amber-500/40';
-    return 'bg-sky-500/20 text-sky-300 border-sky-500/40';
   };
 
   return (
@@ -95,7 +85,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="bg-[#111827] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
           <div className="px-6 pt-6 pb-5">
             <h2 className="text-base font-bold text-white mb-0.5">Sign in to your workspace</h2>
-            <p className="text-xs text-slate-400">Use the credentials provided below</p>
+            <p className="text-xs text-slate-400">Enter your work email and password</p>
           </div>
 
           {/* Divider */}
@@ -183,6 +173,30 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               </div>
             </div>
 
+            {organizations.length > 0 && (
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                  Organization
+                </label>
+                <select
+                  value={organizationId}
+                  onChange={(event) => {
+                    setOrganizationId(event.target.value);
+                    setError('');
+                  }}
+                  required
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+                >
+                  <option value="">Select an organization…</option>
+                  {organizations.map((organization) => (
+                    <option key={organization.organizationId} value={organization.organizationId}>
+                      {organization.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Error */}
             {error && (
               <div className="flex items-start gap-2 bg-rose-500/10 border border-rose-500/30 rounded-lg px-3 py-2.5">
@@ -236,96 +250,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           </form>
         </div>
 
-        {/* Demo Credentials Panel */}
-        <div className="mt-4 bg-[#111827]/80 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-          <Button
-            type="button"
-            onClick={() => setShowCredentials(!showCredentials)}
-            className="w-full flex items-center justify-between px-5 py-3.5 text-left cursor-pointer hover:bg-slate-800/40 transition-colors"
-          >
-            <div className="flex items-center gap-2.5">
-              <span className="text-xs font-bold text-slate-300">Demo Credentials</span>
-              <span className="text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded">
-                {accounts.length} accounts
-              </span>
-            </div>
-            <svg
-              className={`h-4 w-4 text-slate-400 transition-transform ${showCredentials ? 'rotate-180' : ''}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </Button>
-
-          {showCredentials && (
-            <div className="border-t border-slate-800">
-              {/* Header row */}
-              <div className="grid grid-cols-[1fr_auto] gap-2 px-5 py-2 bg-slate-900/60 text-[10px] uppercase tracking-wider text-slate-500 font-bold">
-                <span>Account</span>
-                <span>Fill</span>
-              </div>
-
-              <div className="divide-y divide-slate-800/80 max-h-80 overflow-y-auto">
-                {accounts.map((account) => {
-                  const isSelected = selectedAccount?.email === account.email;
-                  return (
-                    <div
-                      key={account.email}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors ${
-                        isSelected ? 'bg-sky-900/20' : 'hover:bg-slate-800/40'
-                      }`}
-                    >
-                      {/* Avatar */}
-                      <div className="h-8 w-8 rounded-full bg-slate-800 border border-slate-700 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
-                        {account.initials}
-                      </div>
-
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-xs font-semibold text-white truncate">
-                            {account.name}
-                          </span>
-                          <span
-                            className={`text-[9px] font-bold px-1.5 py-0 rounded border ${accessBadgeClass(account.access)}`}
-                          >
-                            {account.access}
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
-                          {account.email}
-                        </div>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="text-[10px] text-slate-500">Password:</span>
-                          <code className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0 rounded border border-slate-700 font-mono">
-                            {account.password}
-                          </code>
-                        </div>
-                      </div>
-
-                      {/* Quick-fill button */}
-                      <Button
-                        type="button"
-                        onClick={() => handleQuickFill(account)}
-                        className="shrink-0 px-2.5 py-1 text-[10px] font-bold rounded border border-sky-500/40 bg-sky-500/10 text-sky-300 hover:bg-sky-500/20 transition-all cursor-pointer whitespace-nowrap"
-                      >
-                        Use →
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Footer */}
-        <p className="text-center text-[11px] text-slate-600 mt-5">
-          Smarteam EMS · Frontend Simulation · v0.1.0
-        </p>
+        <p className="text-center text-[11px] text-slate-600 mt-5">Smarteam EMS · v0.1.0</p>
       </div>
     </div>
   );

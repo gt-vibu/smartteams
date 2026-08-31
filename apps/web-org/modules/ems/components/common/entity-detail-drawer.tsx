@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Sheet, SheetContent } from '@smarteam/ui';
+import { Button, Progress, Sheet, SheetContent, SheetTitle } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 import { AssignEmployeeModal } from './assign-employee-modal';
 
@@ -75,6 +75,7 @@ export function EntityDetailDrawer({
     <>
       <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <SheetContent className="max-w-md p-0">
+          <SheetTitle className="sr-only">Employee details</SheetTitle>
           {/* Drawer Header */}
           <div className="p-5 border-b border-slate-200 flex items-start justify-between bg-slate-50/70">
             <div className="flex items-center gap-3.5">
@@ -304,12 +305,10 @@ export function EntityDetailDrawer({
                       </div>
 
                       {/* Visual Allocation Progress Bar */}
-                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-sky-500 to-indigo-600 rounded-full"
-                          style={{ width: `${Math.min(100, proj.allocationPercentage)}%` }}
-                        />
-                      </div>
+                      <Progress
+                        aria-label={`Allocation ${proj.allocationPercentage}%`}
+                        value={proj.allocationPercentage}
+                      />
 
                       <div className="text-[10px] text-slate-500">
                         Project Role:{' '}

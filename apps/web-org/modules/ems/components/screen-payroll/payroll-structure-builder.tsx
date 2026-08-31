@@ -1525,7 +1525,7 @@ export function PayrollStructureBuilder() {
                       <Checkbox
                         checked={editingForm.epfCapEnabled}
                         onCheckedChange={(checked) =>
-                          setEditingForm({ ...editingForm, epfCapEnabled: checked })
+                          setEditingForm({ ...editingForm, epfCapEnabled: checked === true })
                         }
                         className="accent-primary"
                       />
@@ -1557,7 +1557,7 @@ export function PayrollStructureBuilder() {
                       <Checkbox
                         checked={editingForm.ptEnabled !== false}
                         onCheckedChange={(checked) =>
-                          setEditingForm({ ...editingForm, ptEnabled: checked })
+                          setEditingForm({ ...editingForm, ptEnabled: checked === true })
                         }
                         className="accent-primary"
                       />
@@ -1589,7 +1589,7 @@ export function PayrollStructureBuilder() {
                       <Checkbox
                         checked={editingForm.tdsEnabled !== false}
                         onCheckedChange={(checked) =>
-                          setEditingForm({ ...editingForm, tdsEnabled: checked })
+                          setEditingForm({ ...editingForm, tdsEnabled: checked === true })
                         }
                         className="accent-primary"
                       />

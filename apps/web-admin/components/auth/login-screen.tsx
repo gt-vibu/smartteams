@@ -46,14 +46,7 @@ export function LoginScreen({ busy, error, onSubmit }: LoginScreenProps) {
               <h1 className="text-4xl font-semibold leading-tight tracking-[-0.04em]">
                 Make the connection clear before the first request.
               </h1>
-              <p className="mt-5 text-sm leading-6 text-primary-foreground/72">
-                Set up the BlizBooks federation boundary, credentials, and least-privilege access
-                from one controlled surface.
-              </p>
             </div>
-            <p className="text-xs text-primary-foreground/55">
-              Superadmin access only · Activity is audited
-            </p>
           </div>
         </aside>
 
@@ -65,14 +58,7 @@ export function LoginScreen({ busy, error, onSubmit }: LoginScreenProps) {
             <div className="mb-5 flex size-11 items-center justify-center rounded-2xl bg-secondary text-primary lg:hidden">
               <Icon className="size-5" name="lock" />
             </div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-              Secure sign in
-            </p>
-            <h2 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Welcome back.</h2>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Use a platform operator account to manage BlizBooks connections. Organization users
-              cannot access this workspace.
-            </p>
+            <h2 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Sign in</h2>
           </div>
 
           {error && (
@@ -84,7 +70,7 @@ export function LoginScreen({ busy, error, onSubmit }: LoginScreenProps) {
 
           <form className="grid max-w-md gap-5" onSubmit={submit}>
             <div className="grid gap-2">
-              <Label htmlFor="email">Platform email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 autoComplete="username"
                 id="email"
@@ -96,10 +82,7 @@ export function LoginScreen({ busy, error, onSubmit }: LoginScreenProps) {
               />
             </div>
             <div className="grid gap-2">
-              <div className="flex items-center justify-between gap-4">
-                <Label htmlFor="password">Password</Label>
-                <span className="text-xs text-muted-foreground">Platform identity</span>
-              </div>
+              <Label htmlFor="password">Password</Label>
               <Input
                 autoComplete="current-password"
                 id="password"
@@ -112,7 +95,7 @@ export function LoginScreen({ busy, error, onSubmit }: LoginScreenProps) {
               />
             </div>
             <Button className="group mt-2 w-full" disabled={busy} type="submit">
-              {busy ? 'Verifying access…' : 'Continue to integration desk'}
+              {busy ? 'Signing in…' : 'Sign in'}
               {!busy && (
                 <Icon
                   className="size-4 transition-transform duration-200 group-hover:translate-x-1"
@@ -121,13 +104,6 @@ export function LoginScreen({ busy, error, onSubmit }: LoginScreenProps) {
               )}
             </Button>
           </form>
-
-          <div className="mt-9 flex items-start gap-3 border-t border-border pt-5 text-xs leading-5 text-muted-foreground">
-            <Icon className="mt-0.5 size-4 shrink-0 text-primary" name="lock" />
-            <p>
-              Session credentials stay in this browser session and are cleared when you sign out.
-            </p>
-          </div>
         </section>
       </div>
     </main>

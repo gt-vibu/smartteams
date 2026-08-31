@@ -16,6 +16,7 @@ export type IconName =
   | 'shield'
   | 'spark'
   | 'trash'
+  | 'users'
   | 'warning';
 
 export function Icon({ name, ...props }: SVGProps<SVGSVGElement> & { name: IconName }) {
@@ -28,6 +29,9 @@ export function Icon({ name, ...props }: SVGProps<SVGSVGElement> & { name: IconN
   };
   const paths: Record<IconName, React.ReactNode> = {
     'arrow-right': <path d="M5 12h14m-6-6 6 6-6 6" />,
+    users: (
+      <path d="M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 7a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm13 12v-1a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    ),
     building: <path d="M4 21h16M6 21V5l6-2 6 2v16M9 8h1m4 0h1M9 12h1m4 0h1M9 16h1m4 0h1" />,
     check: <path d="m5 12 4 4L19 6" />,
     clipboard: (

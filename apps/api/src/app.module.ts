@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './common/config/config.module';
 import { CommonModule } from './common/common.module';
 import { RequestContextMiddleware } from './common/context/request-context';
+import { CsrfMiddleware } from './common/security/csrf.middleware';
+import { SecurityHeadersMiddleware } from './common/security/security-headers.middleware';
 import { HealthModule } from './common/health/health.module';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
@@ -32,7 +34,26 @@ import { UsersModule } from './modules/users/users.module';
       imports: [AppConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        pinoHttp: { level: config.getOrThrow<string>('LOG_LEVEL') },
+        pinoHttp: {
+          level: config.getOrThrow<string>('LOG_LEVEL'),
+          // pino-http's default serializer logs the whole header set, which would write every
+          // bearer token and session cookie to the application log. Remove them outright
+          // rather than masking, along with any credential that reaches a request body.
+          redact: {
+            paths: [
+              'req.headers.authorization',
+              'req.headers.cookie',
+              'req.headers["x-csrf-token"]',
+              'res.headers["set-cookie"]',
+              'req.body.password',
+              'req.body.token',
+              'req.body.refreshToken',
+              'req.body.clientSecret',
+              'req.body.temporaryPassword',
+            ],
+            remove: true,
+          },
+        },
       }),
     }),
     AppConfigModule,
@@ -62,6 +83,10 @@ import { UsersModule } from './modules/users/users.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestContextMiddleware).forRoutes('*');
+    // Order matters: headers and CSRF are enforced before any handler runs, and the request
+    // context must exist before anything that reports a correlation id.
+    consumer
+      .apply(SecurityHeadersMiddleware, RequestContextMiddleware, CsrfMiddleware)
+      .forRoutes('*');
   }
 }

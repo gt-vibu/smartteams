@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button, Badge, Dialog, DialogContent } from '@smarteam/ui';
+import { Button, Badge, Dialog, DialogContent, DialogTitle } from '@smarteam/ui';
 import { formatINR } from '../../utils/formatters';
 
 export interface PayslipData {
@@ -51,6 +51,7 @@ export function PayslipDocumentModal({ isOpen, onClose, payslip }: PayslipDocume
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 border border-slate-200 dark:border-slate-800">
+        <DialogTitle className="sr-only">Payslip</DialogTitle>
         {/* Document Action Header */}
         <div className="p-4 bg-slate-50 dark:bg-card border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div>

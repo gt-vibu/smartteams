@@ -276,7 +276,7 @@ export function OrgAnnouncementsTab({
                 <Checkbox
                   id="pinNotice"
                   checked={isPinned}
-                  onCheckedChange={setIsPinned}
+                  onCheckedChange={(checked) => setIsPinned(checked === true)}
                   aria-label="Pin this announcement to the top"
                   className="h-3.5 w-3.5"
                 />

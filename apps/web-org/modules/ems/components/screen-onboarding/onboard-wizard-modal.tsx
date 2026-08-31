@@ -817,7 +817,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                 <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
                   <Checkbox
                     checked={includeMonitor}
-                    onCheckedChange={setIncludeMonitor}
+                    onCheckedChange={(checked) => setIncludeMonitor(checked === true)}
                     className="rounded text-sky-600"
                   />
                   <span>Include Dell UltraSharp 27" 4K USB-C Hub Monitor</span>
@@ -826,7 +826,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                 <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
                   <Checkbox
                     checked={includeAccessCard}
-                    onCheckedChange={setIncludeAccessCard}
+                    onCheckedChange={(checked) => setIncludeAccessCard(checked === true)}
                     className="rounded text-sky-600"
                   />
                   <span>Provision Smarteam Smart NFC Office Access Card & YubiKey 5C NFC</span>
@@ -835,7 +835,7 @@ export function OnboardWizardModal({ isOpen, onClose, onComplete }: OnboardWizar
                 <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
                   <Checkbox
                     checked={includeWelcomeKit}
-                    onCheckedChange={setIncludeWelcomeKit}
+                    onCheckedChange={(checked) => setIncludeWelcomeKit(checked === true)}
                     className="rounded text-sky-600"
                   />
                   <span>

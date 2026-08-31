@@ -92,7 +92,12 @@ function setup(options: { existingOrganization?: boolean; existingGrant?: boolea
     tx,
     audit,
     outbox,
-    service: new OrganizationsService(database as never, audit, outbox as never),
+    service: new OrganizationsService(
+      database as never,
+      audit,
+      outbox as never,
+      { hashPassword: jest.fn().mockResolvedValue('argon2-hash') } as never,
+    ),
   };
 }
 

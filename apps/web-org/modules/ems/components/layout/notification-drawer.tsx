@@ -75,16 +75,18 @@ export function NotificationDrawer({ isOpen, onClose }: NotificationDrawerProps)
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetHeader>
-        <SheetTitle>Notifications</SheetTitle>
-        <SheetDescription>Activity and updates for {persona.name.split(' ')[0]}.</SheetDescription>
-        {unreadCount > 0 && (
-          <Button variant="link" size="sm" className="self-start px-0" onClick={markAllRead}>
-            Mark all read
-          </Button>
-        )}
-      </SheetHeader>
       <SheetContent className="p-3">
+        <SheetHeader>
+          <SheetTitle>Notifications</SheetTitle>
+          <SheetDescription>
+            Activity and updates for {persona.name.split(' ')[0]}.
+          </SheetDescription>
+          {unreadCount > 0 && (
+            <Button variant="link" size="sm" className="self-start px-0" onClick={markAllRead}>
+              Mark all read
+            </Button>
+          )}
+        </SheetHeader>
         <div
           role="tablist"
           aria-label="Notification filter"

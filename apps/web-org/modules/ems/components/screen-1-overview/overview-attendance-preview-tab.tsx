@@ -1,5 +1,7 @@
 'use client';
 
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@smarteam/ui';
+
 import React from 'react';
 import { useAttendance } from '../../hooks/use-attendance';
 
@@ -44,29 +46,35 @@ export function OverviewAttendancePreviewTab() {
           </span>
         </div>
 
-        <table className="w-full text-left text-xs border-collapse">
-          <thead>
-            <tr className="bg-slate-100/60 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
-              <th className="py-2.5 px-4">Date</th>
-              <th className="py-2.5 px-3">Day</th>
-              <th className="py-2.5 px-3">First In</th>
-              <th className="py-2.5 px-3">Last Out</th>
-              <th className="py-2.5 px-3">Payable Hours</th>
-              <th className="py-2.5 px-3 text-right">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-slate-100/60 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
+              <TableHead className="py-2.5 px-4">Date</TableHead>
+              <TableHead className="py-2.5 px-3">Day</TableHead>
+              <TableHead className="py-2.5 px-3">First In</TableHead>
+              <TableHead className="py-2.5 px-3">Last Out</TableHead>
+              <TableHead className="py-2.5 px-3">Payable Hours</TableHead>
+              <TableHead className="py-2.5 px-3 text-right">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-slate-100">
             {records.slice(0, 7).map((r) => (
-              <tr key={r.id} className="hover:bg-slate-50/60 transition-colors">
-                <td className="py-2.5 px-4 font-mono font-semibold text-slate-800">{r.workDate}</td>
-                <td className="py-2.5 px-3 text-slate-500">{r.dayOfWeek}</td>
-                <td className="py-2.5 px-3 font-mono text-slate-700">{r.firstInTime || '—'}</td>
-                <td className="py-2.5 px-3 font-mono text-slate-700">{r.lastOutTime || '—'}</td>
-                <td className="py-2.5 px-3 font-bold text-slate-800 font-mono">
+              <TableRow key={r.id} className="hover:bg-slate-50/60 transition-colors">
+                <TableCell className="py-2.5 px-4 font-mono font-semibold text-slate-800">
+                  {r.workDate}
+                </TableCell>
+                <TableCell className="py-2.5 px-3 text-slate-500">{r.dayOfWeek}</TableCell>
+                <TableCell className="py-2.5 px-3 font-mono text-slate-700">
+                  {r.firstInTime || '—'}
+                </TableCell>
+                <TableCell className="py-2.5 px-3 font-mono text-slate-700">
+                  {r.lastOutTime || '—'}
+                </TableCell>
+                <TableCell className="py-2.5 px-3 font-bold text-slate-800 font-mono">
                   {r.payableHours ||
                     `${Math.floor(r.workedMinutes / 60)}h ${r.workedMinutes % 60}m`}
-                </td>
-                <td className="py-2.5 px-3 text-right">
+                </TableCell>
+                <TableCell className="py-2.5 px-3 text-right">
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
                       r.dayStatus === 'PRESENT'
@@ -80,11 +88,11 @@ export function OverviewAttendancePreviewTab() {
                   >
                     {r.dayStatus}
                   </span>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

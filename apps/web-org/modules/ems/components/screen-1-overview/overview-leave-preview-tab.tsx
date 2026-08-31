@@ -1,5 +1,7 @@
 'use client';
 
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@smarteam/ui';
+
 import React from 'react';
 import { useLeave } from '../../hooks/use-leave';
 
@@ -48,26 +50,32 @@ export function OverviewLeavePreviewTab() {
             No recent leave applications submitted.
           </div>
         ) : (
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-100/60 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
-                <th className="py-2.5 px-4">Leave Scheme</th>
-                <th className="py-2.5 px-3">Duration</th>
-                <th className="py-2.5 px-3">Days</th>
-                <th className="py-2.5 px-3">Reason</th>
-                <th className="py-2.5 px-3 text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-100/60 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
+                <TableHead className="py-2.5 px-4">Leave Scheme</TableHead>
+                <TableHead className="py-2.5 px-3">Duration</TableHead>
+                <TableHead className="py-2.5 px-3">Days</TableHead>
+                <TableHead className="py-2.5 px-3">Reason</TableHead>
+                <TableHead className="py-2.5 px-3 text-right">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-slate-100">
               {applications.map((app) => (
-                <tr key={app.id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-2.5 px-4 font-semibold text-slate-800">{app.leaveTypeName}</td>
-                  <td className="py-2.5 px-3 text-slate-600 font-mono text-[11px]">
+                <TableRow key={app.id} className="hover:bg-slate-50/60 transition-colors">
+                  <TableCell className="py-2.5 px-4 font-semibold text-slate-800">
+                    {app.leaveTypeName}
+                  </TableCell>
+                  <TableCell className="py-2.5 px-3 text-slate-600 font-mono text-[11px]">
                     {app.startDate} to {app.endDate}
-                  </td>
-                  <td className="py-2.5 px-3 font-bold text-slate-700">{app.dayCount} Day(s)</td>
-                  <td className="py-2.5 px-3 text-slate-500 truncate max-w-xs">{app.reason}</td>
-                  <td className="py-2.5 px-3 text-right">
+                  </TableCell>
+                  <TableCell className="py-2.5 px-3 font-bold text-slate-700">
+                    {app.dayCount} Day(s)
+                  </TableCell>
+                  <TableCell className="py-2.5 px-3 text-slate-500 truncate max-w-xs">
+                    {app.reason}
+                  </TableCell>
+                  <TableCell className="py-2.5 px-3 text-right">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
                         app.status === 'APPROVED'
@@ -79,11 +87,11 @@ export function OverviewLeavePreviewTab() {
                     >
                       {app.status}
                     </span>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>

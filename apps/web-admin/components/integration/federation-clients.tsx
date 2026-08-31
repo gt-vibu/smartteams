@@ -17,13 +17,15 @@ import {
   listFederationClients,
   rotateFederationClientSecret,
   setFederationClientEnabled,
-  type AdminSession,
   type FederationClient,
   type FederationClientSecret,
 } from '../../lib/api-client';
-import { FederationClientDialog, FederationSecretDialog } from './federation-client-dialogs';
+import { FederationClientDialog } from './federation-client-dialogs';
+import { ActionButton } from './action-button';
+import { formatDateTime, readableError } from '../../lib/format';
+import { FederationSecretDialog } from './federation-secret-dialog';
 
-export function FederationClients({ session }: { session: AdminSession }) {
+export function FederationClients() {
   const [clients, setClients] = useState<FederationClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [action, setAction] = useState<string | null>(null);
@@ -34,14 +36,14 @@ export function FederationClients({ session }: { session: AdminSession }) {
 
   const load = useCallback(async () => {
     try {
-      setClients(await listFederationClients(session));
+      setClients(await listFederationClients());
       setError(null);
     } catch (caught) {
-      setError(readableError(caught));
+      setError(readableError(caught, 'The federation client action could not be completed.'));
     } finally {
       setLoading(false);
     }
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     void load();
@@ -54,7 +56,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
       await operation();
       await load();
     } catch (caught) {
-      setError(readableError(caught));
+      setError(readableError(caught, 'The federation client action could not be completed.'));
     } finally {
       setAction(null);
     }
@@ -68,7 +70,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
     )
       return;
     await runAction(`rotate:${client.id}`, async () => {
-      setOneTimeSecret(await rotateFederationClientSecret(session, client.id));
+      setOneTimeSecret(await rotateFederationClientSecret(client.id));
     });
   }
 
@@ -76,7 +78,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
     const verb = client.isActive ? 'Disable' : 'Enable';
     if (!window.confirm(`${verb} ${client.name}?`)) return;
     await runAction(`toggle:${client.id}`, async () => {
-      await setFederationClientEnabled(session, client.id, !client.isActive);
+      await setFederationClientEnabled(client.id, !client.isActive);
     });
   }
 
@@ -89,7 +91,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
       !window.confirm(`Delete ${client.name}? Its credentials and tenant grants will be revoked.`)
     )
       return;
-    await runAction(`delete:${client.id}`, () => deleteFederationClient(session, client.id));
+    await runAction(`delete:${client.id}`, () => deleteFederationClient(client.id));
   }
 
   return (
@@ -175,7 +177,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
                 accessorKey: 'createdAt',
                 sortable: true,
                 cell: (c) => (
-                  <span className="text-xs text-slate-500">{formatDate(c.createdAt)}</span>
+                  <span className="text-xs text-slate-500">{formatDateTime(c.createdAt)}</span>
                 ),
               },
               {
@@ -185,7 +187,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
                 sortable: true,
                 cell: (c) => (
                   <span className="text-xs text-slate-500">
-                    {c.lastUsedAt ? formatDate(c.lastUsedAt) : 'Not tracked'}
+                    {c.lastUsedAt ? formatDateTime(c.lastUsedAt) : 'Not tracked'}
                   </span>
                 ),
               },
@@ -259,53 +261,8 @@ export function FederationClients({ session }: { session: AdminSession }) {
           await load();
         }}
         open={createOpen || editingClient !== null}
-        session={session}
       />
       <FederationSecretDialog onClose={() => setOneTimeSecret(null)} secret={oneTimeSecret} />
     </>
   );
-}
-
-function ActionButton({
-  icon,
-  label,
-  danger,
-  disabled,
-  onClick,
-}: {
-  icon: 'edit' | 'refresh' | 'power' | 'trash';
-  label: string;
-  danger?: boolean;
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <Button
-      aria-label={label}
-      className={`grid size-10 place-items-center rounded-lg border border-border transition-colors disabled:cursor-wait disabled:opacity-45 ${
-        danger
-          ? 'text-destructive hover:border-destructive/30 hover:bg-destructive/5'
-          : 'hover:bg-muted'
-      }`}
-      disabled={disabled}
-      onClick={onClick}
-      title={label}
-      type="button"
-    >
-      <Icon className="size-4" name={icon} />
-    </Button>
-  );
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(value));
-}
-
-function readableError(error: unknown) {
-  return error instanceof Error && error.message
-    ? error.message
-    : 'The federation client action could not be completed.';
 }

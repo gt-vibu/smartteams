@@ -20,7 +20,7 @@ import {
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
-import { AuthService } from '../auth/auth.service';
+import { AuthSessionService } from '../auth/auth.session.service';
 import { createHash } from 'node:crypto';
 import { EmployeeRecordsService } from './employee-records.service';
 import { toEmployeeDto } from './employee-mappers';
@@ -48,7 +48,7 @@ export class EmployeesService {
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
-    private readonly auth: AuthService,
+    private readonly sessions: AuthSessionService,
     private readonly records: EmployeeRecordsService,
   ) {}
 
@@ -263,7 +263,7 @@ export class EmployeesService {
         update: { status: 'ACTIVE', removedAt: null, externalId },
       });
       if (employee.status !== EmployeeStatus.ACTIVE)
-        await this.auth.revokeAllSessions(employee.userId!, 'FEDERATED_EMPLOYEE_INACTIVE', tx);
+        await this.sessions.revokeAllSessions(employee.userId!, 'FEDERATED_EMPLOYEE_INACTIVE', tx);
       await this.setOwnership(
         tx,
         context,
@@ -700,7 +700,7 @@ export class EmployeesService {
         where: { organizationId: context.organizationId, externalId: externalEmployeeId },
       });
       if (!employee?.userId) throw new NotFoundError('Federated employee user');
-      await this.auth.revokeAllSessions(employee.userId, reason, tx);
+      await this.sessions.revokeAllSessions(employee.userId, reason, tx);
       await this.audit.record(
         context,
         {
@@ -728,7 +728,7 @@ export class EmployeesService {
         data: { status: 'INACTIVE', deactivatedAt: new Date(), version: { increment: 1 } },
       });
       if (employee.userId)
-        await this.auth.revokeAllSessions(employee.userId, 'EMPLOYEE_DEACTIVATED', tx);
+        await this.sessions.revokeAllSessions(employee.userId, 'EMPLOYEE_DEACTIVATED', tx);
       await this.audit.record(
         context,
         {

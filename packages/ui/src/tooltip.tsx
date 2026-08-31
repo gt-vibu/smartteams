@@ -1,44 +1,55 @@
+'use client';
+
 import * as React from 'react';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { cn } from './cn';
+
+const TooltipProvider = TooltipPrimitive.Provider;
+const TooltipRoot = TooltipPrimitive.Root;
+const TooltipTrigger = TooltipPrimitive.Trigger;
+
+const TooltipContent = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Content
+      ref={ref}
+      sideOffset={sideOffset}
+      className={cn(
+        'z-50 overflow-hidden rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-md',
+        'data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95',
+        className,
+      )}
+      {...props}
+    />
+  </TooltipPrimitive.Portal>
+));
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
 export interface TooltipProps {
   content: React.ReactNode;
   children: React.ReactNode;
-  side?: 'top' | 'bottom' | 'left' | 'right';
+  side?: 'top' | 'right' | 'bottom' | 'left';
   className?: string;
 }
 
+/**
+ * Convenience wrapper preserving the previous `content` / `side` API used by call sites, now
+ * backed by Radix so the tooltip is keyboard-reachable, announced to screen readers and
+ * collision-aware. The primitives are exported alongside for compositional use.
+ */
 export function Tooltip({ content, children, side = 'top', className }: TooltipProps) {
-  const [isVisible, setIsVisible] = React.useState(false);
-
-  const sideClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-1.5',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-1.5',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-1.5',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-1.5',
-  };
-
   return (
-    <span
-      className="relative inline-flex items-center"
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
-      onFocus={() => setIsVisible(true)}
-      onBlur={() => setIsVisible(false)}
-    >
-      {children}
-      {isVisible && (
-        <span
-          role="tooltip"
-          className={cn(
-            'absolute z-50 max-w-xs rounded-md bg-slate-900 px-2.5 py-1.5 text-[11px] font-normal leading-tight text-white shadow-md transition-opacity duration-150 animate-in fade-in-0 zoom-in-95 dark:bg-slate-100 dark:text-slate-900 pointer-events-none whitespace-normal text-left',
-            sideClasses[side],
-            className,
-          )}
-        >
+    <TooltipProvider delayDuration={200}>
+      <TooltipRoot>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent className={className} side={side}>
           {content}
-        </span>
-      )}
-    </span>
+        </TooltipContent>
+      </TooltipRoot>
+    </TooltipProvider>
   );
 }
+
+export { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent };

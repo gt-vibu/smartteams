@@ -1,156 +1,101 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import * as argon2 from 'argon2';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import type { OrganizationMembership } from '@smarteam/contracts';
 import { UnauthorizedDomainError } from '../../common/errors/domain-error';
-import type { Prisma } from '../../generated/prisma/client';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { PasswordService } from './auth.passwords';
+import {
+  AuthSessionService,
+  REVOCATION,
+  type IssuedSession,
+  type SessionMetadata,
+} from './auth.session.service';
 
-export type AuthTokenPair = {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: 'Bearer';
-  expiresIn: number;
-  organizationId?: string;
-  userId: string;
-};
+/**
+ * Login outcomes. `ORGANIZATION_SELECTION_REQUIRED` is returned instead of silently choosing a
+ * tenant for a user who belongs to several.
+ */
+export type LoginOutcome =
+  | { outcome: 'AUTHENTICATED'; session: IssuedSession }
+  | { outcome: 'ORGANIZATION_SELECTION_REQUIRED'; organizations: OrganizationMembership[] };
 
-type TokenPayload = { sub: string; sid: string; tv: number; organizationId?: string };
+/** One message for every credential failure, so responses cannot be used to enumerate users. */
+const INVALID_CREDENTIALS = 'Invalid email or password';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly config: ConfigService,
-    private readonly jwt: JwtService,
     private readonly database: TenantDatabaseService,
+    private readonly passwords: PasswordService,
+    private readonly sessions: AuthSessionService,
   ) {}
 
-  async hashPassword(password: string) {
-    return argon2.hash(password, {
-      memoryCost: this.config.get<number>('PASSWORD_HASH_MEMORY_COST', 19_456),
-      type: argon2.argon2id,
-    });
-  }
-
-  async verifyPassword(hash: string, password: string) {
-    return argon2.verify(hash, password);
-  }
-
-  async register(input: {
-    organizationName: string;
-    timezone: string;
-    currencyCode: string;
-    email: string;
-    displayName: string;
-    password: string;
-  }) {
-    const emailNormalized = this.normalizeEmail(input.email);
-    const passwordHash = await this.hashPassword(input.password);
-    const result = await this.database.runSystem(undefined, async (tx) => {
-      const user = await tx.user.create({
-        data: {
-          email: input.email.trim(),
-          emailNormalized,
-          displayName: input.displayName.trim(),
-          passwordHash,
-          identityType: 'NATIVE',
-        },
-      });
-      const organization = await tx.organization.create({
-        data: {
-          name: input.organizationName.trim(),
-          slug: this.slugify(input.organizationName),
-          source: 'NATIVE',
-          timezone: input.timezone,
-          currencyCode: input.currencyCode.toUpperCase(),
-          settings: { create: {} },
-        },
-      });
-      await tx.userOrganization.create({
-        data: {
-          userId: user.id,
-          organizationId: organization.id,
-          status: 'ACTIVE',
-          source: 'NATIVE',
-        },
-      });
-      const role = await tx.role.create({
-        data: {
-          organizationId: organization.id,
-          code: 'ORG_ADMIN',
-          name: 'Organization Admin',
-          scope: 'ORGANIZATION',
-          isSystem: true,
-        },
-      });
-      const wildcard = await tx.permission.create({
-        data: { key: '*', description: 'Organization administrator wildcard permission' },
-      });
-      await tx.rolePermission.create({ data: { roleId: role.id, permissionId: wildcard.id } });
-      await tx.userRole.create({
-        data: {
-          userId: user.id,
-          organizationId: organization.id,
-          roleId: role.id,
-          assignmentSource: 'NATIVE',
-        },
-      });
-      return { userId: user.id, tokenVersion: user.tokenVersion, organizationId: organization.id };
-    });
-    return this.issueTokens(result.userId, result.tokenVersion, result.organizationId);
-  }
-
+  /**
+   * Authenticates a tenant user.
+   *
+   * `organizationId` is a *selection*, never an authorization input: it is honoured only when
+   * the authenticated user holds an ACTIVE membership of that organization, and any other
+   * value is rejected with the same opaque error as a wrong password.
+   */
   async login(
     email: string,
     password: string,
-    organizationId: string,
-    metadata: { ipAddress?: string; userAgent?: string },
-  ) {
-    const user = await this.database.run(
-      {
-        organizationId,
-        accessMode: 'NATIVE',
-        actor: { type: 'SYSTEM' },
-        correlationId: crypto.randomUUID(),
-        requestId: crypto.randomUUID(),
-        permissions: new Set(),
-      },
-      (tx) =>
-        tx.user.findFirst({
-          where: {
-            emailNormalized: this.normalizeEmail(email),
-            isActive: true,
-            memberships: { some: { organizationId, status: 'ACTIVE' } },
-          },
-        }),
+    organizationId?: string,
+    metadata: SessionMetadata = {},
+  ): Promise<LoginOutcome> {
+    const user = await this.findByEmail(email);
+    if (!user?.passwordHash) {
+      // Burn an equivalent argon2 verification so a missing account is not faster to reject
+      // than a wrong password.
+      await this.passwords.verifyDecoy(password);
+      throw new UnauthorizedDomainError(INVALID_CREDENTIALS);
+    }
+    if (!(await this.passwords.verifyPassword(user.passwordHash, password)) || !user.isActive) {
+      throw new UnauthorizedDomainError(INVALID_CREDENTIALS);
+    }
+
+    const memberships = user.memberships.filter((membership) => membership.status === 'ACTIVE');
+    if (memberships.length === 0) throw new UnauthorizedDomainError(INVALID_CREDENTIALS);
+
+    if (organizationId) {
+      // Not a 403: telling the caller that the organization exists but is not theirs would
+      // leak the tenant directory to anyone holding a single valid credential.
+      if (!memberships.some((membership) => membership.organizationId === organizationId)) {
+        throw new UnauthorizedDomainError(INVALID_CREDENTIALS);
+      }
+    } else if (memberships.length > 1) {
+      return {
+        outcome: 'ORGANIZATION_SELECTION_REQUIRED',
+        organizations: memberships.map(toMembershipContract),
+      };
+    }
+
+    const resolvedOrganizationId = organizationId ?? memberships[0]!.organizationId;
+    await this.database.runSystem(resolvedOrganizationId, (tx) =>
+      tx.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } }),
     );
-    if (!user?.passwordHash || !(await this.verifyPassword(user.passwordHash, password)))
-      throw new UnauthorizedDomainError('Invalid email or password');
-    await this.database.run(
-      {
-        organizationId,
-        accessMode: 'NATIVE',
-        actor: { type: 'SYSTEM' },
-        correlationId: crypto.randomUUID(),
-        requestId: crypto.randomUUID(),
-        permissions: new Set(),
-      },
-      (tx) => tx.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } }),
+    const session = await this.sessions.issue(
+      user.id,
+      user.tokenVersion,
+      resolvedOrganizationId,
+      metadata,
     );
-    return this.issueTokens(user.id, user.tokenVersion, organizationId, metadata);
+    return { outcome: 'AUTHENTICATED', session };
   }
 
+  /**
+   * Authenticates a platform operator. Platform sessions are deliberately not scoped to an
+   * organization; platform authority is re-derived from `UserPlatformRole` by
+   * `PlatformAuthGuard` on every protected request.
+   */
   async platformLogin(
     email: string,
     password: string,
-    metadata: { ipAddress?: string; userAgent?: string },
-  ) {
+    metadata: SessionMetadata = {},
+  ): Promise<IssuedSession> {
     const user = await this.database.runSystem(undefined, (tx) =>
       tx.user.findFirst({
         where: {
-          emailNormalized: this.normalizeEmail(email),
-          isActive: true,
+          emailNormalized: this.passwords.normalizeEmail(email),
           platformRoleAssignments: {
             some: {
               revokedAt: null,
@@ -158,310 +103,65 @@ export class AuthService {
             },
           },
         },
+        select: { id: true, isActive: true, passwordHash: true, tokenVersion: true },
       }),
     );
-    if (!user?.passwordHash || !(await this.verifyPassword(user.passwordHash, password)))
-      throw new UnauthorizedDomainError('Invalid email or password');
+    if (!user?.passwordHash) {
+      await this.passwords.verifyDecoy(password);
+      throw new UnauthorizedDomainError(INVALID_CREDENTIALS);
+    }
+    if (!(await this.passwords.verifyPassword(user.passwordHash, password)) || !user.isActive) {
+      throw new UnauthorizedDomainError(INVALID_CREDENTIALS);
+    }
     await this.database.runSystem(undefined, (tx) =>
       tx.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } }),
     );
-    return this.issueTokens(user.id, user.tokenVersion, undefined, metadata);
+    return this.sessions.issue(user.id, user.tokenVersion, undefined, metadata);
   }
 
-  async refresh(refreshToken: string) {
-    const session = await this.database.runSystem(undefined, (tx) =>
-      tx.authSession.findUnique({
-        where: { refreshTokenHash: this.hashOpaqueToken(refreshToken) },
-        include: { user: true },
-      }),
-    );
-    if (
-      !session ||
-      session.status !== 'ACTIVE' ||
-      session.expiresAt <= new Date() ||
-      !session.user.isActive
-    )
-      throw new UnauthorizedDomainError('Refresh token is invalid or expired');
-    if (session.organizationId) {
-      await this.database.run(
-        {
-          organizationId: session.organizationId,
-          accessMode: 'NATIVE',
-          actor: { type: 'USER', userId: session.userId },
-          correlationId: crypto.randomUUID(),
-          requestId: crypto.randomUUID(),
-          permissions: new Set(),
-        },
-        (tx) =>
-          tx.authSession.update({
-            where: { id: session.id },
-            data: { status: 'REVOKED', revokedAt: new Date(), revocationReason: 'ROTATED' },
-          }),
-      );
-    } else {
-      await this.database.runSystem(undefined, (tx) =>
-        tx.authSession.update({
-          where: { id: session.id },
-          data: { status: 'REVOKED', revokedAt: new Date(), revocationReason: 'ROTATED' },
-        }),
-      );
-    }
-    return this.issueTokens(
-      session.userId,
-      session.user.tokenVersion,
-      session.organizationId ?? undefined,
-    );
+  refresh(refreshToken: string, metadata: SessionMetadata = {}): Promise<IssuedSession> {
+    return this.sessions.rotate(refreshToken, metadata);
   }
 
-  async logout(sessionId: string) {
-    await this.database.runSystem(undefined, (tx) =>
-      tx.authSession.updateMany({
-        where: { id: sessionId, status: 'ACTIVE' },
-        data: { status: 'REVOKED', revokedAt: new Date(), revocationReason: 'USER_LOGOUT' },
-      }),
-    );
+  logout(sessionId: string): Promise<void> {
+    return this.sessions.revoke(sessionId, REVOCATION.logout);
   }
 
-  async revokeAllSessions(userId: string, reason: string, tx?: Prisma.TransactionClient) {
-    if (tx) {
-      await tx.user.update({ where: { id: userId }, data: { tokenVersion: { increment: 1 } } });
-      await tx.authSession.updateMany({
-        where: { userId, status: 'ACTIVE' },
-        data: { status: 'REVOKED', revokedAt: new Date(), revocationReason: reason },
-      });
-      return;
-    }
-    await this.database.runSystem(undefined, async (tx) => {
-      await tx.user.update({ where: { id: userId }, data: { tokenVersion: { increment: 1 } } });
-      await tx.authSession.updateMany({
-        where: { userId, status: 'ACTIVE' },
-        data: { status: 'REVOKED', revokedAt: new Date(), revocationReason: reason },
-      });
-    });
-  }
-
-  async requestPasswordReset(email: string, organizationId: string) {
-    const user = await this.database.run(
-      {
-        organizationId,
-        accessMode: 'NATIVE',
-        actor: { type: 'SYSTEM' },
-        correlationId: crypto.randomUUID(),
-        requestId: crypto.randomUUID(),
-        permissions: new Set(),
-      },
-      (tx) =>
-        tx.user.findFirst({
-          where: {
-            emailNormalized: this.normalizeEmail(email),
-            memberships: { some: { organizationId, status: 'ACTIVE' } },
-            isActive: true,
-          },
-        }),
-    );
-    if (!user) return { accepted: true };
-    const token = randomBytes(32).toString('base64url');
-    await this.database.runSystem(undefined, (tx) =>
-      tx.passwordResetToken.create({
-        data: {
-          userId: user.id,
-          tokenHash: this.hashOpaqueToken(token),
-          expiresAt: new Date(Date.now() + 3_600_000),
-        },
-      }),
-    );
-    return {
-      accepted: true,
-      delivery: 'configured',
-      developmentToken: this.config.get('NODE_ENV') === 'development' ? token : undefined,
-    };
-  }
-
-  async resetPassword(token: string, password: string) {
-    const reset = await this.database.runSystem(undefined, (tx) =>
-      tx.passwordResetToken.findUnique({ where: { tokenHash: this.hashOpaqueToken(token) } }),
-    );
-    if (!reset || reset.usedAt || reset.revokedAt || reset.expiresAt <= new Date())
-      throw new UnauthorizedDomainError('Password reset token is invalid or expired');
-    const passwordHash = await this.hashPassword(password);
-    await this.database.runSystem(undefined, async (tx) => {
-      const claimed = await tx.passwordResetToken.updateMany({
-        where: { id: reset.id, usedAt: null, revokedAt: null, expiresAt: { gt: new Date() } },
-        data: { usedAt: new Date() },
-      });
-      if (claimed.count !== 1)
-        throw new UnauthorizedDomainError('Password reset token is invalid or expired');
-      await tx.user.update({
-        where: { id: reset.userId },
-        data: { passwordHash, tokenVersion: { increment: 1 } },
-      });
-      await tx.authSession.updateMany({
-        where: { userId: reset.userId, status: 'ACTIVE' },
-        data: { status: 'REVOKED', revokedAt: new Date(), revocationReason: 'PASSWORD_RESET' },
-      });
-    });
-    return { success: true };
-  }
-
-  async acceptInvitation(token: string, displayName: string, password: string) {
-    const invitation = await this.database.runSystem(undefined, (tx) =>
-      tx.userInvitation.findUnique({ where: { tokenHash: this.hashOpaqueToken(token) } }),
-    );
-    if (
-      !invitation ||
-      invitation.acceptedAt ||
-      invitation.revokedAt ||
-      invitation.expiresAt <= new Date()
-    )
-      throw new UnauthorizedDomainError('Invitation is invalid or expired');
-    const result = await this.database.runSystem(undefined, async (tx) => {
-      const existing = await tx.user.findUnique({
-        where: { emailNormalized: invitation.emailNormalized },
-      });
-      const user = existing
-        ? await tx.user.update({
-            where: { id: existing.id },
-            data: {
-              displayName: displayName.trim(),
-              passwordHash: await this.hashPassword(password),
-              isActive: true,
+  /**
+   * Pre-authentication lookup. Runs on the system role because no tenant context exists yet;
+   * it is keyed solely on the normalized email, and nothing is returned to the caller until
+   * the password has been verified.
+   */
+  private findByEmail(email: string) {
+    return this.database.runSystem(undefined, (tx) =>
+      tx.user.findUnique({
+        where: { emailNormalized: this.passwords.normalizeEmail(email) },
+        select: {
+          id: true,
+          isActive: true,
+          passwordHash: true,
+          tokenVersion: true,
+          memberships: {
+            select: {
+              organizationId: true,
+              status: true,
+              organization: { select: { name: true, slug: true, status: true } },
             },
-          })
-        : await tx.user.create({
-            data: {
-              email: invitation.emailNormalized,
-              emailNormalized: invitation.emailNormalized,
-              displayName: displayName.trim(),
-              passwordHash: await this.hashPassword(password),
-              identityType: 'NATIVE',
-            },
-          });
-      await tx.userOrganization.upsert({
-        where: {
-          userId_organizationId: { userId: user.id, organizationId: invitation.organizationId },
-        },
-        create: {
-          userId: user.id,
-          organizationId: invitation.organizationId,
-          status: 'ACTIVE',
-          source: 'NATIVE',
-        },
-        update: { status: 'ACTIVE', removedAt: null },
-      });
-      const role =
-        (await tx.role.findFirst({
-          where: { organizationId: invitation.organizationId, code: 'EMPLOYEE' },
-        })) ??
-        (await tx.role.create({
-          data: {
-            organizationId: invitation.organizationId,
-            code: 'EMPLOYEE',
-            name: 'Employee',
-            scope: 'ORGANIZATION',
-            isSystem: true,
           },
-        }));
-      const assignment = await tx.userRole.findFirst({
-        where: {
-          userId: user.id,
-          organizationId: invitation.organizationId,
-          roleId: role.id,
-          endsAt: null,
         },
-      });
-      if (!assignment)
-        await tx.userRole.create({
-          data: {
-            userId: user.id,
-            organizationId: invitation.organizationId,
-            roleId: role.id,
-            assignmentSource: 'NATIVE',
-          },
-        });
-      await tx.userInvitation.update({
-        where: { id: invitation.id },
-        data: { acceptedAt: new Date(), acceptedByUserId: user.id },
-      });
-      return {
-        userId: user.id,
-        tokenVersion: user.tokenVersion,
-        organizationId: invitation.organizationId,
-      };
-    });
-    return this.issueTokens(result.userId, result.tokenVersion, result.organizationId);
-  }
-
-  async getUser(userId: string) {
-    const user = await this.database.runSystem(undefined, (tx) =>
-      tx.user.findUnique({ where: { id: userId }, include: { memberships: true, employee: true } }),
+      }),
     );
-    if (!user || !user.isActive) throw new UnauthorizedDomainError();
-    return user;
   }
+}
 
-  async issueTokens(
-    userId: string,
-    tokenVersion: number,
-    organizationId?: string,
-    metadata: { ipAddress?: string; userAgent?: string } = {},
-  ): Promise<AuthTokenPair> {
-    const refreshToken = randomBytes(32).toString('base64url');
-    const createSession = (tx: Prisma.TransactionClient) =>
-      tx.authSession.create({
-        data: {
-          userId,
-          organizationId,
-          refreshTokenHash: this.hashOpaqueToken(refreshToken),
-          expiresAt: new Date(
-            Date.now() + this.config.get<number>('JWT_REFRESH_TOKEN_TTL_SECONDS', 2_592_000) * 1000,
-          ),
-          ipAddress: metadata.ipAddress,
-          userAgent: metadata.userAgent,
-        },
-      });
-    const session = organizationId
-      ? await this.database.run(
-          {
-            organizationId,
-            accessMode: 'NATIVE',
-            actor: { type: 'USER', userId },
-            correlationId: crypto.randomUUID(),
-            requestId: crypto.randomUUID(),
-            permissions: new Set(),
-          },
-          createSession,
-        )
-      : await this.database.runSystem(undefined, createSession);
-    const accessToken = await this.jwt.signAsync({
-      sub: userId,
-      sid: session.id,
-      tv: tokenVersion,
-      organizationId,
-    } satisfies TokenPayload);
-    return {
-      accessToken,
-      refreshToken,
-      tokenType: 'Bearer',
-      expiresIn: this.config.get<number>('JWT_ACCESS_TOKEN_TTL_SECONDS', 900),
-      organizationId,
-      userId,
-    };
-  }
-
-  hashOpaqueToken(value: string) {
-    return createHash('sha256').update(value).digest('hex');
-  }
-  normalizeEmail(email: string) {
-    return email.trim().toLowerCase();
-  }
-
-  private slugify(value: string) {
-    const slug =
-      value
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '') || `org-${randomUUID().slice(0, 8)}`;
-    return `${slug}-${randomUUID().slice(0, 8)}`;
-  }
+function toMembershipContract(membership: {
+  organizationId: string;
+  organization: { name: string; slug: string; status: string };
+}): OrganizationMembership {
+  return {
+    organizationId: membership.organizationId,
+    name: membership.organization.name,
+    slug: membership.organization.slug,
+    status: membership.organization.status as OrganizationMembership['status'],
+  };
 }

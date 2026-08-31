@@ -198,7 +198,8 @@ export function AssignPayStructureModal({
           </div>
           <Button
             onClick={onClose}
-            className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
+            variant="ghost"
+            className="p-1 rounded text-muted-foreground hover:text-foreground"
           >
             ✕
           </Button>
@@ -379,7 +380,7 @@ export function AssignPayStructureModal({
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
                 <Checkbox
                   checked={epfEnrolled}
-                  onCheckedChange={setEpfEnrolled}
+                  onCheckedChange={(checked) => setEpfEnrolled(checked === true)}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>
@@ -393,7 +394,7 @@ export function AssignPayStructureModal({
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
                 <Checkbox
                   checked={esiEnrolled}
-                  onCheckedChange={setEsiEnrolled}
+                  onCheckedChange={(checked) => setEsiEnrolled(checked === true)}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>
@@ -407,7 +408,7 @@ export function AssignPayStructureModal({
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
                 <Checkbox
                   checked={ptEnrolled}
-                  onCheckedChange={setPtEnrolled}
+                  onCheckedChange={(checked) => setPtEnrolled(checked === true)}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>
@@ -421,7 +422,7 @@ export function AssignPayStructureModal({
               <label className="flex items-center gap-2 p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded cursor-pointer">
                 <Checkbox
                   checked={gratuityEnrolled}
-                  onCheckedChange={setGratuityEnrolled}
+                  onCheckedChange={(checked) => setGratuityEnrolled(checked === true)}
                   className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                 />
                 <div>

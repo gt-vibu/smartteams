@@ -16,7 +16,7 @@ const AVATAR_OVERRIDE_KEY = 'ems_avatar_override';
 
 export class LocalEmployeeRepository implements IEmployeeRepository {
   getCurrentEmployee(): EmployeeProfile {
-    const persona = authRepository.getCurrentPersona();
+    const persona = authRepository.requireCurrentPersona();
 
     // Avatar can be overridden by the user via photo upload — stored separately
     const avatarOverride = emsStorageAdapter.getItem<string | null>(AVATAR_OVERRIDE_KEY, null);

@@ -1,45 +1,43 @@
+'use client';
+
 import * as React from 'react';
+import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { cn } from './cn';
 
-export interface CheckboxProps extends Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  'onChange'
-> {
-  checked?: boolean;
-  onCheckedChange?: (checked: boolean) => void;
-}
+export type CheckboxProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>;
 
-export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
-  ({ className, checked = false, onCheckedChange, disabled, ...props }, ref) => {
-    return (
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={checked}
-        disabled={disabled}
-        ref={ref}
-        onClick={() => !disabled && onCheckedChange?.(!checked)}
-        className={cn(
-          'peer h-4 w-4 shrink-0 rounded border border-slate-300 transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 flex items-center justify-center cursor-pointer',
-          checked
-            ? 'bg-primary text-white border-primary'
-            : 'bg-white dark:bg-card hover:border-slate-400 dark:hover:border-slate-600',
-          className,
-        )}
-        {...props}
-      >
-        {checked && (
-          <svg
-            className="h-3 w-3 text-white stroke-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-        )}
-      </button>
-    );
-  },
+/**
+ * `onCheckedChange` now also emits Radix's `"indeterminate"` state. Existing call sites pass a
+ * `(checked: boolean) => void`, which stays assignable because `CheckedState` widens it.
+ */
+const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>, CheckboxProps>(
+  ({ className, ...props }, ref) => (
+    <CheckboxPrimitive.Root
+      ref={ref}
+      className={cn(
+        'peer size-4 shrink-0 rounded-sm border border-input shadow-sm',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        'disabled:cursor-not-allowed disabled:opacity-50',
+        'data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground',
+        className,
+      )}
+      {...props}
+    >
+      <CheckboxPrimitive.Indicator className={cn('grid place-items-center text-current')}>
+        <svg
+          aria-hidden="true"
+          className="size-3.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={3}
+          viewBox="0 0 24 24"
+        >
+          <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </CheckboxPrimitive.Indicator>
+    </CheckboxPrimitive.Root>
+  ),
 );
-Checkbox.displayName = 'Checkbox';
+Checkbox.displayName = CheckboxPrimitive.Root.displayName;
+
+export { Checkbox };

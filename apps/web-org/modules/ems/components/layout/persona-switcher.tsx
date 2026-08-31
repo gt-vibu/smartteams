@@ -150,7 +150,9 @@ export function PersonaSwitcher() {
             <Button
               onClick={() => {
                 setIsOpen(false);
-                logout();
+                // Fire-and-forget: the API revokes the session and clears the cookies, and the
+                // shell re-renders to the sign-in screen when the promise settles.
+                void logout();
               }}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-[6px] text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
             >

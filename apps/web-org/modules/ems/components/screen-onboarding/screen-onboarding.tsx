@@ -1,6 +1,19 @@
 'use client';
 
-import { Button, Checkbox, Input, Textarea } from '@smarteam/ui';
+import {
+  Button,
+  Checkbox,
+  Input,
+  Progress,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Textarea,
+  progressTone,
+} from '@smarteam/ui';
 
 import React, { useState, useEffect } from 'react';
 import { Select } from '@smarteam/ui';
@@ -412,107 +425,98 @@ export function ScreenOnboarding() {
           </div>
 
           {/* Candidate Table */}
-          <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                  <th className="py-2.5 px-4">Candidate</th>
-                  <th className="py-2.5 px-3">Role & Dept</th>
-                  <th className="py-2.5 px-3">Branch & Manager</th>
-                  <th className="py-2.5 px-3">Joining Date</th>
-                  <th className="py-2.5 px-3">Stage</th>
-                  <th className="py-2.5 px-3">Checklist Progress</th>
-                  <th className="py-2.5 px-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredCandidates.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center text-slate-400">
-                      No candidates match the selected filters.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredCandidates.map((c) => {
-                    const stCfg = STAGES.find((s) => s.id === c.stage) || STAGES[0]!;
-                    return (
-                      <tr
-                        key={c.id}
-                        onClick={() => setSelectedCandidate(c)}
-                        className="hover:bg-sky-50/40 transition-colors cursor-pointer group"
-                      >
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                              {c.avatarInitials}
+          <Table containerClassName="shadow-xs">
+            <TableHeader>
+              <TableRow className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                <TableHead className="py-2.5 px-4">Candidate</TableHead>
+                <TableHead className="py-2.5 px-3">Role & Dept</TableHead>
+                <TableHead className="py-2.5 px-3">Branch & Manager</TableHead>
+                <TableHead className="py-2.5 px-3">Joining Date</TableHead>
+                <TableHead className="py-2.5 px-3">Stage</TableHead>
+                <TableHead className="py-2.5 px-3">Checklist Progress</TableHead>
+                <TableHead className="py-2.5 px-3 text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-slate-100">
+              {filteredCandidates.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="py-12 text-center text-slate-400">
+                    No candidates match the selected filters.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredCandidates.map((c) => {
+                  const stCfg = STAGES.find((s) => s.id === c.stage) || STAGES[0]!;
+                  return (
+                    <TableRow
+                      key={c.id}
+                      onClick={() => setSelectedCandidate(c)}
+                      className="hover:bg-sky-50/40 transition-colors cursor-pointer group"
+                    >
+                      <TableCell className="py-3 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                            {c.avatarInitials}
+                          </div>
+                          <div>
+                            <div className="font-bold text-slate-900 group-hover:text-sky-700 transition-colors">
+                              {c.candidateName}
                             </div>
-                            <div>
-                              <div className="font-bold text-slate-900 group-hover:text-sky-700 transition-colors">
-                                {c.candidateName}
-                              </div>
-                              <div className="text-[10px] text-slate-400 font-mono">
-                                {c.employeeNumber} · {c.workEmail}
-                              </div>
+                            <div className="text-[10px] text-slate-400 font-mono">
+                              {c.employeeNumber} · {c.workEmail}
                             </div>
                           </div>
-                        </td>
+                        </div>
+                      </TableCell>
 
-                        <td className="py-3 px-3">
-                          <div className="font-semibold text-slate-800">{c.jobTitle}</div>
-                          <div className="text-[10px] text-slate-500">{c.department}</div>
-                        </td>
+                      <TableCell className="py-3 px-3">
+                        <div className="font-semibold text-slate-800">{c.jobTitle}</div>
+                        <div className="text-[10px] text-slate-500">{c.department}</div>
+                      </TableCell>
 
-                        <td className="py-3 px-3">
-                          <div className="text-slate-700">{c.branchName}</div>
-                          <div className="text-[10px] text-slate-400">
-                            Reports to {c.managerName}
+                      <TableCell className="py-3 px-3">
+                        <div className="text-slate-700">{c.branchName}</div>
+                        <div className="text-[10px] text-slate-400">Reports to {c.managerName}</div>
+                      </TableCell>
+
+                      <TableCell className="py-3 px-3 font-medium text-slate-700">
+                        {c.joiningDate}
+                      </TableCell>
+
+                      <TableCell className="py-3 px-3">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold border ${stCfg.badgeCls}`}
+                        >
+                          <span className={`h-1.5 w-1.5 rounded-full ${stCfg.dotCls}`} />
+                          {stCfg.label}
+                        </span>
+                      </TableCell>
+
+                      <TableCell className="py-3 px-3">
+                        <div className="w-28 space-y-1">
+                          <div className="flex justify-between text-[10px] text-slate-500 font-medium">
+                            <span>Tasks</span>
+                            <span>{c.progressPercentage}%</span>
                           </div>
-                        </td>
+                          <Progress
+                            aria-label={`Checklist ${c.progressPercentage}% complete`}
+                            tone={progressTone(c.progressPercentage)}
+                            value={c.progressPercentage}
+                          />
+                        </div>
+                      </TableCell>
 
-                        <td className="py-3 px-3 font-medium text-slate-700">{c.joiningDate}</td>
-
-                        <td className="py-3 px-3">
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold border ${stCfg.badgeCls}`}
-                          >
-                            <span className={`h-1.5 w-1.5 rounded-full ${stCfg.dotCls}`} />
-                            {stCfg.label}
-                          </span>
-                        </td>
-
-                        <td className="py-3 px-3">
-                          <div className="w-28 space-y-1">
-                            <div className="flex justify-between text-[10px] text-slate-500 font-medium">
-                              <span>Tasks</span>
-                              <span>{c.progressPercentage}%</span>
-                            </div>
-                            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full rounded-full transition-all ${
-                                  c.progressPercentage === 100
-                                    ? 'bg-emerald-500'
-                                    : c.progressPercentage > 50
-                                      ? 'bg-sky-500'
-                                      : 'bg-amber-500'
-                                }`}
-                                style={{ width: `${c.progressPercentage}%` }}
-                              />
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="py-3 px-3 text-right">
-                          <span className="text-xs font-semibold text-primary group-hover:underline">
-                            View Dossier →
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                      <TableCell className="py-3 px-3 text-right">
+                        <span className="text-xs font-semibold text-primary group-hover:underline">
+                          View Dossier →
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
         </div>
       )}
 
@@ -595,12 +599,12 @@ export function ScreenOnboarding() {
                       {selectedCandidate.progressPercentage}%
                     </span>
                   </div>
-                  <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary transition-all rounded-full"
-                      style={{ width: `${selectedCandidate.progressPercentage}%` }}
-                    />
-                  </div>
+                  <Progress
+                    aria-label={`Onboarding ${selectedCandidate.progressPercentage}% complete`}
+                    className="h-2"
+                    tone={progressTone(selectedCandidate.progressPercentage)}
+                    value={selectedCandidate.progressPercentage}
+                  />
                 </div>
 
                 {/* Task Items */}
@@ -664,68 +668,69 @@ export function ScreenOnboarding() {
             prior to Day 1.
           </p>
 
-          <div className="bg-white rounded-[6px] border border-slate-200 shadow-xs overflow-hidden">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                  <th className="py-2.5 px-4">Candidate</th>
-                  <th className="py-2.5 px-3">Document Title</th>
-                  <th className="py-2.5 px-3">Type</th>
-                  <th className="py-2.5 px-3">File Name</th>
-                  <th className="py-2.5 px-3">Status</th>
-                  <th className="py-2.5 px-3">Verification Details</th>
-                  <th className="py-2.5 px-3 text-right">Audit Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {candidates.flatMap((c) =>
-                  c.documents.map((d) => (
-                    <tr key={`${c.id}-${d.id}`} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="py-3 px-4 font-semibold text-slate-900">
-                        {c.candidateName}
-                        <div className="text-[10px] text-slate-400 font-mono">
-                          {c.employeeNumber}
-                        </div>
-                      </td>
-                      <td className="py-3 px-3 font-medium text-slate-800">{d.title}</td>
-                      <td className="py-3 px-3">
-                        <span className="text-[10px] font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
-                          {d.type}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 font-mono text-[11px] text-sky-700 underline cursor-pointer">
-                        {d.fileName}
-                      </td>
-                      <td className="py-3 px-3">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
-                            d.status === 'VERIFIED'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : d.status === 'REJECTED'
-                                ? 'bg-rose-50 text-rose-700 border-rose-200'
-                                : 'bg-amber-50 text-amber-700 border-amber-200'
-                          }`}
-                        >
-                          {d.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 text-[11px] text-slate-500">
-                        {d.reviewerRemarks || 'Pending compliance audit'}
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        <Button
-                          onClick={() => setReviewingDoc({ candidateId: c.id, doc: d })}
-                          className="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded transition-colors cursor-pointer"
-                        >
-                          Audit & Verify
-                        </Button>
-                      </td>
-                    </tr>
-                  )),
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table containerClassName="shadow-xs">
+            <TableHeader>
+              <TableRow className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                <TableHead className="py-2.5 px-4">Candidate</TableHead>
+                <TableHead className="py-2.5 px-3">Document Title</TableHead>
+                <TableHead className="py-2.5 px-3">Type</TableHead>
+                <TableHead className="py-2.5 px-3">File Name</TableHead>
+                <TableHead className="py-2.5 px-3">Status</TableHead>
+                <TableHead className="py-2.5 px-3">Verification Details</TableHead>
+                <TableHead className="py-2.5 px-3 text-right">Audit Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-slate-100">
+              {candidates.flatMap((c) =>
+                c.documents.map((d) => (
+                  <TableRow
+                    key={`${c.id}-${d.id}`}
+                    className="hover:bg-slate-50/60 transition-colors"
+                  >
+                    <TableCell className="py-3 px-4 font-semibold text-slate-900">
+                      {c.candidateName}
+                      <div className="text-[10px] text-slate-400 font-mono">{c.employeeNumber}</div>
+                    </TableCell>
+                    <TableCell className="py-3 px-3 font-medium text-slate-800">
+                      {d.title}
+                    </TableCell>
+                    <TableCell className="py-3 px-3">
+                      <span className="text-[10px] font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
+                        {d.type}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-3 px-3 font-mono text-[11px] text-sky-700 underline cursor-pointer">
+                      {d.fileName}
+                    </TableCell>
+                    <TableCell className="py-3 px-3">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
+                          d.status === 'VERIFIED'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : d.status === 'REJECTED'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200'
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}
+                      >
+                        {d.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-3 px-3 text-[11px] text-slate-500">
+                      {d.reviewerRemarks || 'Pending compliance audit'}
+                    </TableCell>
+                    <TableCell className="py-3 px-3 text-right">
+                      <Button
+                        onClick={() => setReviewingDoc({ candidateId: c.id, doc: d })}
+                        className="px-2.5 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded transition-colors cursor-pointer"
+                      >
+                        Audit & Verify
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )),
+              )}
+            </TableBody>
+          </Table>
         </div>
       )}
 
@@ -737,84 +742,87 @@ export function ScreenOnboarding() {
             upcoming hires.
           </p>
 
-          <div className="bg-white rounded-[6px] border border-slate-200 shadow-xs overflow-hidden">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                  <th className="py-2.5 px-4">Assigned To</th>
-                  <th className="py-2.5 px-3">Asset Type</th>
-                  <th className="py-2.5 px-3">Model & Specs</th>
-                  <th className="py-2.5 px-3">Serial Number</th>
-                  <th className="py-2.5 px-3">Fulfillment Status</th>
-                  <th className="py-2.5 px-3">Courier / Handover</th>
-                  <th className="py-2.5 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {candidates.flatMap((c) =>
-                  c.assets.map((a) => (
-                    <tr key={`${c.id}-${a.id}`} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="py-3 px-4 font-semibold text-slate-900">
-                        {c.candidateName}
-                        <div className="text-[10px] text-slate-400">{c.jobTitle}</div>
-                      </td>
-                      <td className="py-3 px-3">
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">
-                          {a.assetType}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 font-medium text-slate-800">{a.modelName}</td>
-                      <td className="py-3 px-3 font-mono text-[11px] text-slate-600">
-                        {a.serialNumber}
-                      </td>
-                      <td className="py-3 px-3">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
-                            a.status === 'DELIVERED'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : a.status === 'DISPATCHED'
-                                ? 'bg-sky-50 text-sky-700 border-sky-200'
-                                : 'bg-amber-50 text-amber-700 border-amber-200'
-                          }`}
-                        >
-                          {a.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 text-[11px] text-slate-500 font-mono">
-                        {a.trackingNumber || 'In Bengaluru HQ Locker'}
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        <Button
-                          onClick={() => {
-                            const nextStatus: ProvisionedAsset['status'] =
-                              a.status === 'ORDERED'
-                                ? 'ASSIGNED'
-                                : a.status === 'ASSIGNED'
-                                  ? 'DISPATCHED'
-                                  : 'DELIVERED';
-                            const next = candidates.map((can) =>
-                              can.id === c.id
-                                ? {
-                                    ...can,
-                                    assets: can.assets.map((item) =>
-                                      item.id === a.id ? { ...item, status: nextStatus } : item,
-                                    ),
-                                  }
-                                : can,
-                            );
-                            saveCandidates(next);
-                          }}
-                          className="px-2 py-0.5 text-[11px] font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded border border-sky-200 cursor-pointer"
-                        >
-                          Update Status →
-                        </Button>
-                      </td>
-                    </tr>
-                  )),
-                )}
-              </tbody>
-            </table>
-          </div>
+          <Table containerClassName="shadow-xs">
+            <TableHeader>
+              <TableRow className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                <TableHead className="py-2.5 px-4">Assigned To</TableHead>
+                <TableHead className="py-2.5 px-3">Asset Type</TableHead>
+                <TableHead className="py-2.5 px-3">Model & Specs</TableHead>
+                <TableHead className="py-2.5 px-3">Serial Number</TableHead>
+                <TableHead className="py-2.5 px-3">Fulfillment Status</TableHead>
+                <TableHead className="py-2.5 px-3">Courier / Handover</TableHead>
+                <TableHead className="py-2.5 px-3 text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-slate-100">
+              {candidates.flatMap((c) =>
+                c.assets.map((a) => (
+                  <TableRow
+                    key={`${c.id}-${a.id}`}
+                    className="hover:bg-slate-50/60 transition-colors"
+                  >
+                    <TableCell className="py-3 px-4 font-semibold text-slate-900">
+                      {c.candidateName}
+                      <div className="text-[10px] text-slate-400">{c.jobTitle}</div>
+                    </TableCell>
+                    <TableCell className="py-3 px-3">
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">
+                        {a.assetType}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-3 px-3 font-medium text-slate-800">
+                      {a.modelName}
+                    </TableCell>
+                    <TableCell className="py-3 px-3 font-mono text-[11px] text-slate-600">
+                      {a.serialNumber}
+                    </TableCell>
+                    <TableCell className="py-3 px-3">
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
+                          a.status === 'DELIVERED'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : a.status === 'DISPATCHED'
+                              ? 'bg-sky-50 text-sky-700 border-sky-200'
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}
+                      >
+                        {a.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-3 px-3 text-[11px] text-slate-500 font-mono">
+                      {a.trackingNumber || 'In Bengaluru HQ Locker'}
+                    </TableCell>
+                    <TableCell className="py-3 px-3 text-right">
+                      <Button
+                        onClick={() => {
+                          const nextStatus: ProvisionedAsset['status'] =
+                            a.status === 'ORDERED'
+                              ? 'ASSIGNED'
+                              : a.status === 'ASSIGNED'
+                                ? 'DISPATCHED'
+                                : 'DELIVERED';
+                          const next = candidates.map((can) =>
+                            can.id === c.id
+                              ? {
+                                  ...can,
+                                  assets: can.assets.map((item) =>
+                                    item.id === a.id ? { ...item, status: nextStatus } : item,
+                                  ),
+                                }
+                              : can,
+                          );
+                          saveCandidates(next);
+                        }}
+                        className="px-2 py-0.5 text-[11px] font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded border border-sky-200 cursor-pointer"
+                      >
+                        Update Status →
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )),
+              )}
+            </TableBody>
+          </Table>
         </div>
       )}
 

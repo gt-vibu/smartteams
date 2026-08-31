@@ -32,7 +32,7 @@ export function UpcomingHolidaysCard({ holidays }: UpcomingHolidaysCardProps) {
           </h2>
         </div>
 
-        <Button className="text-xs font-semibold text-primary dark:text-primary hover:underline cursor-pointer">
+        <Button className="h-auto p-0 text-xs font-semibold" variant="link">
           View all
         </Button>
       </div>

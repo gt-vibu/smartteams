@@ -1,245 +1,171 @@
-import { emsStorageAdapter } from '../storage/storage.adapter';
-import { EMS_STORAGE_KEYS } from '../storage/storage.keys';
-import mockUsersFixture from '../data/fixtures/mock-users.json';
+import type { AuthenticatedSession, OrganizationMembership } from '@smarteam/contracts';
 import type {
-  Persona,
-  AuthSession,
-  WorkspaceContext,
   ApprovalDomainType,
+  AuthSession,
+  Persona,
+  WorkspaceContext,
 } from '../types/auth.types';
+import {
+  canApprove as evaluateApproval,
+  can,
+  canAny,
+  canExplicitly,
+} from '../services/authorization.policy';
+import { personaRepository } from './persona.repository';
+import { sessionRepository, type LoginOutcome } from './session.repository';
 
-const STORAGE_KEY_PERSONA = 'ems_active_persona';
-const STORAGE_KEY_AUTH_STATUS = 'ems_auth_status';
-const STORAGE_KEY_WORKSPACE = 'ems_workspace_context';
+/**
+ * Facade over the authenticated session and the persona that renders it.
+ *
+ * What changed, and why it matters:
+ *
+ *  - Authentication happens only on the server. The previous implementation signed a user in
+ *    locally when the API was unreachable *or returned 401*, minting a persona with
+ *    `ORG_ADMIN` and `permissions: ['*']` for any address with a six-character password. That
+ *    path is gone; a failed sign-in leaves the user signed out.
+ *  - Permissions always come from `GET /v1/auth/me`. They are never defaulted to `['*']` when
+ *    the server reports an empty set, which previously escalated an unprivileged user into a
+ *    tenant administrator.
+ *  - No token is stored. Access and refresh tokens live in HttpOnly cookies the browser cannot
+ *    read, so nothing here writes credentials to local storage.
+ *  - The committed fixture passwords are never consulted.
+ *
+ * Everything this class exposes is presentation state. The API independently authorizes every
+ * request, so nothing here is a security boundary.
+ */
+export class AuthRepository {
+  private session: AuthenticatedSession | null = null;
+  private persona: Persona | null = null;
 
-interface MockUserFixture {
-  id: string;
-  email: string;
-  password?: string;
-  displayName: string;
-  employeeNumber: string;
-  jobTitle: string;
-  department: string;
-  branchId: string;
-  branchName: string;
-  avatarInitials: string;
-  avatarUrl: string | null;
-  scenarioTitle?: string;
-  description?: string;
-  roles: Persona['roles'];
-  permissions: string[];
-  assignedTeamIds: string[];
-  assignedProjectIds: string[];
-  directReportEmployeeIds: string[];
-  managerEmployeeId: string | null;
-  managerName: string | null;
-  canSwitchWorkspace?: boolean;
-  defaultWorkspace?: WorkspaceContext;
-}
+  /** Restores the session from the server. Returns null when not signed in. */
+  async restore(): Promise<Persona | null> {
+    return this.adopt(await sessionRepository.restore());
+  }
 
-const fixtureUsers = mockUsersFixture as unknown as MockUserFixture[];
+  /**
+   * Signs in. When the account belongs to several organizations the caller receives
+   * `SELECT_ORGANIZATION` and must retry with an explicit choice — the server will not pick a
+   * tenant on the user's behalf.
+   */
+  async login(email: string, password: string, organizationId?: string): Promise<LoginOutcome> {
+    const outcome = await sessionRepository.login(email, password, organizationId);
+    if (outcome.status === 'AUTHENTICATED' && !this.adopt(outcome.session)) {
+      // Credentials were valid but the session is not tenant-scoped. Revoke it rather than
+      // leaving a usable session cookie behind for an app that will never accept it.
+      await sessionRepository.logout();
+      throw new Error('This account does not have an organization workspace.');
+    }
+    return outcome;
+  }
 
-export class LocalAuthRepository {
-  private users: Persona[] = fixtureUsers.map((u) => ({
-    ...u,
-    name: u.displayName,
-    badge: u.scenarioTitle || u.jobTitle,
-    user: {
-      id: u.id,
-      email: u.email,
-      displayName: u.displayName,
-      avatarUrl: u.avatarUrl,
-      avatarInitials: u.avatarInitials,
-      identityType: 'NATIVE',
-      isActive: true,
-    },
-  }));
-
-  getAllPersonas(): Persona[] {
-    return this.users;
+  async logout(): Promise<void> {
+    await sessionRepository.logout();
+    this.session = null;
+    this.persona = null;
+    personaRepository.clear();
   }
 
   isAuthenticated(): boolean {
-    return emsStorageAdapter.getItem<boolean>(STORAGE_KEY_AUTH_STATUS, false);
+    return this.session !== null;
   }
 
-  getCurrentPersona(): Persona {
-    const savedId = emsStorageAdapter.getItem<string>(STORAGE_KEY_PERSONA, 'user-040');
-    const found = this.users.find((p) => p.id === savedId || p.user.id === savedId);
-    return found || this.users[0]!;
+  getCurrentPersona(): Persona | null {
+    return this.persona;
+  }
+
+  /**
+   * The signed-in persona, for code that only runs inside the authenticated workspace.
+   * Throws rather than returning a blank identity that could be mistaken for a real user.
+   */
+  requireCurrentPersona(): Persona {
+    if (!this.persona) throw new Error('No authenticated session');
+    return this.persona;
+  }
+
+  getMemberships(): OrganizationMembership[] {
+    return this.session?.memberships ?? [];
   }
 
   getWorkspaceContext(): WorkspaceContext {
-    const persona = this.getCurrentPersona();
-    if (!persona.canSwitchWorkspace) {
-      return persona.defaultWorkspace || 'EMPLOYEE';
-    }
-    return emsStorageAdapter.getItem<WorkspaceContext>(
-      STORAGE_KEY_WORKSPACE,
-      persona.defaultWorkspace || 'ADMIN',
-    );
+    return this.persona ? personaRepository.getWorkspaceContext(this.persona) : 'EMPLOYEE';
   }
 
   setWorkspaceContext(context: WorkspaceContext): WorkspaceContext {
-    const persona = this.getCurrentPersona();
-    if (!persona.canSwitchWorkspace) {
-      return persona.defaultWorkspace || 'EMPLOYEE';
-    }
-    emsStorageAdapter.setItem(STORAGE_KEY_WORKSPACE, context);
-    return context;
+    if (!this.persona) return 'EMPLOYEE';
+    return personaRepository.setWorkspaceContext(this.persona, context);
   }
 
-  loginWithCredentials(email: string, password?: string): Persona | null {
-    const found = this.users.find(
-      (u) =>
-        u.email.toLowerCase() === email.toLowerCase() ||
-        u.user.email.toLowerCase() === email.toLowerCase(),
-    );
-
-    if (!found) {
-      return null;
-    }
-
-    // Verify fixture password if provided
-    const fixtureUser = fixtureUsers.find((f) => f.id === found.id || f.email === found.email);
-    if (password && fixtureUser?.password && fixtureUser.password !== password) {
-      return null;
-    }
-
-    emsStorageAdapter.setItem(STORAGE_KEY_AUTH_STATUS, true);
-    return this.switchPersona(found.id);
-  }
-
-  login(personaId: string): Persona {
-    emsStorageAdapter.setItem(STORAGE_KEY_AUTH_STATUS, true);
-    return this.switchPersona(personaId);
-  }
-
-  logout(): void {
-    emsStorageAdapter.setItem(STORAGE_KEY_AUTH_STATUS, false);
-  }
-
-  switchPersona(personaId: string): Persona {
-    const found = this.users.find((p) => p.id === personaId || p.user.id === personaId);
-    if (!found) {
-      throw new Error(`Persona not found: ${personaId}`);
-    }
-    emsStorageAdapter.setItem(STORAGE_KEY_PERSONA, found.id);
-    emsStorageAdapter.setItem(STORAGE_KEY_AUTH_STATUS, true);
-    emsStorageAdapter.setItem(STORAGE_KEY_WORKSPACE, found.defaultWorkspace || 'EMPLOYEE');
-
-    // Synchronize current employee profile in storage — write to the SAME key
-    // that employee.repository.ts reads (EMS_STORAGE_KEYS.EMPLOYEE = 'ems_employee_profile')
-    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.EMPLOYEE, {
-      id: found.id,
-      employeeNumber: found.employeeNumber,
-      firstName: found.name.split(' ')[0] || '',
-      lastName: found.name.split(' ').slice(1).join(' ') || '',
-      workEmail: found.email,
-      jobTitle: found.jobTitle,
-      department: found.department,
-      location: found.branchName,
-      avatarUrl: found.avatarUrl,
-      joinedDate: '2024-03-15',
-      phone: '+91 98765 43210',
-      manager: found.managerName
-        ? {
-            id: found.managerEmployeeId || 'user-009',
-            employeeNumber: 'EMP-009',
-            firstName: found.managerName.split(' ')[0] || '',
-            lastName: found.managerName.split(' ').slice(1).join(' ') || '',
-            jobTitle: 'Manager',
-            isOnline: true,
-          }
-        : null,
-      departmentMembers: [],
-    });
-
-    return found;
-  }
-
-  getAuthSession(): AuthSession {
-    const persona = this.getCurrentPersona();
+  /** Legacy shape consumed by the workspace screens. */
+  getAuthSession(): AuthSession | null {
+    if (!this.session || !this.persona) return null;
     return {
-      user: persona.user,
-      personaId: persona.id,
-      employeeId: persona.id,
-      organizationId: 'org_smarteam_01',
-      branchId: persona.branchId,
-      roles: persona.roles,
-      permissions: new Set(persona.permissions),
+      user: this.persona.user,
+      personaId: this.persona.id,
+      employeeId: this.session.employee?.id ?? this.persona.id,
+      organizationId: this.session.organization?.id ?? '',
+      branchId: this.session.employee?.branchId ?? null,
+      roles: this.persona.roles,
+      permissions: new Set(this.session.permissions),
       workspaceContext: this.getWorkspaceContext(),
     };
   }
 
-  hasPermission(permission: string, persona?: Persona): boolean {
-    const p = persona || this.getCurrentPersona();
-    const permSet = new Set(p.permissions);
-    return permSet.has('*') || permSet.has(permission);
+  private permissions(): readonly string[] {
+    return this.session?.permissions ?? [];
   }
 
-  /** Checks if the persona has the exact permission key — '*' wildcard is NOT expanded.
-   *  Use this when '*' should not substitute for domain-specific permissions,
-   *  e.g. when gating approval actions in Employee Workspace. */
-  hasExplicitPermission(permission: string, persona?: Persona): boolean {
-    const p = persona || this.getCurrentPersona();
-    return new Set(p.permissions).has(permission);
+  hasPermission(permission: string): boolean {
+    return can(this.permissions(), permission);
   }
 
-  hasAnyPermission(permissions: string[], persona?: Persona): boolean {
-    const p = persona || this.getCurrentPersona();
-    const permSet = new Set(p.permissions);
-    if (permSet.has('*')) return true;
-    return permissions.some((perm) => permSet.has(perm));
+  hasAnyPermission(permissions: string[]): boolean {
+    return canAny(this.permissions(), permissions);
+  }
+
+  /** Exact check; the tenant wildcard is NOT expanded. */
+  hasExplicitPermission(permission: string): boolean {
+    return canExplicitly(this.permissions(), permission);
   }
 
   canApprove(
     domain: ApprovalDomainType,
     resource?: { requesterId?: string; employeeId?: string },
   ): boolean {
-    const persona = this.getCurrentPersona();
-    const currentUserId = persona.id;
-    const workspaceContext = this.getWorkspaceContext();
+    if (!this.persona) return false;
+    return evaluateApproval(
+      {
+        currentUserId: this.persona.id,
+        directReportEmployeeIds: this.persona.directReportEmployeeIds,
+        workspaceContext: this.getWorkspaceContext(),
+        permissions: this.permissions(),
+      },
+      domain,
+      resource,
+    );
+  }
 
-    // Backend rule: requester CANNOT approve their own request
-    if (resource) {
-      const requester = resource.requesterId || resource.employeeId;
-      if (requester && (requester === currentUserId || requester === persona.employeeNumber)) {
-        return false;
-      }
+  /**
+   * Accepts a session only if it is scoped to a tenant.
+   *
+   * Being authenticated is not sufficient to enter this workspace. A platform-operator session
+   * authenticates against `/me` perfectly well but carries `organization: null` and an empty
+   * tenant permission set, so admitting it would render an organization workspace for an
+   * account that belongs to no organization. In local development both apps are served from
+   * `localhost` and therefore share one cookie jar, which is exactly how such a session
+   * reaches this app.
+   */
+  private adopt(session: AuthenticatedSession | null): Persona | null {
+    if (!session?.organization) {
+      this.session = null;
+      this.persona = null;
+      personaRepository.clear();
+      return null;
     }
-
-    // Check if manager of the requester (always valid regardless of workspace)
-    if (resource && resource.employeeId) {
-      if (persona.directReportEmployeeIds.includes(resource.employeeId)) {
-        return true;
-      }
-    }
-
-    // In Employee Workspace: wildcard ('*') alone does NOT grant approval authority.
-    // Only explicit approval permissions or direct-report relationships work.
-    // (This prevents admins who happen to have '*' from approving in employee context)
-    const explicitApprovalPermissions = {
-      LEAVE: ['leave.approve'],
-      TIMESHEET: ['timesheets.approve'],
-      ATTENDANCE_CORRECTION: ['attendance.approve'],
-      PAYROLL: ['payroll.approve'],
-    };
-
-    if (workspaceContext === 'EMPLOYEE') {
-      const perms = explicitApprovalPermissions[domain];
-      return perms.some((p) => this.hasPermission(p));
-    }
-
-    // In Admin Workspace: full authority check including wildcard
-    const adminApprovalPermissions: Record<ApprovalDomainType, string[]> = {
-      LEAVE: ['leave.approve', 'leave.write', '*'],
-      TIMESHEET: ['timesheets.approve', 'timesheets.write', '*'],
-      ATTENDANCE_CORRECTION: ['attendance.approve', 'attendance.write', '*'],
-      PAYROLL: ['payroll.approve', 'payroll.write', '*'],
-    };
-    return this.hasAnyPermission(adminApprovalPermissions[domain]);
+    this.session = session;
+    this.persona = personaRepository.forSession(session);
+    personaRepository.publish(this.persona);
+    return this.persona;
   }
 }
 
-export const authRepository = new LocalAuthRepository();
+export const authRepository = new AuthRepository();

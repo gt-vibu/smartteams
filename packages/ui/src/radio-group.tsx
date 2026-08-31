@@ -1,75 +1,41 @@
+'use client';
+
 import * as React from 'react';
+import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 import { cn } from './cn';
 
-interface RadioGroupContextValue {
-  value?: string;
-  onValueChange?: (value: string) => void;
-  name?: string;
-  disabled?: boolean;
-}
+export type RadioGroupProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
+export type RadioGroupItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
-const RadioGroupContext = React.createContext<RadioGroupContextValue | null>(null);
+/** Radix provides arrow-key roving focus between items, which the previous version lacked. */
+const RadioGroup = React.forwardRef<
+  React.ElementRef<typeof RadioGroupPrimitive.Root>,
+  RadioGroupProps
+>(({ className, ...props }, ref) => (
+  <RadioGroupPrimitive.Root ref={ref} className={cn('grid gap-2', className)} {...props} />
+));
+RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
-export interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
-  value?: string;
-  onValueChange?: (value: string) => void;
-  name?: string;
-  disabled?: boolean;
-}
+const RadioGroupItem = React.forwardRef<
+  React.ElementRef<typeof RadioGroupPrimitive.Item>,
+  RadioGroupItemProps
+>(({ className, ...props }, ref) => (
+  <RadioGroupPrimitive.Item
+    ref={ref}
+    className={cn(
+      'aspect-square size-4 rounded-full border border-input text-primary shadow-sm',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+      'disabled:cursor-not-allowed disabled:opacity-50',
+      'data-[state=checked]:border-primary',
+      className,
+    )}
+    {...props}
+  >
+    <RadioGroupPrimitive.Indicator className="grid place-items-center">
+      <span className="size-2 rounded-full bg-primary" />
+    </RadioGroupPrimitive.Indicator>
+  </RadioGroupPrimitive.Item>
+));
+RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
-export function RadioGroup({
-  className,
-  value,
-  onValueChange,
-  name,
-  disabled,
-  ...props
-}: RadioGroupProps) {
-  return (
-    <RadioGroupContext.Provider value={{ value, onValueChange, name, disabled }}>
-      <div role="radiogroup" className={cn('grid gap-2', className)} {...props} />
-    </RadioGroupContext.Provider>
-  );
-}
-
-export interface RadioGroupItemProps extends Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  'value' | 'onChange'
-> {
-  value: string;
-}
-
-export const RadioGroupItem = React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(
-  ({ className, value, disabled, ...props }, ref) => {
-    const context = React.useContext(RadioGroupContext);
-    const isDisabled = disabled || context?.disabled;
-    const isChecked = context?.value === value;
-
-    return (
-      <button
-        ref={ref}
-        type="button"
-        role="radio"
-        aria-checked={isChecked}
-        aria-disabled={isDisabled || undefined}
-        data-name={context?.name}
-        disabled={isDisabled}
-        onClick={() => context?.onValueChange?.(value)}
-        className={cn(
-          'h-4 w-4 shrink-0 rounded-full border border-slate-300 bg-background transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700',
-          isChecked && 'border-primary bg-primary',
-          className,
-        )}
-        {...props}
-      >
-        <span
-          className={cn(
-            'mx-auto block h-1.5 w-1.5 rounded-full',
-            isChecked ? 'bg-white' : 'bg-transparent',
-          )}
-        />
-      </button>
-    );
-  },
-);
-RadioGroupItem.displayName = 'RadioGroupItem';
+export { RadioGroup, RadioGroupItem };

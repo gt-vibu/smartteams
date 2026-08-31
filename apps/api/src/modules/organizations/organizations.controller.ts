@@ -7,6 +7,7 @@ import {
   BranchDeactivationDto,
   BranchDto,
   CreateOrganizationDto,
+  OnboardOrganizationDto,
   SourceChangeDto,
   UpdateBranchDto,
   UpdateOrganizationDto,
@@ -103,6 +104,21 @@ export class OrganizationsController {
       Number(request.headers['if-match-version'] ?? 1),
       body,
     );
+  }
+
+  @Get()
+  @UseGuards(PlatformAuthGuard)
+  async list(@Req() request: Request & { user: NativeRequestUser }) {
+    return this.organizations.listPlatform(request.user.userId);
+  }
+
+  @Post('onboard')
+  @UseGuards(PlatformAuthGuard)
+  async onboard(
+    @Body() body: OnboardOrganizationDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.organizations.onboardPlatform(request.user.userId, body);
   }
 
   @Post()

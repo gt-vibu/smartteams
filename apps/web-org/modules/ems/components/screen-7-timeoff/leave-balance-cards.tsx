@@ -1,3 +1,4 @@
+import { Progress, progressTone } from '@smarteam/ui';
 import React from 'react';
 import type { LeaveBalanceItem } from '../../types/leave.types';
 
@@ -35,12 +36,12 @@ export function LeaveBalanceCards({ balances }: LeaveBalanceCardsProps) {
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mb-3">
-              <div
-                className={`h-full rounded-full ${b.colorClass}`}
-                style={{ width: `${percentage}%` }}
-              />
-            </div>
+            <Progress
+              aria-label={`${percentage}% used`}
+              className="mb-3"
+              tone={progressTone(percentage)}
+              value={percentage}
+            />
 
             {/* Sub-Metric Breakdown */}
             <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">

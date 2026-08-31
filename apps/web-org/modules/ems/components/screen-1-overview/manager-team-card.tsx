@@ -51,7 +51,9 @@ export function ManagerTeamCard({ employee }: ManagerTeamCardProps) {
           ))}
 
           <div className="pt-1">
-            <Button className="text-xs font-semibold text-primary hover:underline">+8 More</Button>
+            <Button className="h-auto p-0 text-xs font-semibold" variant="link">
+              +8 More
+            </Button>
           </div>
         </div>
       </div>

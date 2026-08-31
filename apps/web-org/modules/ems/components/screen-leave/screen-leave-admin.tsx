@@ -1,6 +1,19 @@
 'use client';
 
-import { Button, Checkbox, Input, RadioGroup, RadioGroupItem, Textarea } from '@smarteam/ui';
+import {
+  Button,
+  Checkbox,
+  Input,
+  RadioGroup,
+  RadioGroupItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Textarea,
+} from '@smarteam/ui';
 
 import React, { useState } from 'react';
 import { DatePicker, Select } from '@smarteam/ui';
@@ -380,22 +393,22 @@ export function ScreenLeaveAdmin() {
           </div>
 
           <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.05)] overflow-hidden">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                  <th className="py-2.5 px-4">Code & Name</th>
-                  <th className="py-2.5 px-3">Type</th>
-                  <th className="py-2.5 px-3">Accrual Frequency</th>
-                  <th className="py-2.5 px-3">Annual Allowance</th>
-                  <th className="py-2.5 px-3">Carryover Limit</th>
-                  <th className="py-2.5 px-3">Branch Assignments</th>
-                  <th className="py-2.5 px-3 text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                  <TableHead className="py-2.5 px-4">Code & Name</TableHead>
+                  <TableHead className="py-2.5 px-3">Type</TableHead>
+                  <TableHead className="py-2.5 px-3">Accrual Frequency</TableHead>
+                  <TableHead className="py-2.5 px-3">Annual Allowance</TableHead>
+                  <TableHead className="py-2.5 px-3">Carryover Limit</TableHead>
+                  <TableHead className="py-2.5 px-3">Branch Assignments</TableHead>
+                  <TableHead className="py-2.5 px-3 text-right">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-slate-100">
                 {policies.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3 px-4">
+                  <TableRow key={p.id} className="hover:bg-slate-50/60 transition-colors">
+                    <TableCell className="py-3 px-4">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded border border-sky-200">
                           {p.code}
@@ -405,8 +418,8 @@ export function ScreenLeaveAdmin() {
                       <div className="text-[11px] text-slate-500 mt-0.5 line-clamp-1">
                         {p.description}
                       </div>
-                    </td>
-                    <td className="py-3 px-3">
+                    </TableCell>
+                    <TableCell className="py-3 px-3">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded ${
                           p.paid
@@ -416,19 +429,21 @@ export function ScreenLeaveAdmin() {
                       >
                         {p.paid ? 'Paid' : 'Unpaid'}
                       </span>
-                    </td>
-                    <td className="py-3 px-3 font-medium text-slate-700">
+                    </TableCell>
+                    <TableCell className="py-3 px-3 font-medium text-slate-700">
                       {p.accrualType === 'FIXED_ANNUAL'
                         ? 'Fixed Annual'
                         : p.accrualType === 'MONTHLY'
                           ? 'Monthly Accrual'
                           : 'None'}
-                    </td>
-                    <td className="py-3 px-3 font-bold font-mono text-slate-900">
+                    </TableCell>
+                    <TableCell className="py-3 px-3 font-bold font-mono text-slate-900">
                       {p.annualAllowance} Days
-                    </td>
-                    <td className="py-3 px-3 font-mono text-slate-600">{p.carryoverLimit} Days</td>
-                    <td className="py-3 px-3">
+                    </TableCell>
+                    <TableCell className="py-3 px-3 font-mono text-slate-600">
+                      {p.carryoverLimit} Days
+                    </TableCell>
+                    <TableCell className="py-3 px-3">
                       <div className="flex flex-wrap gap-1">
                         {p.branchAssignments.map((b) => (
                           <span
@@ -439,17 +454,17 @@ export function ScreenLeaveAdmin() {
                           </span>
                         ))}
                       </div>
-                    </td>
-                    <td className="py-3 px-3 text-right">
+                    </TableCell>
+                    <TableCell className="py-3 px-3 text-right">
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                         Active
                       </span>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
       )}
@@ -529,25 +544,27 @@ export function ScreenLeaveAdmin() {
                   </span>
                 </div>
 
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100/60 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
-                      <th className="py-2.5 px-4">Holiday Name</th>
-                      <th className="py-2.5 px-3">Date</th>
-                      <th className="py-2.5 px-3">Day of Week</th>
-                      <th className="py-2.5 px-3">Classification</th>
-                      <th className="py-2.5 px-3 text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-slate-100/60 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
+                      <TableHead className="py-2.5 px-4">Holiday Name</TableHead>
+                      <TableHead className="py-2.5 px-3">Date</TableHead>
+                      <TableHead className="py-2.5 px-3">Day of Week</TableHead>
+                      <TableHead className="py-2.5 px-3">Classification</TableHead>
+                      <TableHead className="py-2.5 px-3 text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="divide-y divide-slate-100">
                     {selectedTemplate.holidays.map((h) => (
-                      <tr key={h.id} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="py-3 px-4 font-semibold text-slate-800">{h.name}</td>
-                        <td className="py-3 px-3 font-mono text-[11px] text-slate-700 font-bold">
+                      <TableRow key={h.id} className="hover:bg-slate-50/60 transition-colors">
+                        <TableCell className="py-3 px-4 font-semibold text-slate-800">
+                          {h.name}
+                        </TableCell>
+                        <TableCell className="py-3 px-3 font-mono text-[11px] text-slate-700 font-bold">
                           {h.date}
-                        </td>
-                        <td className="py-3 px-3 text-slate-600">{h.dayOfWeek}</td>
-                        <td className="py-3 px-3">
+                        </TableCell>
+                        <TableCell className="py-3 px-3 text-slate-600">{h.dayOfWeek}</TableCell>
+                        <TableCell className="py-3 px-3">
                           <span
                             className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
                               h.type === 'MANDATORY'
@@ -557,14 +574,14 @@ export function ScreenLeaveAdmin() {
                           >
                             {h.type}
                           </span>
-                        </td>
-                        <td className="py-3 px-3 text-right">
+                        </TableCell>
+                        <TableCell className="py-3 px-3 text-right">
                           <span className="text-[10px] font-bold text-emerald-700">ACTIVE</span>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </div>
           </div>
@@ -574,40 +591,46 @@ export function ScreenLeaveAdmin() {
       {/* Tab 3: Organization Requests & Action-Level Approvals */}
       {activeTab === 'REQUESTS' && (
         <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.05)] overflow-hidden">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                <th className="py-2.5 px-4">Leave Scheme</th>
-                <th className="py-2.5 px-3">Code</th>
-                <th className="py-2.5 px-3">Dates</th>
-                <th className="py-2.5 px-3">Duration</th>
-                <th className="py-2.5 px-3">Reason</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3 text-right">Approval Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-100/75 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                <TableHead className="py-2.5 px-4">Leave Scheme</TableHead>
+                <TableHead className="py-2.5 px-3">Code</TableHead>
+                <TableHead className="py-2.5 px-3">Dates</TableHead>
+                <TableHead className="py-2.5 px-3">Duration</TableHead>
+                <TableHead className="py-2.5 px-3">Reason</TableHead>
+                <TableHead className="py-2.5 px-3">Status</TableHead>
+                <TableHead className="py-2.5 px-3 text-right">Approval Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-slate-100">
               {applications.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-10 text-center text-slate-400 text-xs">
+                <TableRow>
+                  <TableCell colSpan={7} className="py-10 text-center text-slate-400 text-xs">
                     No leave requests submitted in the organization.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 applications.map((req: LeaveApplicationItem) => {
                   const isAuthorized = canApprove('LEAVE');
                   return (
-                    <tr key={req.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="py-3 px-4">
+                    <TableRow key={req.id} className="hover:bg-slate-50/60 transition-colors">
+                      <TableCell className="py-3 px-4">
                         <span className="font-bold text-slate-900">{req.leaveTypeName}</span>
-                      </td>
-                      <td className="py-3 px-3 font-mono text-[10px] text-slate-500">{req.code}</td>
-                      <td className="py-3 px-3 font-mono text-[11px] text-slate-700 font-semibold">
+                      </TableCell>
+                      <TableCell className="py-3 px-3 font-mono text-[10px] text-slate-500">
+                        {req.code}
+                      </TableCell>
+                      <TableCell className="py-3 px-3 font-mono text-[11px] text-slate-700 font-semibold">
                         {req.startDate} to {req.endDate}
-                      </td>
-                      <td className="py-3 px-3 font-bold text-slate-800">{req.dayCount} Day(s)</td>
-                      <td className="py-3 px-3 text-slate-600 max-w-xs truncate">{req.reason}</td>
-                      <td className="py-3 px-3">
+                      </TableCell>
+                      <TableCell className="py-3 px-3 font-bold text-slate-800">
+                        {req.dayCount} Day(s)
+                      </TableCell>
+                      <TableCell className="py-3 px-3 text-slate-600 max-w-xs truncate">
+                        {req.reason}
+                      </TableCell>
+                      <TableCell className="py-3 px-3">
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
                             req.status === 'APPROVED'
@@ -619,8 +642,8 @@ export function ScreenLeaveAdmin() {
                         >
                           {req.status}
                         </span>
-                      </td>
-                      <td className="py-3 px-3 text-right">
+                      </TableCell>
+                      <TableCell className="py-3 px-3 text-right">
                         {req.status === 'PENDING' ? (
                           isAuthorized ? (
                             <div className="flex items-center justify-end gap-1.5">
@@ -645,13 +668,13 @@ export function ScreenLeaveAdmin() {
                         ) : (
                           <span className="text-[10px] text-slate-400 font-mono">Completed</span>
                         )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
 
@@ -746,7 +769,7 @@ export function ScreenLeaveAdmin() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <Checkbox
                       checked={newPaid}
-                      onCheckedChange={setNewPaid}
+                      onCheckedChange={(checked) => setNewPaid(checked === true)}
                       className="rounded border-slate-300 text-sky-600 focus:ring-sky-500"
                     />
                     <span className="font-bold text-slate-700">Paid Leave Benefit</span>

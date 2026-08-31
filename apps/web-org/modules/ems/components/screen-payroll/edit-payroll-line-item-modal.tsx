@@ -110,7 +110,8 @@ export function EditPayrollLineItemModal({
           </div>
           <Button
             onClick={onClose}
-            className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
+            variant="ghost"
+            className="p-1 rounded text-muted-foreground hover:text-foreground"
           >
             ✕
           </Button>

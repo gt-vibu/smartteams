@@ -6,7 +6,6 @@ import {
   AlertDescription,
   AlertTitle,
   Button,
-  Checkbox,
   Icon,
   Input,
   Select,
@@ -15,13 +14,14 @@ import {
 import {
   createFederationClient,
   updateFederationClientCertificates,
-  type AdminSession,
   type FederationClient,
   type FederationClientInput,
   type FederationClientSecret,
   type FederationEnvironment,
 } from '../../lib/api-client';
 import { FormField } from './form-field';
+import { CheckField } from './check-field';
+import { isSha256Fingerprint, parseFingerprints } from './fingerprints';
 
 const environments: FederationEnvironment[] = ['SANDBOX', 'STAGING', 'PRODUCTION'];
 
@@ -36,13 +36,11 @@ const emptyForm: FederationClientInput & { fingerprintsText: string } = {
 };
 
 export function FederationClientDialog({
-  session,
   client,
   open,
   onClose,
   onSaved,
 }: {
-  session: AdminSession;
   client: FederationClient | null;
   open: boolean;
   onClose: () => void;
@@ -96,13 +94,13 @@ export function FederationClientDialog({
     setError(null);
     try {
       if (client) {
-        await updateFederationClientCertificates(session, client.id, {
+        await updateFederationClientCertificates(client.id, {
           mtlsRequired: form.mtlsRequired,
           allowedCertificateFingerprints: fingerprints,
         });
         await onSaved();
       } else {
-        const secret = await createFederationClient(session, {
+        const secret = await createFederationClient({
           name: form.name.trim(),
           clientId: form.clientId.trim(),
           environment: form.environment,
@@ -214,7 +212,6 @@ export function FederationClientDialog({
 
           <CheckField
             checked={form.mtlsRequired}
-            description="Keep enabled for secure federation. OAuth-only is available only for non-production UAT."
             disabled={form.environment === 'PRODUCTION'}
             label="Require certificate-bound mTLS"
             onChange={(checked) => setForm((current) => ({ ...current, mtlsRequired: checked }))}
@@ -250,100 +247,4 @@ export function FederationClientDialog({
       </section>
     </div>
   );
-}
-
-export function FederationSecretDialog({
-  secret,
-  onClose,
-}: {
-  secret: FederationClientSecret | null;
-  onClose: () => void;
-}) {
-  const [copied, setCopied] = useState(false);
-  if (!secret) return null;
-  const clientSecret = secret.clientSecret;
-
-  async function copy() {
-    await navigator.clipboard.writeText(clientSecret);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
-  }
-
-  return (
-    <div className="fixed inset-0 z-[60] grid place-items-center bg-foreground/45 px-4 py-8">
-      <section
-        aria-labelledby="federation-secret-title"
-        aria-modal="true"
-        className="w-full max-w-xl rounded-xl border border-border bg-card p-6 shadow-2xl sm:p-8"
-        role="dialog"
-      >
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-semibold tracking-[-0.035em]" id="federation-secret-title">
-            Client Secret
-          </h2>
-          <Button aria-label="Close secret" onClick={onClose} type="button" variant="quiet">
-            <Icon className="size-5" name="close" />
-          </Button>
-        </div>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          This secret is shown only once. Copy it now and store it in the BlizBooks secret manager.
-        </p>
-        <div className="mt-6 flex flex-col gap-3 rounded-xl border border-warning/25 bg-warning/5 p-4 sm:flex-row sm:items-center">
-          <code className="min-w-0 flex-1 break-all text-sm">{clientSecret}</code>
-          <Button className="shrink-0" onClick={copy} type="button" variant="outline">
-            <Icon className="size-4" name={copied ? 'check' : 'clipboard'} />
-            {copied ? 'Copied' : 'Copy Secret'}
-          </Button>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function CheckField({
-  checked,
-  label,
-  description,
-  disabled,
-  onChange,
-}: {
-  checked: boolean;
-  label: string;
-  description?: string;
-  disabled?: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <label className="flex items-start gap-3 text-sm font-medium">
-      <Checkbox
-        checked={checked}
-        className="mt-0.5 size-4 accent-primary"
-        disabled={disabled}
-        onCheckedChange={onChange}
-      />
-      <span>
-        {label}
-        {description && (
-          <span className="mt-1 block font-normal leading-5 text-muted-foreground">
-            {description}
-          </span>
-        )}
-      </span>
-    </label>
-  );
-}
-
-function parseFingerprints(value: string) {
-  return [
-    ...new Set(
-      value
-        .split(/[\s,]+/)
-        .map((item) => item.trim())
-        .filter(Boolean),
-    ),
-  ];
-}
-
-function isSha256Fingerprint(value: string) {
-  return /^[a-f0-9]{64}$/i.test(value.replaceAll(':', ''));
 }

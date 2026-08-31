@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@smarteam/ui';
+import { Button, Tabs, TabsList, TabsTrigger } from '@smarteam/ui';
 
 export interface AttendanceToolbarProps {
   title?: string;
@@ -86,25 +86,24 @@ export function AttendanceToolbar({
         </div>
 
         {onChangeViewMode && (
-          <div
-            className="hidden items-center overflow-hidden rounded border border-slate-200 bg-white shadow-xs xs:flex"
-            role="tablist"
+          <Tabs
             aria-label="Attendance views"
+            className="hidden xs:block"
+            onValueChange={(value) => onChangeViewMode(value as 'timeline' | 'table' | 'calendar')}
+            value={viewMode}
           >
-            {VIEWS.map((view) => (
-              <Button
-                key={view.value}
-                type="button"
-                variant="ghost"
-                role="tab"
-                aria-selected={viewMode === view.value}
-                onClick={() => onChangeViewMode(view.value)}
-                className={`rounded-none px-3 py-1.5 text-xs ${viewMode === view.value ? 'bg-slate-100 font-bold text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
-              >
-                {view.label}
-              </Button>
-            ))}
-          </div>
+            <TabsList className="h-auto rounded-md border border-border bg-card p-0">
+              {VIEWS.map((view) => (
+                <TabsTrigger
+                  className="rounded-none px-3 py-1.5 text-xs text-muted-foreground data-[state=active]:bg-muted data-[state=active]:font-bold data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  key={view.value}
+                  value={view.value}
+                >
+                  {view.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         )}
 
         {onFilterToggle && (
