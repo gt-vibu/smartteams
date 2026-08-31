@@ -381,7 +381,7 @@ export function ApprovalPolicyBuilder() {
                             }}
                             className={`p-1.5 text-[11px] rounded border font-medium cursor-pointer text-center truncate ${
                               step.approverType === preset.type
-                                ? 'bg-sky-50 dark:bg-card text-primary dark:text-sky-300 border-primary'
+                                ? 'bg-slate-900 text-white font-bold border-slate-900 dark:bg-white dark:text-slate-900'
                                 : 'bg-white dark:bg-card text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
                             }`}
                           >
@@ -398,8 +398,10 @@ export function ApprovalPolicyBuilder() {
               <div className="pt-1">
                 <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-                  className="text-xs text-primary hover:underline flex items-center gap-1 cursor-pointer font-medium"
+                  className="text-xs text-slate-800 dark:text-slate-200 hover:text-slate-900 flex items-center gap-1 cursor-pointer font-medium p-0"
                 >
                   <span>{showAdvancedSettings ? '▼' : '▶'}</span>
                   <span>Advanced Workflow Settings (SLA, Auto-Escalation, Delegation)</span>
@@ -443,7 +445,13 @@ export function ApprovalPolicyBuilder() {
               <Button variant="outline" onClick={() => setEditingPolicy(null)}>
                 Cancel
               </Button>
-              <Button onClick={handleSavePolicy}>Save Policy</Button>
+              <Button
+                variant="default"
+                onClick={handleSavePolicy}
+                className="bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-xs"
+              >
+                Save Policy
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

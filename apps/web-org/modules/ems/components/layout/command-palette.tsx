@@ -527,11 +527,13 @@ export function CommandPalette({
             return (
               <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 key={cat}
                 onClick={() => setQuery(cat === 'All' ? '' : cat)}
                 className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer whitespace-nowrap border ${
                   isCatActive
-                    ? 'bg-primary text-white border-primary shadow-2xs'
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
                     : 'bg-white text-slate-600 border-slate-200 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >

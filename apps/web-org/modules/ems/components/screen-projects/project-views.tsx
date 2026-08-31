@@ -254,7 +254,7 @@ export function ProjectTable({
       pinned: 'right',
       sortable: false,
       cell: () => (
-        <span className="text-xs font-semibold text-primary hover:underline cursor-pointer">
+        <span className="text-xs font-semibold text-slate-700 hover:text-slate-900 hover:underline cursor-pointer">
           View
         </span>
       ),
@@ -292,8 +292,10 @@ export function StaffingMatrixView({
         </p>
         {canManage && (
           <Button
+            variant="default"
+            size="sm"
             onClick={onOpenAssign}
-            className="px-3 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-[5px] shadow-xs cursor-pointer flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-[5px] shadow-xs cursor-pointer flex items-center gap-1.5"
           >
             <span>+</span>
             <span>Assign Team Member</span>
@@ -523,8 +525,10 @@ export function ProjectDetailDrawer({
                 </h3>
                 {canManage && (
                   <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={onOpenAssign}
-                    className="text-[11px] font-bold text-primary hover:underline cursor-pointer flex items-center gap-1"
+                    className="text-[11px] font-bold text-slate-800 hover:text-slate-900 hover:underline cursor-pointer flex items-center gap-1"
                   >
                     <span>+ Assign Member</span>
                   </Button>
@@ -589,8 +593,10 @@ export function ProjectDetailDrawer({
           {/* Footer */}
           <div className="p-4 border-t border-slate-200 dark:border-[#262F3D] bg-slate-50 dark:bg-[#161B22] flex justify-end">
             <Button
+              variant="outline"
+              size="sm"
               onClick={onClose}
-              className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold rounded border border-transparent dark:border-slate-700 transition-colors cursor-pointer"
+              className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold rounded border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
             >
               Close
             </Button>

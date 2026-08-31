@@ -85,11 +85,14 @@ function TreeNodeItem({
               👥 {node.children.length} direct report{node.children.length !== 1 ? 's' : ''}
             </span>
             <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleExpand(node.id);
               }}
-              className="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-100 hover:bg-sky-100 hover:text-sky-700 text-slate-600 transition-colors flex items-center gap-1 cursor-pointer"
+              className="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-100 hover:bg-sky-100 hover:text-sky-700 text-slate-600 transition-colors flex items-center gap-1 cursor-pointer h-auto"
             >
               <span>{isExpanded ? 'Collapse' : 'Expand'}</span>
               <span>{isExpanded ? '▲' : '▼'}</span>
@@ -225,18 +228,27 @@ export function OrgEmployeeTreeTab({ treeRoot }: OrgEmployeeTreeTabProps) {
         {/* Right: Expand/Collapse & Print Actions */}
         <div className="flex items-center gap-2">
           <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={handleExpandAll}
             className="px-2.5 py-1 text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded shadow-2xs transition-colors cursor-pointer"
           >
             Expand All
           </Button>
           <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={handleCollapseAll}
             className="px-2.5 py-1 text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded shadow-2xs transition-colors cursor-pointer"
           >
             Collapse All
           </Button>
           <Button
+            type="button"
+            variant="outline"
+            size="icon"
             onClick={handlePrint}
             className="p-1.5 text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-50 rounded shadow-2xs transition-colors cursor-pointer"
             title="Print Organization Hierarchy"

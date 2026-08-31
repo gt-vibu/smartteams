@@ -35,9 +35,9 @@ export function TimeTrackerToolbar({
             role="tab"
             aria-selected={activeSubTab === tab}
             onClick={() => onSelectSubTab(tab)}
-            className={`relative whitespace-nowrap px-0 pb-1 text-xs font-semibold ${
+            className={`relative whitespace-nowrap px-0 pb-1 text-xs font-semibold rounded-none ${
               activeSubTab === tab
-                ? 'border-b-2 border-primary text-primary'
+                ? 'border-b-2 border-slate-900 text-slate-900 font-bold'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -91,7 +91,12 @@ export function TimeTrackerToolbar({
           </Button>
         </div>
 
-        <Button type="button" onClick={onOpenLogTime} className="px-3 py-1.5">
+        <Button
+          type="button"
+          variant="default"
+          onClick={onOpenLogTime}
+          className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs"
+        >
           Log Time
         </Button>
       </div>

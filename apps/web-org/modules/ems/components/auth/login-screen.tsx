@@ -206,8 +206,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             {/* Submit */}
             <Button
               type="submit"
+              variant="default"
               disabled={isLoading || !email || !password}
-              className="w-full py-2.5 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               {isLoading ? (
                 <>

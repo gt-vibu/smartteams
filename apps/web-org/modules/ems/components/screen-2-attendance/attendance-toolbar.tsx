@@ -32,7 +32,7 @@ export function AttendanceToolbar({
 }: AttendanceToolbarProps) {
   return (
     <div className="flex w-full flex-col justify-between gap-2 border-b border-slate-200/90 bg-white/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
-      <h1 className="!m-0 border-b-2 border-primary pb-1 !text-sm !font-bold !text-slate-900">
+      <h1 className="!m-0 border-b-2 border-slate-900 pb-1 !text-sm !font-bold !text-slate-900">
         {title}
       </h1>
 
@@ -99,7 +99,7 @@ export function AttendanceToolbar({
                 role="tab"
                 aria-selected={viewMode === view.value}
                 onClick={() => onChangeViewMode(view.value)}
-                className={`rounded-none px-3 py-1.5 text-xs ${viewMode === view.value ? 'bg-sky-50 font-bold text-primary' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
+                className={`rounded-none px-3 py-1.5 text-xs ${viewMode === view.value ? 'bg-slate-100 font-bold text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
               >
                 {view.label}
               </Button>

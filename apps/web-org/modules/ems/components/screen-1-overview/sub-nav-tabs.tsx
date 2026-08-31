@@ -38,10 +38,12 @@ export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
           return (
             <Button
               key={tab}
+              variant="ghost"
+              size="sm"
               onClick={() => onSelectTab(tab)}
-              className={`h-full text-xs font-semibold px-1 flex items-center whitespace-nowrap transition-colors relative cursor-pointer shrink-0 ${
+              className={`h-full text-xs font-semibold px-1 flex items-center whitespace-nowrap transition-colors relative cursor-pointer shrink-0 rounded-none ${
                 isActive
-                  ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary'
+                  ? 'text-slate-900 dark:text-white border-b-2 border-slate-900 dark:border-white font-bold'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -52,7 +54,9 @@ export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
       </div>
 
       <Button
-        className="p-1 text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded transition-colors shrink-0 ml-2 cursor-pointer"
+        variant="ghost"
+        size="icon"
+        className="p-1 text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded transition-colors shrink-0 ml-2 cursor-pointer h-7 w-7"
         title="View Settings / Filters"
         aria-label="Filter"
       >

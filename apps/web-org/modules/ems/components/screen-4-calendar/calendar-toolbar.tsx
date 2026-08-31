@@ -27,10 +27,12 @@ export function CalendarToolbar({
   return (
     <div className="flex w-full flex-col justify-between gap-2 border-b border-slate-200/90 bg-white/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
       <div className="flex items-center gap-3">
-        <Button type="button" variant="outline" size="sm" onClick={onToday}>
-          Today
-        </Button>
-        <div className="flex items-center rounded border border-slate-200 bg-white px-2 py-1 text-xs font-bold text-slate-800 shadow-xs">
+        {onToday && (
+          <Button type="button" variant="outline" size="sm" onClick={onToday}>
+            Today
+          </Button>
+        )}
+        <div className="flex items-center rounded border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-xs">
           <Button
             type="button"
             variant="ghost"
@@ -38,6 +40,7 @@ export function CalendarToolbar({
             className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
             title="Previous month"
             aria-label="Previous month"
+            disabled={!onPrevMonth}
             onClick={onPrevMonth}
           >
             <svg
@@ -51,7 +54,9 @@ export function CalendarToolbar({
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </Button>
-          <span className="px-3">{monthName}</span>
+          <span className="max-w-[140px] truncate px-2 text-slate-800 xs:max-w-none font-bold">
+            {monthName}
+          </span>
           <Button
             type="button"
             variant="ghost"
@@ -59,6 +64,7 @@ export function CalendarToolbar({
             className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
             title="Next month"
             aria-label="Next month"
+            disabled={!onNextMonth}
             onClick={onNextMonth}
           >
             <svg
@@ -89,7 +95,7 @@ export function CalendarToolbar({
               role="tab"
               aria-selected={viewMode === view.value}
               onClick={() => onChangeViewMode(view.value)}
-              className={`rounded-none px-3 py-1.5 text-xs ${viewMode === view.value ? 'bg-sky-50 font-bold text-primary' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
+              className={`rounded-none px-3 py-1.5 text-xs ${viewMode === view.value ? 'bg-slate-100 font-bold text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}`}
             >
               {view.label}
             </Button>

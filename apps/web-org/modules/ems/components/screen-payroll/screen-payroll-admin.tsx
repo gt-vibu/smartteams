@@ -260,9 +260,10 @@ export function ScreenPayrollAdmin() {
         <div className="flex items-center gap-2">
           {activeMainTab === 'RUNS' && (
             <Button
-              onClick={() => setIsStartRunModalOpen(true)}
+              variant="default"
               size="sm"
-              className="h-8 text-xs font-semibold"
+              onClick={() => setIsStartRunModalOpen(true)}
+              className="h-8 text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-xs"
             >
               <span>+</span>
               <span>New Payroll Run</span>
@@ -308,10 +309,10 @@ export function ScreenPayrollAdmin() {
           {selectedRun && (
             <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-card shadow-sm overflow-hidden">
               {/* Header: Cycle Details, Stepper, Primary Action */}
-              <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800/80 flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-gradient-to-r from-slate-50/70 via-white to-sky-50/20 dark:from-[var(--card)] dark:via-[var(--card)] dark:to-[var(--card)]">
+              <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800/80 flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-gradient-to-r from-slate-50/70 via-white to-slate-50/20 dark:from-[var(--card)] dark:via-[var(--card)] dark:to-[var(--card)]">
                 {/* Left: Cycle Identity */}
                 <div className="flex items-center gap-3.5">
-                  <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-primary to-sky-700 text-white font-bold flex items-center justify-center text-lg shrink-0 shadow-md shadow-sky-600/20 ring-4 ring-sky-50 dark:ring-sky-950/40">
+                  <div className="h-11 w-11 rounded-xl bg-slate-900 text-white font-bold flex items-center justify-center text-lg shrink-0 shadow-md ring-4 ring-slate-100 dark:ring-slate-800">
                     ₹
                   </div>
                   <div>
@@ -384,7 +385,7 @@ export function ScreenPayrollAdmin() {
                           s.done
                             ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/40'
                             : s.current
-                              ? 'text-primary dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 ring-1 ring-sky-300/60 dark:ring-sky-800'
+                              ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 ring-1 ring-slate-300 dark:ring-slate-700'
                               : 'text-slate-400 dark:text-slate-600'
                         }`}
                       >
@@ -403,9 +404,10 @@ export function ScreenPayrollAdmin() {
                 <div className="flex items-center gap-2.5 self-start xl:self-auto">
                   {selectedRun.status === 'DRAFT' && (
                     <Button
+                      variant="default"
                       size="sm"
                       onClick={() => handleCalculatePayroll(selectedRun.id)}
-                      className="bg-primary hover:bg-primary/90 text-white font-semibold text-xs h-9 px-4 shadow-sm shadow-sky-600/20 rounded-lg flex items-center gap-1.5 transition-all hover:scale-[1.02]"
+                      className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs h-9 px-4 shadow-sm rounded-lg flex items-center gap-1.5 transition-all"
                     >
                       <span>▶</span>
                       <span>Compute Payroll Run</span>
@@ -413,9 +415,10 @@ export function ScreenPayrollAdmin() {
                   )}
                   {selectedRun.status === 'CALCULATED' && canApprove('PAYROLL') && (
                     <Button
+                      variant="success"
                       size="sm"
                       onClick={() => handleAuthorizePayroll(selectedRun.id)}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-9 px-4 shadow-sm shadow-emerald-600/20 rounded-lg flex items-center gap-1.5 transition-all hover:scale-[1.02]"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs h-9 px-4 shadow-sm shadow-emerald-600/20 rounded-lg flex items-center gap-1.5 transition-all"
                     >
                       <span>✓</span>
                       <span>Authorize Run</span>
@@ -423,9 +426,10 @@ export function ScreenPayrollAdmin() {
                   )}
                   {selectedRun.status === 'APPROVED' && (
                     <Button
+                      variant="default"
                       size="sm"
                       onClick={() => handleDisbursePayroll(selectedRun.id)}
-                      className="bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold text-xs h-9 px-4 shadow-sm rounded-lg flex items-center gap-1.5 transition-all hover:scale-[1.02]"
+                      className="bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold text-xs h-9 px-4 shadow-sm rounded-lg flex items-center gap-1.5 transition-all"
                     >
                       <span>💸</span>
                       <span>Disburse to Bank</span>

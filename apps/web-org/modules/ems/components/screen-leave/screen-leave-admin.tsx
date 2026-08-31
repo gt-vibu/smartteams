@@ -309,7 +309,7 @@ export function ScreenLeaveAdmin() {
       <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
               Admin Governance
             </span>
             <span className="text-xs text-slate-400">·</span>
@@ -323,6 +323,8 @@ export function ScreenLeaveAdmin() {
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-[6px] border border-slate-200 shrink-0 overflow-x-auto no-scrollbar">
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('POLICIES')}
             className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'POLICIES'
@@ -333,6 +335,8 @@ export function ScreenLeaveAdmin() {
             Leave Policies ({policies.length})
           </Button>
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('HOLIDAYS')}
             className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'HOLIDAYS'
@@ -343,6 +347,8 @@ export function ScreenLeaveAdmin() {
             Holiday Templates ({holidayTemplates.length})
           </Button>
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('REQUESTS')}
             className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'REQUESTS'
@@ -364,8 +370,9 @@ export function ScreenLeaveAdmin() {
               entitlements.
             </p>
             <Button
+              variant="default"
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
+              className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
             >
               <span>+</span>
               <span>Create Leave Policy</span>
@@ -456,8 +463,9 @@ export function ScreenLeaveAdmin() {
               Delhi), and optional floating lists.
             </p>
             <Button
+              variant="default"
               onClick={() => setIsCreateHolidayModalOpen(true)}
-              className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5 shrink-0"
+              className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-[5px] transition-colors shadow-xs cursor-pointer flex items-center gap-1.5 shrink-0"
             >
               <span>+</span>
               <span>Add Holiday to Template</span>
@@ -479,7 +487,7 @@ export function ScreenLeaveAdmin() {
                       onClick={() => setSelectedTemplate(t)}
                       className={`p-3.5 rounded-[6px] border transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-sky-50/80 border-sky-400 ring-1 ring-sky-300 shadow-xs'
+                          ? 'bg-slate-100 dark:bg-slate-800 border-slate-400 dark:border-slate-600 shadow-xs'
                           : 'bg-white border-slate-200 hover:bg-slate-50'
                       }`}
                     >
@@ -516,7 +524,7 @@ export function ScreenLeaveAdmin() {
                       {selectedTemplate.applicableBranch} · {selectedTemplate.code}
                     </p>
                   </div>
-                  <span className="text-xs font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded border border-sky-200">
+                  <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
                     {selectedTemplate.holidays.length} Listed Dates
                   </span>
                 </div>
@@ -768,6 +776,7 @@ export function ScreenLeaveAdmin() {
               <div className="flex justify-end gap-2 pt-2">
                 <Button
                   type="button"
+                  variant="outline"
                   onClick={() => setIsCreateModalOpen(false)}
                   className="px-3 py-1.5 border border-slate-300 text-slate-700 font-bold rounded hover:bg-slate-100 cursor-pointer"
                 >
@@ -775,7 +784,8 @@ export function ScreenLeaveAdmin() {
                 </Button>
                 <Button
                   type="submit"
-                  className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold rounded shadow-xs cursor-pointer"
+                  variant="default"
+                  className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded shadow-xs cursor-pointer"
                 >
                   Save Policy
                 </Button>
@@ -810,6 +820,8 @@ export function ScreenLeaveAdmin() {
                     </p>
                   </div>
                   <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setIsCreateHolidayModalOpen(false)}
                     className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
                   >
@@ -835,7 +847,7 @@ export function ScreenLeaveAdmin() {
                         setNewHolidayName(e.target.value);
                         if (formErrors.name) setFormErrors({ ...formErrors, name: undefined });
                       }}
-                      className={`w-full px-3 py-2 bg-white dark:bg-slate-900 border rounded text-xs focus:ring-1 focus:ring-sky-500 font-medium ${
+                      className={`w-full px-3 py-2 bg-white dark:bg-slate-900 border rounded text-xs focus:ring-1 focus:ring-slate-500 font-medium ${
                         formErrors.name
                           ? 'border-rose-500 bg-rose-50/20 text-rose-900 dark:text-rose-200'
                           : 'border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white'
@@ -879,7 +891,7 @@ export function ScreenLeaveAdmin() {
                         }}
                         placeholder="Select Holiday Date"
                       />
-                      <span className="text-[11px] font-semibold text-sky-700 dark:text-sky-300 mt-1 block">
+                      <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 mt-1 block">
                         {formatLongDayText(newHolidayDate)}
                       </span>
                     </div>
@@ -957,6 +969,8 @@ export function ScreenLeaveAdmin() {
                             <Button
                               key={branch}
                               type="button"
+                              variant="outline"
+                              size="sm"
                               onClick={() => {
                                 setSelectedBranches(
                                   isChecked
@@ -966,7 +980,7 @@ export function ScreenLeaveAdmin() {
                               }}
                               className={`px-2 py-1 rounded text-[11px] font-semibold border cursor-pointer transition-colors ${
                                 isChecked
-                                  ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-800'
+                                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-slate-400 dark:border-slate-600'
                                   : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700'
                               }`}
                             >
@@ -991,6 +1005,7 @@ export function ScreenLeaveAdmin() {
                   <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-200 dark:border-slate-700">
                     <Button
                       type="button"
+                      variant="outline"
                       onClick={() => {
                         setIsCreateHolidayModalOpen(false);
                         setFormErrors({});
@@ -1001,7 +1016,8 @@ export function ScreenLeaveAdmin() {
                     </Button>
                     <Button
                       type="submit"
-                      className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-[6px] shadow-xs cursor-pointer"
+                      variant="default"
+                      className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-[6px] shadow-xs cursor-pointer"
                     >
                       Save Holiday
                     </Button>

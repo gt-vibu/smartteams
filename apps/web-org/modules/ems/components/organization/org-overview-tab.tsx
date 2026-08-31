@@ -365,8 +365,10 @@ export function OrgOverviewTab({
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200">Quick Links</h3>
             <Button
+              variant="outline"
+              size="icon"
               onClick={() => setIsAddLinkModalOpen(true)}
-              className="h-5 w-5 rounded border border-primary text-primary hover:bg-primary/10 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
+              className="h-5 w-5 rounded border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
               title="Add Quick Link"
             >
               +
@@ -409,26 +411,28 @@ export function OrgOverviewTab({
       <div className="lg:col-span-8 xl:col-span-9 space-y-3 min-w-0">
         {/* Sub-Tabs Selector Header Strip */}
         <div className="border-b border-slate-200 dark:border-[var(--border)] pb-1 flex items-center gap-6">
-          <Button
+          <button
+            type="button"
             onClick={() => setActiveSubTab('Services')}
-            className={`text-xs font-semibold pb-2 transition-colors relative cursor-pointer ${
+            className={`text-xs font-semibold pb-2 transition-colors relative cursor-pointer bg-transparent ${
               activeSubTab === 'Services'
-                ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary'
+                ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Services
-          </Button>
-          <Button
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveSubTab('Location')}
-            className={`text-xs font-semibold pb-2 transition-colors relative cursor-pointer ${
+            className={`text-xs font-semibold pb-2 transition-colors relative cursor-pointer bg-transparent ${
               activeSubTab === 'Location'
-                ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary'
+                ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Location
-          </Button>
+          </button>
         </div>
 
         {/* 1. Services 2-Column Grid (Only real existing modules) */}
@@ -534,6 +538,8 @@ export function OrgOverviewTab({
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => setIsAddLinkModalOpen(false)}
                   className="px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded font-medium cursor-pointer"
                 >
@@ -541,7 +547,9 @@ export function OrgOverviewTab({
                 </Button>
                 <Button
                   type="submit"
-                  className="px-3.5 py-1.5 text-xs bg-primary hover:bg-primary/90 text-white rounded font-semibold transition-colors cursor-pointer"
+                  variant="default"
+                  size="sm"
+                  className="px-3.5 py-1.5 text-xs bg-slate-900 hover:bg-slate-800 text-white rounded font-semibold transition-colors cursor-pointer shadow-xs"
                 >
                   Add Shortcut
                 </Button>

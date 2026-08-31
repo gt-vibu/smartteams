@@ -309,9 +309,10 @@ export function ScreenApprovals() {
                               Reject
                             </Button>
                             <Button
+                              variant="default"
                               size="sm"
                               onClick={() => handleApprove(item.id)}
-                              className="text-xs"
+                              className="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-xs"
                             >
                               Approve
                             </Button>

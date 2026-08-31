@@ -50,9 +50,11 @@ export function OrgMilestonesTab({ milestones }: OrgMilestonesTabProps) {
                   setActiveFilter(tab.id);
                 }
               }}
+              variant="ghost"
+              size="sm"
               className={`px-3 py-1 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'bg-primary text-white shadow-2xs'
+                  ? 'bg-slate-900 text-white shadow-2xs font-bold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -70,7 +72,7 @@ export function OrgMilestonesTab({ milestones }: OrgMilestonesTabProps) {
           return (
             <div
               key={item.id}
-              className="bg-white rounded-[6px] border border-slate-200/90 p-4 shadow-xs flex flex-col justify-between hover:border-sky-300 transition-all"
+              className="bg-white rounded-[6px] border border-slate-200/90 p-4 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-all"
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-3">
@@ -99,7 +101,7 @@ export function OrgMilestonesTab({ milestones }: OrgMilestonesTabProps) {
                       {item.employeeName}
                     </h4>
                     <p className="text-[10px] text-slate-500 truncate">{item.jobTitle}</p>
-                    <p className="text-[10px] text-primary font-medium truncate">
+                    <p className="text-[10px] text-slate-600 font-medium truncate">
                       {item.department}
                     </p>
                   </div>
@@ -113,12 +115,14 @@ export function OrgMilestonesTab({ milestones }: OrgMilestonesTabProps) {
               <div className="border-t border-slate-100 pt-3 mt-3 flex items-center justify-between">
                 <span className="text-[10px] text-slate-400 font-mono">{item.employeeNumber}</span>
                 <Button
+                  variant={isWished ? 'outline' : 'default'}
+                  size="sm"
                   onClick={() => handleWish(item.id)}
                   disabled={isWished}
                   className={`px-3 py-1 text-xs font-semibold rounded transition-colors cursor-pointer ${
                     isWished
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-primary hover:bg-primary/90 text-white shadow-2xs'
+                      : 'bg-slate-900 hover:bg-slate-800 text-white shadow-2xs'
                   }`}
                 >
                   {isWished ? '✓ Sent Wishes' : 'Send Wishes 🎊'}

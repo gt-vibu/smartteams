@@ -50,17 +50,18 @@ export function OrgHeroBanner({
           {subTabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
-              <Button
+              <button
+                type="button"
                 key={tab.id}
                 onClick={() => onSelectTab(tab.id)}
-                className={`h-full text-xs font-semibold px-1 flex items-center transition-colors relative cursor-pointer whitespace-nowrap ${
+                className={`h-full text-xs font-semibold px-1 flex items-center transition-colors relative cursor-pointer whitespace-nowrap bg-transparent ${
                   isActive
-                    ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary'
+                    ? 'text-primary dark:text-primary border-b-2 border-primary dark:border-primary font-bold'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {tab.label}
-              </Button>
+              </button>
             );
           })}
         </div>
@@ -92,6 +93,8 @@ export function OrgHeroBanner({
               <div className="flex justify-end gap-2">
                 <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => setIsEditingCover(false)}
                   className="px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded cursor-pointer"
                 >
@@ -99,7 +102,9 @@ export function OrgHeroBanner({
                 </Button>
                 <Button
                   type="submit"
-                  className="px-3.5 py-1.5 text-xs bg-primary hover:bg-primary/90 text-white font-bold rounded cursor-pointer"
+                  variant="default"
+                  size="sm"
+                  className="px-3.5 py-1.5 text-xs bg-slate-900 hover:bg-slate-800 text-white font-bold rounded cursor-pointer shadow-xs"
                 >
                   Save Photo
                 </Button>

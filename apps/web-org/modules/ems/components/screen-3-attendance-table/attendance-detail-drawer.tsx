@@ -164,9 +164,10 @@ export function AttendanceDetailDrawer({
                   />
                   <Button
                     type="button"
+                    variant="default"
                     disabled={reason.length < 5}
                     onClick={handleSubmitRegularization}
-                    className="w-full"
+                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 text-xs shadow-xs"
                   >
                     Submit Correction Request
                   </Button>

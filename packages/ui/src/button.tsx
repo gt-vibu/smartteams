@@ -7,20 +7,27 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
+        default:
+          'bg-slate-900 text-white hover:bg-slate-800 shadow-xs dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white',
+        primary:
+          'bg-slate-900 text-white hover:bg-slate-800 shadow-xs dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs',
-        outline: 'border border-border bg-background hover:bg-muted text-foreground shadow-2xs',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-muted hover:text-foreground text-muted-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
-        success: 'bg-success text-success-foreground hover:bg-success/90 shadow-xs',
-        quiet: 'hover:bg-muted text-foreground',
+        outline:
+          'border border-slate-200 dark:border-slate-800 bg-white dark:bg-card text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 hover:text-slate-900 dark:hover:text-white shadow-2xs',
+        secondary:
+          'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700',
+        ghost:
+          'bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100',
+        link: 'bg-transparent text-slate-900 dark:text-slate-100 underline-offset-4 hover:underline hover:text-slate-700 dark:hover:text-slate-300 p-0 h-auto',
+        success: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs',
+        quiet:
+          'bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300',
       },
       size: {
-        default: 'min-h-9 px-3 py-1.5',
-        sm: 'min-h-9 rounded-md px-2.5 text-[11px]',
-        lg: 'min-h-10 rounded-md px-4 text-xs',
-        icon: 'h-9 w-9',
+        default: 'h-8 px-3 py-1.5',
+        sm: 'h-7 rounded-md px-2.5 text-[11px]',
+        lg: 'h-9 rounded-md px-4 text-xs',
+        icon: 'h-8 w-8 p-0',
       },
     },
     defaultVariants: {

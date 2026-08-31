@@ -115,7 +115,7 @@ export function ScreenTimesheetsAdmin() {
       <div className="sticky top-0 z-20 bg-background">
         <div className="bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5 border-b border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
           <div className="flex items-center space-x-4">
-            <span className="text-xs font-bold text-primary border-b-2 border-primary pb-1">
+            <span className="text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-1">
               Time Logs & Timesheets
             </span>
           </div>
@@ -146,7 +146,7 @@ export function ScreenTimesheetsAdmin() {
         <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                 Admin Governance
               </span>
               <span className="text-xs text-slate-400">·</span>
@@ -360,8 +360,10 @@ export function ScreenTimesheetsAdmin() {
                     <p className="text-xs text-slate-500">{activeDrawerRecord.period}</p>
                   </div>
                   <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setActiveDrawerRecord(null)}
-                    className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200 cursor-pointer"
+                    className="h-7 w-7 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200 cursor-pointer"
                   >
                     ✕
                   </Button>
@@ -414,7 +416,7 @@ export function ScreenTimesheetsAdmin() {
                           className="p-3 bg-slate-50 border border-slate-200 rounded-[6px] flex items-center justify-between"
                         >
                           <div className="font-semibold text-slate-800">{p.projectName}</div>
-                          <div className="font-mono font-bold text-sky-700">{p.hours} hrs</div>
+                          <div className="font-mono font-bold text-slate-800">{p.hours} hrs</div>
                         </div>
                       ))}
                     </div>
@@ -429,22 +431,25 @@ export function ScreenTimesheetsAdmin() {
                   }) ? (
                     <>
                       <Button
+                        variant="destructive"
                         onClick={() => handleReject(activeDrawerRecord.id)}
-                        className="flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded text-xs cursor-pointer transition-colors"
+                        className="flex-1 py-2 font-bold rounded text-xs cursor-pointer transition-colors"
                       >
                         Reject Timesheet
                       </Button>
                       <Button
+                        variant="success"
                         onClick={() => handleApprove(activeDrawerRecord.id)}
-                        className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded text-xs cursor-pointer transition-colors"
+                        className="flex-1 py-2 font-bold rounded text-xs cursor-pointer transition-colors"
                       >
                         Approve Timesheet
                       </Button>
                     </>
                   ) : (
                     <Button
+                      variant="default"
                       onClick={() => setActiveDrawerRecord(null)}
-                      className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded text-xs cursor-pointer transition-colors"
+                      className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded text-xs cursor-pointer transition-colors"
                     >
                       Close Inspection
                     </Button>

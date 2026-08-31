@@ -108,8 +108,10 @@ export function ScreenFiles() {
           </p>
         </div>
         <Button
+          variant="default"
+          size="sm"
           onClick={() => setIsUploadModalOpen(true)}
-          className="self-start sm:self-auto text-xs"
+          className="self-start sm:self-auto text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-xs"
         >
           <span>+ Upload Document</span>
         </Button>
@@ -165,7 +167,7 @@ export function ScreenFiles() {
         {filteredFiles.map((file) => (
           <Card
             key={file.id}
-            className="p-4 hover:border-sky-400/80 dark:hover:border-sky-600 transition-all flex flex-col justify-between group"
+            className="p-4 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between group"
           >
             <div>
               <div className="flex items-start justify-between gap-2 mb-2.5">
@@ -191,7 +193,7 @@ export function ScreenFiles() {
                 </Badge>
               </div>
 
-              <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-primary dark:group-hover:text-sky-400 transition-colors">
+              <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                 {file.name}
               </h3>
               <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 space-y-0.5 font-mono">
@@ -215,7 +217,7 @@ export function ScreenFiles() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleDownload(file.name)}
-                className="text-xs text-primary dark:text-sky-400"
+                className="text-xs text-slate-800 dark:text-slate-200 hover:text-slate-900"
               >
                 Download File ↓
               </Button>
@@ -262,7 +264,12 @@ export function ScreenFiles() {
               >
                 Cancel
               </Button>
-              <Button type="submit" size="sm">
+              <Button
+                type="submit"
+                variant="default"
+                size="sm"
+                className="bg-slate-900 hover:bg-slate-800 text-white font-bold"
+              >
                 Upload
               </Button>
             </DialogFooter>

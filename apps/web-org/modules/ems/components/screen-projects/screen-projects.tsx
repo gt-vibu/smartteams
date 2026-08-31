@@ -189,10 +189,12 @@ export function ScreenProjects() {
               return (
                 <Button
                   key={tab}
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setActiveTab(tab)}
-                  className={`text-xs font-semibold pb-1 transition-colors relative whitespace-nowrap cursor-pointer ${
+                  className={`text-xs font-semibold pb-1 transition-colors relative whitespace-nowrap cursor-pointer rounded-none ${
                     isActive
-                      ? 'text-primary border-b-2 border-primary'
+                      ? 'text-slate-900 border-b-2 border-slate-900 font-bold'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -231,10 +233,12 @@ export function ScreenProjects() {
             {/* Grid / Table View Switcher */}
             <div className="flex items-center bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
               <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 transition-colors cursor-pointer ${
+                className={`p-1.5 h-8 w-8 transition-colors cursor-pointer rounded-none ${
                   viewMode === 'grid'
-                    ? 'bg-sky-50 text-primary font-bold'
+                    ? 'bg-slate-100 text-slate-900 font-bold'
                     : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
                 }`}
                 title="Grid View"
@@ -254,10 +258,12 @@ export function ScreenProjects() {
                 </svg>
               </Button>
               <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setViewMode('table')}
-                className={`p-1.5 transition-colors border-l border-slate-200 cursor-pointer ${
+                className={`p-1.5 h-8 w-8 transition-colors border-l border-slate-200 cursor-pointer rounded-none ${
                   viewMode === 'table'
-                    ? 'bg-sky-50 text-primary font-bold'
+                    ? 'bg-slate-100 text-slate-900 font-bold'
                     : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
                 }`}
                 title="Table View"
@@ -281,6 +287,8 @@ export function ScreenProjects() {
             {/* Quick Action: Assign Member */}
             {isAdmin && (
               <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setIsAssignModalOpen(true)}
                 className="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               >
@@ -291,8 +299,10 @@ export function ScreenProjects() {
             {/* Primary CTA: New Project */}
             {isAdmin && (
               <Button
+                variant="default"
+                size="sm"
                 onClick={() => setIsCreateModalOpen(true)}
-                className="px-3 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <svg
                   className="h-3.5 w-3.5"

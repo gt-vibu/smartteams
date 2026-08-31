@@ -60,8 +60,10 @@ export function ContextBar({
 
         {/* Space */}
         <Button
+          variant="ghost"
+          size="sm"
           onClick={() => onNavigateSpace?.(activeSpace)}
-          className="hover:text-slate-900 dark:hover:text-white font-medium cursor-pointer transition-colors text-slate-600 dark:text-slate-300"
+          className="h-auto p-1 text-xs hover:text-slate-900 dark:hover:text-white font-medium cursor-pointer transition-colors text-slate-600 dark:text-slate-300"
         >
           {activeSpace}
         </Button>
@@ -71,8 +73,10 @@ export function ContextBar({
           <>
             <span className="text-slate-300 dark:text-slate-600">/</span>
             <Button
+              variant="ghost"
+              size="sm"
               onClick={() => onNavigateModule?.(activeModule)}
-              className="text-slate-900 dark:text-white font-semibold truncate hover:underline cursor-pointer"
+              className="h-auto p-1 text-xs text-slate-900 dark:text-white font-semibold truncate hover:underline cursor-pointer"
             >
               {getModuleLabel(activeModule)}
             </Button>

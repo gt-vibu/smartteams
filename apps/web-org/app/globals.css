@@ -40,7 +40,6 @@
   --ring: var(--smarteam-primary);
   --sidebar: oklch(0.17 0.045 245);
   --sidebar-foreground: oklch(0.9 0.025 220);
-  --sidebar-border: oklch(0.27 0.06 245);
   --sidebar-accent: var(--smarteam-primary);
   --radius: 0.75rem;
 }

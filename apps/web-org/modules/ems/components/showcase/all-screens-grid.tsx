@@ -74,7 +74,7 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded border border-sky-200">
+          <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
             6 Production Modules Live
           </span>
         </div>
@@ -85,7 +85,7 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
         {screens.map((s, index) => (
           <div
             key={s.id}
-            className="bg-white rounded-[8px] border border-slate-200 shadow-md overflow-hidden flex flex-col group hover:border-sky-400 transition-all"
+            className="bg-white rounded-[8px] border border-slate-200 shadow-md overflow-hidden flex flex-col group hover:border-slate-400 transition-all"
           >
             {/* Screen Header Bar */}
             <div className="px-5 py-3 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
@@ -101,8 +101,10 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
                   {s.badge}
                 </span>
                 <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => onSelectScreen(s.id)}
-                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-slate-800 hover:text-slate-900 flex items-center gap-1"
                 >
                   <span>Focus View</span>
                   <svg

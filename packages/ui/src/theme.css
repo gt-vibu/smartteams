@@ -3,3 +3,8 @@
   --smarteam-primary: #0284c7;
   --smarteam-primary-foreground: #ffffff;
 }
+
+.dark {
+  --smarteam-primary: #38bdf8;
+  --smarteam-primary-foreground: #0f172a;
+}

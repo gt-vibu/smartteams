@@ -273,11 +273,13 @@ function AttendanceDesktopTable({ rows, onSelectRow }: AttendanceTableViewProps)
       cell: (row) =>
         row.canRegularize ? (
           <Button
+            variant="outline"
+            size="sm"
             onClick={(e) => {
               e.stopPropagation();
               onSelectRow(row);
             }}
-            className="text-[11px] font-semibold text-primary hover:text-primary hover:underline cursor-pointer whitespace-nowrap"
+            className="text-[11px] font-semibold text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 bg-white dark:bg-card hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer whitespace-nowrap shadow-2xs"
           >
             Regularize
           </Button>

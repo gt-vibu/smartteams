@@ -169,11 +169,13 @@ export function ScreenAttendanceAdmin() {
       sortable: false,
       cell: (row) => (
         <Button
+          variant="outline"
+          size="sm"
           onClick={(e) => {
             e.stopPropagation();
             setSelectedRow(row);
           }}
-          className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
+          className="h-7 px-2.5 text-[11px] font-semibold text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 bg-white dark:bg-card hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer shadow-2xs"
         >
           Inspect
         </Button>
@@ -187,7 +189,7 @@ export function ScreenAttendanceAdmin() {
       <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
               Admin Governance
             </span>
             <span className="text-xs text-slate-400">·</span>
@@ -201,9 +203,11 @@ export function ScreenAttendanceAdmin() {
         {/* Custom Date Picker + Prev/Next Steppers */}
         <div className="flex items-center gap-2 shrink-0">
           <Button
+            variant="outline"
+            size="icon"
             onClick={handlePrevDate}
             disabled={availableDates.indexOf(selectedDate) <= 0}
-            className="p-1.5 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
+            className="h-8 w-8 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-2xs"
             title="Previous Day"
           >
             <svg
@@ -225,9 +229,11 @@ export function ScreenAttendanceAdmin() {
           />
 
           <Button
+            variant="outline"
+            size="icon"
             onClick={handleNextDate}
             disabled={availableDates.indexOf(selectedDate) >= availableDates.length - 1}
-            className="p-1.5 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-xs"
+            className="h-8 w-8 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-2xs"
             title="Next Day"
           >
             <svg
@@ -319,8 +325,10 @@ export function ScreenAttendanceAdmin() {
                   </p>
                 </div>
                 <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setSelectedRow(null)}
-                  className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                  className="h-7 w-7 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
                 >
                   ✕
                 </Button>
@@ -387,7 +395,7 @@ export function ScreenAttendanceAdmin() {
                         Biometric & Geofence Verified
                       </div>
                     </div>
-                    <span className="text-[10px] font-mono bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded font-bold">
                       {selectedRow.source}
                     </span>
                   </div>
@@ -396,8 +404,9 @@ export function ScreenAttendanceAdmin() {
 
               <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-card">
                 <Button
+                  variant="default"
                   onClick={() => setSelectedRow(null)}
-                  className="w-full py-2 bg-slate-800 hover:bg-slate-700 dark:bg-primary dark:hover:bg-primary/90 text-white font-bold rounded text-xs cursor-pointer transition-colors"
+                  className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded text-xs cursor-pointer transition-colors"
                 >
                   Close Inspection
                 </Button>

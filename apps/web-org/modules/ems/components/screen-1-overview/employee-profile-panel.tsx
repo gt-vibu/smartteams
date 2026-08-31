@@ -117,11 +117,13 @@ export function EmployeeProfilePanel() {
           </div>
 
           <Button
+            variant={isCheckedIn ? 'outline' : 'default'}
+            size="sm"
             onClick={handleToggleAttendance}
             className={`w-full py-1.5 px-3 rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
               isCheckedIn
                 ? 'bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
-                : 'bg-primary hover:bg-primary/90 text-white'
+                : 'bg-slate-900 hover:bg-slate-800 text-white font-bold'
             }`}
           >
             {isCheckedIn ? 'Check out' : 'Check in'}

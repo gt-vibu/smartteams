@@ -25,10 +25,12 @@ export function LeaveToolbar({
           return (
             <Button
               key={tab}
+              variant="ghost"
+              size="sm"
               onClick={() => onSelectSubTab(tab)}
-              className={`text-xs font-semibold pb-1 transition-colors relative whitespace-nowrap ${
+              className={`text-xs font-semibold pb-1 transition-colors relative whitespace-nowrap rounded-none ${
                 isActive
-                  ? 'text-primary border-b-2 border-primary'
+                  ? 'text-slate-900 border-b-2 border-slate-900 font-bold'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -42,7 +44,12 @@ export function LeaveToolbar({
       <div className="flex items-center gap-3">
         {/* Year Navigator */}
         <div className="flex items-center bg-white border border-slate-200 rounded px-2 py-1 shadow-xs text-xs font-semibold text-slate-700">
-          <Button className="p-0.5 hover:text-slate-900 text-slate-400" title="Previous Year">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 p-0.5 hover:text-slate-900 text-slate-400"
+            title="Previous Year"
+          >
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -69,7 +76,12 @@ export function LeaveToolbar({
             </svg>
             <span>{yearLabel}</span>
           </div>
-          <Button className="p-0.5 hover:text-slate-900 text-slate-400" title="Next Year">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 p-0.5 hover:text-slate-900 text-slate-400"
+            title="Next Year"
+          >
             <svg
               className="h-3.5 w-3.5"
               fill="none"
@@ -84,8 +96,9 @@ export function LeaveToolbar({
 
         {/* Primary Action Button: + Apply Leave */}
         <Button
+          variant="default"
           onClick={onOpenApplyLeave}
-          className="px-3 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors"
+          className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors"
         >
           <svg
             className="h-3.5 w-3.5"

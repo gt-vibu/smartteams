@@ -215,7 +215,7 @@ export function ScreenOnboarding() {
       <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/60 px-2 py-0.5 rounded border border-sky-100 dark:border-sky-900">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
               Talent Operations
             </span>
             <span className="text-xs text-slate-400">·</span>
@@ -231,8 +231,10 @@ export function ScreenOnboarding() {
         {/* Action Button */}
         <div className="flex items-center gap-2.5 shrink-0">
           <Button
+            variant="default"
+            size="sm"
             onClick={() => setIsWizardOpen(true)}
-            className="w-full sm:w-auto justify-center px-4 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-md shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-md shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
           >
             <span>+</span>
             <span>Onboard New Hire</span>
@@ -266,7 +268,7 @@ export function ScreenOnboarding() {
           <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Hardware Dispatched
           </div>
-          <div className="text-lg sm:text-xl font-bold text-sky-600 dark:text-sky-400 mt-0.5">
+          <div className="text-lg sm:text-xl font-bold text-slate-700 dark:text-slate-300 mt-0.5">
             {totalAssetsDispatched} Assets
           </div>
           <div className="text-[10px] text-slate-400 mt-0.5">MacBooks & 4K Monitors</div>
@@ -286,53 +288,63 @@ export function ScreenOnboarding() {
 
       {/* Sub-Navigation Tabs Bar */}
       <div className="bg-white dark:bg-card rounded-lg border border-slate-200 dark:border-slate-800 p-1.5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 overflow-hidden">
-        <div className="flex items-center space-x-1.5">
+        <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('PIPELINE')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'PIPELINE'
-                ? 'bg-primary text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
             Candidate Pipeline ({candidates.length})
           </Button>
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('CHECKLISTS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'CHECKLISTS'
-                ? 'bg-primary text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
             Onboarding Checklists
           </Button>
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('DOCUMENTS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'DOCUMENTS'
-                ? 'bg-primary text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
             Document Verification {pendingDocsCount > 0 && `(${pendingDocsCount})`}
           </Button>
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('ASSETS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'ASSETS'
-                ? 'bg-primary text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
             Asset & Kit Allocation
           </Button>
           <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab('WORKFLOWS')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'WORKFLOWS'
-                ? 'bg-primary text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
             Templates & Policies

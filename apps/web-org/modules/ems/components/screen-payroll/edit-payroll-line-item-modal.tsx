@@ -225,6 +225,8 @@ export function EditPayrollLineItemModal({
           <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
             <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={onClose}
               className="px-3.5 py-1.5 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             >
@@ -232,7 +234,9 @@ export function EditPayrollLineItemModal({
             </Button>
             <Button
               type="submit"
-              className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white font-bold rounded shadow-xs cursor-pointer"
+              variant="default"
+              size="sm"
+              className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded shadow-xs cursor-pointer"
             >
               Save Changes
             </Button>

@@ -118,8 +118,10 @@ export function OverviewFeedsTab() {
             </div>
             <Button
               type="submit"
+              variant="default"
+              size="sm"
               disabled={!newPostContent.trim()}
-              className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-xs font-semibold rounded shadow-2xs transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-semibold rounded shadow-2xs transition-colors cursor-pointer"
             >
               Post Update
             </Button>

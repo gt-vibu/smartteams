@@ -243,7 +243,7 @@ export function TeamTable({
       pinned: 'right',
       sortable: false,
       cell: () => (
-        <span className="text-xs font-semibold text-primary hover:underline cursor-pointer">
+        <span className="text-xs font-semibold text-slate-700 hover:text-slate-900 hover:underline cursor-pointer">
           View
         </span>
       ),
@@ -477,7 +477,7 @@ export function TeamDetailDrawer({ team, onClose }: { team: TeamData; onClose: (
                           {m.firstName} {m.lastName}
                         </p>
                         {team.teamLeadEmployeeId === m.employeeId && (
-                          <span className="text-[9px] bg-primary text-white px-1.5 py-0.2 rounded font-bold uppercase">
+                          <span className="text-[9px] bg-slate-900 text-white px-1.5 py-0.2 rounded font-bold uppercase">
                             Lead
                           </span>
                         )}
@@ -495,8 +495,10 @@ export function TeamDetailDrawer({ team, onClose }: { team: TeamData; onClose: (
                       </div>
                       {canManage && team.teamLeadEmployeeId !== m.employeeId && (
                         <Button
-                          onClick={() => handleRemoveMember(m.id)}
-                          className="p-1 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveMember(m.employeeId)}
+                          className="h-6 w-6 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded cursor-pointer"
                           title="Remove from team"
                         >
                           ✕
@@ -541,8 +543,10 @@ export function TeamDetailDrawer({ team, onClose }: { team: TeamData; onClose: (
           {/* Footer */}
           <div className="p-4 border-t border-slate-200 dark:border-border bg-slate-50 dark:bg-card flex justify-end">
             <Button
+              variant="outline"
+              size="sm"
               onClick={onClose}
-              className="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold rounded border border-transparent dark:border-slate-700 transition-colors cursor-pointer"
+              className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white text-xs font-semibold rounded border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
             >
               Close
             </Button>

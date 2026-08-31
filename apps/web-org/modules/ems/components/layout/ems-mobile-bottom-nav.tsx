@@ -446,14 +446,15 @@ export function EmsMobileBottomNav({
               return (
                 <Button
                   key={item.id}
+                  variant="ghost"
                   onClick={() => handleSelect(item.id)}
                   className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-primary/10 text-primary dark:text-sky-400'
+                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold'
                       : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  <div className={isActive ? 'text-primary dark:text-sky-400' : ''}>
+                  <div className={isActive ? 'text-slate-900 dark:text-white' : ''}>
                     {item.icon}
                   </div>
                   <span className="text-[10px] font-semibold text-center leading-tight break-words max-w-[56px]">
@@ -473,21 +474,19 @@ export function EmsMobileBottomNav({
           return (
             <Button
               key={item.id}
-              onClick={() => {
-                onSelectModule(item.id);
-                setIsMoreOpen(false);
-              }}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative ${
+              variant="ghost"
+              onClick={() => handleSelect(item.id)}
+              className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative rounded-none ${
                 isActive
-                  ? 'text-primary dark:text-sky-400'
+                  ? 'text-slate-900 dark:text-white font-bold'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {/* Active indicator line */}
               {isActive && (
-                <span className="absolute top-0 left-3 right-3 h-[2px] bg-primary dark:bg-sky-400 rounded-full" />
+                <span className="absolute top-0 left-3 right-3 h-[2px] bg-slate-900 dark:bg-white rounded-full" />
               )}
-              <div className={isActive ? 'text-primary dark:text-sky-400' : ''}>{item.icon}</div>
+              <div className={isActive ? 'text-slate-900 dark:text-white' : ''}>{item.icon}</div>
               <span className="text-[10px] font-semibold leading-tight truncate max-w-[56px] text-center">
                 {item.label}
               </span>
@@ -498,15 +497,16 @@ export function EmsMobileBottomNav({
         {/* More Button */}
         {hasOverflow && (
           <Button
+            variant="ghost"
             onClick={() => setIsMoreOpen(!isMoreOpen)}
-            className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative ${
+            className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative rounded-none ${
               isOverflowActive || isMoreOpen
-                ? 'text-primary dark:text-sky-400'
+                ? 'text-slate-900 dark:text-white font-bold'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             {(isOverflowActive || isMoreOpen) && (
-              <span className="absolute top-0 left-3 right-3 h-[2px] bg-primary dark:bg-sky-400 rounded-full" />
+              <span className="absolute top-0 left-3 right-3 h-[2px] bg-slate-900 dark:bg-white rounded-full" />
             )}
             <svg
               className="h-5 w-5"

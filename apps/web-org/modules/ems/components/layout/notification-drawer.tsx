@@ -113,7 +113,7 @@ export function NotificationDrawer({ isOpen, onClose }: NotificationDrawerProps)
             {filtered.map((item) => (
               <article
                 key={item.id}
-                className={`flex items-start gap-3 rounded-md border p-3 shadow-xs ${item.isRead ? 'border-border bg-card' : 'border-primary/30 bg-primary/10'}`}
+                className={`flex items-start gap-3 rounded-md border p-3 shadow-xs ${item.isRead ? 'border-border bg-card' : 'border-slate-300 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80'}`}
               >
                 <div
                   className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-background text-sm"

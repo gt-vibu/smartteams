@@ -80,10 +80,12 @@ export function OrgAnnouncementsTab({
             return (
               <Button
                 key={cat.id}
+                variant="ghost"
+                size="sm"
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? 'bg-primary text-white shadow-2xs'
+                    ? 'bg-slate-900 text-white shadow-2xs font-bold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
@@ -95,8 +97,10 @@ export function OrgAnnouncementsTab({
 
         {hasPermission('organizations.write') && (
           <Button
+            variant="default"
+            size="sm"
             onClick={() => setIsCreateModalOpen(true)}
-            className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto shrink-0"
+            className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-[4px] shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto shrink-0"
           >
             <span>+</span>
             <span>New Announcement</span>
@@ -294,9 +298,11 @@ export function OrgAnnouncementsTab({
                 </Button>
                 <Button
                   type="submit"
-                  className="px-4 py-1.5 text-xs bg-primary hover:bg-primary/90 text-white rounded font-semibold transition-colors cursor-pointer"
+                  variant="default"
+                  size="sm"
+                  className="px-4 py-1.5 text-xs bg-slate-900 hover:bg-slate-800 text-white rounded font-semibold transition-colors cursor-pointer"
                 >
-                  Publish Announcement
+                  Post Announcement
                 </Button>
               </div>
             </form>
