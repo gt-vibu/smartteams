@@ -159,10 +159,17 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
-      # MinIO is started here rather than as a service container because it needs a command and a
-      # KMS master key. The key makes SSE-S3 work: the API signs every upload with
-      # ServerSideEncryption AES256, and MinIO answers 501 without one while real S3 accepts it.
-      - name: Start MinIO with SSE-S3
+      # MinIO exists ONLY here, as CI's S3-compatible test double.
+      #
+      # Development and production both use real AWS S3 through the same StorageService; nothing
+      # in the application, docker-compose.yml or .env.example knows this container exists. It is
+      # here because the alternative to a test double is either long-lived AWS keys in GitHub or
+      # an ungated storage suite, and 45 real storage checks are worth more than either.
+      #
+      # Started with `docker run` rather than as a service container because it needs a command
+      # and a KMS master key. The key is what makes SSE-S3 work: the API signs every upload with
+      # ServerSideEncryption AES256, which real S3 accepts and MinIO answers 501 to without one.
+      - name: Start MinIO with SSE-S3 (CI-only S3 test double)
         run: |
           docker run -d --name minio -p 9000:9000 \
             -e MINIO_ROOT_USER=smarteam \
@@ -192,6 +199,7 @@ jobs:
           SUPERADMIN_PASSWORD=ci-only-superadmin-password
           AWS_REGION=us-east-1
           AWS_S3_BUCKET=smarteam-files
+          # CI-only: points the SDK at the MinIO container above. Blank everywhere else.
           AWS_S3_ENDPOINT=http://localhost:9000
           AWS_S3_FORCE_PATH_STYLE=true
           AWS_ACCESS_KEY_ID=smarteam
@@ -245,6 +253,8 @@ jobs:
         with:
           languages: javascript-typescript
           queries: security-extended
+          # Scopes the scan to the shipped surface; see the file for what is excluded and why.
+          config-file: ./.github/codeql/codeql-config.yml
       - uses: github/codeql-action/analyze@v3
         with:
           category: /language:javascript-typescript
