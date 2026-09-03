@@ -4,8 +4,10 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   AttendanceCorrectionDto,
+  AttendanceCorrectionQueryDto,
   AttendanceDecisionDto,
   AttendancePreferencesDto,
+  AttendancePreferencesQueryDto,
   AttendanceQueryDto,
   PunchDto,
 } from './attendance.dto';
@@ -37,6 +39,50 @@ export class AttendanceController {
       .native(request.user.userId, organizationId)
       .then((context) => this.attendance.list(context, query));
   }
+  /**
+   * Correction requests.
+   *
+   * `AttendanceService.listCorrectionRequests` has existed since the module was written and is
+   * reachable over the federation surface, but the native controller never exposed it — so the
+   * app could raise a correction and never list one. Same for the two routes below. No service
+   * or federation code changes; these are the missing HTTP entry points.
+   */
+  @Get('corrections') corrections(
+    @Param('organizationId') organizationId: string,
+    @Query() query: AttendanceCorrectionQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.attendance.listCorrectionRequests(context, {
+        ...(query.employeeId ? { employeeId: query.employeeId } : {}),
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.limit ? { limit: query.limit } : {}),
+      }),
+    );
+  }
+
+  /** Corrections awaiting the signed-in user's decision. */
+  @Get('corrections/inbox') correctionInbox(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) =>
+        this.attendance.listPendingCorrectionApprovals(context, request.user.userId),
+      );
+  }
+
+  @Get('preferences') readPreferences(
+    @Param('organizationId') organizationId: string,
+    @Query() query: AttendancePreferencesQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.getPreferences(context, query.branchId));
+  }
+
   @Post('check-ins') checkIn(
     @Param('organizationId') organizationId: string,
     @Body() body: PunchDto,

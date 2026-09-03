@@ -8,6 +8,7 @@ import {
   IsUUID,
   Max,
   Min,
+  MinLength,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -56,7 +57,7 @@ export class UpdateShiftDto {
   breakRules?: BreakRuleDto[];
 }
 export class ShiftDeactivationDto {
-  @IsString() @Min(2) reason!: string;
+  @IsString() @MinLength(2) reason!: string;
 }
 export class ShiftAssignmentDto {
   @IsUUID() shiftId!: string;

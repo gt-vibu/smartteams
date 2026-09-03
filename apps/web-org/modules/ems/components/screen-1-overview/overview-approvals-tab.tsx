@@ -56,10 +56,10 @@ export function OverviewApprovalsTab() {
 
   if (!isManagerApprover) {
     return (
-      <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-2xs p-8 text-center space-y-2">
+      <div className="bg-card rounded-[6px] border border-border/90 shadow-2xs p-8 text-center space-y-2">
         <div className="text-2xl">📋</div>
-        <h4 className="text-xs font-bold text-slate-800">No Approvals Assigned</h4>
-        <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
+        <h4 className="text-xs font-bold text-foreground">No Approvals Assigned</h4>
+        <p className="text-[11px] text-muted-foreground max-w-sm mx-auto">
           You are currently in Individual Contributor mode. Managerial approvals for team
           timesheets, leave requests, and attendance corrections are assigned exclusively to
           designated reporting managers.
@@ -77,13 +77,13 @@ export function OverviewApprovalsTab() {
   const pendingCount = approvals.filter((a) => a.status === 'PENDING').length;
 
   return (
-    <div className="bg-white rounded-[6px] border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
-      <div className="p-4 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
+    <div className="bg-card rounded-[6px] border border-border/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="p-4 border-b border-border bg-muted/40/70 flex items-center justify-between">
         <div>
-          <h3 className="!text-xs !font-bold !text-slate-800 !m-0">
+          <h3 className="!text-xs !font-bold !text-foreground !m-0">
             Pending Team Approvals & Action Requests
           </h3>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+          <p className="text-[11px] text-muted-foreground mt-0.5">
             Review and take action on direct reports' attendance corrections, leave requests, and
             timesheets.
           </p>
@@ -112,11 +112,11 @@ export function OverviewApprovalsTab() {
                 >
                   {item.type.replace('_', ' ')}
                 </span>
-                <span className="text-xs font-bold text-slate-900">{item.requesterName}</span>
-                <span className="text-[11px] text-slate-400">({item.requesterRole})</span>
+                <span className="text-xs font-bold text-foreground">{item.requesterName}</span>
+                <span className="text-[11px] text-muted-foreground">({item.requesterRole})</span>
               </div>
-              <div className="text-xs text-slate-700 font-medium">{item.details}</div>
-              <div className="text-[11px] text-slate-400 font-mono">
+              <div className="text-xs text-foreground font-medium">{item.details}</div>
+              <div className="text-[11px] text-muted-foreground font-mono">
                 Date / Duration: {item.date}
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './common/config/config.module';
@@ -6,6 +7,7 @@ import { CommonModule } from './common/common.module';
 import { RequestContextMiddleware } from './common/context/request-context';
 import { CsrfMiddleware } from './common/security/csrf.middleware';
 import { SecurityHeadersMiddleware } from './common/security/security-headers.middleware';
+import { RequestRateLimitInterceptor } from './common/security/request-rate-limit.interceptor';
 import { HealthModule } from './common/health/health.module';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
@@ -25,6 +27,7 @@ import { PayrollModule } from './modules/payroll/payroll.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { ShiftsModule } from './modules/shifts/shifts.module';
+import { HolidaysModule } from './modules/holidays/holidays.module';
 import { TimesheetsModule } from './modules/timesheets/timesheets.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -75,11 +78,13 @@ import { UsersModule } from './modules/users/users.module';
     LeaveModule,
     TimesheetsModule,
     ShiftsModule,
+    HolidaysModule,
     PayrollModule,
     FederationModule,
     AuditModule,
     PlatformModule,
   ],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: RequestRateLimitInterceptor }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

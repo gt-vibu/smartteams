@@ -1,0 +1,11 @@
+# Anything that would bloat the build context, invalidate the cache, or leak a secret.
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+apps/api/src/generated
+.git
+.env
+.env.*
+!.env.example
+**/*.log

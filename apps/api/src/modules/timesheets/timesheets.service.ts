@@ -38,6 +38,8 @@ export class TimesheetsService {
         employeeId = employee.id;
       }
       const timesheets = await tx.timesheet.findMany({
+        // Bounded: a period across a large tenant is otherwise one unbounded response.
+        take: 500,
         where: {
           organizationId: context.organizationId,
           employeeId,
@@ -137,57 +139,100 @@ export class TimesheetsService {
           overtimeMinutes: true,
         },
       });
-      const results = [];
-      for (const employee of employees) {
-        const employeeRecords = records.filter((record) => record.employeeId === employee.id);
-        const timesheet = await tx.timesheet.upsert({
-          where: {
-            employeeId_timesheetPeriodId: { employeeId: employee.id, timesheetPeriodId: period.id },
-          },
-          create: {
+      /*
+       * Set-based, not per-employee.
+       *
+       * This loop previously ran an upsert, a delete, one insert per attendance record and an
+       * update for every employee — around twenty-three round trips each, all sequential, all
+       * inside one open transaction. At ten thousand employees that is a couple of hundred
+       * thousand queries holding locks for the duration, which does not finish. It also grouped
+       * records with `.filter()` inside the loop, making the grouping itself quadratic.
+       *
+       * The work below is the same work in a fixed number of statements, whatever the headcount.
+       */
+      const recordsByEmployee = new Map<string, typeof records>();
+      for (const record of records) {
+        const bucket = recordsByEmployee.get(record.employeeId);
+        if (bucket) bucket.push(record);
+        else recordsByEmployee.set(record.employeeId, [record]);
+      }
+
+      const existing = await tx.timesheet.findMany({
+        where: { organizationId: context.organizationId, timesheetPeriodId: period.id },
+        select: { id: true, employeeId: true },
+      });
+      const existingByEmployee = new Map(existing.map((sheet) => [sheet.employeeId, sheet.id]));
+
+      const missing = employees.filter((employee) => !existingByEmployee.has(employee.id));
+      if (missing.length > 0)
+        await tx.timesheet.createMany({
+          data: missing.map((employee) => ({
             organizationId: context.organizationId,
             timesheetPeriodId: period.id,
             employeeId: employee.id,
             branchId: context.branchId ?? employee.primaryBranchId,
             status: TimesheetStatus.DRAFT,
             sourceAccessMode: context.accessMode,
-          },
-          update: {
-            status: TimesheetStatus.DRAFT,
-            totalMinutes: 0,
-            regularMinutes: 0,
-            overtimeMinutes: 0,
-            version: { increment: 1 },
-          },
+          })),
         });
-        await tx.timesheetEntry.deleteMany({
-          where: { timesheetId: timesheet.id, source: TimesheetEntrySource.ATTENDANCE },
-        });
-        for (const record of employeeRecords)
-          await tx.timesheetEntry.create({
-            data: {
-              organizationId: context.organizationId,
-              timesheetId: timesheet.id,
-              attendanceRecordId: record.id,
-              workDate: record.workDate,
-              minutes: record.workedMinutes,
-              regularMinutes: record.workedMinutes - record.overtimeMinutes,
-              overtimeMinutes: record.overtimeMinutes,
-              source: TimesheetEntrySource.ATTENDANCE,
-            },
-          });
-        const totalMinutes = employeeRecords.reduce((sum, record) => sum + record.workedMinutes, 0);
-        const overtimeMinutes = employeeRecords.reduce(
-          (sum, record) => sum + record.overtimeMinutes,
-          0,
-        );
-        results.push(
-          await tx.timesheet.update({
-            where: { id: timesheet.id },
-            data: { totalMinutes, regularMinutes: totalMinutes - overtimeMinutes, overtimeMinutes },
-          }),
-        );
+
+      // Re-read so newly created sheets carry their ids. Derivation resets every sheet in the
+      // period to draft, exactly as the per-employee upsert did.
+      const sheets = await tx.timesheet.findMany({
+        where: {
+          organizationId: context.organizationId,
+          timesheetPeriodId: period.id,
+          employeeId: { in: employees.map((employee) => employee.id) },
+        },
+        select: { id: true, employeeId: true },
+      });
+      const sheetIds = sheets.map((sheet) => sheet.id);
+
+      await tx.timesheet.updateMany({
+        where: { id: { in: sheetIds } },
+        data: { status: TimesheetStatus.DRAFT, version: { increment: 1 } },
+      });
+
+      // Attendance-derived entries are rebuilt wholesale; manual entries are left alone.
+      await tx.timesheetEntry.deleteMany({
+        where: { timesheetId: { in: sheetIds }, source: TimesheetEntrySource.ATTENDANCE },
+      });
+
+      const entries = sheets.flatMap((sheet) =>
+        (recordsByEmployee.get(sheet.employeeId) ?? []).map((record) => ({
+          organizationId: context.organizationId,
+          timesheetId: sheet.id,
+          attendanceRecordId: record.id,
+          workDate: record.workDate,
+          minutes: record.workedMinutes,
+          regularMinutes: record.workedMinutes - record.overtimeMinutes,
+          overtimeMinutes: record.overtimeMinutes,
+          source: TimesheetEntrySource.ATTENDANCE,
+        })),
+      );
+      if (entries.length > 0) await tx.timesheetEntry.createMany({ data: entries });
+
+      // Totals differ per sheet, so they cannot be one `updateMany`. Grouping by the figures
+      // keeps this to a handful of statements — most employees in a period share a total.
+      const byTotals = new Map<string, string[]>();
+      for (const sheet of sheets) {
+        const own = recordsByEmployee.get(sheet.employeeId) ?? [];
+        const totalMinutes = own.reduce((sum, record) => sum + record.workedMinutes, 0);
+        const overtimeMinutes = own.reduce((sum, record) => sum + record.overtimeMinutes, 0);
+        const key = `${totalMinutes}:${overtimeMinutes}`;
+        const bucket = byTotals.get(key);
+        if (bucket) bucket.push(sheet.id);
+        else byTotals.set(key, [sheet.id]);
       }
+      for (const [key, ids] of byTotals) {
+        const [totalMinutes = 0, overtimeMinutes = 0] = key.split(':').map(Number);
+        await tx.timesheet.updateMany({
+          where: { id: { in: ids } },
+          data: { totalMinutes, regularMinutes: totalMinutes - overtimeMinutes, overtimeMinutes },
+        });
+      }
+
+      const results = await tx.timesheet.findMany({ where: { id: { in: sheetIds } } });
       await this.audit.record(
         context,
         {

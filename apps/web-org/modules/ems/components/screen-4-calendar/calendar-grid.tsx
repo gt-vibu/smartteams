@@ -14,9 +14,9 @@ export function CalendarGrid({ days, onSelectDay }: CalendarGridProps) {
     <div className="bg-white dark:bg-card rounded-lg border-t border-l border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
       <div className="min-w-[480px] sm:min-w-[560px]">
         {/* Weekday Column Headers */}
-        <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50/80 text-center text-xs font-bold text-slate-700">
+        <div className="grid grid-cols-7 border-b border-border bg-muted/40/80 text-center text-xs font-bold text-foreground">
           {weekDays.map((wd) => (
-            <div key={wd} className="py-2.5 border-r border-slate-200">
+            <div key={wd} className="py-2.5 border-r border-border">
               {wd}
             </div>
           ))}

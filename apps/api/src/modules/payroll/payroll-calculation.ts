@@ -46,6 +46,42 @@ export function countWorkingDays(
   return Math.max(1, count);
 }
 
+/**
+ * Days within the period that the employee was not employed for.
+ *
+ * `payrollDayBasis` is a fixed monthly divisor (30 by default), the standard Indian convention:
+ * every unpaid day costs one thirtieth of gross, and weekends and holidays are already priced into
+ * the basis rather than counted. Employment dates were not part of that sum, so somebody who
+ * joined on the 16th was paid for the whole month.
+ *
+ * A day before joining or after leaving is unpaid for the same reason an unpaid leave day is: the
+ * employee was not owed salary for it. Counting it here applies the existing convention rather
+ * than introducing a second one.
+ */
+export function unemployedDays(
+  periodStart: Date,
+  periodEnd: Date,
+  dateOfJoining: Date | null,
+  dateOfLeaving: Date | null,
+) {
+  const dayMs = 86_400_000;
+  const inclusiveDays = (from: Date, to: Date) =>
+    Math.max(0, Math.floor((to.getTime() - from.getTime()) / dayMs) + 1);
+
+  let days = 0;
+  if (dateOfJoining && dateOfJoining > periodStart) {
+    // Days from the start of the period up to the day before joining.
+    const lastUnpaid = new Date(Math.min(dateOfJoining.getTime() - dayMs, periodEnd.getTime()));
+    days += inclusiveDays(periodStart, lastUnpaid);
+  }
+  if (dateOfLeaving && dateOfLeaving < periodEnd) {
+    // Days from the day after leaving to the end of the period.
+    const firstUnpaid = new Date(Math.max(dateOfLeaving.getTime() + dayMs, periodStart.getTime()));
+    days += inclusiveDays(firstUnpaid, periodEnd);
+  }
+  return days;
+}
+
 export function sumTimesheets(entries: Array<{ regularMinutes: number; overtimeMinutes: number }>) {
   if (entries.length === 0) return null;
   return entries.reduce(
@@ -159,11 +195,15 @@ function isFormula(
 
 export function validTransition(current: PayrollRunStatus, target: PayrollRunStatus) {
   const transitions: Record<PayrollRunStatus, PayrollRunStatus[]> = {
-    DRAFT: [PayrollRunStatus.CALCULATED],
-    CALCULATED: [PayrollRunStatus.APPROVED],
+    DRAFT: [PayrollRunStatus.CALCULATED, PayrollRunStatus.VOIDED],
+    CALCULATED: [PayrollRunStatus.APPROVED, PayrollRunStatus.VOIDED],
     APPROVED: [PayrollRunStatus.RELEASED],
-    RELEASED: [PayrollRunStatus.LOCKED],
-    LOCKED: [],
+    // A released run is never edited. It can only be superseded by a correction run, which is
+    // what moves it to CORRECTED — see `PayrollService.correct`. FR-38 requires the original and
+    // the correction to survive as separate, auditable records, so neither is mutated.
+    RELEASED: [PayrollRunStatus.LOCKED, PayrollRunStatus.CORRECTED],
+    LOCKED: [PayrollRunStatus.CORRECTED],
+    // Terminal. A correction chain grows forward by creating runs, never by reopening one.
     CORRECTED: [],
     VOIDED: [],
   };
@@ -177,5 +217,9 @@ export function payrollTransitionPermission(target: PayrollRunStatus) {
       ? 'payroll.runs.approve'
       : target === PayrollRunStatus.RELEASED
         ? 'payroll.runs.release'
-        : 'payroll.runs.lock';
+        : target === PayrollRunStatus.CORRECTED
+          ? 'payroll.runs.correct'
+          : target === PayrollRunStatus.VOIDED
+            ? 'payroll.runs.void'
+            : 'payroll.runs.lock';
 }

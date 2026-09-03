@@ -1,160 +1,207 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
+  Button,
+  DatePicker,
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
   DialogTitle,
-  DialogDescription,
-  Button,
   Label,
-  Input,
-  Select,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
   Textarea,
-  DatePicker,
 } from '@smarteam/ui';
-import type { ApplyLeaveFormData } from '../../types/leave.types';
+import type { LeaveBalance, LeaveType } from '@smarteam/contracts';
 
 interface ApplyLeaveModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmitLeave?: (data: ApplyLeaveFormData) => void;
+  types: LeaveType[];
+  balances: LeaveBalance[];
+  saving: boolean;
+  saveError: string | null;
+  onApply: (input: {
+    leaveTypeId: string;
+    startDate: string;
+    endDate: string;
+    reason?: string;
+  }) => Promise<boolean>;
 }
 
-export function ApplyLeaveModal({ isOpen, onClose, onSubmitLeave }: ApplyLeaveModalProps) {
-  const [leaveTypeId, setLeaveTypeId] = useState('lt_cl');
-  const [startDate, setStartDate] = useState('2026-09-12');
-  const [endDate, setEndDate] = useState('2026-09-14');
+/**
+ * Applies for leave.
+ *
+ * The day count is deliberately not previewed. The server derives it from the branch working
+ * week and the holiday calendar; a client-side estimate would disagree with the figure the
+ * request is actually created with, and the user would be told two different numbers.
+ */
+export function ApplyLeaveModal({
+  isOpen,
+  onClose,
+  types,
+  balances,
+  saving,
+  saveError,
+  onApply,
+}: ApplyLeaveModalProps) {
+  const [leaveTypeId, setLeaveTypeId] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
-  const [teamNotify, setTeamNotify] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onSubmitLeave) {
-      onSubmitLeave({
-        leaveTypeId,
-        startDate,
-        endDate,
-        dayCount: 3,
-        reason,
-        teamNotify,
-      });
+  const balanceFor = useMemo(
+    () => new Map(balances.map((balance) => [balance.leaveTypeId, balance])),
+    [balances],
+  );
+  const selectedBalance = leaveTypeId ? balanceFor.get(leaveTypeId) : undefined;
+
+  const reset = () => {
+    setLeaveTypeId('');
+    setStartDate('');
+    setEndDate('');
+    setReason('');
+    setError('');
+  };
+
+  const handleSubmit = async () => {
+    if (!leaveTypeId || !startDate || !endDate) {
+      setError('Select a leave type and both dates.');
+      return;
     }
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
+    if (endDate < startDate) {
+      setError('The end date cannot precede the start date.');
+      return;
+    }
+    setError('');
+    const applied = await onApply({
+      leaveTypeId,
+      startDate,
+      endDate,
+      ...(reason.trim() ? { reason: reason.trim() } : {}),
+    });
+    if (applied) {
+      reset();
       onClose();
-    }, 900);
+    }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            <span className="h-6 w-6 rounded-md bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center text-xs font-bold shrink-0">
-              📅
-            </span>
-            <DialogTitle>Apply for Time Off</DialogTitle>
-          </div>
-          <DialogDescription>
-            Submit time-off request for manager approval and roster adjustment.
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          reset();
+          onClose();
+        }
+      }}
+      open={isOpen}
+    >
+      <DialogContent className="max-w-lg gap-0 p-0">
+        <DialogTitle className="border-b border-border px-5 py-4 text-sm font-semibold">
+          Apply for leave
+        </DialogTitle>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 py-1">
-          {/* Leave Type Select */}
-          <div className="space-y-1">
-            <Label htmlFor="leave-type-select">
-              Leave Category <span className="text-rose-500">*</span>
-            </Label>
-            <Select
-              id="leave-type-select"
-              value={leaveTypeId}
-              onChange={(e) => setLeaveTypeId(e.target.value)}
-              required
-            >
-              <option value="lt_cl">Casual Leave (CL) — 6.5 Days Remaining</option>
-              <option value="lt_el">Earned / Privilege Leave (EL) — 14.0 Days Remaining</option>
-              <option value="lt_sl">Sick Leave (SL) — 8.0 Days Remaining</option>
-              <option value="lt_comp">Compensatory Off (COMP) — 2.0 Days Available</option>
-            </Select>
-          </div>
+        <div className="space-y-4 p-5">
+          {types.length === 0 ? (
+            <p className="text-xs text-muted-foreground">
+              No leave types are available for your branch yet.
+            </p>
+          ) : (
+            <>
+              <div>
+                <Label className="mb-1 block" htmlFor="leave-type">
+                  Leave type
+                </Label>
+                <SelectMenu disabled={saving} onValueChange={setLeaveTypeId} value={leaveTypeId}>
+                  <SelectTrigger id="leave-type">
+                    <SelectValue placeholder="Select a leave type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {types.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.name}
+                        {type.paid ? '' : ' (unpaid)'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectMenu>
+                {selectedBalance && (
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    {selectedBalance.availableAmount} day
+                    {selectedBalance.availableAmount === 1 ? '' : 's'} available
+                  </p>
+                )}
+              </div>
 
-          {/* Date Range with shadcn DatePicker */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>
-                From Date <span className="text-rose-500">*</span>
-              </Label>
-              <DatePicker
-                value={startDate}
-                onChange={(d) => setStartDate(d)}
-                placeholder="Start Date"
-              />
-            </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <Label className="mb-1 block" htmlFor="leave-start">
+                    From
+                  </Label>
+                  <DatePicker
+                    disabled={saving}
+                    id="leave-start"
+                    max={endDate || undefined}
+                    onChange={setStartDate}
+                    value={startDate}
+                  />
+                </div>
+                <div>
+                  <Label className="mb-1 block" htmlFor="leave-end">
+                    To
+                  </Label>
+                  <DatePicker
+                    disabled={saving}
+                    id="leave-end"
+                    min={startDate || undefined}
+                    onChange={setEndDate}
+                    value={endDate}
+                  />
+                </div>
+              </div>
 
-            <div className="space-y-1">
-              <Label>
-                To Date <span className="text-rose-500">*</span>
-              </Label>
-              <DatePicker value={endDate} onChange={(d) => setEndDate(d)} placeholder="End Date" />
-            </div>
-          </div>
+              <div>
+                <Label className="mb-1 block" htmlFor="leave-reason">
+                  Reason
+                </Label>
+                <Textarea
+                  disabled={saving}
+                  id="leave-reason"
+                  onChange={(event) => setReason(event.target.value)}
+                  rows={2}
+                  value={reason}
+                />
+              </div>
 
-          {/* Applied Duration Summary */}
-          <div className="bg-sky-50 dark:bg-card border border-sky-200 dark:border-sky-800/60 rounded-md px-3 py-2 flex items-center justify-between text-xs text-sky-900 dark:text-sky-300">
-            <span className="font-medium">Applied Duration:</span>
-            <span className="font-bold font-mono">3 Working Days</span>
-          </div>
-
-          {/* Reason Textarea */}
-          <div className="space-y-1">
-            <Label htmlFor="leave-reason">
-              Reason for Leave <span className="text-rose-500">*</span>
-            </Label>
-            <Textarea
-              id="leave-reason"
-              rows={3}
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="State the reason for your time-off request..."
-              required
-            />
-          </div>
-
-          {/* Team Notify */}
-          <div className="space-y-1">
-            <Label htmlFor="leave-notify">Notify Colleagues (Optional)</Label>
-            <Input
-              id="leave-notify"
-              type="text"
-              value={teamNotify}
-              onChange={(e) => setTeamNotify(e.target.value)}
-              placeholder="e.g. Ranjith Kumar C, Shailesh Thipse"
-            />
-          </div>
-
-          {/* Submission Feedback */}
-          {isSubmitted && (
-            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs rounded-md font-semibold flex items-center gap-2">
-              <span>✓</span>
-              <span>Leave request submitted successfully to your manager!</span>
-            </div>
+              <p className="text-[11px] text-muted-foreground">
+                Working days are counted by the server using your branch calendar, so weekends and
+                holidays in the range are not deducted.
+              </p>
+            </>
           )}
+        </div>
 
-          <DialogFooter className="pt-2">
-            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+        <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
+          <p className="text-[11px] font-medium text-destructive" role="alert">
+            {error || saveError}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button disabled={saving} onClick={onClose} type="button" variant="outline">
               Cancel
             </Button>
-            <Button type="submit" size="sm">
-              Submit Application
+            <Button
+              disabled={saving || types.length === 0}
+              onClick={() => void handleSubmit()}
+              type="button"
+            >
+              {saving ? 'Submitting...' : 'Submit request'}
             </Button>
-          </DialogFooter>
-        </form>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

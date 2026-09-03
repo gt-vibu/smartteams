@@ -134,6 +134,44 @@ export function EmsLeftRail({
       ),
     },
     {
+      id: 'shifts',
+      label: 'Shifts',
+      icon: (
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: 'holidays',
+      label: 'Holidays',
+      icon: (
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+      ),
+    },
+    {
       id: 'approvals',
       label: 'Approvals',
       icon: (
@@ -389,12 +427,12 @@ export function EmsLeftRail({
               }`}
             >
               <div
-                className={`mb-1 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`}
+                className={`mb-1 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-muted-foreground group-hover:text-white'}`}
               >
                 {item.icon}
               </div>
               <span
-                className={`text-[9.5px] leading-tight font-medium text-center px-0.5 break-normal tracking-tight max-w-[66px] ${isActive ? 'text-white font-bold' : 'text-slate-400 group-hover:text-white'}`}
+                className={`text-[9.5px] leading-tight font-medium text-center px-0.5 break-normal tracking-tight max-w-[66px] ${isActive ? 'text-white font-bold' : 'text-muted-foreground group-hover:text-white'}`}
               >
                 {item.label}
               </span>
@@ -404,7 +442,7 @@ export function EmsLeftRail({
       </div>
 
       {/* Bottom Rail Controls */}
-      <div className="flex flex-col items-center space-y-2 pb-2 text-slate-400">
+      <div className="flex flex-col items-center space-y-2 pb-2 text-muted-foreground">
         <button
           type="button"
           onClick={() => onSelectModule('files')}

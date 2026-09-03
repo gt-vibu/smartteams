@@ -6,6 +6,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { dateOnly, toEmployeeDto } from './employee-mappers';
+import { assertMayReadEmployee } from './employee-access';
 
 @Injectable()
 export class EmployeeRecordsService {
@@ -18,9 +19,31 @@ export class EmployeeRecordsService {
     requirePermission(context, 'employees.read');
     return this.database.run(context, async (tx) => {
       await this.assertEmployee(tx, context.organizationId, employeeId);
+      // Next-of-kin names and phone numbers. Self-scoped on the same boundary as the record
+      // they hang off.
+      await assertMayReadEmployee(tx, context, employeeId);
       return tx.employeeEmergencyContact.findMany({
         where: { organizationId: context.organizationId, employeeId },
         orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }],
+      });
+    });
+  }
+
+  /**
+   * Employment history for an employee, most recent first.
+   *
+   * `jobTitle` and `department` live on this record rather than on `Employee`, so this is the
+   * only way to read them. Deliberately a separate route instead of widening `toEmployeeDto`,
+   * which is part of the federation response contract and must not change.
+   */
+  async listEmploymentRecords(context: DomainContext, employeeId: string) {
+    requirePermission(context, 'employees.read');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      await assertMayReadEmployee(tx, context, employeeId);
+      return tx.employeeEmploymentRecord.findMany({
+        where: { organizationId: context.organizationId, employeeId },
+        orderBy: [{ effectiveFrom: 'desc' }],
       });
     });
   }
@@ -301,6 +324,60 @@ export class EmployeeRecordsService {
         tx,
       );
       return compensation;
+    });
+  }
+
+  /**
+   * Links a user account to an employee record.
+   *
+   * `Employee.userId` has always existed and the whole product depends on it — self-scoped reads
+   * resolve "my employee" through it, and manager approval routing follows it from the requester's
+   * `managerEmployeeId` to the manager's login. Only the federated sync path ever populated it, so
+   * for a natively created employee the column stayed null and both behaviours silently failed:
+   * an employee saw no payroll of their own, and a `MANAGER` approval step could never resolve.
+   *
+   * The column is globally unique, so a user belongs to at most one employee. Both directions are
+   * refused rather than overwritten — a silent re-link would move someone's leave, payslips and
+   * approval authority to another person.
+   */
+  async linkUser(context: DomainContext, employeeId: string, userId: string) {
+    requirePermission(context, 'employees.write');
+    return this.database.run(context, async (tx) => {
+      const employee = await this.assertEmployee(tx, context.organizationId, employeeId);
+      if (employee.userId === userId) return toEmployeeDto(employee);
+      if (employee.userId)
+        throw new ConflictError('This employee is already linked to a different user account');
+
+      // Membership is the tenant boundary: a user outside this organization must not become one
+      // of its employees by id alone.
+      const membership = await tx.userOrganization.findFirst({
+        where: { userId, organizationId: context.organizationId, status: 'ACTIVE' },
+        select: { userId: true },
+      });
+      if (!membership) throw new NotFoundError('Active organization member');
+
+      const taken = await tx.employee.findFirst({
+        where: { userId, organizationId: context.organizationId },
+        select: { id: true },
+      });
+      if (taken) throw new ConflictError('That user account is already linked to another employee');
+
+      const updated = await tx.employee.update({
+        where: { id: employee.id },
+        data: { userId, version: { increment: 1 } },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'EMPLOYEE',
+          entityId: employee.id,
+          action: 'EMPLOYEE_USER_LINKED',
+          beforeState: jsonSnapshot(employee),
+          afterState: jsonSnapshot(updated),
+        },
+        tx,
+      );
+      return toEmployeeDto(updated);
     });
   }
 

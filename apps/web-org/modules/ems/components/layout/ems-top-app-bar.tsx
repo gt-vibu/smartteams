@@ -56,7 +56,7 @@ export function EmsTopAppBar({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 rounded text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer max-w-[140px] sm:max-w-none truncate"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-card/5 hover:bg-card/10 text-slate-200 border border-white/10 rounded text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer max-w-[140px] sm:max-w-none truncate"
                 title="Switch Operating Workspace"
                 aria-haspopup="true"
                 aria-expanded={isWorkspaceMenuOpen}
@@ -66,7 +66,7 @@ export function EmsTopAppBar({
                   {workspaceContext === 'ADMIN' ? 'Admin' : 'Employee'}
                 </span>
                 <svg
-                  className="h-3 w-3 text-slate-400 shrink-0"
+                  className="h-3 w-3 text-muted-foreground shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -83,15 +83,15 @@ export function EmsTopAppBar({
                     className="fixed inset-0 z-40"
                   />
                   <div className="absolute left-0 mt-1.5 w-52 bg-[#0F172A] border border-slate-700/70 rounded-md shadow-xl z-50 py-1 text-xs text-slate-200">
-                    <div className="px-3 py-1.5 border-b border-slate-700/60 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                    <div className="px-3 py-1.5 border-b border-slate-700/60 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
                       Operating Context
                     </div>
                     <Button
                       variant="ghost"
                       onClick={() => handleToggleWorkspace('ADMIN')}
-                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-white/10 cursor-pointer ${
+                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-card/10 cursor-pointer ${
                         workspaceContext === 'ADMIN'
-                          ? 'text-white font-bold bg-white/10'
+                          ? 'text-white font-bold bg-card/10'
                           : 'text-slate-300'
                       }`}
                     >
@@ -104,9 +104,9 @@ export function EmsTopAppBar({
                     <Button
                       variant="ghost"
                       onClick={() => handleToggleWorkspace('EMPLOYEE')}
-                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-white/10 cursor-pointer ${
+                      className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-card/10 cursor-pointer ${
                         workspaceContext === 'EMPLOYEE'
-                          ? 'text-white font-bold bg-white/10'
+                          ? 'text-white font-bold bg-card/10'
                           : 'text-slate-300'
                       }`}
                     >
@@ -135,8 +135,8 @@ export function EmsTopAppBar({
                     onClick={() => onSelectSpace(space)}
                     className={`px-3 py-1 text-xs font-semibold rounded-[5px] transition-all cursor-pointer whitespace-nowrap ${
                       isActive
-                        ? 'bg-white/15 text-white shadow-xs font-bold'
-                        : 'text-slate-300 hover:text-white hover:bg-white/10'
+                        ? 'bg-card/15 text-white shadow-xs font-bold'
+                        : 'text-slate-300 hover:text-white hover:bg-card/10'
                     }`}
                   >
                     {space}
@@ -155,7 +155,7 @@ export function EmsTopAppBar({
               variant="outline"
               size="icon"
               onClick={() => window.dispatchEvent(new CustomEvent('ems:open:command-palette'))}
-              className="hidden sm:flex h-8 w-8 rounded-[5px] bg-white/10 hover:bg-white/20 text-white border border-white/20 items-center justify-center transition-colors shadow-xs cursor-pointer"
+              className="hidden sm:flex h-8 w-8 rounded-[5px] bg-card/10 hover:bg-card/20 text-white border border-white/20 items-center justify-center transition-colors shadow-xs cursor-pointer"
               title="Quick Action"
               aria-label="Quick Action"
             >
@@ -176,7 +176,7 @@ export function EmsTopAppBar({
             variant="ghost"
             size="sm"
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded transition-colors cursor-pointer h-8"
+            className="flex items-center gap-1.5 p-1.5 text-slate-300 hover:text-white hover:bg-card/10 rounded transition-colors cursor-pointer h-8"
             title="Open Command & Search (⌘K / Ctrl+K)"
             aria-label="Search"
           >
@@ -203,7 +203,7 @@ export function EmsTopAppBar({
             variant="ghost"
             size="icon"
             onClick={onOpenNotifications}
-            className="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded transition-colors cursor-pointer relative h-8 w-8"
+            className="p-1.5 text-slate-300 hover:text-white hover:bg-card/10 rounded transition-colors cursor-pointer relative h-8 w-8"
             title="Notifications"
             aria-label="Notifications"
           >
@@ -231,7 +231,7 @@ export function EmsTopAppBar({
             className={`h-8 p-1.5 sm:px-2.5 sm:py-1 rounded-[5px] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
               isDark
                 ? 'bg-[#1E2530] text-amber-400 border-amber-400/30 hover:bg-[#283242]'
-                : 'bg-white/10 text-slate-200 border-white/15 hover:bg-white/15'
+                : 'bg-card/10 text-slate-200 border-white/15 hover:bg-card/15'
             }`}
             title={
               isDark

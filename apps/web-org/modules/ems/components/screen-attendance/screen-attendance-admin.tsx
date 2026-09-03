@@ -1,419 +1,217 @@
 'use client';
 
-import { Button } from '@smarteam/ui';
+import React, { useMemo, useState } from 'react';
+import { Clock3 } from 'lucide-react';
+import { ScreenHeader } from '../common/screen-header';
+import { useScreenTab } from '../../hooks/use-screen-tab';
+import { Badge, Button, DatePicker, Input } from '@smarteam/ui';
+import { currentMonthRange, useAttendanceAdmin } from '../../hooks/use-attendance-admin';
+import { toAttendanceDayViews } from '../../services/attendance-view';
+import { localDateKey } from '../../hooks/use-attendance';
+import { AttendanceCorrectionsPanel } from './attendance-corrections-panel';
+import { AttendancePolicyPanel } from './attendance-policy-panel';
 
-import React, { useState, useMemo } from 'react';
-import type { ColumnDef } from '@smarteam/ui';
-import { DatePicker, StandardDataTable } from '@smarteam/ui';
-import attendanceRecordsFixture from '../../data/fixtures/attendance-records.json';
+type Tab = 'records' | 'corrections' | 'policy';
 
-interface AttendanceRow {
-  id: string;
-  employeeId: string;
-  employeeNumber: string;
-  employeeName: string;
-  jobTitle: string;
-  department: string;
-  branchName: string;
-  shiftName: string;
-  dayStatus: string;
-  firstIn: string | null;
-  lastOut: string | null;
-  workedMinutes: number;
-  overtimeMinutes: number;
-  source: string;
-}
-
-interface AttendanceDateData {
-  summary: {
-    totalEmployees: number;
-    present: number;
-    absent: number;
-    onLeave: number;
-    holiday: number;
-    weekend: number;
-  };
-  records: AttendanceRow[];
-}
-
-const datesFixture = attendanceRecordsFixture.dates as unknown as Record<
-  string,
-  AttendanceDateData
->;
-const availableAttendanceDates = Object.keys(datesFixture).sort();
-
+/**
+ * Organization-wide attendance.
+ *
+ * Replaces a screen driven entirely by `attendance-records.json`, keyed by a hardcoded demo
+ * date. The range now defaults to the current month and every row is a record the API returned.
+ */
 export function ScreenAttendanceAdmin() {
-  const [selectedDate, setSelectedDate] = useState(
-    availableAttendanceDates[availableAttendanceDates.length - 1] || '',
+  const defaults = useMemo(() => currentMonthRange(), []);
+  const [from, setFrom] = useState(defaults.from);
+  const [to, setTo] = useState(defaults.to);
+  const [tab, setTab] = useScreenTab<Tab>(
+    'attendanceTab',
+    ['records', 'corrections', 'policy'],
+    'records',
   );
-  const [selectedRow, setSelectedRow] = useState<AttendanceRow | null>(null);
+  const [search, setSearch] = useState('');
 
-  const datesData = datesFixture;
-  const activeDateData = datesData[selectedDate] || {
-    summary: { totalEmployees: 24, present: 0, absent: 0, onLeave: 0, holiday: 0, weekend: 0 },
-    records: [],
-  };
+  const admin = useAttendanceAdmin(from, to);
+  const todayKey = localDateKey();
 
-  const records: AttendanceRow[] = useMemo(() => {
-    return activeDateData.records;
-  }, [activeDateData]);
+  const rows = useMemo(
+    () => toAttendanceDayViews(admin.records, todayKey, admin.corrections),
+    [admin.records, admin.corrections, todayKey],
+  );
 
-  const availableDates = availableAttendanceDates;
-
-  const handlePrevDate = () => {
-    const idx = availableDates.indexOf(selectedDate);
-    if (idx > 0) setSelectedDate(availableDates[idx - 1]!);
-  };
-
-  const handleNextDate = () => {
-    const idx = availableDates.indexOf(selectedDate);
-    if (idx < availableDates.length - 1) setSelectedDate(availableDates[idx + 1]!);
-  };
-
-  const formatMinutes = (mins: number) => {
-    if (!mins) return '-';
-    const h = Math.floor(mins / 60);
-    const m = mins % 60;
-    return `${h}h ${m}m`;
-  };
-
-  const columns: ColumnDef<AttendanceRow>[] = [
-    {
-      id: 'employeeName',
-      header: 'Employee',
-      accessorKey: 'employeeName',
-      sortable: true,
-      pinned: 'left',
-      cell: (row) => (
-        <div>
-          <div className="font-semibold text-slate-900 group-hover:text-sky-700 transition-colors">
-            {row.employeeName}
-          </div>
-          <div className="text-[10px] text-slate-400 font-mono">
-            {row.employeeNumber} · {row.jobTitle}
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: 'branchName',
-      header: 'Branch',
-      accessorKey: 'branchName',
-      sortable: true,
-      filterable: true,
-      cell: (row) => <span className="text-slate-600">{row.branchName}</span>,
-    },
-    {
-      id: 'shiftName',
-      header: 'Shift',
-      accessorKey: 'shiftName',
-      sortable: true,
-      filterable: true,
-      cell: (row) => <span className="text-slate-600">{row.shiftName}</span>,
-    },
-    {
-      id: 'dayStatus',
-      header: 'Status',
-      accessorKey: 'dayStatus',
-      sortable: true,
-      filterable: true,
-      filterOptions: [
-        { label: 'Present', value: 'PRESENT' },
-        { label: 'Absent', value: 'ABSENT' },
-        { label: 'On Leave', value: 'ON_LEAVE' },
-      ],
-      cell: (row) => (
-        <span
-          className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${
-            row.dayStatus === 'PRESENT'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80'
-              : row.dayStatus === 'ON_LEAVE'
-                ? 'bg-cyan-50 text-cyan-700 border border-cyan-200/80'
-                : 'bg-rose-50 text-rose-700 border border-rose-200/80'
-          }`}
-        >
-          {row.dayStatus}
-        </span>
-      ),
-    },
-    {
-      id: 'firstIn',
-      header: 'First In',
-      accessorKey: 'firstIn',
-      sortable: true,
-      cell: (row) => <span className="font-mono text-slate-700">{row.firstIn || '-'}</span>,
-    },
-    {
-      id: 'lastOut',
-      header: 'Last Out',
-      accessorKey: 'lastOut',
-      sortable: true,
-      cell: (row) => <span className="font-mono text-slate-700">{row.lastOut || '-'}</span>,
-    },
-    {
-      id: 'workedMinutes',
-      header: 'Worked Duration',
-      accessorKey: 'workedMinutes',
-      sortable: true,
-      cell: (row) => (
-        <span className="font-mono font-medium text-slate-800">
-          {formatMinutes(row.workedMinutes)}
-        </span>
-      ),
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      align: 'right',
-      pinned: 'right',
-      sortable: false,
-      cell: (row) => (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedRow(row);
-          }}
-          className="h-7 px-2.5 text-[11px] font-semibold text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 bg-white dark:bg-card hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer shadow-2xs"
-        >
-          Inspect
-        </Button>
-      ),
-    },
-  ];
+  const query = search.trim().toLowerCase();
+  const filtered = rows.filter(
+    (row) =>
+      !query ||
+      (row.employeeName ?? '').toLowerCase().includes(query) ||
+      (row.employeeNumber ?? '').toLowerCase().includes(query),
+  );
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header with Title & Date Navigation Controls */}
-      <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-              Admin Governance
-            </span>
-            <span className="text-xs text-slate-400">·</span>
-            <span className="text-xs text-slate-500 font-medium">
-              Organization Daily Attendance
-            </span>
-          </div>
-          <h1 className="text-lg font-bold text-slate-900 mt-1">Attendance Operations</h1>
-        </div>
-
-        {/* Custom Date Picker + Prev/Next Steppers */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handlePrevDate}
-            disabled={availableDates.indexOf(selectedDate) <= 0}
-            className="h-8 w-8 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-2xs"
-            title="Previous Day"
-          >
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </Button>
-
-          <DatePicker
-            value={selectedDate}
-            onChange={setSelectedDate}
-            min={availableDates[0]}
-            max={availableDates[availableDates.length - 1]}
-          />
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleNextDate}
-            disabled={availableDates.indexOf(selectedDate) >= availableDates.length - 1}
-            className="h-8 w-8 rounded-[5px] border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-2xs"
-            title="Next Day"
-          >
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </Button>
-        </div>
-      </div>
-
-      {/* Summary KPI Cards for Selected Date */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Present
-          </div>
-          <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-            {activeDateData.summary.present}
-          </div>
-        </div>
-        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Absent
-          </div>
-          <div className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-0.5">
-            {activeDateData.summary.absent}
-          </div>
-        </div>
-        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            On Leave
-          </div>
-          <div className="text-xl font-bold text-cyan-600 dark:text-cyan-400 mt-0.5">
-            {activeDateData.summary.onLeave}
-          </div>
-        </div>
-        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Holiday
-          </div>
-          <div className="text-xl font-bold text-amber-600 dark:text-amber-400 mt-0.5">
-            {activeDateData.summary.holiday}
-          </div>
-        </div>
-        <div className="bg-white dark:bg-card p-3.5 rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-2xs">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Total Rostered
-          </div>
-          <div className="text-xl font-bold text-slate-800 dark:text-slate-100 mt-0.5">
-            {activeDateData.summary.totalEmployees}
-          </div>
-        </div>
-      </div>
-
-      {/* Filter Toolbar & Data Table */}
-      <StandardDataTable
-        data={records}
-        columns={columns}
-        keyExtractor={(row) => row.id}
-        searchPlaceholder="Search employee name, ID, branch, or shift..."
-        onRowClick={setSelectedRow}
-        initialRowsPerPage={10}
+    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+      <ScreenHeader
+        description="Records, corrections and the attendance policy."
+        icon={Clock3}
+        title="Attendance"
+        tone="success"
       />
-
-      {/* Attendance Detail Slide-Over Drawer */}
-      {selectedRow && (
-        <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true">
-          <div
-            onClick={() => setSelectedRow(null)}
-            className="absolute inset-0 bg-slate-900/50 backdrop-blur-xs"
-          />
-          <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white dark:bg-card shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col justify-between">
-              <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-card flex items-start justify-between">
-                <div>
-                  <span className="text-[10px] font-mono font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-1.5 py-0.5 rounded">
-                    {selectedRow.employeeNumber}
-                  </span>
-                  <h2 className="text-sm font-bold text-slate-900 dark:text-white mt-1">
-                    {selectedRow.employeeName}
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {selectedRow.jobTitle} · {selectedRow.department}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSelectedRow(null)}
-                  className="h-7 w-7 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
-                >
-                  ✕
-                </Button>
-              </div>
-
-              <div className="p-5 space-y-4 flex-1 overflow-y-auto text-xs">
-                <div className="bg-slate-50 dark:bg-card p-3 rounded-lg border border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-3">
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">Date</span>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                      {selectedDate}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">
-                      Day Status
-                    </span>
-                    <p className="font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5">
-                      {selectedRow.dayStatus}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">
-                      First Punch In
-                    </span>
-                    <p className="font-mono font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                      {selectedRow.firstIn || 'N/A'}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">
-                      Last Punch Out
-                    </span>
-                    <p className="font-mono font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                      {selectedRow.lastOut || 'N/A'}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">
-                      Worked Minutes
-                    </span>
-                    <p className="font-mono font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                      {selectedRow.workedMinutes} mins
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">Overtime</span>
-                    <p className="font-mono font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                      {selectedRow.overtimeMinutes} mins
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">
-                    Punch Stream Source
-                  </h3>
-                  <div className="p-3 bg-slate-50 dark:bg-card border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-slate-800 dark:text-slate-200">
-                        Native Mobile / Web Punch
-                      </div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
-                        Biometric & Geofence Verified
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-2 py-0.5 rounded font-bold">
-                      {selectedRow.source}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-card">
-                <Button
-                  variant="default"
-                  onClick={() => setSelectedRow(null)}
-                  className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded text-xs cursor-pointer transition-colors"
-                >
-                  Close Inspection
-                </Button>
-              </div>
-            </div>
-          </div>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex items-center gap-4">
+          {(['records', 'corrections', 'policy'] as const).map((value) => (
+            <Button
+              className={`rounded-none pb-1 text-xs font-semibold ${
+                tab === value
+                  ? 'border-b-2 border-foreground font-bold text-foreground'
+                  : 'text-muted-foreground'
+              }`}
+              key={value}
+              onClick={() => setTab(value)}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              {value === 'records' ? 'Records' : value === 'corrections' ? 'Corrections' : 'Policy'}
+            </Button>
+          ))}
         </div>
+
+        {/*
+          The range is the primary control on this screen, so it is labelled rather than left as
+          two bare fields: without a label a date on its own reads as printed data instead of
+          something selectable.
+        */}
+        {tab === 'records' && (
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-medium text-muted-foreground">From</span>
+              <DatePicker
+                className="w-36"
+                max={to || undefined}
+                onChange={setFrom}
+                placeholder="Start date"
+                value={from}
+              />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-medium text-muted-foreground">To</span>
+              <DatePicker
+                className="w-36"
+                min={from || undefined}
+                onChange={setTo}
+                placeholder="End date"
+                value={to}
+              />
+            </div>
+            <Input
+              className="w-44"
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search employee"
+              value={search}
+            />
+          </div>
+        )}
+      </div>
+
+      {tab === 'policy' && <AttendancePolicyPanel />}
+      {tab === 'corrections' && <AttendanceCorrectionsPanel admin={admin} />}
+
+      {tab === 'records' && (
+        <>
+          {admin.loading && (
+            <p className="py-10 text-center text-xs text-muted-foreground" role="status">
+              Loading attendance...
+            </p>
+          )}
+
+          {!admin.loading && admin.forbidden && (
+            <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+              <p className="text-sm font-bold text-foreground">Not available</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                You do not have permission to view attendance.
+              </p>
+            </div>
+          )}
+
+          {!admin.loading && admin.error && !admin.forbidden && (
+            <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+              <p className="text-sm font-bold text-foreground">Could not load attendance</p>
+              <p className="mt-1 text-xs text-muted-foreground">{admin.error}</p>
+              <Button
+                className="mt-3"
+                onClick={() => void admin.refetch()}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                Try again
+              </Button>
+            </div>
+          )}
+
+          {!admin.loading && !admin.error && filtered.length === 0 && (
+            <div className="rounded-lg border border-border bg-card p-10 text-center">
+              <p className="text-sm font-bold text-foreground">No attendance records</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Nothing was recorded in this range.
+              </p>
+            </div>
+          )}
+
+          {!admin.loading && !admin.error && filtered.length > 0 && (
+            <div className="overflow-x-auto rounded-xl border border-border bg-card">
+              <table className="w-full min-w-[820px] text-left text-xs">
+                <thead className="border-b border-border bg-muted/40">
+                  <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    <th className="px-4 py-2.5 font-bold">Date</th>
+                    <th className="px-4 py-2.5 font-bold">Employee</th>
+                    <th className="px-4 py-2.5 font-bold">First in</th>
+                    <th className="px-4 py-2.5 font-bold">Last out</th>
+                    <th className="px-4 py-2.5 font-bold">Worked</th>
+                    <th className="px-4 py-2.5 font-bold">Overtime</th>
+                    <th className="px-4 py-2.5 font-bold">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((row) => (
+                    <tr
+                      className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
+                      key={row.id}
+                    >
+                      <td className="px-4 py-2.5 font-mono text-foreground">{row.workDate}</td>
+                      <td className="px-4 py-2.5">
+                        <span className="block font-semibold text-foreground">
+                          {row.employeeName ?? 'Not in the directory'}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {row.employeeNumber ?? '--'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                        {row.firstInTime ?? '--'}
+                      </td>
+                      <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                        {row.lastOutTime ?? '--'}
+                      </td>
+                      <td className="px-4 py-2.5 font-mono font-bold text-foreground">
+                        {row.workedLabel}
+                      </td>
+                      <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                        {row.overtimeLabel}
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <Badge variant="outline">{row.dayStatus}</Badge>
+                        {row.correctionStatus === 'PENDING' && (
+                          <Badge className="ml-1" variant="secondary">
+                            Correction pending
+                          </Badge>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -7,7 +7,6 @@ import { EmsMobileBottomNav } from './ems-mobile-bottom-nav';
 import { ContextBar } from './context-bar';
 import { CommandPalette } from './command-palette';
 import { NotificationDrawer } from './notification-drawer';
-import type { EmployeeDetailData } from '../common/entity-detail-drawer';
 import { EntityDetailDrawer } from '../common/entity-detail-drawer';
 
 interface EmsLayoutProps {
@@ -31,16 +30,16 @@ export function EmsLayout({
 }: EmsLayoutProps) {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
-  const [selectedEmployeeDetail, setSelectedEmployeeDetail] = useState<EmployeeDetailData | null>(
-    null,
-  );
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
 
   // Global event listeners
   useEffect(() => {
     const handleOpenCommand = () => setIsCommandPaletteOpen(true);
+    // The drawer loads the employee itself, so callers only need to name one.
     const handleOpenEmployee = (event: Event) => {
-      const detail = (event as CustomEvent<EmployeeDetailData>).detail;
-      setSelectedEmployeeDetail(detail);
+      // Typed as nullable because the event is a global bus any caller can dispatch on.
+      const detail = (event as CustomEvent<{ employeeId?: string } | null>).detail;
+      if (detail?.employeeId) setSelectedEmployeeId(detail.employeeId);
     };
 
     window.addEventListener('ems:open:command-palette', handleOpenCommand);
@@ -51,78 +50,10 @@ export function EmsLayout({
     };
   }, []);
 
-  const handleSelectEmployee = (empId: string) => {
-    setSelectedEmployeeDetail({
-      id: empId,
-      employeeNumber: empId === 'emp_009' ? 'EMP-009' : empId === 'emp_064' ? 'EMP-064' : 'EMP-040',
-      firstName: empId === 'emp_009' ? 'Ranjith' : empId === 'emp_064' ? 'Mithun' : 'Vikramaditya',
-      lastName: empId === 'emp_009' ? 'Kumar C' : empId === 'emp_064' ? 'Gowda H' : 'Sengupta',
-      workEmail: `${empId}@smarteam.cloud`,
-      jobTitle:
-        empId === 'emp_009'
-          ? 'Engineering Manager'
-          : empId === 'emp_064'
-            ? 'Software Engineer'
-            : 'VP of People Ops',
-      department: 'Engineering & Technology',
-      branchName: 'HQ – Bengaluru',
-      avatarInitials: empId === 'emp_009' ? 'RK' : empId === 'emp_064' ? 'MG' : 'VS',
-      avatarUrl: null,
-      status: 'ACTIVE',
-      manager:
-        empId === 'emp_064'
-          ? {
-              id: 'emp_009',
-              employeeNumber: 'EMP-009',
-              firstName: 'Ranjith',
-              lastName: 'Kumar C',
-              jobTitle: 'Engineering Manager',
-            }
-          : null,
-      teams: [
-        { id: 'team-1', name: 'Frontend Engineering', isLead: empId === 'emp_009' },
-        { id: 'team-2', name: 'Platform Core', isLead: false },
-      ],
-      projects: [
-        {
-          id: 'proj-1',
-          code: 'LUX-2026',
-          name: 'Luxasia 2026',
-          role: 'Frontend Lead',
-          allocationPercentage: 60,
-        },
-        {
-          id: 'proj-2',
-          code: 'SMAR-EMS',
-          name: 'Smarteam EMS Redesign',
-          role: 'Architect',
-          allocationPercentage: 40,
-        },
-      ],
-      directReports:
-        empId === 'emp_009'
-          ? [
-              {
-                id: 'emp_064',
-                employeeNumber: 'EMP-064',
-                name: 'Mithun Gowda H',
-                jobTitle: 'Software Engineer',
-              },
-              {
-                id: 'emp-001',
-                employeeNumber: 'EMP-001',
-                name: 'Arjun Das',
-                jobTitle: 'QA Engineer',
-              },
-            ]
-          : undefined,
-    });
-  };
-
   const showLeftRail = activeSpace === 'My Space' || activeSpace === 'Organization';
 
   return (
-    <div className="h-screen w-full flex flex-col bg-background text-slate-800 antialiased overflow-hidden font-sans">
+    <div className="h-screen w-full flex flex-col bg-background text-foreground antialiased overflow-hidden font-sans">
       {/* 1. Global Top App Bar */}
       <EmsTopAppBar
         activeSpace={activeSpace}
@@ -180,7 +111,7 @@ export function EmsLayout({
         onClose={() => setIsCommandPaletteOpen(false)}
         onNavigateModule={onSelectModule}
         onNavigateSpace={onSelectSpace}
-        onSelectEmployee={handleSelectEmployee}
+        onSelectEmployee={setSelectedEmployeeId}
       />
 
       {/* 5. Notifications Drawer */}
@@ -191,9 +122,9 @@ export function EmsLayout({
 
       {/* 6. Entity Detail Drawer */}
       <EntityDetailDrawer
-        isOpen={!!selectedEmployeeDetail}
-        onClose={() => setSelectedEmployeeDetail(null)}
-        employee={selectedEmployeeDetail}
+        employeeId={selectedEmployeeId}
+        isOpen={!!selectedEmployeeId}
+        onClose={() => setSelectedEmployeeId(null)}
       />
     </div>
   );

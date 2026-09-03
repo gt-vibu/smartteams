@@ -3,14 +3,19 @@
 import { Button } from '@smarteam/ui';
 
 import React, { useState } from 'react';
+import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
 import { PhotoUploadModal } from '../profile/photo-upload-modal';
 import { ProfileEditDrawer } from '../profile/profile-edit-drawer';
 
 export function EmployeeProfilePanel() {
-  const { employee } = useEmployee();
-  const { liveState, timerDisplay, checkIn, checkOut } = useAttendance();
+  const { employee, loading, error, forbidden, hasEmployeeRecord, refetch } = useEmployee();
+
+  const state = ProfileState({ loading, error, forbidden, hasEmployeeRecord, onRetry: refetch });
+  if (state || !employee) return state;
+
+  const { isCheckedIn: checkedIn, timerDisplay, checkIn, checkOut } = useAttendance();
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -19,13 +24,13 @@ export function EmployeeProfilePanel() {
     setIsMounted(true);
   }, []);
 
-  const isCheckedIn = isMounted && liveState.isCheckedIn;
+  const isCheckedIn = isMounted && checkedIn;
 
   const handleToggleAttendance = () => {
-    if (liveState.isCheckedIn) {
-      checkOut('Checked out from overview panel');
+    if (checkedIn) {
+      void checkOut();
     } else {
-      checkIn('Checked in from overview panel');
+      void checkIn();
     }
   };
 
@@ -201,25 +206,25 @@ export function EmployeeProfilePanel() {
 
           <div className="p-2.5 bg-slate-50 dark:bg-card rounded-md border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs font-mono">
             <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-slate-500">PAN:</span>
+              <span className="font-sans text-[11px] text-muted-foreground">PAN:</span>
               <span className="font-bold">AAAPM0192L</span>
             </div>
             <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-slate-500">UAN (PF):</span>
+              <span className="font-sans text-[11px] text-muted-foreground">UAN (PF):</span>
               <span className="font-bold">101928374650</span>
             </div>
             <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-slate-500">Tax Regime:</span>
+              <span className="font-sans text-[11px] text-muted-foreground">Tax Regime:</span>
               <span className="font-sans text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                 New (115BAC)
               </span>
             </div>
             <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-slate-500">Prof. Tax (PT):</span>
+              <span className="font-sans text-[11px] text-muted-foreground">Prof. Tax (PT):</span>
               <span>₹200 / mo</span>
             </div>
             <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-slate-500">TDS Rate:</span>
+              <span className="font-sans text-[11px] text-muted-foreground">TDS Rate:</span>
               <span>10% Statutory</span>
             </div>
           </div>

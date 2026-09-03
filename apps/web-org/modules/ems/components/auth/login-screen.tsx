@@ -78,14 +78,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Smarteam</h1>
-          <p className="text-sm text-slate-400 mt-1">Employee Management System</p>
+          <p className="text-sm text-muted-foreground mt-1">Employee Management System</p>
         </div>
 
         {/* Login Card */}
         <div className="bg-[#111827] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
           <div className="px-6 pt-6 pb-5">
             <h2 className="text-base font-bold text-white mb-0.5">Sign in to your workspace</h2>
-            <p className="text-xs text-slate-400">Enter your work email and password</p>
+            <p className="text-xs text-muted-foreground">Enter your work email and password</p>
           </div>
 
           {/* Divider */}
@@ -94,7 +94,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
             {/* Email */}
             <div>
-              <label className="block text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-[11px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
                 Work Email
               </label>
               <Input
@@ -113,7 +113,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
             {/* Password */}
             <div>
-              <label className="block text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+              <label className="block text-[11px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
                 Password
               </label>
               <div className="relative">
@@ -132,7 +132,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 <Button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-slate-200 transition-colors"
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -175,7 +175,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
             {organizations.length > 0 && (
               <div>
-                <label className="block text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label className="block text-[11px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
                   Organization
                 </label>
                 <select
@@ -251,7 +251,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[11px] text-slate-600 mt-5">Smarteam EMS · v0.1.0</p>
+        <p className="text-center text-[11px] text-muted-foreground mt-5">Smarteam EMS · v0.1.0</p>
       </div>
     </div>
   );

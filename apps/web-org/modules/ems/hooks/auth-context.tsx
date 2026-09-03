@@ -3,6 +3,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { OrganizationMembership } from '@smarteam/contracts';
 import { authRepository } from '../repositories/auth.repository';
+import { workforceRepository } from '../repositories/workforce.repository';
+import { hasPermission } from '@smarteam/contracts';
 import { canAccessModule as evaluateModuleAccess } from '../services/authorization.policy';
 import type {
   ApprovalDomainType,
@@ -113,7 +115,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const permissions = persona?.permissions ?? [];
-  const isAssignedToAnyTeam = (persona?.assignedTeamIds.length ?? 0) > 0;
+
+  /**
+   * Whether the signed-in employee is on a team, from the teams API.
+   *
+   * This gates the Team space and several modules. It previously read `assignedTeamIds` off the
+   * persona fixture, which is empty for every real onboarded user — so a genuine team member
+   * never saw the Team space. False until the check settles, so access is never granted on an
+   * assumption.
+   */
+  const [isAssignedToAnyTeam, setIsAssignedToAnyTeam] = useState(false);
+  // `hasPermission` understands the tenant wildcard, so the check goes through it rather than a
+  // string comparison; the joined key exists only to give the effect a stable dependency.
+  const canReadTeams = hasPermission(permissions, 'teams.read');
+  const sessionOrganizationId = persona ? authRepository.getAuthSession()?.organizationId : null;
+  const sessionEmployeeId = persona ? authRepository.getAuthSession()?.employeeId : null;
+
+  useEffect(() => {
+    if (!sessionOrganizationId || !sessionEmployeeId || !canReadTeams) {
+      setIsAssignedToAnyTeam(false);
+      return;
+    }
+    let cancelled = false;
+    void workforceRepository
+      .listTeams(sessionOrganizationId)
+      .then((teams) => {
+        if (cancelled) return;
+        setIsAssignedToAnyTeam(
+          teams.some(
+            (team) =>
+              team.teamLeadEmployeeId === sessionEmployeeId ||
+              (team.members ?? []).some(
+                (member) => member.employeeId === sessionEmployeeId && !member.leftAt,
+              ),
+          ),
+        );
+      })
+      // A failed check must not grant access; it leaves the flag false.
+      .catch(() => {
+        if (!cancelled) setIsAssignedToAnyTeam(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionOrganizationId, sessionEmployeeId, canReadTeams]);
 
   const value = useMemo<SessionState>(() => {
     const visibleSpaces = persona

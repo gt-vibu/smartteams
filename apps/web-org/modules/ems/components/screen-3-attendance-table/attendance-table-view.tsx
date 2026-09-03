@@ -44,7 +44,7 @@ function StatusBadge({ row }: { row: AttendanceTableRow }) {
       </span>
     );
   }
-  return <span className="text-slate-400 font-mono">-</span>;
+  return <span className="text-muted-foreground font-mono">-</span>;
 }
 
 // ─── Mobile card list ─────────────────────────────────────────────────────────

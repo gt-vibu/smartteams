@@ -41,6 +41,19 @@ export class AttendanceQueryDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
 }
 
+/** Filters for the correction request list. Mirrors what the federation surface already accepts. */
+export class AttendanceCorrectionQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsEnum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']) status?:
+    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+}
+
+/** Selects which branch's attendance policy to read. */
+export class AttendancePreferencesQueryDto {
+  @IsOptional() @IsUUID() branchId?: string;
+}
+
 export class AttendanceCorrectionDto {
   @IsString() @MinLength(10) @MaxLength(500) reason!: string;
   @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;

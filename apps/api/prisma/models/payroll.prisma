@@ -11,6 +11,9 @@ model PayrollRun {
   inputSnapshotHash  String           @map("input_snapshot_hash") @db.Char(64)
   calculationHash    String?          @map("calculation_hash") @db.Char(64)
   calculatedAt       DateTime?        @map("calculated_at") @db.Timestamptz(6)
+  /// Set when an input changes after a run was calculated. A stale run cannot be approved or
+  /// released; it has to be calculated again so the change reaches the money.
+  calculationStaleAt DateTime?        @map("calculation_stale_at") @db.Timestamptz(6)
   approvedAt         DateTime?        @map("approved_at") @db.Timestamptz(6)
   releasedAt         DateTime?        @map("released_at") @db.Timestamptz(6)
   lockedAt           DateTime?        @map("locked_at") @db.Timestamptz(6)
@@ -32,7 +35,10 @@ model PayrollRun {
   payments          PayrollPayment[]
   advanceRecoveries SalaryAdvanceRecovery[]
 
-  @@unique([organizationId, periodStart, periodEnd])
+  /// A period holds one original run plus one replacement per correction link. "No second
+  /// *open* run for a period" is a lifecycle rule rather than a shape rule — Postgres treats
+  /// NULLs as distinct — so PayrollService.correct enforces it.
+  @@unique([organizationId, periodStart, periodEnd, correctionOfRunId])
   @@index([organizationId, status, periodStart])
   @@map("payroll_runs")
 }

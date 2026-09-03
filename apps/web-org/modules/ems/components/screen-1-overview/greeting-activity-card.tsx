@@ -1,17 +1,23 @@
 'use client';
 
 import React from 'react';
+import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
+import { formatWorkMinutes } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
 
 export function GreetingActivityCard() {
-  const { employee } = useEmployee();
-  const { approvedNotification } = useTimesheet();
+  const { employee, loading, error, forbidden, hasEmployeeRecord, refetch } = useEmployee();
+
+  const state = ProfileState({ loading, error, forbidden, hasEmployeeRecord, onRetry: refetch });
+  if (state || !employee) return state;
+
+  const { approvedTimesheet } = useTimesheet();
 
   return (
     <div className="space-y-3">
       {/* Greeting Banner */}
-      <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-between">
+      <div className="bg-card rounded-[6px] border border-border/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-between">
         <div className="flex items-center space-x-3.5">
           <div className="h-9 w-9 rounded-md bg-primary flex items-center justify-center text-white font-bold text-sm shadow-xs">
             <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
@@ -19,20 +25,22 @@ export function GreetingActivityCard() {
             </svg>
           </div>
           <div>
-            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+            <div className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
               smarteam
             </div>
-            <h2 className="!text-sm !font-bold !text-slate-800 !m-0">
+            <h2 className="!text-sm !font-bold !text-foreground !m-0">
               Good Afternoon {employee.firstName} {employee.lastName}
             </h2>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">Have a productive day!</p>
+            <p className="text-xs text-muted-foreground font-medium mt-0.5">
+              Have a productive day!
+            </p>
           </div>
         </div>
       </div>
 
       {/* Timesheet Approval Notice */}
-      {approvedNotification && (
-        <div className="bg-white rounded-[6px] border border-slate-200/90 p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center space-x-3">
+      {approvedTimesheet && (
+        <div className="bg-card rounded-[6px] border border-border/90 p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center space-x-3">
           <div className="h-8 w-8 rounded-full bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shrink-0">
             <svg
               className="h-4 w-4"
@@ -49,16 +57,16 @@ export function GreetingActivityCard() {
             </svg>
           </div>
           <div className="text-xs">
-            <div className="text-slate-700">
+            <div className="text-foreground">
               Your timesheet —{' '}
-              <strong className="text-slate-900 font-semibold">
-                Timesheet ({approvedNotification.periodStart} - {approvedNotification.periodEnd})
+              <strong className="text-foreground font-semibold">
+                Timesheet ({approvedTimesheet.period?.periodStart.slice(0, 10)} -{' '}
+                {approvedTimesheet.period?.periodEnd.slice(0, 10)})
               </strong>{' '}
               has been approved.
             </div>
-            <div className="text-[11px] text-slate-400 font-medium mt-0.5">
-              Total Hours: {approvedNotification.totalHours} Hrs,{' '}
-              {approvedNotification.totalMinutes} Mins
+            <div className="text-[11px] text-muted-foreground font-medium mt-0.5">
+              Total: {formatWorkMinutes(approvedTimesheet.totalMinutes)}
             </div>
           </div>
         </div>

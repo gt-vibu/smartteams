@@ -101,7 +101,9 @@ export class AuthRepository {
     return {
       user: this.persona.user,
       personaId: this.persona.id,
-      employeeId: this.session.employee?.id ?? this.persona.id,
+      // Falling back to the persona id here made every screen request an employee that does
+      // not exist, which the API answered with 404. No employee record means null.
+      employeeId: this.session.employee?.id ?? null,
       organizationId: this.session.organization?.id ?? '',
       branchId: this.session.employee?.branchId ?? null,
       roles: this.persona.roles,
@@ -163,7 +165,6 @@ export class AuthRepository {
     }
     this.session = session;
     this.persona = personaRepository.forSession(session);
-    personaRepository.publish(this.persona);
     return this.persona;
   }
 }

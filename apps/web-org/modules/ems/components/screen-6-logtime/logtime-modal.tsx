@@ -2,189 +2,158 @@
 
 import React, { useState } from 'react';
 import {
+  Button,
+  DatePicker,
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
   DialogTitle,
-  DialogDescription,
-  Button,
-  Label,
   Input,
-  Select,
+  Label,
   Textarea,
-  Switch,
-  DatePicker,
 } from '@smarteam/ui';
-import type { LogTimeFormData } from '../../types/logtime-form.types';
-import { formatLocalIsoDate } from '../../utils/formatters';
+import { parseDuration } from '../../services/timesheet-view';
+import type { ManualEntryInput } from '../../repositories/timesheet.repository';
 
 interface LogTimeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave?: (data: LogTimeFormData) => void;
+  saving: boolean;
+  saveError: string | null;
+  onSubmit: (input: ManualEntryInput) => Promise<boolean>;
 }
 
-export function LogTimeModal({ isOpen, onClose, onSave }: LogTimeModalProps) {
-  const [date, setDate] = useState(formatLocalIsoDate);
-  const [projectName, setProjectName] = useState('Luxasia 2026');
-  const [jobName, setJobName] = useState('Development');
-  const [workItem, setWorkItem] = useState('');
-  const [isBillable, setIsBillable] = useState(true);
-  const [hours, setHours] = useState('02:00');
+/**
+ * Logs one manual time entry.
+ *
+ * The project, task and billable fields the previous version collected have been removed:
+ * `ManualEntryDto` has no column for any of them, so every one of those values was discarded on
+ * submit. See `docs/backend-gaps.md`.
+ */
+export function LogTimeModal({ isOpen, onClose, saving, saveError, onSubmit }: LogTimeModalProps) {
+  const [workDate, setWorkDate] = useState('');
+  const [duration, setDuration] = useState('');
+  const [overtime, setOvertime] = useState('');
   const [description, setDescription] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onSave) {
-      onSave({
-        date,
-        projectName,
-        jobName,
-        workItem,
-        isBillable,
-        hours,
-        description,
-      });
+  const reset = () => {
+    setWorkDate('');
+    setDuration('');
+    setOvertime('');
+    setDescription('');
+    setError('');
+  };
+
+  const handleSubmit = async () => {
+    if (!workDate) {
+      setError('Select the date the work was done.');
+      return;
     }
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
+    const minutes = parseDuration(duration);
+    if (minutes === null || minutes < 1) {
+      setError('Enter a duration such as 1h 30m, 1:30 or 90.');
+      return;
+    }
+    const overtimeMinutes = overtime.trim() ? parseDuration(overtime) : 0;
+    if (overtimeMinutes === null) {
+      setError('Overtime must be a duration such as 30m, or left blank.');
+      return;
+    }
+    setError('');
+    const saved = await onSubmit({
+      workDate,
+      minutes,
+      ...(overtimeMinutes ? { overtimeMinutes } : {}),
+      ...(description.trim() ? { description: description.trim() } : {}),
+    });
+    if (saved) {
+      reset();
       onClose();
-    }, 900);
+    }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            <span className="h-6 w-6 rounded-md bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center text-xs font-bold shrink-0">
-              ⏱
-            </span>
-            <DialogTitle>Log Work Time</DialogTitle>
-          </div>
-          <DialogDescription>
-            Record work duration against assigned project tasks and sprint deliverables.
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          reset();
+          onClose();
+        }
+      }}
+      open={isOpen}
+    >
+      <DialogContent className="max-w-md gap-0 p-0">
+        <DialogTitle className="border-b border-border px-5 py-4 text-sm font-semibold">
+          Log time
+        </DialogTitle>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 py-1">
-          {/* Row 1: Date & Project */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>
-                Log Date <span className="text-rose-500">*</span>
-              </Label>
-              <DatePicker value={date} onChange={(d) => setDate(d)} placeholder="Select Date" />
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="project-name-select">
-                Project Name <span className="text-rose-500">*</span>
-              </Label>
-              <Select
-                id="project-name-select"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                required
-              >
-                <option value="Luxasia 2026">Luxasia 2026</option>
-                <option value="Internal-Project 2026">Internal-Project 2026</option>
-                <option value="Smarteam EMS Redesign">Smarteam EMS Redesign</option>
-              </Select>
-            </div>
+        <div className="space-y-4 p-5">
+          <div>
+            <Label className="mb-1 block" htmlFor="log-date">
+              Date
+            </Label>
+            <DatePicker disabled={saving} id="log-date" onChange={setWorkDate} value={workDate} />
           </div>
 
-          {/* Row 2: Job Name & Work Item */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label htmlFor="job-name-select">
-                Job Track <span className="text-rose-500">*</span>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label className="mb-1 block" htmlFor="log-duration">
+                Duration
               </Label>
-              <Select
-                id="job-name-select"
-                value={jobName}
-                onChange={(e) => setJobName(e.target.value)}
-                required
-              >
-                <option value="Development">Development</option>
-                <option value="Code Review">Code Review</option>
-                <option value="Architecture & Planning">Architecture & Planning</option>
-                <option value="Testing & QA">Testing & QA</option>
-                <option value="Client Sync">Client Sync</option>
-              </Select>
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="work-item-input">Work Item / Issue ID</Label>
               <Input
-                id="work-item-input"
-                type="text"
-                value={workItem}
-                onChange={(e) => setWorkItem(e.target.value)}
-                placeholder="e.g. LUX-402, SMAR-109"
+                disabled={saving}
+                id="log-duration"
+                onChange={(event) => setDuration(event.target.value)}
+                placeholder="1h 30m"
+                value={duration}
+              />
+            </div>
+            <div>
+              <Label className="mb-1 block" htmlFor="log-overtime">
+                Overtime
+              </Label>
+              <Input
+                disabled={saving}
+                id="log-overtime"
+                onChange={(event) => setOvertime(event.target.value)}
+                placeholder="Optional"
+                value={overtime}
               />
             </div>
           </div>
 
-          {/* Row 3: Time Spent & Billable Toggle */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-            <div className="space-y-1">
-              <Label htmlFor="time-spent-input">
-                Time Spent (HH:MM) <span className="text-rose-500">*</span>
-              </Label>
-              <Input
-                id="time-spent-input"
-                type="text"
-                value={hours}
-                onChange={(e) => setHours(e.target.value)}
-                placeholder="02:30"
-                className="font-mono"
-                required
-              />
-            </div>
-
-            <div className="space-y-1 pt-4">
-              <div className="flex items-center justify-between p-2 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-card">
-                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Client Billable
-                </span>
-                <Switch checked={isBillable} onCheckedChange={setIsBillable} />
-              </div>
-            </div>
-          </div>
-
-          {/* Description Textarea */}
-          <div className="space-y-1">
-            <Label htmlFor="log-desc-textarea">Work Summary</Label>
+          <div>
+            <Label className="mb-1 block" htmlFor="log-description">
+              Description
+            </Label>
             <Textarea
-              id="log-desc-textarea"
-              rows={3}
+              disabled={saving}
+              id="log-description"
+              onChange={(event) => setDescription(event.target.value)}
+              rows={2}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the tasks, tickets, or modules worked on..."
             />
           </div>
 
-          {/* Submission Feedback */}
-          {isSubmitted && (
-            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs rounded-md font-semibold flex items-center gap-2">
-              <span>✓</span>
-              <span>Time log entry saved to your weekly timesheet!</span>
-            </div>
-          )}
+          <p className="text-[11px] text-muted-foreground">
+            Time is recorded against the period, not against a project — the API stores a date, a
+            duration and a description.
+          </p>
+        </div>
 
-          <DialogFooter className="pt-2">
-            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+        <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
+          <p className="text-[11px] font-medium text-destructive" role="alert">
+            {error || saveError}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button disabled={saving} onClick={onClose} type="button" variant="outline">
               Cancel
             </Button>
-            <Button type="submit" size="sm">
-              Save Time Entry
+            <Button disabled={saving} onClick={() => void handleSubmit()} type="button">
+              {saving ? 'Saving...' : 'Log time'}
             </Button>
-          </DialogFooter>
-        </form>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

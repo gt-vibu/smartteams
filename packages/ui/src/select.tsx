@@ -10,7 +10,12 @@
  * `select-menu.tsx` instead.
  */
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 import { cn } from './cn';
+import { useAnchoredPanel, useDismissOnOutside } from './use-anchored-panel';
+
+/** Matches the panel's own `max-h-60` plus padding, so the flip decision is measured, not guessed. */
+const LISTBOX_SIZE = { width: 288, height: 256 };
 
 // ─── Types & Context ──────────────────────────────────────────────────────────
 
@@ -61,7 +66,11 @@ export function Select({
   const [selectedLabel, setSelectedLabel] = React.useState<string>('');
   const triggerRef = React.useRef<HTMLButtonElement | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const listboxRef = React.useRef<HTMLDivElement>(null);
   const listboxId = React.useId();
+  // Positioned in viewport coordinates and portalled, so a scrolling ancestor — a dialog body,
+  // most often — cannot clip the options or push a sideways scrollbar into the form.
+  const listboxPosition = useAnchoredPanel(open, containerRef, LISTBOX_SIZE);
 
   const activeValue = controlledValue !== undefined ? controlledValue : internalValue;
 
@@ -77,18 +86,10 @@ export function Select({
     [controlledValue, onValueChange, onChange, name],
   );
 
-  // Close on outside click
-  React.useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open]);
+  // The listbox lives in a portal, so it has to be named here alongside the trigger — otherwise
+  // clicking an option counts as an outside click and closes the menu before it registers.
+  const dismiss = React.useCallback(() => setOpen(false), []);
+  useDismissOnOutside(open, [containerRef, listboxRef], dismiss);
 
   // Close on Escape key
   React.useEffect(() => {
@@ -174,60 +175,70 @@ export function Select({
           </svg>
         </button>
 
-        {open && (
-          <div
-            className="absolute left-0 mt-1 z-50 min-w-full w-max max-w-sm rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-card dark:text-slate-100 animate-in fade-in zoom-in-95"
-            role="listbox"
-            id={listboxId}
-            tabIndex={-1}
-          >
-            <div className="max-h-60 overflow-y-auto space-y-0.5">
-              {options.map((opt) => {
-                const isSelected = opt.value === activeValue;
-                return (
-                  <div
-                    key={opt.value}
-                    role="option"
-                    aria-selected={isSelected}
-                    aria-disabled={opt.disabled || undefined}
-                    tabIndex={opt.disabled ? -1 : 0}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        if (!opt.disabled) handleValueChange(opt.value);
-                      }
-                    }}
-                    onClick={() => {
-                      if (!opt.disabled) {
-                        handleValueChange(opt.value);
-                      }
-                    }}
-                    className={cn(
-                      'relative flex items-center justify-between w-full px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer select-none',
-                      isSelected
-                        ? 'bg-sky-50 dark:bg-sky-950/50 text-primary dark:text-sky-400 font-semibold'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80',
-                      opt.disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
-                    )}
-                  >
-                    <span className="truncate pr-4">{opt.label}</span>
-                    {isSelected && (
-                      <svg
-                        className="h-3.5 w-3.5 text-primary dark:text-sky-400 shrink-0"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {open &&
+          listboxPosition &&
+          typeof document !== 'undefined' &&
+          createPortal(
+            <div
+              ref={listboxRef}
+              style={{
+                left: listboxPosition.left,
+                top: listboxPosition.top,
+                minWidth: containerRef.current?.offsetWidth,
+              }}
+              className="fixed z-[100] w-max max-w-sm rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-card dark:text-slate-100 animate-in fade-in zoom-in-95"
+              role="listbox"
+              id={listboxId}
+              tabIndex={-1}
+            >
+              <div className="max-h-60 overflow-y-auto space-y-0.5">
+                {options.map((opt) => {
+                  const isSelected = opt.value === activeValue;
+                  return (
+                    <div
+                      key={opt.value}
+                      role="option"
+                      aria-selected={isSelected}
+                      aria-disabled={opt.disabled || undefined}
+                      tabIndex={opt.disabled ? -1 : 0}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          if (!opt.disabled) handleValueChange(opt.value);
+                        }
+                      }}
+                      onClick={() => {
+                        if (!opt.disabled) {
+                          handleValueChange(opt.value);
+                        }
+                      }}
+                      className={cn(
+                        'relative flex items-center justify-between w-full px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer select-none',
+                        isSelected
+                          ? 'bg-sky-50 dark:bg-sky-950/50 text-primary dark:text-sky-400 font-semibold'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80',
+                        opt.disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+                      )}
+                    >
+                      <span className="truncate pr-4">{opt.label}</span>
+                      {isSelected && (
+                        <svg
+                          className="h-3.5 w-3.5 text-primary dark:text-sky-400 shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>,
+            document.body,
+          )}
       </div>
     );
   }

@@ -1,365 +1,211 @@
 'use client';
 
 import React, { useState } from 'react';
+import type { Branch } from '@smarteam/contracts';
 import {
+  Button,
+  DatePicker,
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
   DialogTitle,
-  DialogDescription,
-  Button,
-  Checkbox,
-  Label,
   Input,
-  Select,
+  Label,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
   Textarea,
-  DatePicker,
 } from '@smarteam/ui';
-import { AVAILABLE_EMPLOYEES, BRANCH_OPTIONS } from '../screen-teams/create-team-modal';
-
-export type ProjectStatus = 'PLANNED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'ARCHIVED';
-
-export interface AssignedMemberInput {
-  employeeId: string;
-  projectRole: string;
-  allocationPercentage: number;
-}
-
-export interface CreateProjectPayload {
-  code: string;
-  name: string;
-  description: string;
-  status: ProjectStatus;
-  startDate: string;
-  endDate: string;
-  branchId: string;
-  branchName: string;
-  members: AssignedMemberInput[];
-}
+import type { CreateProjectInput } from '../../repositories/teams-projects.repository';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (payload: CreateProjectPayload) => void;
+  branches: readonly Branch[];
+  saving: boolean;
+  saveError: string | null;
+  onCreate: (input: CreateProjectInput) => Promise<boolean>;
 }
 
-export function CreateProjectModal({ isOpen, onClose, onSubmit }: CreateProjectModalProps) {
+const NONE = 'none';
+
+/**
+ * Creates a project.
+ *
+ * Members are allocated afterwards from the project drawer rather than here: allocation needs a
+ * role and a percentage per person, and the API adds members one call at a time, so doing it in
+ * the create form would hide a partial failure behind a single "create" button.
+ */
+export function CreateProjectModal({
+  isOpen,
+  onClose,
+  branches,
+  saving,
+  saveError,
+  onCreate,
+}: CreateProjectModalProps) {
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState<ProjectStatus>('ACTIVE');
-  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
+  const [branchId, setBranchId] = useState(NONE);
+  const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [branchId, setBranchId] = useState(BRANCH_OPTIONS[0]?.id || '');
-  const [assignedMembers, setAssignedMembers] = useState<
-    Record<string, { selected: boolean; role: string; allocation: number }>
-  >(() => {
-    const initial: Record<string, { selected: boolean; role: string; allocation: number }> = {};
-    if (AVAILABLE_EMPLOYEES[0]?.id) {
-      initial[AVAILABLE_EMPLOYEES[0].id] = { selected: true, role: 'Tech Lead', allocation: 100 };
-    }
-    if (AVAILABLE_EMPLOYEES[1]?.id) {
-      initial[AVAILABLE_EMPLOYEES[1].id] = {
-        selected: true,
-        role: 'UI/UX Designer',
-        allocation: 80,
-      };
-    }
-    return initial;
-  });
   const [error, setError] = useState('');
 
-  const handleToggleMember = (empId: string) => {
-    const current = assignedMembers[empId];
-    if (current && current.selected) {
-      setAssignedMembers({
-        ...assignedMembers,
-        [empId]: { ...current, selected: false },
-      });
-    } else {
-      setAssignedMembers({
-        ...assignedMembers,
-        [empId]: {
-          selected: true,
-          role: current?.role || 'Developer',
-          allocation: current?.allocation || 100,
-        },
-      });
-    }
-  };
-
-  const handleUpdateRole = (empId: string, role: string) => {
-    const current = assignedMembers[empId] || {
-      selected: true,
-      role: 'Developer',
-      allocation: 100,
-    };
-    setAssignedMembers({
-      ...assignedMembers,
-      [empId]: { ...current, role },
-    });
-  };
-
-  const handleUpdateAllocation = (empId: string, allocation: number) => {
-    const current = assignedMembers[empId] || {
-      selected: true,
-      role: 'Developer',
-      allocation: 100,
-    };
-    setAssignedMembers({
-      ...assignedMembers,
-      [empId]: { ...current, allocation: Math.min(100, Math.max(0, allocation)) },
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!code.trim()) {
-      setError('Project code is required (e.g. PRJ-01)');
-      return;
-    }
-    if (!name.trim()) {
-      setError('Project name is required');
-      return;
-    }
-
-    const branch = BRANCH_OPTIONS.find((b) => b.id === branchId) || BRANCH_OPTIONS[0];
-
-    const selectedList: AssignedMemberInput[] = Object.entries(assignedMembers)
-      .filter(([, val]) => val.selected)
-      .map(([empId, val]) => ({
-        employeeId: empId,
-        projectRole: val.role.trim() || 'Contributor',
-        allocationPercentage: val.allocation || 100,
-      }));
-
-    onSubmit({
-      code: code.trim().toUpperCase(),
-      name: name.trim(),
-      description: description.trim(),
-      status,
-      startDate: startDate || new Date().toISOString().slice(0, 10),
-      endDate: endDate || '',
-      branchId: branch?.id || '',
-      branchName: branch?.name || '',
-      members: selectedList,
-    });
-
-    // Reset & Close
+  const reset = () => {
     setCode('');
     setName('');
     setDescription('');
+    setBranchId(NONE);
+    setStartDate('');
     setEndDate('');
     setError('');
-    onClose();
   };
 
-  const selectedCount = Object.values(assignedMembers).filter((m) => m.selected).length;
+  const handleSubmit = async () => {
+    if (!code.trim() || !name.trim()) {
+      setError('A project code and name are both required.');
+      return;
+    }
+    if (startDate && endDate && endDate < startDate) {
+      setError('The end date cannot precede the start date.');
+      return;
+    }
+    setError('');
+    const created = await onCreate({
+      code: code.trim(),
+      name: name.trim(),
+      ...(description.trim() ? { description: description.trim() } : {}),
+      ...(branchId !== NONE ? { branchId } : {}),
+      ...(startDate ? { startDate } : {}),
+      ...(endDate ? { endDate } : {}),
+    });
+    if (created) {
+      reset();
+      onClose();
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            <span className="h-6 w-6 rounded-md bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center text-xs font-bold shrink-0">
-              📁
-            </span>
-            <DialogTitle>Create New Project</DialogTitle>
-          </div>
-          <DialogDescription>
-            Define project code, timeline, status, and assign members with role & allocation.
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          reset();
+          onClose();
+        }
+      }}
+      open={isOpen}
+    >
+      <DialogContent className="max-w-2xl gap-0 p-0">
+        <DialogTitle className="border-b border-border px-5 py-4 text-sm font-bold">
+          New project
+        </DialogTitle>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 py-1">
-          {error && (
-            <div className="p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-md text-xs text-rose-700 dark:text-rose-300 font-medium">
-              {error}
-            </div>
-          )}
-
-          {/* 1. Code + Name */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="space-y-1">
-              <Label htmlFor="proj-code-input">
-                Code <span className="text-rose-500">*</span>
+        <div className="max-h-[70vh] space-y-4 overflow-y-auto p-5">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <Label className="mb-1 block" htmlFor="project-code">
+                Code
               </Label>
               <Input
-                id="proj-code-input"
-                type="text"
-                required
+                disabled={saving}
+                id="project-code"
+                onChange={(event) => setCode(event.target.value)}
+                placeholder="LUX-2026"
                 value={code}
-                onChange={(e) => {
-                  setCode(e.target.value);
-                  if (error) setError('');
-                }}
-                placeholder="EMS-26"
-                className="font-mono uppercase font-bold"
               />
             </div>
-            <div className="sm:col-span-2 space-y-1">
-              <Label htmlFor="proj-name-input">
-                Project Name <span className="text-rose-500">*</span>
+            <div className="sm:col-span-2">
+              <Label className="mb-1 block" htmlFor="project-name">
+                Name
               </Label>
               <Input
-                id="proj-name-input"
-                type="text"
-                required
+                disabled={saving}
+                id="project-name"
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Project name"
                 value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  if (error) setError('');
-                }}
-                placeholder="Mobile Portal Redesign"
               />
             </div>
           </div>
 
-          {/* 2. Description */}
-          <div className="space-y-1">
-            <Label htmlFor="proj-desc-textarea">
-              Description <span className="text-slate-400 font-normal">(optional)</span>
+          <div>
+            <Label className="mb-1 block" htmlFor="project-description">
+              Description
             </Label>
             <Textarea
-              id="proj-desc-textarea"
+              disabled={saving}
+              id="project-description"
+              onChange={(event) => setDescription(event.target.value)}
               rows={2}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="High-level objectives and business goals..."
             />
           </div>
 
-          {/* 3. Status + Branch */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label htmlFor="proj-status-select">Status</Label>
-              <Select
-                id="proj-status-select"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ProjectStatus)}
-              >
-                <option value="ACTIVE">Active (In Progress)</option>
-                <option value="PLANNED">Planned (Backlog)</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="ARCHIVED">Archived</option>
-              </Select>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <Label className="mb-1 block" htmlFor="project-branch">
+                Branch
+              </Label>
+              <SelectMenu disabled={saving} onValueChange={setBranchId} value={branchId}>
+                <SelectTrigger id="project-branch">
+                  <SelectValue placeholder="No branch" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE}>No branch</SelectItem>
+                  {branches.map((branch) => (
+                    <SelectItem key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectMenu>
             </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="proj-branch-select">Branch Location</Label>
-              <Select
-                id="proj-branch-select"
-                value={branchId}
-                onChange={(e) => setBranchId(e.target.value)}
-              >
-                {BRANCH_OPTIONS.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-
-          {/* 4. Timeline Dates with shadcn DatePicker */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>
-                Start Date <span className="text-rose-500">*</span>
+            <div>
+              <Label className="mb-1 block" htmlFor="project-start">
+                Start date
               </Label>
               <DatePicker
+                disabled={saving}
+                id="project-start"
+                max={endDate || undefined}
+                onChange={setStartDate}
                 value={startDate}
-                onChange={(d) => setStartDate(d)}
-                placeholder="Start Date"
               />
             </div>
-
-            <div className="space-y-1">
-              <Label>
-                Target End Date <span className="text-slate-400 font-normal">(optional)</span>
+            <div>
+              <Label className="mb-1 block" htmlFor="project-end">
+                End date
               </Label>
-              <DatePicker value={endDate} onChange={(d) => setEndDate(d)} placeholder="End Date" />
+              <DatePicker
+                disabled={saving}
+                id="project-end"
+                min={startDate || undefined}
+                onChange={setEndDate}
+                value={endDate}
+              />
             </div>
           </div>
 
-          {/* 5. Team Members Allocation */}
-          <div className="space-y-1.5 pt-1">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs">Assigned Team ({selectedCount} members)</Label>
-              <span className="text-[10px] text-slate-400">Select & set % allocation</span>
-            </div>
-            <div className="max-h-48 overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-md p-2 bg-slate-50/50 dark:bg-card space-y-1.5">
-              {AVAILABLE_EMPLOYEES.map((emp) => {
-                const assigned = assignedMembers[emp.id];
-                const isSelected = assigned?.selected || false;
-                return (
-                  <div
-                    key={emp.id}
-                    className={`p-2 rounded-md border text-xs transition-all ${
-                      isSelected
-                        ? 'bg-white dark:bg-[#1C2128] border-sky-300 dark:border-sky-700 shadow-2xs'
-                        : 'bg-transparent border-transparent hover:bg-slate-100/80 dark:hover:bg-slate-800/80 text-slate-600 dark:text-slate-400'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div
-                        onClick={() => handleToggleMember(emp.id)}
-                        className="flex items-center gap-2 cursor-pointer flex-1"
-                      >
-                        <Checkbox
-                          checked={isSelected}
-                          onCheckedChange={() => {}}
-                          aria-label={`Assign ${emp.firstName} ${emp.lastName} to this project`}
-                          className="h-3.5 w-3.5"
-                        />
-                        <span className="font-semibold text-slate-900 dark:text-white">
-                          {emp.firstName} {emp.lastName}
-                        </span>
-                        <span className="text-[10px] text-slate-400">({emp.jobTitle})</span>
-                      </div>
+          <p className="text-[11px] text-muted-foreground">
+            Allocate people from the project once it exists.
+          </p>
+        </div>
 
-                      {isSelected && (
-                        <div className="flex items-center gap-2">
-                          <Input
-                            type="text"
-                            value={assigned?.role || 'Developer'}
-                            onChange={(e) => handleUpdateRole(emp.id, e.target.value)}
-                            placeholder="Role"
-                            className="text-[11px] w-28"
-                          />
-                          <div className="flex items-center gap-1">
-                            <Input
-                              type="number"
-                              min={10}
-                              max={100}
-                              step={10}
-                              value={assigned?.allocation || 100}
-                              onChange={(e) =>
-                                handleUpdateAllocation(emp.id, parseInt(e.target.value, 10) || 0)
-                              }
-                              className="text-[11px] w-14 text-center font-mono"
-                            />
-                            <span className="text-[10px] text-slate-400">%</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <DialogFooter className="pt-2">
-            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+        <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
+          <p className="text-[11px] font-semibold text-destructive" role="alert">
+            {error || saveError}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button disabled={saving} onClick={onClose} type="button" variant="outline">
               Cancel
             </Button>
-            <Button type="submit" size="sm">
-              Create Project
+            <Button disabled={saving} onClick={() => void handleSubmit()} type="button">
+              {saving ? 'Creating...' : 'Create project'}
             </Button>
-          </DialogFooter>
-        </form>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

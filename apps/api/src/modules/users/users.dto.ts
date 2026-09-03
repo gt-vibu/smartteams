@@ -1,6 +1,8 @@
 import {
+  ArrayNotEmpty,
   IsArray,
   IsDateString,
+  IsEmail,
   IsEnum,
   IsOptional,
   IsString,
@@ -21,3 +23,10 @@ export class RoleAssignmentDto {
   @IsOptional() @IsDateString() endsAt?: string;
 }
 import type { RoleScope } from '../../generated/prisma/enums';
+
+export class MemberDto {
+  @IsEmail() email!: string;
+  @IsString() @MinLength(2) displayName!: string;
+  @IsArray() @ArrayNotEmpty() @IsUUID('4', { each: true }) roleIds!: string[];
+  @IsString() @MinLength(3) reason!: string;
+}

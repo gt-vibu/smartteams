@@ -46,18 +46,18 @@ export function AttendanceDetailDrawer({
           role="dialog"
           aria-labelledby="attendance-details-title"
           tabIndex={-1}
-          className="flex w-screen max-w-md flex-col justify-between border-l border-slate-200 bg-white shadow-2xl"
+          className="flex w-screen max-w-md flex-col justify-between border-l border-border bg-card shadow-2xl"
         >
           {/* Header */}
-          <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+          <div className="p-5 border-b border-border flex items-center justify-between bg-muted/40/70">
             <div>
               <h2
                 id="attendance-details-title"
-                className="!m-0 !text-sm !font-bold !text-slate-900"
+                className="!m-0 !text-sm !font-bold !text-foreground"
               >
                 Attendance Details
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">{row.date}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{row.date}</p>
             </div>
             <Button
               type="button"
@@ -65,7 +65,7 @@ export function AttendanceDetailDrawer({
               size="icon"
               aria-label="Close attendance details"
               onClick={onClose}
-              className="h-8 w-8 text-slate-400 hover:text-slate-700"
+              className="h-8 w-8 text-muted-foreground hover:text-foreground"
             >
               <svg
                 className="h-5 w-5"
@@ -82,24 +82,24 @@ export function AttendanceDetailDrawer({
           {/* Body Content */}
           <div className="p-5 space-y-5 flex-1 overflow-y-auto">
             {/* Shift & Status KPI Strip */}
-            <div className="bg-slate-50 border border-slate-200 rounded p-3.5 space-y-2">
+            <div className="bg-muted/40 border border-border rounded p-3.5 space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Shift</span>
-                <span className="font-semibold text-slate-800">{row.shift}</span>
+                <span className="text-muted-foreground font-medium">Shift</span>
+                <span className="font-semibold text-foreground">{row.shift}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Status</span>
-                <span className="font-semibold text-slate-800">{row.status}</span>
+                <span className="text-muted-foreground font-medium">Status</span>
+                <span className="font-semibold text-foreground">{row.status}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Total Worked</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="text-muted-foreground font-medium">Total Worked</span>
+                <span className="font-mono font-bold text-foreground">
                   {row.totalHours !== '-' ? `${row.totalHours} Hrs` : '-'}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Payable Hours</span>
-                <span className="font-mono font-semibold text-slate-800">
+                <span className="text-muted-foreground font-medium">Payable Hours</span>
+                <span className="font-mono font-semibold text-foreground">
                   {row.payableHours !== '-' ? `${row.payableHours} Hrs` : '-'}
                 </span>
               </div>
@@ -107,7 +107,7 @@ export function AttendanceDetailDrawer({
 
             {/* Clock Event Telemetry Logs */}
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">
+              <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2.5">
                 Punches / Clock Events
               </div>
               {row.punches && row.punches.length > 0 ? (
@@ -115,7 +115,7 @@ export function AttendanceDetailDrawer({
                   {row.punches.map((p, i) => (
                     <div
                       key={i}
-                      className="p-2.5 rounded border border-slate-200 bg-white flex items-center justify-between text-xs shadow-2xs"
+                      className="p-2.5 rounded border border-border bg-card flex items-center justify-between text-xs shadow-2xs"
                     >
                       <div className="flex items-center gap-2">
                         <span
@@ -123,13 +123,13 @@ export function AttendanceDetailDrawer({
                             p.type === 'IN' ? 'bg-emerald-500' : 'bg-rose-500'
                           }`}
                         />
-                        <span className="font-semibold text-slate-800">
+                        <span className="font-semibold text-foreground">
                           {p.type === 'IN' ? 'Check In' : 'Check Out'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-slate-500 font-mono">
+                      <div className="flex items-center gap-2 text-muted-foreground font-mono">
                         <span>{p.time}</span>
-                        <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded font-sans text-slate-600">
+                        <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-sans text-muted-foreground">
                           {p.source}
                         </span>
                       </div>
@@ -137,16 +137,16 @@ export function AttendanceDetailDrawer({
                   ))}
                 </div>
               ) : (
-                <div className="text-xs text-slate-400 italic py-2">
+                <div className="text-xs text-muted-foreground italic py-2">
                   No clock events recorded for this date.
                 </div>
               )}
             </div>
 
             {/* Regularization Form */}
-            <div className="pt-2 border-t border-slate-100">
-              <div className="text-xs font-bold text-slate-800 mb-1.5">Request Regularization</div>
-              <p className="text-[11px] text-slate-500 mb-2.5">
+            <div className="pt-2 border-t border-border">
+              <div className="text-xs font-bold text-foreground mb-1.5">Request Regularization</div>
+              <p className="text-[11px] text-muted-foreground mb-2.5">
                 Submit an attendance correction request for your reporting manager to review.
               </p>
               {submitted ? (
@@ -160,7 +160,7 @@ export function AttendanceDetailDrawer({
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Reason for regularization (min 10 characters)..."
-                    className="bg-slate-50 focus:bg-white"
+                    className="bg-muted/40 focus:bg-card"
                   />
                   <Button
                     type="button"

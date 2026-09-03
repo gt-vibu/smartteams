@@ -249,9 +249,17 @@ export class LeaveService {
     });
   }
 
-  async listBalances(context: DomainContext, employeeId?: string) {
+  async listBalances(context: DomainContext, requestedEmployeeId?: string) {
     requirePermission(context, 'leave.balances.read');
     return this.database.run(context, async (tx) => {
+      let employeeId = requestedEmployeeId;
+      if (!this.canReadAllEmployees(context, 'leave.balances.read.all')) {
+        const self = await this.selfEmployee(tx, context);
+        if (!self) return [];
+        if (employeeId && employeeId !== self.id)
+          throw new ConflictError('Employees may only read their own leave balances');
+        employeeId = self.id;
+      }
       if (employeeId) {
         const employee = await tx.employee.findFirst({
           where: {
@@ -312,11 +320,19 @@ export class LeaveService {
   }
   async listRequests(
     context: DomainContext,
-    employeeId?: string,
+    requestedEmployeeId?: string,
     pagination: { cursor?: string; limit?: number } = {},
   ) {
     requirePermission(context, 'leave.requests.read');
     return this.database.run(context, async (tx) => {
+      let employeeId = requestedEmployeeId;
+      if (!this.canReadAllEmployees(context, 'leave.requests.read.all')) {
+        const self = await this.selfEmployee(tx, context);
+        if (!self) return { requests: [], nextCursor: undefined };
+        if (employeeId && employeeId !== self.id)
+          throw new ConflictError('Employees may only read their own leave requests');
+        employeeId = self.id;
+      }
       const cursorId = pagination.cursor ? decodeLeaveCursor(pagination.cursor) : undefined;
       const limit = Math.min(pagination.limit ?? 100, 500);
       const requests = await tx.leaveRequest.findMany({
@@ -753,9 +769,16 @@ export class LeaveService {
           reason,
           leaveRequestId: request.id,
         });
+        // The days must return to `availableAmount` as well. Decrementing `usedAmount` alone
+        // left the employee with entitlement that was neither used, reserved, nor available —
+        // cancelling an approved leave silently destroyed the days it gave back.
         await tx.leaveBalance.update({
           where: { id: balance.id },
-          data: { usedAmount: { decrement: days }, version: { increment: 1 } },
+          data: {
+            usedAmount: { decrement: days },
+            availableAmount: { increment: days },
+            version: { increment: 1 },
+          },
         });
       }
       await this.audit.record(
@@ -934,6 +957,27 @@ export class LeaveService {
       return (type.monthlyAccrual ?? new Prisma.Decimal(0)).mul(months);
     }
     return new Prisma.Decimal(0);
+  }
+
+  /**
+   * Employee self-scoping, matching the convention already used by Timesheets, Compliance and
+   * Payroll: a plain `read` permission may only see the caller's own records, `<permission>.all`
+   * (or the tenant wildcard) may read other employees, and federation grants keep the read
+   * breadth their scope already carries.
+   */
+  private canReadAllEmployees(context: DomainContext, readAllPermission: string) {
+    return (
+      context.accessMode === 'FEDERATION' ||
+      context.permissions.has('*') ||
+      context.permissions.has(readAllPermission)
+    );
+  }
+
+  private selfEmployee(tx: Prisma.TransactionClient, context: DomainContext) {
+    return tx.employee.findFirst({
+      where: { organizationId: context.organizationId, userId: context.actor.userId },
+      select: { id: true },
+    });
   }
 
   private employeeScope(context: DomainContext): Prisma.EmployeeWhereInput {

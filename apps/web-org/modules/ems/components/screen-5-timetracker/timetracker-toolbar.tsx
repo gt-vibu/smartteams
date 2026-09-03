@@ -21,7 +21,7 @@ export function TimeTrackerToolbar({
   onNextMonth,
 }: TimeTrackerToolbarProps) {
   return (
-    <div className="flex w-full flex-col justify-between gap-2 border-b border-slate-200/90 bg-white/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
+    <div className="flex w-full flex-col justify-between gap-2 border-b border-border/90 bg-card/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
       <Tabs aria-label="Time tracking views" onValueChange={onSelectSubTab} value={activeSubTab}>
         <TabsList className="h-auto gap-4 overflow-x-auto bg-transparent p-0 sm:gap-5">
           {TABS.map((tab) => (
@@ -37,12 +37,12 @@ export function TimeTrackerToolbar({
       </Tabs>
 
       <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-2.5">
-        <div className="flex items-center rounded border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-xs">
+        <div className="flex items-center rounded border border-border bg-card px-2 py-1 text-xs font-semibold text-foreground shadow-xs">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
+            className="h-7 w-7 p-0.5 text-muted-foreground hover:text-foreground"
             title="Previous month"
             aria-label="Previous month"
             onClick={onPrevMonth}
@@ -58,12 +58,12 @@ export function TimeTrackerToolbar({
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </Button>
-          <span className="px-2 font-bold text-slate-800">{monthName}</span>
+          <span className="px-2 font-bold text-foreground">{monthName}</span>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
+            className="h-7 w-7 p-0.5 text-muted-foreground hover:text-foreground"
             title="Next month"
             aria-label="Next month"
             onClick={onNextMonth}

@@ -16,7 +16,7 @@ export function TimeLogTable({ logs, onSelectLog }: TimeLogTableProps) {
       accessorKey: 'jobName',
       sortable: true,
       pinned: 'left',
-      cell: (log) => <span className="font-semibold text-slate-900">{log.jobName}</span>,
+      cell: (log) => <span className="font-semibold text-foreground">{log.jobName}</span>,
     },
     {
       id: 'projectName',
@@ -24,14 +24,14 @@ export function TimeLogTable({ logs, onSelectLog }: TimeLogTableProps) {
       accessorKey: 'projectName',
       sortable: true,
       filterable: true,
-      cell: (log) => <span className="font-medium text-slate-700">{log.projectName}</span>,
+      cell: (log) => <span className="font-medium text-foreground">{log.projectName}</span>,
     },
     {
       id: 'duration',
       header: 'Duration',
       accessorKey: 'duration',
       sortable: true,
-      cell: (log) => <span className="font-mono font-bold text-slate-800">{log.duration}</span>,
+      cell: (log) => <span className="font-mono font-bold text-foreground">{log.duration}</span>,
     },
     {
       id: 'isBillable',
@@ -47,7 +47,7 @@ export function TimeLogTable({ logs, onSelectLog }: TimeLogTableProps) {
           className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ${
             log.isBillable
               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80'
-              : 'bg-slate-100 text-slate-600 border border-slate-200'
+              : 'bg-muted text-muted-foreground border border-border'
           }`}
         >
           {log.isBillable ? 'Billable' : 'Non-billable'}

@@ -6,6 +6,7 @@ import {
   PayComponentAssignmentDto,
   PayComponentDto,
   PayrollActionDto,
+  PayrollCorrectionDto,
   PayrollAdjustmentDto,
   PayrollPayslipQueryDto,
   PayrollRunDto,
@@ -106,5 +107,21 @@ export class PayrollController {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.comment)
       .then((context) => this.payroll.advance(context, runId, body.target, body.comment));
+  }
+
+  /**
+   * Supersedes a released run with a correction. Its own route rather than an `action` target,
+   * because it creates a second run and returns both — the superseded original and the
+   * replacement draft.
+   */
+  @Post('runs/:runId/correct') correct(
+    @Param('organizationId') organizationId: string,
+    @Param('runId') runId: string,
+    @Body() body: PayrollCorrectionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.payroll.correct(context, runId, body.reason));
   }
 }

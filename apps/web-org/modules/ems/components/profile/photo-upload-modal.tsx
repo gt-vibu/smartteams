@@ -1,9 +1,7 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import {
-  Alert,
-  AlertDescription,
   Button,
   Dialog,
   DialogContent,
@@ -11,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
+  Icon,
 } from '@smarteam/ui';
 import { useEmployee } from '../../hooks/use-employee';
 
@@ -20,92 +18,50 @@ interface PhotoUploadModalProps {
   onClose: () => void;
 }
 
+/**
+ * Profile photo.
+ *
+ * The backend has no avatar capability: `Employee` has no image field, and while the files
+ * module can store an upload there is nothing to associate it with. The previous version wrote
+ * a data URL to localStorage, which looked like it saved but was per-browser and invisible to
+ * anyone else.
+ *
+ * Rather than keep a control that silently fails, this states the position plainly. The rest of
+ * the product renders initials, which is a complete and consistent identity treatment.
+ */
 export function PhotoUploadModal({ isOpen, onClose }: PhotoUploadModalProps) {
-  const { employee, updateAvatar } = useEmployee();
-  const [previewUrl, setPreviewUrl] = useState<string | null>(employee.avatarUrl ?? null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-      setErrorMessage('Please select a valid PNG, JPG, or WEBP image.');
-      return;
-    }
-    if (file.size > 4 * 1024 * 1024) {
-      setErrorMessage('File size exceeds 4MB. Please choose a smaller image.');
-      return;
-    }
-    setErrorMessage(null);
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') setPreviewUrl(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleSave = () => {
-    updateAvatar(previewUrl);
-    onClose();
-  };
-
-  const handleRemove = () => {
-    updateAvatar(null);
-    setPreviewUrl(null);
-    onClose();
-  };
+  const { initials } = useEmployee();
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Update Profile Photo</DialogTitle>
-          <DialogDescription>Upload a PNG, JPG, or WEBP image up to 4MB.</DialogDescription>
+          <DialogTitle>Profile photo</DialogTitle>
+          <DialogDescription>
+            Photo uploads are not available yet. Your initials are shown across Smarteam in the
+            meantime.
+          </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4 text-center">
-          <div className="flex justify-center">
-            <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-background bg-slate-900 text-3xl font-bold text-white shadow-md">
-              {previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Profile preview"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                employee.firstName.charAt(0)
-              )}
-            </div>
-          </div>
-          <Input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileChange}
-            accept="image/png,image/jpeg,image/webp"
-            className="hidden"
-          />
-          <div className="flex justify-center gap-3">
-            <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()}>
-              Choose Photo
-            </Button>
-            {previewUrl && (
-              <Button type="button" variant="outline" onClick={handleRemove}>
-                Remove
-              </Button>
-            )}
-          </div>
-          {errorMessage && (
-            <Alert variant="destructive">
-              <AlertDescription>{errorMessage}</AlertDescription>
-            </Alert>
-          )}
+
+        <div className="flex items-center gap-4 py-2">
+          <span
+            aria-hidden="true"
+            className="grid size-16 shrink-0 place-items-center rounded-full bg-primary/10 text-xl font-bold text-primary"
+          >
+            {initials}
+          </span>
+          <p className="flex items-start gap-2 text-xs leading-5 text-muted-foreground">
+            <Icon className="mt-0.5 size-4 shrink-0" name="warning" />
+            <span>
+              We will enable photo uploads once avatar storage is available. Nothing is lost — there
+              is no photo saved today.
+            </span>
+          </p>
         </div>
+
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="button" onClick={handleSave} disabled={Boolean(errorMessage)}>
-            Save Photo
+          <Button onClick={onClose} type="button" variant="outline">
+            Close
           </Button>
         </DialogFooter>
       </DialogContent>

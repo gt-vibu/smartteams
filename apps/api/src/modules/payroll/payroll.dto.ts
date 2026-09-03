@@ -53,8 +53,13 @@ export class PayrollAdjustmentDto {
   @IsOptional() @IsString() externalId?: string;
 }
 export class PayrollActionDto {
-  @IsEnum(['CALCULATED', 'APPROVED', 'RELEASED', 'LOCKED']) target!: PayrollRunStatus;
+  // CORRECTED is deliberately absent: correcting creates a replacement run, so it has its own
+  // route rather than pretending to be a status move.
+  @IsEnum(['CALCULATED', 'APPROVED', 'RELEASED', 'LOCKED', 'VOIDED']) target!: PayrollRunStatus;
   @IsString() @MinLength(3) comment!: string;
+}
+export class PayrollCorrectionDto {
+  @IsString() @MinLength(10) reason!: string;
 }
 export class PayrollCalendarDto {
   @IsOptional() @IsDateString() periodStart?: string;

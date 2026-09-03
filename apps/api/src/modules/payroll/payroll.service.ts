@@ -29,6 +29,7 @@ import {
   sumTimesheets,
   summarizeLeave,
   summarizeAttendance,
+  unemployedDays,
   payrollTransitionPermission,
   validTransition,
 } from './payroll-calculation';
@@ -573,8 +574,14 @@ export class PayrollService {
       const run = await tx.payrollRun.findFirst({
         where: { id: runId, organizationId: context.organizationId },
       });
-      if (!run || run.status !== PayrollRunStatus.DRAFT)
-        throw new ConflictError('Only a draft payroll run can be calculated');
+      // A calculated run is recalculable only while it is marked stale: an input changed after the
+      // figures were produced, so the figures have to catch up before anyone can approve them.
+      const recalculable =
+        run?.status === PayrollRunStatus.CALCULATED && run.calculationStaleAt !== null;
+      if (!run || !(run.status === PayrollRunStatus.DRAFT || recalculable))
+        throw new ConflictError(
+          'Only a draft payroll run, or a calculated run with pending changes, can be calculated',
+        );
       const unapproved = await tx.timesheet.count({
         where: {
           organizationId: context.organizationId,
@@ -732,6 +739,13 @@ export class PayrollService {
           attendance: summarizeAttendance(
             attendanceRecords.filter((record) => record.employeeId === employee.id),
           ),
+          // Days in the period before joining or after leaving. Priced exactly like unpaid leave.
+          unemployedDays: unemployedDays(
+            run.periodStart,
+            run.periodEnd,
+            employee.dateOfJoining,
+            employee.dateOfLeaving,
+          ),
           periodWorkingDays: countWorkingDays(
             run.periodStart,
             run.periodEnd,
@@ -765,6 +779,15 @@ export class PayrollService {
       }
       await tx.salaryAdvanceRecovery.deleteMany({ where: { payrollRunId: run.id } });
       await tx.payrollPayment.deleteMany({ where: { payrollRunId: run.id } });
+      // Component rows hold the line item under `onDelete: Restrict`, so they go first. This only
+      // bites on a recalculation of an employee who has assigned pay components — the path that
+      // opened when a stale run became recalculable.
+      await tx.payrollLineItemComponent.deleteMany({
+        where: {
+          organizationId: context.organizationId,
+          payrollLineItem: { payrollRunId: run.id },
+        },
+      });
       await tx.payrollLineItem.deleteMany({ where: { payrollRunId: run.id } });
       const lines = [];
       for (const item of snapshot)
@@ -793,6 +816,7 @@ export class PayrollService {
           inputSnapshotHash,
           calculationHash,
           calculatedAt: new Date(),
+          calculationStaleAt: null,
           version: { increment: 1 },
         },
       });
@@ -854,6 +878,11 @@ export class PayrollService {
       if (!employee) throw new NotFoundError('Employee');
       if (!Number.isFinite(input.amount) || input.amount < 0)
         throw new ConflictError('Payroll adjustment amount must be a non-negative number');
+      if (run.status === PayrollRunStatus.CALCULATED)
+        await tx.payrollRun.update({
+          where: { id: run.id },
+          data: { calculationStaleAt: new Date(), version: { increment: 1 } },
+        });
       const adjustment = await tx.payrollAdjustment.create({
         data: {
           organizationId: context.organizationId,
@@ -884,6 +913,88 @@ export class PayrollService {
     });
   }
 
+  /**
+   * Supersedes a released payroll run with a correction.
+   *
+   * PRD FR-38: payroll must never be mutable retroactively, and a correction must preserve the
+   * original and the correction as separate auditable entries. So nothing about the released run
+   * changes except its status — its line items, payslips and payments stay exactly as paid — and
+   * the correction is a fresh draft for the same period, linked back by `correctionOfRunId`.
+   *
+   * Until now `CORRECTED` was a state nothing could reach: a wrong figure that got as far as
+   * release was permanent. The schema always carried the self-relation for this; only the
+   * transition was missing.
+   *
+   * The replacement starts as a DRAFT, so it goes through calculate, approve and release like any
+   * other run rather than appearing as an already-blessed set of numbers.
+   */
+  async correct(context: DomainContext, runId: string, reason: string) {
+    requirePermission(context, 'payroll.runs.correct');
+    requireReason({ ...context, reason }, 'A payroll correction requires a reason');
+    return this.database.run(context, async (tx) => {
+      const original = await tx.payrollRun.findFirst({
+        where: { id: runId, organizationId: context.organizationId },
+      });
+      if (!original || !validTransition(original.status, PayrollRunStatus.CORRECTED))
+        throw new ConflictError(
+          `Only a released or locked payroll run can be corrected; this one is ${original?.status ?? 'missing'}`,
+        );
+
+      // One live run per period at a time. The database unique now spans the correction link so a
+      // replacement can exist alongside its original, which means "no second active run" is this
+      // service's job to hold.
+      const active = await tx.payrollRun.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          periodStart: original.periodStart,
+          periodEnd: original.periodEnd,
+          status: {
+            in: [PayrollRunStatus.DRAFT, PayrollRunStatus.CALCULATED, PayrollRunStatus.APPROVED],
+          },
+        },
+      });
+      if (active)
+        throw new ConflictError(
+          'A payroll run for this period is already open; finish or void it before correcting',
+        );
+
+      const superseded = await tx.payrollRun.update({
+        where: { id: original.id },
+        data: { status: PayrollRunStatus.CORRECTED, version: { increment: 1 } },
+      });
+
+      const replacement = await tx.payrollRun.create({
+        data: {
+          organizationId: context.organizationId,
+          periodStart: original.periodStart,
+          periodEnd: original.periodEnd,
+          payFrequency: original.payFrequency,
+          currencyCode: original.currencyCode,
+          approvalPolicyId: original.approvalPolicyId,
+          status: PayrollRunStatus.DRAFT,
+          calculationVersion: original.calculationVersion,
+          inputSnapshotHash: original.inputSnapshotHash,
+          correctionOfRunId: original.id,
+          createdByUserId: context.actor.userId,
+        },
+      });
+
+      await this.audit.record(
+        context,
+        {
+          entityType: 'PAYROLL_RUN',
+          entityId: original.id,
+          action: 'PAYROLL_RUN_CORRECTED',
+          beforeState: jsonSnapshot(original),
+          afterState: jsonSnapshot({ superseded, replacementRunId: replacement.id }),
+          reason,
+        },
+        tx,
+      );
+      return { superseded, replacement };
+    });
+  }
+
   async advance(context: DomainContext, runId: string, target: PayrollRunStatus, comment: string) {
     requirePermission(context, payrollTransitionPermission(target));
     requireReason({ ...context, reason: comment }, 'Payroll state changes require a reason');
@@ -894,6 +1005,10 @@ export class PayrollService {
       if (!run || !validTransition(run.status, target))
         throw new ConflictError(
           `Invalid payroll transition from ${run?.status ?? 'missing'} to ${target}`,
+        );
+      if (run.calculationStaleAt)
+        throw new ConflictError(
+          'Payroll inputs changed after this run was calculated; calculate it again before approving or releasing it',
         );
       const updated = await tx.payrollRun.update({
         where: { id: run.id },
@@ -990,6 +1105,7 @@ export class PayrollService {
       timesheet: { regularMinutes: number; overtimeMinutes: number } | null;
       leave: { paidDays: number; unpaidDays: number };
       attendance: { absentDays: number; halfDays: number };
+      unemployedDays: number;
       periodWorkingDays: number;
       adjustments: Array<{
         type: PayrollAdjustmentType;
@@ -1013,9 +1129,14 @@ export class PayrollService {
       roundingMode: item.policy.roundingMode,
     });
     const unpaidAttendanceDays = item.attendance.absentDays + item.attendance.halfDays / 2;
+    // `payrollDayBasis` is a fixed monthly divisor, so every unpaid day — leave, absence, or a day
+    // outside employment — costs one basis-day of gross.
     const payableDays = Math.max(
       0,
-      item.policy.payrollDayBasis - item.leave.unpaidDays - unpaidAttendanceDays,
+      item.policy.payrollDayBasis -
+        item.leave.unpaidDays -
+        unpaidAttendanceDays -
+        item.unemployedDays,
     );
     const proratedStructure = prorateSalaryStructure(
       monthlyStructure,

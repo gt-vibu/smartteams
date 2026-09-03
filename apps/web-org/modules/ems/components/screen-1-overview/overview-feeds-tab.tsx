@@ -96,7 +96,7 @@ export function OverviewFeedsTab() {
   return (
     <div className="space-y-4">
       {/* Create Post Card */}
-      <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+      <div className="bg-card rounded-[6px] border border-border/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
         <form onSubmit={handleCreatePost} className="space-y-3">
           <div className="flex items-start gap-3">
             <div className="h-8 w-8 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
@@ -107,12 +107,12 @@ export function OverviewFeedsTab() {
               onChange={(e) => setNewPostContent(e.target.value)}
               placeholder="Share an update, shoutout, or announcement with your team..."
               rows={2}
-              className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded focus:ring-1 focus:ring-sky-500 focus:bg-white focus:outline-none transition-colors"
+              className="w-full text-xs p-2.5 bg-muted/40 border border-border rounded focus:ring-1 focus:ring-sky-500 focus:bg-card focus:outline-none transition-colors"
             />
           </div>
-          <div className="flex items-center justify-between pt-1 border-t border-slate-100">
-            <div className="flex items-center gap-2 text-slate-400 text-xs">
-              <span className="inline-flex items-center gap-1 text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">
+          <div className="flex items-center justify-between pt-1 border-t border-border">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs">
+              <span className="inline-flex items-center gap-1 text-[11px] bg-muted text-muted-foreground px-2 py-0.5 rounded font-medium">
                 Public · Smarteam Org
               </span>
             </div>
@@ -134,7 +134,7 @@ export function OverviewFeedsTab() {
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-white rounded-[6px] border border-slate-200/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] space-y-3"
+            className="bg-card rounded-[6px] border border-border/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] space-y-3"
           >
             {/* Author Header */}
             <div className="flex items-center justify-between">
@@ -143,8 +143,8 @@ export function OverviewFeedsTab() {
                   {post.avatar}
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">{post.author}</div>
-                  <div className="text-[10px] text-slate-500">
+                  <div className="text-xs font-bold text-foreground">{post.author}</div>
+                  <div className="text-[10px] text-muted-foreground">
                     {post.role} · {post.time}
                   </div>
                 </div>
@@ -163,16 +163,16 @@ export function OverviewFeedsTab() {
             </div>
 
             {/* Content */}
-            <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
+            <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">
               {post.content}
             </p>
 
             {/* Action Bar */}
-            <div className="flex items-center gap-4 pt-2 border-t border-slate-100 text-xs text-slate-500">
+            <div className="flex items-center gap-4 pt-2 border-t border-border text-xs text-muted-foreground">
               <Button
                 onClick={() => handleLike(post.id)}
                 className={`flex items-center gap-1.5 font-medium transition-colors cursor-pointer ${
-                  post.hasLiked ? 'text-sky-600 font-bold' : 'hover:text-slate-800'
+                  post.hasLiked ? 'text-sky-600 font-bold' : 'hover:text-foreground'
                 }`}
               >
                 <svg
@@ -193,7 +193,7 @@ export function OverviewFeedsTab() {
                 </span>
               </Button>
 
-              <div className="flex items-center gap-1.5 font-medium hover:text-slate-800 cursor-pointer">
+              <div className="flex items-center gap-1.5 font-medium hover:text-foreground cursor-pointer">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"

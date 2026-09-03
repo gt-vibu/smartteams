@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
-import { useTeams } from '../../hooks/use-teams';
+import { useMyTeams } from '../../hooks/use-teams';
 
 interface ContextBarProps {
   activeSpace: string;
@@ -23,7 +23,7 @@ export function ContextBar({
   onNavigateModule,
 }: ContextBarProps) {
   const { persona, workspaceContext } = useAuth();
-  const { primaryTeam } = useTeams();
+  const { primaryTeam } = useMyTeams();
 
   const getModuleLabel = (mod: string) => {
     switch (mod) {

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { EmsLayout } from './components/layout/ems-layout';
 import { Screen1Overview } from './components/screen-1-overview/screen-1-overview';
 import { Screen2Timeline } from './components/screen-2-attendance/screen-2-timeline';
@@ -19,6 +19,8 @@ import { ScreenLeaveAdmin } from './components/screen-leave/screen-leave-admin';
 import { ScreenAttendanceAdmin } from './components/screen-attendance/screen-attendance-admin';
 import { ScreenTimesheetsAdmin } from './components/screen-timesheet/screen-timesheets-admin';
 import { ScreenPayrollAdmin } from './components/screen-payroll/screen-payroll-admin';
+import { ScreenShifts } from './components/screen-shifts/screen-shifts';
+import { ScreenHolidays } from './components/screen-holidays/screen-holidays';
 import { LoginScreen } from './components/auth/login-screen';
 import { useEmsNavigation } from './hooks/use-ems-navigation';
 import { AuthProvider, useSession } from './hooks/auth-context';
@@ -37,8 +39,16 @@ export function EmsWorkspace() {
 function EmsWorkspaceInner() {
   // The shell is the one place the unauthenticated case is expected, so it reads the session
   // directly rather than through `useAuth`, which asserts a signed-in persona.
-  const { isAuthenticated, isRestoring, login, canAccessSpace, canAccessModule, workspaceContext } =
-    useSession();
+  const {
+    isAuthenticated,
+    isRestoring,
+    login,
+    canAccessSpace,
+    canAccessModule,
+    canSwitchWorkspace,
+    switchWorkspace,
+    workspaceContext,
+  } = useSession();
   useTheme(); // Initialize and apply persisted theme (dark / light) on mount
 
   const {
@@ -48,9 +58,19 @@ function EmsWorkspaceInner() {
     orgActiveTab,
     navigateToSpace,
     navigateToModule,
-    navigateToOrgTab,
     setAttendanceViewMode,
   } = useEmsNavigation();
+
+  // A space the URL asks for but the current workspace mode does not contain.
+  //
+  // Spaces are filtered by mode — Organization exists in ADMIN, My Space and Team in EMPLOYEE — so
+  // an administrator whose last choice was the employee view followed an /?space=organization link
+  // and silently landed on My Space instead. Switching the mode to match honours the link; someone
+  // who cannot switch is unaffected and still falls back below.
+  const requestedSpaceNeedsAdmin = activeSpace === 'Organization' && workspaceContext !== 'ADMIN';
+  useEffect(() => {
+    if (isAuthenticated && requestedSpaceNeedsAdmin && canSwitchWorkspace) switchWorkspace('ADMIN');
+  }, [isAuthenticated, requestedSpaceNeedsAdmin, canSwitchWorkspace, switchWorkspace]);
 
   // Avoid flashing the sign-in screen while the session is being restored from the API.
   if (isRestoring) return <WorkspaceLoading />;
@@ -77,13 +97,7 @@ function EmsWorkspaceInner() {
       {effectiveSpace === 'Organization' && (
         <>
           {effectiveModule === 'home' && (
-            <OrganizationWorkspace
-              activeTab={orgActiveTab}
-              onSelectTab={navigateToOrgTab}
-              onNavigateModule={(moduleId) => {
-                navigateToModule(moduleId);
-              }}
-            />
+            <OrganizationWorkspace onNavigateModule={navigateToModule} />
           )}
 
           {effectiveModule === 'onboarding' && <ScreenOnboarding />}
@@ -99,6 +113,10 @@ function EmsWorkspaceInner() {
           {effectiveModule === 'projects' && <ScreenProjects />}
 
           {effectiveModule === 'payroll' && <ScreenPayrollAdmin />}
+
+          {effectiveModule === 'shifts' && <ScreenShifts />}
+
+          {effectiveModule === 'holidays' && <ScreenHolidays />}
 
           {effectiveModule === 'approvals' && <ScreenApprovals />}
 
@@ -153,7 +171,7 @@ function EmsWorkspaceInner() {
 
 function WorkspaceLoading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0B1120] text-sm text-slate-400">
+    <div className="flex min-h-screen items-center justify-center bg-[#0B1120] text-sm text-muted-foreground">
       Restoring your session…
     </div>
   );

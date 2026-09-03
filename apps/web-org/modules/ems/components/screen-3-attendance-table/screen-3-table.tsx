@@ -15,7 +15,7 @@ interface Screen3TableProps {
 }
 
 export function Screen3Table({ onToggleView }: Screen3TableProps) {
-  const { records, punches, regularize } = useAttendance();
+  const { days: records, requestCorrection, canRequestCorrection } = useAttendance();
   const [selectedRow, setSelectedRow] = useState<AttendanceTableRow | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -24,7 +24,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   // Map attendance records to AttendanceTableRow
   const rows: AttendanceTableRow[] = useMemo(() => {
     return records.map((r) => {
-      const dayPunches = punches.filter((p) => p.date === r.workDate);
+      const dayPunches = r.record.punches ?? [];
       return {
         id: r.id,
         date: `${r.dayLabel}-${r.workDate.slice(0, 4)}`,
@@ -36,26 +36,24 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
                 .toString()
                 .padStart(2, '0')}:${(r.workedMinutes % 60).toString().padStart(2, '0')}`
             : '-',
-        payableHours: r.payableHours,
-        overtime: r.overtime,
-        status:
-          r.holidayName ||
-          (r.dayStatus === 'PRESENT'
-            ? 'Present'
-            : r.dayStatus === 'WEEKEND'
-              ? 'Weekend'
-              : r.dayStatus),
-        statusType: r.statusType,
-        shift: r.shiftName || 'General Shift',
-        canRegularize: r.canRegularize,
+        payableHours: r.workedLabel,
+        overtime: r.overtimeLabel,
+        status: r.dayStatus === 'PRESENT' ? 'Present' : r.dayStatus,
+        statusType: r.workedMinutes > 0 ? 'present' : r.isWeekend ? 'weekend' : 'empty',
+        // Shift assignment is not wired, so the row states that rather than naming a shift.
+        shift: r.shiftName ?? 'Not recorded',
+        canRegularize: canRequestCorrection && r.correctionStatus !== 'PENDING',
         punches: dayPunches.map((p) => ({
-          type: p.type,
-          time: p.time,
-          source: p.source,
+          type: p.punchType === 'IN' ? ('IN' as const) : ('OUT' as const),
+          time: new Date(p.occurredAt).toLocaleTimeString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          source: p.source ?? 'NATIVE',
         })),
       };
     });
-  }, [records, punches]);
+  }, [records, canRequestCorrection]);
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -86,8 +84,10 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   const dateRange = formatDateRangeFromValues(records.map((record) => record.workDate));
 
   const handleRegularize = (recordId: string, reason: string) => {
-    regularize(recordId, reason);
-    setSelectedRow(null);
+    // The drawer closes once the request has actually been accepted, not before.
+    void requestCorrection(recordId, reason).then((raised) => {
+      if (raised) setSelectedRow(null);
+    });
   };
 
   return (
@@ -108,7 +108,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
       <div className="w-full min-w-0 max-w-[1380px] mx-auto px-3 sm:px-6 pb-6 space-y-3.5 pt-3.5">
         {/* Optional Filter Controls Bar */}
         {isFilterActive && (
-          <div className="bg-white border border-slate-200 rounded-[6px] p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+          <div className="bg-card border border-border rounded-[6px] p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                 Filter Status:
@@ -153,9 +153,11 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
         {filteredRows.length > 0 ? (
           <AttendanceTableView rows={filteredRows} onSelectRow={(row) => setSelectedRow(row)} />
         ) : (
-          <div className="bg-white rounded-[6px] border border-slate-200/90 p-8 text-center space-y-2">
-            <div className="text-sm font-bold text-slate-700">No attendance records found</div>
-            <p className="text-xs text-slate-500">Try adjusting your filters or date range.</p>
+          <div className="bg-card rounded-[6px] border border-border/90 p-8 text-center space-y-2">
+            <div className="text-sm font-bold text-foreground">No attendance records found</div>
+            <p className="text-xs text-muted-foreground">
+              Try adjusting your filters or date range.
+            </p>
           </div>
         )}
 

@@ -4,11 +4,11 @@
 @source '../../../packages/ui/src/**/*.{js,ts,jsx,tsx}';
 
 :root {
-  --background: oklch(0.975 0.014 88);
+  --background: oklch(0.977 0.003 247);
   --foreground: oklch(0.23 0.035 165);
-  --card: oklch(0.995 0.006 88);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.23 0.035 165);
-  --popover: oklch(0.995 0.006 88);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.23 0.035 165);
   --primary: var(--smarteam-primary);
   --primary-foreground: var(--smarteam-primary-foreground);
@@ -19,13 +19,17 @@
   --accent: oklch(0.72 0.12 72);
   --accent-foreground: oklch(0.25 0.045 72);
   --destructive: oklch(0.56 0.17 27);
-  --destructive-foreground: oklch(0.985 0.01 88);
+  --destructive-foreground: oklch(0.985 0 0);
   --warning: oklch(0.77 0.15 78);
   --warning-foreground: oklch(0.34 0.075 70);
   --success: oklch(0.61 0.13 153);
   --success-foreground: oklch(0.3 0.07 153);
   --border: oklch(0.23 0.035 165 / 0.14);
   --input: oklch(0.23 0.035 165 / 0.2);
+  /* Control surface for inputs. Neutral by intent: the page canvas is a warm off-white, and a
+     field that inherits that tint reads as discoloured. */
+  --input-surface: oklch(1 0 0);
+  --input-surface-disabled: oklch(0.97 0.004 240);
   --ring: var(--smarteam-primary);
   --radius: 0.75rem;
   --sidebar: oklch(0.17 0.045 165);
@@ -57,6 +61,8 @@
   --color-success-foreground: var(--success-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-input-surface: var(--input-surface);
+  --color-input-surface-disabled: var(--input-surface-disabled);
   --color-ring: var(--ring);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);

@@ -6,6 +6,7 @@ import { AttendanceActionBar } from './attendance-action-bar';
 import { TimelineTrackView } from './timeline-track-view';
 import { AttendanceSummaryFooter } from './attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
+import { toTimelineStatus } from '../../services/attendance-view';
 import { formatDateRangeFromValues } from '../../utils/formatters';
 
 interface Screen2TimelineProps {
@@ -13,7 +14,7 @@ interface Screen2TimelineProps {
 }
 
 export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
-  const { records } = useAttendance();
+  const { days: records } = useAttendance();
 
   const timelineDays = records.map((r) => ({
     id: r.id,
@@ -24,11 +25,11 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     firstInTime: r.firstInTime || undefined,
     lastOutTime: r.lastOutTime || undefined,
     workedMinutes: r.workedMinutes,
-    status: r.dayStatus === 'ON_DUTY' ? 'PRESENT' : r.dayStatus,
-    holidayName: r.holidayName,
-    isRestrictedHoliday: r.isRestrictedHoliday,
-    spanStartPercent: r.spanStartPercent ?? (r.firstInTime ? 0 : undefined),
-    spanEndPercent: r.spanEndPercent ?? (r.lastOutTime ? 100 : r.isToday ? 48 : undefined),
+    status: toTimelineStatus(r.dayStatus),
+    // Holiday naming is not wired; the bar is drawn from the punches alone.
+    holidayName: r.holidayName ?? undefined,
+    spanStartPercent: r.spanStartPercent ?? undefined,
+    spanEndPercent: r.spanEndPercent ?? undefined,
   }));
 
   const stats = {

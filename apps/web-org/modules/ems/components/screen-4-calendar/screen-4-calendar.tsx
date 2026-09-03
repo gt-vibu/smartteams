@@ -5,18 +5,19 @@ import { CalendarToolbar } from './calendar-toolbar';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarDetailDrawer } from './calendar-detail-drawer';
 import { useAttendance } from '../../hooks/use-attendance';
+import { toCalendarStatus } from '../../services/attendance-view';
 import type { CalendarDayItem } from '../../types/calendar.types';
-import holidaysFixture from '../../data/fixtures/holidays.json';
 
 interface Screen4CalendarProps {
   onToggleView?: (view: 'timeline' | 'table' | 'calendar') => void;
 }
 
 export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
-  const { records, punches, liveState } = useAttendance();
+  const { days: records } = useAttendance();
   const [selectedDay, setSelectedDay] = useState<CalendarDayItem | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [viewDate, setViewDate] = useState(() => new Date(2026, 7, 1));
+  // Open on the current month rather than a hardcoded demo month.
+  const [viewDate, setViewDate] = useState(() => new Date());
 
   // Generate the visible month from attendance and holiday data.
   const calendarDays: CalendarDayItem[] = useMemo(() => {
@@ -42,46 +43,20 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
       const dayOfWeekNum = new Date(year, month, d).getDay();
       const isWeekend = dayOfWeekNum === 0 || dayOfWeekNum === 6;
       const isToday = dateStr === demoToday;
-      const monthName = new Date(year, month, d).toLocaleDateString('en-US', { month: 'short' });
 
-      const holiday = holidaysFixture.holidays.find(
-        (h) =>
-          h.holidayDate.startsWith(String(d).padStart(2, '0')) && h.holidayDate.includes(monthName),
-      );
-
-      // Find matching attendance record
+      // Find the attendance record the server returned for this date.
       const record = records.find((r) => r.workDate === dateStr);
-      const dayPunches = punches.filter((p) => p.date === dateStr);
+      const dayPunches = record?.record.punches ?? [];
 
-      let dayStatus: CalendarDayItem['dayStatus'] = 'EMPTY';
-      let hoursLabel: string | undefined = undefined;
-
-      if (isToday) {
-        dayStatus = 'PRESENT';
-        hoursLabel = liveState.isCheckedIn ? 'In (Active)' : '08:00 Hrs';
-      } else if (record) {
-        dayStatus =
-          record.dayStatus === 'ON_DUTY'
-            ? 'PRESENT'
-            : record.dayStatus === 'LEAVE'
-              ? 'ABSENT'
-              : record.dayStatus;
-        hoursLabel =
-          record.workedMinutes > 0
-            ? `${Math.floor(record.workedMinutes / 60)
-                .toString()
-                .padStart(2, '0')}:${(record.workedMinutes % 60).toString().padStart(2, '0')} Hrs`
-            : undefined;
-      } else if (holiday) {
-        dayStatus = 'HOLIDAY';
-      } else if (isWeekend) {
-        dayStatus = 'WEEKEND';
-      } else if (demoToday && dateStr < demoToday) {
-        dayStatus = 'PRESENT';
-        hoursLabel = '08:00 Hrs';
-      } else {
-        dayStatus = 'UPCOMING';
-      }
+      // A day with no record is EMPTY. The previous version showed "08:00 Hrs · Present" for
+      // every past weekday with no data, which invented a full day of work out of nothing.
+      const dayStatus: CalendarDayItem['dayStatus'] = record
+        ? toCalendarStatus(record.dayStatus)
+        : isWeekend
+          ? 'WEEKEND'
+          : demoToday && dateStr > demoToday
+            ? 'UPCOMING'
+            : 'EMPTY';
 
       days.push({
         date: dateStr,
@@ -89,26 +64,20 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         isCurrentMonth: true,
         isToday,
         dayStatus,
-        hoursLabel,
-        holidayName: holiday?.name || record?.holidayName,
-        isRestrictedHoliday: holiday?.isOptional || record?.isRestrictedHoliday,
-        shiftName: 'General Shift [ 10:00 AM - 6:00 PM ]',
+        hoursLabel: record && record.workedMinutes > 0 ? record.workedLabel : undefined,
+        // Holidays and shift assignment are not wired yet, so neither is claimed here.
+        shiftName: undefined,
         punches:
           dayPunches.length > 0
             ? dayPunches.map((p) => ({
-                type: p.type,
-                time: p.time,
-                source: p.source,
+                type: p.punchType === 'IN' ? ('IN' as const) : ('OUT' as const),
+                time: new Date(p.occurredAt).toLocaleTimeString(undefined, {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }),
+                source: p.source ?? 'NATIVE',
               }))
-            : isToday && liveState.firstPunchInTime
-              ? [
-                  {
-                    type: 'IN',
-                    time: liveState.firstPunchInTime,
-                    source: 'NATIVE',
-                  },
-                ]
-              : undefined,
+            : undefined,
       });
     }
 
@@ -127,7 +96,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     }
 
     return days;
-  }, [records, punches, liveState, viewDate]);
+  }, [records, viewDate]);
 
   const handleToday = () => {
     const today = records.find((record) => record.isToday)?.workDate;

@@ -24,6 +24,7 @@ import { AuthSessionService } from '../auth/auth.session.service';
 import { createHash } from 'node:crypto';
 import { EmployeeRecordsService } from './employee-records.service';
 import { toEmployeeDto } from './employee-mappers';
+import { assertMayReadEmployee, canReadAllEmployees, findSelfEmployeeId } from './employee-access';
 
 const externallyOwnedFields = new Set([
   'employeeNumber',
@@ -307,6 +308,9 @@ export class EmployeesService {
         include: { fieldOwnership: true, branchAssignments: true },
       });
       if (!employee) throw new NotFoundError('Employee');
+      // After the existence check, so an employee in another tenant reports as missing rather
+      // than as refused.
+      await assertMayReadEmployee(tx, context, employee.id);
       return {
         ...toEmployeeDto(employee),
         ownedFields: employee.fieldOwnership.map((ownership) => ({
@@ -318,14 +322,44 @@ export class EmployeesService {
     });
   }
 
-  async list(context: DomainContext) {
+  /**
+   * The employee directory.
+   *
+   * `employees.read` alone returns the caller's own record and nothing else. The tenant-wide
+   * directory needs `employees.read.all` or the wildcard, because these rows carry
+   * `personalEmail` and `phone` for every member of staff — the response is a full contact
+   * export, not a name list.
+   */
+  async list(context: DomainContext, filters: { limit?: number; cursor?: string } = {}) {
     requirePermission(context, 'employees.read');
+    // Capped server-side rather than trusted from the query: an unbounded read here loads every
+    // employee row into memory and holds the RLS transaction open for the whole serialisation.
+    const limit = Math.min(Math.max(filters.limit ?? 200, 1), 200);
     return this.database.run(context, async (tx) => {
+      if (!canReadAllEmployees(context)) {
+        const selfEmployeeId = await findSelfEmployeeId(tx, context);
+        // A user with no employee record of their own sees an empty directory, not everyone's.
+        if (!selfEmployeeId) return { items: [], nextCursor: undefined };
+        const self = await tx.employee.findFirst({
+          where: { id: selfEmployeeId, organizationId: context.organizationId },
+        });
+        return { items: self ? [toEmployeeDto(self)] : [], nextCursor: undefined };
+      }
       const employees = await tx.employee.findMany({
         where: { organizationId: context.organizationId },
-        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
+        // Paging needs a total order, and (lastName, firstName) is not unique — two people with
+        // the same name would make the cursor ambiguous and could skip or repeat a row. Id is
+        // the tiebreaker and the cursor.
+        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
+        ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
+        take: limit + 1,
       });
-      return employees.map((employee) => toEmployeeDto(employee));
+      const hasNextPage = employees.length > limit;
+      const page = employees.slice(0, limit);
+      return {
+        items: page.map((employee) => toEmployeeDto(employee)),
+        nextCursor: hasNextPage ? page.at(-1)?.id : undefined,
+      };
     });
   }
 
@@ -745,6 +779,10 @@ export class EmployeesService {
     });
   }
 
+  async listEmploymentRecords(context: DomainContext, employeeId: string) {
+    return this.records.listEmploymentRecords(context, employeeId);
+  }
+
   async listEmergencyContacts(context: DomainContext, employeeId: string) {
     return this.records.listEmergencyContacts(context, employeeId);
   }
@@ -794,6 +832,10 @@ export class EmployeesService {
     },
   ) {
     return this.records.addCompensation(context, employeeId, input);
+  }
+
+  async linkUser(context: DomainContext, employeeId: string, userId: string) {
+    return this.records.linkUser(context, employeeId, userId);
   }
 
   async assignManager(context: DomainContext, employeeId: string, managerEmployeeId: string) {

@@ -3,9 +3,10 @@
 import { Button, Input } from '@smarteam/ui';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { employeeDisplayName } from '@smarteam/contracts';
 import { useAuth } from '../../hooks/use-auth';
+import { useEmployees, useProjects } from '../../hooks/use-workforce';
 import { useAttendance } from '../../hooks/use-attendance';
-import projectsFixture from '../../data/fixtures/projects.json';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -26,14 +27,6 @@ interface CommandItem {
   onSelect: () => void;
 }
 
-interface ProjectSearchRecord {
-  id: string;
-  name: string;
-  code: string;
-  branchName: string;
-  status: string;
-}
-
 export function CommandPalette({
   isOpen,
   onClose,
@@ -43,7 +36,10 @@ export function CommandPalette({
   onSelectProject,
 }: CommandPaletteProps) {
   const { workspaceContext, isAssignedToAnyTeam, canAccessModule } = useAuth();
-  const { liveState, checkIn, checkOut } = useAttendance();
+  const { data: employeeList } = useEmployees();
+  const employees = employeeList ?? [];
+  const { data: projectList } = useProjects();
+  const { isCheckedIn, checkIn, checkOut } = useAttendance();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -123,7 +119,7 @@ export function CommandPalette({
         title: 'Go to Organization Hub',
         subtitle: 'Department directory, hierarchy & branches',
         category: 'Navigation',
-        icon: <span className="text-slate-400">🏢</span>,
+        icon: <span className="text-muted-foreground">🏢</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
           onClose();
@@ -134,7 +130,7 @@ export function CommandPalette({
         title: 'Go to Team Workspace',
         subtitle: 'View team squads and structure',
         category: 'Navigation',
-        icon: <span className="text-slate-400">👥</span>,
+        icon: <span className="text-muted-foreground">👥</span>,
         onSelect: () => {
           onNavigateSpace('Team');
           onClose();
@@ -146,8 +142,8 @@ export function CommandPalette({
     allItems.push(
       {
         id: 'act-punch',
-        title: liveState.isCheckedIn ? 'Check Out of Attendance' : 'Check In to Attendance',
-        subtitle: liveState.isCheckedIn ? 'Stop active session timer' : 'Start attendance timer',
+        title: isCheckedIn ? 'Check Out of Attendance' : 'Check In to Attendance',
+        subtitle: isCheckedIn ? 'Stop active session timer' : 'Start attendance timer',
         category: 'Actions',
         badge: 'Action',
         icon: (
@@ -166,8 +162,9 @@ export function CommandPalette({
           </svg>
         ),
         onSelect: () => {
-          if (liveState.isCheckedIn) checkOut('Checked out via Command Bar');
-          else checkIn('Checked in via Command Bar');
+          // The API records the punch itself; there is no note field on a punch.
+          if (isCheckedIn) void checkOut();
+          else void checkIn();
           onClose();
         },
       },
@@ -227,7 +224,7 @@ export function CommandPalette({
         title: 'Overview (Home)',
         subtitle: 'Personal dashboard, presence, and schedule',
         category: 'Navigation',
-        icon: <span className="text-slate-400">🏠</span>,
+        icon: <span className="text-muted-foreground">🏠</span>,
         onSelect: () => {
           onNavigateSpace('My Space');
           onNavigateModule('home');
@@ -239,7 +236,7 @@ export function CommandPalette({
         title: 'Attendance (Side Nav)',
         subtitle: 'Daily check-in timeline and attendance calendar',
         category: 'Navigation',
-        icon: <span className="text-slate-400">⏱️</span>,
+        icon: <span className="text-muted-foreground">⏱️</span>,
         onSelect: () => {
           onNavigateSpace('My Space');
           onNavigateModule('attendance');
@@ -251,7 +248,7 @@ export function CommandPalette({
         title: 'Time Off / Leave (Side Nav)',
         subtitle: 'Personal leave balances & applications',
         category: 'Navigation',
-        icon: <span className="text-slate-400">🌴</span>,
+        icon: <span className="text-muted-foreground">🌴</span>,
         onSelect: () => {
           onNavigateSpace('My Space');
           onNavigateModule('time-off');
@@ -263,7 +260,7 @@ export function CommandPalette({
         title: 'Timesheet Tracker (Side Nav)',
         subtitle: 'Weekly timesheet logs and timers',
         category: 'Navigation',
-        icon: <span className="text-slate-400">📅</span>,
+        icon: <span className="text-muted-foreground">📅</span>,
         onSelect: () => {
           onNavigateSpace('My Space');
           onNavigateModule('timesheet');
@@ -275,7 +272,7 @@ export function CommandPalette({
         title: 'Projects (Side Nav)',
         subtitle: 'Assigned project delivery squads',
         category: 'Navigation',
-        icon: <span className="text-slate-400">📂</span>,
+        icon: <span className="text-muted-foreground">📂</span>,
         onSelect: () => {
           onNavigateSpace('My Space');
           onNavigateModule('projects');
@@ -287,7 +284,7 @@ export function CommandPalette({
         title: 'Payroll / Payslips (Side Nav)',
         subtitle: 'Salary structure and payslip history',
         category: 'Navigation',
-        icon: <span className="text-slate-400">💳</span>,
+        icon: <span className="text-muted-foreground">💳</span>,
         onSelect: () => {
           onNavigateSpace('My Space');
           onNavigateModule('payroll');
@@ -303,7 +300,7 @@ export function CommandPalette({
         subtitle: 'Sign-off pending team leave and timesheet requests',
         category: 'Navigation',
         badge: 'Manager',
-        icon: <span className="text-slate-400">✅</span>,
+        icon: <span className="text-muted-foreground">✅</span>,
         onSelect: () => {
           onNavigateSpace('My Space');
           onNavigateModule('approvals');
@@ -318,7 +315,7 @@ export function CommandPalette({
         title: 'Team Space (Top Nav)',
         subtitle: 'View assigned squad roster and team topology',
         category: 'Navigation',
-        icon: <span className="text-slate-400">👥</span>,
+        icon: <span className="text-muted-foreground">👥</span>,
         onSelect: () => {
           onNavigateSpace('Team');
           onClose();
@@ -327,72 +324,30 @@ export function CommandPalette({
     }
   }
 
-  // Add People Directory Search Items
-  const people: CommandItem[] = [
-    {
-      id: 'emp-064',
-      title: 'Mithun Gowda H',
-      subtitle: 'Software Engineer · Engineering & Technology',
-      category: 'People',
-      icon: <span className="text-slate-400">👤</span>,
-      onSelect: () => {
-        onSelectEmployee?.('emp_064');
-        onClose();
-      },
+  // People come from the employees API. There is deliberately no fixture fallback: when the
+  // directory cannot be read the People section is simply empty rather than showing invented
+  // colleagues.
+  const people: CommandItem[] = employees.map((employee) => ({
+    id: employee.id,
+    title: employeeDisplayName(employee),
+    subtitle: employee.employeeNumber,
+    category: 'People',
+    icon: <span className="text-muted-foreground">👤</span>,
+    onSelect: () => {
+      onSelectEmployee?.(employee.id);
+      onClose();
     },
-    {
-      id: 'emp-009',
-      title: 'Ranjith Kumar C',
-      subtitle: 'Engineering Manager · Engineering & Technology',
-      category: 'People',
-      icon: <span className="text-slate-400">👤</span>,
-      onSelect: () => {
-        onSelectEmployee?.('emp_009');
-        onClose();
-      },
-    },
-    {
-      id: 'emp-032',
-      title: 'Swati Pande',
-      subtitle: 'Growth Analyst · Marketing & Growth',
-      category: 'People',
-      icon: <span className="text-slate-400">👤</span>,
-      onSelect: () => {
-        onSelectEmployee?.('emp-032');
-        onClose();
-      },
-    },
-    {
-      id: 'emp-020',
-      title: 'Kavita Joshi',
-      subtitle: 'Head of Product · Product & UX Design (Mumbai)',
-      category: 'People',
-      icon: <span className="text-slate-400">👤</span>,
-      onSelect: () => {
-        onSelectEmployee?.('emp-020');
-        onClose();
-      },
-    },
-    {
-      id: 'emp-040',
-      title: 'Vikramaditya Sengupta',
-      subtitle: 'VP of People Operations · People & Operations',
-      category: 'People',
-      icon: <span className="text-slate-400">👤</span>,
-      onSelect: () => {
-        onSelectEmployee?.('emp-040');
-        onClose();
-      },
-    },
-  ];
+  }));
 
   // Add Projects Search Items
-  const projects: CommandItem[] = (projectsFixture.projects as ProjectSearchRecord[]).map((p) => ({
+  // Projects come from the API. Without permission the section is empty rather than listing
+  // projects that do not exist in this tenant.
+  const projects: CommandItem[] = (projectList ?? []).map((p) => ({
     id: p.id,
     title: p.name,
-    subtitle: `${p.code} · ${p.branchName} · ${p.status}`,
+    subtitle: [p.code, p.status].filter(Boolean).join(' · '),
     category: 'Projects',
-    icon: <span className="text-slate-400">📦</span>,
+    icon: <span className="text-muted-foreground">📦</span>,
     onSelect: () => {
       onSelectProject?.(p.id);
       if (workspaceContext === 'ADMIN') {
@@ -462,7 +417,7 @@ export function CommandPalette({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-white border border-slate-200 rounded-[10px] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-100"
+        className="w-full max-w-xl bg-card border border-border rounded-[10px] shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-100"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         role="dialog"
@@ -470,7 +425,7 @@ export function CommandPalette({
         aria-label="Command palette"
       >
         {/* Search Input Bar with Glowing Accent */}
-        <div className="p-3.5 border-b border-slate-200 bg-slate-50/80 flex items-center gap-3">
+        <div className="p-3.5 border-b border-border bg-muted/40/80 flex items-center gap-3">
           <div className="h-6 w-6 rounded bg-sky-100 border border-sky-300 flex items-center justify-center text-primary shrink-0">
             <svg
               className="h-3.5 w-3.5"
@@ -499,14 +454,14 @@ export function CommandPalette({
                 ? 'Search admin actions, policies, payroll, or staff (⌘K)...'
                 : 'Search personal actions, timesheets, leaves, or staff (⌘K)...'
             }
-            className="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none font-medium"
+            className="w-full bg-transparent text-sm text-foreground placeholder-slate-400 focus:outline-none font-medium"
           />
           {query && (
             <Button
               type="button"
               aria-label="Clear command search"
               onClick={() => setQuery('')}
-              className="text-slate-400 hover:text-slate-700 text-xs cursor-pointer px-1"
+              className="text-muted-foreground hover:text-foreground text-xs cursor-pointer px-1"
             >
               ✕
             </Button>
@@ -517,8 +472,8 @@ export function CommandPalette({
         </div>
 
         {/* Quick Filter Badges Bar */}
-        <div className="px-3.5 py-2 border-b border-slate-100 bg-slate-50/50 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
-          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mr-1">
+        <div className="px-3.5 py-2 border-b border-border bg-muted/40/50 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+          <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mr-1">
             Filter:
           </span>
           {['All', 'Actions', 'Navigation', 'People', 'Projects'].map((cat) => {
@@ -534,7 +489,7 @@ export function CommandPalette({
                 className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-colors cursor-pointer whitespace-nowrap border ${
                   isCatActive
                     ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
-                    : 'bg-white text-slate-600 border-slate-200 hover:text-slate-900 hover:bg-slate-100'
+                    : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'
                 }`}
               >
                 {cat}
@@ -546,9 +501,9 @@ export function CommandPalette({
         {/* Results List */}
         <div className="flex-1 overflow-y-auto p-2 space-y-1 no-scrollbar">
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-slate-400 text-xs">
+            <div className="p-8 text-center text-muted-foreground text-xs">
               No matching results found for{' '}
-              <span className="text-slate-700 font-semibold">"{query}"</span>
+              <span className="text-foreground font-semibold">"{query}"</span>
             </div>
           ) : (
             filtered.map((item, idx) => {
@@ -564,7 +519,7 @@ export function CommandPalette({
                   case 'Projects':
                     return 'text-amber-700 bg-amber-50 border-amber-200';
                   default:
-                    return 'text-slate-600 bg-slate-100 border-slate-200';
+                    return 'text-muted-foreground bg-muted border-border';
                 }
               };
 
@@ -576,20 +531,22 @@ export function CommandPalette({
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full text-left p-2.5 rounded-[6px] transition-all flex items-center justify-between gap-3 cursor-pointer ${
                     isSelected
-                      ? 'bg-sky-50 text-slate-900 shadow-2xs border border-sky-300 ring-1 ring-sky-200'
-                      : 'hover:bg-slate-50 text-slate-700 border border-transparent'
+                      ? 'bg-sky-50 text-foreground shadow-2xs border border-sky-300 ring-1 ring-sky-200'
+                      : 'hover:bg-muted/40 text-foreground border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-7 w-7 rounded-[5px] bg-slate-100 flex items-center justify-center text-sm shrink-0 border border-slate-200 text-slate-600 shadow-2xs">
+                    <div className="h-7 w-7 rounded-[5px] bg-muted flex items-center justify-center text-sm shrink-0 border border-border text-muted-foreground shadow-2xs">
                       {item.icon}
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-slate-900 truncate">
+                      <div className="text-xs font-semibold text-foreground truncate">
                         {item.title}
                       </div>
                       {item.subtitle && (
-                        <div className="text-[10px] text-slate-500 truncate">{item.subtitle}</div>
+                        <div className="text-[10px] text-muted-foreground truncate">
+                          {item.subtitle}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -613,16 +570,16 @@ export function CommandPalette({
         </div>
 
         {/* Footer Shortcut Bar */}
-        <div className="p-2 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-[10px] text-slate-500 px-3">
+        <div className="p-2 border-t border-border bg-muted/40 flex items-center justify-between text-[10px] text-muted-foreground px-3">
           <span>
             Context:{' '}
-            <span className="font-semibold text-slate-700">
+            <span className="font-semibold text-foreground">
               {workspaceContext === 'ADMIN' ? 'Admin Workspace' : 'Employee Workspace'}
             </span>
           </span>
           <span>
             Select with{' '}
-            <kbd className="font-mono bg-white border border-slate-200 px-1 rounded shadow-2xs">
+            <kbd className="font-mono bg-card border border-border px-1 rounded shadow-2xs">
               ↵ Enter
             </kbd>
           </span>

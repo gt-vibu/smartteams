@@ -10,7 +10,7 @@ import {
   calculateStatutoryDeduction,
   prorateSalaryStructure,
 } from './payroll-salary-structure';
-import { summarizeAttendance, summarizeLeave } from './payroll-calculation';
+import { summarizeAttendance, summarizeLeave, unemployedDays } from './payroll-calculation';
 import { dateOnly, type PreviewInput } from './payroll-policy.types';
 import { employeeScope, findPolicy, resolveEmployeeId } from './payroll-policy-access';
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
@@ -100,6 +100,15 @@ export class PayrollPreviewService {
       ]);
       const attendance = summarizeAttendance(attendanceRecords);
       const leave = summarizeLeave(approvedLeaves, periodStart, measuredEnd);
+      // Preview measures the period only as far as today, which is why its figure differs from a
+      // released run. The *day accounting* must not differ though, so employment dates are counted
+      // here exactly as `calculate` counts them.
+      const notEmployedDays = unemployedDays(
+        periodStart,
+        measuredEnd,
+        employee.dateOfJoining,
+        employee.dateOfLeaving,
+      );
       const payableDays =
         input.payableDays ??
         Math.max(
@@ -107,7 +116,8 @@ export class PayrollPreviewService {
           Math.min(policy.payrollDayBasis, elapsedDays) -
             leave.unpaidDays -
             attendance.absentDays -
-            attendance.halfDays / 2,
+            attendance.halfDays / 2 -
+            notEmployedDays,
         );
       if (!Number.isFinite(payableDays) || payableDays < 0 || payableDays > policy.payrollDayBasis)
         throw new ConflictError('Preview payable days must be within the payroll day basis');

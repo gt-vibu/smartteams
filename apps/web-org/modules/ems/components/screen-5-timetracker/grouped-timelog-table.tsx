@@ -38,7 +38,7 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
             return (
               <React.Fragment key={group.date}>
                 {/* Date Group Header Row */}
-                <TableRow className="bg-slate-50/90 border-t border-b border-slate-200/90 text-slate-800">
+                <TableRow className="bg-muted/40/90 border-t border-b border-border/90 text-foreground">
                   <TableCell className="py-2.5 px-4 w-10">
                     <Checkbox
                       checked={allGroupSelected}
@@ -47,7 +47,7 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                       className="h-3.5 w-3.5"
                     />
                   </TableCell>
-                  <TableCell colSpan={3} className="py-2.5 px-3 font-bold text-slate-800 text-xs">
+                  <TableCell colSpan={3} className="py-2.5 px-3 font-bold text-foreground text-xs">
                     {group.date}
                   </TableCell>
                   <TableCell
@@ -66,7 +66,7 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                     <TableRow
                       key={entry.id}
                       onClick={() => onSelectEntry && onSelectEntry(entry.id)}
-                      className={`border-b border-slate-100 hover:bg-slate-50/60 transition-colors cursor-pointer group ${
+                      className={`border-b border-border hover:bg-muted/40/60 transition-colors cursor-pointer group ${
                         isChecked ? 'bg-sky-50/20' : ''
                       }`}
                     >
@@ -88,31 +88,33 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
 
                       {/* Job Name · Project Name */}
                       <TableCell className="py-3 px-3 max-w-[280px]">
-                        <div className="font-semibold text-slate-800 group-hover:text-primary transition-colors truncate">
+                        <div className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                           {entry.jobName}{' '}
-                          <span className="text-slate-400 font-normal">· {entry.projectName}</span>
+                          <span className="text-muted-foreground font-normal">
+                            · {entry.projectName}
+                          </span>
                         </div>
                       </TableCell>
 
                       {/* Description */}
-                      <TableCell className="py-3 px-3 text-slate-600 max-w-[360px]">
+                      <TableCell className="py-3 px-3 text-muted-foreground max-w-[360px]">
                         <div className="line-clamp-2 text-[11px] leading-relaxed">
                           {entry.description}
                         </div>
                       </TableCell>
 
                       {/* Billable Status */}
-                      <TableCell className="py-3 px-3 w-24 text-slate-600 font-medium">
+                      <TableCell className="py-3 px-3 w-24 text-muted-foreground font-medium">
                         {entry.isBillable ? 'Billable' : 'Non-billable'}
                       </TableCell>
 
                       {/* Duration */}
-                      <TableCell className="py-3 px-4 w-20 font-mono font-semibold text-slate-800 text-right">
+                      <TableCell className="py-3 px-4 w-20 font-mono font-semibold text-foreground text-right">
                         {entry.duration}
                       </TableCell>
 
                       {/* Location Pin Icon */}
-                      <TableCell className="py-3 px-3 w-10 text-center text-slate-400 hover:text-slate-600">
+                      <TableCell className="py-3 px-3 w-10 text-center text-muted-foreground hover:text-muted-foreground">
                         <svg
                           className="h-3.5 w-3.5 inline-block"
                           fill="none"

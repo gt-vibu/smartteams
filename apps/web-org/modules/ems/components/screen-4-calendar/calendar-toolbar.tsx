@@ -25,19 +25,19 @@ export function CalendarToolbar({
   ];
 
   return (
-    <div className="flex w-full flex-col justify-between gap-2 border-b border-slate-200/90 bg-white/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
+    <div className="flex w-full flex-col justify-between gap-2 border-b border-border/90 bg-card/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
       <div className="flex items-center gap-3">
         {onToday && (
           <Button type="button" variant="outline" size="sm" onClick={onToday}>
             Today
           </Button>
         )}
-        <div className="flex items-center rounded border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-xs">
+        <div className="flex items-center rounded border border-border bg-card px-2 py-1 text-xs font-semibold text-foreground shadow-xs">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
+            className="h-7 w-7 p-0.5 text-muted-foreground hover:text-foreground"
             title="Previous month"
             aria-label="Previous month"
             disabled={!onPrevMonth}
@@ -54,14 +54,14 @@ export function CalendarToolbar({
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </Button>
-          <span className="max-w-[140px] truncate px-2 text-slate-800 xs:max-w-none font-bold">
+          <span className="max-w-[140px] truncate px-2 text-foreground xs:max-w-none font-bold">
             {monthName}
           </span>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
+            className="h-7 w-7 p-0.5 text-muted-foreground hover:text-foreground"
             title="Next month"
             aria-label="Next month"
             disabled={!onNextMonth}

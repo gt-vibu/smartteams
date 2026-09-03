@@ -54,6 +54,13 @@ export const serverEnvSchema = z
     FEDERATION_TOKEN_RATE_LIMIT_PER_MINUTE: positiveInt.default(60),
     FEDERATION_WEBHOOK_ALLOWED_HOSTS: z.string().default('invalid-blizbooks.invalid'),
     AUTH_RATE_LIMIT_PER_MINUTE: positiveInt.default(30),
+    // Baseline ceilings for the native application API, per identity per minute. See
+    // `RequestRateLimitInterceptor` for why the tiers differ rather than one figure applying.
+    RATE_LIMIT_READ_PER_MINUTE: positiveInt.default(600),
+    RATE_LIMIT_MUTATION_PER_MINUTE: positiveInt.default(120),
+    // 20/min blocked a platform operator onboarding tenants in a loop, which is a legitimate
+    // burst rather than abuse. 60 still bounds a whole-tenant payroll calculation.
+    RATE_LIMIT_EXPENSIVE_PER_MINUTE: positiveInt.default(60),
     FILE_DELETION_RETENTION_DAYS: positiveInt.default(30),
     WEBAUTHN_RP_ID: z.string().min(1).default('invalid.smarteam.example'),
     WEBAUTHN_ORIGIN: z.string().url().default('https://invalid.smarteam.example'),
@@ -80,6 +87,7 @@ export const serverEnvSchema = z
       ['FEDERATION_WEBHOOK_SIGNING_PRIVATE_KEY_PEM', 'FEDERATION_WEBHOOK_SIGNING_PRIVATE_KEY_PEM'],
       ['FEDERATION_WEBHOOK_SIGNING_PUBLIC_KEY_PEM', 'FEDERATION_WEBHOOK_SIGNING_PUBLIC_KEY_PEM'],
       ['METRICS_TOKEN', 'METRICS_TOKEN'],
+      ['FEDERATION_IDEMPOTENCY_ENCRYPTION_KEY', 'FEDERATION_IDEMPOTENCY_ENCRYPTION_KEY'],
     ];
     for (const [key, label] of requiredSecrets) {
       if (!env[key])

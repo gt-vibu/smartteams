@@ -7698,6 +7698,7 @@ export const PayrollRunScalarFieldEnum = {
   inputSnapshotHash: 'inputSnapshotHash',
   calculationHash: 'calculationHash',
   calculatedAt: 'calculatedAt',
+  calculationStaleAt: 'calculationStaleAt',
   approvedAt: 'approvedAt',
   releasedAt: 'releasedAt',
   lockedAt: 'lockedAt',

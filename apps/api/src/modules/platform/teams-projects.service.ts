@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client';
 import { ProjectStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { toProjectDto, toTeamDto } from './workforce-mappers';
 
 @Injectable()
 export class TeamsProjectsService {
@@ -15,24 +15,33 @@ export class TeamsProjectsService {
 
   async listTeams(context: DomainContext) {
     requirePermission(context, 'teams.read');
-    return this.database.run(context, (tx) =>
-      tx.team.findMany({
+    return this.database.run(context, async (tx) => {
+      // Bounded: the previous read returned every team with every membership row attached, so a
+      // large tenant produced one very large response and no way to ask for less.
+      const teams = await tx.team.findMany({
         where: { organizationId: context.organizationId, status: 'ACTIVE' },
         include: { members: true },
         orderBy: { name: 'asc' },
-      }),
-    );
+        // One over the cap, so a truncated list can say so rather than looking complete.
+        take: 201,
+      });
+      const page = teams.slice(0, 200);
+      return { items: page.map(toTeamDto), truncated: teams.length > 200 };
+    });
   }
 
   async listProjects(context: DomainContext) {
     requirePermission(context, 'projects.read');
-    return this.database.run(context, (tx) =>
-      tx.project.findMany({
+    return this.database.run(context, async (tx) => {
+      const projects = await tx.project.findMany({
         where: { organizationId: context.organizationId },
         include: { members: true },
         orderBy: [{ status: 'asc' }, { code: 'asc' }],
-      }),
-    );
+        take: 201,
+      });
+      const page = projects.slice(0, 200);
+      return { items: page.map(toProjectDto), truncated: projects.length > 200 };
+    });
   }
 
   async createTeam(
@@ -79,43 +88,6 @@ export class TeamsProjectsService {
         tx,
       );
       return team;
-    });
-  }
-
-  async addTeamMember(
-    context: DomainContext,
-    teamId: string,
-    input: { employeeId: string; joinedAt: string },
-  ) {
-    requirePermission(context, 'teams.write');
-    return this.database.run(context, async (tx) => {
-      const [team, employee] = await Promise.all([
-        tx.team.findFirst({ where: { id: teamId, organizationId: context.organizationId } }),
-        tx.employee.findFirst({
-          where: { id: input.employeeId, organizationId: context.organizationId },
-        }),
-      ]);
-      if (!team) throw new NotFoundError('Team');
-      if (!employee) throw new NotFoundError('Employee');
-      const member = await tx.teamMember.create({
-        data: {
-          organizationId: context.organizationId,
-          teamId,
-          employeeId: input.employeeId,
-          joinedAt: dateOnly(input.joinedAt),
-        },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'TEAM_MEMBER',
-          entityId: member.id,
-          action: 'TEAM_MEMBER_ADDED',
-          afterState: jsonSnapshot(member),
-        },
-        tx,
-      );
-      return member;
     });
   }
 
@@ -244,74 +216,6 @@ export class TeamsProjectsService {
         tx,
       );
       return project;
-    });
-  }
-
-  async addProjectMember(
-    context: DomainContext,
-    projectId: string,
-    input: {
-      employeeId: string;
-      projectRole?: string;
-      allocationPercentage?: number;
-      startsOn: string;
-      endsOn?: string;
-    },
-  ) {
-    requirePermission(context, 'projects.write');
-    return this.database.run(context, async (tx) => {
-      const [project, employee] = await Promise.all([
-        tx.project.findFirst({ where: { id: projectId, organizationId: context.organizationId } }),
-        tx.employee.findFirst({
-          where: { id: input.employeeId, organizationId: context.organizationId },
-        }),
-      ]);
-      if (!project) throw new NotFoundError('Project');
-      if (!employee) throw new NotFoundError('Employee');
-      if (
-        input.allocationPercentage !== undefined &&
-        (input.allocationPercentage < 0 || input.allocationPercentage > 100)
-      )
-        throw new ConflictError('Allocation percentage must be between 0 and 100');
-      const start = dateOnly(input.startsOn);
-      const end = input.endsOn ? dateOnly(input.endsOn) : undefined;
-      if (end && end < start)
-        throw new ConflictError('Project assignment end must not precede start');
-      const overlap = await tx.projectMember.findFirst({
-        where: {
-          organizationId: context.organizationId,
-          projectId,
-          employeeId: input.employeeId,
-          startsOn: { lte: end ?? new Date('9999-12-31') },
-          OR: [{ endsOn: null }, { endsOn: { gte: start } }],
-        },
-      });
-      if (overlap) throw new ConflictError('Project assignments must not overlap');
-      const member = await tx.projectMember.create({
-        data: {
-          organizationId: context.organizationId,
-          projectId,
-          employeeId: input.employeeId,
-          projectRole: input.projectRole,
-          allocationPercentage:
-            input.allocationPercentage === undefined
-              ? undefined
-              : new Prisma.Decimal(input.allocationPercentage),
-          startsOn: start,
-          endsOn: end,
-        },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'PROJECT_MEMBER',
-          entityId: member.id,
-          action: 'PROJECT_MEMBER_ADDED',
-          afterState: jsonSnapshot(member),
-        },
-        tx,
-      );
-      return member;
     });
   }
 

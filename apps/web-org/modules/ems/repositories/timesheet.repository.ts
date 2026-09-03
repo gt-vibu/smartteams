@@ -1,94 +1,96 @@
-import { EMS_STORAGE_KEYS } from '../storage/storage.keys';
-import { emsStorageAdapter } from '../storage/storage.adapter';
-import timesheetsFixture from '../data/fixtures/timesheets.json';
-import type {
-  ApprovedTimesheetNotification,
-  DateGroupedTimeLogs,
-  TimeLogItem,
-  TimeTrackerSummaryStats,
-  TimesheetStorageData,
-} from '../types/timelog.types';
+import { parseTimesheet, parseTimesheetList, type Timesheet } from '@smarteam/contracts';
+import { apiRequest } from '../lib/api-client';
+import { expectShape, orgPath, queryString } from './api-helpers';
 
-export interface ITimesheetRepository {
-  getGroupedLogs(): DateGroupedTimeLogs[];
-  getSummary(): TimeTrackerSummaryStats;
-  getApprovedNotification(): ApprovedTimesheetNotification | null;
-  addEntry(data: {
-    date: string;
-    projectName: string;
-    jobName: string;
-    description: string;
-    isBillable: boolean;
-    duration: string;
-  }): DateGroupedTimeLogs[];
-}
+/**
+ * Timesheet data access.
+ *
+ * Replaces a repository backed by `timesheets.json` and `localStorage`, where a logged hour
+ * existed only in the browser that logged it — invisible to the approver and to payroll, which
+ * prices overtime from these minutes.
+ *
+ * The API self-scopes reads: without `timesheets.read.all` the service narrows the query to the
+ * caller's own employee record and rejects an `employeeId` for anyone else. Nothing here needs
+ * to enforce that, and nothing here should try to work around it.
+ */
 
-export class LocalTimesheetRepository implements ITimesheetRepository {
-  private getStoredData(): TimesheetStorageData {
-    return emsStorageAdapter.getItem<TimesheetStorageData>(
-      EMS_STORAGE_KEYS.TIMESHEETS,
-      timesheetsFixture as unknown as TimesheetStorageData,
+const base = (organizationId: string) => orgPath(organizationId, '/timesheets');
+
+export type ManualEntryInput = {
+  workDate: string;
+  minutes: number;
+  overtimeMinutes?: number;
+  description?: string;
+};
+
+export const timesheetRepository = {
+  async list(
+    organizationId: string,
+    filters: { employeeId?: string; periodId?: string } = {},
+  ): Promise<Timesheet[]> {
+    return expectShape(
+      parseTimesheetList(
+        await apiRequest(`${base(organizationId)}${queryString(filters)}`, { method: 'GET' }),
+      ),
+      'timesheet list',
     );
-  }
+  },
 
-  getGroupedLogs(): DateGroupedTimeLogs[] {
-    return this.getStoredData().groupedLogs;
-  }
+  /** Opens a period. Timesheets are derived into it afterwards. */
+  async createPeriod(
+    organizationId: string,
+    input: { periodType: string; periodStart: string; periodEnd: string },
+  ): Promise<{ id: string }> {
+    return (await apiRequest(`${base(organizationId)}/periods`, {
+      method: 'POST',
+      body: input,
+    })) as { id: string };
+  },
 
-  getSummary(): TimeTrackerSummaryStats {
-    return this.getStoredData().summary;
-  }
+  /**
+   * Builds timesheets for a period from recorded attendance.
+   *
+   * This is the only route that creates timesheets in bulk; entries added by hand go through
+   * `addEntry` against an existing sheet.
+   */
+  async derivePeriod(organizationId: string, periodId: string): Promise<unknown> {
+    return apiRequest(`${base(organizationId)}/periods/${encodeURIComponent(periodId)}/derive`, {
+      method: 'POST',
+    });
+  },
 
-  getApprovedNotification(): ApprovedTimesheetNotification | null {
-    return this.getStoredData().approvedNotification;
-  }
+  async addEntry(
+    organizationId: string,
+    timesheetId: string,
+    input: ManualEntryInput,
+  ): Promise<Timesheet> {
+    return expectShape(
+      parseTimesheet(
+        await apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/entries`, {
+          method: 'POST',
+          body: input,
+        }),
+      ),
+      'timesheet entry',
+    );
+  },
 
-  addEntry(data: {
-    date: string;
-    projectName: string;
-    jobName: string;
-    description: string;
-    isBillable: boolean;
-    duration: string;
-  }): DateGroupedTimeLogs[] {
-    const currentData = this.getStoredData();
-    const groupedLogs = [...currentData.groupedLogs];
+  async submit(organizationId: string, timesheetId: string): Promise<unknown> {
+    return apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/submit`, {
+      method: 'POST',
+    });
+  },
 
-    const newEntry: TimeLogItem = {
-      id: `entry_${Date.now()}`,
-      jobName: data.jobName,
-      projectName: data.projectName,
-      description: data.description,
-      isBillable: data.isBillable,
-      duration: data.duration,
-      durationMinutes: 120,
-    };
-
-    // Find if date group exists
-    const groupIndex = groupedLogs.findIndex((g) => g.date === data.date);
-    if (groupIndex >= 0 && groupedLogs[groupIndex]) {
-      const existingGroup = groupedLogs[groupIndex];
-      groupedLogs[groupIndex] = {
-        date: existingGroup.date,
-        totalDayHours: existingGroup.totalDayHours,
-        entries: [newEntry, ...existingGroup.entries],
-      };
-    } else {
-      groupedLogs.unshift({
-        date: data.date,
-        totalDayHours: data.duration,
-        entries: [newEntry],
-      });
-    }
-
-    const updated = {
-      ...currentData,
-      groupedLogs,
-    };
-
-    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.TIMESHEETS, updated);
-    return groupedLogs;
-  }
-}
-
-export const timesheetRepository = new LocalTimesheetRepository();
+  /** The API requires a comment of at least two characters and audits it. */
+  async decide(
+    organizationId: string,
+    timesheetId: string,
+    status: 'APPROVED' | 'REJECTED',
+    comment: string,
+  ): Promise<unknown> {
+    return apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/decision`, {
+      method: 'POST',
+      body: { status, comment },
+    });
+  },
+};

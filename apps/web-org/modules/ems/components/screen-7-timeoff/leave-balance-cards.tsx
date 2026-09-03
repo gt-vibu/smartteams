@@ -1,57 +1,68 @@
-import { Progress, progressTone } from '@smarteam/ui';
+'use client';
+
 import React from 'react';
-import type { LeaveBalanceItem } from '../../types/leave.types';
+import { Progress } from '@smarteam/ui';
+import { entitlementOf, type LeaveBalance, type LeaveType } from '@smarteam/contracts';
 
-interface LeaveBalanceCardsProps {
-  balances: LeaveBalanceItem[];
-}
+/**
+ * Entitlement per leave type, exactly as the server reports it.
+ *
+ * `availableAmount` already excludes days reserved by a pending request, so nothing is
+ * recalculated here — a second, disagreeing figure is worse than no figure.
+ */
+export function LeaveBalanceCards({
+  balances,
+  typesById,
+}: {
+  balances: LeaveBalance[];
+  typesById: Map<string, LeaveType>;
+}) {
+  if (balances.length === 0) return null;
 
-export function LeaveBalanceCards({ balances }: LeaveBalanceCardsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-      {balances.map((b) => {
-        const percentage = Math.round((b.remainingDays / b.totalEntitlement) * 100);
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {balances.map((balance) => {
+        const type = balance.leaveType ?? typesById.get(balance.leaveTypeId);
+        const entitled = entitlementOf(balance);
+        // Guard the divide: a type with no annual allowance has an entitlement of zero.
+        const usedFraction = entitled > 0 ? (balance.usedAmount / entitled) * 100 : 0;
 
         return (
-          <div
-            key={b.id}
-            className="bg-white rounded-[6px] border border-slate-200/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col justify-between"
-          >
-            {/* Header with Type & Code Pill */}
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold text-slate-850 truncate">{b.leaveTypeName}</span>
-              <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                {b.code}
+          <div className="rounded-lg border border-border bg-card p-4" key={balance.id}>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="truncate text-xs font-semibold text-foreground">
+                {type?.name ?? 'Leave'}
+              </span>
+              <span className="font-mono text-[10px] text-muted-foreground">
+                {type?.code ?? '--'}
               </span>
             </div>
 
-            {/* Remaining Days Counter */}
-            <div className="flex items-baseline gap-1.5 mb-2">
-              <span className="text-2xl font-bold font-mono text-slate-900 tracking-tight">
-                {b.remainingDays}
+            <p className="mt-3 text-2xl font-semibold tabular-nums text-foreground">
+              {balance.availableAmount}
+              <span className="ml-1 text-xs font-normal text-muted-foreground">
+                of {entitled} available
               </span>
-              <span className="text-xs text-slate-500 font-medium">
-                / {b.totalEntitlement} Days Available
-              </span>
-            </div>
+            </p>
 
-            {/* Progress Bar */}
             <Progress
-              aria-label={`${percentage}% used`}
-              className="mb-3"
-              tone={progressTone(percentage)}
-              value={percentage}
+              aria-label={`${balance.usedAmount} of ${entitled} days used`}
+              className="mt-3"
+              value={Math.min(usedFraction, 100)}
             />
 
-            {/* Sub-Metric Breakdown */}
-            <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
-              <span>
-                Used: <strong className="text-slate-700">{b.usedDays}</strong>
-              </span>
-              <span>
-                Pending: <strong className="text-slate-700">{b.pendingDays}</strong>
-              </span>
-            </div>
+            <dl className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
+              <div className="flex gap-1">
+                <dt>Used</dt>
+                <dd className="font-semibold tabular-nums text-foreground">{balance.usedAmount}</dd>
+              </div>
+              <div className="flex gap-1">
+                <dt>Pending</dt>
+                <dd className="font-semibold tabular-nums text-foreground">
+                  {balance.reservedAmount}
+                </dd>
+              </div>
+            </dl>
           </div>
         );
       })}

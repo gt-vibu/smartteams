@@ -1,0 +1,120 @@
+name: CI
+
+# Every push and every pull request. Before this the only automated check on a change was a
+# pre-commit hook running on the author's own machine, which can be skipped with --no-verify.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  # A new push supersedes an in-flight run on the same ref.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Turborepo prunes to what a change actually affects (NFR-23), so this stays proportional to
+  # the diff rather than to the size of the monorepo.
+  TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+  verify:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Prisma's client is generated, not committed to the build — the typecheck needs it first.
+      - run: pnpm db:generate
+        env:
+          DATABASE_URL: postgresql://build:build@localhost:5432/build
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+        env:
+          DATABASE_URL: postgresql://build:build@localhost:5432/build
+      - run: pnpm format:check
+
+  migrations:
+    name: Migrations and database-backed tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: smarteam
+          POSTGRES_PASSWORD: smarteam
+          POSTGRES_DB: smarteam
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U smarteam -d smarteam"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Proves the committed migrations apply to an empty database in order. A migration that
+      # only ever ran against the author's already-populated database fails here.
+      - run: pnpm db:deploy
+
+      # The tests that need a real database: row-level security, the cross-tenant policies and
+      # the structural invariants. The rest of the suite mocks Prisma and cannot see any of it.
+      #
+      # There is deliberately no `migrate diff` drift gate. The initial migration was written by
+      # hand rather than generated, so it differs from the datamodel in index names and in whether
+      # ids default in the database or in Prisma — cosmetic, pre-existing, and it would leave the
+      # gate permanently red while catching nothing. The integration suite asserts the structural
+      # properties that actually matter instead.
+      - run: pnpm --filter @smarteam/api test:integration
+
+  security:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # High and critical only. Failing on every low-severity transitive advisory trains people
+      # to ignore the job, which is worse than not having it.
+      - run: pnpm audit --audit-level high
+
+  images:
+    name: Container images build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Only after the code is known good; building three images to discover a type error is waste.
+    needs: [verify]
+    strategy:
+      matrix:
+        target: [api, web-org, web-admin]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: ${{ matrix.target }}
+          # Not pushed: this job proves the image builds. Publishing belongs to a release
+          # workflow with credentials and a tagging policy, which is a separate decision.
+          push: false
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}

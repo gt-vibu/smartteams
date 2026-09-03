@@ -1,12 +1,26 @@
 import React from 'react';
 import { Button } from '@smarteam/ui';
-import type { HolidayItem } from '../../types/holiday.types';
+import type { Holiday } from '@smarteam/contracts';
 
 interface UpcomingHolidaysCardProps {
-  holidays: HolidayItem[];
+  holidays: Holiday[];
+  loading?: boolean;
+  unavailable?: boolean;
 }
 
-export function UpcomingHolidaysCard({ holidays }: UpcomingHolidaysCardProps) {
+/** `Mon` — derived from the date the API returned, not stored alongside it. */
+function weekday(isoDate: string): string {
+  const date = new Date(`${isoDate.slice(0, 10)}T00:00:00Z`);
+  return Number.isNaN(date.getTime())
+    ? ''
+    : date.toLocaleDateString('en-IN', { weekday: 'short', timeZone: 'UTC' });
+}
+
+export function UpcomingHolidaysCard({
+  holidays,
+  loading = false,
+  unavailable = false,
+}: UpcomingHolidaysCardProps) {
   return (
     <div className="bg-white dark:bg-card rounded-[6px] border border-slate-200/90 dark:border-border p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
       {/* Header */}
@@ -37,6 +51,22 @@ export function UpcomingHolidaysCard({ holidays }: UpcomingHolidaysCardProps) {
         </Button>
       </div>
 
+      {unavailable && (
+        <p className="text-[11px] text-muted-foreground">
+          You do not have permission to view the holiday calendar.
+        </p>
+      )}
+
+      {!unavailable && loading && (
+        <p className="text-[11px] text-muted-foreground" role="status">
+          Loading holidays...
+        </p>
+      )}
+
+      {!unavailable && !loading && holidays.length === 0 && (
+        <p className="text-[11px] text-muted-foreground">No holidays are scheduled ahead.</p>
+      )}
+
       {/* 3 Holiday Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {holidays.map((hol) => (
@@ -66,9 +96,9 @@ export function UpcomingHolidaysCard({ holidays }: UpcomingHolidaysCardProps) {
 
             {/* 3. Date & Day */}
             <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">
-              {hol.holidayDate},{' '}
+              {hol.holidayDate.slice(0, 10)},{' '}
               <span className="text-slate-500 dark:text-slate-400 font-normal">
-                {hol.dayOfWeek}
+                {weekday(hol.holidayDate)}
               </span>
             </div>
           </div>

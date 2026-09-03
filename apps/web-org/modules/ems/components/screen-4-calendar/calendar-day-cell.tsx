@@ -9,8 +9,8 @@ interface CalendarDayCellProps {
 export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
   if (!day.isCurrentMonth) {
     return (
-      <div className="min-h-[72px] p-1.5 bg-slate-50/50 border-b border-r border-slate-100 opacity-40 select-none">
-        <span className="text-[11px] font-medium text-slate-400">{day.dayNumber}</span>
+      <div className="min-h-[72px] p-1.5 bg-muted/40/50 border-b border-r border-border opacity-40 select-none">
+        <span className="text-[11px] font-medium text-muted-foreground">{day.dayNumber}</span>
       </div>
     );
   }
@@ -20,12 +20,12 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
   return (
     <div
       onClick={() => onClick(day)}
-      className={`min-h-[72px] p-1.5 border-b border-r border-slate-200 transition-all cursor-pointer group flex flex-col justify-between ${
+      className={`min-h-[72px] p-1.5 border-b border-r border-border transition-all cursor-pointer group flex flex-col justify-between ${
         day.isToday
           ? 'bg-sky-50/30 ring-1 ring-inset ring-sky-300'
           : isWeekend
             ? 'bg-amber-50/20 hover:bg-amber-50/40'
-            : 'bg-white hover:bg-slate-50/80'
+            : 'bg-card hover:bg-muted/40/80'
       }`}
     >
       {/* Top Header with Day Number */}
@@ -35,13 +35,13 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
             {day.dayNumber}
           </span>
         ) : (
-          <span className="text-[11px] font-semibold text-slate-800 group-hover:text-primary transition-colors">
+          <span className="text-[11px] font-semibold text-foreground group-hover:text-primary transition-colors">
             {day.dayNumber}
           </span>
         )}
 
         {day.shiftName && !isWeekend && day.dayStatus !== 'HOLIDAY' && (
-          <span className="text-[9px] text-slate-400 font-medium hidden sm:inline">GEN</span>
+          <span className="text-[9px] text-muted-foreground font-medium hidden sm:inline">GEN</span>
         )}
       </div>
 

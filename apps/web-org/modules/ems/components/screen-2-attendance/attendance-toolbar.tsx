@@ -31,18 +31,18 @@ export function AttendanceToolbar({
   isFilterActive,
 }: AttendanceToolbarProps) {
   return (
-    <div className="flex w-full flex-col justify-between gap-2 border-b border-slate-200/90 bg-white/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
-      <h1 className="!m-0 border-b-2 border-slate-900 pb-1 !text-sm !font-bold !text-slate-900">
+    <div className="flex w-full flex-col justify-between gap-2 border-b border-border bg-card/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
+      <h1 className="!m-0 border-b-2 border-foreground pb-1 !text-sm !font-bold !text-foreground">
         {title}
       </h1>
 
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex items-center rounded border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-xs">
+        <div className="flex items-center rounded border border-border bg-card px-2 py-1 text-xs font-semibold text-foreground shadow-xs">
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
+            className="h-7 w-7 p-0.5 text-muted-foreground hover:text-foreground"
             title="Previous period"
             aria-label="Previous period"
             disabled={!onPrevDate}
@@ -59,14 +59,14 @@ export function AttendanceToolbar({
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </Button>
-          <span className="max-w-[140px] truncate px-2 text-slate-800 xs:max-w-none">
+          <span className="max-w-[140px] truncate px-2 text-foreground xs:max-w-none">
             {dateRange}
           </span>
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7 p-0.5 text-slate-400 hover:text-slate-900"
+            className="h-7 w-7 p-0.5 text-muted-foreground hover:text-foreground"
             title="Next period"
             aria-label="Next period"
             disabled={!onNextDate}

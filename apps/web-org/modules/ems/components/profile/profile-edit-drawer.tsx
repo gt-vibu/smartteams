@@ -21,28 +21,45 @@ interface ProfileEditDrawerProps {
 
 export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
   const { employee, updateProfile } = useEmployee();
-  const [firstName, setFirstName] = useState(employee.firstName);
-  const [lastName, setLastName] = useState(employee.lastName);
-  const [phone, setPhone] = useState(employee.phone);
-  const [location, setLocation] = useState(employee.location);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
   const [isSaved, setIsSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!employee) return;
     setFirstName(employee.firstName);
     setLastName(employee.lastName);
-    setPhone(employee.phone);
-    setLocation(employee.location);
+    setPhone(employee.phone ?? '');
   }, [employee]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    updateProfile({ firstName: firstName.trim(), lastName: lastName.trim(), phone, location });
-    setIsSaved(true);
-    window.setTimeout(() => {
-      setIsSaved(false);
-      onClose();
-    }, 700);
+    setSaving(true);
+    setSaveError(null);
+    try {
+      // Persists via PATCH and refetches, so the drawer closes on confirmed server state.
+      await updateProfile({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phone: phone.trim(),
+      });
+      setIsSaved(true);
+      window.setTimeout(() => {
+        setIsSaved(false);
+        onClose();
+      }, 700);
+    } catch (caught) {
+      setSaveError(caught instanceof Error ? caught.message : 'Could not save your changes.');
+    } finally {
+      setSaving(false);
+    }
   };
+
+  // The profile has not loaded, or this account has no employee record in the tenant.
+  if (!employee) return null;
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -78,7 +95,7 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="profile-email">Work Email (Read Only)</Label>
-            <Input id="profile-email" type="email" value={employee.workEmail} disabled />
+            <Input id="profile-email" type="email" value={employee.workEmail ?? ''} disabled />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="profile-phone">Contact Phone</Label>
@@ -91,18 +108,17 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="profile-location">Work Location</Label>
-            <Input
-              id="profile-location"
-              value={location}
-              onChange={(event) => setLocation(event.target.value)}
-              placeholder="Bangalore Office"
-            />
-          </div>
-          <div className="space-y-1.5">
             <Label htmlFor="profile-department">Department (Read Only)</Label>
-            <Input id="profile-department" value={employee.department} disabled />
+            <Input id="profile-department" value={employee.department ?? 'Not set'} disabled />
           </div>
+          {saveError && (
+            <p
+              role="alert"
+              className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-xs font-semibold text-destructive"
+            >
+              {saveError}
+            </p>
+          )}
           {isSaved && (
             <p
               role="status"
@@ -113,10 +129,12 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
           )}
         </SheetContent>
         <SheetFooter>
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={saving}>
             Cancel
           </Button>
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit" disabled={saving}>
+            {saving ? 'Saving…' : 'Save Changes'}
+          </Button>
         </SheetFooter>
       </form>
     </Sheet>

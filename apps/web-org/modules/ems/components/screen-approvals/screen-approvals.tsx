@@ -1,406 +1,210 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Button,
-  Badge,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  Label,
-  Textarea,
-} from '@smarteam/ui';
-import approvalsFixture from '../../data/fixtures/approvals.json';
+import { CheckCircle2 } from 'lucide-react';
+import { ScreenHeader } from '../common/screen-header';
+import { Badge, Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
+import { useApprovalInbox, type ApprovalInboxItem } from '../../hooks/use-approval-inbox';
 import { ApprovalPolicyBuilder } from './approval-policy-builder';
 
-type ApprovalFilter = 'ALL' | 'LEAVE_REQUEST' | 'TIMESHEET' | 'ATTENDANCE_CORRECTION' | 'COMPLETED';
+type View = 'queue' | 'policies';
 
-interface ApprovalItem {
-  id: string;
-  domain: Exclude<ApprovalFilter, 'ALL' | 'COMPLETED'>;
-  title?: string;
-  applicant?: string;
-  applicantName?: string;
-  applicantAvatar?: string;
-  applicantRole?: string;
-  employeeName?: string;
-  jobTitle?: string;
-  employeeNumber?: string;
-  details?: string;
-  reason?: string;
-  description?: string;
-  appliedAt?: string;
-  submittedDate?: string;
-  currentApprover?: string;
-  rejectionReason?: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  actionDate?: string;
-}
-
-const approvalData = approvalsFixture as unknown as {
-  pendingApprovals: ApprovalItem[];
-  completedApprovals: ApprovalItem[];
-};
-
+/**
+ * Approvals.
+ *
+ * Replaces a queue backed by `approvals.json`, where approving an item removed a row from a
+ * browser array — the request stayed pending on the server, and the requester never heard back.
+ *
+ * There is no unified approvals API. The queue is composed from the two inboxes that exist —
+ * leave requests and attendance corrections — each keyed on the signed-in user by the server.
+ * Timesheet and payroll approvals have no inbox route and are therefore absent rather than
+ * mocked, and no decision is taken here that the server would not authorise.
+ */
 export function ScreenApprovals() {
-  const [mainView, setMainView] = useState<'queue' | 'policies'>('queue');
-  const [activeFilter, setActiveFilter] = useState<
-    'ALL' | 'LEAVE_REQUEST' | 'TIMESHEET' | 'ATTENDANCE_CORRECTION' | 'COMPLETED'
-  >('ALL');
-  const [pendingList, setPendingList] = useState<ApprovalItem[]>(approvalData.pendingApprovals);
-  const [completedList, setCompletedList] = useState<ApprovalItem[]>(
-    approvalData.completedApprovals,
-  );
+  const inbox = useApprovalInbox();
+  const [view, setView] = useState<View>('queue');
+  const [deciding, setDeciding] = useState<{
+    item: ApprovalInboxItem;
+    status: 'APPROVED' | 'REJECTED';
+  } | null>(null);
+  const [comment, setComment] = useState('');
 
-  // Rejection Reason Modal State (shadcn)
-  const [rejectingItem, setRejectingItem] = useState<ApprovalItem | null>(null);
-  const [rejectReason, setRejectReason] = useState('');
-  const [rejectError, setRejectError] = useState<string | null>(null);
-
-  // Toast Notification State
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 4000);
-  };
-
-  const handleApprove = (id: string) => {
-    const item = pendingList.find((p) => p.id === id);
-    if (!item) return;
-
-    setPendingList((prev) => prev.filter((p) => p.id !== id));
-    setCompletedList((prev) => [
-      {
-        ...item,
-        status: 'APPROVED',
-        actionDate: 'Just now',
-      },
-      ...prev,
-    ]);
-    showToast(
-      `Request by ${item.applicantName || item.employeeName || item.applicant || 'staff'} approved.`,
-    );
-  };
-
-  const handleInitiateReject = (item: ApprovalItem) => {
-    setRejectingItem(item);
-    setRejectReason('');
-    setRejectError(null);
-  };
-
-  const handleConfirmReject = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!rejectReason.trim()) {
-      setRejectError('Please provide a specific reason for rejection.');
-      return;
+  const confirm = async () => {
+    if (!deciding) return;
+    const ok = await inbox.decide(deciding.item, deciding.status, comment.trim());
+    if (ok) {
+      setComment('');
+      setDeciding(null);
     }
-
-    if (!rejectingItem) return;
-
-    const id = rejectingItem.id;
-    setPendingList((prev) => prev.filter((p) => p.id !== id));
-    setCompletedList((prev) => [
-      {
-        ...rejectingItem,
-        status: 'REJECTED',
-        rejectionReason: rejectReason.trim(),
-        actionDate: 'Just now',
-      },
-      ...prev,
-    ]);
-    showToast(`Request rejected with notification sent to applicant.`);
-    setRejectingItem(null);
-    setRejectReason('');
-    setRejectError(null);
   };
-
-  const displayedList =
-    activeFilter === 'COMPLETED'
-      ? completedList
-      : pendingList.filter((item) => {
-          if (activeFilter === 'ALL') return true;
-          return item.domain === activeFilter;
-        });
 
   return (
-    <div className="space-y-5">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-md shadow-2xl flex items-center gap-2 border border-slate-700 animate-in fade-in">
-          <span className="h-2 w-2 rounded-full bg-emerald-400" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-200 dark:border-slate-800">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Governance & Approval Engine
-          </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Operational approval queues, multi-level hierarchy routing, and enterprise workflow
-            policies.
-          </p>
-        </div>
-
-        <Tabs
-          value={mainView}
-          onValueChange={(value) => {
-            if (value === 'queue' || value === 'policies') setMainView(value);
-          }}
-        >
-          <TabsList className="grid grid-cols-2 w-64 bg-slate-100 dark:bg-card p-0.5 rounded-lg">
-            <TabsTrigger value="queue" className="text-xs font-semibold">
-              Approval Queue ({pendingList.length})
-            </TabsTrigger>
-            <TabsTrigger value="policies" className="text-xs font-semibold">
-              Routing Policies
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+      <ScreenHeader
+        description="Decisions routed to you, and the policies that route them."
+        icon={CheckCircle2}
+        title="Approvals"
+        tone="success"
+      />
+      <div className="flex items-center gap-4 border-b border-border pb-2">
+        {(
+          [
+            {
+              id: 'queue',
+              label: `Awaiting me${inbox.items.length ? ` (${inbox.items.length})` : ''}`,
+            },
+            { id: 'policies', label: 'Routing policies' },
+          ] as Array<{ id: View; label: string }>
+        ).map((entry) => (
+          <Button
+            className={`rounded-none pb-1 text-xs font-semibold ${
+              view === entry.id
+                ? 'border-b-2 border-foreground font-bold text-foreground'
+                : 'text-muted-foreground'
+            }`}
+            key={entry.id}
+            onClick={() => setView(entry.id)}
+            size="sm"
+            type="button"
+            variant="ghost"
+          >
+            {entry.label}
+          </Button>
+        ))}
       </div>
 
-      {mainView === 'queue' ? (
-        <div className="space-y-4">
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 flex-wrap">
-            {[
-              { id: 'ALL', label: `All Pending (${pendingList.length})` },
-              { id: 'LEAVE_REQUEST', label: 'Leave Requests' },
-              { id: 'TIMESHEET', label: 'Timesheets' },
-              { id: 'ATTENDANCE_CORRECTION', label: 'Attendance Regularization' },
-              { id: 'COMPLETED', label: `History (${completedList.length})` },
-            ].map((tab) => (
+      {view === 'policies' && <ApprovalPolicyBuilder />}
+
+      {view === 'queue' && (
+        <div className="space-y-3">
+          {inbox.saveError && (
+            <p
+              className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
+              role="alert"
+            >
+              {inbox.saveError}
+            </p>
+          )}
+
+          {inbox.loading && (
+            <p className="py-10 text-center text-xs text-muted-foreground" role="status">
+              Loading approvals...
+            </p>
+          )}
+
+          {!inbox.loading && inbox.error && (
+            <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+              <p className="text-sm font-bold text-foreground">Could not load approvals</p>
+              <p className="mt-1 text-xs text-muted-foreground">{inbox.error}</p>
               <Button
-                key={tab.id}
-                variant={activeFilter === tab.id ? 'default' : 'outline'}
+                className="mt-3"
+                onClick={() => void inbox.refetch()}
                 size="sm"
-                onClick={() => {
-                  if (
-                    tab.id === 'ALL' ||
-                    tab.id === 'LEAVE_REQUEST' ||
-                    tab.id === 'TIMESHEET' ||
-                    tab.id === 'ATTENDANCE_CORRECTION' ||
-                    tab.id === 'COMPLETED'
-                  ) {
-                    setActiveFilter(tab.id);
-                  }
-                }}
-                className="text-xs"
+                type="button"
+                variant="outline"
               >
-                {tab.label}
+                Try again
               </Button>
+            </div>
+          )}
+
+          {!inbox.loading && !inbox.error && inbox.items.length === 0 && (
+            <div className="rounded-lg border border-border bg-card p-10 text-center">
+              <p className="text-sm font-bold text-foreground">Nothing awaiting your decision</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Leave requests and attendance corrections routed to you appear here.
+              </p>
+            </div>
+          )}
+
+          {!inbox.loading &&
+            !inbox.error &&
+            inbox.items.map((item) => (
+              <div
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3"
+                key={`${item.domain}-${item.id}`}
+              >
+                <div>
+                  <p className="text-xs font-bold text-foreground">{item.title}</p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground">{item.detail}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">
+                    {item.submittedAt ? item.submittedAt.slice(0, 10) : 'pending'}
+                  </Badge>
+                  {inbox.canDecide(item) ? (
+                    <>
+                      <Button
+                        disabled={inbox.saving}
+                        onClick={() => setDeciding({ item, status: 'REJECTED' })}
+                        size="sm"
+                        type="button"
+                        variant="outline"
+                      >
+                        Reject
+                      </Button>
+                      <Button
+                        disabled={inbox.saving}
+                        onClick={() => setDeciding({ item, status: 'APPROVED' })}
+                        size="sm"
+                        type="button"
+                      >
+                        Approve
+                      </Button>
+                    </>
+                  ) : (
+                    <span className="text-[11px] text-muted-foreground">
+                      You cannot decide this
+                    </span>
+                  )}
+                </div>
+              </div>
             ))}
-          </div>
 
-          {/* Clean Requests Table */}
-          <Card>
-            <CardHeader className="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-xs font-bold">
-                  {activeFilter === 'COMPLETED'
-                    ? 'Approval Audit History'
-                    : 'Pending Approvals Queue'}
-                </CardTitle>
-                <CardDescription className="mt-0.5">
-                  Items requiring managerial authorization or escalated under configured SLAs.
-                </CardDescription>
-              </div>
-              <Badge variant="secondary">{displayedList.length} items</Badge>
-            </CardHeader>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="px-4">Requester</TableHead>
-                  <TableHead>Request Type</TableHead>
-                  <TableHead>Details</TableHead>
-                  <TableHead>Submitted</TableHead>
-                  <TableHead>Current Approver</TableHead>
-                  <TableHead>Status / SLA</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayedList.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-slate-400 text-xs">
-                      No items matching this queue filter.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  displayedList.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="px-4">
-                        <div className="font-bold text-slate-900 dark:text-white">
-                          {item.applicantName ||
-                            item.employeeName ||
-                            item.applicant ||
-                            'Staff Member'}
-                        </div>
-                        <div className="text-[11px] text-slate-500 font-mono">
-                          {item.applicantRole || item.jobTitle || 'Engineering'}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="sky">{item.domain.replace('_', ' ')}</Badge>
-                      </TableCell>
-                      <TableCell className="text-xs max-w-xs text-slate-700 dark:text-slate-300">
-                        <div className="truncate">
-                          {item.reason ||
-                            item.title ||
-                            item.description ||
-                            item.details ||
-                            'Pending managerial review'}
-                        </div>
-                        {item.rejectionReason && (
-                          <div className="text-[10px] text-rose-600 dark:text-rose-400 mt-0.5 flex items-center gap-1 font-medium">
-                            <span>Reason:</span>
-                            <span className="italic">{item.rejectionReason}</span>
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-[11px] text-slate-500">
-                        {item.submittedDate || item.appliedAt || 'Today'}
-                      </TableCell>
-                      <TableCell className="text-xs font-medium">
-                        {item.currentApprover || 'Reporting Manager'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            item.status === 'APPROVED'
-                              ? 'success'
-                              : item.status === 'REJECTED'
-                                ? 'destructive'
-                                : 'warning'
-                          }
-                        >
-                          {item.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {item.status === 'PENDING' ? (
-                          <div className="flex items-center justify-end gap-1.5">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleInitiateReject(item)}
-                              className="text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40"
-                            >
-                              Reject
-                            </Button>
-                            <Button
-                              variant="default"
-                              size="sm"
-                              onClick={() => handleApprove(item.id)}
-                              className="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-xs"
-                            >
-                              Approve
-                            </Button>
-                          </div>
-                        ) : (
-                          <span className="text-[11px] text-slate-400 font-mono">
-                            {item.actionDate || 'Resolved'}
-                          </span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </Card>
+          <p className="text-[11px] text-muted-foreground">
+            Timesheet and payroll approvals are not listed: neither exposes an inbox route.
+          </p>
         </div>
-      ) : (
-        <ApprovalPolicyBuilder />
       )}
 
-      {/* Reject Reason Modal (shadcn Dialog) */}
-      {rejectingItem && (
-        <Dialog open={Boolean(rejectingItem)} onOpenChange={() => setRejectingItem(null)}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <div className="flex items-center gap-2">
-                <span className="h-6 w-6 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs font-bold shrink-0">
-                  ✕
-                </span>
-                <DialogTitle>Reject Request</DialogTitle>
-              </div>
-              <DialogDescription>
-                Provide a reason for rejecting this{' '}
-                {rejectingItem.domain.replace('_', ' ').toLowerCase()} for{' '}
-                <span className="font-semibold text-slate-900 dark:text-white">
-                  {rejectingItem.applicantName ||
-                    rejectingItem.employeeName ||
-                    rejectingItem.applicant ||
-                    'the applicant'}
-                </span>
-                .
-              </DialogDescription>
-            </DialogHeader>
-
-            <form onSubmit={handleConfirmReject} className="space-y-3 py-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="rejection-reason-input" className="text-xs font-semibold">
-                  Reason for Rejection <span className="text-rose-500">*</span>
-                </Label>
-                <Textarea
-                  id="rejection-reason-input"
-                  name="rejectionReason"
-                  placeholder="Explain why this request is being rejected (e.g., Incomplete documentation, team coverage conflict, revision required)..."
-                  value={rejectReason}
-                  onChange={(e) => {
-                    setRejectReason(e.target.value);
-                    if (rejectError) setRejectError(null);
-                  }}
-                  rows={4}
-                  className="text-xs"
-                  required
-                  autoFocus
-                />
-                {rejectError && (
-                  <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium">
-                    {rejectError}
-                  </p>
-                )}
-              </div>
-
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setRejectingItem(null)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" variant="destructive" size="sm">
-                  Confirm Rejection
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      )}
+      <Dialog onOpenChange={(open) => !open && setDeciding(null)} open={deciding !== null}>
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>
+            {deciding?.status === 'APPROVED' ? 'Approve' : 'Reject'} this request
+          </DialogTitle>
+          <p className="mt-1 text-xs text-muted-foreground">
+            The comment is recorded against the decision and shown to the requester.
+          </p>
+          <div className="mt-4 space-y-3">
+            <Label className="block" htmlFor="decision-comment">
+              Comment
+            </Label>
+            <Textarea
+              disabled={inbox.saving}
+              id="decision-comment"
+              onChange={(event) => setComment(event.target.value)}
+              value={comment}
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                disabled={inbox.saving}
+                onClick={() => setDeciding(null)}
+                type="button"
+                variant="outline"
+              >
+                Cancel
+              </Button>
+              <Button
+                disabled={inbox.saving || comment.trim().length < 2}
+                onClick={() => void confirm()}
+                type="button"
+              >
+                {inbox.saving ? 'Recording...' : 'Confirm'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

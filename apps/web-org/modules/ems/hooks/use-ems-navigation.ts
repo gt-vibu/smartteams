@@ -13,6 +13,8 @@ export type EmsModule =
   | 'teams'
   | 'projects'
   | 'payroll'
+  | 'shifts'
+  | 'holidays'
   | 'approvals'
   | 'files';
 
@@ -34,6 +36,8 @@ const VALID_MODULES: EmsModule[] = [
   'teams',
   'projects',
   'payroll',
+  'shifts',
+  'holidays',
   'approvals',
   'files',
 ];

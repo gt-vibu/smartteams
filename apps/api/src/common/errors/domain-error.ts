@@ -37,14 +37,18 @@ export class UnauthorizedDomainError extends DomainError {
 }
 
 export class RateLimitError extends DomainError {
-  constructor() {
-    super(
-      'RATE_LIMITED',
-      'The federation client rate limit has been exceeded',
-      HttpStatus.TOO_MANY_REQUESTS,
-      {},
-      true,
-    );
+  /**
+   * The message is a parameter because this is raised on two very different surfaces. It was
+   * written for the federation interceptor and said so; once the native API gained a limiter, an
+   * administrator who onboarded too many tenants in a minute was told that a *federation client*
+   * had exceeded its limit, which sent them looking in the wrong place entirely.
+   *
+   * The federation wording stays the default deliberately. Federation is owned by another team
+   * and its call sites must not change, so the surface that arrived second is the one that
+   * passes an argument.
+   */
+  constructor(message = 'The federation client rate limit has been exceeded') {
+    super('RATE_LIMITED', message, HttpStatus.TOO_MANY_REQUESTS, {}, true);
   }
 }
 

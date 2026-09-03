@@ -34,11 +34,15 @@ export interface Persona {
   name: string;
   badge: string;
   email: string;
-  jobTitle: string;
-  department: string;
-  branchId: string;
-  branchName: string;
-  employeeNumber: string;
+  /**
+   * Null unless the session carries it. These used to be filled from a fixture matched on the
+   * signed-in email; the components that display them read the employee detail route instead.
+   */
+  jobTitle: string | null;
+  department: string | null;
+  branchId: string | null;
+  branchName: string | null;
+  employeeNumber: string | null;
   avatarInitials: string;
   avatarUrl: string | null;
   user: User;
@@ -58,7 +62,8 @@ export interface Persona {
 export interface AuthSession {
   user: User;
   personaId: string;
-  employeeId: string;
+  /** Null when the signed-in user has no employee record; never substituted with another id. */
+  employeeId: string | null;
   organizationId: string;
   branchId?: string | null;
   roles: Role[];

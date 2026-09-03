@@ -1,300 +1,272 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Button,
-  Badge,
-  Card,
-  Input,
-  Label,
-  Select,
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
   DialogTitle,
-  DialogDescription,
-  ConfirmDialog,
+  Label,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
 } from '@smarteam/ui';
-import filesFixture from '../../data/fixtures/files.json';
+import { formatFileSize, type FilePurpose } from '@smarteam/contracts';
+import { FolderOpen } from 'lucide-react';
+import { ScreenHeader } from '../common/screen-header';
+import { useFiles } from '../../hooks/use-files';
 
-interface FileItem {
-  id: string;
-  name: string;
-  category: string;
-  size: string;
-  fileType: string;
-  uploadedAt: string;
-  uploadedBy: string;
-  security: string;
-  downloadUrl: string;
-}
+/**
+ * Files.
+ *
+ * Replaces a document library built on `files.json` — categories, security classifications and a
+ * searchable list of company handbooks and Form 16s, none of which existed on the server. Every
+ * "download" was a `#` link.
+ *
+ * The list is the API's answer to "what may this caller see", not a client-side filter: a normal
+ * employee gets their own files, an organization-wide permission gets the tenant's.
+ */
 
-interface FileCategory {
-  id: string;
-  label: string;
-}
-
-const fileData: { files: FileItem[]; categories: FileCategory[] } = filesFixture;
+const PURPOSES: Array<{ value: FilePurpose; label: string }> = [
+  { value: 'EMPLOYEE_DOCUMENT', label: 'Employee document' },
+  { value: 'RESUME', label: 'Resume' },
+  { value: 'PROFILE_IMAGE', label: 'Profile image' },
+  { value: 'OTHER', label: 'Other' },
+];
 
 export function ScreenFiles() {
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [search, setSearch] = useState('');
-  const [fileList, setFileList] = useState<FileItem[]>(fileData.files);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [deletingFile, setDeletingFile] = useState<FileItem | null>(null);
-  const [newFileName, setNewFileName] = useState('');
-  const [newFileCategory, setNewFileCategory] = useState('company');
-  const [downloadToast, setDownloadToast] = useState<string | null>(null);
+  const files = useFiles();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [purpose, setPurpose] = useState<FilePurpose>('EMPLOYEE_DOCUMENT');
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [reason, setReason] = useState('');
 
-  const { categories } = fileData;
+  const pick = () => inputRef.current?.click();
 
-  const filteredFiles = fileList.filter((f) => {
-    const matchesCat = activeCategory === 'all' || f.category === activeCategory;
-    const matchesSearch = !search || f.name.toLowerCase().includes(search.toLowerCase());
-    return matchesCat && matchesSearch;
-  });
+  const onPicked = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (file) await files.upload(file, purpose);
+  };
 
-  const handleUpload = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newFileName.trim()) {
-      const newFile = {
-        id: `file-${Date.now()}`,
-        name: newFileName.trim().endsWith('.pdf')
-          ? newFileName.trim()
-          : `${newFileName.trim()}.pdf`,
-        category: newFileCategory,
-        size: '1.2 MB',
-        fileType: 'PDF',
-        uploadedAt: new Date().toLocaleDateString('en-IN', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        }),
-        uploadedBy: 'Self',
-        security: 'CONFIDENTIAL',
-        downloadUrl: '#',
-      };
-      setFileList([newFile, ...fileList]);
-      setNewFileName('');
-      setIsUploadModalOpen(false);
+  const confirmDelete = async () => {
+    if (!deleting || reason.trim().length < 3) return;
+    const ok = await files.remove(deleting, reason.trim());
+    if (ok) {
+      setReason('');
+      setDeleting(null);
     }
   };
 
-  const handleDownload = (fileName: string) => {
-    setDownloadToast(`Preparing ${fileName} for secure download...`);
-    setTimeout(() => setDownloadToast(null), 3000);
-  };
-
   return (
-    <div className="space-y-4">
-      {/* Toast Notification */}
-      {downloadToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-md shadow-2xl flex items-center gap-2 border border-slate-700 animate-in fade-in">
-          <span className="h-2 w-2 rounded-full bg-sky-400" />
-          <span>{downloadToast}</span>
+    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+      <ScreenHeader
+        description="Upload a document to secure storage, then download or remove it."
+        icon={FolderOpen}
+        title="Files"
+        tone="neutral"
+      />
+
+      {!files.canWrite && !files.canRead && (
+        <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+          <p className="text-sm font-bold text-foreground">Not available</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            You do not have permission to work with files.
+          </p>
         </div>
       )}
 
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-200 dark:border-slate-800">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Document Vault & Statutory Files
-          </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Encrypted corporate policies, tax forms, Form 16, appointment letters, and employee KYC
-            credentials.
+      {files.canWrite && (
+        <section className="space-y-3 rounded-lg border border-border bg-card p-4">
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="w-56">
+              <Label className="mb-1 block">Purpose</Label>
+              <SelectMenu
+                onValueChange={(value) => setPurpose(value as FilePurpose)}
+                value={purpose}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PURPOSES.map((entry) => (
+                    <SelectItem key={entry.value} value={entry.value}>
+                      {entry.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectMenu>
+            </div>
+            <Button disabled={files.busy} onClick={pick} size="sm" type="button">
+              {files.busy ? 'Working...' : 'Choose a file'}
+            </Button>
+            <input className="hidden" onChange={onPicked} ref={inputRef} type="file" />
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            The API decides which types and sizes each purpose allows, and verifies the stored
+            file&apos;s size and checksum before accepting it.
           </p>
-        </div>
-        <Button
-          variant="default"
-          size="sm"
-          onClick={() => setIsUploadModalOpen(true)}
-          className="self-start sm:self-auto text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-xs"
+        </section>
+      )}
+
+      {files.error && (
+        <p
+          className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
+          role="alert"
         >
-          <span>+ Upload Document</span>
-        </Button>
-      </div>
+          {files.error}
+        </p>
+      )}
 
-      {/* Categories & Search Strip */}
-      <Card className="p-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            {categories.map((cat) => {
-              const isActive = activeCategory === cat.id;
-              return (
-                <Button
-                  key={cat.id}
-                  variant={isActive ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setActiveCategory(cat.id)}
-                  className="text-xs shrink-0"
-                >
-                  {cat.label}
-                </Button>
-              );
-            })}
+      <section className="space-y-2">
+        <h2 className="text-xs font-bold text-foreground">Stored documents</h2>
+
+        {files.listForbidden && (
+          <div className="rounded-lg border border-border bg-card p-8 text-center" role="status">
+            <p className="text-xs text-muted-foreground">
+              You do not have permission to view stored files.
+            </p>
           </div>
+        )}
 
-          <div className="relative w-full sm:w-64">
-            <svg
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+        {!files.listForbidden && files.listLoading && (
+          <p className="py-8 text-center text-xs text-muted-foreground" role="status">
+            Loading files...
+          </p>
+        )}
+
+        {!files.listForbidden && !files.listLoading && files.listError && (
+          <div className="rounded-lg border border-border bg-card p-8 text-center" role="alert">
+            <p className="text-sm font-bold text-foreground">Could not load files</p>
+            <p className="mt-1 text-xs text-muted-foreground">{files.listError}</p>
+            <Button
+              className="mt-3"
+              onClick={() => void files.refetch()}
+              size="sm"
+              type="button"
+              variant="outline"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <Input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search documents..."
-              className="pl-8 text-xs h-8"
-            />
+              Try again
+            </Button>
           </div>
-        </div>
-      </Card>
+        )}
 
-      {/* Files Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-        {filteredFiles.map((file) => (
-          <Card
-            key={file.id}
-            className="p-4 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-start justify-between gap-2 mb-2.5">
-                <div className="h-8 w-8 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-                  <svg
-                    className="h-4.5 w-4.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1.8}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+        {!files.listForbidden &&
+          !files.listLoading &&
+          !files.listError &&
+          files.files.length === 0 && (
+            <div className="rounded-lg border border-border bg-card p-8 text-center">
+              <p className="text-xs text-muted-foreground">No documents are stored for you yet.</p>
+            </div>
+          )}
+
+        {files.files.length > 0 && (
+          <div className="overflow-x-auto rounded-xl border border-border bg-card">
+            <table className="w-full min-w-[720px] text-left text-xs">
+              <thead className="border-b border-border bg-muted/40">
+                <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <th className="px-4 py-2.5 font-bold">File</th>
+                  <th className="px-4 py-2.5 font-bold">Purpose</th>
+                  <th className="px-4 py-2.5 font-bold">Size</th>
+                  <th className="px-4 py-2.5 font-bold">Added</th>
+                  <th className="px-4 py-2.5 text-right font-bold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {files.files.map((file) => (
+                  <tr
+                    className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
+                    key={file.id}
                   >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                    <line x1="10" y1="9" x2="8" y2="9" />
-                  </svg>
-                </div>
-                <Badge variant="secondary" className="text-[9px]">
-                  {file.security}
-                </Badge>
-              </div>
+                    <td className="px-4 py-2.5 font-semibold text-foreground">
+                      {file.originalName}
+                    </td>
+                    <td className="px-4 py-2.5 text-muted-foreground">
+                      {file.purpose.replace(/_/g, ' ').toLowerCase()}
+                    </td>
+                    <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                      {formatFileSize(file.byteSize)}
+                    </td>
+                    <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                      {file.createdAt.slice(0, 10)}
+                    </td>
+                    <td className="px-4 py-2.5 text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          disabled={files.busy}
+                          onClick={() => void files.download(file.id)}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          Download
+                        </Button>
+                        {files.canWrite && (
+                          <Button
+                            disabled={files.busy}
+                            onClick={() => setDeleting(file.id)}
+                            size="sm"
+                            type="button"
+                            variant="ghost"
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-              <h3 className="text-xs font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                {file.name}
-              </h3>
-              <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 space-y-0.5 font-mono">
-                <div>
-                  Size: {file.size} · Uploaded: {file.uploadedAt}
-                </div>
-                <div>Source: {file.uploadedBy}</div>
-              </div>
-            </div>
+        <p className="text-[11px] text-muted-foreground">
+          The API decides which files you can see: your own unless you hold the organization-wide
+          permission. Payslip documents remain reachable from the payslip they belong to.
+        </p>
+      </section>
 
-            <div className="border-t border-slate-100 dark:border-slate-800 pt-2.5 mt-3 flex items-center justify-between">
+      <Dialog onOpenChange={(open) => !open && setDeleting(null)} open={deleting !== null}>
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>Delete this file</DialogTitle>
+          <p className="mt-1 text-xs text-muted-foreground">
+            The reason is recorded in the audit trail. The file is purged after the retention
+            period.
+          </p>
+          <div className="mt-4 space-y-3">
+            <Label className="block" htmlFor="file-delete-reason">
+              Reason
+            </Label>
+            <Textarea
+              disabled={files.busy}
+              id="file-delete-reason"
+              onChange={(event) => setReason(event.target.value)}
+              value={reason}
+            />
+            <div className="flex justify-end gap-2">
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setDeletingFile(file)}
-                className="text-xs text-rose-500 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-0 h-7"
-              >
-                Delete
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDownload(file.name)}
-                className="text-xs text-slate-800 dark:text-slate-200 hover:text-slate-900"
-              >
-                Download File ↓
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {/* Upload Modal */}
-      <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Upload Vault Document</DialogTitle>
-            <DialogDescription>
-              Select category and title for your encrypted file upload.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleUpload} className="space-y-3 pt-2">
-            <div className="space-y-1">
-              <Label className="text-xs">Document Name</Label>
-              <Input
-                type="text"
-                required
-                value={newFileName}
-                onChange={(e) => setNewFileName(e.target.value)}
-                placeholder="e.g. Health_Insurance_Card.pdf"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Category</Label>
-              <Select value={newFileCategory} onChange={(e) => setNewFileCategory(e.target.value)}>
-                <option value="company">Company Policies</option>
-                <option value="statutory">Statutory & Tax (Form 16)</option>
-                <option value="letters">Employment Letters</option>
-                <option value="identity">Identity & KYC Proofs</option>
-              </Select>
-            </div>
-            <DialogFooter className="pt-3">
-              <Button
+                disabled={files.busy}
+                onClick={() => setDeleting(null)}
                 type="button"
                 variant="outline"
-                size="sm"
-                onClick={() => setIsUploadModalOpen(false)}
               >
                 Cancel
               </Button>
               <Button
-                type="submit"
-                variant="default"
-                size="sm"
-                className="bg-slate-900 hover:bg-slate-800 text-white font-bold"
+                disabled={files.busy || reason.trim().length < 3}
+                onClick={() => void confirmDelete()}
+                type="button"
               >
-                Upload
+                {files.busy ? 'Deleting...' : 'Delete'}
               </Button>
-            </DialogFooter>
-          </form>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
-
-      {/* shadcn ConfirmDialog for Delete Confirmation */}
-      {deletingFile && (
-        <ConfirmDialog
-          open={Boolean(deletingFile)}
-          title="Delete Vault Document"
-          description={`Are you sure you want to delete "${deletingFile.name}"? This action will remove the encrypted file from company storage and cannot be undone.`}
-          confirmText="Yes, Delete Document"
-          cancelText="Cancel"
-          variant="destructive"
-          onConfirm={() => {
-            setFileList((prev) => prev.filter((f) => f.id !== deletingFile.id));
-            setDownloadToast(`Deleted "${deletingFile.name}" from document vault.`);
-            setDeletingFile(null);
-            setTimeout(() => setDownloadToast(null), 3000);
-          }}
-          onCancel={() => setDeletingFile(null)}
-        />
-      )}
     </div>
   );
 }

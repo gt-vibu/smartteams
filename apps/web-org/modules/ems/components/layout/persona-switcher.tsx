@@ -4,9 +4,17 @@ import { Button } from '@smarteam/ui';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/use-auth';
+import { useSession } from '../../hooks/auth-context';
+import { useEmployeeDetail } from '../../hooks/use-employee-detail';
 
 export function PersonaSwitcher() {
   const { persona, logout, workspaceContext } = useAuth();
+  const { session } = useSession();
+  // Job title and department live on the employment record, so they come from the employee
+  // detail route. They were previously read from a fixture matched on the signed-in email.
+  const detail = useEmployeeDetail(session?.employeeId ?? null);
+  const jobTitle = detail.data?.jobTitle ?? null;
+  const department = detail.data?.department ?? null;
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -23,7 +31,7 @@ export function PersonaSwitcher() {
 
   // Clean role label for top bar
   const displayedRoleLabel =
-    workspaceContext === 'ADMIN' ? 'Tenant Admin' : persona.jobTitle || 'Employee';
+    workspaceContext === 'ADMIN' ? 'Tenant Admin' : (jobTitle ?? 'Employee');
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -57,15 +65,17 @@ export function PersonaSwitcher() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-[10px] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+        <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-[10px] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
           {/* Profile Header */}
-          <div className="p-4 bg-slate-50 flex items-center gap-3 border-b border-slate-100">
+          <div className="p-4 bg-muted/40 flex items-center gap-3 border-b border-border">
             <div className="h-10 w-10 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
               {persona.avatarInitials}
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-bold text-slate-900 truncate">{persona.name}</div>
-              <div className="text-[10px] text-slate-500 truncate mt-0.5">{persona.email}</div>
+              <div className="text-sm font-bold text-foreground truncate">{persona.name}</div>
+              <div className="text-[10px] text-muted-foreground truncate mt-0.5">
+                {persona.email}
+              </div>
               <div className="text-[9px] text-sky-700 font-semibold mt-0.5">
                 {displayedRoleLabel}
               </div>
@@ -74,9 +84,9 @@ export function PersonaSwitcher() {
 
           {/* Account Details */}
           <div className="p-2 space-y-0.5">
-            <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-slate-600">
+            <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-muted-foreground">
               <svg
-                className="h-3.5 w-3.5 shrink-0 text-slate-400"
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -88,11 +98,11 @@ export function PersonaSwitcher() {
                   d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                 />
               </svg>
-              <span className="truncate">{persona.department}</span>
+              <span className="truncate">{department ?? 'Department not set'}</span>
             </div>
-            <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-slate-600">
+            <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-muted-foreground">
               <svg
-                className="h-3.5 w-3.5 shrink-0 text-slate-400"
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -109,11 +119,13 @@ export function PersonaSwitcher() {
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <span className="truncate">{persona.branchName}</span>
+              <span className="truncate">
+                {persona.branchName ?? (persona.branchId ? 'Branch assigned' : 'No branch')}
+              </span>
             </div>
-            <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-slate-600">
+            <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-muted-foreground">
               <svg
-                className="h-3.5 w-3.5 shrink-0 text-slate-400"
+                className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -125,7 +137,9 @@ export function PersonaSwitcher() {
                   d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
                 />
               </svg>
-              <span className="truncate font-mono text-slate-500">{persona.employeeNumber}</span>
+              <span className="truncate font-mono text-muted-foreground">
+                {persona.employeeNumber ?? 'No employee record'}
+              </span>
             </div>
           </div>
 
@@ -146,7 +160,7 @@ export function PersonaSwitcher() {
           </div>
 
           {/* Sign Out */}
-          <div className="border-t border-slate-100 p-2">
+          <div className="border-t border-border p-2">
             <Button
               onClick={() => {
                 setIsOpen(false);

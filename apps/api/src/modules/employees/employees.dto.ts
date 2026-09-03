@@ -6,8 +6,11 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Max,
+  Min,
   MinLength,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import {
   EmployeeStatus,
   EmploymentType,
@@ -97,4 +100,18 @@ export class CompensationDto {
 
 export class ManagerAssignmentDto {
   @IsUUID() managerEmployeeId!: string;
+}
+
+/** Links an existing organization member's account to an employee record. */
+export class UserLinkDto {
+  @IsUUID() userId!: string;
+}
+
+/**
+ * Paging for the employee directory. The service caps `limit` regardless of what arrives here,
+ * so a large value is clamped rather than refused.
+ */
+export class EmployeeListQueryDto {
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(1) @Max(200) limit?: number;
+  @IsOptional() @IsUUID() cursor?: string;
 }

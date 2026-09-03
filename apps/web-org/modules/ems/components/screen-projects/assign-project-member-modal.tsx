@@ -1,243 +1,176 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { employeeDisplayName, type Employee } from '@smarteam/contracts';
 import {
+  Button,
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
   DialogTitle,
-  DialogDescription,
-  Button,
-  Label,
   Input,
-  Select,
-  DatePicker,
+  Label,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
 } from '@smarteam/ui';
-import type { ProjectData } from './screen-projects';
-import { AVAILABLE_EMPLOYEES } from '../screen-teams/create-team-modal';
-
-export interface AssignProjectMemberPayload {
-  projectId: string;
-  employeeId: string;
-  projectRole: string;
-  allocationPercentage: number;
-  startsOn: string;
-  endsOn: string | null;
-}
+import type { AddProjectMemberInput } from '../../hooks/use-project-directory';
 
 interface AssignProjectMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
-  project?: ProjectData | null;
-  projects?: ProjectData[];
-  selectedProjectId?: string;
-  onAssign: (payload: AssignProjectMemberPayload) => void;
+  projectName: string;
+  /** Employees not already allocated to this project. */
+  candidates: readonly Employee[];
+  saving: boolean;
+  saveError: string | null;
+  onAssign: (member: AddProjectMemberInput) => Promise<boolean>;
 }
 
-const COMMON_ROLES = [
-  'Tech Lead',
-  'Senior Developer',
-  'Frontend Developer',
-  'Backend Developer',
-  'UI/UX Designer',
-  'QA Engineer',
-  'DevOps Specialist',
-  'Project Manager',
-];
-
+/**
+ * Allocates one employee to a project.
+ *
+ * Allocation is captured here because it is fixed at assignment time — the API exposes no route
+ * to change a membership row afterwards.
+ */
 export function AssignProjectMemberModal({
   isOpen,
   onClose,
-  project,
-  projects = [],
-  selectedProjectId: initialSelectedProjectId,
+  projectName,
+  candidates,
+  saving,
+  saveError,
   onAssign,
 }: AssignProjectMemberModalProps) {
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(
-    project?.id || initialSelectedProjectId || projects[0]?.id || '',
+  const [employeeId, setEmployeeId] = useState('');
+  const [projectRole, setProjectRole] = useState('');
+  const [allocation, setAllocation] = useState(50);
+  const [error, setError] = useState('');
+
+  const sorted = useMemo(
+    () =>
+      [...candidates].sort((a, b) => employeeDisplayName(a).localeCompare(employeeDisplayName(b))),
+    [candidates],
   );
-  const [employeeId, setEmployeeId] = useState<string>(AVAILABLE_EMPLOYEES[0]?.id || '');
-  const [role, setRole] = useState<string>(COMMON_ROLES[1]!);
-  const [allocation, setAllocation] = useState<number>(100);
-  const [startsOn, setStartsOn] = useState<string>(new Date().toISOString().slice(0, 10));
-  const [endsOn, setEndsOn] = useState<string>('');
 
-  const currentProject = project || projects.find((p) => p.id === selectedProjectId);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!employeeId || !currentProject) return;
-
-    onAssign({
-      projectId: currentProject.id,
-      employeeId,
-      projectRole: role,
-      allocationPercentage: allocation,
-      startsOn,
-      endsOn: endsOn || null,
-    });
-    onClose();
+  const reset = () => {
+    setEmployeeId('');
+    setProjectRole('');
+    setAllocation(50);
+    setError('');
   };
 
-  const selectedEmp = AVAILABLE_EMPLOYEES.find((e) => e.id === employeeId);
+  const handleSubmit = async () => {
+    if (!employeeId) {
+      setError('Select an employee to allocate.');
+      return;
+    }
+    setError('');
+    const assigned = await onAssign({
+      employeeId,
+      ...(projectRole.trim() ? { projectRole: projectRole.trim() } : {}),
+      allocationPercentage: allocation,
+    });
+    if (assigned) {
+      reset();
+      onClose();
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          reset();
+          onClose();
+        }
+      }}
+      open={isOpen}
+    >
+      <DialogContent className="max-w-lg gap-0 p-0">
+        <DialogTitle className="border-b border-border px-5 py-4 text-sm font-bold">
+          Allocate to {projectName}
+        </DialogTitle>
+
+        <div className="space-y-4 p-5">
+          {sorted.length === 0 ? (
+            <p className="text-xs text-muted-foreground">
+              Every employee in the directory is already allocated to this project.
+            </p>
+          ) : (
+            <>
+              <div>
+                <Label className="mb-1 block" htmlFor="allocate-employee">
+                  Employee
+                </Label>
+                <SelectMenu disabled={saving} onValueChange={setEmployeeId} value={employeeId}>
+                  <SelectTrigger id="allocate-employee">
+                    <SelectValue placeholder="Select an employee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sorted.map((employee) => (
+                      <SelectItem key={employee.id} value={employee.id}>
+                        {employeeDisplayName(employee)} · {employee.employeeNumber}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectMenu>
+              </div>
+
+              <div>
+                <Label className="mb-1 block" htmlFor="allocate-role">
+                  Project role
+                </Label>
+                <Input
+                  disabled={saving}
+                  id="allocate-role"
+                  onChange={(event) => setProjectRole(event.target.value)}
+                  placeholder="e.g. Frontend Lead"
+                  value={projectRole}
+                />
+              </div>
+
+              <div>
+                <Label className="mb-1 block" htmlFor="allocate-percentage">
+                  Allocation ({allocation}%)
+                </Label>
+                <input
+                  className="w-full cursor-pointer accent-primary"
+                  disabled={saving}
+                  id="allocate-percentage"
+                  max="100"
+                  min="10"
+                  onChange={(event) => setAllocation(Number.parseInt(event.target.value, 10))}
+                  step="5"
+                  type="range"
+                  value={allocation}
+                />
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Allocation is fixed at assignment; it cannot be edited afterwards.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
+          <p className="text-[11px] font-semibold text-destructive" role="alert">
+            {error || saveError}
+          </p>
           <div className="flex items-center gap-2">
-            <span className="h-6 w-6 rounded-md bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center text-xs font-bold shrink-0">
-              👤
-            </span>
-            <DialogTitle>Assign Staff to Project</DialogTitle>
-          </div>
-          <DialogDescription>
-            {project ? (
-              <>
-                Assign workforce member to{' '}
-                <strong className="text-slate-900 dark:text-white">{project.name}</strong> (
-                {project.code}).
-              </>
-            ) : (
-              'Select project, team member, role, and capacity allocation.'
-            )}
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-3.5 py-1">
-          {/* 1. Project Selector (if not pre-fixed) */}
-          {!project && projects.length > 0 && (
-            <div className="space-y-1">
-              <Label htmlFor="assign-proj-select">
-                Target Project <span className="text-rose-500">*</span>
-              </Label>
-              <Select
-                id="assign-proj-select"
-                value={selectedProjectId}
-                onChange={(e) => setSelectedProjectId(e.target.value)}
-              >
-                {projects.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} ({p.code})
-                  </option>
-                ))}
-              </Select>
-            </div>
-          )}
-
-          {/* 2. Employee Selector */}
-          <div className="space-y-1">
-            <Label htmlFor="assign-emp-select">
-              Workforce Member <span className="text-rose-500">*</span>
-            </Label>
-            <Select
-              id="assign-emp-select"
-              value={employeeId}
-              onChange={(e) => setEmployeeId(e.target.value)}
-            >
-              {AVAILABLE_EMPLOYEES.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.firstName} {emp.lastName} — {emp.jobTitle} ({emp.employeeNumber})
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          {/* 3. Project Role */}
-          <div className="space-y-1">
-            <Label htmlFor="assign-role-input">
-              Project Role / Responsibility <span className="text-rose-500">*</span>
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                id="assign-role-input"
-                type="text"
-                required
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                placeholder="e.g. Lead Architect"
-              />
-              <Select
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) setRole(e.target.value);
-                }}
-                className="w-40 shrink-0"
-              >
-                <option value="">Presets...</option>
-                {COMMON_ROLES.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-
-          {/* 4. Allocation Percentage */}
-          <div className="bg-slate-50 dark:bg-card p-3 rounded-lg border border-slate-200 dark:border-slate-800 space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs">Staffing Allocation:</Label>
-              <span className="font-mono font-bold text-xs text-primary bg-white dark:bg-card border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded">
-                {allocation}% Time Commitment
-              </span>
-            </div>
-            <input
-              type="range"
-              min="10"
-              max="100"
-              step="10"
-              value={allocation}
-              onChange={(e) => setAllocation(Number(e.target.value))}
-              className="w-full accent-sky-600 cursor-pointer"
-            />
-            <div className="flex justify-between text-[10px] text-slate-400">
-              <span>10% (Advisory)</span>
-              <span>50% (Part-time)</span>
-              <span>100% (Dedicated)</span>
-            </div>
-          </div>
-
-          {/* 5. Start & End Dates with shadcn DatePicker */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>
-                Effective Start Date <span className="text-rose-500">*</span>
-              </Label>
-              <DatePicker
-                value={startsOn}
-                onChange={(d) => setStartsOn(d)}
-                placeholder="Start Date"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Release Date (Optional)</Label>
-              <DatePicker value={endsOn} onChange={(d) => setEndsOn(d)} placeholder="End Date" />
-            </div>
-          </div>
-
-          {/* Preview Note */}
-          {selectedEmp && currentProject && (
-            <div className="p-2.5 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 rounded-md text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
-              Assigning{' '}
-              <strong className="text-slate-900 dark:text-white">
-                {selectedEmp.firstName} {selectedEmp.lastName}
-              </strong>{' '}
-              as <strong>{role}</strong> ({allocation}% allocation) to{' '}
-              <strong>{currentProject.name}</strong>.
-            </div>
-          )}
-
-          <DialogFooter className="pt-2">
-            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+            <Button disabled={saving} onClick={onClose} type="button" variant="outline">
               Cancel
             </Button>
-            <Button type="submit" size="sm">
-              Confirm Assignment
+            <Button
+              disabled={saving || sorted.length === 0}
+              onClick={() => void handleSubmit()}
+              type="button"
+            >
+              {saving ? 'Allocating...' : 'Allocate'}
             </Button>
-          </DialogFooter>
-        </form>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

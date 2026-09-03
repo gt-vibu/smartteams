@@ -254,12 +254,23 @@ export class AttendanceService {
   ) {
     requirePermission(context, 'attendance.read');
     return this.database.run(context, async (tx) => {
+      let employeeId = filters.employeeId;
+      if (!this.canReadAllEmployees(context, 'attendance.read.all')) {
+        const self = await tx.employee.findFirst({
+          where: { organizationId: context.organizationId, userId: context.actor.userId },
+          select: { id: true },
+        });
+        if (!self) return { records: [], nextCursor: undefined };
+        if (employeeId && employeeId !== self.id)
+          throw new ConflictError('Employees may only read their own attendance records');
+        employeeId = self.id;
+      }
       const cursorId = filters.cursor ? decodeAttendanceCursor(filters.cursor) : undefined;
       const limit = Math.min(filters.limit ?? 100, 500);
       const records = await tx.attendanceRecord.findMany({
         where: {
           organizationId: context.organizationId,
-          employeeId: filters.employeeId,
+          employeeId,
           branchId: context.branchId,
           workDate: {
             gte: filters.from ? new Date(filters.from) : undefined,
@@ -778,6 +789,20 @@ export class AttendanceService {
         },
       });
     });
+  }
+
+  /**
+   * Employee self-scoping, matching the convention already used by Timesheets, Compliance and
+   * Payroll: a plain `attendance.read` may only see the caller's own records, `attendance.read.all`
+   * (or the tenant wildcard) may read other employees, and federation grants keep the read breadth
+   * their scope already carries.
+   */
+  private canReadAllEmployees(context: DomainContext, readAllPermission: string) {
+    return (
+      context.accessMode === 'FEDERATION' ||
+      context.permissions.has('*') ||
+      context.permissions.has(readAllPermission)
+    );
   }
 
   private assertSettingOwnership(

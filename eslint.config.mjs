@@ -6,12 +6,18 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   {
     ignores: [
+      'apps/api/jest.integration.config.cjs',
+      'apps/api/jest.integration.setup.cjs',
       '**/node_modules/**',
       '**/.next/**',
       '**/dist/**',
       '**/coverage/**',
       '**/.turbo/**',
       '**/src/generated/**',
+      // Test-runner configuration lives outside the app tsconfig projects, so the
+      // type-aware rules cannot resolve it.
+      '**/vitest.config.*',
+      '**/vitest.setup.*',
     ],
   },
   eslint.configs.recommended,

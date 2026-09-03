@@ -113,9 +113,9 @@ export function ScreenTimesheetsAdmin() {
     <div className="w-full">
       {/* 1. Sub-Header Toolbar Strip — Sticky White Strip */}
       <div className="sticky top-0 z-20 bg-background">
-        <div className="bg-white/95 backdrop-blur-md px-4 sm:px-6 py-2.5 border-b border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+        <div className="bg-card/95 backdrop-blur-md px-4 sm:px-6 py-2.5 border-b border-border/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 w-full shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
           <div className="flex items-center space-x-4">
-            <span className="text-xs font-bold text-slate-900 border-b-2 border-slate-900 pb-1">
+            <span className="text-xs font-bold text-foreground border-b-2 border-slate-900 pb-1">
               Time Logs & Timesheets
             </span>
           </div>
@@ -143,49 +143,49 @@ export function ScreenTimesheetsAdmin() {
 
       <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-[6px] border border-slate-200/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-card rounded-[6px] border border-border/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-foreground bg-muted px-2 py-0.5 rounded border border-border">
                 Admin Governance
               </span>
-              <span className="text-xs text-slate-400">·</span>
-              <span className="text-xs text-slate-500 font-medium">
+              <span className="text-xs text-muted-foreground">·</span>
+              <span className="text-xs font-medium text-muted-foreground">
                 Timesheet Audit & Approvals
               </span>
             </div>
-            <h1 className="text-lg font-bold text-slate-900 mt-1">Timesheet Operations</h1>
+            <h1 className="mt-1 text-lg font-bold text-foreground">Timesheet Operations</h1>
           </div>
         </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-white p-3.5 rounded-[6px] border border-slate-200/90 shadow-2xs">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="bg-card p-3.5 rounded-[6px] border border-border/90 shadow-2xs">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Pending Review
             </div>
             <div className="text-xl font-bold text-amber-600 mt-0.5">
               {timesheets.filter((t) => t.status === 'SUBMITTED').length}
             </div>
           </div>
-          <div className="bg-white p-3.5 rounded-[6px] border border-slate-200/90 shadow-2xs">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="bg-card p-3.5 rounded-[6px] border border-border/90 shadow-2xs">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Approved
             </div>
             <div className="text-xl font-bold text-emerald-600 mt-0.5">
               {timesheets.filter((t) => t.status === 'APPROVED').length}
             </div>
           </div>
-          <div className="bg-white p-3.5 rounded-[6px] border border-slate-200/90 shadow-2xs">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="bg-card p-3.5 rounded-[6px] border border-border/90 shadow-2xs">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Draft / In Progress
             </div>
-            <div className="text-xl font-bold text-slate-600 mt-0.5">
+            <div className="text-xl font-bold text-muted-foreground mt-0.5">
               {timesheets.filter((t) => t.status === 'DRAFT').length}
             </div>
           </div>
-          <div className="bg-white p-3.5 rounded-[6px] border border-slate-200/90 shadow-2xs">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="bg-card p-3.5 rounded-[6px] border border-border/90 shadow-2xs">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Total Logged Hours
             </div>
             <div className="text-xl font-bold text-sky-700 mt-0.5">
@@ -205,10 +205,10 @@ export function ScreenTimesheetsAdmin() {
               pinned: 'left',
               cell: (row) => (
                 <div>
-                  <div className="font-bold text-slate-900 group-hover:text-sky-700 transition-colors">
+                  <div className="font-bold text-foreground group-hover:text-sky-700 transition-colors">
                     {row.employeeName}
                   </div>
-                  <div className="text-[10px] text-slate-400 font-mono">
+                  <div className="text-[10px] text-muted-foreground font-mono">
                     {row.employeeNumber} · {row.department}
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export function ScreenTimesheetsAdmin() {
               accessorKey: 'period',
               sortable: true,
               filterable: true,
-              cell: (row) => <span className="font-medium text-slate-700">{row.period}</span>,
+              cell: (row) => <span className="font-medium text-foreground">{row.period}</span>,
             },
             {
               id: 'totalHours',
@@ -228,7 +228,7 @@ export function ScreenTimesheetsAdmin() {
               accessorKey: 'totalHours',
               sortable: true,
               cell: (row) => (
-                <span className="font-mono font-bold text-slate-900">{row.totalHours} hrs</span>
+                <span className="font-mono font-bold text-foreground">{row.totalHours} hrs</span>
               ),
             },
             {
@@ -251,7 +251,7 @@ export function ScreenTimesheetsAdmin() {
                   {row.projectBreakdown.map((p, idx) => (
                     <span
                       key={idx}
-                      className="text-[9px] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200"
+                      className="text-[9px] font-semibold bg-muted text-foreground px-1.5 py-0.5 rounded border border-border"
                     >
                       {p.projectName} ({p.hours}h)
                     </span>
@@ -280,7 +280,7 @@ export function ScreenTimesheetsAdmin() {
                         ? 'bg-rose-50 text-rose-700 border border-rose-200'
                         : row.status === 'SUBMITTED'
                           ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                          : 'bg-slate-100 text-slate-600'
+                          : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {row.status}
@@ -318,10 +318,10 @@ export function ScreenTimesheetsAdmin() {
                       </Button>
                     </div>
                   ) : (
-                    <span className="text-[10px] text-slate-400 italic">Pending Review</span>
+                    <span className="text-[10px] text-muted-foreground italic">Pending Review</span>
                   )
                 ) : (
-                  <span className="text-[10px] text-slate-400 font-mono">Completed</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">Completed</span>
                 );
               },
             },
@@ -348,39 +348,39 @@ export function ScreenTimesheetsAdmin() {
               className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs"
             />
             <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-              <div className="w-screen max-w-md bg-white shadow-2xl border-l border-slate-200 flex flex-col justify-between">
-                <div className="p-5 border-b border-slate-200 bg-slate-50/80 flex items-start justify-between">
+              <div className="w-screen max-w-md bg-card shadow-2xl border-l border-border flex flex-col justify-between">
+                <div className="p-5 border-b border-border bg-muted/40/80 flex items-start justify-between">
                   <div>
-                    <span className="text-[10px] font-mono font-bold bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold bg-slate-200 text-muted-foreground px-1.5 py-0.5 rounded">
                       {activeDrawerRecord.employeeNumber}
                     </span>
-                    <h2 className="text-sm font-bold text-slate-900 mt-1">
+                    <h2 className="text-sm font-bold text-foreground mt-1">
                       {activeDrawerRecord.employeeName}
                     </h2>
-                    <p className="text-xs text-slate-500">{activeDrawerRecord.period}</p>
+                    <p className="text-xs text-muted-foreground">{activeDrawerRecord.period}</p>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setActiveDrawerRecord(null)}
-                    className="h-7 w-7 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200 cursor-pointer"
+                    className="h-7 w-7 rounded text-muted-foreground hover:text-foreground hover:bg-slate-200 cursor-pointer"
                   >
                     ✕
                   </Button>
                 </div>
 
                 <div className="p-5 space-y-4 flex-1 overflow-y-auto text-xs">
-                  <div className="bg-slate-50 p-3.5 rounded-[6px] border border-slate-200 grid grid-cols-2 gap-3">
+                  <div className="bg-muted/40 p-3.5 rounded-[6px] border border-border grid grid-cols-2 gap-3">
                     <div>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase">
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase">
                         Total Hours
                       </span>
-                      <p className="text-sm font-bold text-slate-800 font-mono mt-0.5">
+                      <p className="text-sm font-bold text-foreground font-mono mt-0.5">
                         {activeDrawerRecord.totalHours} hrs
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase">
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase">
                         Billable Hours
                       </span>
                       <p className="text-sm font-bold text-emerald-700 font-mono mt-0.5">
@@ -388,42 +388,42 @@ export function ScreenTimesheetsAdmin() {
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase">
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase">
                         Submission Status
                       </span>
-                      <p className="font-semibold text-slate-800 mt-0.5">
+                      <p className="font-semibold text-foreground mt-0.5">
                         {activeDrawerRecord.status}
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase">
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase">
                         Submitted At
                       </span>
-                      <p className="font-mono text-slate-600 mt-0.5">
+                      <p className="font-mono text-muted-foreground mt-0.5">
                         {activeDrawerRecord.submittedAt || 'Not Submitted'}
                       </p>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
+                    <h3 className="text-xs font-bold text-foreground uppercase tracking-wide mb-2">
                       Project Allocations
                     </h3>
                     <div className="space-y-2">
                       {activeDrawerRecord.projectBreakdown.map((p, i) => (
                         <div
                           key={i}
-                          className="p-3 bg-slate-50 border border-slate-200 rounded-[6px] flex items-center justify-between"
+                          className="p-3 bg-muted/40 border border-border rounded-[6px] flex items-center justify-between"
                         >
-                          <div className="font-semibold text-slate-800">{p.projectName}</div>
-                          <div className="font-mono font-bold text-slate-800">{p.hours} hrs</div>
+                          <div className="font-semibold text-foreground">{p.projectName}</div>
+                          <div className="font-mono font-bold text-foreground">{p.hours} hrs</div>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center gap-2">
+                <div className="p-4 border-t border-border bg-muted/40 flex items-center gap-2">
                   {activeDrawerRecord.status === 'SUBMITTED' &&
                   canApprove('TIMESHEET', {
                     requesterId: activeDrawerRecord.employeeId,

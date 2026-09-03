@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useScreenTab } from '../../hooks/use-screen-tab';
 import { HeroBanner } from './hero-banner';
 import { EmployeeProfilePanel } from './employee-profile-panel';
 import { SubNavTabs } from './sub-nav-tabs';
@@ -19,27 +20,59 @@ import { Screen4Calendar } from '../screen-4-calendar/screen-4-calendar';
 import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useTimesheet } from '../../hooks/use-timesheet';
-import holidaysFixture from '../../data/fixtures/holidays.json';
+import { useHolidays } from '../../hooks/use-holidays';
 import type { DailyAttendanceItem } from '../../types/attendance.types';
+import { toDailyStatus } from '../../services/attendance-view';
 import { formatDateLabel } from '../../utils/formatters';
+
+const TOP_TABS = ['Overview', 'Dashboard', 'Calendar'] as const;
+
+/**
+ * 'Approvals' stays in this list even though only a line manager sees the control: rejecting it
+ * for everyone else would mean a manager's shared link landed silently on Activities.
+ */
+const SUB_TABS = [
+  'Activities',
+  'Feeds',
+  'Profile',
+  'Approvals',
+  'Leave',
+  'Attendance',
+  'Time Logs',
+  'Timesheets',
+] as const;
+
+function isOneOf<T extends string>(value: string, allowed: readonly T[]): value is T {
+  return (allowed as readonly string[]).includes(value);
+}
 
 interface Screen1OverviewProps {
   onNavigateModule?: (module: string, subView?: 'timeline' | 'table' | 'calendar') => void;
 }
 
 export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
-  const [activeTopTab, setActiveTopTab] = useState('Overview');
-  const [activeSubTab, setActiveSubTab] = useState('Activities');
+  // Two independent levels, each its own history entry: moving through the sub-tabs and then
+  // pressing Back returns to the previous sub-tab rather than leaving the screen.
+  const [activeTopTab, setActiveTopTab] = useScreenTab('overviewTab', TOP_TABS, 'Overview');
+  const [activeSubTab, setActiveSubTab] = useScreenTab('overviewSection', SUB_TABS, 'Activities');
   const { employee } = useEmployee();
-  const { records } = useAttendance();
-  const { approvedNotification } = useTimesheet();
+  const { days: records } = useAttendance();
+  const { approvedTimesheet } = useTimesheet();
+  const holidays = useHolidays();
+
+  // The card shows what is still ahead this year, from the calendar the API returned.
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const upcomingHolidays = holidays.holidays
+    .filter((holiday) => holiday.isActive && holiday.holidayDate.slice(0, 10) >= todayKey)
+    .slice(0, 3);
 
   const shiftInfo = {
     id: 'shift_general',
     code: 'GEN',
-    name: 'General Shift',
-    startsAt: '10:00 AM',
-    endsAt: '6:00 PM',
+    // Shift assignment is not wired; the card reports that rather than naming a shift.
+    name: 'Not recorded',
+    startsAt: '--',
+    endsAt: '--',
   };
 
   // Convert attendance records to week schedule format
@@ -48,14 +81,7 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
     workDate: r.workDate,
     dayOfWeek: r.dayOfWeek,
     dayNumber: r.dayNumber,
-    dayStatus:
-      r.dayStatus === 'LEAVE'
-        ? 'ON_LEAVE'
-        : r.dayStatus === 'ON_DUTY'
-          ? 'PRESENT'
-          : r.dayStatus === 'EMPTY'
-            ? 'ABSENT'
-            : r.dayStatus,
+    dayStatus: toDailyStatus(r.dayStatus),
     workedMinutes: r.workedMinutes,
     isToday: r.isToday,
   }));
@@ -65,13 +91,14 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
     ? formatDateLabel(scheduleDates[scheduleDates.length - 1]!)
     : '';
 
+  // The tab name arrives from a child as a plain string, so it is checked against the list
+  // rather than asserted. An unknown name is ignored instead of blanking the screen.
   const handleSelectSubTab = (tab: string) => {
-    // Retain inline preview state without forcefully redirecting away
-    setActiveSubTab(tab);
+    if (isOneOf(tab, SUB_TABS)) setActiveSubTab(tab);
   };
 
   const handleSelectTopTab = (tab: string) => {
-    setActiveTopTab(tab);
+    if (isOneOf(tab, TOP_TABS)) setActiveTopTab(tab);
   };
 
   return (
@@ -112,11 +139,9 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
               {/* Tab 1: Activities (Default Home Feed) */}
               {activeSubTab === 'Activities' && (
                 <>
-                  <GreetingCard employee={employee} />
+                  {employee && <GreetingCard employee={employee} />}
 
-                  {approvedNotification && (
-                    <TimesheetStatusCard notification={approvedNotification} />
-                  )}
+                  {approvedTimesheet && <TimesheetStatusCard notification={approvedTimesheet} />}
 
                   <WorkScheduleCard
                     shift={shiftInfo}
@@ -125,7 +150,11 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
                     attendanceDays={weekScheduleDays}
                   />
 
-                  <UpcomingHolidaysCard holidays={holidaysFixture.holidays} />
+                  <UpcomingHolidaysCard
+                    holidays={upcomingHolidays}
+                    loading={holidays.loading}
+                    unavailable={holidays.forbidden}
+                  />
                 </>
               )}
 

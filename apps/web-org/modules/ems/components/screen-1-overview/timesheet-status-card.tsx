@@ -1,50 +1,23 @@
 import React from 'react';
-import type { ApprovedTimesheetNotification } from '../../types/timesheet.types';
+import { formatWorkMinutes, type Timesheet } from '@smarteam/contracts';
 
-interface TimesheetStatusCardProps {
-  notification: ApprovedTimesheetNotification;
-}
-
-export function TimesheetStatusCard({ notification }: TimesheetStatusCardProps) {
+/** The most recently approved timesheet, shown as a confirmation on the overview screen. */
+export function TimesheetStatusCard({ notification }: { notification: Timesheet }) {
   return (
-    <div className="bg-[#FFFDF7] dark:bg-card rounded-lg border border-amber-200/90 dark:border-amber-500/30 p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full min-w-0">
-      <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-        {/* Amber Clock Icon Container */}
-        <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-amber-100/90 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200/60 dark:border-amber-700/50 mt-0.5 sm:mt-0">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="text-xs font-semibold text-slate-800 dark:text-white break-words">
-            Your timesheet — Timesheet ({notification.periodStart} - {notification.periodEnd}) has
-            been approved.
-          </div>
-          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-            Total Hours:{' '}
-            <span className="font-semibold text-slate-700 dark:text-slate-200">
-              {notification.totalHours} Hrs, {notification.totalMinutes} Mins
-            </span>
-          </div>
-        </div>
+    <div className="flex w-full min-w-0 flex-col justify-between gap-3 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-center">
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-semibold text-foreground">Timesheet approved</p>
+        <p className="mt-0.5 text-[11px] text-muted-foreground">
+          {notification.period
+            ? `${notification.period.periodStart.slice(0, 10)} to ${notification.period.periodEnd.slice(0, 10)}`
+            : 'Current period'}
+          {' · '}
+          {formatWorkMinutes(notification.totalMinutes)}
+        </p>
       </div>
-
-      <div className="self-end sm:self-center shrink-0">
-        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200/60 dark:border-emerald-700/50">
-          Approved
-        </span>
-      </div>
+      <span className="shrink-0 rounded border border-border px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+        {notification.status}
+      </span>
     </div>
   );
 }

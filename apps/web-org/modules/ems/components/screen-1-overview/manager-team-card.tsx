@@ -11,14 +11,16 @@ export function ManagerTeamCard({ employee }: ManagerTeamCardProps) {
     <div className="space-y-4">
       {/* Reporting Manager Card */}
       {employee.manager && (
-        <div className="bg-white rounded-[6px] border border-slate-200 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
-          <div className="text-xs font-semibold text-slate-500 mb-2.5">Reporting Manager</div>
+        <div className="bg-card rounded-[6px] border border-border p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+          <div className="text-xs font-semibold text-muted-foreground mb-2.5">
+            Reporting Manager
+          </div>
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
+            <div className="h-8 w-8 rounded-full bg-slate-200 text-foreground font-bold text-xs flex items-center justify-center shrink-0">
               {employee.manager.firstName[0]}
             </div>
             <div className="truncate">
-              <div className="text-xs font-semibold text-slate-900 truncate">
+              <div className="text-xs font-semibold text-foreground truncate">
                 {employee.manager.employeeNumber} - {employee.manager.firstName}{' '}
                 {employee.manager.lastName}
               </div>
@@ -31,16 +33,16 @@ export function ManagerTeamCard({ employee }: ManagerTeamCardProps) {
       )}
 
       {/* Department Members Card */}
-      <div className="bg-white rounded-[6px] border border-slate-200 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
-        <div className="text-xs font-semibold text-slate-500 mb-2.5">Department Members</div>
+      <div className="bg-card rounded-[6px] border border-border p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+        <div className="text-xs font-semibold text-muted-foreground mb-2.5">Department Members</div>
         <div className="space-y-3">
           {employee.departmentMembers.map((member) => (
             <div key={member.id} className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
+              <div className="h-8 w-8 rounded-full bg-slate-200 text-foreground font-bold text-xs flex items-center justify-center shrink-0">
                 {member.firstName[0]}
               </div>
               <div className="truncate">
-                <div className="text-xs font-semibold text-slate-900 truncate">
+                <div className="text-xs font-semibold text-foreground truncate">
                   {member.employeeNumber} - {member.firstName} {member.lastName}
                 </div>
                 <div className="text-[11px] font-semibold text-emerald-700">

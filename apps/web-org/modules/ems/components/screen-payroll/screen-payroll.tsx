@@ -1,260 +1,143 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import payrollFixture from '../../data/fixtures/payroll.json';
-import { useAuth } from '../../hooks/use-auth';
-import { ScreenPayrollView } from './screen-payroll-view';
-import type { PayslipData } from './payslip-document-modal';
-import type { SalaryStructureDocumentData } from './salary-structure-document-modal';
+import React from 'react';
+import { useScreenTab } from '../../hooks/use-screen-tab';
+import { Button } from '@smarteam/ui';
+import { usePayroll } from '../../hooks/use-payroll';
+import { PayrollStructurePanel } from './payroll-structure-panel';
+import { PayrollPayslipsPanel } from './payroll-payslips-panel';
+import { PayrollAdvancesPanel } from './payroll-advances-panel';
 
-export interface AdvanceItem {
-  id: string;
-  requestedAmount: number;
-  approvedAmount: number | null;
-  recoveredAmount: number;
-  status: string;
-  reason: string;
-  requestedAt: string;
-  approvedAt: string | null;
-  recoveryMonth: string;
-}
+type Tab = 'structure' | 'payslips' | 'advances';
 
-export interface PayrollEarning {
-  name: string;
-  code: string;
-  monthly: number;
-  annual?: number;
-}
-
-export interface PayslipSummary {
-  id: string;
-  month: string;
-  period: string;
-  paidDays: number;
-  payableDays?: number;
-  lossOfPayDays: number;
-  lopDays?: number;
-  grossPay: number;
-  deductions: number;
-  totalDeductions: number;
-  netPay: number;
-  payoutDate: string;
-  disbursedAt?: string;
-  paymentMode: string;
-  status: string;
-  basicSalary?: number;
-  hra?: number;
-  pfDeduction?: number;
-  professionalTax?: number;
-}
-
-export interface PayrollCompensation {
-  annualCtc: number;
-  monthlyGross: number;
-  netTakeHome: number;
-  currency: string;
-  currencySymbol: string;
-  effectiveFrom?: string;
-  earnings: PayrollEarning[];
-}
-
-export interface PayrollFixture {
-  compensation: PayrollCompensation;
-  payslips: PayslipSummary[];
-  advances: AdvanceItem[];
-}
-
-const payrollData = payrollFixture as unknown as PayrollFixture;
-
-export interface PayrollCalculation {
-  gross: number;
-  epf: number;
-  pt: number;
-  tds: number;
-  totalDeductions: number;
-  netTakeHome: number;
-  annualCtc: number;
-  employerPf: number;
-  gratuity: number;
-}
-
+/**
+ * The employee's own payroll.
+ *
+ * Replaces a screen built on `payroll.json` that computed its own statutory deductions in the
+ * browser — a flat 1800 for PF, 200 for professional tax, and ten percent of gross as income tax.
+ * Those figures were not the ones payroll would pay. Every number here is now a backend result,
+ * and anything the backend does not calculate is absent rather than estimated.
+ */
 export function ScreenPayroll() {
-  const { persona } = useAuth();
-  const [activeTab, setActiveTab] = useState<string>('structure');
-  const [selectedPayslipModal, setSelectedPayslipModal] = useState<PayslipData | null>(null);
-  const [selectedStructureModal, setSelectedStructureModal] =
-    useState<SalaryStructureDocumentData | null>(null);
+  const payroll = usePayroll();
+  const [tab, setTab] = useScreenTab<Tab>(
+    'payrollTab',
+    ['structure', 'payslips', 'advances'],
+    'structure',
+  );
 
-  // Salary Advance State
-  const [isAdvanceModalOpen, setIsAdvanceModalOpen] = useState(false);
-  const [advanceAmount, setAdvanceAmount] = useState('');
-  const [advanceReason, setAdvanceReason] = useState('');
-  const [advanceList, setAdvanceList] = useState<AdvanceItem[]>(payrollData.advances);
-
-  const { compensation, payslips } = payrollData;
-
-  // Standard statutory compliance calculations
-  const dynamicCalc = useMemo(() => {
-    const gross = compensation.monthlyGross;
-    const epf = 1800;
-    const pt = 200;
-    const tds = Math.round(gross * 0.1);
-    const totalDeductions = epf + pt + tds;
-    const netTakeHome = gross - totalDeductions;
-    const annualCtc = compensation.annualCtc;
-    const employerPf = 1800;
-    const gratuity = 2405;
-
-    return {
-      gross,
-      epf,
-      pt,
-      tds,
-      totalDeductions,
-      netTakeHome,
-      annualCtc,
-      employerPf,
-      gratuity,
-    };
-  }, [compensation]);
-
-  const handleRequestAdvance = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (advanceAmount && advanceReason) {
-      const newAdv: AdvanceItem = {
-        id: `adv-${Date.now()}`,
-        requestedAmount: Number(advanceAmount),
-        approvedAmount: null,
-        recoveredAmount: 0,
-        status: 'REQUESTED',
-        reason: advanceReason,
-        requestedAt: new Date().toLocaleDateString('en-IN', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        }),
-        approvedAt: null,
-        recoveryMonth: 'Next Payroll Run',
-      };
-      setAdvanceList([newAdv, ...advanceList]);
-      setAdvanceAmount('');
-      setAdvanceReason('');
-      setIsAdvanceModalOpen(false);
-    }
-  };
-
-  const handleOpenPayslip = (slip: PayslipSummary) => {
-    const basicAmount = slip.basicSalary || Math.round(slip.grossPay * 0.5);
-    const hraAmount = slip.hra || Math.round(basicAmount * 0.4);
-    const epfAmount = slip.pfDeduction || 1800;
-    const ptAmount = slip.professionalTax || 200;
-    const tdsAmount = Math.round(slip.grossPay * 0.1);
-    const specialAllowanceAmount = Math.max(0, slip.grossPay - basicAmount - hraAmount);
-
-    const fullPayslip: PayslipData = {
-      id: slip.id,
-      payrollRunCode: `PR-${slip.month.replace(' ', '-')}`,
-      periodStart: `2026-07-01`,
-      periodEnd: `2026-07-31`,
-      payDate: slip.disbursedAt || '2026-07-31',
-      employeeId: persona.employeeNumber || 'EMP-064',
-      employeeNumber: persona.employeeNumber || 'EMP-064',
-      employeeName: persona.name,
-      jobTitle: persona.jobTitle,
-      department: persona.department,
-      branchName: persona.branchName || 'HQ – Bengaluru',
-      totalWorkingDays: 30,
-      paidDays: slip.payableDays || 30,
-      lossOfPayDays: slip.lopDays || 0,
-      earnings: [
-        { name: 'Basic Salary', amount: basicAmount },
-        { name: 'House Rent Allowance (HRA)', amount: hraAmount },
-        { name: 'Special Allowance', amount: specialAllowanceAmount },
-      ],
-      deductions: [
-        { name: 'Employee Provident Fund (12%)', amount: epfAmount },
-        { name: 'Professional Tax (PT)', amount: ptAmount },
-        { name: 'Income Tax (TDS 10%)', amount: tdsAmount },
-      ],
-      employerContributions: [
-        { name: 'Employer EPF Contribution', amount: epfAmount },
-        { name: 'Gratuity Provision (4.81%)', amount: Math.round((basicAmount * 15) / (26 * 12)) },
-      ],
-      grossEarnings: slip.grossPay,
-      totalDeductions: epfAmount + ptAmount + tdsAmount,
-      netPay: slip.grossPay - (epfAmount + ptAmount + tdsAmount),
-      totalEmployerCost: slip.grossPay + epfAmount + Math.round((basicAmount * 15) / (26 * 12)),
-    };
-
-    setSelectedPayslipModal(fullPayslip);
-  };
-
-  const handleDownloadStructureStatement = () => {
-    const docData: SalaryStructureDocumentData = {
-      structureName: 'Software Engineering Standard Track',
-      structureCode: 'ROLE_SOFTWARE_ENG',
-      effectiveFrom: compensation.effectiveFrom || '2026-04-01',
-      employeeName: persona.name,
-      employeeNumber: persona.employeeNumber || 'EMP-064',
-      jobTitle: persona.jobTitle,
-      department: persona.department,
-      annualCtc: dynamicCalc.annualCtc,
-      monthlyCtc: Math.round(dynamicCalc.annualCtc / 12),
-      earnings: compensation.earnings.map((e) => ({
-        name: e.name,
-        monthly: e.monthly,
-        annual: e.annual || e.monthly * 12,
-      })),
-      deductions: [
-        {
-          name: 'Employee Provident Fund (12%)',
-          monthly: dynamicCalc.epf,
-          annual: dynamicCalc.epf * 12,
-        },
-        { name: 'Professional Tax (PT)', monthly: dynamicCalc.pt, annual: dynamicCalc.pt * 12 },
-        { name: 'Income Tax (TDS 10%)', monthly: dynamicCalc.tds, annual: dynamicCalc.tds * 12 },
-      ],
-      employerContributions: [
-        {
-          name: 'Employer EPF Contribution',
-          monthly: dynamicCalc.employerPf,
-          annual: dynamicCalc.employerPf * 12,
-        },
-        {
-          name: 'Gratuity Provision (4.81%)',
-          monthly: dynamicCalc.gratuity,
-          annual: dynamicCalc.gratuity * 12,
-        },
-      ],
-      grossSalary: dynamicCalc.gross,
-      totalDeductions: dynamicCalc.totalDeductions,
-      netTakeHome: dynamicCalc.netTakeHome,
-    };
-    setSelectedStructureModal(docData);
-  };
+  const tabs: Array<{ id: Tab; label: string }> = [
+    { id: 'structure', label: 'Salary structure' },
+    {
+      id: 'payslips',
+      label: `Payslips${payroll.payslips.length ? ` (${payroll.payslips.length})` : ''}`,
+    },
+    {
+      id: 'advances',
+      label: `Advances${payroll.advances.length ? ` (${payroll.advances.length})` : ''}`,
+    },
+  ];
 
   return (
-    <ScreenPayrollView
-      persona={persona}
-      activeTab={activeTab}
-      setActiveTab={setActiveTab}
-      compensation={compensation}
-      payslips={payslips}
-      advanceList={advanceList}
-      dynamicCalc={dynamicCalc}
-      handleDownloadStructureStatement={handleDownloadStructureStatement}
-      handleOpenPayslip={handleOpenPayslip}
-      isAdvanceModalOpen={isAdvanceModalOpen}
-      setIsAdvanceModalOpen={setIsAdvanceModalOpen}
-      advanceAmount={advanceAmount}
-      setAdvanceAmount={setAdvanceAmount}
-      advanceReason={advanceReason}
-      setAdvanceReason={setAdvanceReason}
-      handleRequestAdvance={handleRequestAdvance}
-      selectedPayslipModal={selectedPayslipModal}
-      setSelectedPayslipModal={setSelectedPayslipModal}
-      selectedStructureModal={selectedStructureModal}
-      setSelectedStructureModal={setSelectedStructureModal}
-    />
+    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+      <div className="flex items-center gap-4 border-b border-border pb-2">
+        {tabs.map((entry) => (
+          <Button
+            className={`rounded-none pb-1 text-xs font-semibold ${
+              tab === entry.id
+                ? 'border-b-2 border-foreground font-bold text-foreground'
+                : 'text-muted-foreground'
+            }`}
+            key={entry.id}
+            onClick={() => setTab(entry.id)}
+            size="sm"
+            type="button"
+            variant="ghost"
+          >
+            {entry.label}
+          </Button>
+        ))}
+      </div>
+
+      {payroll.hasNoEmployeeRecord && (
+        <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+          <p className="text-sm font-bold text-foreground">No employee record</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Your account is not linked to an employee, so payroll cannot be resolved for you.
+          </p>
+        </div>
+      )}
+
+      {!payroll.hasNoEmployeeRecord && payroll.loading && (
+        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
+          Loading payroll...
+        </p>
+      )}
+
+      {!payroll.hasNoEmployeeRecord && !payroll.loading && payroll.error && (
+        <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+          <p className="text-sm font-bold text-foreground">Could not load payroll</p>
+          <p className="mt-1 text-xs text-muted-foreground">{payroll.error}</p>
+          <Button
+            className="mt-3"
+            onClick={() => void payroll.refetch()}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
+            Try again
+          </Button>
+        </div>
+      )}
+
+      {!payroll.hasNoEmployeeRecord && !payroll.loading && !payroll.error && (
+        <>
+          {tab === 'structure' &&
+            (payroll.profileForbidden || !payroll.profile ? (
+              <Unavailable
+                detail="You do not have permission to view your salary structure, or none has been assigned yet."
+                title="Salary structure not available"
+              />
+            ) : (
+              <PayrollStructurePanel profile={payroll.profile} />
+            ))}
+
+          {tab === 'payslips' &&
+            (payroll.payslipsForbidden ? (
+              <Unavailable
+                detail="You do not have permission to view payslips."
+                title="Payslips not available"
+              />
+            ) : (
+              <PayrollPayslipsPanel payslips={payroll.payslips} />
+            ))}
+
+          {tab === 'advances' &&
+            (payroll.advancesForbidden ? (
+              <Unavailable
+                detail="You do not have permission to view salary advances."
+                title="Advances not available"
+              />
+            ) : (
+              <PayrollAdvancesPanel
+                advances={payroll.advances}
+                canRequest={payroll.canRequestAdvance && !payroll.hasNoEmployeeRecord}
+                onRequest={payroll.requestAdvance}
+                saveError={payroll.saveError}
+                saving={payroll.saving}
+              />
+            ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+function Unavailable({ title, detail }: { title: string; detail: string }) {
+  return (
+    <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+      <p className="text-sm font-bold text-foreground">{title}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
+    </div>
   );
 }

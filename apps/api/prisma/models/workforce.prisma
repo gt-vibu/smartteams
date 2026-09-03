@@ -63,6 +63,7 @@ model Employee {
   @@unique([organizationId, employeeNumber])
   @@unique([organizationId, externalId])
   @@index([organizationId, status])
+  @@index([organizationId, managerEmployeeId])
   @@index([organizationId, lastName, firstName])
   @@map("employees")
 }

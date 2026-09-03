@@ -3,9 +3,9 @@ export interface EmployeeProfile {
   employeeNumber: string;
   firstName: string;
   lastName: string;
-  workEmail: string;
-  jobTitle: string;
-  department: string;
+  workEmail: string | null;
+  jobTitle: string | null;
+  department: string | null;
   location?: string;
   avatarUrl?: string | null;
   joinedDate?: string;

@@ -22,10 +22,10 @@ export function AttendancePunchBar({ initialSeconds = 14242 }: AttendancePunchBa
   const { hrs, mins, secs } = formatSecondsToTime(seconds);
 
   return (
-    <div className="bg-white rounded-[6px] border border-slate-200/90 p-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-3">
+    <div className="bg-card rounded-[6px] border border-border/90 p-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-3">
       {/* Shift Name & Hours */}
-      <div className="text-xs font-bold text-slate-900 shrink-0">
-        General Shift <span className="font-normal text-slate-500">[ 10:00 AM - 6:00 PM ]</span>
+      <div className="text-xs font-bold text-foreground shrink-0">
+        <span className="font-normal text-muted-foreground">Shift assignment is not recorded</span>
       </div>
 
       {/* Note Input */}
@@ -35,7 +35,7 @@ export function AttendancePunchBar({ initialSeconds = 14242 }: AttendancePunchBa
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="Add notes for check-out"
-          className="w-full bg-slate-50 focus:bg-white"
+          className="w-full bg-muted/40 focus:bg-card"
         />
       </div>
 

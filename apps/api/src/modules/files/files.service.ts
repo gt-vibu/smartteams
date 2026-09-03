@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { ConfigService } from '@nestjs/config';
-import { FilePurpose, FileStatus } from '../../generated/prisma/enums';
+import { AccessMode, FilePurpose, FileStatus } from '../../generated/prisma/enums';
 import {
   requirePermission,
   requireReason,
@@ -206,18 +206,100 @@ export class FilesService {
     });
   }
 
+  /**
+   * A short-lived download URL for one file.
+   *
+   * `files.read` alone used to be enough for any file in the tenant, which meant a colleague's
+   * payslip or leave attachment was reachable by anyone who knew its id. Reads are now self-scoped
+   * the way Leave, Attendance and Payroll already are: `files.read` reaches your own employee's
+   * files, `files.read.all` (or the tenant wildcard) reaches everyone's, and a federation grant
+   * keeps the breadth its scope carries.
+   *
+   * A file with no employee — a payroll export, an import, an organization document — is not
+   * anyone's own file, so it needs the broader permission too.
+   */
+  /**
+   * Files the caller may see.
+   *
+   * Deliberately added only after `download` was self-scoped: a listing on top of an unscoped read
+   * would have turned "guess a file id" into "enumerate every payslip in the tenant".
+   *
+   * The boundary is the same one `download` enforces. `files.read` returns the caller's own
+   * employee's files and nothing else — not even organization-level files, which belong to nobody
+   * in particular. `files.read.all` (or the wildcard) returns the tenant's. Deleted files are
+   * excluded, and the page is bounded so the list cannot sweep the tenant in one call.
+   */
+  async list(
+    context: DomainContext,
+    filters: { purpose?: FilePurpose; employeeId?: string; limit?: number } = {},
+  ) {
+    requirePermission(context, 'files.read');
+    const canReadAll =
+      context.accessMode === AccessMode.FEDERATION ||
+      context.permissions.has('*') ||
+      context.permissions.has('files.read.all');
+    return this.database.run(context, async (tx) => {
+      let employeeId = filters.employeeId;
+      if (!canReadAll) {
+        const employee = await tx.employee.findFirst({
+          where: { organizationId: context.organizationId, userId: context.actor.userId },
+          select: { id: true },
+        });
+        if (!employee) return [];
+        // A requested employee that is not the caller is narrowed to the caller rather than
+        // refused, so the response never confirms whether that employee has files.
+        employeeId = employee.id;
+      }
+      const files = await tx.fileObject.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: FileStatus.AVAILABLE,
+          deletedAt: null,
+          ...(employeeId ? { employeeId } : {}),
+          ...(filters.purpose ? { purpose: filters.purpose } : {}),
+        },
+        select: {
+          id: true,
+          employeeId: true,
+          purpose: true,
+          status: true,
+          originalName: true,
+          contentType: true,
+          byteSize: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: Math.min(filters.limit ?? 100, 200),
+      });
+      return files.map((file) => ({ ...file, byteSize: file.byteSize.toString() }));
+    });
+  }
+
   async download(context: DomainContext, fileId: string) {
     requirePermission(context, 'files.read');
-    const file = await this.database.run(context, (tx) =>
-      tx.fileObject.findFirst({
+    const canReadAll =
+      context.accessMode === AccessMode.FEDERATION ||
+      context.permissions.has('*') ||
+      context.permissions.has('files.read.all');
+    const file = await this.database.run(context, async (tx) => {
+      const found = await tx.fileObject.findFirst({
         where: {
           id: fileId,
           organizationId: context.organizationId,
           status: FileStatus.AVAILABLE,
           deletedAt: null,
         },
-      }),
-    );
+      });
+      if (!found || canReadAll) return found;
+      const employee = await tx.employee.findFirst({
+        where: { organizationId: context.organizationId, userId: context.actor.userId },
+        select: { id: true },
+      });
+      // Reported as missing rather than forbidden: a caller who may not read the file should not
+      // learn that the id exists.
+      if (!employee || found.employeeId !== employee.id) return null;
+      return found;
+    });
     if (!file) throw new NotFoundError('File');
     return {
       fileId: file.id,

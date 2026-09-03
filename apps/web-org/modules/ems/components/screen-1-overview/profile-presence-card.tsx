@@ -35,7 +35,7 @@ export function ProfilePresenceCard({ employee, initialPunch }: ProfilePresenceC
   const secs = (displaySeconds % 60).toString().padStart(2, '0');
 
   return (
-    <div className="bg-white rounded-[6px] border border-slate-200 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col items-center text-center">
+    <div className="bg-card rounded-[6px] border border-border p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)] flex flex-col items-center text-center">
       {/* Avatar with Circular Border */}
       <div className="relative -mt-14 mb-3">
         <div className="h-20 w-20 rounded-full bg-slate-800 text-white font-bold text-2xl flex items-center justify-center border-4 border-white shadow-md overflow-hidden">
@@ -45,26 +45,26 @@ export function ProfilePresenceCard({ employee, initialPunch }: ProfilePresenceC
       </div>
 
       {/* Name & Role */}
-      <h2 className="text-sm font-bold text-slate-900 leading-snug">
+      <h2 className="text-sm font-bold text-foreground leading-snug">
         {employee.employeeNumber} - {employee.firstName} {employee.lastName}
       </h2>
-      <p className="text-xs text-slate-500 font-medium mb-3">{employee.jobTitle}</p>
+      <p className="text-xs text-muted-foreground font-medium mb-3">{employee.jobTitle}</p>
 
       {/* Presence Status */}
       <div className="mb-2">
         <span
-          className={`text-xs font-semibold ${isCheckedIn ? 'text-emerald-700' : 'text-slate-500'}`}
+          className={`text-xs font-semibold ${isCheckedIn ? 'text-emerald-700' : 'text-muted-foreground'}`}
         >
           {isCheckedIn ? 'In' : 'Out'}
         </span>
       </div>
 
       {/* Ticking Clock Box (HH : MM : SS) */}
-      <div className="bg-slate-50 border border-slate-200 rounded px-3 py-1.5 font-mono text-sm font-semibold text-slate-800 tracking-wider mb-3 flex items-center gap-1.5 shadow-inner">
+      <div className="bg-muted/40 border border-border rounded px-3 py-1.5 font-mono text-sm font-semibold text-foreground tracking-wider mb-3 flex items-center gap-1.5 shadow-inner">
         <span>{hrs}</span>
-        <span className="text-slate-400">:</span>
+        <span className="text-muted-foreground">:</span>
         <span>{mins}</span>
-        <span className="text-slate-400">:</span>
+        <span className="text-muted-foreground">:</span>
         <span>{secs}</span>
       </div>
 

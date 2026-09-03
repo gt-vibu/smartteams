@@ -13,16 +13,16 @@
 :root {
   --ink: oklch(0.2 0.03 165);
   --ink-soft: oklch(0.32 0.03 165);
-  --paper: oklch(0.96 0.018 92);
+  --paper: oklch(0.977 0.003 247);
   --accent: oklch(0.68 0.14 46);
   --line: oklch(0.2 0.03 165 / 0.17);
 
   /* Canonical Smarteam semantic tokens consumed by @smarteam/ui. */
-  --background: oklch(0.96 0.018 92);
+  --background: oklch(0.977 0.003 247);
   --foreground: oklch(0.2 0.03 165);
-  --card: oklch(0.995 0.006 88);
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0.2 0.03 165);
-  --popover: oklch(0.995 0.006 88);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.03 165);
   --primary: var(--smarteam-primary);
   --primary-foreground: var(--smarteam-primary-foreground);
@@ -32,11 +32,15 @@
   --muted-foreground: oklch(0.48 0.035 220);
   --accent-foreground: oklch(0.25 0.045 72);
   --destructive: oklch(0.56 0.17 27);
-  --destructive-foreground: oklch(0.985 0.01 88);
+  --destructive-foreground: oklch(0.985 0 0);
   --success: oklch(0.61 0.13 153);
   --success-foreground: oklch(0.3 0.07 153);
   --border: oklch(0.2 0.03 165 / 0.14);
   --input: oklch(0.2 0.03 165 / 0.2);
+  /* Control surface for inputs, textareas and select triggers. Neutral by intent: the page
+     canvas is a warm off-white, and a field that inherits that tint reads as discoloured. */
+  --input-surface: oklch(1 0 0);
+  --input-surface-disabled: oklch(0.97 0.004 240);
   --ring: var(--smarteam-primary);
   --sidebar: oklch(0.17 0.045 245);
   --sidebar-foreground: oklch(0.9 0.025 220);
@@ -65,6 +69,8 @@
   --color-success-foreground: var(--success-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-input-surface: var(--input-surface);
+  --color-input-surface-disabled: var(--input-surface-disabled);
   --color-ring: var(--ring);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -338,6 +344,8 @@ html[data-theme='dark'] body {
   --muted-foreground: oklch(0.7 0.025 220);
   --border: oklch(0.33 0.04 245 / 0.8);
   --input: oklch(0.33 0.04 245);
+  --input-surface: oklch(0.185 0.022 245);
+  --input-surface-disabled: oklch(0.23 0.025 245);
   --sidebar: oklch(0.13 0.03 245);
   --sidebar-foreground: oklch(0.9 0.025 220);
   --sidebar-border: oklch(0.25 0.04 245);

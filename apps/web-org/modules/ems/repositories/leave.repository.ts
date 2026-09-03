@@ -1,102 +1,182 @@
-import { EMS_STORAGE_KEYS } from '../storage/storage.keys';
-import { emsStorageAdapter } from '../storage/storage.adapter';
-import leaveFixture from '../data/fixtures/leave.json';
-import type {
-  LeaveBalanceItem,
-  LeaveApplicationItem,
-  ApplyLeaveFormData,
-} from '../types/leave.types';
+import {
+  parseLeaveAssignmentList,
+  parseLeaveBalanceList,
+  parseLeaveInbox,
+  parseLeaveRequest,
+  parseLeaveRequestPage,
+  parseLeaveTypeList,
+  type LeaveAssignment,
+  type LeaveBalance,
+  type LeaveInboxEntry,
+  type LeaveRequest,
+  type LeaveType,
+} from '@smarteam/contracts';
+import { apiRequest } from '../lib/api-client';
+import { expectShape, orgPath, queryString } from './api-helpers';
 
-export interface ILeaveRepository {
-  getBalances(): LeaveBalanceItem[];
-  getApplications(): LeaveApplicationItem[];
-  applyLeave(data: ApplyLeaveFormData): LeaveApplicationItem[];
-  approveApplication(id: string): LeaveApplicationItem[];
-  rejectApplication(id: string): LeaveApplicationItem[];
-}
+/**
+ * Leave data access.
+ *
+ * Replaces a repository backed by `leave.json` and `localStorage`, where an application existed
+ * only in the browser that filed it — invisible to the approver, to payroll, and to the same
+ * person on another device.
+ *
+ * Balances are never computed here. The server owns entitlement, accrual, reservation and usage;
+ * recomputing any of it client-side would produce a second, disagreeing answer.
+ */
 
-export class LocalLeaveRepository implements ILeaveRepository {
-  getBalances(): LeaveBalanceItem[] {
-    return emsStorageAdapter.getItem<LeaveBalanceItem[]>(
-      EMS_STORAGE_KEYS.LEAVE_BALANCES,
-      leaveFixture.balances,
+export type CreateLeaveRequestInput = {
+  employeeId: string;
+  leaveTypeId: string;
+  startDate: string;
+  endDate: string;
+  reason?: string;
+  branchId?: string;
+};
+
+export type LeaveTypeInput = {
+  code: string;
+  name: string;
+  paid: boolean;
+  accrualType: 'NONE' | 'FIXED_ANNUAL' | 'MONTHLY' | 'PER_PAY_PERIOD' | 'MANUAL';
+  annualAllowance?: number;
+  monthlyAccrual?: number;
+  carryoverLimit?: number;
+  requiresAttachment: boolean;
+};
+
+export const leaveRepository = {
+  async listTypes(organizationId: string): Promise<LeaveType[]> {
+    return expectShape(
+      parseLeaveTypeList(
+        await apiRequest(`${orgPath(organizationId, '/leave')}/types`, { method: 'GET' }),
+      ),
+      'leave type list',
     );
-  }
+  },
 
-  getApplications(): LeaveApplicationItem[] {
-    return emsStorageAdapter.getItem<LeaveApplicationItem[]>(
-      EMS_STORAGE_KEYS.LEAVE_APPLICATIONS,
-      leaveFixture.applications as LeaveApplicationItem[],
+  async listAssignments(organizationId: string): Promise<LeaveAssignment[]> {
+    return expectShape(
+      parseLeaveAssignmentList(
+        await apiRequest(`${orgPath(organizationId, '/leave')}/assignments`, { method: 'GET' }),
+      ),
+      'leave assignment list',
     );
-  }
+  },
 
-  applyLeave(data: ApplyLeaveFormData): LeaveApplicationItem[] {
-    const apps = this.getApplications();
-    const balances = this.getBalances();
+  async listBalances(organizationId: string, employeeId?: string): Promise<LeaveBalance[]> {
+    return expectShape(
+      parseLeaveBalanceList(
+        await apiRequest(
+          `${orgPath(organizationId, '/leave')}/balances${queryString({ employeeId })}`,
+          {
+            method: 'GET',
+          },
+        ),
+      ),
+      'leave balance list',
+    );
+  },
 
-    const leaveTypeName =
-      data.leaveTypeId === 'lt_cl'
-        ? 'Casual Leave'
-        : data.leaveTypeId === 'lt_el'
-          ? 'Earned / Privilege Leave'
-          : data.leaveTypeId === 'lt_sl'
-            ? 'Sick Leave'
-            : 'Compensatory Off';
-    const code =
-      data.leaveTypeId === 'lt_cl'
-        ? 'CL'
-        : data.leaveTypeId === 'lt_el'
-          ? 'EL'
-          : data.leaveTypeId === 'lt_sl'
-            ? 'SL'
-            : 'COMP';
+  async listRequests(
+    organizationId: string,
+    filters: { employeeId?: string; limit?: number } = {},
+  ): Promise<LeaveRequest[]> {
+    return expectShape(
+      parseLeaveRequestPage(
+        await apiRequest(`${orgPath(organizationId, '/leave')}/requests${queryString(filters)}`, {
+          method: 'GET',
+        }),
+      ),
+      'leave request list',
+    ).requests;
+  },
 
-    const newApp: LeaveApplicationItem = {
-      id: `app_${Date.now()}`,
-      leaveTypeName,
-      code,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      dayCount: data.dayCount,
-      reason: data.reason,
-      approverName: '009 · Ranjith Kumar C',
-      status: 'PENDING',
-      appliedOn: new Date()
-        .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-        .replace(/ /g, '-'),
-    };
+  /** Requests awaiting the signed-in user's decision. */
+  async requestInbox(organizationId: string): Promise<LeaveInboxEntry[]> {
+    return expectShape(
+      parseLeaveInbox(
+        await apiRequest(`${orgPath(organizationId, '/leave')}/requests/inbox`, { method: 'GET' }),
+      ),
+      'leave approval inbox',
+    );
+  },
 
-    const updatedApps = [newApp, ...apps];
-    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.LEAVE_APPLICATIONS, updatedApps);
+  async createRequest(
+    organizationId: string,
+    input: CreateLeaveRequestInput,
+  ): Promise<LeaveRequest> {
+    return expectShape(
+      parseLeaveRequest(
+        await apiRequest(`${orgPath(organizationId, '/leave')}/requests`, {
+          method: 'POST',
+          body: input,
+        }),
+      ),
+      'created leave request',
+    );
+  },
 
-    // Adjust pending days on the matching balance
-    const updatedBalances = balances.map((b) => {
-      if (b.leaveTypeId === data.leaveTypeId) {
-        return {
-          ...b,
-          pendingDays: b.pendingDays + data.dayCount,
-        };
-      }
-      return b;
+  /** The API requires a comment of at least two characters and audits it. */
+  async decide(
+    organizationId: string,
+    requestId: string,
+    status: 'APPROVED' | 'REJECTED',
+    comment: string,
+  ): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId, '/leave')}/requests/${encodeURIComponent(requestId)}/decision`,
+      { method: 'POST', body: { status, comment } },
+    );
+  },
+
+  /** The API requires a reason of at least three characters and audits it. */
+  async cancel(organizationId: string, requestId: string, reason: string): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId, '/leave')}/requests/${encodeURIComponent(requestId)}/cancel`,
+      {
+        method: 'POST',
+        body: { reason },
+      },
+    );
+  },
+
+  async createType(organizationId: string, input: LeaveTypeInput): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/leave')}/types`, {
+      method: 'POST',
+      body: input,
     });
-    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.LEAVE_BALANCES, updatedBalances);
+  },
 
-    return updatedApps;
-  }
+  async assignTypeToBranch(
+    organizationId: string,
+    code: string,
+    branchId: string,
+  ): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId, '/leave')}/types/${encodeURIComponent(code)}/assign`,
+      {
+        method: 'POST',
+        body: { branchId },
+      },
+    );
+  },
 
-  approveApplication(id: string): LeaveApplicationItem[] {
-    const apps = this.getApplications();
-    const updated = apps.map((a) => (a.id === id ? { ...a, status: 'APPROVED' as const } : a));
-    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.LEAVE_APPLICATIONS, updated);
-    return updated;
-  }
-
-  rejectApplication(id: string): LeaveApplicationItem[] {
-    const apps = this.getApplications();
-    const updated = apps.map((a) => (a.id === id ? { ...a, status: 'REJECTED' as const } : a));
-    emsStorageAdapter.setItem(EMS_STORAGE_KEYS.LEAVE_APPLICATIONS, updated);
-    return updated;
-  }
-}
-
-export const leaveRepository = new LocalLeaveRepository();
+  /** Manual balance adjustment. The API requires a reason of at least five characters. */
+  async adjustBalance(
+    organizationId: string,
+    input: {
+      employeeId: string;
+      leaveTypeId: string;
+      amount: number;
+      reason: string;
+      periodStart: string;
+      periodEnd: string;
+    },
+  ): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/leave')}/balances/adjust`, {
+      method: 'POST',
+      body: input,
+    });
+  },
+};

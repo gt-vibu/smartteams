@@ -44,7 +44,10 @@ const DialogContent = React.forwardRef<
       ref={ref}
       className={cn(
         'fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4',
-        'max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-2xl',
+        // `overflow-x-hidden`: a dialog scrolls vertically when its form is tall, and nothing in
+        // one should produce a sideways scrollbar. The popovers that used to cause exactly that —
+        // a calendar overflowing its dialog — are portalled to the body now rather than clipped.
+        'max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-card p-6 shadow-2xl',
         'duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
         'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
         className,

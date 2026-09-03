@@ -23,21 +23,21 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
     <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
       <div className="min-w-[580px] sm:min-w-[660px]">
         {/* Top Header Time Scale Ruler */}
-        <div className="grid grid-cols-12 border-b border-slate-200 bg-slate-50/70 text-[11px] font-semibold text-slate-500 py-2.5 px-4">
+        <div className="grid grid-cols-12 border-b border-border bg-muted/40/70 text-[11px] font-semibold text-muted-foreground py-2.5 px-4">
           {/* Left Day Header */}
-          <div className="col-span-2 text-xs font-bold text-slate-700">Day</div>
+          <div className="col-span-2 text-xs font-bold text-foreground">Day</div>
 
           {/* 9 Time Hours Markers */}
           <div className="col-span-8 grid grid-cols-9 text-center">
             {hoursScale.map((hr) => (
-              <span key={hr} className="text-slate-500 font-mono text-[10px]">
+              <span key={hr} className="text-muted-foreground font-mono text-[10px]">
                 {hr}
               </span>
             ))}
           </div>
 
           {/* Right Worked Hours Header */}
-          <div className="col-span-2 text-right text-xs font-bold text-slate-700">Total Hours</div>
+          <div className="col-span-2 text-right text-xs font-bold text-foreground">Total Hours</div>
         </div>
 
         {/* Daily Timeline Rows */}
@@ -54,7 +54,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
               <div
                 key={day.id}
                 className={`grid grid-cols-12 items-center px-4 py-3.5 transition-colors ${
-                  day.isToday ? 'bg-sky-50/20' : 'hover:bg-slate-50/50'
+                  day.isToday ? 'bg-sky-50/20' : 'hover:bg-muted/40/50'
                 }`}
               >
                 {/* Left Day Label Column */}
@@ -64,7 +64,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
                       {day.dayLabel}
                     </span>
                   ) : (
-                    <span className="text-xs font-bold text-slate-800">{day.dayLabel}</span>
+                    <span className="text-xs font-bold text-foreground">{day.dayLabel}</span>
                   )}
                 </div>
 
@@ -73,7 +73,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
                   {/* Background faint guide grid for shift hours */}
                   <div className="absolute inset-0 grid grid-cols-9 pointer-events-none opacity-40">
                     {hoursScale.map((_, i) => (
-                      <div key={i} className="border-r border-slate-200 h-full" />
+                      <div key={i} className="border-r border-border h-full" />
                     ))}
                   </div>
 
@@ -89,7 +89,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
                             style={{ left: `${day.spanStartPercent ?? 0}%` }}
                           >
                             <div className="h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500 shadow-xs" />
-                            <span className="text-[10px] font-mono font-semibold text-slate-700 whitespace-nowrap mt-1">
+                            <span className="text-[10px] font-mono font-semibold text-foreground whitespace-nowrap mt-1">
                               {day.firstInTime}
                             </span>
                           </div>
@@ -102,7 +102,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
                             style={{ left: `${day.spanEndPercent ?? 100}%` }}
                           >
                             <div className="h-3.5 w-3.5 rounded-full border-2 border-white bg-rose-500 shadow-xs" />
-                            <span className="text-[10px] font-mono font-semibold text-slate-700 whitespace-nowrap mt-1">
+                            <span className="text-[10px] font-mono font-semibold text-foreground whitespace-nowrap mt-1">
                               {day.lastOutTime}
                             </span>
                           </div>
@@ -137,7 +137,7 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
 
                 {/* Right Total Worked Hours Column */}
                 <div className="col-span-2 text-right">
-                  <div className="text-xs font-mono font-bold text-slate-800">
+                  <div className="text-xs font-mono font-bold text-foreground">
                     {durationStr ? `${durationStr} worked` : '00:00 Hrs worked'}
                   </div>
                 </div>

@@ -20,6 +20,82 @@ import { FEDERATION_CAPABILITY_CATALOG } from '../federation/federation-capabili
 import { FEDERATION_GRANTABLE_SCOPES } from '../federation/federation-scope.catalog';
 import type { AuditContext } from '../audit/audit.service';
 
+/**
+ * What an ordinary employee needs to use the product for themselves.
+ *
+ * Every entry is self-scoped by the service that owns it: the plain `read` reaches the caller's
+ * own record, and the `.all` variant that reaches everyone's is deliberately absent from all of
+ * them.
+ */
+export const EMPLOYEE_SELF_SERVICE_PERMISSIONS = [
+  'organizations.read',
+  'employees.read',
+  'attendance.read',
+  'attendance.write',
+  'attendance.corrections.write',
+  'attendance.preferences.read',
+  'leave.types.read',
+  'leave.requests.read',
+  'leave.requests.write',
+  'leave.balances.read',
+  'timesheets.read',
+  'timesheets.write',
+  'timesheets.submit',
+  'payroll.payslips.read',
+  'payroll.employee-profile.read',
+  'payroll.preview.read',
+  'payroll.advances.read',
+  'payroll.advances.request',
+  'files.read',
+  'files.write',
+  'teams.read',
+  'projects.read',
+  'shifts.read',
+] as const;
+
+/**
+ * A line manager: their own records, plus the ability to decide what their reports send them.
+ *
+ * PRD FR-11 requires Manager and HR Admin alongside Organization Admin and Employee. Only the
+ * first and last were seeded, which left the middle of the permission model — the `.all` versus
+ * self-scoped split — untested by any real role and unusable without hand-building one.
+ *
+ * A manager gets decision permissions, not organization-wide read: approval routing already
+ * resolves who reports to them, so breadth comes from the reporting line rather than from a
+ * blanket `.all`.
+ */
+export const MANAGER_PERMISSIONS = [
+  ...EMPLOYEE_SELF_SERVICE_PERMISSIONS,
+  'leave.requests.decide',
+  'attendance.corrections.decide',
+  'timesheets.approve',
+  'rbac.read',
+] as const;
+
+/**
+ * HR: the people-operations role. Organization-wide employee, attendance, leave and timesheet
+ * access, and the ability to onboard — but no payroll release, no role administration and no
+ * organization settings. Those stay with the administrator.
+ */
+export const HR_ADMIN_PERMISSIONS = [
+  ...MANAGER_PERMISSIONS,
+  'employees.read.all',
+  'employees.write',
+  'employees.branches.write',
+  'attendance.read.all',
+  'leave.requests.read.all',
+  'leave.balances.read.all',
+  'leave.balances.adjust',
+  'leave.types.write',
+  'timesheets.read.all',
+  'files.read.all',
+  'branches.read',
+  'shifts.write',
+  'members.read',
+  'members.write',
+  'rbac.write',
+] as const;
+
 @Injectable()
 export class OrganizationsService {
   constructor(
@@ -223,6 +299,60 @@ export class OrganizationsService {
           assignmentSource: 'NATIVE',
         },
       });
+
+      // 7b. Seed a least-privilege EMPLOYEE role.
+      //
+      // ORG_ADMIN above holds the wildcard, which is right for the tenant's bootstrap
+      // administrator and wrong for everyone else. Without a second role there was nothing to
+      // assign a normal joiner, so the only way to make the product work for them was to hand out
+      // administrator access. Every key below is one the services self-scope — none is a `.all` —
+      // so this role reaches the holder's own attendance, leave, timesheets, payslips and files,
+      // and nobody else's.
+      //
+      // `employees.read` was the exception when this role was first written, and the reason the
+      // whole staff directory briefly became readable by every employee: the employee services
+      // read that key as "read everyone" while the rest of the product read it as "read your
+      // own". They agree now — see `employee-access.ts`. A key belongs in this list only once
+      // its service enforces that split.
+      const employeeRole = await tx.role.create({
+        data: {
+          organizationId: organization.id,
+          code: 'EMPLOYEE',
+          name: 'Employee',
+          description: 'Self-service access to your own records',
+          scope: 'ORGANIZATION',
+          isSystem: true,
+        },
+      });
+      const grant = async (roleId: string, keys: readonly string[]) => {
+        for (const key of keys) {
+          const permission = await tx.permission.upsert({
+            where: { key },
+            create: { key, description: key },
+            update: {},
+          });
+          await tx.rolePermission.create({ data: { roleId, permissionId: permission.id } });
+        }
+      };
+      await grant(employeeRole.id, EMPLOYEE_SELF_SERVICE_PERMISSIONS);
+
+      // 7c. Manager and HR Admin, the two roles FR-11 requires that had never been seeded.
+      for (const [code, name, description, keys] of [
+        ['MANAGER', 'Manager', 'Approves what their reports submit', MANAGER_PERMISSIONS],
+        ['HR_ADMIN', 'HR Admin', 'People operations across the organization', HR_ADMIN_PERMISSIONS],
+      ] as const) {
+        const role = await tx.role.create({
+          data: {
+            organizationId: organization.id,
+            code,
+            name,
+            description,
+            scope: 'ORGANIZATION',
+            isSystem: true,
+          },
+        });
+        await grant(role.id, keys);
+      }
 
       // 8. Record audit log
       await this.audit.record(

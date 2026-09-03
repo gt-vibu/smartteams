@@ -1,142 +1,147 @@
-import { Button } from '@smarteam/ui';
-import React from 'react';
-import type { ColumnDef } from '@smarteam/ui';
-import { StandardDataTable } from '@smarteam/ui';
-import type { LeaveApplicationItem } from '../../types/leave.types';
+'use client';
 
-interface LeaveApplicationsTableProps {
-  applications: LeaveApplicationItem[];
-  onSelectApplication?: (app: LeaveApplicationItem) => void;
+import React, { useState } from 'react';
+import { Badge, Button, Input } from '@smarteam/ui';
+import { dateKey, isCancellable, type LeaveRequest, type LeaveType } from '@smarteam/contracts';
+
+/** Status tone. Restrained on purpose: the row is not recoloured, only the badge. */
+function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
+  if (status === 'REJECTED') return 'destructive';
+  if (status === 'APPROVED') return 'secondary';
+  return 'outline';
 }
 
 export function LeaveApplicationsTable({
-  applications,
-  onSelectApplication,
-}: LeaveApplicationsTableProps) {
-  const columns: ColumnDef<LeaveApplicationItem>[] = [
-    {
-      id: 'leaveTypeName',
-      header: 'Leave Type',
-      accessorKey: 'leaveTypeName',
-      sortable: true,
-      filterable: true,
-      pinned: 'left',
-      cell: (app) => (
-        <div>
-          <div className="font-semibold text-slate-900 group-hover:text-primary transition-colors">
-            {app.leaveTypeName}
-          </div>
-          <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-            Applied on {app.appliedOn}
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: 'dateRange',
-      header: 'Date Range',
-      accessorKey: (app) => `${app.startDate} — ${app.endDate}`,
-      sortable: true,
-      cell: (app) => (
-        <span className="text-slate-700 font-medium">
-          {app.startDate} — {app.endDate}
-        </span>
-      ),
-    },
-    {
-      id: 'dayCount',
-      header: 'Duration',
-      accessorKey: 'dayCount',
-      sortable: true,
-      cell: (app) => (
-        <span className="font-mono font-bold text-slate-800">
-          {app.dayCount} {app.dayCount === 1 ? 'Day' : 'Days'}
-        </span>
-      ),
-    },
-    {
-      id: 'reason',
-      header: 'Reason',
-      accessorKey: 'reason',
-      sortable: false,
-      cell: (app) => <div className="text-slate-600 max-w-xs truncate">{app.reason}</div>,
-    },
-    {
-      id: 'approverName',
-      header: 'Approver',
-      accessorKey: 'approverName',
-      sortable: true,
-      filterable: true,
-      cell: (app) => <span className="text-slate-700 font-medium">{app.approverName}</span>,
-    },
-    {
-      id: 'status',
-      header: 'Status',
-      accessorKey: 'status',
-      filterable: true,
-      filterOptions: [
-        { label: 'Approved', value: 'APPROVED' },
-        { label: 'Pending Approval', value: 'PENDING' },
-        { label: 'Rejected', value: 'REJECTED' },
-        { label: 'Cancelled', value: 'CANCELLED' },
-      ],
-      cell: (app) => (
-        <>
-          {app.status === 'APPROVED' && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/70">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Approved
-            </span>
-          )}
-          {app.status === 'PENDING' && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/70">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-              Pending Approval
-            </span>
-          )}
-          {app.status === 'REJECTED' && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200/70">
-              <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-              Rejected
-            </span>
-          )}
-          {app.status === 'CANCELLED' && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-              Cancelled
-            </span>
-          )}
-        </>
-      ),
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      align: 'center',
-      pinned: 'right',
-      sortable: false,
-      cell: (app) => (
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectApplication?.(app);
-          }}
-          className="text-xs font-semibold text-primary hover:underline cursor-pointer"
-        >
-          View Details
-        </Button>
-      ),
-    },
-  ];
+  requests,
+  typesById,
+  canWrite,
+  saving,
+  onCancel,
+}: {
+  requests: LeaveRequest[];
+  typesById: Map<string, LeaveType>;
+  canWrite: boolean;
+  saving: boolean;
+  onCancel: (requestId: string, reason: string) => Promise<boolean>;
+}) {
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [reason, setReason] = useState('');
+  const [error, setError] = useState('');
+
+  const submitCancel = async (requestId: string) => {
+    // The API requires at least three characters and writes the reason to the audit trail.
+    if (reason.trim().length < 3) {
+      setError('A reason of at least three characters is required.');
+      return;
+    }
+    setError('');
+    const cancelled = await onCancel(requestId, reason.trim());
+    if (cancelled) {
+      setCancellingId(null);
+      setReason('');
+    }
+  };
 
   return (
-    <StandardDataTable
-      data={applications}
-      columns={columns}
-      keyExtractor={(app) => app.id}
-      title="Recent Leave Applications"
-      searchPlaceholder="Search leave applications..."
-      onRowClick={onSelectApplication}
-      initialRowsPerPage={10}
-    />
+    <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <table className="w-full min-w-[720px] text-left text-xs">
+        <thead className="border-b border-border bg-muted/40">
+          <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-2.5 font-semibold">Type</th>
+            <th className="px-4 py-2.5 font-semibold">From</th>
+            <th className="px-4 py-2.5 font-semibold">To</th>
+            <th className="px-4 py-2.5 font-semibold">Days</th>
+            <th className="px-4 py-2.5 font-semibold">Status</th>
+            <th className="px-4 py-2.5 text-right font-semibold">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {requests.map((request) => {
+            const type = typesById.get(request.leaveTypeId);
+            const cancellable = canWrite && isCancellable(request);
+            return (
+              <React.Fragment key={request.id}>
+                <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
+                  <td className="px-4 py-2.5">
+                    <span className="font-semibold text-foreground">{type?.name ?? 'Leave'}</span>
+                    {type && !type.paid && (
+                      <span className="ml-1.5 text-[10px] text-muted-foreground">Unpaid</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                    {dateKey(request.startDate)}
+                  </td>
+                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                    {dateKey(request.endDate)}
+                  </td>
+                  <td className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground">
+                    {request.requestedDays}
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
+                  </td>
+                  <td className="px-4 py-2.5 text-right">
+                    {cancellable && cancellingId !== request.id && (
+                      <Button
+                        onClick={() => {
+                          setCancellingId(request.id);
+                          setReason('');
+                          setError('');
+                        }}
+                        size="sm"
+                        type="button"
+                        variant="outline"
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+
+                {cancellingId === request.id && (
+                  <tr className="border-b border-border bg-muted/30">
+                    <td className="px-4 py-3" colSpan={6}>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Input
+                          aria-label="Cancellation reason"
+                          className="max-w-sm"
+                          disabled={saving}
+                          onChange={(event) => setReason(event.target.value)}
+                          placeholder="Why is this being cancelled?"
+                          value={reason}
+                        />
+                        <Button
+                          disabled={saving}
+                          onClick={() => void submitCancel(request.id)}
+                          size="sm"
+                          type="button"
+                          variant="destructive"
+                        >
+                          {saving ? 'Cancelling...' : 'Confirm cancellation'}
+                        </Button>
+                        <Button
+                          disabled={saving}
+                          onClick={() => setCancellingId(null)}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          Keep
+                        </Button>
+                        {error && (
+                          <span className="text-[11px] font-medium text-destructive" role="alert">
+                            {error}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

@@ -4,9 +4,11 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   LeaveAdjustmentDto,
+  LeaveBalanceQueryDto,
   LeaveCancelDto,
   LeaveDecisionDto,
   LeaveRequestDto,
+  LeaveRequestQueryDto,
   LeavePolicyAssignmentDto,
   LeaveTypeDto,
 } from './leave.dto';
@@ -19,6 +21,47 @@ export class LeaveController {
     private readonly leave: LeaveService,
     private readonly contexts: DomainContextFactory,
   ) {}
+
+  /**
+   * Leave requests, balances and the approval inbox.
+   *
+   * All three service methods have existed since the module was written and are reachable over
+   * the federation surface, but the native controller exposed only writes — the app could submit
+   * a leave request and never list one, and could adjust a balance it could not read. No service
+   * or federation change; these are the missing HTTP entry points.
+   */
+  @Get('requests') requests(
+    @Param('organizationId') organizationId: string,
+    @Query() query: LeaveRequestQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.leave.listRequests(context, query.employeeId, {
+        ...(query.cursor ? { cursor: query.cursor } : {}),
+        ...(query.limit ? { limit: query.limit } : {}),
+      }),
+    );
+  }
+
+  /** Requests awaiting the signed-in user's decision. */
+  @Get('requests/inbox') requestInbox(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.listPendingApprovals(context, request.user.userId));
+  }
+
+  @Get('balances') balances(
+    @Param('organizationId') organizationId: string,
+    @Query() query: LeaveBalanceQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.listBalances(context, query.employeeId));
+  }
 
   @Get('types') types(
     @Param('organizationId') organizationId: string,

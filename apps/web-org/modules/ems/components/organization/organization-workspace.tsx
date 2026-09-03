@@ -1,155 +1,167 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { Button } from '@smarteam/ui';
+import { Building2 } from 'lucide-react';
+import { ScreenHeader } from '../common/screen-header';
 import { useOrganization } from '../../hooks/use-organization';
-import { OrgHeroBanner } from './org-hero-banner';
-import { OrgOverviewTab } from './org-overview-tab';
-import { OrgDepartmentDirectoryTab } from './org-department-directory-tab';
-import { OrgEmployeeTreeTab } from './org-employee-tree-tab';
-import { OrgDepartmentTreeTab } from './org-department-tree-tab';
-import { OrgAnnouncementsTab } from './org-announcements-tab';
-import { OrgPoliciesTab } from './org-policies-tab';
-import { OrgMilestonesTab } from './org-milestones-tab';
-import { OrgCalendarTab } from './org-calendar-tab';
-import { ScreenAttendanceAdmin } from '../screen-attendance/screen-attendance-admin';
-import { ScreenLeaveAdmin } from '../screen-leave/screen-leave-admin';
-import { ScreenTimesheetsAdmin } from '../screen-timesheet/screen-timesheets-admin';
-import { ScreenPayrollAdmin } from '../screen-payroll/screen-payroll-admin';
+import { useEmployeeDirectory } from '../../hooks/use-employee-directory';
+import { useHolidays } from '../../hooks/use-holidays';
+import { useScreenTab } from '../../hooks/use-screen-tab';
+import { OrgProfilePanel, Unavailable } from './org-profile-panel';
+import { OrgBranchesPanel } from './org-branches-panel';
+import { OrgOverviewPanel } from './org-overview-panel';
+import { OrgPeoplePanel } from './org-people-panel';
 
-interface OrganizationWorkspaceProps {
-  onNavigateModule?: (module: string, subView?: string) => void;
-  activeTab?: string;
-  onSelectTab?: (tab: string) => void;
-}
+const TABS = [
+  'overview',
+  'people',
+  'departments',
+  'reporting',
+  'branches',
+  'profile',
+  'unavailable',
+] as const;
 
+type Tab = (typeof TABS)[number];
+
+/**
+ * The organization workspace.
+ *
+ * A first pass reduced this to Profile, Branches and a list of capability gaps, on the reasoning
+ * that the ten tabs it replaced were built on `organization.json` and four `localStorage` keys.
+ * That was right about the fixtures and wrong about the conclusion: four of those tabs describe
+ * data the product genuinely holds, and removing them lost real capability along with the fake.
+ *
+ * They are back, on real reads. Overview counts what the API returned; People, Departments and
+ * Reporting all derive from one directory request rather than one per employee. Announcements,
+ * milestones, quick links and the cover image are not back, because nothing stores them — those
+ * stay listed under "Not available" with the reason.
+ */
 export function OrganizationWorkspace({
   onNavigateModule,
-  activeTab: controlledTab,
-  onSelectTab: controlledSelectTab,
-}: OrganizationWorkspaceProps) {
-  const [internalTab, setInternalTab] = useState('Overview');
-  const activeTab = controlledTab || internalTab;
-  const setActiveTab = controlledSelectTab || setInternalTab;
-  const {
-    organization,
-    branches,
-    departments,
-    orgHierarchyTree,
-    approvalPolicies,
-    announcements,
-    milestones,
-    quickLinks,
-    updateCoverUrl,
-    addAnnouncement,
-    addQuickLink,
-    removeQuickLink,
-  } = useOrganization();
+}: {
+  onNavigateModule?: (module: string) => void;
+}) {
+  const organization = useOrganization();
+  const directory = useEmployeeDirectory();
+  const holidays = useHolidays();
+  const [tab, setTab] = useScreenTab<Tab>('orgSection', TABS, 'overview');
+
+  const tabs: Array<{ id: Tab; label: string }> = [
+    { id: 'overview', label: 'Overview' },
+    {
+      id: 'people',
+      label: `People${directory.entries.length ? ` (${directory.entries.length})` : ''}`,
+    },
+    { id: 'departments', label: 'Departments' },
+    { id: 'reporting', label: 'Reporting' },
+    {
+      id: 'branches',
+      label: `Branches${organization.branches.length ? ` (${organization.branches.length})` : ''}`,
+    },
+    { id: 'profile', label: 'Profile' },
+    { id: 'unavailable', label: 'Not available' },
+  ];
 
   return (
-    <div className="w-full max-w-full pb-14 bg-background dark:bg-background min-h-full">
-      {/* 1. Full-Width Botanical Cover Hero Banner + Sticky Sub-Nav */}
-      <OrgHeroBanner
-        organization={organization}
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        onUpdateCoverUrl={updateCoverUrl}
+    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+      <ScreenHeader
+        description="People, structure and configuration for this tenant."
+        icon={Building2}
+        title={organization.organization?.name ?? 'Organization'}
+        tone="primary"
       />
 
-      {/* 2. Sub-View Body */}
-      <div className="max-w-[1380px] mx-auto px-4 sm:px-6 -mt-16 relative z-20">
-        {/* Tab 1: Overview */}
-        {activeTab === 'Overview' && (
-          <OrgOverviewTab
-            organization={organization}
-            branches={branches}
-            quickLinks={quickLinks}
-            onNavigateModule={onNavigateModule}
-            onSelectSubTab={setActiveTab}
-            onAddQuickLink={addQuickLink}
-            onRemoveQuickLink={removeQuickLink}
-          />
-        )}
-
-        {/* Tab 2: Department Directory */}
-        {activeTab === 'Department Directory' && (
-          <div className="pt-3">
-            <OrgDepartmentDirectoryTab departments={departments} />
-          </div>
-        )}
-
-        {/* Tab 3: Employee Tree (Org Hierarchy) */}
-        {activeTab === 'Employee Tree' && (
-          <div className="pt-3">
-            <OrgEmployeeTreeTab treeRoot={orgHierarchyTree} />
-          </div>
-        )}
-
-        {/* Tab 4: Attendance Operations */}
-        {activeTab === 'Attendance Operations' && (
-          <div className="pt-3">
-            <ScreenAttendanceAdmin />
-          </div>
-        )}
-
-        {/* Tab 5: Leave Policies & Approvals */}
-        {activeTab === 'Leave Policies & Approvals' && (
-          <div className="pt-3">
-            <ScreenLeaveAdmin />
-          </div>
-        )}
-
-        {/* Tab 6: Timesheets Audit */}
-        {activeTab === 'Timesheets Audit' && (
-          <div className="pt-3">
-            <ScreenTimesheetsAdmin />
-          </div>
-        )}
-
-        {/* Tab 7: Payroll Runs */}
-        {activeTab === 'Payroll Runs' && (
-          <div className="pt-3">
-            <ScreenPayrollAdmin />
-          </div>
-        )}
-
-        {/* Tab 8: Department Tree */}
-        {activeTab === 'Department Tree' && (
-          <div className="pt-3">
-            <OrgDepartmentTreeTab departments={departments} />
-          </div>
-        )}
-
-        {/* Tab 9: Announcements */}
-        {activeTab === 'Announcements' && (
-          <div className="pt-3">
-            <OrgAnnouncementsTab
-              announcements={announcements}
-              onAddAnnouncement={addAnnouncement}
-            />
-          </div>
-        )}
-
-        {/* Tab 10: Policies */}
-        {activeTab === 'Policies' && (
-          <div className="pt-3">
-            <OrgPoliciesTab approvalPolicies={approvalPolicies} />
-          </div>
-        )}
-
-        {/* Tab 11: Milestones (Birthdays & New Hires) */}
-        {activeTab === 'New Hires & Birthdays' && (
-          <div className="pt-3">
-            <OrgMilestonesTab milestones={milestones} />
-          </div>
-        )}
-
-        {/* Tab 12: Calendar (Holidays) */}
-        {activeTab === 'Calendar' && (
-          <div className="pt-3">
-            <OrgCalendarTab />
-          </div>
-        )}
+      <div className="flex items-center gap-4 overflow-x-auto border-b border-border pb-2">
+        {tabs.map((entry) => (
+          <Button
+            className={`shrink-0 rounded-none pb-1 text-xs font-semibold ${
+              tab === entry.id
+                ? 'border-b-2 border-foreground font-bold text-foreground'
+                : 'text-muted-foreground'
+            }`}
+            key={entry.id}
+            onClick={() => setTab(entry.id)}
+            size="sm"
+            type="button"
+            variant="ghost"
+          >
+            {entry.label}
+          </Button>
+        ))}
       </div>
+
+      {tab === 'overview' && (
+        <OrgOverviewPanel
+          directory={directory}
+          holidays={holidays}
+          onNavigateModule={onNavigateModule}
+          organization={organization}
+        />
+      )}
+      {tab === 'people' && <OrgPeoplePanel directory={directory} view="directory" />}
+      {tab === 'departments' && <OrgPeoplePanel directory={directory} view="departments" />}
+      {tab === 'reporting' && <OrgPeoplePanel directory={directory} view="reporting" />}
+      {tab === 'branches' && <OrgBranchesPanel organization={organization} />}
+      {tab === 'profile' && <OrgProfilePanel organization={organization} />}
+      {tab === 'unavailable' && <BackendCapabilityGaps />}
+    </div>
+  );
+}
+
+/**
+ * What the backend still does not hold.
+ *
+ * Shorter than it was, because departments, the reporting hierarchy and headcount left this list
+ * when a native directory projection made them readable. What remains has no entity at all — and
+ * is listed with the reason rather than shown with sample data.
+ */
+function BackendCapabilityGaps() {
+  const items = [
+    {
+      title: 'Announcements',
+      detail: 'No announcement entity exists.',
+    },
+    {
+      title: 'Milestones',
+      detail: 'No milestone entity exists. Company milestones were previously sample data.',
+    },
+    {
+      title: 'Quick links',
+      detail:
+        'Previously stored per browser, so a link one person added was invisible to everyone else. Navigation lives in the sidebar; configurable links are not organization data the backend holds.',
+    },
+    {
+      title: 'Cover image and branding',
+      detail:
+        'No asset is stored against an organization. A cover image was previously a data URL in one browser.',
+    },
+    {
+      title: 'Department as an entity',
+      detail:
+        'Departments are grouped from the free-text field on each employment record, which is why one exists exactly as long as someone is in it. There is no department to rename, own or archive.',
+    },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <Unavailable
+        detail="Each of these is a backend capability gap rather than a missing screen. They are listed with the reason, rather than shown with sample data."
+        title="Not currently available"
+      />
+      {/* A one-column list, not a two-column grid: an odd number of entries left a dead grey
+          cell hanging off the end, which read as a broken tile rather than as "that is all". */}
+      <dl className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+        {items.map((item) => (
+          <div className="px-4 py-3" key={item.title}>
+            <dt className="text-xs font-bold text-foreground">{item.title}</dt>
+            <dd className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+              {item.detail}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
