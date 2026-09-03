@@ -136,7 +136,7 @@ Ordered by severity.
 1. **CRITICAL — Authentication bypass in `web-admin`** (`apps/web-admin/lib/api-client.ts`,
    `platformLogin`). If the API call throws *for any reason — including a 401 rejection* — the
    catch block grants a superadmin session to anyone whose email merely *contains* `"admin"` or
-   `"platform"`, or who types the hardcoded password `a hardcoded literal (redacted)`. Anyone who can
+   `"platform"`, or who types the hardcoded password `a hardcoded literal (redacted; see git history before this commit)`. Anyone who can
    reach the admin console and cause (or simply wait for) an API error becomes a platform
    super admin in the UI. The same file also fabricates organizations in `sessionStorage` when
    `listOrganizations`/`onboardOrganization`/`deactivateOrganization` fail, silently presenting
