@@ -80,6 +80,10 @@ jobs:
       # gate permanently red while catching nothing. The integration suite asserts the structural
       # properties that actually matter instead.
       - run: pnpm --filter @smarteam/api test:integration
+        env:
+          # The suite creates its own restricted role, so it needs a role that can. The runtime
+          # role must NOT be this one — that is the whole point of the RLS guard.
+          DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
 
   security:
     name: Dependency audit

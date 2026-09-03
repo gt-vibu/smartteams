@@ -41,6 +41,21 @@ const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> = {
   OTHER: { maxBytes: 25_000_000, types: ['application/octet-stream'] },
 };
 
+/**
+ * A file as the API returns it.
+ *
+ * `byteSize` is a BigInt column, and Express cannot serialise one — returning the row directly
+ * crashed the response with "Do not know how to serialize a BigInt" after it had already
+ * committed the change. `list` converted it and the other two routes did not, so delete and
+ * complete-upload were broken while listing worked.
+ *
+ * A decimal string, matching how every other wide number crosses this boundary; the frontend
+ * contract already accepts a string here.
+ */
+export function toFileDto<T extends { byteSize: bigint }>(file: T) {
+  return { ...file, byteSize: file.byteSize.toString() };
+}
+
 @Injectable()
 export class FilesService {
   constructor(
@@ -271,7 +286,7 @@ export class FilesService {
         orderBy: { createdAt: 'desc' },
         take: Math.min(filters.limit ?? 100, 200),
       });
-      return files.map((file) => ({ ...file, byteSize: file.byteSize.toString() }));
+      return files.map(toFileDto);
     });
   }
 
@@ -355,7 +370,7 @@ export class FilesService {
           removeOnFail: false,
         },
       );
-      return updated;
+      return toFileDto(updated);
     });
   }
 

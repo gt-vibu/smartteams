@@ -32,9 +32,31 @@ export class RlsEnforcementGuard implements OnApplicationBootstrap {
     const environment = this.config.get<string>('NODE_ENV', 'development');
     const isProductionLike = environment === 'production' || environment === 'staging';
 
+    /*
+     * Privilege, not identity.
+     *
+     * The role's own `rolsuper`/`rolbypassrls` is the obvious check and is not sufficient on its
+     * own: privilege is inheritable, so a role that is merely a *member* of a superuser or
+     * BYPASSRLS role reports false for both and can still read across every tenant. `pg_has_role`
+     * with 'USAGE' answers the question that actually matters — can this session obtain the
+     * privilege — rather than whether it holds the attribute directly.
+     */
     const [role] = await this.prisma.$queryRawUnsafe<
-      Array<{ rolname: string; rolsuper: boolean; rolbypassrls: boolean }>
-    >(`SELECT rolname, rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user`);
+      Array<{ rolname: string; rolsuper: boolean; rolbypassrls: boolean; inherited: boolean }>
+    >(`
+      SELECT
+        r.rolname,
+        r.rolsuper,
+        r.rolbypassrls,
+        EXISTS (
+          SELECT 1 FROM pg_roles elevated
+          WHERE (elevated.rolsuper OR elevated.rolbypassrls)
+            AND elevated.rolname <> r.rolname
+            AND pg_has_role(r.rolname, elevated.oid, 'USAGE')
+        ) AS inherited
+      FROM pg_roles r
+      WHERE r.rolname = current_user
+    `);
 
     if (!role) {
       // Cannot read the catalogue: assume the worst rather than assume the best.
@@ -44,12 +66,13 @@ export class RlsEnforcementGuard implements OnApplicationBootstrap {
       return;
     }
 
-    const bypasses = role.rolsuper || role.rolbypassrls;
+    const bypasses = role.rolsuper || role.rolbypassrls || role.inherited;
     if (!bypasses) return;
 
     const message =
       `The runtime database role "${role.rolname}" bypasses row-level security ` +
-      `(superuser=${role.rolsuper}, bypassrls=${role.rolbypassrls}). Tenant isolation policies ` +
+      `(superuser=${role.rolsuper}, bypassrls=${role.rolbypassrls}, inherited=${role.inherited}). ` +
+      `Tenant isolation policies ` +
       `are not being enforced. Provision an unprivileged role for DATABASE_URL.`;
 
     if (isProductionLike) throw new Error(message);
