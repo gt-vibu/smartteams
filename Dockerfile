@@ -68,6 +68,17 @@ COPY --from=build /repo/apps/api/src/generated apps/api/src/generated
 # Migrations ship with the image so a release can apply exactly the ones it was built against.
 COPY --from=build /repo/apps/api/prisma apps/api/prisma
 
+# Drop the package managers now that installation is done.
+#
+# The base image bundles npm, and corepack has just materialised pnpm. This container runs
+# `node dist/main.js` and nothing else, so neither is reachable at runtime — but both were still
+# scanned, and npm's own dependency tree (pacote, minimatch, brace-expansion, picomatch,
+# ip-address) accounted for essentially every high-severity finding against this image. Removing
+# them fixes those findings by deleting the code rather than by silencing the report, and takes a
+# writable, network-capable toolchain out of the runtime at the same time.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
+  /usr/local/lib/node_modules/corepack /usr/local/bin/corepack "$PNPM_HOME"
+
 # Never run as root: a container escape should not start with uid 0.
 USER node
 EXPOSE 4000

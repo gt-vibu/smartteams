@@ -8,10 +8,12 @@
 # Nothing here may be a live secret. Anything that turns out to be one is rotated and removed
 # from history, not added to this file.
 
-# `FEDERATION_IDEMPOTENCY_ENCRYPTION_KEY=invalid-idempotency-key-replace-with-at-least-32-characters`
-# in `.env.example`. A placeholder, matched by the generic-api-key rule on length alone, and
-# deliberately invalid so that copying the example file produces a service that refuses to start
-# rather than one running on a guessable key. HEAD now uses the `<placeholder>` convention, but
-# the value stays reachable from this commit and history is not worth rewriting for a string that
-# was never a secret.
+# The federation idempotency key placeholder in `.env.example`, matched by the generic-api-key
+# rule on length alone. It was deliberately invalid, so copying the example file produced a
+# service that refused to start rather than one running on a guessable key. HEAD uses the
+# `<placeholder>` convention now, but the old value stays reachable from that commit, and history
+# is not worth rewriting for a string that was never a secret.
+#
+# The literal itself is not quoted here: this file is scanned too, and repeating a flagged value
+# in the note that excuses it simply relocates the finding.
 3704369ba41abad2518e0840d662a86c3b7f44b6:.env.example:generic-api-key:52

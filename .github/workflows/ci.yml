@@ -172,7 +172,8 @@ jobs:
           for i in $(seq 1 40); do
             curl -fsS http://localhost:9000/minio/health/live && break || sleep 2
           done
-          docker run --rm --network host minio/mc:latest sh -c "
+          # `minio/mc` sets its entrypoint to `mc`, so a shell has to be asked for explicitly.
+          docker run --rm --network host --entrypoint sh minio/mc:latest -c "
             mc alias set local http://localhost:9000 smarteam smarteam-ci-only &&
             mc mb --ignore-existing local/smarteam-files &&
             mc anonymous set none local/smarteam-files"
