@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Building2, Users } from 'lucide-react';
+import { ArrowRight, Building2, Users } from 'lucide-react';
+import { Button } from '@smarteam/ui';
 import { employeeDisplayName, type EmployeeDirectoryEntry } from '@smarteam/contracts';
 import { PersonAvatar } from '../common/person-avatar';
 import type {
@@ -24,11 +25,16 @@ import type {
 
 type Directory = ReturnType<typeof useEmployeeDirectory>;
 
+/** How many rows a summary shows before handing off to the module that owns the full list. */
+const PREVIEW_LIMIT = 6;
+
 export function OrgPeoplePanel({
   directory,
+  onNavigateModule,
   view,
 }: {
   directory: Directory;
+  onNavigateModule?: (module: string) => void;
   view: 'directory' | 'departments' | 'reporting';
 }) {
   if (directory.forbidden)
@@ -60,61 +66,92 @@ export function OrgPeoplePanel({
           views load at once.
         </p>
       )}
-      {view === 'directory' && <DirectoryTable directory={directory} />}
+      {view === 'directory' && (
+        <DirectoryTable directory={directory} onNavigateModule={onNavigateModule} />
+      )}
       {view === 'departments' && <Departments groups={directory.departments} />}
       {view === 'reporting' && <Reporting roots={directory.reportingTree} />}
     </div>
   );
 }
 
-function DirectoryTable({ directory }: { directory: Directory }) {
+function DirectoryTable({
+  directory,
+  onNavigateModule,
+}: {
+  directory: Directory;
+  onNavigateModule?: (module: string) => void;
+}) {
+  // A summary, not the directory. Onboarding owns the full roster and the actions on it.
+  const rows = directory.entries.slice(0, PREVIEW_LIMIT);
+  const remaining = directory.entries.length - rows.length;
+
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[760px] text-left text-xs">
-        <thead>
-          <tr className="border-b border-border bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground">
-            <th className="px-4 py-2.5 font-bold">Name</th>
-            <th className="px-4 py-2.5 font-bold">Number</th>
-            <th className="px-4 py-2.5 font-bold">Department</th>
-            <th className="px-4 py-2.5 font-bold">Joined</th>
-            <th className="px-4 py-2.5 font-bold">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {directory.entries.map((entry) => (
-            <tr
-              className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
-              key={entry.id}
-            >
-              {/* Name and job title in one cell: they are one fact about a person, and splitting
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[760px] text-left text-xs">
+          <thead>
+            <tr className="border-b border-border bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <th className="px-4 py-2.5 font-bold">Name</th>
+              <th className="px-4 py-2.5 font-bold">Number</th>
+              <th className="px-4 py-2.5 font-bold">Department</th>
+              <th className="px-4 py-2.5 font-bold">Joined</th>
+              <th className="px-4 py-2.5 font-bold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((entry) => (
+              <tr
+                className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
+                key={entry.id}
+              >
+                {/* Name and job title in one cell: they are one fact about a person, and splitting
                   them across columns left the title column half empty for anyone without one. */}
-              <td className="px-4 py-2.5">
-                <div className="flex items-center gap-2.5">
-                  <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
-                  <div className="min-w-0">
-                    <div className="truncate font-semibold text-foreground">
-                      {employeeDisplayName(entry)}
-                    </div>
-                    <div className="truncate text-[11px] text-muted-foreground">
-                      {entry.jobTitle ?? 'No job title'}
+                <td className="px-4 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
+                    <div className="min-w-0">
+                      <div className="truncate font-semibold text-foreground">
+                        {employeeDisplayName(entry)}
+                      </div>
+                      <div className="truncate text-[11px] text-muted-foreground">
+                        {entry.jobTitle ?? 'No job title'}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </td>
-              <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
-                {entry.employeeNumber}
-              </td>
-              <td className="px-4 py-2.5 text-muted-foreground">{entry.department ?? '--'}</td>
-              <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
-                {entry.dateOfJoining ?? '--'}
-              </td>
-              <td className="px-4 py-2.5">
-                <StatusPill status={entry.status} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+                <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
+                  {entry.employeeNumber}
+                </td>
+                <td className="px-4 py-2.5 text-muted-foreground">{entry.department ?? '--'}</td>
+                <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
+                  {entry.dateOfJoining ?? '--'}
+                </td>
+                <td className="px-4 py-2.5">
+                  <StatusPill status={entry.status} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2.5">
+        <span className="text-[11px] text-muted-foreground">
+          {remaining > 0
+            ? `Showing ${rows.length} of ${directory.entries.length}`
+            : `${directory.entries.length} ${directory.entries.length === 1 ? 'person' : 'people'}`}
+        </span>
+        <Button
+          className="h-auto gap-1 px-2 py-1 text-[11px]"
+          onClick={() => onNavigateModule?.('onboarding')}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
+          Manage people
+          <ArrowRight aria-hidden="true" className="h-3 w-3" strokeWidth={2} />
+        </Button>
+      </div>
     </div>
   );
 }
@@ -126,8 +163,8 @@ function Departments({ groups }: { groups: DepartmentGroup[] }) {
         Grouped from the department recorded on each employment record. There is no department
         entity, so one exists exactly as long as someone is in it.
       </p>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {groups.map((group) => (
+      <div className="grid gap-3 sm:grid-cols-2">
+        {groups.slice(0, PREVIEW_LIMIT).map((group) => (
           <section
             className="flex flex-col rounded-xl border border-border bg-card p-4"
             key={group.name}
@@ -182,11 +219,16 @@ function Reporting({ roots }: { roots: ReportingNode[] }) {
         the top level rather than being left out.
       </p>
       <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
-        <ul className="min-w-[420px] space-y-2">
-          {roots.map((node) => (
+        <ul className="min-w-[380px] space-y-2">
+          {roots.slice(0, PREVIEW_LIMIT).map((node) => (
             <TreeNode depth={0} key={node.employee.id} node={node} />
           ))}
         </ul>
+        {roots.length > PREVIEW_LIMIT && (
+          <p className="mt-3 border-t border-border pt-2 text-[11px] text-muted-foreground">
+            Showing {PREVIEW_LIMIT} of {roots.length} reporting lines.
+          </p>
+        )}
       </div>
     </div>
   );

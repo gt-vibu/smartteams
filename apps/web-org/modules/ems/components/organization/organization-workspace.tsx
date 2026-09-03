@@ -1,16 +1,17 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@smarteam/ui';
 import { Building2 } from 'lucide-react';
-import { ScreenHeader } from '../common/screen-header';
+import { Button } from '@smarteam/ui';
 import { useOrganization } from '../../hooks/use-organization';
 import { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useScreenTab } from '../../hooks/use-screen-tab';
+import { BotanicalCover } from '../layout/botanical-cover';
 import { OrgProfilePanel, Unavailable } from './org-profile-panel';
 import { OrgBranchesPanel } from './org-branches-panel';
-import { OrgOverviewPanel } from './org-overview-panel';
+import { OrgShortcuts } from './org-shortcuts';
+import { OrgIdentityRail } from './org-identity-rail';
 import { OrgPeoplePanel } from './org-people-panel';
 
 const TABS = [
@@ -28,15 +29,15 @@ type Tab = (typeof TABS)[number];
 /**
  * The organization workspace.
  *
- * A first pass reduced this to Profile, Branches and a list of capability gaps, on the reasoning
- * that the ten tabs it replaced were built on `organization.json` and four `localStorage` keys.
- * That was right about the fixtures and wrong about the conclusion: four of those tabs describe
- * data the product genuinely holds, and removing them lost real capability along with the fake.
+ * One screen with several views, not several screens. The banner, the identity card and the
+ * headline figures are part of the shell and stay put; only the right-hand panel changes with the
+ * tab. They previously belonged to the Overview tab, so moving to People replaced everything and
+ * each tab read as a separate page that happened to share a heading.
  *
- * They are back, on real reads. Overview counts what the API returned; People, Departments and
- * Reporting all derive from one directory request rather than one per employee. Announcements,
- * milestones, quick links and the cover image are not back, because nothing stores them — those
- * stay listed under "Not available" with the reason.
+ * The tabs are summaries by design. They answer "what does this organization look like" — the
+ * first handful of people, how the departments divide, who reports to whom — while the modules in
+ * the sidebar hold the full lists and the actions. A tab that tried to be the whole screen would
+ * only duplicate one of those.
  */
 export function OrganizationWorkspace({
   onNavigateModule,
@@ -65,47 +66,86 @@ export function OrganizationWorkspace({
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
-      <ScreenHeader
-        description="People, structure and configuration for this tenant."
-        icon={Building2}
-        title={organization.organization?.name ?? 'Organization'}
-        tone="primary"
-      />
-
-      <div className="flex items-center gap-4 overflow-x-auto border-b border-border pb-2">
-        {tabs.map((entry) => (
-          <Button
-            className={`shrink-0 rounded-none pb-1 text-xs font-semibold ${
-              tab === entry.id
-                ? 'border-b-2 border-foreground font-bold text-foreground'
-                : 'text-muted-foreground'
-            }`}
-            key={entry.id}
-            onClick={() => setTab(entry.id)}
-            size="sm"
-            type="button"
-            variant="ghost"
+    <div className="mx-auto w-full max-w-[1380px] px-4 pb-6 sm:px-6">
+      {/*
+        Sticky. The tab bar is how you move around this screen, so it should not scroll away as
+        soon as the content below it gets long. The negative margin lets the background span the
+        full width while the text stays aligned with the page.
+      */}
+      <div className="sticky top-0 z-20 -mx-4 border-b border-border bg-background/95 px-4 pt-4 backdrop-blur-sm sm:-mx-6 sm:px-6">
+        <div className="flex items-start gap-3">
+          <span
+            aria-hidden="true"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"
           >
-            {entry.label}
-          </Button>
-        ))}
+            <Building2 className="h-[18px] w-[18px]" strokeWidth={1.75} />
+          </span>
+          <div className="min-w-0">
+            <h1 className="truncate text-sm font-bold text-foreground">
+              {organization.organization?.name ?? 'Organization'}
+            </h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              People, structure and configuration for this tenant.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-3 flex items-center gap-4 overflow-x-auto">
+          {tabs.map((entry) => (
+            <Button
+              className={`shrink-0 rounded-none border-b-2 pb-2 text-xs font-semibold ${
+                tab === entry.id
+                  ? 'border-foreground font-bold text-foreground'
+                  : 'border-transparent text-muted-foreground'
+              }`}
+              key={entry.id}
+              onClick={() => setTab(entry.id)}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              {entry.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
-      {tab === 'overview' && (
-        <OrgOverviewPanel
-          directory={directory}
-          holidays={holidays}
-          onNavigateModule={onNavigateModule}
-          organization={organization}
-        />
-      )}
-      {tab === 'people' && <OrgPeoplePanel directory={directory} view="directory" />}
-      {tab === 'departments' && <OrgPeoplePanel directory={directory} view="departments" />}
-      {tab === 'reporting' && <OrgPeoplePanel directory={directory} view="reporting" />}
-      {tab === 'branches' && <OrgBranchesPanel organization={organization} />}
-      {tab === 'profile' && <OrgProfilePanel organization={organization} />}
-      {tab === 'unavailable' && <BackendCapabilityGaps />}
+      <div className="mt-4 overflow-hidden rounded-xl border border-border">
+        <BotanicalCover heightClass="h-24 sm:h-32" />
+      </div>
+
+      {/* The rail is part of the shell; only the panel beside it belongs to the active tab. */}
+      <div className="relative z-10 -mt-8 grid gap-4 lg:grid-cols-3">
+        <OrgIdentityRail directory={directory} holidays={holidays} organization={organization} />
+
+        <div className="lg:col-span-2">
+          {tab === 'overview' && <OrgShortcuts onNavigateModule={onNavigateModule} />}
+          {tab === 'people' && (
+            <OrgPeoplePanel
+              directory={directory}
+              onNavigateModule={onNavigateModule}
+              view="directory"
+            />
+          )}
+          {tab === 'departments' && (
+            <OrgPeoplePanel
+              directory={directory}
+              onNavigateModule={onNavigateModule}
+              view="departments"
+            />
+          )}
+          {tab === 'reporting' && (
+            <OrgPeoplePanel
+              directory={directory}
+              onNavigateModule={onNavigateModule}
+              view="reporting"
+            />
+          )}
+          {tab === 'branches' && <OrgBranchesPanel organization={organization} />}
+          {tab === 'profile' && <OrgProfilePanel organization={organization} />}
+          {tab === 'unavailable' && <BackendCapabilityGaps />}
+        </div>
+      </div>
     </div>
   );
 }
@@ -113,16 +153,12 @@ export function OrganizationWorkspace({
 /**
  * What the backend still does not hold.
  *
- * Shorter than it was, because departments, the reporting hierarchy and headcount left this list
- * when a native directory projection made them readable. What remains has no entity at all — and
- * is listed with the reason rather than shown with sample data.
+ * Shorter than it was: departments, the reporting hierarchy and headcount left this list once a
+ * native directory projection made them readable. What remains has no entity at all.
  */
 function BackendCapabilityGaps() {
   const items = [
-    {
-      title: 'Announcements',
-      detail: 'No announcement entity exists.',
-    },
+    { title: 'Announcements', detail: 'No announcement entity exists.' },
     {
       title: 'Milestones',
       detail: 'No milestone entity exists. Company milestones were previously sample data.',
@@ -150,9 +186,7 @@ function BackendCapabilityGaps() {
         detail="Each of these is a backend capability gap rather than a missing screen. They are listed with the reason, rather than shown with sample data."
         title="Not currently available"
       />
-      {/* A one-column list, not a two-column grid: an odd number of entries left a dead grey
-          cell hanging off the end, which read as a broken tile rather than as "that is all". */}
-      <dl className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+      <dl className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
         {items.map((item) => (
           <div className="px-4 py-3" key={item.title}>
             <dt className="text-xs font-bold text-foreground">{item.title}</dt>
