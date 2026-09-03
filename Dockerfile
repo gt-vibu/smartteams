@@ -77,7 +77,9 @@ COPY --from=build /repo/apps/api/prisma apps/api/prisma
 # them fixes those findings by deleting the code rather than by silencing the report, and takes a
 # writable, network-capable toolchain out of the runtime at the same time.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
-  /usr/local/lib/node_modules/corepack /usr/local/bin/corepack "$PNPM_HOME"
+  /usr/local/lib/node_modules/corepack /usr/local/bin/corepack /usr/local/bin/pnpm \
+  /usr/local/bin/pnpx "$PNPM_HOME" /root/.cache/node/corepack /root/.local/share/pnpm \
+  /root/.npm /opt/yarn-v* /usr/local/bin/yarn /usr/local/bin/yarnpkg
 
 # Never run as root: a container escape should not start with uid 0.
 USER node
