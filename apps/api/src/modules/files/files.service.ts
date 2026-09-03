@@ -140,13 +140,19 @@ export class FilesService {
       );
       return file;
     });
-    const uploadUrl = await this.storage.createUploadUrl({
+    const upload = await this.storage.createUploadUrl({
       key,
       contentType: input.contentType,
       byteSize: input.byteSize,
       checksumSha256: input.checksumSha256,
     });
-    return { fileId: file.id, objectKey: key, uploadUrl, expiresIn: 600 };
+    return {
+      fileId: file.id,
+      objectKey: key,
+      uploadUrl: upload.url,
+      uploadHeaders: upload.headers,
+      expiresIn: 600,
+    };
   }
 
   async completeUpload(

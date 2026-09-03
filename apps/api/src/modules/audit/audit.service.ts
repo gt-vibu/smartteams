@@ -15,7 +15,11 @@ export type AuditRecordInput = {
 };
 
 export function jsonSnapshot(value: unknown): Prisma.InputJsonValue {
-  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+  return JSON.parse(JSON.stringify(value, serializeBigInt)) as Prisma.InputJsonValue;
+}
+
+function serializeBigInt(_key: string, nestedValue: unknown): unknown {
+  return typeof nestedValue === 'bigint' ? Number(nestedValue) : nestedValue;
 }
 
 @Injectable()

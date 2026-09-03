@@ -76,6 +76,7 @@ export class FederationFilesController {
     return {
       fileId: upload.fileId,
       uploadUrl: upload.uploadUrl,
+      uploadHeaders: upload.uploadHeaders,
       expiresIn: upload.expiresIn,
     };
   }

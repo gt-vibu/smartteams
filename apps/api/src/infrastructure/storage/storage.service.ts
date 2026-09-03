@@ -52,7 +52,15 @@ export class StorageService {
     checksumSha256?: string;
     expiresIn?: number;
   }) {
-    return getSignedUrl(
+    const headers = {
+      'x-amz-server-side-encryption': 'AES256',
+      ...(input.checksumSha256 && /^[0-9a-f]{64}$/i.test(input.checksumSha256)
+        ? {
+            'x-amz-checksum-sha256': Buffer.from(input.checksumSha256, 'hex').toString('base64'),
+          }
+        : {}),
+    };
+    const url = await getSignedUrl(
       this.client,
       new PutObjectCommand({
         Bucket: this.bucket,
@@ -66,6 +74,7 @@ export class StorageService {
       }),
       { expiresIn: input.expiresIn ?? 600 },
     );
+    return { url, headers };
   }
 
   async head(key: string) {
