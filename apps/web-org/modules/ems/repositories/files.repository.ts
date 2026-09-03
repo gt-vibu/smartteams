@@ -69,7 +69,24 @@ export const filesRepository = {
     const response = await fetch(uploadUrl, {
       method: 'PUT',
       body: file,
-      headers: { 'Content-Type': file.type },
+      headers: {
+        'Content-Type': file.type,
+        /*
+         * Required, not optional.
+         *
+         * The API signs every upload with ServerSideEncryption AES256, which puts
+         * `x-amz-server-side-encryption` into the URL's SignedHeaders. A presigned URL is a
+         * signature over an exact request, so omitting a signed header is not a missing nicety —
+         * the store rejects the whole PUT ("There were headers present in the request which were
+         * not signed"). Uploading from the browser was broken for as long as this line was
+         * absent, and only ever failed at the storage provider, where the API could not see it.
+         *
+         * The value must match what StorageService signs. It is a constant on both sides rather
+         * than something the ticket carries; if the server ever moves to aws:kms, this moves with
+         * it.
+         */
+        'x-amz-server-side-encryption': 'AES256',
+      },
     });
     if (!response.ok) {
       throw new Error(`The file could not be uploaded to storage (${response.status}).`);

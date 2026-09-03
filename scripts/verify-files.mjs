@@ -2,19 +2,25 @@
 /**
  * Files integration check.
  *
- * Scope note, stated up front because it matters: this environment has **no object storage**.
- * `AWS_S3_ENDPOINT` is unset, no MinIO/LocalStack is listening, and there are no S3 credentials —
- * so the API cannot even presign an upload URL, and every operation that needs a file id is
- * skipped rather than reported as passing. What *is* verified is everything the API decides
- * before it touches storage: the purpose/type/size rules, tenant isolation, and the absence of a
- * list route.
+ * Runs the whole lifecycle against real object storage: a ticket is issued, real bytes are PUT
+ * to the presigned URL, the upload is completed, the file is downloaded and the returned bytes
+ * are compared to the ones sent, then it is deleted. Nothing here trusts the API's own account
+ * of what it stored — the assertion that matters is that the bytes come back byte-for-byte.
  *
+ * This used to stop at "the API issued a ticket", because the environment had no S3-compatible
+ * store and five checks skipped. Skipping was hiding two real crashes, so the round trip is now
+ * the point of the script rather than an extra.
+ *
+ * Needs the API, PostgreSQL, Redis and MinIO up:
+ *
+ *   docker compose up -d postgres redis minio minio-bucket
  *   pnpm verify:files
  */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
+import { runRoundTrip } from './files-round-trip.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contracts = createRequire(import.meta.url)(resolve(ROOT, 'packages/contracts/dist/index.js'));
@@ -173,21 +179,19 @@ async function main() {
     contentType: 'application/pdf',
     byteSize: 2048,
   });
-  const storageReady = r.status === 200 || r.status === 201;
-
-  if (!storageReady) {
-    skip(
-      'issue an upload ticket',
-      `the API returned ${r.status}: object storage is not configured in this environment`,
+  /*
+   * Object storage is a requirement now, not a nice-to-have.
+   *
+   * This used to degrade to five skips when the API could not presign. That was the wrong
+   * default: the skips were hiding two crashes that only appeared once the path actually ran, so
+   * an unreachable store is reported as a failure with the fix in the message.
+   */
+  check('the API can presign an upload', r.status, [200, 201]);
+  if (r.status !== 200 && r.status !== 201) {
+    console.log(
+      '\n  object storage is unreachable. Start it with:\n' +
+        '    docker compose up -d minio minio-bucket\n',
     );
-    for (const label of [
-      'complete an upload',
-      'download a file',
-      'delete a file',
-      'cross-tenant download and delete',
-    ]) {
-      skip(label, 'no file id could be obtained');
-    }
   } else {
     check(
       'the ticket parses for the frontend',
@@ -214,6 +218,9 @@ async function main() {
     check('delete with a reason succeeds', r.status, [200, 201]);
     r = await org(a, 'POST', `/files/${fileId}/delete`, { reason: 'Uploaded in error' });
     check('a deleted file cannot be deleted twice', r.status, [404, 409]);
+
+    console.log('\nthe real lifecycle, with bytes');
+    await runRoundTrip({ check, contracts, org, a, b });
   }
 
   console.log('\nlisting, scoped the same way download is');
@@ -230,9 +237,6 @@ async function main() {
   console.log(`\n${passed} passed, ${failures.length} failed, ${skipped.length} skipped`);
   for (const f of failures) console.log(`  FAIL  ${f}`);
   for (const entry of skipped) console.log(`  skip  ${entry}`);
-  console.log(
-    '\nA byte round trip is never covered here: the browser PUTs straight to object storage.',
-  );
   if (failures.length) process.exitCode = 1;
 }
 

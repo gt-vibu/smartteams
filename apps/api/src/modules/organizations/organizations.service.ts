@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { randomBytes, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import type { Prisma } from '../../generated/prisma/client';
-import {
-  requirePermission,
-  requireReason,
-  type DomainContext,
-} from '../../common/context/domain-context';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import {
   ConflictError,
   ForbiddenDomainError,
   NotFoundError,
-  StaleWriteError,
 } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
@@ -18,629 +13,105 @@ import { PasswordService } from '../auth/auth.passwords';
 import { OutboxService } from '../federation/outbox.service';
 import { FEDERATION_CAPABILITY_CATALOG } from '../federation/federation-capability.catalog';
 import { FEDERATION_GRANTABLE_SCOPES } from '../federation/federation-scope.catalog';
-import type { AuditContext } from '../audit/audit.service';
+import { branchDto, toDto } from './organization-shared';
+import { OrganizationBranchesService } from './organization-branches.service';
+import { OrganizationLifecycleService } from './organization-lifecycle.service';
+import { OrganizationOnboardingService } from './organization-onboarding.service';
+
+export {
+  EMPLOYEE_SELF_SERVICE_PERMISSIONS,
+  HR_ADMIN_PERMISSIONS,
+  MANAGER_PERMISSIONS,
+} from './organization-roles';
 
 /**
- * What an ordinary employee needs to use the product for themselves.
+ * The organizations module's entry point.
  *
- * Every entry is self-scoped by the service that owns it: the plain `read` reaches the caller's
- * own record, and the `.all` variant that reaches everyone's is deliberately absent from all of
- * them.
- */
-export const EMPLOYEE_SELF_SERVICE_PERMISSIONS = [
-  'organizations.read',
-  'employees.read',
-  'attendance.read',
-  'attendance.write',
-  'attendance.corrections.write',
-  'attendance.preferences.read',
-  'leave.types.read',
-  'leave.requests.read',
-  'leave.requests.write',
-  'leave.balances.read',
-  'timesheets.read',
-  'timesheets.write',
-  'timesheets.submit',
-  'payroll.payslips.read',
-  'payroll.employee-profile.read',
-  'payroll.preview.read',
-  'payroll.advances.read',
-  'payroll.advances.request',
-  'files.read',
-  'files.write',
-  'teams.read',
-  'projects.read',
-  'shifts.read',
-] as const;
-
-/**
- * A line manager: their own records, plus the ability to decide what their reports send them.
+ * Was 1035 lines covering tenant onboarding, branches, the organization record and the federated
+ * bootstrap. Onboarding, branches and the record lifecycle are now their own services.
  *
- * PRD FR-11 requires Manager and HR Admin alongside Organization Admin and Employee. Only the
- * first and last were seeded, which left the middle of the permission model — the `.all` versus
- * self-scoped split — untested by any real role and unusable without hand-building one.
+ * The federated methods below stayed here, byte for byte. Moving them would have meant editing
+ * federation-specific code to satisfy a file-length target, and that trade is not worth making:
+ * the partner contract is the one thing in this repository that must not move. `toDto`,
+ * `branchDto` and `runScoped` are kept as thin private methods for the same reason — the
+ * federated bodies still call `this.toDto(...)` exactly as they always did, and those wrappers
+ * forward to the shared functions the new services use.
  *
- * A manager gets decision permissions, not organization-wide read: approval routing already
- * resolves who reports to them, so breadth comes from the reporting line rather than from a
- * blanket `.all`.
+ * The constructor still takes the same four dependencies, so Nest and any direct construction
+ * keep working.
  */
-export const MANAGER_PERMISSIONS = [
-  ...EMPLOYEE_SELF_SERVICE_PERMISSIONS,
-  'leave.requests.decide',
-  'attendance.corrections.decide',
-  'timesheets.approve',
-  'rbac.read',
-] as const;
-
-/**
- * HR: the people-operations role. Organization-wide employee, attendance, leave and timesheet
- * access, and the ability to onboard — but no payroll release, no role administration and no
- * organization settings. Those stay with the administrator.
- */
-export const HR_ADMIN_PERMISSIONS = [
-  ...MANAGER_PERMISSIONS,
-  'employees.read.all',
-  'employees.write',
-  'employees.branches.write',
-  'attendance.read.all',
-  'leave.requests.read.all',
-  'leave.balances.read.all',
-  'leave.balances.adjust',
-  'leave.types.write',
-  'timesheets.read.all',
-  'files.read.all',
-  'branches.read',
-  'shifts.write',
-  'members.read',
-  'members.write',
-  'rbac.write',
-] as const;
-
 @Injectable()
 export class OrganizationsService {
+  private readonly branches: OrganizationBranchesService;
+  private readonly lifecycle: OrganizationLifecycleService;
+  private readonly onboarding: OrganizationOnboardingService;
+
   constructor(
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
-    private readonly passwords: PasswordService,
-  ) {}
-
-  async listPlatform(userId: string) {
-    const context = {
-      accessMode: 'PLATFORM' as const,
-      actor: { type: 'PLATFORM_OPERATOR' as const, userId },
-      correlationId: randomUUID(),
-      requestId: randomUUID(),
-      permissions: new Set(['*']),
-      // Required: `runPlatform` refuses any RLS bypass that is not attributable to an operator
-      // and a stated purpose. Omitting it makes the whole listing fail closed with a 403.
-      reason: 'Platform tenant directory listing',
-    } satisfies Omit<AuditContext, 'organizationId'> & { organizationId?: string };
-
-    return this.database.runPlatform(context, async (tx) => {
-      const organizations = await tx.organization.findMany({
-        orderBy: { createdAt: 'desc' },
-        include: {
-          settings: true,
-          users: {
-            where: { status: 'ACTIVE' },
-            // Deterministic: the primary administrator is the founding member, so the oldest
-            // active membership wins. Without an explicit order the row is whatever Postgres
-            // returns first, which would show an arbitrary employee as "Primary Admin" as soon
-            // as a tenant has more than one member.
-            orderBy: { joinedAt: 'asc' },
-            take: 1,
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  email: true,
-                  displayName: true,
-                  lastLoginAt: true,
-                },
-              },
-            },
-          },
-          _count: {
-            select: {
-              branches: true,
-              // Counts must match the "Active" figure the console renders beside them; an
-              // unfiltered count also includes REMOVED and SUSPENDED memberships.
-              users: { where: { status: 'ACTIVE' } },
-            },
-          },
-        },
-      });
-
-      return organizations.map((org) => ({
-        id: org.id,
-        name: org.name,
-        slug: org.slug,
-        source: org.source,
-        status: org.status,
-        timezone: org.timezone,
-        currencyCode: org.currencyCode,
-        locale: org.locale,
-        createdAt: org.createdAt.toISOString(),
-        updatedAt: org.updatedAt.toISOString(),
-        deactivatedAt: org.deactivatedAt?.toISOString() ?? null,
-        branchCount: org._count.branches,
-        userCount: org._count.users,
-        adminUser: org.users[0]?.user ?? null,
-      }));
-    });
-  }
-
-  async onboardPlatform(
-    userId: string,
-    input: {
-      name: string;
-      slug: string;
-      timezone: string;
-      currencyCode: string;
-      adminEmail: string;
-      adminDisplayName: string;
-      reason?: string;
-    },
+    passwords: PasswordService,
   ) {
-    const reason = input.reason || 'Super Admin company onboarding';
-    const emailNormalized = input.adminEmail.trim().toLowerCase();
-
-    // Generate secure 16-character temporary password with complexity
-    const randomChars = randomBytes(9).toString('base64url');
-    const temporaryPassword = `ST!${randomChars}9aA`;
-    const passwordHash = await this.passwords.hashPassword(temporaryPassword);
-
-    const context = {
-      accessMode: 'PLATFORM' as const,
-      actor: { type: 'PLATFORM_OPERATOR' as const, userId },
-      correlationId: randomUUID(),
-      requestId: randomUUID(),
-      permissions: new Set(['*']),
-      reason,
-    } satisfies Omit<AuditContext, 'organizationId'> & { organizationId?: string };
-
-    const result = await this.database.runPlatform(context, async (tx) => {
-      // 1. Create Organization
-      const organization = await tx.organization.create({
-        data: {
-          name: input.name.trim(),
-          slug: input.slug.trim().toLowerCase(),
-          source: 'NATIVE',
-          timezone: input.timezone,
-          currencyCode: input.currencyCode.toUpperCase(),
-          settings: { create: {} },
-        },
-      });
-
-      // 2. Create Default Primary Branch
-      const branch = await tx.branch.create({
-        data: {
-          organizationId: organization.id,
-          name: 'Headquarters',
-          code: 'HQ',
-          source: 'NATIVE',
-        },
-      });
-
-      // 3. Create or find User
-      const existingUser = await tx.user.findUnique({
-        where: { emailNormalized },
-      });
-
-      const user = existingUser
-        ? await tx.user.update({
-            where: { id: existingUser.id },
-            data: {
-              passwordHash,
-              displayName: input.adminDisplayName.trim(),
-              isActive: true,
-            },
-          })
-        : await tx.user.create({
-            data: {
-              email: input.adminEmail.trim(),
-              emailNormalized,
-              displayName: input.adminDisplayName.trim(),
-              passwordHash,
-              identityType: 'NATIVE',
-            },
-          });
-
-      // 4. Create UserOrganization membership
-      await tx.userOrganization.upsert({
-        where: {
-          userId_organizationId: { userId: user.id, organizationId: organization.id },
-        },
-        create: {
-          userId: user.id,
-          organizationId: organization.id,
-          status: 'ACTIVE',
-          source: 'NATIVE',
-        },
-        update: {
-          status: 'ACTIVE',
-          removedAt: null,
-        },
-      });
-
-      // 5. Create canonical ORG_ADMIN role if not existing in this org
-      const role = await tx.role.create({
-        data: {
-          organizationId: organization.id,
-          code: 'ORG_ADMIN',
-          name: 'Organization Admin',
-          description: 'Full administrative access to the organization workspace',
-          scope: 'ORGANIZATION',
-          isSystem: true,
-        },
-      });
-
-      // 6. Link wildcard permission to ORG_ADMIN
-      const wildcardPermission = await tx.permission.upsert({
-        where: { key: '*' },
-        create: { key: '*', description: 'Administrator wildcard permission' },
-        update: {},
-      });
-
-      await tx.rolePermission.create({
-        data: {
-          roleId: role.id,
-          permissionId: wildcardPermission.id,
-        },
-      });
-
-      // 7. Assign ORG_ADMIN role to user
-      await tx.userRole.create({
-        data: {
-          userId: user.id,
-          organizationId: organization.id,
-          roleId: role.id,
-          assignmentSource: 'NATIVE',
-        },
-      });
-
-      // 7b. Seed a least-privilege EMPLOYEE role.
-      //
-      // ORG_ADMIN above holds the wildcard, which is right for the tenant's bootstrap
-      // administrator and wrong for everyone else. Without a second role there was nothing to
-      // assign a normal joiner, so the only way to make the product work for them was to hand out
-      // administrator access. Every key below is one the services self-scope — none is a `.all` —
-      // so this role reaches the holder's own attendance, leave, timesheets, payslips and files,
-      // and nobody else's.
-      //
-      // `employees.read` was the exception when this role was first written, and the reason the
-      // whole staff directory briefly became readable by every employee: the employee services
-      // read that key as "read everyone" while the rest of the product read it as "read your
-      // own". They agree now — see `employee-access.ts`. A key belongs in this list only once
-      // its service enforces that split.
-      const employeeRole = await tx.role.create({
-        data: {
-          organizationId: organization.id,
-          code: 'EMPLOYEE',
-          name: 'Employee',
-          description: 'Self-service access to your own records',
-          scope: 'ORGANIZATION',
-          isSystem: true,
-        },
-      });
-      const grant = async (roleId: string, keys: readonly string[]) => {
-        for (const key of keys) {
-          const permission = await tx.permission.upsert({
-            where: { key },
-            create: { key, description: key },
-            update: {},
-          });
-          await tx.rolePermission.create({ data: { roleId, permissionId: permission.id } });
-        }
-      };
-      await grant(employeeRole.id, EMPLOYEE_SELF_SERVICE_PERMISSIONS);
-
-      // 7c. Manager and HR Admin, the two roles FR-11 requires that had never been seeded.
-      for (const [code, name, description, keys] of [
-        ['MANAGER', 'Manager', 'Approves what their reports submit', MANAGER_PERMISSIONS],
-        ['HR_ADMIN', 'HR Admin', 'People operations across the organization', HR_ADMIN_PERMISSIONS],
-      ] as const) {
-        const role = await tx.role.create({
-          data: {
-            organizationId: organization.id,
-            code,
-            name,
-            description,
-            scope: 'ORGANIZATION',
-            isSystem: true,
-          },
-        });
-        await grant(role.id, keys);
-      }
-
-      // 8. Record audit log
-      await this.audit.record(
-        { ...context, organizationId: organization.id },
-        {
-          entityType: 'ORGANIZATION',
-          entityId: organization.id,
-          action: 'ORGANIZATION_CREATED',
-          afterState: jsonSnapshot({
-            organization,
-            adminUserId: user.id,
-            branchId: branch.id,
-          }),
-          reason,
-        },
-        tx,
-      );
-
-      return {
-        organization: this.toDto(organization),
-        adminUser: {
-          id: user.id,
-          email: user.email,
-          displayName: user.displayName,
-        },
-        branch: this.branchDto(branch),
-      };
-    });
-
-    return {
-      ...result,
-      temporaryPassword,
-    };
+    this.branches = new OrganizationBranchesService(database, audit, outbox);
+    this.lifecycle = new OrganizationLifecycleService(database, audit, outbox);
+    this.onboarding = new OrganizationOnboardingService(database, audit, passwords);
   }
 
-  async createPlatform(
-    userId: string,
-    input: {
-      name: string;
-      slug: string;
-      timezone: string;
-      currencyCode: string;
-      source?: 'NATIVE' | 'BLIZBOOKS';
-      externalId?: string;
-      reason: string;
-    },
-  ) {
-    const source = input.source ?? 'NATIVE';
-    if ((source === 'BLIZBOOKS') !== Boolean(input.externalId?.trim()))
-      throw new ConflictError(
-        'A BLIZBOOKS organization requires an externalId and a NATIVE organization must not have one',
-      );
-    const context = {
-      accessMode: 'PLATFORM' as const,
-      actor: { type: 'PLATFORM_OPERATOR' as const, userId },
-      correlationId: randomUUID(),
-      requestId: randomUUID(),
-      permissions: new Set(['*']),
-      reason: input.reason,
-    } satisfies Omit<AuditContext, 'organizationId'> & { organizationId?: string };
-    const organization = await this.database.runPlatform(context, async (tx) => {
-      const created = await tx.organization.create({
-        data: {
-          name: input.name.trim(),
-          slug: input.slug.trim().toLowerCase(),
-          source,
-          externalId: input.externalId?.trim(),
-          timezone: input.timezone,
-          currencyCode: input.currencyCode.toUpperCase(),
-          settings: { create: {} },
-        },
-      });
-      await this.audit.record(
-        { ...context, organizationId: created.id },
-        {
-          entityType: 'ORGANIZATION',
-          entityId: created.id,
-          action: 'ORGANIZATION_CREATED',
-          afterState: jsonSnapshot(created),
-          reason: input.reason,
-        },
-        tx,
-      );
-      return created;
-    });
-    return this.toDto(organization);
+  // --- platform onboarding -----------------------------------------------------------------
+
+  listPlatform(userId: string) {
+    return this.onboarding.listPlatform(userId);
   }
 
-  async get(context: DomainContext) {
-    requirePermission(context, 'organizations.read');
-    return this.runScoped(context, async (tx) => {
-      const organization = await tx.organization.findUnique({
-        where: { id: context.organizationId },
-        include: { settings: true },
-      });
-      if (!organization) throw new NotFoundError('Organization');
-      return this.toDto(organization);
-    });
+  onboardPlatform(...args: Parameters<OrganizationOnboardingService['onboardPlatform']>) {
+    return this.onboarding.onboardPlatform(...args);
   }
 
-  async listBranches(context: DomainContext) {
-    requirePermission(context, 'branches.read');
-    return this.database.run(context, (tx) =>
-      tx.branch
-        .findMany({
-          where: { organizationId: context.organizationId },
-          orderBy: { code: 'asc' },
-        })
-        .then((branches) => branches.map((branch) => this.branchDto(branch))),
-    );
+  createPlatform(...args: Parameters<OrganizationOnboardingService['createPlatform']>) {
+    return this.onboarding.createPlatform(...args);
   }
 
-  async getBranch(context: DomainContext, branchId: string) {
-    requirePermission(context, 'branches.read');
-    return this.database.run(context, async (tx) => {
-      const branch = await tx.branch.findFirst({
-        where: { id: branchId, organizationId: context.organizationId },
-      });
-      if (!branch) throw new NotFoundError('Branch');
-      return this.branchDto(branch);
-    });
+  // --- branches ----------------------------------------------------------------------------
+
+  listBranches(context: DomainContext) {
+    return this.branches.listBranches(context);
   }
 
-  async createBranch(
-    context: DomainContext,
-    input: { name: string; code: string; externalId?: string; address?: Record<string, unknown> },
-  ) {
-    requirePermission(context, 'branches.write');
-    return this.runScoped(context, async (tx) => {
-      const branch = await tx.branch.create({
-        data: {
-          organizationId: context.organizationId,
-          name: input.name.trim(),
-          code: input.code.trim().toUpperCase(),
-          externalId: input.externalId,
-          source: 'NATIVE',
-          address: input.address === undefined ? undefined : jsonSnapshot(input.address),
-        },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'BRANCH',
-          entityId: branch.id,
-          action: 'BRANCH_CREATED',
-          afterState: jsonSnapshot(branch),
-        },
-        tx,
-      );
-      return this.branchDto(branch);
-    });
+  getBranch(context: DomainContext, branchId: string) {
+    return this.branches.getBranch(context, branchId);
   }
 
-  async updateBranch(
-    context: DomainContext,
-    branchId: string,
-    input: { name?: string; code?: string; address?: Record<string, unknown> },
-  ) {
-    requirePermission(context, 'branches.write');
-    return this.database.run(context, async (tx) => {
-      const before = await tx.branch.findFirst({
-        where: { id: branchId, organizationId: context.organizationId },
-      });
-      if (!before) throw new NotFoundError('Branch');
-      const updated = await tx.branch.update({
-        where: { id: before.id },
-        data: {
-          name: input.name?.trim(),
-          code: input.code?.trim().toUpperCase(),
-          address: input.address === undefined ? undefined : jsonSnapshot(input.address),
-        },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'BRANCH',
-          entityId: updated.id,
-          action: 'BRANCH_UPDATED',
-          beforeState: jsonSnapshot(before),
-          afterState: jsonSnapshot(updated),
-        },
-        tx,
-      );
-      await this.outbox.append(
-        context,
-        {
-          aggregateType: 'Branch',
-          aggregateId: updated.id,
-          aggregateVersion: 1,
-          eventType: 'branch.updated',
-          payload: jsonSnapshot(updated),
-        },
-        tx,
-      );
-      return this.branchDto(updated);
-    });
+  createBranch(...args: Parameters<OrganizationBranchesService['createBranch']>) {
+    return this.branches.createBranch(...args);
   }
 
-  async deactivateBranch(context: DomainContext, branchId: string, reason: string) {
-    requirePermission(context, 'branches.write');
-    requireReason({ ...context, reason }, 'Branch deactivation requires a reason');
-    return this.database.run(context, async (tx) => {
-      const before = await tx.branch.findFirst({
-        where: { id: branchId, organizationId: context.organizationId },
-      });
-      if (!before) throw new NotFoundError('Branch');
-      if (before.status === 'DEACTIVATED') throw new ConflictError('Branch is already deactivated');
-      const updated = await tx.branch.update({
-        where: { id: before.id },
-        data: { status: 'DEACTIVATED' },
-      });
-      await tx.employeeBranchAssignment.updateMany({
-        where: { organizationId: context.organizationId, branchId: before.id, endsOn: null },
-        data: { endsOn: new Date() },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'BRANCH',
-          entityId: updated.id,
-          action: 'BRANCH_DEACTIVATED',
-          beforeState: jsonSnapshot(before),
-          afterState: jsonSnapshot(updated),
-          reason,
-        },
-        tx,
-      );
-      await this.outbox.append(
-        context,
-        {
-          aggregateType: 'Branch',
-          aggregateId: updated.id,
-          aggregateVersion: 1,
-          eventType: 'branch.deactivated',
-          payload: jsonSnapshot(updated),
-        },
-        tx,
-      );
-      return this.branchDto(updated);
-    });
+  updateBranch(...args: Parameters<OrganizationBranchesService['updateBranch']>) {
+    return this.branches.updateBranch(...args);
   }
 
-  async update(
-    context: DomainContext,
-    version: number,
-    input: { name?: string; timezone?: string; currencyCode?: string },
-  ) {
-    requirePermission(context, 'organizations.update');
-    return this.database.run(context, async (tx) => {
-      const before = await tx.organization.findUnique({ where: { id: context.organizationId } });
-      if (!before) throw new NotFoundError('Organization');
-      const updated = await tx.organization.updateMany({
-        where: { id: context.organizationId, version },
-        data: {
-          ...input,
-          currencyCode: input.currencyCode?.toUpperCase(),
-          version: { increment: 1 },
-        },
-      });
-      if (updated.count !== 1) throw new StaleWriteError();
-      const after = await tx.organization.findUniqueOrThrow({
-        where: { id: context.organizationId },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'ORGANIZATION',
-          entityId: after.id,
-          action: 'ORGANIZATION_UPDATED',
-          beforeState: jsonSnapshot(before),
-          afterState: jsonSnapshot(after),
-        },
-        tx,
-      );
-      await this.outbox.append(
-        context,
-        {
-          aggregateType: 'Organization',
-          aggregateId: after.id,
-          aggregateVersion: after.version,
-          eventType: 'organization.updated',
-          payload: jsonSnapshot(this.toDto(after)),
-        },
-        tx,
-      );
-      return this.toDto(after);
-    });
+  deactivateBranch(context: DomainContext, branchId: string, reason: string) {
+    return this.branches.deactivateBranch(context, branchId, reason);
   }
+
+  // --- the organization record ---------------------------------------------------------------
+
+  get(context: DomainContext) {
+    return this.lifecycle.get(context);
+  }
+
+  update(...args: Parameters<OrganizationLifecycleService['update']>) {
+    return this.lifecycle.update(...args);
+  }
+
+  changeSource(context: DomainContext, toSource: 'NATIVE' | 'BLIZBOOKS') {
+    return this.lifecycle.changeSource(context, toSource);
+  }
+
+  deactivate(context: DomainContext) {
+    return this.lifecycle.deactivate(context);
+  }
+
+  // --- federation: unchanged ------------------------------------------------------------------
 
   async bootstrapFederated(
     clientId: string,
@@ -887,149 +358,11 @@ export class OrganizationsService {
     });
   }
 
-  async changeSource(context: DomainContext, toSource: 'NATIVE' | 'BLIZBOOKS') {
-    requirePermission(context, 'organizations.source_change');
-    requireReason(context, 'An organization source change requires a reason');
-    return this.runScoped(context, async (tx) => {
-      const organization = await tx.organization.findUniqueOrThrow({
-        where: { id: context.organizationId },
-      });
-      if (organization.source === toSource)
-        throw new ConflictError('Organization already has this source');
-      const updated = await tx.organization.update({
-        where: { id: organization.id },
-        data: { source: toSource, version: { increment: 1 } },
-      });
-      await tx.organizationSourceChange.create({
-        data: {
-          organizationId: organization.id,
-          fromSource: organization.source,
-          toSource,
-          reason: context.reason!,
-          requestedByUserId: context.actor.userId!,
-          correlationId: context.correlationId,
-        },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'ORGANIZATION',
-          entityId: organization.id,
-          action: 'ORGANIZATION_SOURCE_CHANGED',
-          beforeState: jsonSnapshot(organization),
-          afterState: jsonSnapshot(updated),
-          reason: context.reason,
-        },
-        tx,
-      );
-      return this.toDto(updated);
-    });
+  private toDto(value: Parameters<typeof toDto>[0]) {
+    return toDto(value);
   }
 
-  async deactivate(context: DomainContext) {
-    requirePermission(context, 'organizations.deactivate');
-    requireReason(context, 'Deactivation requires a reason');
-    return this.runScoped(context, async (tx) => {
-      const organization = await tx.organization.findUniqueOrThrow({
-        where: { id: context.organizationId },
-      });
-      const now = new Date();
-      await tx.organization.update({
-        where: { id: organization.id },
-        data: { status: 'DEACTIVATED', deactivatedAt: now, version: { increment: 1 } },
-      });
-      await tx.branch.updateMany({
-        where: { organizationId: organization.id, status: { not: 'DEACTIVATED' } },
-        data: { status: 'DEACTIVATED' },
-      });
-      await tx.employee.updateMany({
-        where: { organizationId: organization.id, status: { not: 'TERMINATED' } },
-        data: { status: 'INACTIVE', deactivatedAt: now },
-      });
-      await tx.userOrganization.updateMany({
-        where: { organizationId: organization.id, status: { not: 'REMOVED' } },
-        data: { status: 'REMOVED', removedAt: now },
-      });
-      await tx.authSession.updateMany({
-        where: { organizationId: organization.id, status: 'ACTIVE' },
-        data: { status: 'REVOKED', revokedAt: now, revocationReason: 'ORGANIZATION_DEACTIVATED' },
-      });
-      await tx.federationGrant.updateMany({
-        where: { organizationId: organization.id, status: 'ACTIVE' },
-        data: { status: 'SUSPENDED', suspendedAt: now, suspensionReason: context.reason },
-      });
-      await tx.webhookSubscription.updateMany({
-        where: { organizationId: organization.id, status: 'ACTIVE' },
-        data: { status: 'PAUSED' },
-      });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'ORGANIZATION',
-          entityId: organization.id,
-          action: 'ORGANIZATION_DEACTIVATED',
-          beforeState: jsonSnapshot(organization),
-          reason: context.reason,
-        },
-        tx,
-      );
-      return { id: organization.id, status: 'DEACTIVATED' as const };
-    });
-  }
-
-  private runScoped(context: DomainContext, callback: Parameters<TenantDatabaseService['run']>[1]) {
-    return context.accessMode === 'PLATFORM'
-      ? this.database.runPlatform(context, callback)
-      : this.database.run(context, callback);
-  }
-
-  private toDto(value: {
-    id: string;
-    name: string;
-    slug: string;
-    source: string;
-    externalId: string | null;
-    status: string;
-    timezone: string;
-    currencyCode: string;
-    locale: string;
-    version: number;
-  }) {
-    return {
-      id: value.id,
-      name: value.name,
-      slug: value.slug,
-      source: value.source,
-      externalId: value.externalId,
-      status: value.status,
-      timezone: value.timezone,
-      currencyCode: value.currencyCode,
-      locale: value.locale,
-      version: value.version,
-    };
-  }
-
-  private branchDto(value: {
-    id: string;
-    organizationId: string;
-    name: string;
-    code: string;
-    source: string;
-    externalId: string | null;
-    status: string;
-    timezone: string | null;
-    address: unknown;
-  }) {
-    return {
-      id: value.id,
-      organizationId: value.organizationId,
-      name: value.name,
-      code: value.code,
-      source: value.source,
-      externalId: value.externalId,
-      status: value.status,
-      timezone: value.timezone,
-      address: value.address,
-    };
+  private branchDto(value: Parameters<typeof branchDto>[0]) {
+    return branchDto(value);
   }
 }

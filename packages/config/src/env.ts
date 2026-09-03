@@ -65,12 +65,21 @@ export const serverEnvSchema = z
     WEBAUTHN_RP_ID: z.string().min(1).default('invalid.smarteam.example'),
     WEBAUTHN_ORIGIN: z.string().url().default('https://invalid.smarteam.example'),
     WEBAUTHN_CHALLENGE_TTL_SECONDS: positiveInt.default(300),
-    OTEL_SERVICE_NAME: z.string().default('smarteam-api'),
-    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional().or(z.literal('')),
-    PROMETHEUS_ENABLED: booleanFromEnv.default(true),
+    /*
+     * Observability.
+     *
+     * `METRICS_TOKEN` is the only entry here that anything reads: `MetricsGuard` requires it as a
+     * bearer token on /metrics, and the check further down makes it mandatory outside development.
+     *
+     * OTEL_SERVICE_NAME, OTEL_EXPORTER_OTLP_ENDPOINT, PROMETHEUS_ENABLED and SENTRY_DSN used to
+     * sit here too. Nothing in the codebase read any of them, so setting an OTLP endpoint or a
+     * Sentry DSN configured precisely nothing while looking like it had — the worst kind of
+     * missing feature, because it hides itself. They are gone rather than left as a promise; when
+     * tracing or error reporting is actually wired up, they come back with the code that uses
+     * them.
+     */
     METRICS_TOKEN: z.string().min(32).optional().or(z.literal('')),
     SWAGGER_ENABLED: booleanFromEnv.default(true),
-    SENTRY_DSN: z.string().url().optional().or(z.literal('')),
   })
   .superRefine((env, context) => {
     if (env.SESSION_COOKIE_SAME_SITE === 'none' && !env.SESSION_COOKIE_SECURE) {

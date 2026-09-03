@@ -129,4 +129,19 @@ describe('filesRepository', () => {
     expect(init.method).toBe('PUT');
     expect(init.credentials).toBeUndefined();
   });
+
+  /*
+   * The API signs uploads with ServerSideEncryption AES256, so this header is part of the
+   * signature rather than an extra. Dropping it makes every browser upload fail at the storage
+   * provider — far from this file, and invisible to the API — which is exactly how it went
+   * unnoticed before. Asserted here so the next edit cannot quietly remove it.
+   */
+  it('sends the server-side-encryption header the presigned URL signs', async () => {
+    const spy = mockFetch(200, {});
+    const file = new File(['hello'], 'doc.txt', { type: 'text/plain' });
+    await filesRepository.putBytes('https://storage.example/put', file);
+
+    const [, init] = spy.mock.calls[0] as [string, RequestInit];
+    expect(init.headers).toMatchObject({ 'x-amz-server-side-encryption': 'AES256' });
+  });
 });

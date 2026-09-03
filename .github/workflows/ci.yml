@@ -122,3 +122,172 @@ jobs:
           push: false
           cache-from: type=gha,scope=${{ matrix.target }}
           cache-to: type=gha,mode=max,scope=${{ matrix.target }}
+
+  # The twelve verify:* suites, which drive the real HTTP API against a real PostgreSQL, Redis and
+  # S3-compatible store. They were the sharpest tests in the repository and gated nothing: 457
+  # checks that only ever ran when somebody remembered to run them. Everything else in this
+  # workflow mocks Prisma, so this is the only job that can catch a broken query, a wrong status
+  # code, or an authorization rule that reads correctly and behaves otherwise.
+  end-to-end:
+    name: API end-to-end suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [verify]
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: smarteam
+          POSTGRES_PASSWORD: smarteam
+          POSTGRES_DB: smarteam
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U smarteam -d smarteam"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # MinIO is started here rather than as a service container because it needs a command and a
+      # KMS master key. The key makes SSE-S3 work: the API signs every upload with
+      # ServerSideEncryption AES256, and MinIO answers 501 without one while real S3 accepts it.
+      - name: Start MinIO with SSE-S3
+        run: |
+          docker run -d --name minio -p 9000:9000 \
+            -e MINIO_ROOT_USER=smarteam \
+            -e MINIO_ROOT_PASSWORD=smarteam-ci-only \
+            -e MINIO_KMS_SECRET_KEY="ci-key:$(openssl rand -base64 32)" \
+            minio/minio:latest server /data
+          for i in $(seq 1 40); do
+            curl -fsS http://localhost:9000/minio/health/live && break || sleep 2
+          done
+          docker run --rm --network host minio/mc:latest sh -c "
+            mc alias set local http://localhost:9000 smarteam smarteam-ci-only &&
+            mc mb --ignore-existing local/smarteam-files &&
+            mc anonymous set none local/smarteam-files"
+
+      # The verify scripts read .env from the repository root, the same file a developer uses.
+      # Written here rather than committed so CI has no credential of its own to leak.
+      - name: Write the environment the suites expect
+        run: |
+          cat > .env <<'ENV'
+          NODE_ENV=development
+          DATABASE_URL=postgresql://smarteam:smarteam@localhost:5432/smarteam
+          REDIS_URL=redis://localhost:6379
+          JWT_SECRET=ci-only-jwt-secret-value-at-least-32-chars
+          FEDERATION_BOOTSTRAP_SECRET=ci-only-federation-secret
+          SUPERADMIN_EMAIL=ci-superadmin@smarteam.test
+          SUPERADMIN_PASSWORD=ci-only-superadmin-password
+          AWS_REGION=us-east-1
+          AWS_S3_BUCKET=smarteam-files
+          AWS_S3_ENDPOINT=http://localhost:9000
+          AWS_S3_FORCE_PATH_STYLE=true
+          AWS_ACCESS_KEY_ID=smarteam
+          AWS_SECRET_ACCESS_KEY=smarteam-ci-only
+          ENV
+
+      - run: pnpm db:deploy
+      - run: pnpm --filter @smarteam/api db:seed
+      - run: pnpm --filter @smarteam/api build
+
+      - name: Start the API
+        run: |
+          pnpm --filter @smarteam/api start > /tmp/api.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fsS http://localhost:4000/health/ready && break || sleep 2
+          done
+
+      # Run every suite even if one fails, so a red build reports all the damage rather than the
+      # first symptom.
+      - name: Run the verify suites
+        run: |
+          failed=""
+          for suite in auth employees teams attendance leave payroll organization files \
+                       holidays employee-detail employee-directory onboarding; do
+            echo "::group::verify:$suite"
+            pnpm "verify:$suite" || failed="$failed $suite"
+            echo "::endgroup::"
+          done
+          if [ -n "$failed" ]; then echo "FAILED:$failed"; exit 1; fi
+
+      - name: API log on failure
+        if: failure()
+        run: tail -100 /tmp/api.log
+
+  # Static analysis of the code itself. `pnpm audit` only knows about published advisories in
+  # dependencies; it cannot see an injection or an unsafe comparison written here. CodeQL reads
+  # the source, which is the gap that dependency scanning alone always leaves.
+  codeql:
+    name: Static analysis (CodeQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:javascript-typescript
+
+  # Secrets, in the working tree and in history. A committed credential is not caught by any of
+  # the jobs above, and this repository has already had one: the superadmin password was quoted
+  # in a security document and reached a commit.
+  secrets-scan:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Whole history, not just the tip. A secret removed in the latest commit is still a
+          # secret if it is reachable from an earlier one.
+          fetch-depth: 0
+      - name: Scan for committed secrets
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest \
+            detect --source /repo --redact --verbose --no-banner
+
+  # Vulnerabilities in the shipped image, not just in package.json. Most of an image is the base
+  # OS and its libraries, which no Node-level audit inspects.
+  image-scan:
+    name: Container image scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [verify]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: api
+          push: false
+          load: true
+          tags: smarteam-api:scan
+          cache-from: type=gha,scope=api
+      - uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: smarteam-api:scan
+          format: table
+          # Matches the dependency gate: high and critical fail, lower severities are reported
+          # by the scan output without training people to ignore a permanently red job.
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
