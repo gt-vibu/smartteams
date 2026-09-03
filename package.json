@@ -6,7 +6,9 @@
   "packageManager": "pnpm@10.24.0",
   "pnpm": {
     "overrides": {
-      "deepmerge-ts": "8.0.1"
+      "deepmerge-ts": "8.0.1",
+      "fast-uri": ">=3.1.6",
+      "mysql2": ">=3.22.0"
     }
   },
   "engines": {
@@ -28,7 +30,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "turbo run lint",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "verify:auth": "node scripts/verify-auth.mjs",

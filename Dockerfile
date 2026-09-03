@@ -19,11 +19,14 @@ RUN corepack enable
 WORKDIR /repo
 
 # Only the manifests, so a source change does not invalidate the install layer.
+#
+# `packages/assets` is deliberately absent: the workspace glob is `packages/*`, but that directory
+# holds a single image and no package.json, so pnpm does not treat it as a package and copying a
+# manifest that does not exist fails the build outright.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json apps/api/
 COPY apps/web-org/package.json apps/web-org/
 COPY apps/web-admin/package.json apps/web-admin/
-COPY packages/assets/package.json packages/assets/
 COPY packages/config/package.json packages/config/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/eslint-config/package.json packages/eslint-config/
