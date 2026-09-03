@@ -335,7 +335,11 @@ export class FilesService {
           removeOnFail: false,
         },
       );
-      return updated;
+      return {
+        id: updated.id,
+        status: updated.status,
+        deletedAt: updated.deletedAt?.toISOString() ?? null,
+      };
     });
   }
 
