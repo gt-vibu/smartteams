@@ -200,7 +200,9 @@ jobs:
 
       - run: pnpm db:deploy
       - run: pnpm --filter @smarteam/api db:seed
-      - run: pnpm --filter @smarteam/api build
+      # `...` includes the workspace packages the API imports; building the app alone
+      # leaves @smarteam/contracts without its declarations.
+      - run: pnpm build --filter @smarteam/api...
 
       - name: Start the API
         run: |
