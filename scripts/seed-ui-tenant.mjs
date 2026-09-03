@@ -12,7 +12,7 @@
  *
  *   node scripts/seed-ui-tenant.mjs
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
@@ -168,7 +168,27 @@ async function main() {
 
   console.log('\n--- sign in ---');
   console.log(`email    ${email}`);
-  console.log(`password ${password}`);
+  /*
+   * The password goes to a gitignored file, not to stdout.
+   *
+   * Printing it was convenient and wrong: this runs in terminals that get screen-shared and in
+   * shells whose scrollback is kept, and CodeQL flags it as clear-text logging of a credential.
+   * The file carries the same convenience without leaving a live password where it can be copied
+   * by accident.
+   */
+  const credentialsPath = resolve(ROOT, '.seed-credentials.local');
+  writeFileSync(
+    credentialsPath,
+    `email=${email}
+password=${password}
+organizationId=${orgId}
+`,
+    {
+      encoding: 'utf8',
+      mode: 0o600,
+    },
+  );
+  console.log(`password written to ${credentialsPath} (gitignored)`);
   console.log(`org      ${orgId}`);
 }
 
