@@ -9,6 +9,9 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'node:crypto';
+import type { FilePurpose } from '../../generated/prisma/enums';
+import { fileExtension, fileStorageFolder } from '../../modules/files/file-naming';
+import type { EmployeeDocumentType } from '../../modules/files/file.constants';
 
 @Injectable()
 export class StorageService {
@@ -36,13 +39,24 @@ export class StorageService {
     return this.bucket;
   }
 
-  createObjectKey(organizationId: string, purpose: string, originalName: string) {
-    const extension = originalName
-      .split('.')
-      .pop()
-      ?.toLowerCase()
-      .replace(/[^a-z0-9]/g, '');
-    return `${organizationId}/${purpose}/${randomUUID()}${extension ? `.${extension}` : ''}`;
+  createObjectKey(
+    organizationId: string,
+    purpose: FilePurpose,
+    originalName: string,
+    options?: {
+      employeeId?: string;
+      documentType?: EmployeeDocumentType;
+      contentType?: string;
+    },
+  ) {
+    const extension = fileExtension(originalName, options?.contentType);
+    const folder = fileStorageFolder(
+      organizationId,
+      purpose,
+      options?.employeeId,
+      options?.documentType,
+    );
+    return `${folder}/${randomUUID()}${extension}`;
   }
 
   async createUploadUrl(input: {
@@ -83,10 +97,21 @@ export class StorageService {
     );
   }
 
-  async createDownloadUrl(key: string, expiresIn = 600) {
-    return getSignedUrl(this.client, new GetObjectCommand({ Bucket: this.bucket, Key: key }), {
-      expiresIn,
+  async createDownloadUrl(
+    key: string,
+    options?: { expiresIn?: number; fileName?: string; contentType?: string; inline?: boolean },
+  ) {
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+      ...(options?.contentType ? { ResponseContentType: options.contentType } : {}),
+      ...(options?.fileName
+        ? {
+            ResponseContentDisposition: `${options.inline ? 'inline' : 'attachment'}; filename="${options.fileName.replace(/[^a-zA-Z0-9._-]/g, '_')}"`,
+          }
+        : {}),
     });
+    return getSignedUrl(this.client, command, { expiresIn: options?.expiresIn ?? 600 });
   }
 
   async delete(key: string) {

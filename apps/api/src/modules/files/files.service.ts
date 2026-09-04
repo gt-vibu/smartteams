@@ -11,7 +11,8 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { StorageService } from '../../infrastructure/storage/storage.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
-import type { EmployeeDocumentType } from './file.constants';
+import { EMPLOYEE_DOCUMENT_TYPES, type EmployeeDocumentType } from './file.constants';
+import { fileDisplayName } from './file-naming';
 import type { Queue } from 'bullmq';
 
 const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> = {
@@ -89,6 +90,17 @@ export class FilesService {
       context.organizationId,
       input.purpose,
       input.originalName,
+      {
+        employeeId: input.employeeId,
+        documentType: input.documentType,
+        contentType: input.contentType,
+      },
+    );
+    const displayName = fileDisplayName(
+      input.purpose,
+      input.originalName,
+      input.documentType,
+      input.contentType,
     );
     const file = await this.database.run(context, async (tx) => {
       const employee = input.employeeId
@@ -116,11 +128,13 @@ export class FilesService {
           purpose: input.purpose,
           bucket: this.storage.getBucket(),
           objectKey: key,
-          originalName: input.originalName.replace(/[\\/]/g, '_'),
+          originalName: displayName,
           contentType: input.contentType,
           byteSize: BigInt(input.byteSize),
           checksumSha256: input.checksumSha256,
-          ...(input.documentType ? { metadata: { documentType: input.documentType } } : {}),
+          ...(input.documentType
+            ? { metadata: { documentType: input.documentType, displayName } }
+            : { metadata: { displayName } }),
         },
       });
       await this.audit.record(
@@ -151,6 +165,7 @@ export class FilesService {
       objectKey: key,
       uploadUrl: upload.url,
       uploadHeaders: upload.headers,
+      displayName,
       expiresIn: 600,
     };
   }
@@ -245,9 +260,24 @@ export class FilesService {
       }),
     );
     if (!file) throw new NotFoundError('File');
+    const displayName = fileDisplayName(
+      file.purpose,
+      file.originalName,
+      documentTypeFromMetadata(file.metadata) ?? undefined,
+      file.contentType,
+    );
     return {
       fileId: file.id,
-      downloadUrl: await this.storage.createDownloadUrl(file.objectKey),
+      downloadUrl: await this.storage.createDownloadUrl(file.objectKey, {
+        fileName: displayName,
+        contentType: file.contentType,
+      }),
+      viewUrl: await this.storage.createDownloadUrl(file.objectKey, {
+        fileName: displayName,
+        contentType: file.contentType,
+        inline: true,
+      }),
+      displayName,
       expiresIn: 600,
     };
   }
@@ -265,6 +295,7 @@ export class FilesService {
         },
         select: {
           id: true,
+          objectKey: true,
           purpose: true,
           originalName: true,
           contentType: true,
@@ -276,16 +307,34 @@ export class FilesService {
         orderBy: { createdAt: 'desc' },
       }),
     );
-    return files.map((file) => ({
-      id: file.id,
-      purpose: file.purpose,
-      documentType: documentTypeFromMetadata(file.metadata),
-      originalName: file.originalName,
-      contentType: file.contentType,
-      byteSize: Number(file.byteSize),
-      uploadedAt: file.createdAt.toISOString(),
-      updatedAt: file.updatedAt.toISOString(),
-    }));
+    return Promise.all(
+      files.map(async (file) => {
+        const documentType = documentTypeFromMetadata(file.metadata);
+        const displayName = fileDisplayName(
+          file.purpose,
+          file.originalName,
+          documentType ?? undefined,
+          file.contentType,
+        );
+        return {
+          id: file.id,
+          purpose: file.purpose,
+          documentType,
+          originalName: displayName,
+          displayName,
+          contentType: file.contentType,
+          byteSize: Number(file.byteSize),
+          uploadedAt: file.createdAt.toISOString(),
+          updatedAt: file.updatedAt.toISOString(),
+          previewUrl: await this.storage.createDownloadUrl(file.objectKey, {
+            fileName: displayName,
+            contentType: file.contentType,
+            inline: true,
+          }),
+          previewExpiresIn: 600,
+        };
+      }),
+    );
   }
 
   async softDelete(
@@ -376,14 +425,17 @@ export class FilesService {
   }
 }
 
-function documentTypeFromMetadata(metadata: unknown) {
+function documentTypeFromMetadata(metadata: unknown): EmployeeDocumentType | null {
   if (
     typeof metadata === 'object' &&
     metadata !== null &&
     'documentType' in metadata &&
     typeof metadata.documentType === 'string'
   ) {
-    return metadata.documentType;
+    const documentType = metadata.documentType;
+    return EMPLOYEE_DOCUMENT_TYPES.includes(documentType as EmployeeDocumentType)
+      ? (documentType as EmployeeDocumentType)
+      : null;
   }
   return null;
 }
