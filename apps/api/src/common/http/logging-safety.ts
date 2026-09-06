@@ -1,9 +1,12 @@
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { ServerResponse } from 'node:http';
 
-type RequestWithRoute = IncomingMessage & {
+type RequestWithRoute = {
   baseUrl?: string;
   id?: string;
+  method?: string;
   route?: { path?: string };
+  socket?: { remoteAddress?: string | null };
+  url?: string;
 };
 
 type ResponseWithHeaders = ServerResponse & {
@@ -29,7 +32,7 @@ export function serializeHttpRequest(request: RequestWithRoute) {
     id: request.id,
     method: request.method,
     url: routePath,
-    remoteAddress: request.socket.remoteAddress,
+    remoteAddress: request.socket?.remoteAddress,
   };
 }
 
