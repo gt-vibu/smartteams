@@ -46,6 +46,11 @@ export class AttendanceCorrectionDto {
   @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;
 }
 
+export class AttendanceDateCorrectionDto extends AttendanceCorrectionDto {
+  @IsUUID() employeeId!: string;
+  @IsDateString() workDate!: string;
+}
+
 export class AttendanceDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
   @IsString() @MinLength(2) @MaxLength(500) comment!: string;

@@ -38,6 +38,7 @@ import {
   EmployeeBankAccountDto,
   EmployeePersonalProfileDto,
   EmployeeReferenceDto,
+  EmployeeReferencesDto,
 } from '../employees/employees.dto';
 import type { FederationRequest } from './federation.types';
 import { FederationIdempotencyInterceptor } from './federation-idempotency.interceptor';
@@ -320,6 +321,22 @@ export class FederationEmployeesController {
     );
   }
 
+  @Put('federation/employees/:externalId/bank-accounts/primary')
+  @UseGuards(FederationAuthGuard)
+  async replacePrimaryBankAccount(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Body() body: EmployeeBankAccountDto,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.replacePrimaryBankAccount(
+      await this.support.context(request, organizationId, 'employees.bank_details.write', branchId),
+      externalId,
+      body,
+    );
+  }
+
   @Get('federation/employees/:externalId/references')
   @UseGuards(FederationAuthGuard)
   async references(
@@ -357,6 +374,27 @@ export class FederationEmployeesController {
       ),
       externalId,
       body,
+    );
+  }
+
+  @Put('federation/employees/:externalId/references')
+  @UseGuards(FederationAuthGuard)
+  async replaceReferences(
+    @Param('externalId') externalId: string,
+    @Headers('x-organization-id') organizationId: string,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Body() body: EmployeeReferencesDto,
+    @Req() request: FederationRequest,
+  ) {
+    return this.federatedEmployees.replaceReferences(
+      await this.support.context(
+        request,
+        organizationId,
+        'employees.personal_details.write',
+        branchId,
+      ),
+      externalId,
+      body.references,
     );
   }
 

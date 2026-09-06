@@ -14,6 +14,7 @@ import {
   EmployeePersonalProfileDto,
   EmployeeBankAccountDto,
   EmployeeReferenceDto,
+  EmployeeReferencesDto,
 } from './employees.dto';
 import { ConflictError } from '../../common/errors/domain-error';
 import { EmployeesService } from './employees.service';
@@ -145,6 +146,16 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.addBankAccount(context, employeeId, body));
   }
+  @Put(':employeeId/bank-accounts/primary') replacePrimaryBankAccount(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: EmployeeBankAccountDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.replacePrimaryBankAccount(context, employeeId, body));
+  }
   @Get(':employeeId/references') references(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -163,6 +174,16 @@ export class EmployeesController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.records.addReference(context, employeeId, body));
+  }
+  @Put(':employeeId/references') replaceReferences(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: EmployeeReferencesDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.replaceReferences(context, employeeId, body.references));
   }
   @Post(':employeeId/employment-records') employment(
     @Param('organizationId') organizationId: string,

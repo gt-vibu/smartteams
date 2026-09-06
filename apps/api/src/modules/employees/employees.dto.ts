@@ -1,13 +1,18 @@
 import {
   IsBoolean,
+  IsArray,
   IsDateString,
   IsEnum,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
+  MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import {
   EmployeeStatus,
   EmploymentType,
@@ -100,27 +105,34 @@ export class ManagerAssignmentDto {
 }
 
 export class EmployeePersonalProfileDto {
-  @IsOptional() @IsString() fatherName?: string | null;
-  @IsOptional() @IsString() motherName?: string | null;
-  @IsOptional() @IsString() spouseName?: string | null;
-  @IsOptional() @IsString() aadhaarNumber?: string | null;
-  @IsOptional() @IsString() panNumber?: string | null;
-  @IsOptional() @IsString() presentAddress?: string | null;
-  @IsOptional() @IsString() permanentAddress?: string | null;
+  @IsOptional() @IsString() @MaxLength(120) fatherName?: string | null;
+  @IsOptional() @IsString() @MaxLength(120) motherName?: string | null;
+  @IsOptional() @IsString() @MaxLength(120) spouseName?: string | null;
+  @IsOptional() @Matches(/^\d{12}$/) aadhaarNumber?: string | null;
+  @IsOptional() @Matches(/^[A-Z]{5}\d{4}[A-Z]$/) panNumber?: string | null;
+  @IsOptional() @IsString() @MaxLength(500) presentAddress?: string | null;
+  @IsOptional() @IsString() @MaxLength(500) permanentAddress?: string | null;
 }
 
 export class EmployeeBankAccountDto {
-  @IsOptional() @IsString() bankName?: string | null;
-  @IsOptional() @IsString() accountNumber?: string | null;
-  @IsOptional() @IsString() ifscCode?: string | null;
-  @IsOptional() @IsString() accountHolderName?: string | null;
+  @IsOptional() @IsString() @MaxLength(160) bankName?: string | null;
+  @IsOptional() @Matches(/^\d{9,18}$/) accountNumber?: string | null;
+  @IsOptional() @Matches(/^[A-Z]{4}0[A-Z0-9]{6}$/) ifscCode?: string | null;
+  @IsOptional() @IsString() @MaxLength(120) accountHolderName?: string | null;
   @IsOptional() @IsDateString() effectiveFrom?: string;
 }
 
 export class EmployeeReferenceDto {
-  @IsString() @MinLength(2) name!: string;
-  @IsOptional() @IsString() relationship?: string | null;
-  @IsString() @MinLength(5) phone!: string;
-  @IsOptional() @IsString() referenceType?: string;
+  @IsString() @MinLength(2) @MaxLength(120) name!: string;
+  @IsOptional() @IsString() @MaxLength(80) relationship?: string | null;
+  @Matches(/^\+?[0-9]{10,15}$/) phone!: string;
+  @IsOptional() @IsString() @MaxLength(40) referenceType?: string;
   @IsOptional() @IsNumber() sortOrder?: number;
+}
+
+export class EmployeeReferencesDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EmployeeReferenceDto)
+  references!: EmployeeReferenceDto[];
 }

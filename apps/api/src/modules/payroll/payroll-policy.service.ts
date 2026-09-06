@@ -29,6 +29,7 @@ import {
   type AdvanceInput,
   type EmployeePolicyInput,
   type PaymentInput,
+  type PolicyComponentInput,
   type PolicyInput,
   type SalaryProfileInput,
   type StatutoryRuleInput,
@@ -57,6 +58,26 @@ export class PayrollPolicyService {
     );
   }
 
+  async listPolicies(context: DomainContext, effectiveDate = new Date()) {
+    requirePermission(context, 'payroll.policy.read');
+    return this.database.run(context, (tx) =>
+      tx.payrollPolicy.findMany({
+        where: {
+          organizationId: context.organizationId,
+          effectiveFrom: { lte: effectiveDate },
+          OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
+        },
+        include: {
+          components: {
+            include: { payComponent: true },
+            orderBy: [{ displayOrder: 'asc' }, { createdAt: 'asc' }],
+          },
+        },
+        orderBy: [{ name: 'asc' }, { effectiveFrom: 'desc' }],
+      }),
+    );
+  }
+
   async savePolicy(context: DomainContext, input: PolicyInput) {
     requirePermission(context, 'payroll.policy.write');
     validatePolicy(input);
@@ -65,32 +86,46 @@ export class PayrollPolicyService {
     if (effectiveTo && effectiveTo < effectiveFrom)
       throw new ConflictError('Policy end must not precede its start');
     return this.database.run(context, async (tx) => {
-      const existing = await tx.payrollPolicy.findUnique({
-        where: {
-          organizationId_effectiveFrom: { organizationId: context.organizationId, effectiveFrom },
-        },
-      });
+      const existing = input.id
+        ? await tx.payrollPolicy.findFirst({
+            where: { id: input.id, organizationId: context.organizationId },
+          })
+        : await tx.payrollPolicy.findFirst({
+            where: {
+              organizationId: context.organizationId,
+              name: input.name?.trim() || 'Standard payroll',
+              effectiveFrom,
+            },
+          });
+      if (input.id && !existing) throw new NotFoundError('Payroll policy');
+      const policyInput: PolicyInput = {
+        ...input,
+        name: input.name?.trim() || existing?.name || 'Standard payroll',
+      };
       const overlap = await tx.payrollPolicy.findFirst({
         where: {
           organizationId: context.organizationId,
+          name: policyInput.name,
           ...(existing ? { id: { not: existing.id } } : {}),
           effectiveFrom: { lte: effectiveTo ?? new Date('9999-12-31') },
           OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
         },
       });
-      if (overlap) throw new ConflictError('Payroll policy periods must not overlap');
+      if (overlap)
+        throw new ConflictError('Payroll policy periods must not overlap for the same policy');
       const policy = existing
         ? await tx.payrollPolicy.update({
             where: { id: existing.id },
-            data: toPolicyData(input, effectiveTo),
+            data: toPolicyData(policyInput, effectiveTo),
           })
         : await tx.payrollPolicy.create({
             data: {
               organizationId: context.organizationId,
               effectiveFrom,
-              ...toPolicyData(input, effectiveTo),
+              ...toPolicyData(policyInput, effectiveTo),
             },
           });
+      await replacePolicyComponents(tx, context.organizationId, policy.id, policyInput.components);
       if (policy.statutoryJurisdiction) {
         const ruleCount = await tx.payrollStatutoryRule.count({
           where: {
@@ -166,6 +201,12 @@ export class PayrollPolicyService {
     requirePermission(context, 'payroll.employee-profile.write');
     return this.database.run(context, async (tx) => {
       await requireEmployee(tx, context, input.employeeId, true);
+      const payrollPolicyId = await resolvePayrollPolicyId(
+        tx,
+        context.organizationId,
+        input.payrollEnabled,
+        input.payrollPolicyId,
+      );
       const effectiveFrom = dateOnly(input.effectiveFrom);
       const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
       if (effectiveTo && effectiveTo < effectiveFrom)
@@ -194,7 +235,7 @@ export class PayrollPolicyService {
       const policy = existing
         ? await tx.employeePayrollPolicy.update({
             where: { id: existing.id },
-            data: toEmployeePolicyData(input, effectiveTo),
+            data: { ...toEmployeePolicyData(input, effectiveTo), payrollPolicyId },
           })
         : await tx.employeePayrollPolicy.create({
             data: {
@@ -202,6 +243,7 @@ export class PayrollPolicyService {
               employeeId: input.employeeId,
               effectiveFrom,
               ...toEmployeePolicyData(input, effectiveTo),
+              payrollPolicyId,
             },
           });
       await this.audit.record(
@@ -282,6 +324,7 @@ export class PayrollPolicyService {
         esiEnabled: input.esiEnabled,
         ptEnabled: input.ptEnabled,
         statutoryJurisdiction: input.statutoryJurisdiction,
+        payrollPolicyId: input.payrollPolicyId,
       });
       await this.audit.record(
         context,
@@ -333,6 +376,16 @@ export class PayrollPolicyService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: {
+              payrollPolicy: {
+                include: {
+                  components: {
+                    include: { payComponent: true },
+                    orderBy: [{ displayOrder: 'asc' }, { createdAt: 'asc' }],
+                  },
+                },
+              },
+            },
           },
           payComponents: {
             where: {
@@ -345,10 +398,12 @@ export class PayrollPolicyService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const policy =
-        (await findPolicy(tx, context.organizationId, new Date())) ?? DEFAULT_PAYROLL_POLICY;
       const compensation = employee.compensations[0] ?? null;
       const employeePolicy = employee.payrollPolicies[0] ?? null;
+      const policy =
+        employeePolicy?.payrollPolicy ??
+        (await findPolicy(tx, context.organizationId, new Date())) ??
+        DEFAULT_PAYROLL_POLICY;
       const gross = compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0);
       const structure = calculateSalaryStructure(gross, policy);
       const statutoryJurisdiction =
@@ -379,17 +434,29 @@ export class PayrollPolicyService {
         .map((rule) =>
           calculateStatutoryDeduction(structure, rule, policy.roundingMode, structure),
         );
-      const assignedComponents = employee.payComponents.map((assignment) => ({
-        code: assignment.payComponent.code,
-        name: assignment.payComponent.name,
-        componentType: assignment.payComponent.componentType,
-        calculationType: assignment.payComponent.calculationType,
-        isTaxable: assignment.payComponent.isTaxable,
+      const policyComponents = employeePolicy?.payrollPolicy?.components ?? [];
+      const employeeComponentIds = new Set(
+        employee.payComponents.map((item) => item.payComponentId),
+      );
+      const assignedComponents = [
+        ...policyComponents
+          .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId))
+          .map((assignment) => ({ assignment, component: assignment.payComponent })),
+        ...employee.payComponents.map((assignment) => ({
+          assignment,
+          component: assignment.payComponent,
+        })),
+      ].map(({ assignment, component }) => ({
+        code: component.code,
+        name: component.name,
+        componentType: component.componentType,
+        calculationType: component.calculationType,
+        isTaxable: component.isTaxable,
         amount: calculateComponent(
           {
             amount: assignment.amount,
             percentage: assignment.percentage,
-            component: assignment.payComponent,
+            component,
           },
           structure.base,
         ),
@@ -477,6 +544,7 @@ export class PayrollPolicyService {
         compensation,
         employeePolicy,
         organizationPolicy: policy,
+        payrollApplied: employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault,
         structure,
         statutory,
         salaryBreakdown: {
@@ -739,6 +807,12 @@ export class PayrollPolicyService {
     context: DomainContext,
     input: EmployeePolicyInput,
   ) {
+    const payrollPolicyId = await resolvePayrollPolicyId(
+      tx,
+      context.organizationId,
+      input.payrollEnabled,
+      input.payrollPolicyId,
+    );
     const effectiveFrom = dateOnly(input.effectiveFrom);
     const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
     if (effectiveTo && effectiveTo < effectiveFrom)
@@ -765,7 +839,7 @@ export class PayrollPolicyService {
     return existing
       ? tx.employeePayrollPolicy.update({
           where: { id: existing.id },
-          data: toEmployeePolicyData(input, effectiveTo),
+          data: { ...toEmployeePolicyData(input, effectiveTo), payrollPolicyId },
         })
       : tx.employeePayrollPolicy.create({
           data: {
@@ -773,9 +847,59 @@ export class PayrollPolicyService {
             employeeId: input.employeeId,
             effectiveFrom,
             ...toEmployeePolicyData(input, effectiveTo),
+            payrollPolicyId,
           },
         });
   }
+}
+
+async function resolvePayrollPolicyId(
+  tx: TenantTransaction,
+  organizationId: string,
+  payrollEnabled: boolean,
+  payrollPolicyId?: string,
+) {
+  if (!payrollEnabled) return null;
+  if (!payrollPolicyId) throw new ConflictError('Select a payroll policy when payroll is enabled');
+  const policy = await tx.payrollPolicy.findFirst({
+    where: { id: payrollPolicyId, organizationId },
+    select: { id: true },
+  });
+  if (!policy) throw new NotFoundError('Payroll policy');
+  return policy.id;
+}
+
+async function replacePolicyComponents(
+  tx: TenantTransaction,
+  organizationId: string,
+  payrollPolicyId: string,
+  components?: PolicyComponentInput[],
+) {
+  if (components === undefined) return;
+  const uniqueIds = new Set(components.map((component) => component.payComponentId));
+  if (uniqueIds.size !== components.length)
+    throw new ConflictError('A payroll policy cannot include the same component twice');
+  if (components.length) {
+    const available = await tx.payComponent.findMany({
+      where: { organizationId, id: { in: [...uniqueIds] } },
+      select: { id: true },
+    });
+    if (available.length !== components.length) throw new NotFoundError('Pay component');
+  }
+  await tx.payrollPolicyComponent.deleteMany({ where: { payrollPolicyId, organizationId } });
+  if (!components.length) return;
+  await tx.payrollPolicyComponent.createMany({
+    data: components.map((component, index) => ({
+      organizationId,
+      payrollPolicyId,
+      payComponentId: component.payComponentId,
+      amount: component.amount === undefined ? null : new Prisma.Decimal(component.amount),
+      percentage:
+        component.percentage === undefined ? null : new Prisma.Decimal(component.percentage),
+      formulaParameters: (component.formulaParameters ?? {}) as Prisma.InputJsonObject,
+      displayOrder: component.displayOrder ?? index,
+    })),
+  });
 }
 
 function statutoryName(code: string) {

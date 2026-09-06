@@ -186,6 +186,62 @@ export class EmployeeRecordsService {
     });
   }
 
+  async replacePrimaryBankAccount(
+    context: DomainContext,
+    employeeId: string,
+    input: {
+      bankName?: string | null;
+      accountNumber?: string | null;
+      ifscCode?: string | null;
+      accountHolderName?: string | null;
+      effectiveFrom?: string;
+    },
+  ) {
+    requirePermission(context, 'employees.bank_details.write');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      const existing = await tx.employeeBankAccount.findFirst({
+        where: { organizationId: context.organizationId, employeeId, isPrimary: true },
+        orderBy: { effectiveFrom: 'desc' },
+      });
+      const data = {
+        bankName: input.bankName?.trim() || null,
+        accountNumberEncrypted: input.accountNumber?.trim()
+          ? encryptEmployeeSecret(this.config, input.accountNumber.trim())
+          : null,
+        ifscCode: input.ifscCode?.trim().toUpperCase() || null,
+        accountHolderName: input.accountHolderName?.trim() || null,
+        effectiveFrom: dateOnly(input.effectiveFrom ?? new Date().toISOString().slice(0, 10)),
+        isPrimary: true,
+      };
+      const account = existing
+        ? await tx.employeeBankAccount.update({ where: { id: existing.id }, data })
+        : await tx.employeeBankAccount.create({
+            data: { organizationId: context.organizationId, employeeId, ...data },
+          });
+      await tx.employeeBankAccount.updateMany({
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          id: { not: account.id },
+          isPrimary: true,
+        },
+        data: { isPrimary: false },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'EMPLOYEE_BANK_ACCOUNT',
+          entityId: account.id,
+          action: 'EMPLOYEE_BANK_ACCOUNT_REPLACED',
+          afterState: { id: account.id, employeeId },
+        },
+        tx,
+      );
+      return { ...account, accountNumber: '[stored]', accountNumberEncrypted: undefined };
+    });
+  }
+
   async listReferences(context: DomainContext, employeeId: string) {
     requirePermission(context, 'employees.personal_details.read');
     return this.database.run(context, async (tx) => {
@@ -222,6 +278,70 @@ export class EmployeeRecordsService {
           sortOrder: input.sortOrder ?? 0,
         },
       });
+    });
+  }
+
+  async replaceReferences(
+    context: DomainContext,
+    employeeId: string,
+    references: Array<{
+      name: string;
+      relationship?: string | null;
+      phone: string;
+      referenceType?: string;
+      sortOrder?: number;
+    }>,
+  ) {
+    requirePermission(context, 'employees.personal_details.write');
+    return this.database.run(context, async (tx) => {
+      await this.assertEmployee(tx, context.organizationId, employeeId);
+      const existing = await tx.employeeReference.findMany({
+        where: { organizationId: context.organizationId, employeeId },
+        orderBy: { sortOrder: 'asc' },
+      });
+      const retainedIds: string[] = [];
+      const saved: typeof existing = [];
+      for (const [index, input] of references.entries()) {
+        const current = existing[index];
+        const data = {
+          name: input.name.trim(),
+          relationship: input.relationship?.trim() || null,
+          phone: input.phone.trim(),
+          referenceType: input.referenceType?.trim() || (index === 0 ? 'FAMILY' : 'OTHER'),
+          sortOrder: input.sortOrder ?? index,
+        };
+        const reference = current
+          ? await tx.employeeReference.update({ where: { id: current.id }, data })
+          : await tx.employeeReference.create({
+              data: { organizationId: context.organizationId, employeeId, ...data },
+            });
+        retainedIds.push(reference.id);
+        saved.push(reference);
+      }
+      if (retainedIds.length) {
+        await tx.employeeReference.deleteMany({
+          where: {
+            organizationId: context.organizationId,
+            employeeId,
+            id: { notIn: retainedIds },
+          },
+        });
+      } else {
+        await tx.employeeReference.deleteMany({
+          where: { organizationId: context.organizationId, employeeId },
+        });
+      }
+      await this.audit.record(
+        context,
+        {
+          entityType: 'EMPLOYEE_REFERENCES',
+          entityId: employeeId,
+          action: 'EMPLOYEE_REFERENCES_REPLACED',
+          afterState: { employeeId, count: saved.length },
+        },
+        tx,
+      );
+      return saved;
     });
   }
 

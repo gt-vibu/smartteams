@@ -445,6 +445,7 @@ export const ModelName = {
   TimesheetApproval: 'TimesheetApproval',
   PayrollRun: 'PayrollRun',
   PayrollPolicy: 'PayrollPolicy',
+  PayrollPolicyComponent: 'PayrollPolicyComponent',
   PayrollStatutoryRule: 'PayrollStatutoryRule',
   PayrollLineItem: 'PayrollLineItem',
   SalaryAdvance: 'SalaryAdvance',
@@ -501,7 +502,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileObjectVersion" | "user" | "userInvitation" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "attendanceApproval" | "holiday" | "leaveType" | "leavePolicyAssignment" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "leaveApproval" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "payrollRun" | "payrollPolicy" | "payrollStatutoryRule" | "payrollLineItem" | "salaryAdvance" | "salaryAdvanceRecovery" | "payrollPayment" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "payrollCalendar" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "webauthnCredential" | "webauthnChallenge" | "employee" | "employeePersonalProfile" | "employeeBankAccount" | "employeeReference" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "employeePayrollPolicy" | "employeeStatutoryProfile" | "employeeStatutoryRecord" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember"
+    modelProps: "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileObjectVersion" | "user" | "userInvitation" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "attendanceApproval" | "holiday" | "leaveType" | "leavePolicyAssignment" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "leaveApproval" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "payrollRun" | "payrollPolicy" | "payrollPolicyComponent" | "payrollStatutoryRule" | "payrollLineItem" | "salaryAdvance" | "salaryAdvanceRecovery" | "payrollPayment" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "payrollCalendar" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "webauthnCredential" | "webauthnChallenge" | "employee" | "employeePersonalProfile" | "employeeBankAccount" | "employeeReference" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "employeePayrollPolicy" | "employeeStatutoryProfile" | "employeeStatutoryRecord" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4054,6 +4055,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PayrollPolicyCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PayrollPolicyCountAggregateOutputType> | number
+        }
+      }
+    }
+    PayrollPolicyComponent: {
+      payload: Prisma.$PayrollPolicyComponentPayload<ExtArgs>
+      fields: Prisma.PayrollPolicyComponentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PayrollPolicyComponentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PayrollPolicyComponentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>
+        }
+        findFirst: {
+          args: Prisma.PayrollPolicyComponentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PayrollPolicyComponentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>
+        }
+        findMany: {
+          args: Prisma.PayrollPolicyComponentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>[]
+        }
+        create: {
+          args: Prisma.PayrollPolicyComponentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>
+        }
+        createMany: {
+          args: Prisma.PayrollPolicyComponentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PayrollPolicyComponentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>[]
+        }
+        delete: {
+          args: Prisma.PayrollPolicyComponentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>
+        }
+        update: {
+          args: Prisma.PayrollPolicyComponentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>
+        }
+        deleteMany: {
+          args: Prisma.PayrollPolicyComponentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PayrollPolicyComponentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PayrollPolicyComponentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>[]
+        }
+        upsert: {
+          args: Prisma.PayrollPolicyComponentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollPolicyComponentPayload>
+        }
+        aggregate: {
+          args: Prisma.PayrollPolicyComponentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayrollPolicyComponent>
+        }
+        groupBy: {
+          args: Prisma.PayrollPolicyComponentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollPolicyComponentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PayrollPolicyComponentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollPolicyComponentCountAggregateOutputType> | number
         }
       }
     }
@@ -7939,6 +8014,7 @@ export type PayrollRunScalarFieldEnum = (typeof PayrollRunScalarFieldEnum)[keyof
 export const PayrollPolicyScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
+  name: 'name',
   effectiveFrom: 'effectiveFrom',
   effectiveTo: 'effectiveTo',
   salarySlipDefault: 'salarySlipDefault',
@@ -7958,6 +8034,22 @@ export const PayrollPolicyScalarFieldEnum = {
 } as const
 
 export type PayrollPolicyScalarFieldEnum = (typeof PayrollPolicyScalarFieldEnum)[keyof typeof PayrollPolicyScalarFieldEnum]
+
+
+export const PayrollPolicyComponentScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  payrollPolicyId: 'payrollPolicyId',
+  payComponentId: 'payComponentId',
+  amount: 'amount',
+  percentage: 'percentage',
+  formulaParameters: 'formulaParameters',
+  displayOrder: 'displayOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollPolicyComponentScalarFieldEnum = (typeof PayrollPolicyComponentScalarFieldEnum)[keyof typeof PayrollPolicyComponentScalarFieldEnum]
 
 
 export const PayrollStatutoryRuleScalarFieldEnum = {
@@ -8531,6 +8623,7 @@ export const EmployeePayrollPolicyScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   employeeId: 'employeeId',
+  payrollPolicyId: 'payrollPolicyId',
   effectiveFrom: 'effectiveFrom',
   effectiveTo: 'effectiveTo',
   payrollEnabled: 'payrollEnabled',
@@ -9855,6 +9948,7 @@ export type GlobalOmitConfig = {
   timesheetApproval?: Prisma.TimesheetApprovalOmit
   payrollRun?: Prisma.PayrollRunOmit
   payrollPolicy?: Prisma.PayrollPolicyOmit
+  payrollPolicyComponent?: Prisma.PayrollPolicyComponentOmit
   payrollStatutoryRule?: Prisma.PayrollStatutoryRuleOmit
   payrollLineItem?: Prisma.PayrollLineItemOmit
   salaryAdvance?: Prisma.SalaryAdvanceOmit

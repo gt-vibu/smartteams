@@ -79,6 +79,17 @@ export class FederationPayrollController {
     );
   }
 
+  @Get('federation/payroll/policies')
+  @UseGuards(FederationAuthGuard)
+  async policies(
+    @Headers('x-organization-id') organizationId: string,
+    @Req() request: FederationRequest,
+  ) {
+    return this.payrollPolicy.listPolicies(
+      await this.support.context(request, organizationId, 'payroll.policy.read'),
+    );
+  }
+
   @Get('federation/payroll/statutory-rules')
   @UseGuards(FederationAuthGuard)
   async statutoryRules(

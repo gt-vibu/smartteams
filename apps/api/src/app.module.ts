@@ -4,6 +4,12 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './common/config/config.module';
 import { CommonModule } from './common/common.module';
 import { RequestContextMiddleware } from './common/context/request-context';
+import {
+  sensitiveLogPaths,
+  serializeHttpError,
+  serializeHttpRequest,
+  serializeHttpResponse,
+} from './common/http/logging-safety';
 import { HealthModule } from './common/health/health.module';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
@@ -32,7 +38,18 @@ import { UsersModule } from './modules/users/users.module';
       imports: [AppConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        pinoHttp: { level: config.getOrThrow<string>('LOG_LEVEL') },
+        pinoHttp: {
+          level: config.getOrThrow<string>('LOG_LEVEL'),
+          redact: {
+            paths: sensitiveLogPaths,
+            censor: '[REDACTED]',
+          },
+          serializers: {
+            err: serializeHttpError,
+            req: serializeHttpRequest,
+            res: serializeHttpResponse,
+          },
+        },
       }),
     }),
     AppConfigModule,

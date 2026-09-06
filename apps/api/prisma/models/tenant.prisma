@@ -15,6 +15,7 @@ model Organization {
 
   settings                  OrganizationSettings?
   payrollPolicies           PayrollPolicy[]
+  payrollPolicyComponents   PayrollPolicyComponent[]
   statutoryRules            PayrollStatutoryRule[]
   employeePayrollPolicies   EmployeePayrollPolicy[]
   salaryAdvances            SalaryAdvance[]

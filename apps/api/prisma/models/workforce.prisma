@@ -239,6 +239,7 @@ model EmployeePayrollPolicy {
   id                    String         @id @default(uuid()) @db.Uuid
   organizationId        String         @map("organization_id") @db.Uuid
   employeeId            String         @map("employee_id") @db.Uuid
+  payrollPolicyId       String?        @map("payroll_policy_id") @db.Uuid
   effectiveFrom         DateTime       @map("effective_from") @db.Date
   effectiveTo           DateTime?      @map("effective_to") @db.Date
   payrollEnabled        Boolean        @default(true) @map("payroll_enabled")
@@ -253,6 +254,7 @@ model EmployeePayrollPolicy {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  payrollPolicy PayrollPolicy? @relation(fields: [payrollPolicyId], references: [id], onDelete: Restrict)
 
   @@unique([organizationId, employeeId, effectiveFrom])
   @@index([organizationId, employeeId, effectiveFrom])
@@ -324,6 +326,7 @@ model PayComponent {
   organization        Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   employeeAssignments EmployeePayComponent[]
   payrollComponents   PayrollLineItemComponent[]
+  policyAssignments   PayrollPolicyComponent[]
 
   @@unique([organizationId, code])
   @@index([organizationId, isActive, displayOrder])

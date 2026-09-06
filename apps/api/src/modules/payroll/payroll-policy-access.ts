@@ -80,14 +80,23 @@ export async function findPolicy(
   tx: TenantTransaction,
   organizationId: string,
   effectiveDate: Date,
+  policyId?: string,
 ) {
-  const policy = await tx.payrollPolicy.findFirst({
-    where: {
-      organizationId,
-      effectiveFrom: { lte: effectiveDate },
-      OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
-    },
-    orderBy: { effectiveFrom: 'desc' },
+  const where = {
+    organizationId,
+    ...(policyId ? { id: policyId } : {}),
+    effectiveFrom: { lte: effectiveDate },
+    OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
+  } satisfies Prisma.PayrollPolicyWhereInput;
+  if (!policyId) {
+    const standard = await tx.payrollPolicy.findFirst({
+      where: { ...where, name: 'Standard payroll' },
+      orderBy: { effectiveFrom: 'desc' },
+    });
+    if (standard) return standard;
+  }
+  return tx.payrollPolicy.findFirst({
+    where,
+    orderBy: [{ effectiveFrom: 'desc' }, { name: 'asc' }],
   });
-  return policy;
 }

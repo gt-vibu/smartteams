@@ -56,15 +56,23 @@ export class PayrollPreviewService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: {
+              payrollPolicy: true,
+            },
           },
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const policy =
-        (await findPolicy(tx, context.organizationId, periodStart)) ?? DEFAULT_PAYROLL_POLICY;
       const compensation = employee.compensations[0];
       if (!compensation) throw new ConflictError('Employee has no salary profile for this period');
       const employeePolicy = employee.payrollPolicies[0];
+      const policy =
+        employeePolicy?.payrollPolicy ??
+        (await findPolicy(tx, context.organizationId, periodStart)) ??
+        DEFAULT_PAYROLL_POLICY;
+      if (!(employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault)) {
+        throw new ConflictError('Payroll is disabled for this employee');
+      }
       const gross = compensation.grossSalary ?? compensation.baseAmount;
       const monthlyStructure = calculateSalaryStructure(gross, policy);
       const today = dateOnly(new Date().toISOString());
@@ -73,14 +81,14 @@ export class PayrollPreviewService {
         measuredEnd < periodStart
           ? 0
           : Math.floor((measuredEnd.getTime() - periodStart.getTime()) / 86_400_000) + 1;
-      const [attendanceRecords, approvedLeaves] = await Promise.all([
+      const [attendanceRecords, approvedLeaves, settings, holidays] = await Promise.all([
         tx.attendanceRecord.findMany({
           where: {
             organizationId: context.organizationId,
             employeeId,
             workDate: { gte: periodStart, lte: measuredEnd },
           },
-          select: { dayStatus: true },
+          select: { workDate: true, dayStatus: true },
         }),
         tx.leaveRequest.findMany({
           where: {
@@ -97,8 +105,30 @@ export class PayrollPreviewService {
             leaveType: { select: { paid: true } },
           },
         }),
+        tx.organizationSettings.findUniqueOrThrow({
+          where: { organizationId: context.organizationId },
+          select: { workWeekDays: true },
+        }),
+        tx.holiday.findMany({
+          where: {
+            organizationId: context.organizationId,
+            isActive: true,
+            holidayDate: { gte: periodStart, lte: measuredEnd },
+          },
+          select: { holidayDate: true, branchId: true },
+        }),
       ]);
-      const attendance = summarizeAttendance(attendanceRecords);
+      const attendance = summarizeAttendance(attendanceRecords, {
+        periodStart,
+        periodEnd: measuredEnd,
+        workWeekDays: settings.workWeekDays,
+        holidays,
+        branchId: employee.primaryBranchId,
+        leaves: approvedLeaves.map((leave) => ({
+          startDate: leave.startDate,
+          endDate: leave.endDate,
+        })),
+      });
       const leave = summarizeLeave(approvedLeaves, periodStart, measuredEnd);
       const payableDays =
         input.payableDays ??
@@ -116,6 +146,22 @@ export class PayrollPreviewService {
         payableDays,
         policy.payrollDayBasis,
         policy.roundingMode,
+      );
+      const totalUnpaidAdjustment = monthlyStructure.gross.minus(structure.gross);
+      const unpaidLeaveAdjustment = Prisma.Decimal.min(
+        totalUnpaidAdjustment,
+        monthlyStructure.gross.minus(
+          prorateSalaryStructure(
+            monthlyStructure,
+            Math.max(0, policy.payrollDayBasis - leave.unpaidDays),
+            policy.payrollDayBasis,
+            policy.roundingMode,
+          ).gross,
+        ),
+      );
+      const unpaidAttendanceAdjustment = Prisma.Decimal.max(
+        new Prisma.Decimal(0),
+        totalUnpaidAdjustment.minus(unpaidLeaveAdjustment),
       );
       const jurisdiction = employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
       const advanceCutoff = endOfDay(periodEnd);
@@ -184,6 +230,8 @@ export class PayrollPreviewService {
         structure,
         statutory,
         deductions,
+        unpaidLeaveAdjustment,
+        unpaidAttendanceAdjustment,
         advances: advanceRecoveries,
         advanceRecovery,
         attendance,

@@ -54,6 +54,15 @@ export class PayrollPolicyController {
       .then((context) => this.payroll.savePolicy(context, body));
   }
 
+  @Get('policies') policies(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.payroll.listPolicies(context));
+  }
+
   @Get('statutory-rules') statutoryRules(
     @Param('organizationId') organizationId: string,
     @Query('jurisdiction') jurisdiction: string | undefined,

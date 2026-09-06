@@ -9,6 +9,8 @@ import type { DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
 
 export type PolicyInput = {
+  id?: string;
+  name?: string;
   effectiveFrom: string;
   effectiveTo?: string;
   salarySlipDefault: boolean;
@@ -22,6 +24,15 @@ export type PolicyInput = {
   ptDefault: boolean;
   statutoryJurisdiction?: string;
   roundingMode: PayrollRoundingMode;
+  components?: PolicyComponentInput[];
+};
+
+export type PolicyComponentInput = {
+  payComponentId: string;
+  amount?: number;
+  percentage?: number;
+  formulaParameters?: Record<string, unknown>;
+  displayOrder?: number;
 };
 
 export type EmployeePolicyInput = {
@@ -34,6 +45,7 @@ export type EmployeePolicyInput = {
   esiEnabled: boolean;
   ptEnabled: boolean;
   statutoryJurisdiction?: string;
+  payrollPolicyId?: string;
 };
 
 export type SalaryProfileInput = EmployeePolicyInput & {
@@ -81,6 +93,7 @@ export type PaymentInput = {
 
 export function toPolicyData(input: PolicyInput, effectiveTo: Date | null) {
   return {
+    name: input.name?.trim() || 'Standard payroll',
     effectiveTo,
     salarySlipDefault: input.salarySlipDefault,
     payrollEnabledDefault: input.payrollEnabledDefault,

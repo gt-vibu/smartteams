@@ -22,7 +22,7 @@ export * as $Enums from './enums'
 export * from "./enums"
 /**
  * ## Prisma Client
- * 
+ *
  * Type-safe database client for TypeScript
  * @example
  * ```
@@ -279,6 +279,11 @@ export type PayrollRun = Prisma.PayrollRunModel
  * 
  */
 export type PayrollPolicy = Prisma.PayrollPolicyModel
+/**
+ * Model PayrollPolicyComponent
+ *
+ */
+export type PayrollPolicyComponent = Prisma.PayrollPolicyComponentModel
 /**
  * Model PayrollStatutoryRule
  * 

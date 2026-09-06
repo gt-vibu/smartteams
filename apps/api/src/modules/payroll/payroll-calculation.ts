@@ -100,8 +100,18 @@ function proratedLeaveDays(
     : requestedDays;
 }
 
-export function summarizeAttendance(records: Array<{ dayStatus: string }>) {
-  return records.reduce(
+export function summarizeAttendance(
+  records: Array<{ dayStatus: string; workDate?: Date }>,
+  options?: {
+    periodStart: Date;
+    periodEnd: Date;
+    workWeekDays: number[];
+    holidays: Array<{ holidayDate: Date; branchId: string | null }>;
+    branchId: string | null;
+    leaves: Array<{ startDate: Date; endDate: Date }>;
+  },
+) {
+  const summary = records.reduce(
     (summary, record) => {
       if (record.dayStatus === 'ABSENT') summary.absentDays += 1;
       if (record.dayStatus === 'HALF_DAY') summary.halfDays += 1;
@@ -109,6 +119,47 @@ export function summarizeAttendance(records: Array<{ dayStatus: string }>) {
     },
     { absentDays: 0, halfDays: 0 },
   );
+  if (!options) return summary;
+
+  const recordedDates = new Set(
+    records
+      .map((record) => record.workDate?.toISOString().slice(0, 10))
+      .filter((value): value is string => Boolean(value)),
+  );
+  const holidayDates = new Set(
+    options.holidays
+      .filter((holiday) => holiday.branchId === null || holiday.branchId === options.branchId)
+      .map((holiday) => holiday.holidayDate.toISOString().slice(0, 10)),
+  );
+  const leaveDates = new Set<string>();
+  for (const leave of options.leaves) {
+    const start = new Date(Math.max(leave.startDate.getTime(), options.periodStart.getTime()));
+    const end = new Date(Math.min(leave.endDate.getTime(), options.periodEnd.getTime()));
+    for (const date = start; date <= end; date.setUTCDate(date.getUTCDate() + 1))
+      leaveDates.add(date.toISOString().slice(0, 10));
+  }
+  for (const record of records) {
+    const dateKey = record.workDate?.toISOString().slice(0, 10);
+    if (!dateKey || !leaveDates.has(dateKey)) continue;
+    if (record.dayStatus === 'ABSENT') summary.absentDays -= 1;
+    if (record.dayStatus === 'HALF_DAY') summary.halfDays -= 1;
+  }
+  for (
+    const date = new Date(options.periodStart);
+    date <= options.periodEnd;
+    date.setUTCDate(date.getUTCDate() + 1)
+  ) {
+    const dateKey = date.toISOString().slice(0, 10);
+    const weekday = date.getUTCDay() === 0 ? 7 : date.getUTCDay();
+    if (
+      options.workWeekDays.includes(weekday) &&
+      !holidayDates.has(dateKey) &&
+      !recordedDates.has(dateKey) &&
+      !leaveDates.has(dateKey)
+    )
+      summary.absentDays += 1;
+  }
+  return summary;
 }
 
 export function calculateComponent(

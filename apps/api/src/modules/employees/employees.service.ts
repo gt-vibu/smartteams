@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Prisma } from '../../generated/prisma/client';
+import { Prisma } from '../../generated/prisma/client';
 import {
   EmployeeStatus,
   EmploymentType,
@@ -191,15 +191,35 @@ export class EmployeesService {
         if (!manager || manager.id === existing?.id) throw new ConflictError('Manager is invalid');
         managerEmployeeId = manager.id;
       }
+      const workEmail = input.workEmail?.trim().toLowerCase() || null;
+      const phone = input.phone?.trim() || null;
+      const contactConditions: Prisma.EmployeeWhereInput[] = [
+        { employeeNumber: input.employeeNumber },
+        ...(workEmail ? [{ workEmail }] : []),
+        ...(phone ? [{ phone }] : []),
+      ];
+      if (contactConditions.length) {
+        const conflictingEmployee = await tx.employee.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            ...(existing ? { id: { not: existing.id } } : {}),
+            OR: contactConditions,
+          },
+          select: { id: true },
+        });
+        if (conflictingEmployee) {
+          throw new ConflictError('Employee number, email, or phone is already in use');
+        }
+      }
       const data = {
         employeeNumber: input.employeeNumber,
         firstName: input.firstName,
         middleName: input.middleName,
         lastName: input.lastName,
         preferredName: input.preferredName,
-        workEmail: input.workEmail,
-        personalEmail: input.personalEmail,
-        phone: input.phone,
+        workEmail,
+        personalEmail: input.personalEmail?.trim().toLowerCase() || null,
+        phone,
         status: input.status ?? EmployeeStatus.ACTIVE,
         employmentType: input.employmentType ?? EmploymentType.FULL_TIME,
         dateOfJoining:
@@ -241,14 +261,22 @@ export class EmployeesService {
               externalIdentityId: externalId,
             },
           })));
-      const employee = existing
-        ? await tx.employee.update({
-            where: { id: existing.id },
-            data: { ...data, userId: shadowUser.id, version: { increment: 1 } },
-          })
-        : await tx.employee.create({
-            data: { organizationId: context.organizationId, userId: shadowUser.id, ...data },
-          });
+      let employee;
+      try {
+        employee = existing
+          ? await tx.employee.update({
+              where: { id: existing.id },
+              data: { ...data, userId: shadowUser.id, version: { increment: 1 } },
+            })
+          : await tx.employee.create({
+              data: { organizationId: context.organizationId, userId: shadowUser.id, ...data },
+            });
+      } catch (error) {
+        if (isUniqueEmployeeIdentityError(error)) {
+          throw new ConflictError('Employee number, email, or phone is already in use');
+        }
+        throw error;
+      }
       await tx.userOrganization.upsert({
         where: {
           userId_organizationId: { userId: shadowUser.id, organizationId: context.organizationId },
@@ -832,4 +860,25 @@ function federatedEmail(clientId: string, externalId: string) {
     .digest('hex')
     .slice(0, 24);
   return `federated-${suffix}@invalid.smarteam.local`;
+}
+
+function isUniqueEmployeeIdentityError(error: unknown) {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== 'P2002') {
+    return false;
+  }
+  const target = error.meta?.target;
+  return Array.isArray(target)
+    ? target.some(
+        (field) =>
+          field === 'employee_number' ||
+          field === 'employeeNumber' ||
+          field === 'work_email' ||
+          field === 'phone' ||
+          field === 'workEmail',
+      )
+    : target === 'employee_number' ||
+        target === 'employeeNumber' ||
+        target === 'work_email' ||
+        target === 'phone' ||
+        target === 'workEmail';
 }

@@ -38,6 +38,7 @@ import {
   calculateStatutoryDeduction,
   prorateSalaryStructure,
 } from './payroll-salary-structure';
+import { findPolicy } from './payroll-policy-access';
 
 type ComponentInput = {
   code: string;
@@ -198,6 +199,7 @@ export class PayrollService {
               grossAmount: true,
               deductionAmount: true,
               netAmount: true,
+              leaveAmount: true,
               inputSnapshot: true,
               calculationBreakdown: true,
               components: {
@@ -229,6 +231,14 @@ export class PayrollService {
           grossAmount: payslip.payrollLineItem.grossAmount,
           deductionAmount: payslip.payrollLineItem.deductionAmount,
           netAmount: payslip.payrollLineItem.netAmount,
+        },
+        payrollAdjustments: {
+          unpaidLeave: payslip.payrollLineItem.leaveAmount,
+          unpaidAttendance: isRecord(payslip.payrollLineItem.calculationBreakdown)
+            ? decimalFromUnknown(
+                payslip.payrollLineItem.calculationBreakdown.unpaidAttendanceAdjustment,
+              )
+            : new Prisma.Decimal(0),
         },
         components:
           canReadAll || detailedSalarySlipAllowed(payslip.payrollLineItem.inputSnapshot)
@@ -603,6 +613,13 @@ export class PayrollService {
               },
               orderBy: { effectiveFrom: 'desc' },
               take: 1,
+              include: {
+                payrollPolicy: {
+                  include: {
+                    components: { include: { payComponent: true } },
+                  },
+                },
+              },
             },
             payComponents: {
               where: {
@@ -660,14 +677,15 @@ export class PayrollService {
         where: { payrollRunId: run.id },
         orderBy: [{ employeeId: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
       });
-      const policy = (await tx.payrollPolicy.findFirst({
-        where: {
-          organizationId: context.organizationId,
-          effectiveFrom: { lte: run.periodStart },
-          OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
-        },
-        orderBy: { effectiveFrom: 'desc' },
-      })) ?? {
+      const basePolicy = await findPolicy(tx, context.organizationId, run.periodStart);
+      const policy = (basePolicy
+        ? await tx.payrollPolicy.findUnique({
+            where: { id: basePolicy.id },
+            include: {
+              components: { include: { payComponent: true } },
+            },
+          })
+        : null) ?? {
         payrollDayBasis: 30,
         basePercentage: new Prisma.Decimal(50),
         baseMinimum: new Prisma.Decimal(15000),
@@ -679,11 +697,11 @@ export class PayrollService {
         statutoryJurisdiction: null,
         salarySlipDefault: true,
         payrollEnabledDefault: true,
+        components: [],
       };
       const statutoryRules = await tx.payrollStatutoryRule.findMany({
         where: {
           organizationId: context.organizationId,
-          ...(policy.statutoryJurisdiction ? { jurisdiction: policy.statutoryJurisdiction } : {}),
           effectiveFrom: { lte: run.periodEnd },
           OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
         },
@@ -707,41 +725,76 @@ export class PayrollService {
         orderBy: [{ requestedAt: 'asc' }, { id: 'asc' }],
       });
       const snapshot = employees
-        .filter(
-          (employee) => employee.payrollPolicies[0]?.payrollEnabled ?? policy.payrollEnabledDefault,
-        )
-        .map((employee) => ({
-          employeeId: employee.id,
-          compensation: employee.compensations[0] ?? null,
-          employeePolicy: employee.payrollPolicies[0] ?? null,
-          policy,
-          statutoryRules,
-          components: employee.payComponents.map((assignment) => ({
-            id: assignment.id,
-            componentId: assignment.payComponentId,
-            amount: assignment.amount,
-            percentage: assignment.percentage,
-            component: assignment.payComponent,
-          })),
-          timesheet: sumTimesheets(timesheets.filter((entry) => entry.employeeId === employee.id)),
-          leave: summarizeLeave(
-            approvedLeaves.filter((leave) => leave.employeeId === employee.id),
-            run.periodStart,
-            run.periodEnd,
-          ),
-          attendance: summarizeAttendance(
-            attendanceRecords.filter((record) => record.employeeId === employee.id),
-          ),
-          periodWorkingDays: countWorkingDays(
-            run.periodStart,
-            run.periodEnd,
-            settings.workWeekDays,
-            holidays,
-            employee.primaryBranchId,
-          ),
-          adjustments: adjustments.filter((adjustment) => adjustment.employeeId === employee.id),
-          advances: advances.filter((advance) => advance.employeeId === employee.id),
-        }));
+        .map((employee) => {
+          const employeePolicy = employee.payrollPolicies[0] ?? null;
+          const selectedPolicy = employeePolicy?.payrollPolicy ?? policy;
+          if (!(employeePolicy?.payrollEnabled ?? selectedPolicy.payrollEnabledDefault))
+            return null;
+          const employeeComponentIds = new Set(
+            employee.payComponents.map((assignment) => assignment.payComponentId),
+          );
+          const components = [
+            ...(employeePolicy?.payrollPolicy?.components ?? [])
+              .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId))
+              .map((assignment) => ({
+                id: assignment.id,
+                componentId: assignment.payComponentId,
+                amount: assignment.amount,
+                percentage: assignment.percentage,
+                component: assignment.payComponent,
+              })),
+            ...employee.payComponents.map((assignment) => ({
+              id: assignment.id,
+              componentId: assignment.payComponentId,
+              amount: assignment.amount,
+              percentage: assignment.percentage,
+              component: assignment.payComponent,
+            })),
+          ];
+          return {
+            employeeId: employee.id,
+            compensation: employee.compensations[0] ?? null,
+            employeePolicy,
+            policy: selectedPolicy,
+            statutoryRules: statutoryRules.filter(
+              (rule) =>
+                !selectedPolicy.statutoryJurisdiction ||
+                rule.jurisdiction === selectedPolicy.statutoryJurisdiction,
+            ),
+            components,
+            timesheet: sumTimesheets(
+              timesheets.filter((entry) => entry.employeeId === employee.id),
+            ),
+            leave: summarizeLeave(
+              approvedLeaves.filter((leave) => leave.employeeId === employee.id),
+              run.periodStart,
+              run.periodEnd,
+            ),
+            attendance: summarizeAttendance(
+              attendanceRecords.filter((record) => record.employeeId === employee.id),
+              {
+                periodStart: run.periodStart,
+                periodEnd: run.periodEnd,
+                workWeekDays: settings.workWeekDays,
+                holidays,
+                branchId: employee.primaryBranchId,
+                leaves: approvedLeaves
+                  .filter((leave) => leave.employeeId === employee.id)
+                  .map((leave) => ({ startDate: leave.startDate, endDate: leave.endDate })),
+              },
+            ),
+            periodWorkingDays: countWorkingDays(
+              run.periodStart,
+              run.periodEnd,
+              settings.workWeekDays,
+              holidays,
+              employee.primaryBranchId,
+            ),
+            adjustments: adjustments.filter((adjustment) => adjustment.employeeId === employee.id),
+            advances: advances.filter((advance) => advance.employeeId === employee.id),
+          };
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null);
       const inputSnapshotHash = hash(snapshot);
       const previousRecoveries = await tx.salaryAdvanceRecovery.findMany({
         where: { payrollRunId: run.id },
@@ -1023,7 +1076,22 @@ export class PayrollService {
       item.policy.payrollDayBasis,
       item.policy.roundingMode,
     );
-    const unpaidLeaveAdjustment = monthlyStructure.gross.minus(proratedStructure.gross);
+    const totalUnpaidAdjustment = monthlyStructure.gross.minus(proratedStructure.gross);
+    const unpaidLeaveAdjustment = Prisma.Decimal.min(
+      totalUnpaidAdjustment,
+      monthlyStructure.gross.minus(
+        prorateSalaryStructure(
+          monthlyStructure,
+          Math.max(0, item.policy.payrollDayBasis - item.leave.unpaidDays),
+          item.policy.payrollDayBasis,
+          item.policy.roundingMode,
+        ).gross,
+      ),
+    );
+    const unpaidAttendanceAdjustment = Prisma.Decimal.max(
+      new Prisma.Decimal(0),
+      totalUnpaidAdjustment.minus(unpaidLeaveAdjustment),
+    );
     const regular = proratedStructure.base;
     const overtime =
       item.compensation && item.timesheet
@@ -1144,6 +1212,8 @@ export class PayrollService {
           advanceRecoveries,
           advanceRecoveryTotal,
           unpaidLeaveAdjustment,
+          unpaidAttendanceAdjustment,
+          totalUnpaidAdjustment,
           paidLeaveDays: item.leave.paidDays,
           unpaidLeaveDays: item.leave.unpaidDays,
           absentAttendanceDays: item.attendance.absentDays,

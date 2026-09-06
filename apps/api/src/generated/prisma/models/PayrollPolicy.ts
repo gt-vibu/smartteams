@@ -43,6 +43,7 @@ export type PayrollPolicySumAggregateOutputType = {
 export type PayrollPolicyMinAggregateOutputType = {
   id: string | null
   organizationId: string | null
+  name: string | null
   effectiveFrom: Date | null
   effectiveTo: Date | null
   salarySlipDefault: boolean | null
@@ -63,6 +64,7 @@ export type PayrollPolicyMinAggregateOutputType = {
 export type PayrollPolicyMaxAggregateOutputType = {
   id: string | null
   organizationId: string | null
+  name: string | null
   effectiveFrom: Date | null
   effectiveTo: Date | null
   salarySlipDefault: boolean | null
@@ -83,6 +85,7 @@ export type PayrollPolicyMaxAggregateOutputType = {
 export type PayrollPolicyCountAggregateOutputType = {
   id: number
   organizationId: number
+  name: number
   effectiveFrom: number
   effectiveTo: number
   salarySlipDefault: number
@@ -120,6 +123,7 @@ export type PayrollPolicySumAggregateInputType = {
 export type PayrollPolicyMinAggregateInputType = {
   id?: true
   organizationId?: true
+  name?: true
   effectiveFrom?: true
   effectiveTo?: true
   salarySlipDefault?: true
@@ -140,6 +144,7 @@ export type PayrollPolicyMinAggregateInputType = {
 export type PayrollPolicyMaxAggregateInputType = {
   id?: true
   organizationId?: true
+  name?: true
   effectiveFrom?: true
   effectiveTo?: true
   salarySlipDefault?: true
@@ -160,6 +165,7 @@ export type PayrollPolicyMaxAggregateInputType = {
 export type PayrollPolicyCountAggregateInputType = {
   id?: true
   organizationId?: true
+  name?: true
   effectiveFrom?: true
   effectiveTo?: true
   salarySlipDefault?: true
@@ -268,6 +274,7 @@ export type PayrollPolicyGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 export type PayrollPolicyGroupByOutputType = {
   id: string
   organizationId: string
+  name: string
   effectiveFrom: Date
   effectiveTo: Date | null
   salarySlipDefault: boolean
@@ -312,6 +319,7 @@ export type PayrollPolicyWhereInput = {
   NOT?: Prisma.PayrollPolicyWhereInput | Prisma.PayrollPolicyWhereInput[]
   id?: Prisma.UuidFilter<"PayrollPolicy"> | string
   organizationId?: Prisma.UuidFilter<"PayrollPolicy"> | string
+  name?: Prisma.StringFilter<"PayrollPolicy"> | string
   effectiveFrom?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
   effectiveTo?: Prisma.DateTimeNullableFilter<"PayrollPolicy"> | Date | string | null
   salarySlipDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
@@ -329,11 +337,14 @@ export type PayrollPolicyWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
+  components?: Prisma.PayrollPolicyComponentListRelationFilter
+  employees?: Prisma.EmployeePayrollPolicyListRelationFilter
 }
 
 export type PayrollPolicyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
   effectiveTo?: Prisma.SortOrderInput | Prisma.SortOrder
   salarySlipDefault?: Prisma.SortOrder
@@ -351,15 +362,18 @@ export type PayrollPolicyOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
+  components?: Prisma.PayrollPolicyComponentOrderByRelationAggregateInput
+  employees?: Prisma.EmployeePayrollPolicyOrderByRelationAggregateInput
 }
 
 export type PayrollPolicyWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  organizationId_effectiveFrom?: Prisma.PayrollPolicyOrganizationIdEffectiveFromCompoundUniqueInput
+  organizationId_name_effectiveFrom?: Prisma.PayrollPolicyOrganizationIdNameEffectiveFromCompoundUniqueInput
   AND?: Prisma.PayrollPolicyWhereInput | Prisma.PayrollPolicyWhereInput[]
   OR?: Prisma.PayrollPolicyWhereInput[]
   NOT?: Prisma.PayrollPolicyWhereInput | Prisma.PayrollPolicyWhereInput[]
   organizationId?: Prisma.UuidFilter<"PayrollPolicy"> | string
+  name?: Prisma.StringFilter<"PayrollPolicy"> | string
   effectiveFrom?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
   effectiveTo?: Prisma.DateTimeNullableFilter<"PayrollPolicy"> | Date | string | null
   salarySlipDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
@@ -377,11 +391,14 @@ export type PayrollPolicyWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
-}, "id" | "organizationId_effectiveFrom">
+  components?: Prisma.PayrollPolicyComponentListRelationFilter
+  employees?: Prisma.EmployeePayrollPolicyListRelationFilter
+}, "id" | "organizationId_name_effectiveFrom">
 
 export type PayrollPolicyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
   effectiveTo?: Prisma.SortOrderInput | Prisma.SortOrder
   salarySlipDefault?: Prisma.SortOrder
@@ -411,6 +428,7 @@ export type PayrollPolicyScalarWhereWithAggregatesInput = {
   NOT?: Prisma.PayrollPolicyScalarWhereWithAggregatesInput | Prisma.PayrollPolicyScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"PayrollPolicy"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"PayrollPolicy"> | string
+  name?: Prisma.StringWithAggregatesFilter<"PayrollPolicy"> | string
   effectiveFrom?: Prisma.DateTimeWithAggregatesFilter<"PayrollPolicy"> | Date | string
   effectiveTo?: Prisma.DateTimeNullableWithAggregatesFilter<"PayrollPolicy"> | Date | string | null
   salarySlipDefault?: Prisma.BoolWithAggregatesFilter<"PayrollPolicy"> | boolean
@@ -431,6 +449,7 @@ export type PayrollPolicyScalarWhereWithAggregatesInput = {
 
 export type PayrollPolicyCreateInput = {
   id?: string
+  name?: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
   salarySlipDefault?: boolean
@@ -448,11 +467,14 @@ export type PayrollPolicyCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutPayrollPoliciesInput
+  components?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutPayrollPolicyInput
+  employees?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutPayrollPolicyInput
 }
 
 export type PayrollPolicyUncheckedCreateInput = {
   id?: string
   organizationId: string
+  name?: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
   salarySlipDefault?: boolean
@@ -469,10 +491,13 @@ export type PayrollPolicyUncheckedCreateInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  components?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutPayrollPolicyInput
+  employees?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutPayrollPolicyInput
 }
 
 export type PayrollPolicyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -490,11 +515,14 @@ export type PayrollPolicyUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollPoliciesNestedInput
+  components?: Prisma.PayrollPolicyComponentUpdateManyWithoutPayrollPolicyNestedInput
+  employees?: Prisma.EmployeePayrollPolicyUpdateManyWithoutPayrollPolicyNestedInput
 }
 
 export type PayrollPolicyUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -511,11 +539,14 @@ export type PayrollPolicyUncheckedUpdateInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutPayrollPolicyNestedInput
+  employees?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutPayrollPolicyNestedInput
 }
 
 export type PayrollPolicyCreateManyInput = {
   id?: string
   organizationId: string
+  name?: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
   salarySlipDefault?: boolean
@@ -536,6 +567,7 @@ export type PayrollPolicyCreateManyInput = {
 
 export type PayrollPolicyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -557,6 +589,7 @@ export type PayrollPolicyUpdateManyMutationInput = {
 export type PayrollPolicyUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -575,14 +608,16 @@ export type PayrollPolicyUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type PayrollPolicyOrganizationIdEffectiveFromCompoundUniqueInput = {
+export type PayrollPolicyOrganizationIdNameEffectiveFromCompoundUniqueInput = {
   organizationId: string
+  name: string
   effectiveFrom: Date | string
 }
 
 export type PayrollPolicyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
   effectiveTo?: Prisma.SortOrder
   salarySlipDefault?: Prisma.SortOrder
@@ -611,6 +646,7 @@ export type PayrollPolicyAvgOrderByAggregateInput = {
 export type PayrollPolicyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
   effectiveTo?: Prisma.SortOrder
   salarySlipDefault?: Prisma.SortOrder
@@ -631,6 +667,7 @@ export type PayrollPolicyMaxOrderByAggregateInput = {
 export type PayrollPolicyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   effectiveFrom?: Prisma.SortOrder
   effectiveTo?: Prisma.SortOrder
   salarySlipDefault?: Prisma.SortOrder
@@ -655,6 +692,11 @@ export type PayrollPolicySumOrderByAggregateInput = {
   hraPercentage?: Prisma.SortOrder
 }
 
+export type PayrollPolicyScalarRelationFilter = {
+  is?: Prisma.PayrollPolicyWhereInput
+  isNot?: Prisma.PayrollPolicyWhereInput
+}
+
 export type PayrollPolicyListRelationFilter = {
   every?: Prisma.PayrollPolicyWhereInput
   some?: Prisma.PayrollPolicyWhereInput
@@ -665,8 +707,27 @@ export type PayrollPolicyOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type PayrollPolicyNullableScalarRelationFilter = {
+  is?: Prisma.PayrollPolicyWhereInput | null
+  isNot?: Prisma.PayrollPolicyWhereInput | null
+}
+
 export type EnumPayrollRoundingModeFieldUpdateOperationsInput = {
   set?: $Enums.PayrollRoundingMode
+}
+
+export type PayrollPolicyCreateNestedOneWithoutComponentsInput = {
+  create?: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutComponentsInput, Prisma.PayrollPolicyUncheckedCreateWithoutComponentsInput>
+  connectOrCreate?: Prisma.PayrollPolicyCreateOrConnectWithoutComponentsInput
+  connect?: Prisma.PayrollPolicyWhereUniqueInput
+}
+
+export type PayrollPolicyUpdateOneRequiredWithoutComponentsNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutComponentsInput, Prisma.PayrollPolicyUncheckedCreateWithoutComponentsInput>
+  connectOrCreate?: Prisma.PayrollPolicyCreateOrConnectWithoutComponentsInput
+  upsert?: Prisma.PayrollPolicyUpsertWithoutComponentsInput
+  connect?: Prisma.PayrollPolicyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PayrollPolicyUpdateToOneWithWhereWithoutComponentsInput, Prisma.PayrollPolicyUpdateWithoutComponentsInput>, Prisma.PayrollPolicyUncheckedUpdateWithoutComponentsInput>
 }
 
 export type PayrollPolicyCreateNestedManyWithoutOrganizationInput = {
@@ -711,8 +772,25 @@ export type PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput = {
   deleteMany?: Prisma.PayrollPolicyScalarWhereInput | Prisma.PayrollPolicyScalarWhereInput[]
 }
 
-export type PayrollPolicyCreateWithoutOrganizationInput = {
+export type PayrollPolicyCreateNestedOneWithoutEmployeesInput = {
+  create?: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutEmployeesInput, Prisma.PayrollPolicyUncheckedCreateWithoutEmployeesInput>
+  connectOrCreate?: Prisma.PayrollPolicyCreateOrConnectWithoutEmployeesInput
+  connect?: Prisma.PayrollPolicyWhereUniqueInput
+}
+
+export type PayrollPolicyUpdateOneWithoutEmployeesNestedInput = {
+  create?: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutEmployeesInput, Prisma.PayrollPolicyUncheckedCreateWithoutEmployeesInput>
+  connectOrCreate?: Prisma.PayrollPolicyCreateOrConnectWithoutEmployeesInput
+  upsert?: Prisma.PayrollPolicyUpsertWithoutEmployeesInput
+  disconnect?: Prisma.PayrollPolicyWhereInput | boolean
+  delete?: Prisma.PayrollPolicyWhereInput | boolean
+  connect?: Prisma.PayrollPolicyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PayrollPolicyUpdateToOneWithWhereWithoutEmployeesInput, Prisma.PayrollPolicyUpdateWithoutEmployeesInput>, Prisma.PayrollPolicyUncheckedUpdateWithoutEmployeesInput>
+}
+
+export type PayrollPolicyCreateWithoutComponentsInput = {
   id?: string
+  name?: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
   salarySlipDefault?: boolean
@@ -729,10 +807,121 @@ export type PayrollPolicyCreateWithoutOrganizationInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollPoliciesInput
+  employees?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutPayrollPolicyInput
+}
+
+export type PayrollPolicyUncheckedCreateWithoutComponentsInput = {
+  id?: string
+  organizationId: string
+  name?: string
+  effectiveFrom: Date | string
+  effectiveTo?: Date | string | null
+  salarySlipDefault?: boolean
+  payrollEnabledDefault?: boolean
+  payrollDayBasis?: number
+  basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: boolean
+  esiDefault?: boolean
+  ptDefault?: boolean
+  statutoryJurisdiction?: string | null
+  roundingMode?: $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  employees?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutPayrollPolicyInput
+}
+
+export type PayrollPolicyCreateOrConnectWithoutComponentsInput = {
+  where: Prisma.PayrollPolicyWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutComponentsInput, Prisma.PayrollPolicyUncheckedCreateWithoutComponentsInput>
+}
+
+export type PayrollPolicyUpsertWithoutComponentsInput = {
+  update: Prisma.XOR<Prisma.PayrollPolicyUpdateWithoutComponentsInput, Prisma.PayrollPolicyUncheckedUpdateWithoutComponentsInput>
+  create: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutComponentsInput, Prisma.PayrollPolicyUncheckedCreateWithoutComponentsInput>
+  where?: Prisma.PayrollPolicyWhereInput
+}
+
+export type PayrollPolicyUpdateToOneWithWhereWithoutComponentsInput = {
+  where?: Prisma.PayrollPolicyWhereInput
+  data: Prisma.XOR<Prisma.PayrollPolicyUpdateWithoutComponentsInput, Prisma.PayrollPolicyUncheckedUpdateWithoutComponentsInput>
+}
+
+export type PayrollPolicyUpdateWithoutComponentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollEnabledDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollDayBasis?: Prisma.IntFieldUpdateOperationsInput | number
+  basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statutoryJurisdiction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  roundingMode?: Prisma.EnumPayrollRoundingModeFieldUpdateOperationsInput | $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollPoliciesNestedInput
+  employees?: Prisma.EmployeePayrollPolicyUpdateManyWithoutPayrollPolicyNestedInput
+}
+
+export type PayrollPolicyUncheckedUpdateWithoutComponentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollEnabledDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollDayBasis?: Prisma.IntFieldUpdateOperationsInput | number
+  basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statutoryJurisdiction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  roundingMode?: Prisma.EnumPayrollRoundingModeFieldUpdateOperationsInput | $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  employees?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutPayrollPolicyNestedInput
+}
+
+export type PayrollPolicyCreateWithoutOrganizationInput = {
+  id?: string
+  name?: string
+  effectiveFrom: Date | string
+  effectiveTo?: Date | string | null
+  salarySlipDefault?: boolean
+  payrollEnabledDefault?: boolean
+  payrollDayBasis?: number
+  basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: boolean
+  esiDefault?: boolean
+  ptDefault?: boolean
+  statutoryJurisdiction?: string | null
+  roundingMode?: $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  components?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutPayrollPolicyInput
+  employees?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutPayrollPolicyInput
 }
 
 export type PayrollPolicyUncheckedCreateWithoutOrganizationInput = {
   id?: string
+  name?: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
   salarySlipDefault?: boolean
@@ -749,6 +938,8 @@ export type PayrollPolicyUncheckedCreateWithoutOrganizationInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  components?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutPayrollPolicyInput
+  employees?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutPayrollPolicyInput
 }
 
 export type PayrollPolicyCreateOrConnectWithoutOrganizationInput = {
@@ -783,6 +974,7 @@ export type PayrollPolicyScalarWhereInput = {
   NOT?: Prisma.PayrollPolicyScalarWhereInput | Prisma.PayrollPolicyScalarWhereInput[]
   id?: Prisma.UuidFilter<"PayrollPolicy"> | string
   organizationId?: Prisma.UuidFilter<"PayrollPolicy"> | string
+  name?: Prisma.StringFilter<"PayrollPolicy"> | string
   effectiveFrom?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
   effectiveTo?: Prisma.DateTimeNullableFilter<"PayrollPolicy"> | Date | string | null
   salarySlipDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
@@ -801,8 +993,117 @@ export type PayrollPolicyScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"PayrollPolicy"> | Date | string
 }
 
+export type PayrollPolicyCreateWithoutEmployeesInput = {
+  id?: string
+  name?: string
+  effectiveFrom: Date | string
+  effectiveTo?: Date | string | null
+  salarySlipDefault?: boolean
+  payrollEnabledDefault?: boolean
+  payrollDayBasis?: number
+  basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: boolean
+  esiDefault?: boolean
+  ptDefault?: boolean
+  statutoryJurisdiction?: string | null
+  roundingMode?: $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutPayrollPoliciesInput
+  components?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutPayrollPolicyInput
+}
+
+export type PayrollPolicyUncheckedCreateWithoutEmployeesInput = {
+  id?: string
+  organizationId: string
+  name?: string
+  effectiveFrom: Date | string
+  effectiveTo?: Date | string | null
+  salarySlipDefault?: boolean
+  payrollEnabledDefault?: boolean
+  payrollDayBasis?: number
+  basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: boolean
+  esiDefault?: boolean
+  ptDefault?: boolean
+  statutoryJurisdiction?: string | null
+  roundingMode?: $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  components?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutPayrollPolicyInput
+}
+
+export type PayrollPolicyCreateOrConnectWithoutEmployeesInput = {
+  where: Prisma.PayrollPolicyWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutEmployeesInput, Prisma.PayrollPolicyUncheckedCreateWithoutEmployeesInput>
+}
+
+export type PayrollPolicyUpsertWithoutEmployeesInput = {
+  update: Prisma.XOR<Prisma.PayrollPolicyUpdateWithoutEmployeesInput, Prisma.PayrollPolicyUncheckedUpdateWithoutEmployeesInput>
+  create: Prisma.XOR<Prisma.PayrollPolicyCreateWithoutEmployeesInput, Prisma.PayrollPolicyUncheckedCreateWithoutEmployeesInput>
+  where?: Prisma.PayrollPolicyWhereInput
+}
+
+export type PayrollPolicyUpdateToOneWithWhereWithoutEmployeesInput = {
+  where?: Prisma.PayrollPolicyWhereInput
+  data: Prisma.XOR<Prisma.PayrollPolicyUpdateWithoutEmployeesInput, Prisma.PayrollPolicyUncheckedUpdateWithoutEmployeesInput>
+}
+
+export type PayrollPolicyUpdateWithoutEmployeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollEnabledDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollDayBasis?: Prisma.IntFieldUpdateOperationsInput | number
+  basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statutoryJurisdiction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  roundingMode?: Prisma.EnumPayrollRoundingModeFieldUpdateOperationsInput | $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutPayrollPoliciesNestedInput
+  components?: Prisma.PayrollPolicyComponentUpdateManyWithoutPayrollPolicyNestedInput
+}
+
+export type PayrollPolicyUncheckedUpdateWithoutEmployeesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollEnabledDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payrollDayBasis?: Prisma.IntFieldUpdateOperationsInput | number
+  basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statutoryJurisdiction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  roundingMode?: Prisma.EnumPayrollRoundingModeFieldUpdateOperationsInput | $Enums.PayrollRoundingMode
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutPayrollPolicyNestedInput
+}
+
 export type PayrollPolicyCreateManyOrganizationInput = {
   id?: string
+  name?: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
   salarySlipDefault?: boolean
@@ -823,6 +1124,7 @@ export type PayrollPolicyCreateManyOrganizationInput = {
 
 export type PayrollPolicyUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -839,10 +1141,13 @@ export type PayrollPolicyUpdateWithoutOrganizationInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollPolicyComponentUpdateManyWithoutPayrollPolicyNestedInput
+  employees?: Prisma.EmployeePayrollPolicyUpdateManyWithoutPayrollPolicyNestedInput
 }
 
 export type PayrollPolicyUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -859,10 +1164,13 @@ export type PayrollPolicyUncheckedUpdateWithoutOrganizationInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  components?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutPayrollPolicyNestedInput
+  employees?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutPayrollPolicyNestedInput
 }
 
 export type PayrollPolicyUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   salarySlipDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -881,11 +1189,50 @@ export type PayrollPolicyUncheckedUpdateManyWithoutOrganizationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type PayrollPolicyCountOutputType
+ */
+
+export type PayrollPolicyCountOutputType = {
+  components: number
+  employees: number
+}
+
+export type PayrollPolicyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  components?: boolean | PayrollPolicyCountOutputTypeCountComponentsArgs
+  employees?: boolean | PayrollPolicyCountOutputTypeCountEmployeesArgs
+}
+
+/**
+ * PayrollPolicyCountOutputType without action
+ */
+export type PayrollPolicyCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayrollPolicyCountOutputType
+   */
+  select?: Prisma.PayrollPolicyCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PayrollPolicyCountOutputType without action
+ */
+export type PayrollPolicyCountOutputTypeCountComponentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayrollPolicyComponentWhereInput
+}
+
+/**
+ * PayrollPolicyCountOutputType without action
+ */
+export type PayrollPolicyCountOutputTypeCountEmployeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeePayrollPolicyWhereInput
+}
 
 
 export type PayrollPolicySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
+  name?: boolean
   effectiveFrom?: boolean
   effectiveTo?: boolean
   salarySlipDefault?: boolean
@@ -903,11 +1250,15 @@ export type PayrollPolicySelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   updatedAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  components?: boolean | Prisma.PayrollPolicy$componentsArgs<ExtArgs>
+  employees?: boolean | Prisma.PayrollPolicy$employeesArgs<ExtArgs>
+  _count?: boolean | Prisma.PayrollPolicyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payrollPolicy"]>
 
 export type PayrollPolicySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
+  name?: boolean
   effectiveFrom?: boolean
   effectiveTo?: boolean
   salarySlipDefault?: boolean
@@ -930,6 +1281,7 @@ export type PayrollPolicySelectCreateManyAndReturn<ExtArgs extends runtime.Types
 export type PayrollPolicySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   organizationId?: boolean
+  name?: boolean
   effectiveFrom?: boolean
   effectiveTo?: boolean
   salarySlipDefault?: boolean
@@ -952,6 +1304,7 @@ export type PayrollPolicySelectUpdateManyAndReturn<ExtArgs extends runtime.Types
 export type PayrollPolicySelectScalar = {
   id?: boolean
   organizationId?: boolean
+  name?: boolean
   effectiveFrom?: boolean
   effectiveTo?: boolean
   salarySlipDefault?: boolean
@@ -970,9 +1323,12 @@ export type PayrollPolicySelectScalar = {
   updatedAt?: boolean
 }
 
-export type PayrollPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "effectiveFrom" | "effectiveTo" | "salarySlipDefault" | "payrollEnabledDefault" | "payrollDayBasis" | "basePercentage" | "baseMinimum" | "hraPercentage" | "pfDefault" | "esiDefault" | "ptDefault" | "statutoryJurisdiction" | "roundingMode" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["payrollPolicy"]>
+export type PayrollPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "effectiveFrom" | "effectiveTo" | "salarySlipDefault" | "payrollEnabledDefault" | "payrollDayBasis" | "basePercentage" | "baseMinimum" | "hraPercentage" | "pfDefault" | "esiDefault" | "ptDefault" | "statutoryJurisdiction" | "roundingMode" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["payrollPolicy"]>
 export type PayrollPolicyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
+  components?: boolean | Prisma.PayrollPolicy$componentsArgs<ExtArgs>
+  employees?: boolean | Prisma.PayrollPolicy$employeesArgs<ExtArgs>
+  _count?: boolean | Prisma.PayrollPolicyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PayrollPolicyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -985,10 +1341,13 @@ export type $PayrollPolicyPayload<ExtArgs extends runtime.Types.Extensions.Inter
   name: "PayrollPolicy"
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
+    components: Prisma.$PayrollPolicyComponentPayload<ExtArgs>[]
+    employees: Prisma.$EmployeePayrollPolicyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
+    name: string
     effectiveFrom: Date
     effectiveTo: Date | null
     salarySlipDefault: boolean
@@ -1400,6 +1759,8 @@ readonly fields: PayrollPolicyFieldRefs;
 export interface Prisma__PayrollPolicyClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  components<T extends Prisma.PayrollPolicy$componentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollPolicy$componentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollPolicyComponentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  employees<T extends Prisma.PayrollPolicy$employeesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayrollPolicy$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeePayrollPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1431,6 +1792,7 @@ export interface Prisma__PayrollPolicyClient<T, Null = never, ExtArgs extends ru
 export interface PayrollPolicyFieldRefs {
   readonly id: Prisma.FieldRef<"PayrollPolicy", 'String'>
   readonly organizationId: Prisma.FieldRef<"PayrollPolicy", 'String'>
+  readonly name: Prisma.FieldRef<"PayrollPolicy", 'String'>
   readonly effectiveFrom: Prisma.FieldRef<"PayrollPolicy", 'DateTime'>
   readonly effectiveTo: Prisma.FieldRef<"PayrollPolicy", 'DateTime'>
   readonly salarySlipDefault: Prisma.FieldRef<"PayrollPolicy", 'Boolean'>
@@ -1845,6 +2207,54 @@ export type PayrollPolicyDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many PayrollPolicies to delete.
    */
   limit?: number
+}
+
+/**
+ * PayrollPolicy.components
+ */
+export type PayrollPolicy$componentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayrollPolicyComponent
+   */
+  select?: Prisma.PayrollPolicyComponentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PayrollPolicyComponent
+   */
+  omit?: Prisma.PayrollPolicyComponentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayrollPolicyComponentInclude<ExtArgs> | null
+  where?: Prisma.PayrollPolicyComponentWhereInput
+  orderBy?: Prisma.PayrollPolicyComponentOrderByWithRelationInput | Prisma.PayrollPolicyComponentOrderByWithRelationInput[]
+  cursor?: Prisma.PayrollPolicyComponentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayrollPolicyComponentScalarFieldEnum | Prisma.PayrollPolicyComponentScalarFieldEnum[]
+}
+
+/**
+ * PayrollPolicy.employees
+ */
+export type PayrollPolicy$employeesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeePayrollPolicy
+   */
+  select?: Prisma.EmployeePayrollPolicySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeePayrollPolicy
+   */
+  omit?: Prisma.EmployeePayrollPolicyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeePayrollPolicyInclude<ExtArgs> | null
+  where?: Prisma.EmployeePayrollPolicyWhereInput
+  orderBy?: Prisma.EmployeePayrollPolicyOrderByWithRelationInput | Prisma.EmployeePayrollPolicyOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeePayrollPolicyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeePayrollPolicyScalarFieldEnum | Prisma.EmployeePayrollPolicyScalarFieldEnum[]
 }
 
 /**

@@ -156,6 +156,7 @@ export class FederatedEmployeeService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: { payrollPolicy: { select: { id: true, name: true } } },
           },
         },
         orderBy: [
@@ -209,6 +210,7 @@ export class FederatedEmployeeService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: { payrollPolicy: { select: { id: true, name: true } } },
           },
           manager: {
             select: {
@@ -346,6 +348,18 @@ export class FederatedEmployeeService {
     return this.records.addBankAccount(context, await this.internalId(context, externalId), input);
   }
 
+  async replacePrimaryBankAccount(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['replacePrimaryBankAccount']>[2],
+  ) {
+    return this.records.replacePrimaryBankAccount(
+      context,
+      await this.internalId(context, externalId),
+      input,
+    );
+  }
+
   async references(context: DomainContext, externalId: string) {
     return this.records.listReferences(context, await this.internalId(context, externalId));
   }
@@ -356,6 +370,18 @@ export class FederatedEmployeeService {
     input: Parameters<EmployeeRecordsService['addReference']>[2],
   ) {
     return this.records.addReference(context, await this.internalId(context, externalId), input);
+  }
+
+  async replaceReferences(
+    context: DomainContext,
+    externalId: string,
+    references: Parameters<EmployeeRecordsService['replaceReferences']>[2],
+  ) {
+    return this.records.replaceReferences(
+      context,
+      await this.internalId(context, externalId),
+      references,
+    );
   }
 
   async employment(context: DomainContext, externalId: string) {
@@ -561,6 +587,9 @@ export class FederatedEmployeeService {
             esiEnabled: employee.payrollPolicies[0].esiEnabled,
             ptEnabled: employee.payrollPolicies[0].ptEnabled,
             statutoryJurisdiction: employee.payrollPolicies[0].statutoryJurisdiction,
+            payrollPolicyId: employee.payrollPolicies[0].payrollPolicyId,
+            payrollPolicyName:
+              (employee.payrollPolicies[0].payrollPolicy as { name?: string } | null)?.name ?? null,
             effectiveFrom: employee.payrollPolicies[0].effectiveFrom,
             effectiveTo: employee.payrollPolicies[0].effectiveTo,
           }

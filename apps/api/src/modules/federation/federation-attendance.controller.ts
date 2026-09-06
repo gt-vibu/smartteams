@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   AttendanceCorrectionDto,
+  AttendanceDateCorrectionDto,
   AttendanceDecisionDto,
   PunchDto,
 } from '../attendance/attendance.dto';
@@ -178,6 +179,25 @@ export class FederationAttendanceController {
       attendanceId,
       body,
     );
+  }
+
+  @Post('federation/attendance/corrections')
+  @UseGuards(FederationAuthGuard)
+  async correctionForDate(
+    @Headers('x-organization-id') organizationId: string,
+    @Body() body: AttendanceDateCorrectionDto,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.corrections.write',
+      branchId,
+      body.reason,
+    );
+    const employeeId = await this.employees.internalId(context, body.employeeId);
+    return this.attendance.requestCorrectionForDate(context, employeeId, body.workDate, body);
   }
 
   @Post('federation/attendance/:correctionId/decision')

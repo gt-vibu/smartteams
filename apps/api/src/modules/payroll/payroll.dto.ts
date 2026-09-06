@@ -6,11 +6,13 @@ import {
   IsNumber,
   IsObject,
   IsOptional,
+  IsArray,
   IsString,
   IsUUID,
   Max,
   Min,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 import {
   PayFrequency,
@@ -84,6 +86,8 @@ export class FederatedPayComponentAssignmentDto {
 }
 
 export class PayrollPolicyDto {
+  @IsOptional() @IsUUID() id?: string;
+  @IsOptional() @IsString() name?: string;
   @IsDateString() effectiveFrom!: string;
   @IsOptional() @IsDateString() effectiveTo?: string;
   @IsBoolean() salarySlipDefault!: boolean;
@@ -97,6 +101,19 @@ export class PayrollPolicyDto {
   @IsBoolean() ptDefault!: boolean;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
   @IsEnum(PayrollRoundingMode) roundingMode!: PayrollRoundingMode;
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PayrollPolicyComponentDto)
+  components?: PayrollPolicyComponentDto[];
+}
+
+export class PayrollPolicyComponentDto {
+  @IsUUID() payComponentId!: string;
+  @IsOptional() @IsNumber() @Min(0) amount?: number;
+  @IsOptional() @IsNumber() @Min(0) @Max(100) percentage?: number;
+  @IsOptional() @IsObject() formulaParameters?: Record<string, unknown>;
+  @IsOptional() @IsNumber() @Min(0) displayOrder?: number;
 }
 
 export class EmployeePayrollPolicyDto {
@@ -108,6 +125,7 @@ export class EmployeePayrollPolicyDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 
@@ -125,6 +143,7 @@ export class SalaryProfileDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 
@@ -175,6 +194,7 @@ export class FederatedEmployeePayrollPolicyDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 
@@ -192,6 +212,7 @@ export class FederatedSalaryProfileDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 

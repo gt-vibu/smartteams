@@ -99,6 +99,7 @@ export const ModelName = {
   TimesheetApproval: 'TimesheetApproval',
   PayrollRun: 'PayrollRun',
   PayrollPolicy: 'PayrollPolicy',
+  PayrollPolicyComponent: 'PayrollPolicyComponent',
   PayrollStatutoryRule: 'PayrollStatutoryRule',
   PayrollLineItem: 'PayrollLineItem',
   SalaryAdvance: 'SalaryAdvance',
@@ -967,6 +968,7 @@ export type PayrollRunScalarFieldEnum = (typeof PayrollRunScalarFieldEnum)[keyof
 export const PayrollPolicyScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
+  name: 'name',
   effectiveFrom: 'effectiveFrom',
   effectiveTo: 'effectiveTo',
   salarySlipDefault: 'salarySlipDefault',
@@ -986,6 +988,22 @@ export const PayrollPolicyScalarFieldEnum = {
 } as const
 
 export type PayrollPolicyScalarFieldEnum = (typeof PayrollPolicyScalarFieldEnum)[keyof typeof PayrollPolicyScalarFieldEnum]
+
+
+export const PayrollPolicyComponentScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  payrollPolicyId: 'payrollPolicyId',
+  payComponentId: 'payComponentId',
+  amount: 'amount',
+  percentage: 'percentage',
+  formulaParameters: 'formulaParameters',
+  displayOrder: 'displayOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollPolicyComponentScalarFieldEnum = (typeof PayrollPolicyComponentScalarFieldEnum)[keyof typeof PayrollPolicyComponentScalarFieldEnum]
 
 
 export const PayrollStatutoryRuleScalarFieldEnum = {
@@ -1559,6 +1577,7 @@ export const EmployeePayrollPolicyScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
   employeeId: 'employeeId',
+  payrollPolicyId: 'payrollPolicyId',
   effectiveFrom: 'effectiveFrom',
   effectiveTo: 'effectiveTo',
   payrollEnabled: 'payrollEnabled',
