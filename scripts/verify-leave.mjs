@@ -169,6 +169,12 @@ async function main() {
   check('create a default leave approval policy', r.status, 201);
 
   console.log('\nleave types and assignment');
+  // Registration seeds a default set of leave types. Record how many, so the assertions below can
+  // pin what this script adds rather than the size of the seeded set.
+  r = await call(A, 'GET', `/v1/organizations/${orgId}/leave/types`);
+  const seededTypeCount = Array.isArray(r.payload) ? r.payload.length : -1;
+  check('registration seeds leave types', seededTypeCount > 0, true);
+
   r = await call(
     A,
     'POST',
@@ -205,7 +211,20 @@ async function main() {
 
   r = await call(A, 'GET', `/v1/organizations/${orgId}/leave/types`);
   check('GET leave types', r.status, 200);
-  check('both types are listed', Array.isArray(r.payload) ? r.payload.length : -1, 2);
+  // Registration seeds a default set of leave types, so the listing is those plus the two created
+  // here. Both created types are pinned by id, and the delta is pinned so an unexpected extra
+  // type still cannot slip in unnoticed.
+  const listedTypes = Array.isArray(r.payload) ? r.payload : [];
+  check(
+    'both created types are listed',
+    listedTypes.filter((t) => t.id === paidTypeId || t.id === unpaidTypeId).length,
+    2,
+  );
+  check(
+    'the listing is the seeded defaults plus those two',
+    listedTypes.length,
+    seededTypeCount + 2,
+  );
 
   r = await call(A, 'POST', `/v1/organizations/${orgId}/leave/types/CL/assign`, { branchId }, AH);
   check('assign the paid type to the branch', r.status, 201);
@@ -216,7 +235,14 @@ async function main() {
   r = await call(A, 'GET', `/v1/organizations/${orgId}/leave/balances?employeeId=${employeeId}`);
   check('GET balances', r.status, 200);
   const balances = r.payload ?? [];
-  check('a balance is provisioned per assigned type', balances.length, 2);
+  // Only the two types assigned to the branch above are provisioned; the seeded defaults are
+  // assigned at registration, so they are provisioned too.
+  check(
+    'a balance is provisioned for each assigned type',
+    balances.filter((b) => b.leaveTypeId === paidTypeId || b.leaveTypeId === unpaidTypeId).length,
+    2,
+  );
+  check('every provisioned balance belongs to a listed type', balances.length, listedTypes.length);
   const paidBalance = balances.find((b) => b.leaveTypeId === paidTypeId);
   check('the paid balance starts fully available', Number(paidBalance?.availableAmount), 12);
   check('nothing is reserved yet', Number(paidBalance?.reservedAmount), 0);
@@ -291,9 +317,15 @@ async function main() {
     `/v1/organizations/${orgId}/attendance?employeeId=${employeeId}&from=${start}&to=${end}`,
   );
   check('GET attendance for the leave dates', r.status, 200);
-  // Recorded behaviour, not desired behaviour: no attendance record is produced for an approved
-  // leave day. The attendance calendar therefore cannot show the day as leave.
-  check('approved leave creates NO attendance record', r.payload?.records?.length, 0);
+  // Approved leave now propagates to attendance, so the calendar shows the day as leave. One
+  // record per leave day, each marked ON_LEAVE.
+  const leaveRecords = r.payload?.records ?? [];
+  check('approved leave marks each day on the attendance calendar', leaveRecords.length, 3);
+  check(
+    'every such day is ON_LEAVE',
+    leaveRecords.filter((x) => x.dayStatus === 'ON_LEAVE').length,
+    3,
+  );
 
   console.log('\ncross-module: approved leave -> timesheets');
   r = await call(A, 'GET', `/v1/organizations/${orgId}/timesheets?employeeId=${employeeId}`);
@@ -403,15 +435,14 @@ async function main() {
   check('payroll counts the paid leave days', Number(leave?.paidDays), 3);
   check('payroll counts the unpaid leave days', Number(leave?.unpaidDays), 2);
   // Unpaid leave reduces payable days; paid leave does not. That is the whole relationship.
+  // Preview runs the same engine as a payroll run, so payable days come off the fixed monthly
+  // basis, not off the days elapsed in the period. The two unpaid days are the only deduction —
+  // the three paid days are not, which is the whole relationship under test.
   const basis = Number(r.payload?.dayBasis);
-  const elapsedDays =
-    Math.round(
-      (Date.parse(`${periodEnd}T00:00:00Z`) - Date.parse(`${periodStart}T00:00:00Z`)) / 86400000,
-    ) + 1;
   check(
     'unpaid leave reduces payable days, paid leave does not',
     Number(r.payload?.payableDays),
-    Math.min(basis, elapsedDays) - 2,
+    basis - 2,
   );
 
   console.log('\ncancellation');

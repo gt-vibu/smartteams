@@ -6,6 +6,8 @@ import { useLeave } from '../../hooks/use-leave';
 import { LeaveBalanceCards } from './leave-balance-cards';
 import { LeaveApplicationsTable } from './leave-applications-table';
 import { ApplyLeaveModal } from './apply-leave-modal';
+import { FloatingHolidaysCard } from './floating-holidays-card';
+import { PageShell } from '../layout/page-shell';
 
 const STATUS_FILTERS = [
   { id: 'ALL', label: 'All' },
@@ -47,7 +49,7 @@ export function Screen7TimeOff() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="sticky top-0 z-20 border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6">
+      <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6">
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
           <SegmentedTabs
             aria-label="Filter leave requests by status"
@@ -68,7 +70,7 @@ export function Screen7TimeOff() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 pb-6 pt-4 sm:px-6">
+      <PageShell>
         {leave.hasNoEmployeeRecord && (
           <p className="rounded-lg border border-border bg-card px-4 py-3 text-xs text-muted-foreground">
             This account has no employee record, so leave cannot be requested.
@@ -82,7 +84,10 @@ export function Screen7TimeOff() {
         )}
 
         {!leave.loading && leave.forbidden && (
-          <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+          <div
+            className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+            role="status"
+          >
             <p className="text-sm font-semibold text-foreground">Not available</p>
             <p className="mt-1 text-xs text-muted-foreground">
               You do not have permission to view leave.
@@ -91,7 +96,10 @@ export function Screen7TimeOff() {
         )}
 
         {!leave.loading && leave.error && !leave.forbidden && (
-          <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+          <div
+            className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+            role="alert"
+          >
             <p className="text-sm font-semibold text-foreground">Could not load leave</p>
             <p className="mt-1 text-xs text-muted-foreground">{leave.error}</p>
             <Button
@@ -114,6 +122,8 @@ export function Screen7TimeOff() {
               </p>
             )}
 
+            <FloatingHolidaysCard />
+
             <LeaveBalanceCards balances={leave.balances} typesById={leave.typesById} />
 
             {leave.saveError && (
@@ -123,7 +133,7 @@ export function Screen7TimeOff() {
             )}
 
             {visible.length === 0 ? (
-              <div className="rounded-lg border border-border bg-card p-10 text-center">
+              <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
                 <p className="text-sm font-semibold text-foreground">
                   {leave.requests.length === 0 ? 'No leave requests' : 'Nothing in this status'}
                 </p>
@@ -144,7 +154,7 @@ export function Screen7TimeOff() {
             )}
           </>
         )}
-      </div>
+      </PageShell>
 
       <ApplyLeaveModal
         balances={leave.balances}

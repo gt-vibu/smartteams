@@ -7,7 +7,7 @@ import { employeeDisplayName } from '@smarteam/contracts';
 import { useAuth } from '../../hooks/use-auth';
 import { useEmployees, useProjects } from '../../hooks/use-workforce';
 import { useAttendance } from '../../hooks/use-attendance';
-import { buildCommandItems } from './command-palette-items';
+import { COMMAND_MODULE_BY_ID, buildCommandItems } from './command-palette-items';
 import type { CommandItem } from './command-palette-types';
 
 interface CommandPaletteProps {
@@ -111,18 +111,19 @@ export function CommandPalette({
     },
   }));
 
-  const moduleByNavigationId: Record<string, string> = {
-    'nav-home': 'home',
-    'nav-attendance': 'attendance',
-    'nav-time-off': 'time-off',
-    'nav-timesheet': 'timesheet',
-    'nav-projects': 'projects',
-    'nav-payroll': 'payroll',
-  };
+  /*
+   * The palette is a navigation surface, so it answers to the same resolver as the sidebar, the
+   * mobile bar, the launcher tiles and the router.
+   *
+   * It previously mapped six of sixteen commands and let anything unmapped through, so a viewer
+   * narrowed to Payroll was still offered "Check In to Attendance", "Apply for Leave", "Log Work
+   * Time" and "Inspect Attendance Daily Roster" while the sidebar beside it hid all four.
+   */
   const scopedItems = allItems.filter((item) => {
-    if (item.id === 'act-admin-payroll') return canAccessModule('payroll');
-    const module = moduleByNavigationId[item.id];
-    return !module || canAccessModule(module);
+    const module = COMMAND_MODULE_BY_ID[item.id];
+    // Fail closed: a command added without a mapping is withheld rather than offered to
+    // everyone, which is the failure mode this replaced.
+    return module ? canAccessModule(module) : false;
   });
   const allSearchable = [
     ...scopedItems,

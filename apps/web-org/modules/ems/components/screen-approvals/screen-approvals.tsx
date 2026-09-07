@@ -6,6 +6,7 @@ import { ScreenHeader } from '../common/screen-header';
 import { Badge, Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
 import { useApprovalInbox, type ApprovalInboxItem } from '../../hooks/use-approval-inbox';
 import { ApprovalPolicyBuilder } from './approval-policy-builder';
+import { PageShell } from '../layout/page-shell';
 
 type View = 'queue' | 'policies';
 
@@ -39,7 +40,7 @@ export function ScreenApprovals() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+    <PageShell>
       <ScreenHeader
         description="Decisions routed to you, and the policies that route them."
         icon={CheckCircle2}
@@ -93,7 +94,10 @@ export function ScreenApprovals() {
           )}
 
           {!inbox.loading && inbox.error && (
-            <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+            <div
+              className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+              role="alert"
+            >
               <p className="text-sm font-bold text-foreground">Could not load approvals</p>
               <p className="mt-1 text-xs text-muted-foreground">{inbox.error}</p>
               <Button
@@ -109,7 +113,7 @@ export function ScreenApprovals() {
           )}
 
           {!inbox.loading && !inbox.error && inbox.items.length === 0 && (
-            <div className="rounded-lg border border-border bg-card p-10 text-center">
+            <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
               <p className="text-sm font-bold text-foreground">Nothing awaiting your decision</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Leave requests and attendance corrections routed to you appear here.
@@ -160,10 +164,6 @@ export function ScreenApprovals() {
                 </div>
               </div>
             ))}
-
-          <p className="text-[11px] text-muted-foreground">
-            Timesheet and payroll approvals are not listed: neither exposes an inbox route.
-          </p>
         </div>
       )}
 
@@ -198,13 +198,18 @@ export function ScreenApprovals() {
                 disabled={inbox.saving || comment.trim().length < 2}
                 onClick={() => void confirm()}
                 type="button"
+                variant={deciding?.status === 'APPROVED' ? 'default' : 'destructive'}
               >
-                {inbox.saving ? 'Recording...' : 'Confirm'}
+                {inbox.saving
+                  ? 'Recording...'
+                  : deciding?.status === 'APPROVED'
+                    ? 'Approve'
+                    : 'Reject'}
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </PageShell>
   );
 }

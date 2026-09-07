@@ -53,6 +53,108 @@ export type ApprovalSubject = {
  * administrator acting as an employee should not silently gain approval authority over their
  * own team's requests. In the admin workspace the wildcard applies as normal.
  */
+/**
+ * Whether the caller holds any real permission that makes the Payroll module worth opening.
+ *
+ * `payroll.read` reads like the obvious gate and is not a permission the backend has ever
+ * granted — no role, seeded or custom, produces it, so checking it left Payroll invisible to
+ * every non-wildcard holder in both workspaces, including an employee whose only access is their
+ * own payslip. These are the keys `requirePermission` actually enforces on the payroll routes;
+ * holding any one of them means there is something in the module for this caller to see.
+ */
+const PAYROLL_MODULE_PERMISSIONS = [
+  'payroll.payslips.read',
+  'payroll.employee-profile.read',
+  'payroll.preview.read',
+  'payroll.advances.read',
+  'payroll.runs.read',
+  'payroll.ledger.read',
+];
+
+function canOpenPayroll(permissions: readonly string[]): boolean {
+  return canAny(permissions, PAYROLL_MODULE_PERMISSIONS);
+}
+
+/**
+ * What each administrative module needs before it is worth opening.
+ *
+ * The admin workspace used to answer `true` for everything except payroll, so any principal who
+ * could reach the Organization space at all — which needs only `organizations.read` — could open
+ * Attendance, Leave, Timesheets and the rest. The API refused the data, so nothing leaked, but
+ * the module rendered and reported itself empty rather than being absent: precisely the
+ * "navigate, then discover a 403" experience module visibility exists to prevent.
+ *
+ * The keys below are the ones the corresponding services actually enforce. An administrative
+ * screen shows the organization's records rather than the viewer's own, so the read it needs is
+ * the `.all` variant wherever the API draws that distinction.
+ */
+const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
+  home: ['organizations.read'],
+  onboarding: ['employees.write'],
+  attendance: ['attendance.read.all'],
+  'time-off': ['leave.requests.read.all'],
+  timesheet: ['timesheets.read.all'],
+  teams: ['teams.read'],
+  projects: ['projects.read'],
+  shifts: ['shifts.read'],
+  // Holidays are part of the organization record: reading is `organizations.read`, editing is
+  // `organizations.update`. Viewing the screen only requires the former.
+  holidays: ['organizations.read'],
+  approvals: ['approval-policies.read'],
+  files: ['files.read.all'],
+};
+
+/**
+ * The permissions that mean "this person acts on the organization", not just on their own record.
+ *
+ * `organizations.read` is deliberately absent, and that absence is the whole point: the seeded
+ * EMPLOYEE role holds it — an employee needs it to see the organization's name and its holidays —
+ * so treating it as the administrative signal classified every single employee as an
+ * administrator and dropped them into the Organization workspace on first sign-in.
+ *
+ * `rbac.read` is where the seeded roles actually divide: EMPLOYEE is below it, MANAGER, HR_ADMIN
+ * and ORG_ADMIN are at or above it. Drawing the line here corrects the employee case without
+ * moving anybody else, which is why it is drawn here rather than somewhere tidier.
+ */
+const ORGANIZATION_WIDE_PERMISSIONS = [
+  'rbac.read',
+  'rbac.write',
+  'members.read',
+  'members.write',
+  'employees.read.all',
+  'employees.write',
+  'attendance.read.all',
+  'leave.requests.read.all',
+  'timesheets.read.all',
+  'files.read.all',
+  'approval-policies.read',
+];
+
+/**
+ * Whether this person belongs in the Organization workspace at all.
+ *
+ * Governs which workspace they land in and whether the workspace switcher is offered. The
+ * backend is still the boundary for every individual screen; this only decides which of the two
+ * workspaces is theirs.
+ */
+export function canAdministerOrganization(permissions: readonly string[]): boolean {
+  return can(permissions, '*') || canAny(permissions, ORGANIZATION_WIDE_PERMISSIONS);
+}
+
+function canOpenAdminModule(moduleName: string, permissions: readonly string[]): boolean {
+  // The tenant wildcard opens everything, including a module added after this map was written.
+  // `hasPermission` expands `*` for every other check in the product, and an ORG_ADMIN locked
+  // out of a new screen by an omission here would be a bug, not a safeguard — they can grant
+  // themselves any named permission anyway.
+  if (can(permissions, '*')) return true;
+  if (moduleName === 'payroll') return canOpenPayroll(permissions);
+  const required = ADMIN_MODULE_PERMISSIONS[moduleName];
+  // Anyone short of the wildcard needs the module to say what it requires. An unlisted module
+  // stays shut rather than inheriting the old blanket `true`.
+  if (!required) return false;
+  return canAny(permissions, required);
+}
+
 export function canApprove(
   subject: ApprovalSubject,
   domain: ApprovalDomainType,
@@ -81,19 +183,21 @@ export function canAccessModule(
   isAssignedToAnyTeam: boolean,
 ): boolean {
   if (workspaceContext === 'ADMIN') {
-    if (moduleName === 'payroll') return can(permissions, 'payroll.read');
-    return true;
+    return canOpenAdminModule(moduleName, permissions);
   }
   switch (moduleName) {
     case 'home':
-    case 'time-off':
-    case 'timesheet':
-    case 'attendance':
     case 'projects':
     case 'files':
       return true;
+    case 'attendance':
+      return can(permissions, 'attendance.read');
+    case 'time-off':
+      return can(permissions, 'leave.requests.read');
+    case 'timesheet':
+      return can(permissions, 'timesheets.read');
     case 'payroll':
-      return can(permissions, 'payroll.read');
+      return canOpenPayroll(permissions);
     case 'approvals':
       // Wildcard alone is not enough here, for the reason given on `canApprove`.
       return (

@@ -2,6 +2,7 @@ import { Prisma } from '../../generated/prisma/client';
 import { LeaveBalanceTransactionType } from '../../generated/prisma/enums';
 import type { DomainContext } from '../../common/context/domain-context';
 import type { LeaveAccrualType } from '../../generated/prisma/enums';
+import { getEffectiveHolidayDates } from '../holidays/effective-holidays';
 import { dayKey, initialEntitlement, leavePeriod } from './leave-shared';
 
 /**
@@ -211,17 +212,16 @@ export async function workingDays(
   start: Date,
   end: Date,
   weekDays: number[],
+  employeeId?: string | null,
 ) {
-  const holidays = await tx.holiday.findMany({
-    where: {
-      organizationId,
-      isActive: true,
-      holidayDate: { gte: start, lte: end },
-      ...(branchId ? { OR: [{ branchId }, { branchId: null }] } : { branchId: null }),
-    },
-    select: { holidayDate: true },
+  const excluded = await getEffectiveHolidayDates(tx, {
+    organizationId,
+    branchId,
+    employeeId,
+    start,
+    end,
   });
-  const excluded = new Set(holidays.map((holiday) => dayKey(holiday.holidayDate)));
+
   let total = 0;
   for (let cursor = new Date(start); cursor <= end; cursor.setUTCDate(cursor.getUTCDate() + 1))
     if (weekDays.includes(cursor.getUTCDay() || 7) && !excluded.has(dayKey(cursor))) total += 1;

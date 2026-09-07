@@ -5,6 +5,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { dateOnly, validateStatutoryRule, type StatutoryRuleInput } from './payroll-policy.types';
+import { markPayrollStale } from './payroll-staleness';
 
 /**
  * Statutory rules per jurisdiction — the rates and ceilings that drive PF, ESI and PT.
@@ -77,6 +78,7 @@ export class PayrollStatutoryService {
         flatAmount: input.flatAmount === undefined ? null : new Prisma.Decimal(input.flatAmount),
         metadata: jsonSnapshot(input.metadata ?? {}),
       };
+      await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo ?? undefined);
       return existing
         ? tx.payrollStatutoryRule.update({ where: { id: existing.id }, data })
         : tx.payrollStatutoryRule.create({
@@ -93,6 +95,12 @@ export class PayrollStatutoryService {
       });
       if (!existing) throw new NotFoundError('Statutory rule');
       await tx.payrollStatutoryRule.delete({ where: { id: existing.id } });
+      await markPayrollStale(
+        tx,
+        context.organizationId,
+        existing.effectiveFrom,
+        existing.effectiveTo ?? undefined,
+      );
       await this.audit.record(
         context,
         {

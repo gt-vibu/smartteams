@@ -30,7 +30,7 @@ export function AttendanceActionBar() {
               ? 'This account has no employee record, so attendance cannot be recorded.'
               : !canWrite
                 ? 'You do not have permission to record attendance.'
-                : 'Punches are recorded on the server.')}
+                : 'Your punches are recorded automatically.')}
         </p>
       </div>
 

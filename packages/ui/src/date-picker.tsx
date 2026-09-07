@@ -134,7 +134,7 @@ export function DatePicker({
       >
         <span className="truncate">{displayFormatted}</span>
         <svg
-          className="h-3.5 w-3.5 text-slate-400 shrink-0 ml-1.5"
+          className="h-3.5 w-3.5 text-muted-foreground shrink-0 ml-1.5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -162,22 +162,22 @@ export function DatePicker({
             className="fixed z-[100] rounded-xl border border-border bg-card p-3 text-card-foreground shadow-xl animate-in fade-in zoom-in-95"
           >
             {/* Month & Year Navigation Header */}
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 text-xs">
+            <div className="flex items-center justify-between pb-2 border-b border-border text-xs">
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
+                className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
                 title="Previous Month"
               >
                 ←
               </button>
-              <span className="font-bold text-slate-900 dark:text-white">
+              <span className="font-bold text-foreground">
                 {monthNames[month]} {year}
               </span>
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
+                className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer"
                 title="Next Month"
               >
                 →
@@ -185,7 +185,7 @@ export function DatePicker({
             </div>
 
             {/* Weekday Labels */}
-            <div className="grid grid-cols-7 gap-1 pt-2 pb-1 text-center text-[10px] font-bold text-slate-400 uppercase">
+            <div className="grid grid-cols-7 gap-1 pt-2 pb-1 text-center text-[10px] font-bold text-muted-foreground uppercase">
               <span>Su</span>
               <span>Mo</span>
               <span>Tu</span>
@@ -243,7 +243,7 @@ export function DatePicker({
             </div>
 
             {/* Quick Actions (Today / Clear) */}
-            <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+            <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-border text-[11px]">
               <button
                 type="button"
                 onClick={() => {
@@ -263,7 +263,7 @@ export function DatePicker({
                   onChange?.('');
                   setIsOpen(false);
                 }}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer"
+                className="text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 Clear
               </button>

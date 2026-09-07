@@ -32,7 +32,10 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
 
   if (admin.forbidden) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+      <div
+        className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+        role="status"
+      >
         <p className="text-sm font-bold text-foreground">Not available</p>
         <p className="mt-1 text-xs text-muted-foreground">
           You do not have permission to view payroll runs.
@@ -45,8 +48,8 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          Every figure below is calculated by the backend from attendance, leave, approved
-          timesheets, the salary structure and the statutory rules.
+          Figures come from attendance, leave, approved timesheets, salary structure and statutory
+          rules.
         </p>
         {admin.can.write && (
           <Button onClick={() => setCreating(true)} size="sm" type="button">
@@ -71,7 +74,10 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
       )}
 
       {!admin.loading && admin.error && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="alert"
+        >
           <p className="text-sm font-bold text-foreground">Could not load payroll runs</p>
           <p className="mt-1 text-xs text-muted-foreground">{admin.error}</p>
           <Button
@@ -87,7 +93,7 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
       )}
 
       {!admin.loading && !admin.error && admin.runs.length === 0 && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center">
+        <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
           <p className="text-sm font-bold text-foreground">No payroll runs yet</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Start a run for a period to calculate pay for that month.

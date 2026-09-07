@@ -8,6 +8,7 @@ import type { ProjectView } from '../../services/team-directory';
 import { CreateProjectModal } from './create-project-modal';
 import { ProjectCard, ProjectTable } from './project-views';
 import { ProjectDetailDrawer } from './project-detail-drawer';
+import { PageShell } from '../layout/page-shell';
 
 /**
  * Projects and allocations, read from and written to the API.
@@ -44,7 +45,7 @@ export function ScreenProjects() {
 
   return (
     <div className="relative flex w-full flex-col">
-      <div className="sticky top-0 z-20 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-6">
+      <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-6">
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:gap-3">
           <div className="flex items-center gap-4">
             {(['all', 'mine'] as const).map((value) => (
@@ -102,7 +103,7 @@ export function ScreenProjects() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1380px] px-4 pb-6 pt-3.5 sm:px-6">
+      <PageShell gap="none">
         {directory.loading && (
           <p className="py-10 text-center text-xs text-muted-foreground" role="status">
             Loading projects...
@@ -110,7 +111,10 @@ export function ScreenProjects() {
         )}
 
         {!directory.loading && directory.forbidden && (
-          <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+          <div
+            className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+            role="status"
+          >
             <p className="text-sm font-bold text-foreground">Not available</p>
             <p className="mt-1 text-xs text-muted-foreground">
               You do not have permission to view projects.
@@ -119,7 +123,10 @@ export function ScreenProjects() {
         )}
 
         {!directory.loading && directory.error && !directory.forbidden && (
-          <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+          <div
+            className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+            role="alert"
+          >
             <p className="text-sm font-bold text-foreground">Could not load projects</p>
             <p className="mt-1 text-xs text-muted-foreground">{directory.error}</p>
             <Button
@@ -135,7 +142,7 @@ export function ScreenProjects() {
         )}
 
         {!directory.loading && !directory.error && filtered.length === 0 && (
-          <div className="rounded-lg border border-border bg-card p-10 text-center">
+          <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
             <p className="text-sm font-bold text-foreground">
               {scope === 'mine' ? 'You have no allocations' : 'No projects yet'}
             </p>
@@ -168,7 +175,7 @@ export function ScreenProjects() {
               views={filtered}
             />
           ))}
-      </div>
+      </PageShell>
 
       {selected && (
         <ProjectDetailDrawer

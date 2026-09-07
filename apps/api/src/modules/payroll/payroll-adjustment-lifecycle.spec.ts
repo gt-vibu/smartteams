@@ -1,4 +1,11 @@
 import { PayrollService } from './payroll.service';
+import { MetricsService } from '../../common/metrics/metrics.service';
+
+/** Config stub: every lookup falls through to the caller's own default. */
+const defaultConfig = {
+  get: (_: string, fallback?: unknown) => fallback,
+  getOrThrow: () => undefined,
+};
 import type { DomainContext } from '../../common/context/domain-context';
 
 const ORG = '11111111-1111-4111-8111-111111111111';
@@ -36,6 +43,10 @@ function setup(run: Partial<RunRow> = {}) {
     ...run,
   };
   const tx = {
+    // The transition and calculation paths take a row lock before reading the state they judge,
+    // so concurrent callers serialise instead of both passing the guard. The mock only has to
+    // answer it.
+    $queryRaw: jest.fn().mockResolvedValue([]),
     payrollRun: {
       findFirst: jest.fn().mockResolvedValue(row),
       update: jest.fn((args: { data: Record<string, unknown> }) =>
@@ -70,6 +81,7 @@ function setup(run: Partial<RunRow> = {}) {
         .mockResolvedValue({ workWeekDays: [1, 2, 3, 4, 5], standardDayMinutes: 480 }),
     },
     holiday: { findMany: jest.fn().mockResolvedValue([]) },
+    employeeHolidaySelection: { findMany: jest.fn().mockResolvedValue([]) },
     leaveRequest: { findMany: jest.fn().mockResolvedValue([]) },
     attendanceRecord: { findMany: jest.fn().mockResolvedValue([]) },
     payrollPolicy: { findFirst: jest.fn().mockResolvedValue(null) },
@@ -84,7 +96,13 @@ function setup(run: Partial<RunRow> = {}) {
   return {
     tx,
     row,
-    service: new PayrollService(database as never, audit as never, outbox as never),
+    service: new PayrollService(
+      database as never,
+      audit as never,
+      outbox as never,
+      new MetricsService(),
+      defaultConfig as never,
+    ),
   };
 }
 

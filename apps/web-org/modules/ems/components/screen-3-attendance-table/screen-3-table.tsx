@@ -9,6 +9,7 @@ import { AttendanceSummaryFooter } from '../screen-2-attendance/attendance-summa
 import { useAttendance } from '../../hooks/use-attendance';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { formatDateRangeFromValues } from '../../utils/formatters';
+import { PageShell } from '../layout/page-shell';
 
 interface Screen3TableProps {
   onToggleView?: (view: 'timeline' | 'table' | 'calendar') => void;
@@ -93,7 +94,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   return (
     <div className="w-full max-w-full flex flex-col relative overflow-x-hidden">
       {/* 1. Header Toolbar — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-3 sm:px-6 bg-muted dark:bg-background">
+      <div className="sticky top-[var(--ems-context-bar-height)] z-20 px-3 sm:px-6 bg-muted dark:bg-background">
         <AttendanceToolbar
           title="Attendance Summary"
           dateRange={dateRange || 'Current period'}
@@ -105,7 +106,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
       </div>
 
       {/* 2. Scrollable content below toolbar */}
-      <div className="w-full min-w-0 max-w-[1380px] mx-auto px-3 sm:px-6 pb-6 space-y-3.5 pt-3.5">
+      <PageShell gap="tight">
         {/* Optional Filter Controls Bar */}
         {isFilterActive && (
           <div className="bg-card border border-border rounded-[6px] p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
@@ -163,7 +164,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
 
         {/* 3. Bottom Summary Strip */}
         <AttendanceSummaryFooter stats={stats} />
-      </div>
+      </PageShell>
 
       {/* 4. Context-Preserving Slide-in Detail Drawer */}
       <AttendanceDetailDrawer

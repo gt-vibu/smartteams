@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useScreenTab } from '../../hooks/use-screen-tab';
 import { HeroBanner } from './hero-banner';
 import { EmployeeProfilePanel } from './employee-profile-panel';
@@ -21,9 +21,12 @@ import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import { useHolidays } from '../../hooks/use-holidays';
+import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
 import type { DailyAttendanceItem } from '../../types/attendance.types';
+import type { Holiday } from '@smarteam/contracts';
 import { toDailyStatus } from '../../services/attendance-view';
 import { formatDateLabel } from '../../utils/formatters';
+import { PageShell } from '../layout/page-shell';
 
 const TOP_TABS = ['Overview', 'Dashboard', 'Calendar'] as const;
 
@@ -59,12 +62,36 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   const { days: records } = useAttendance();
   const { approvedTimesheet } = useTimesheet();
   const holidays = useHolidays();
+  const employeeHolidays = useEmployeeHolidays();
 
-  // The card shows what is still ahead this year, from the calendar the API returned.
+  // The card shows effective holidays still ahead this year for the employee (mandatory + confirmed selections).
   const todayKey = new Date().toISOString().slice(0, 10);
-  const upcomingHolidays = holidays.holidays
-    .filter((holiday) => holiday.isActive && holiday.holidayDate.slice(0, 10) >= todayKey)
-    .slice(0, 3);
+  const effectiveHolidays: Holiday[] = useMemo(() => {
+    if (employeeHolidays.hasEmployeeRecord && employeeHolidays.summary) {
+      const selectedHols = employeeHolidays.selections
+        .filter((s) => s.status === 'CONFIRMED' && s.holiday)
+        .map((s) => s.holiday!);
+      const allEffective = [...employeeHolidays.mandatoryHolidays, ...selectedHols];
+      return allEffective
+        .filter((h) => h.isActive && h.holidayDate.slice(0, 10) >= todayKey)
+        .sort((a, b) => a.holidayDate.localeCompare(b.holidayDate));
+    }
+    return holidays.holidays
+      .filter(
+        (holiday) =>
+          holiday.isActive && !holiday.isOptional && holiday.holidayDate.slice(0, 10) >= todayKey,
+      )
+      .sort((a, b) => a.holidayDate.localeCompare(b.holidayDate));
+  }, [
+    employeeHolidays.hasEmployeeRecord,
+    employeeHolidays.summary,
+    employeeHolidays.mandatoryHolidays,
+    employeeHolidays.selections,
+    holidays.holidays,
+    todayKey,
+  ]);
+
+  const upcomingHolidays = effectiveHolidays.slice(0, 3);
 
   const shiftInfo = {
     id: 'shift_general',
@@ -108,12 +135,12 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
 
       {/* 2. Top-Level Tab: Calendar */}
       {activeTopTab === 'Calendar' ? (
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 pt-4">
+        <PageShell>
           <Screen4Calendar />
-        </div>
+        </PageShell>
       ) : activeTopTab === 'Dashboard' ? (
         /* Top-Level Tab: Executive Dashboard */
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 -mt-16 relative z-20">
+        <PageShell className="relative z-20 -mt-16" gap="none">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div className="lg:col-span-4 xl:col-span-3">
               <EmployeeProfilePanel />
@@ -122,10 +149,10 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
               <OverviewDashboardTab onNavigateModule={onNavigateModule} />
             </div>
           </div>
-        </div>
+        </PageShell>
       ) : (
         /* Top-Level Tab: Standard Overview */
-        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 -mt-16 relative z-20">
+        <PageShell className="relative z-20 -mt-16" gap="none">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column: Unified Employee Profile & Presence Panel */}
             <div className="lg:col-span-4 xl:col-span-3">
@@ -179,7 +206,7 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
               )}
             </div>
           </div>
-        </div>
+        </PageShell>
       )}
     </div>
   );

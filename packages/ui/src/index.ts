@@ -14,6 +14,7 @@ export * from './tooltip';
 export * from './sheet';
 export * from './alert-dialog';
 export * from './date-picker';
+export * from './calendar';
 export * from './use-anchored-panel';
 export * from './icons';
 export * from './popover';
@@ -27,4 +28,7 @@ export * from './radio-group';
 export * from './cn';
 export * from './focus-trap';
 export * from './standard-data-table';
+// The table's data rules, exported so they can be tested and reused independently of the
+// component that renders them.
+export * from './standard-data-table-logic';
 export * from './welcome-page';

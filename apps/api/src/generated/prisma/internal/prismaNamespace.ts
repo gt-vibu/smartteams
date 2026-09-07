@@ -418,6 +418,7 @@ export const ModelName = {
   FileObjectVersion: 'FileObjectVersion',
   User: 'User',
   UserInvitation: 'UserInvitation',
+  EmployeeAccessCode: 'EmployeeAccessCode',
   PasswordResetToken: 'PasswordResetToken',
   UserOrganization: 'UserOrganization',
   AuthSession: 'AuthSession',
@@ -430,6 +431,7 @@ export const ModelName = {
   AttendanceCorrection: 'AttendanceCorrection',
   AttendanceApproval: 'AttendanceApproval',
   Holiday: 'Holiday',
+  EmployeeHolidaySelection: 'EmployeeHolidaySelection',
   LeaveType: 'LeaveType',
   LeavePolicyAssignment: 'LeavePolicyAssignment',
   LeaveBalance: 'LeaveBalance',
@@ -469,6 +471,7 @@ export const ModelName = {
   WebauthnCredential: 'WebauthnCredential',
   WebauthnChallenge: 'WebauthnChallenge',
   Employee: 'Employee',
+  EmployeeHolidayPolicy: 'EmployeeHolidayPolicy',
   EmployeeEmergencyContact: 'EmployeeEmergencyContact',
   EmployeeBranchAssignment: 'EmployeeBranchAssignment',
   EmployeeFieldOwnership: 'EmployeeFieldOwnership',
@@ -498,7 +501,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileObjectVersion" | "user" | "userInvitation" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "attendanceApproval" | "holiday" | "leaveType" | "leavePolicyAssignment" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "leaveApproval" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "payrollRun" | "payrollPolicy" | "payrollStatutoryRule" | "payrollLineItem" | "salaryAdvance" | "salaryAdvanceRecovery" | "payrollPayment" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "payrollCalendar" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "webauthnCredential" | "webauthnChallenge" | "employee" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "employeePayrollPolicy" | "employeeStatutoryProfile" | "employeeStatutoryRecord" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember"
+    modelProps: "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileObjectVersion" | "user" | "userInvitation" | "employeeAccessCode" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "attendanceApproval" | "holiday" | "employeeHolidaySelection" | "leaveType" | "leavePolicyAssignment" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "leaveApproval" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "payrollRun" | "payrollPolicy" | "payrollStatutoryRule" | "payrollLineItem" | "salaryAdvance" | "salaryAdvanceRecovery" | "payrollPayment" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "payrollCalendar" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "webauthnCredential" | "webauthnChallenge" | "employee" | "employeeHolidayPolicy" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "employeePayrollPolicy" | "employeeStatutoryProfile" | "employeeStatutoryRecord" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2056,6 +2059,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EmployeeAccessCode: {
+      payload: Prisma.$EmployeeAccessCodePayload<ExtArgs>
+      fields: Prisma.EmployeeAccessCodeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmployeeAccessCodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmployeeAccessCodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>
+        }
+        findFirst: {
+          args: Prisma.EmployeeAccessCodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmployeeAccessCodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>
+        }
+        findMany: {
+          args: Prisma.EmployeeAccessCodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>[]
+        }
+        create: {
+          args: Prisma.EmployeeAccessCodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>
+        }
+        createMany: {
+          args: Prisma.EmployeeAccessCodeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmployeeAccessCodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>[]
+        }
+        delete: {
+          args: Prisma.EmployeeAccessCodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>
+        }
+        update: {
+          args: Prisma.EmployeeAccessCodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>
+        }
+        deleteMany: {
+          args: Prisma.EmployeeAccessCodeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmployeeAccessCodeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmployeeAccessCodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>[]
+        }
+        upsert: {
+          args: Prisma.EmployeeAccessCodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeAccessCodePayload>
+        }
+        aggregate: {
+          args: Prisma.EmployeeAccessCodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmployeeAccessCode>
+        }
+        groupBy: {
+          args: Prisma.EmployeeAccessCodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeAccessCodeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmployeeAccessCodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeAccessCodeCountAggregateOutputType> | number
+        }
+      }
+    }
     PasswordResetToken: {
       payload: Prisma.$PasswordResetTokenPayload<ExtArgs>
       fields: Prisma.PasswordResetTokenFieldRefs
@@ -2941,6 +3018,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.HolidayCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.HolidayCountAggregateOutputType> | number
+        }
+      }
+    }
+    EmployeeHolidaySelection: {
+      payload: Prisma.$EmployeeHolidaySelectionPayload<ExtArgs>
+      fields: Prisma.EmployeeHolidaySelectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmployeeHolidaySelectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmployeeHolidaySelectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>
+        }
+        findFirst: {
+          args: Prisma.EmployeeHolidaySelectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmployeeHolidaySelectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>
+        }
+        findMany: {
+          args: Prisma.EmployeeHolidaySelectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>[]
+        }
+        create: {
+          args: Prisma.EmployeeHolidaySelectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>
+        }
+        createMany: {
+          args: Prisma.EmployeeHolidaySelectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmployeeHolidaySelectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>[]
+        }
+        delete: {
+          args: Prisma.EmployeeHolidaySelectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>
+        }
+        update: {
+          args: Prisma.EmployeeHolidaySelectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmployeeHolidaySelectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmployeeHolidaySelectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmployeeHolidaySelectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmployeeHolidaySelectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidaySelectionPayload>
+        }
+        aggregate: {
+          args: Prisma.EmployeeHolidaySelectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmployeeHolidaySelection>
+        }
+        groupBy: {
+          args: Prisma.EmployeeHolidaySelectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeHolidaySelectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmployeeHolidaySelectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeHolidaySelectionCountAggregateOutputType> | number
         }
       }
     }
@@ -5830,6 +5981,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EmployeeHolidayPolicy: {
+      payload: Prisma.$EmployeeHolidayPolicyPayload<ExtArgs>
+      fields: Prisma.EmployeeHolidayPolicyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmployeeHolidayPolicyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmployeeHolidayPolicyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>
+        }
+        findFirst: {
+          args: Prisma.EmployeeHolidayPolicyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmployeeHolidayPolicyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>
+        }
+        findMany: {
+          args: Prisma.EmployeeHolidayPolicyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>[]
+        }
+        create: {
+          args: Prisma.EmployeeHolidayPolicyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>
+        }
+        createMany: {
+          args: Prisma.EmployeeHolidayPolicyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmployeeHolidayPolicyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>[]
+        }
+        delete: {
+          args: Prisma.EmployeeHolidayPolicyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>
+        }
+        update: {
+          args: Prisma.EmployeeHolidayPolicyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmployeeHolidayPolicyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmployeeHolidayPolicyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmployeeHolidayPolicyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmployeeHolidayPolicyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmployeeHolidayPolicyPayload>
+        }
+        aggregate: {
+          args: Prisma.EmployeeHolidayPolicyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmployeeHolidayPolicy>
+        }
+        groupBy: {
+          args: Prisma.EmployeeHolidayPolicyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeHolidayPolicyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmployeeHolidayPolicyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmployeeHolidayPolicyCountAggregateOutputType> | number
+        }
+      }
+    }
     EmployeeEmergencyContact: {
       payload: Prisma.$EmployeeEmergencyContactPayload<ExtArgs>
       fields: Prisma.EmployeeEmergencyContactFieldRefs
@@ -7273,6 +7498,23 @@ export const UserInvitationScalarFieldEnum = {
 export type UserInvitationScalarFieldEnum = (typeof UserInvitationScalarFieldEnum)[keyof typeof UserInvitationScalarFieldEnum]
 
 
+export const EmployeeAccessCodeScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  codeHash: 'codeHash',
+  roleIds: 'roleIds',
+  createdByUserId: 'createdByUserId',
+  activatedByUserId: 'activatedByUserId',
+  expiresAt: 'expiresAt',
+  activatedAt: 'activatedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EmployeeAccessCodeScalarFieldEnum = (typeof EmployeeAccessCodeScalarFieldEnum)[keyof typeof EmployeeAccessCodeScalarFieldEnum]
+
+
 export const PasswordResetTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -7458,6 +7700,22 @@ export const HolidayScalarFieldEnum = {
 } as const
 
 export type HolidayScalarFieldEnum = (typeof HolidayScalarFieldEnum)[keyof typeof HolidayScalarFieldEnum]
+
+
+export const EmployeeHolidaySelectionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  holidayId: 'holidayId',
+  year: 'year',
+  status: 'status',
+  selectedAt: 'selectedAt',
+  cancelledAt: 'cancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeHolidaySelectionScalarFieldEnum = (typeof EmployeeHolidaySelectionScalarFieldEnum)[keyof typeof EmployeeHolidaySelectionScalarFieldEnum]
 
 
 export const LeaveTypeScalarFieldEnum = {
@@ -7979,6 +8237,7 @@ export const OrganizationSettingsScalarFieldEnum = {
   payrollFrequency: 'payrollFrequency',
   payrollDayOfMonth: 'payrollDayOfMonth',
   leaveYearStartMonth: 'leaveYearStartMonth',
+  optionalHolidayAllowance: 'optionalHolidayAllowance',
   geofenceMode: 'geofenceMode',
   geofenceOwnerSource: 'geofenceOwnerSource',
   geofenceOwnerClientId: 'geofenceOwnerClientId',
@@ -8165,6 +8424,19 @@ export const EmployeeScalarFieldEnum = {
 } as const
 
 export type EmployeeScalarFieldEnum = (typeof EmployeeScalarFieldEnum)[keyof typeof EmployeeScalarFieldEnum]
+
+
+export const EmployeeHolidayPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  allowanceOverride: 'allowanceOverride',
+  restrictedHolidayIds: 'restrictedHolidayIds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeHolidayPolicyScalarFieldEnum = (typeof EmployeeHolidayPolicyScalarFieldEnum)[keyof typeof EmployeeHolidayPolicyScalarFieldEnum]
 
 
 export const EmployeeEmergencyContactScalarFieldEnum = {
@@ -8920,6 +9192,20 @@ export type ListEnumApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
+ * Reference to a field of type 'SelectionStatus'
+ */
+export type EnumSelectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SelectionStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SelectionStatus[]'
+ */
+export type ListEnumSelectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SelectionStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'LeaveAccrualType'
  */
 export type EnumLeaveAccrualTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeaveAccrualType'>
@@ -9552,6 +9838,7 @@ export type GlobalOmitConfig = {
   fileObjectVersion?: Prisma.FileObjectVersionOmit
   user?: Prisma.UserOmit
   userInvitation?: Prisma.UserInvitationOmit
+  employeeAccessCode?: Prisma.EmployeeAccessCodeOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   userOrganization?: Prisma.UserOrganizationOmit
   authSession?: Prisma.AuthSessionOmit
@@ -9564,6 +9851,7 @@ export type GlobalOmitConfig = {
   attendanceCorrection?: Prisma.AttendanceCorrectionOmit
   attendanceApproval?: Prisma.AttendanceApprovalOmit
   holiday?: Prisma.HolidayOmit
+  employeeHolidaySelection?: Prisma.EmployeeHolidaySelectionOmit
   leaveType?: Prisma.LeaveTypeOmit
   leavePolicyAssignment?: Prisma.LeavePolicyAssignmentOmit
   leaveBalance?: Prisma.LeaveBalanceOmit
@@ -9603,6 +9891,7 @@ export type GlobalOmitConfig = {
   webauthnCredential?: Prisma.WebauthnCredentialOmit
   webauthnChallenge?: Prisma.WebauthnChallengeOmit
   employee?: Prisma.EmployeeOmit
+  employeeHolidayPolicy?: Prisma.EmployeeHolidayPolicyOmit
   employeeEmergencyContact?: Prisma.EmployeeEmergencyContactOmit
   employeeBranchAssignment?: Prisma.EmployeeBranchAssignmentOmit
   employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipOmit

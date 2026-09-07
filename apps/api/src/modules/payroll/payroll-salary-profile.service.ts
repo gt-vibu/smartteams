@@ -5,6 +5,7 @@ import { requirePermission, type DomainContext } from '../../common/context/doma
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { markPayrollStale } from './payroll-staleness';
 import { calculateSalaryStructure, calculateStatutoryDeduction } from './payroll-salary-structure';
 import { calculateComponent } from './payroll-calculation';
 import { dateOnly, type SalaryProfileInput } from './payroll-policy.types';
@@ -85,6 +86,10 @@ export class PayrollSalaryProfileService {
               ...compensationData,
             },
           });
+      // Compensation is the basis every figure prorates from, so any calculated run covering the
+      // effective window is now derived from a salary that has changed. Open-ended when the
+      // record has no end date.
+      await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo ?? undefined);
       const employeePolicy = await saveEmployeePolicyInTransaction(tx, context, {
         employeeId: input.employeeId,
         effectiveFrom: input.effectiveFrom,

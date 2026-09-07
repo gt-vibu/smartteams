@@ -8,6 +8,7 @@ import {
 import { ConflictError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 import { OutboxService } from '../federation/outbox.service';
 import { assertApprover } from '../approvals/approval-authorization';
 
@@ -87,6 +88,16 @@ export class TimesheetEntriesService {
       });
       if (!timesheet || timesheet.status !== TimesheetStatus.DRAFT)
         throw new ConflictError('Only a draft timesheet can be submitted');
+      // Re-read under a row lock: without it two concurrent submissions both see DRAFT, both pass
+      // the guard above, and the sheet is submitted twice — same row, but two audit events and two
+      // version increments describing one submission.
+      await tx.$queryRaw`SELECT id FROM timesheets WHERE id = ${timesheet.id}::uuid FOR UPDATE`;
+      const locked = await tx.timesheet.findUnique({
+        where: { id: timesheet.id },
+        select: { status: true },
+      });
+      if (locked?.status !== TimesheetStatus.DRAFT)
+        throw new ConflictError('Only a draft timesheet can be submitted');
       const policy = await tx.approvalPolicy.findFirst({
         where: {
           organizationId: context.organizationId,
@@ -164,6 +175,14 @@ export class TimesheetEntriesService {
       const hasMoreSteps = Boolean(
         timesheet.approvalPolicy?.steps.some((step) => step.stepNumber > stepNumber),
       );
+      // Payroll consumes approved timesheets only, so a decision either adds hours to a
+      // calculated run or takes them away. Either way the run is no longer current.
+      const period = await tx.timesheetPeriod.findUnique({
+        where: { id: timesheet.timesheetPeriodId },
+        select: { periodStart: true, periodEnd: true },
+      });
+      if (period && !hasMoreSteps)
+        await markPayrollStale(tx, context.organizationId, period.periodStart, period.periodEnd);
       const updated = await tx.timesheet.update({
         where: { id: timesheet.id },
         data: {

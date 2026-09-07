@@ -72,6 +72,7 @@ export const ModelName = {
   FileObjectVersion: 'FileObjectVersion',
   User: 'User',
   UserInvitation: 'UserInvitation',
+  EmployeeAccessCode: 'EmployeeAccessCode',
   PasswordResetToken: 'PasswordResetToken',
   UserOrganization: 'UserOrganization',
   AuthSession: 'AuthSession',
@@ -84,6 +85,7 @@ export const ModelName = {
   AttendanceCorrection: 'AttendanceCorrection',
   AttendanceApproval: 'AttendanceApproval',
   Holiday: 'Holiday',
+  EmployeeHolidaySelection: 'EmployeeHolidaySelection',
   LeaveType: 'LeaveType',
   LeavePolicyAssignment: 'LeavePolicyAssignment',
   LeaveBalance: 'LeaveBalance',
@@ -123,6 +125,7 @@ export const ModelName = {
   WebauthnCredential: 'WebauthnCredential',
   WebauthnChallenge: 'WebauthnChallenge',
   Employee: 'Employee',
+  EmployeeHolidayPolicy: 'EmployeeHolidayPolicy',
   EmployeeEmergencyContact: 'EmployeeEmergencyContact',
   EmployeeBranchAssignment: 'EmployeeBranchAssignment',
   EmployeeFieldOwnership: 'EmployeeFieldOwnership',
@@ -523,6 +526,23 @@ export const UserInvitationScalarFieldEnum = {
 export type UserInvitationScalarFieldEnum = (typeof UserInvitationScalarFieldEnum)[keyof typeof UserInvitationScalarFieldEnum]
 
 
+export const EmployeeAccessCodeScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  codeHash: 'codeHash',
+  roleIds: 'roleIds',
+  createdByUserId: 'createdByUserId',
+  activatedByUserId: 'activatedByUserId',
+  expiresAt: 'expiresAt',
+  activatedAt: 'activatedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EmployeeAccessCodeScalarFieldEnum = (typeof EmployeeAccessCodeScalarFieldEnum)[keyof typeof EmployeeAccessCodeScalarFieldEnum]
+
+
 export const PasswordResetTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -708,6 +728,22 @@ export const HolidayScalarFieldEnum = {
 } as const
 
 export type HolidayScalarFieldEnum = (typeof HolidayScalarFieldEnum)[keyof typeof HolidayScalarFieldEnum]
+
+
+export const EmployeeHolidaySelectionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  holidayId: 'holidayId',
+  year: 'year',
+  status: 'status',
+  selectedAt: 'selectedAt',
+  cancelledAt: 'cancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeHolidaySelectionScalarFieldEnum = (typeof EmployeeHolidaySelectionScalarFieldEnum)[keyof typeof EmployeeHolidaySelectionScalarFieldEnum]
 
 
 export const LeaveTypeScalarFieldEnum = {
@@ -1229,6 +1265,7 @@ export const OrganizationSettingsScalarFieldEnum = {
   payrollFrequency: 'payrollFrequency',
   payrollDayOfMonth: 'payrollDayOfMonth',
   leaveYearStartMonth: 'leaveYearStartMonth',
+  optionalHolidayAllowance: 'optionalHolidayAllowance',
   geofenceMode: 'geofenceMode',
   geofenceOwnerSource: 'geofenceOwnerSource',
   geofenceOwnerClientId: 'geofenceOwnerClientId',
@@ -1415,6 +1452,19 @@ export const EmployeeScalarFieldEnum = {
 } as const
 
 export type EmployeeScalarFieldEnum = (typeof EmployeeScalarFieldEnum)[keyof typeof EmployeeScalarFieldEnum]
+
+
+export const EmployeeHolidayPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  allowanceOverride: 'allowanceOverride',
+  restrictedHolidayIds: 'restrictedHolidayIds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeHolidayPolicyScalarFieldEnum = (typeof EmployeeHolidayPolicyScalarFieldEnum)[keyof typeof EmployeeHolidayPolicyScalarFieldEnum]
 
 
 export const EmployeeEmergencyContactScalarFieldEnum = {

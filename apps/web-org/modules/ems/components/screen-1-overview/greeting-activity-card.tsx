@@ -7,12 +7,14 @@ import { formatWorkMinutes } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
 
 export function GreetingActivityCard() {
+  // Hooks first, unconditionally: an account can gain an employee record while this is mounted
+  // (an administrator enrolling themselves), flipping the branch below from the "no profile"
+  // state to real content. A hook after that branch would only appear on the later render.
   const { employee, loading, error, forbidden, hasEmployeeRecord, refetch } = useEmployee();
+  const { approvedTimesheet } = useTimesheet();
 
   const state = ProfileState({ loading, error, forbidden, hasEmployeeRecord, onRetry: refetch });
   if (state || !employee) return state;
-
-  const { approvedTimesheet } = useTimesheet();
 
   return (
     <div className="space-y-3">

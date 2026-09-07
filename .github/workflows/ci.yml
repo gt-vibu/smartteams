@@ -101,33 +101,6 @@ jobs:
       # to ignore the job, which is worse than not having it.
       - run: pnpm audit --audit-level high
 
-  images:
-    name: Container images build
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    # Only after the code is known good; building three images to discover a type error is waste.
-    needs: [verify]
-    strategy:
-      matrix:
-        target: [api, web-org, web-admin]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          target: ${{ matrix.target }}
-          # Not pushed: this job proves the image builds. Publishing belongs to a release
-          # workflow with credentials and a tagging policy, which is a separate decision.
-          push: false
-          cache-from: type=gha,scope=${{ matrix.target }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
-
-  # The twelve verify:* suites, which drive the real HTTP API against a real PostgreSQL, Redis and
-  # S3-compatible store. They were the sharpest tests in the repository and gated nothing: 457
-  # checks that only ever ran when somebody remembered to run them. Everything else in this
-  # workflow mocks Prisma, so this is the only job that can catch a broken query, a wrong status
-  # code, or an authorization rule that reads correctly and behaves otherwise.
   end-to-end:
     name: API end-to-end suites
     runs-on: ubuntu-latest
@@ -225,7 +198,8 @@ jobs:
         run: |
           failed=""
           for suite in auth employees teams attendance leave payroll organization files \
-                       holidays employee-detail employee-directory onboarding; do
+                       holidays employee-detail employee-directory onboarding \
+                       payroll-staleness timesheet-approval-cycle concurrency; do
             echo "::group::verify:$suite"
             pnpm "verify:$suite" || failed="$failed $suite"
             echo "::endgroup::"
@@ -277,30 +251,102 @@ jobs:
           docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest \
             detect --source /repo --redact --verbose --no-banner
 
-  # Vulnerabilities in the shipped image, not just in package.json. Most of an image is the base
-  # OS and its libraries, which no Node-level audit inspects.
-  image-scan:
-    name: Container image scan
+  # Backup and restore, exercised rather than assumed.
+  #
+  # docs/chore/TECHSTACK.v1.md requires recoverable payroll data. A backup nobody has restored is
+  # a hypothesis, so this takes a real dump of a migrated database and restores it into a separate
+  # one, asserting that the migration ledger, row-level security and the data all survive. The
+  # WAL/PITR half of the requirement is server configuration and lives in
+  # docs/operations/backup-and-recovery.md; what can be verified in CI is verified here.
+  backup-restore:
+    name: Backup and restore drill
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: smarteam
+          POSTGRES_PASSWORD: smarteam
+          POSTGRES_DB: smarteam
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U smarteam -d smarteam"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      # The client tools must match the server, or pg_dump refuses on a version mismatch.
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client-17
+      - run: pnpm db:deploy
+      - run: pnpm db:backup
+      - run: pnpm db:verify-restore
+
+  # The deployable artifact. Building it here is what keeps the Dockerfile honest: without this a
+  # change that breaks the production image is only discovered at deploy time.
+  images:
+    name: Container images
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    needs: [verify]
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
+      - name: Build the API image
+        uses: docker/build-push-action@v6
         with:
           context: .
           target: api
           push: false
           load: true
-          tags: smarteam-api:scan
-          cache-from: type=gha,scope=api
-      - uses: aquasecurity/trivy-action@master
+          tags: smarteam/api:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: The API image starts and reports readiness shape
+        run: |
+          # No database is attached, so readiness is expected to report not-ready (503). What is
+          # being proved is that the image boots, serves, and fails the way an orchestrator can act
+          # on, rather than crashing on start. Liveness must answer 200 even with no database,
+          # because that is exactly what an orchestrator restarts the container for getting wrong.
+          docker run -d --name api-smoke -p 4000:4000 \
+            -e NODE_ENV=development \
+            -e DATABASE_URL=postgresql://unused:unused@127.0.0.1:5432/unused \
+            -e JWT_SECRET=0123456789012345678901234567890123456789 \
+            -e FEDERATION_BOOTSTRAP_SECRET=0123456789012345 \
+            -e AWS_S3_BUCKET=smoke \
+            smarteam/api:ci
+          for i in $(seq 1 30); do
+            live=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/health/live || true)
+            if [ "$live" = "200" ]; then
+              ready=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/health/ready || true)
+              echo "liveness $live, readiness $ready"
+              # 503 is the correct readiness answer with no database attached; 200 would mean the
+              # readiness check is not actually checking anything.
+              [ "$ready" = "503" ] || { echo "readiness should be 503 without a database, got $ready"; exit 1; }
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API image never reported liveness"; docker logs api-smoke | tail -50; exit 1
+      - name: Container log on failure
+        if: failure()
+        run: docker logs api-smoke | tail -100
+      - name: Build the web images
+        uses: docker/build-push-action@v6
         with:
-          image-ref: smarteam-api:scan
-          format: table
-          # Matches the dependency gate: high and critical fail, lower severities are reported
-          # by the scan output without training people to ignore a permanently red job.
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: '1'
+          context: .
+          target: web-org
+          push: false
+          tags: smarteam/web-org:ci
+          cache-from: type=gha

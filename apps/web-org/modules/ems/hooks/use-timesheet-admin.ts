@@ -70,6 +70,23 @@ export function useTimesheetAdmin() {
     [organizationId, run],
   );
 
+  /**
+   * Opens a period and immediately builds its timesheets.
+   *
+   * One operation rather than two, because a period with no sheets derived into it helps nobody:
+   * employees still see "no timesheets" and the administrator has no signal that a second step
+   * was outstanding. `run` reports success as a boolean, so the period id is captured here where
+   * the response is still in hand.
+   */
+  const openPeriod = useCallback(
+    (input: { periodType: string; periodStart: string; periodEnd: string }) =>
+      run(async () => {
+        const period = await timesheetRepository.createPeriod(organizationId!, input);
+        await timesheetRepository.derivePeriod(organizationId!, period.id);
+      }, 'The period could not be opened.'),
+    [organizationId, run],
+  );
+
   return {
     timesheets: resource.data?.timesheets ?? [],
     employees: resource.data?.employees ?? [],
@@ -83,6 +100,7 @@ export function useTimesheetAdmin() {
     decide,
     createPeriod,
     derivePeriod,
+    openPeriod,
     canDecide,
     canWrite,
     /** False when the caller can only see their own sheets, which the queue must state. */

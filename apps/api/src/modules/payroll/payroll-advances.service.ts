@@ -10,6 +10,7 @@ import {
   requireReason,
   type DomainContext,
 } from '../../common/context/domain-context';
+import { markPayrollStale } from './payroll-staleness';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import {
@@ -82,6 +83,10 @@ export class PayrollAdvancesService {
     requirePermission(context, 'payroll.advances.approve');
     requireReason({ ...context, reason: input.comment }, 'Advance decisions require a reason');
     return this.database.run(context, async (tx) => {
+      // Two callers deciding at once both read REQUESTED and both pass the guard below, which for
+      // a financial record means two approvals of the same advance. Locking first makes the second
+      // read the state the first committed and be refused.
+      await tx.$queryRaw`SELECT id FROM salary_advances WHERE id = ${advanceId}::uuid AND organization_id = ${context.organizationId}::uuid FOR UPDATE`;
       const advance = await tx.salaryAdvance.findFirst({
         where: {
           id: advanceId,
@@ -95,6 +100,9 @@ export class PayrollAdvancesService {
         const amount = input.approvedAmount ?? Number(advance.requestedAmount);
         if (amount <= 0 || amount > Number(advance.requestedAmount))
           throw new ConflictError('Approved advance cannot exceed the requested amount');
+        // An approved advance is recovered from net pay, so any run already calculated for a
+        // period covering the approval now omits a deduction it should carry.
+        await markPayrollStale(tx, context.organizationId, new Date());
         return tx.salaryAdvance.update({
           where: { id: advance.id },
           data: {

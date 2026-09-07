@@ -8,6 +8,7 @@ import { requirePermission, type DomainContext } from '../../common/context/doma
 import { ConflictError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 
 import { dateOnly } from './timesheet-shared';
 
@@ -185,7 +186,25 @@ export class TimesheetPeriodsService {
 
       await tx.timesheet.updateMany({
         where: { id: { in: sheetIds } },
-        data: { status: TimesheetStatus.DRAFT, version: { increment: 1 } },
+        data: {
+          status: TimesheetStatus.DRAFT,
+          // The previous cycle's timestamps describe a decision about entries that are about to be
+          // rebuilt, so they do not survive the reset either.
+          submittedAt: null,
+          approvedAt: null,
+          version: { increment: 1 },
+        },
+      });
+
+      // Resetting a sheet to draft opens a new approval cycle, and `TimesheetApproval` holds the
+      // current cycle rather than a history — one row per approver, enforced by
+      // `@@unique([timesheetId, approverUserId])`, which leaves no room for a second round. Without
+      // clearing it the original approver collides with their own previous row and can never
+      // approve the rebuilt sheet, so the period sticks at SUBMITTED and payroll can never be
+      // recalculated for it. The durable record is the audit event each decision writes, which is
+      // untouched by this.
+      await tx.timesheetApproval.deleteMany({
+        where: { organizationId: context.organizationId, timesheetId: { in: sheetIds } },
       });
 
       // Attendance-derived entries are rebuilt wholesale; manual entries are left alone.
@@ -207,13 +226,28 @@ export class TimesheetPeriodsService {
       );
       if (entries.length > 0) await tx.timesheetEntry.createMany({ data: entries });
 
-      // Totals differ per sheet, so they cannot be one `updateMany`. Grouping by the figures
-      // keeps this to a handful of statements — most employees in a period share a total.
+      // Totals are summed from the sheet's own entries rather than from attendance records.
+      // Re-deriving used to recompute them from attendance alone, which silently dropped every
+      // manual entry's minutes from the totals while leaving the entry rows in place — the sheet
+      // then disagreed with itself, and payroll reads the totals.
+      const survivingEntries = await tx.timesheetEntry.findMany({
+        where: { timesheetId: { in: sheetIds } },
+        select: { timesheetId: true, minutes: true, overtimeMinutes: true },
+      });
+      const entriesBySheet = new Map<string, Array<{ minutes: number; overtimeMinutes: number }>>();
+      for (const entry of survivingEntries) {
+        const bucket = entriesBySheet.get(entry.timesheetId);
+        if (bucket) bucket.push(entry);
+        else entriesBySheet.set(entry.timesheetId, [entry]);
+      }
+
+      // Grouping by the resulting figures keeps this to a handful of statements — most employees
+      // in a period share a total.
       const byTotals = new Map<string, string[]>();
       for (const sheet of sheets) {
-        const own = recordsByEmployee.get(sheet.employeeId) ?? [];
-        const totalMinutes = own.reduce((sum, record) => sum + record.workedMinutes, 0);
-        const overtimeMinutes = own.reduce((sum, record) => sum + record.overtimeMinutes, 0);
+        const own = entriesBySheet.get(sheet.id) ?? [];
+        const totalMinutes = own.reduce((sum, entry) => sum + entry.minutes, 0);
+        const overtimeMinutes = own.reduce((sum, entry) => sum + entry.overtimeMinutes, 0);
         const key = `${totalMinutes}:${overtimeMinutes}`;
         const bucket = byTotals.get(key);
         if (bucket) bucket.push(sheet.id);
@@ -226,6 +260,12 @@ export class TimesheetPeriodsService {
           data: { totalMinutes, regularMinutes: totalMinutes - overtimeMinutes, overtimeMinutes },
         });
       }
+
+      // Deriving resets every sheet in the period to draft and rebuilds its attendance entries, so
+      // a run calculated from the previous figures is now derived from minutes that have been
+      // rewritten and approval that has been withdrawn. One flat statement over the period, in
+      // keeping with the rest of this method.
+      await markPayrollStale(tx, context.organizationId, period.periodStart, period.periodEnd);
 
       const results = await tx.timesheet.findMany({ where: { id: { in: sheetIds } } });
       await this.audit.record(

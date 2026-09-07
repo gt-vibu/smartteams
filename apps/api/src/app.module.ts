@@ -8,6 +8,7 @@ import { RequestContextMiddleware } from './common/context/request-context';
 import { CsrfMiddleware } from './common/security/csrf.middleware';
 import { SecurityHeadersMiddleware } from './common/security/security-headers.middleware';
 import { RequestRateLimitInterceptor } from './common/security/request-rate-limit.interceptor';
+import { HttpMetricsInterceptor } from './common/metrics/http-metrics.interceptor';
 import { HealthModule } from './common/health/health.module';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
@@ -84,7 +85,10 @@ import { UsersModule } from './modules/users/users.module';
     AuditModule,
     PlatformModule,
   ],
-  providers: [{ provide: APP_INTERCEPTOR, useClass: RequestRateLimitInterceptor }],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: RequestRateLimitInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: HttpMetricsInterceptor },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

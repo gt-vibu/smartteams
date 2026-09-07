@@ -145,9 +145,9 @@ export function Select({
           disabled={disabled}
           onClick={() => !disabled && setOpen(!open)}
           className={cn(
-            'flex h-8 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-900 shadow-2xs transition-all hover:bg-slate-50/80 focus:outline-none focus:ring-1 focus:ring-ring focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-card dark:text-slate-100 dark:hover:bg-slate-800/80 cursor-pointer',
+            'flex h-8 w-full items-center justify-between rounded-md border border-input bg-input-surface px-2.5 py-1 text-xs text-foreground shadow-2xs transition-all hover:bg-muted/50 focus:outline-none focus:ring-1 focus:ring-ring focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer',
             open && 'ring-1 ring-primary border-primary',
-            !currentOption && 'text-slate-400 dark:text-slate-500',
+            !currentOption && 'text-muted-foreground',
           )}
           aria-haspopup="listbox"
           aria-expanded={open}
@@ -163,8 +163,8 @@ export function Select({
           <span className="truncate pr-2">{displayText}</span>
           <svg
             className={cn(
-              'h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-200',
-              open && 'rotate-180 text-sky-600',
+              'h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-200',
+              open && 'rotate-180 text-primary',
             )}
             fill="none"
             viewBox="0 0 24 24"
@@ -186,7 +186,7 @@ export function Select({
                 top: listboxPosition.top,
                 minWidth: containerRef.current?.offsetWidth,
               }}
-              className="fixed z-[100] w-max max-w-sm rounded-lg border border-slate-200 bg-white p-1 shadow-xl dark:border-slate-800 dark:bg-card dark:text-slate-100 animate-in fade-in zoom-in-95"
+              className="fixed z-[100] w-max max-w-sm rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-xl animate-in fade-in zoom-in-95"
               role="listbox"
               id={listboxId}
               tabIndex={-1}
@@ -215,15 +215,15 @@ export function Select({
                       className={cn(
                         'relative flex items-center justify-between w-full px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer select-none',
                         isSelected
-                          ? 'bg-sky-50 dark:bg-sky-950/50 text-primary dark:text-sky-400 font-semibold'
-                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80',
+                          ? 'bg-primary/10 text-primary font-semibold'
+                          : 'text-foreground hover:bg-accent hover:text-accent-foreground',
                         opt.disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
                       )}
                     >
                       <span className="truncate pr-4">{opt.label}</span>
                       {isSelected && (
                         <svg
-                          className="h-3.5 w-3.5 text-primary dark:text-sky-400 shrink-0"
+                          className="h-3.5 w-3.5 text-primary shrink-0"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"

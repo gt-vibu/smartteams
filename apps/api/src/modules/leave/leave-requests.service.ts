@@ -205,6 +205,7 @@ export class LeaveRequestsService {
         start,
         end,
         settings.workWeekDays,
+        employee.id,
       );
       if (days <= 0) throw new ConflictError('Leave request must contain at least one working day');
       if (type.requiresAttachment && !input.attachmentIds?.length)

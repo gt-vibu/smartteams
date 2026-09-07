@@ -20,7 +20,7 @@ export function EmployeeCompensationPanel({ compensation }: { compensation: Comp
 
   if (!compensation.employeeId) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center">
+      <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
         <p className="text-sm font-bold text-foreground">Select an employee</p>
         <p className="mt-1 text-xs text-muted-foreground">
           Compensation is configured per employee.
@@ -31,7 +31,10 @@ export function EmployeeCompensationPanel({ compensation }: { compensation: Comp
 
   if (compensation.profileForbidden) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+      <div
+        className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+        role="status"
+      >
         <p className="text-sm font-bold text-foreground">Not available</p>
         <p className="mt-1 text-xs text-muted-foreground">
           Reading another employee&apos;s salary profile needs the organisation-wide permission.
@@ -50,7 +53,10 @@ export function EmployeeCompensationPanel({ compensation }: { compensation: Comp
 
   if (compensation.profileError || !compensation.profile) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+      <div
+        className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+        role="alert"
+      >
         <p className="text-sm font-bold text-foreground">Could not load compensation</p>
         <p className="mt-1 text-xs text-muted-foreground">
           {compensation.profileError ?? 'No salary profile was returned for this employee.'}
@@ -208,7 +214,7 @@ function AssignmentTable({ profile }: { profile: SalaryProfile }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full min-w-[640px] text-left text-xs">
-        <thead className="border-b border-border bg-muted/40">
+        <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Component</th>
             <th className="px-4 py-2.5 font-bold">Value</th>

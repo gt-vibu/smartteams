@@ -28,7 +28,10 @@ export function OrgProfilePanel({ organization: state }: { organization: Organiz
   }
   if (state.error || !organization) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+      <div
+        className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+        role="alert"
+      >
         <p className="text-sm font-bold text-foreground">Could not load the organization</p>
         <p className="mt-1 text-xs text-muted-foreground">{state.error ?? 'Nothing returned.'}</p>
         <Button
@@ -169,7 +172,10 @@ export function Unavailable({
   detail: string;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+    <div
+      className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+      role="status"
+    >
       <p className="text-sm font-bold text-foreground">{title}</p>
       <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">{detail}</p>
     </div>

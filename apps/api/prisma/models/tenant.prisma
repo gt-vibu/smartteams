@@ -26,6 +26,7 @@ model Organization {
   users                     UserOrganization[]
   sessions                  AuthSession[]
   invitations               UserInvitation[]
+  employeeAccessCodes       EmployeeAccessCode[]
   approvalPolicies          ApprovalPolicy[]
   approvalPolicySteps       ApprovalPolicyStep[]
   roles                     Role[]
@@ -51,6 +52,8 @@ model Organization {
   attendanceCorrections     AttendanceCorrection[]
   attendanceApprovals       AttendanceApproval[]
   holidays                  Holiday[]
+  holidaySelections         EmployeeHolidaySelection[]
+  employeeHolidayPolicies   EmployeeHolidayPolicy[]
   leaveTypes                LeaveType[]
   leavePolicyAssignments    LeavePolicyAssignment[]
   leaveBalances             LeaveBalance[]
@@ -94,6 +97,7 @@ model OrganizationSettings {
   payrollFrequency          PayFrequency              @default(MONTHLY) @map("payroll_frequency")
   payrollDayOfMonth         Int?                      @map("payroll_day_of_month") @db.SmallInt
   leaveYearStartMonth       Int                       @default(1) @map("leave_year_start_month") @db.SmallInt
+  optionalHolidayAllowance  Int                       @default(0) @map("optional_holiday_allowance") @db.SmallInt
   geofenceMode              GeofenceMode              @default(DISABLED) @map("geofence_mode")
   geofenceOwnerSource       OwnerSource               @default(NATIVE) @map("geofence_owner_source")
   geofenceOwnerClientId     String?                   @map("geofence_owner_client_id") @db.Uuid

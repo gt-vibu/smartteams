@@ -241,6 +241,11 @@ export class PayrollRunsService {
     requirePermission(context, payrollTransitionPermission(target));
     requireReason({ ...context, reason: comment }, 'Payroll state changes require a reason');
     return this.database.run(context, async (tx) => {
+      // Lock before reading the state the transition is judged against, so two callers cannot both
+      // see CALCULATED and both move the run to APPROVED. The unique constraint on
+      // `[payrollRunId, approverUserId]` already stops one person approving twice; this is what
+      // stops two people doing it at the same moment.
+      await tx.$queryRaw`SELECT id FROM payroll_runs WHERE id = ${runId}::uuid AND organization_id = ${context.organizationId}::uuid FOR UPDATE`;
       const run = await tx.payrollRun.findFirst({
         where: { id: runId, organizationId: context.organizationId },
       });

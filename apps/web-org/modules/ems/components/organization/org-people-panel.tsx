@@ -91,7 +91,7 @@ function DirectoryTable({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] text-left text-xs">
           <thead>
-            <tr className="border-b border-border bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground">
+            <tr className="border-b border-border bg-table-header text-[10px] uppercase tracking-wider text-muted-foreground">
               <th className="px-4 py-2.5 font-bold">Name</th>
               <th className="px-4 py-2.5 font-bold">Number</th>
               <th className="px-4 py-2.5 font-bold">Department</th>
@@ -320,7 +320,10 @@ function Notice({
   title: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-10 text-center" role={role}>
+    <div
+      className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+      role={role}
+    >
       <p className="text-sm font-bold text-foreground">{title}</p>
       <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
     </div>

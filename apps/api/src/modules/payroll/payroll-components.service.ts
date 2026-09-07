@@ -7,6 +7,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { dateOnly } from './payroll-calculation';
 import { employeeScope } from './payroll-shared';
+import { markPayrollStale } from './payroll-staleness';
 import {
   hasDefaultValue,
   validateComponentInput,
@@ -208,6 +209,9 @@ export class PayrollComponentsService {
           sourceAccessMode: context.accessMode,
         },
       });
+      // Assigned components are summed into gross earnings or deductions, so a calculated run
+      // inside the assignment's window no longer reflects the components it should carry.
+      await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo);
       await this.audit.record(
         context,
         {

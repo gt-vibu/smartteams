@@ -13,6 +13,8 @@ import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertApprover } from '../approvals/approval-authorization';
 import { toRequestDto } from './leave-shared';
 import { ledger, releaseReservation } from './leave-balance-ops';
+import { clearLeaveDaysOnAttendance, markLeaveDaysOnAttendance } from './leave-attendance-sync';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 
 /**
  * Approving, rejecting and cancelling a leave request.
@@ -122,6 +124,12 @@ export class LeaveDecisionsService {
               version: { increment: 1 },
             },
           });
+          // Only once the request is finally approved. An intermediate step of a multi-step
+          // policy is not yet a decision, and must not put days on the attendance calendar.
+          await markLeaveDaysOnAttendance(tx, context, request);
+          // Payroll reads approved leave directly, so a run already calculated over these dates
+          // is now working from data that has changed underneath it.
+          await markPayrollStale(tx, context.organizationId, request.startDate, request.endDate);
         }
       } else {
         await releaseReservation(
@@ -205,6 +213,10 @@ export class LeaveDecisionsService {
             version: { increment: 1 },
           },
         });
+        // The calendar has to give the days back too, or a cancelled leave leaves the employee
+        // marked ON_LEAVE for days they are expected to work.
+        await clearLeaveDaysOnAttendance(tx, context, request);
+        await markPayrollStale(tx, context.organizationId, request.startDate, request.endDate);
       }
       await this.audit.record(
         context,

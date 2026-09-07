@@ -331,6 +331,8 @@ export type UserWhereInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepListRelationFilter
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityListRelationFilter
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialListRelationFilter
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeListRelationFilter
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -384,6 +386,8 @@ export type UserOrderByWithRelationInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepOrderByRelationAggregateInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityOrderByRelationAggregateInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialOrderByRelationAggregateInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeOrderByRelationAggregateInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -441,6 +445,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   approvalPolicySteps?: Prisma.ApprovalPolicyStepListRelationFilter
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityListRelationFilter
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialListRelationFilter
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeListRelationFilter
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeListRelationFilter
 }, "id" | "emailNormalized" | "externalIdentityProvider_externalOrganizationId_externalIdentityId">
 
 export type UserOrderByWithAggregationInput = {
@@ -538,6 +544,8 @@ export type UserCreateInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -591,6 +599,8 @@ export type UserUncheckedCreateInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUpdateInput = {
@@ -644,6 +654,8 @@ export type UserUpdateInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -697,6 +709,8 @@ export type UserUncheckedUpdateInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -991,6 +1005,36 @@ export type UserUpdateOneWithoutAcceptedInvitationsNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAcceptedInvitationsInput, Prisma.UserUpdateWithoutAcceptedInvitationsInput>, Prisma.UserUncheckedUpdateWithoutAcceptedInvitationsInput>
+}
+
+export type UserCreateNestedOneWithoutCreatedEmployeeAccessCodesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutCreatedEmployeeAccessCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedEmployeeAccessCodesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutActivatedEmployeeAccessCodesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutActivatedEmployeeAccessCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivatedEmployeeAccessCodesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreatedEmployeeAccessCodesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutCreatedEmployeeAccessCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedEmployeeAccessCodesInput
+  upsert?: Prisma.UserUpsertWithoutCreatedEmployeeAccessCodesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedEmployeeAccessCodesInput, Prisma.UserUpdateWithoutCreatedEmployeeAccessCodesInput>, Prisma.UserUncheckedUpdateWithoutCreatedEmployeeAccessCodesInput>
+}
+
+export type UserUpdateOneWithoutActivatedEmployeeAccessCodesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutActivatedEmployeeAccessCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivatedEmployeeAccessCodesInput
+  upsert?: Prisma.UserUpsertWithoutActivatedEmployeeAccessCodesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutActivatedEmployeeAccessCodesInput, Prisma.UserUpdateWithoutActivatedEmployeeAccessCodesInput>, Prisma.UserUncheckedUpdateWithoutActivatedEmployeeAccessCodesInput>
 }
 
 export type UserCreateNestedOneWithoutPasswordResetTokensInput = {
@@ -1423,6 +1467,8 @@ export type UserCreateWithoutCreatedWebhookKeysInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedWebhookKeysInput = {
@@ -1475,6 +1521,8 @@ export type UserUncheckedCreateWithoutCreatedWebhookKeysInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedWebhookKeysInput = {
@@ -1543,6 +1591,8 @@ export type UserUpdateWithoutCreatedWebhookKeysInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedWebhookKeysInput = {
@@ -1595,6 +1645,8 @@ export type UserUncheckedUpdateWithoutCreatedWebhookKeysInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -1647,6 +1699,8 @@ export type UserCreateWithoutAuditLogsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -1699,6 +1753,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -1767,6 +1823,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -1819,6 +1877,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedFederationClientsInput = {
@@ -1871,6 +1931,8 @@ export type UserCreateWithoutCreatedFederationClientsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedFederationClientsInput = {
@@ -1923,6 +1985,8 @@ export type UserUncheckedCreateWithoutCreatedFederationClientsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedFederationClientsInput = {
@@ -1991,6 +2055,8 @@ export type UserUpdateWithoutCreatedFederationClientsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedFederationClientsInput = {
@@ -2043,6 +2109,8 @@ export type UserUncheckedUpdateWithoutCreatedFederationClientsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedClientCredentialsInput = {
@@ -2095,6 +2163,8 @@ export type UserCreateWithoutCreatedClientCredentialsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedClientCredentialsInput = {
@@ -2147,6 +2217,8 @@ export type UserUncheckedCreateWithoutCreatedClientCredentialsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedClientCredentialsInput = {
@@ -2215,6 +2287,8 @@ export type UserUpdateWithoutCreatedClientCredentialsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedClientCredentialsInput = {
@@ -2267,6 +2341,8 @@ export type UserUncheckedUpdateWithoutCreatedClientCredentialsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedGrantsInput = {
@@ -2319,6 +2395,8 @@ export type UserCreateWithoutCreatedGrantsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedGrantsInput = {
@@ -2371,6 +2449,8 @@ export type UserUncheckedCreateWithoutCreatedGrantsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedGrantsInput = {
@@ -2439,6 +2519,8 @@ export type UserUpdateWithoutCreatedGrantsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedGrantsInput = {
@@ -2491,6 +2573,8 @@ export type UserUncheckedUpdateWithoutCreatedGrantsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutUpdatedOrganizationCapabilitiesInput = {
@@ -2543,6 +2627,8 @@ export type UserCreateWithoutUpdatedOrganizationCapabilitiesInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutUpdatedOrganizationCapabilitiesInput = {
@@ -2595,6 +2681,8 @@ export type UserUncheckedCreateWithoutUpdatedOrganizationCapabilitiesInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutUpdatedOrganizationCapabilitiesInput = {
@@ -2663,6 +2751,8 @@ export type UserUpdateWithoutUpdatedOrganizationCapabilitiesInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUpdatedOrganizationCapabilitiesInput = {
@@ -2715,6 +2805,8 @@ export type UserUncheckedUpdateWithoutUpdatedOrganizationCapabilitiesInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutUploadedFilesInput = {
@@ -2767,6 +2859,8 @@ export type UserCreateWithoutUploadedFilesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutUploadedFilesInput = {
@@ -2819,6 +2913,8 @@ export type UserUncheckedCreateWithoutUploadedFilesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutUploadedFilesInput = {
@@ -2887,6 +2983,8 @@ export type UserUpdateWithoutUploadedFilesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUploadedFilesInput = {
@@ -2939,6 +3037,8 @@ export type UserUncheckedUpdateWithoutUploadedFilesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedFileVersionsInput = {
@@ -2991,6 +3091,8 @@ export type UserCreateWithoutCreatedFileVersionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedFileVersionsInput = {
@@ -3043,6 +3145,8 @@ export type UserUncheckedCreateWithoutCreatedFileVersionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedFileVersionsInput = {
@@ -3111,6 +3215,8 @@ export type UserUpdateWithoutCreatedFileVersionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedFileVersionsInput = {
@@ -3163,6 +3269,8 @@ export type UserUncheckedUpdateWithoutCreatedFileVersionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedInvitationsInput = {
@@ -3215,6 +3323,8 @@ export type UserCreateWithoutCreatedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedInvitationsInput = {
@@ -3267,6 +3377,8 @@ export type UserUncheckedCreateWithoutCreatedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedInvitationsInput = {
@@ -3324,6 +3436,8 @@ export type UserCreateWithoutAcceptedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutAcceptedInvitationsInput = {
@@ -3376,6 +3490,8 @@ export type UserUncheckedCreateWithoutAcceptedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutAcceptedInvitationsInput = {
@@ -3444,6 +3560,8 @@ export type UserUpdateWithoutCreatedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedInvitationsInput = {
@@ -3496,6 +3614,8 @@ export type UserUncheckedUpdateWithoutCreatedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUpsertWithoutAcceptedInvitationsInput = {
@@ -3559,6 +3679,8 @@ export type UserUpdateWithoutAcceptedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAcceptedInvitationsInput = {
@@ -3611,6 +3733,472 @@ export type UserUncheckedUpdateWithoutAcceptedInvitationsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserCreateWithoutCreatedEmployeeAccessCodesInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserUncheckedCreateWithoutCreatedEmployeeAccessCodesInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeUncheckedCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectUncheckedCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleUncheckedCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserCreateOrConnectWithoutCreatedEmployeeAccessCodesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutCreatedEmployeeAccessCodesInput>
+}
+
+export type UserCreateWithoutActivatedEmployeeAccessCodesInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutActivatedEmployeeAccessCodesInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeUncheckedCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectUncheckedCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleUncheckedCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutActivatedEmployeeAccessCodesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutActivatedEmployeeAccessCodesInput>
+}
+
+export type UserUpsertWithoutCreatedEmployeeAccessCodesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedEmployeeAccessCodesInput, Prisma.UserUncheckedUpdateWithoutCreatedEmployeeAccessCodesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutCreatedEmployeeAccessCodesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedEmployeeAccessCodesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedEmployeeAccessCodesInput, Prisma.UserUncheckedUpdateWithoutCreatedEmployeeAccessCodesInput>
+}
+
+export type UserUpdateWithoutCreatedEmployeeAccessCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedEmployeeAccessCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUncheckedUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUncheckedUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUncheckedUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserUpsertWithoutActivatedEmployeeAccessCodesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutActivatedEmployeeAccessCodesInput, Prisma.UserUncheckedUpdateWithoutActivatedEmployeeAccessCodesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivatedEmployeeAccessCodesInput, Prisma.UserUncheckedCreateWithoutActivatedEmployeeAccessCodesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutActivatedEmployeeAccessCodesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutActivatedEmployeeAccessCodesInput, Prisma.UserUncheckedUpdateWithoutActivatedEmployeeAccessCodesInput>
+}
+
+export type UserUpdateWithoutActivatedEmployeeAccessCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutActivatedEmployeeAccessCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUncheckedUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUncheckedUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUncheckedUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutPasswordResetTokensInput = {
@@ -3663,6 +4251,8 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -3715,6 +4305,8 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -3783,6 +4375,8 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -3835,6 +4429,8 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutMembershipsInput = {
@@ -3887,6 +4483,8 @@ export type UserCreateWithoutMembershipsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -3939,6 +4537,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -4007,6 +4607,8 @@ export type UserUpdateWithoutMembershipsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -4059,6 +4661,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutAuthSessionsInput = {
@@ -4111,6 +4715,8 @@ export type UserCreateWithoutAuthSessionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutAuthSessionsInput = {
@@ -4163,6 +4769,8 @@ export type UserUncheckedCreateWithoutAuthSessionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutAuthSessionsInput = {
@@ -4231,6 +4839,8 @@ export type UserUpdateWithoutAuthSessionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuthSessionsInput = {
@@ -4283,6 +4893,8 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutPlatformRoleAssignmentsInput = {
@@ -4335,6 +4947,8 @@ export type UserCreateWithoutPlatformRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutPlatformRoleAssignmentsInput = {
@@ -4387,6 +5001,8 @@ export type UserUncheckedCreateWithoutPlatformRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutPlatformRoleAssignmentsInput = {
@@ -4444,6 +5060,8 @@ export type UserCreateWithoutGrantedPlatformRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutGrantedPlatformRolesInput = {
@@ -4496,6 +5114,8 @@ export type UserUncheckedCreateWithoutGrantedPlatformRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutGrantedPlatformRolesInput = {
@@ -4564,6 +5184,8 @@ export type UserUpdateWithoutPlatformRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPlatformRoleAssignmentsInput = {
@@ -4616,6 +5238,8 @@ export type UserUncheckedUpdateWithoutPlatformRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUpsertWithoutGrantedPlatformRolesInput = {
@@ -4679,6 +5303,8 @@ export type UserUpdateWithoutGrantedPlatformRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGrantedPlatformRolesInput = {
@@ -4731,6 +5357,8 @@ export type UserUncheckedUpdateWithoutGrantedPlatformRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCapturedAttendancePunchesInput = {
@@ -4783,6 +5411,8 @@ export type UserCreateWithoutCapturedAttendancePunchesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCapturedAttendancePunchesInput = {
@@ -4835,6 +5465,8 @@ export type UserUncheckedCreateWithoutCapturedAttendancePunchesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCapturedAttendancePunchesInput = {
@@ -4903,6 +5535,8 @@ export type UserUpdateWithoutCapturedAttendancePunchesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCapturedAttendancePunchesInput = {
@@ -4955,6 +5589,8 @@ export type UserUncheckedUpdateWithoutCapturedAttendancePunchesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutRequestedAttendanceCorrectionsInput = {
@@ -5007,6 +5643,8 @@ export type UserCreateWithoutRequestedAttendanceCorrectionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutRequestedAttendanceCorrectionsInput = {
@@ -5059,6 +5697,8 @@ export type UserUncheckedCreateWithoutRequestedAttendanceCorrectionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutRequestedAttendanceCorrectionsInput = {
@@ -5127,6 +5767,8 @@ export type UserUpdateWithoutRequestedAttendanceCorrectionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRequestedAttendanceCorrectionsInput = {
@@ -5179,6 +5821,8 @@ export type UserUncheckedUpdateWithoutRequestedAttendanceCorrectionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutAttendanceApprovalsInput = {
@@ -5231,6 +5875,8 @@ export type UserCreateWithoutAttendanceApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutAttendanceApprovalsInput = {
@@ -5283,6 +5929,8 @@ export type UserUncheckedCreateWithoutAttendanceApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutAttendanceApprovalsInput = {
@@ -5351,6 +5999,8 @@ export type UserUpdateWithoutAttendanceApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAttendanceApprovalsInput = {
@@ -5403,6 +6053,8 @@ export type UserUncheckedUpdateWithoutAttendanceApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedLeaveTransactionsInput = {
@@ -5455,6 +6107,8 @@ export type UserCreateWithoutCreatedLeaveTransactionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedLeaveTransactionsInput = {
@@ -5507,6 +6161,8 @@ export type UserUncheckedCreateWithoutCreatedLeaveTransactionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedLeaveTransactionsInput = {
@@ -5575,6 +6231,8 @@ export type UserUpdateWithoutCreatedLeaveTransactionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedLeaveTransactionsInput = {
@@ -5627,6 +6285,8 @@ export type UserUncheckedUpdateWithoutCreatedLeaveTransactionsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutLeaveApprovalsInput = {
@@ -5679,6 +6339,8 @@ export type UserCreateWithoutLeaveApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutLeaveApprovalsInput = {
@@ -5731,6 +6393,8 @@ export type UserUncheckedCreateWithoutLeaveApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutLeaveApprovalsInput = {
@@ -5799,6 +6463,8 @@ export type UserUpdateWithoutLeaveApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLeaveApprovalsInput = {
@@ -5851,6 +6517,8 @@ export type UserUncheckedUpdateWithoutLeaveApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutTimesheetApprovalsInput = {
@@ -5903,6 +6571,8 @@ export type UserCreateWithoutTimesheetApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutTimesheetApprovalsInput = {
@@ -5955,6 +6625,8 @@ export type UserUncheckedCreateWithoutTimesheetApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutTimesheetApprovalsInput = {
@@ -6023,6 +6695,8 @@ export type UserUpdateWithoutTimesheetApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTimesheetApprovalsInput = {
@@ -6075,6 +6749,8 @@ export type UserUncheckedUpdateWithoutTimesheetApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedPayrollRunsInput = {
@@ -6127,6 +6803,8 @@ export type UserCreateWithoutCreatedPayrollRunsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedPayrollRunsInput = {
@@ -6179,6 +6857,8 @@ export type UserUncheckedCreateWithoutCreatedPayrollRunsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedPayrollRunsInput = {
@@ -6247,6 +6927,8 @@ export type UserUpdateWithoutCreatedPayrollRunsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedPayrollRunsInput = {
@@ -6299,6 +6981,8 @@ export type UserUncheckedUpdateWithoutCreatedPayrollRunsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutApprovedSalaryAdvancesInput = {
@@ -6351,6 +7035,8 @@ export type UserCreateWithoutApprovedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutApprovedSalaryAdvancesInput = {
@@ -6403,6 +7089,8 @@ export type UserUncheckedCreateWithoutApprovedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutApprovedSalaryAdvancesInput = {
@@ -6460,6 +7148,8 @@ export type UserCreateWithoutRejectedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutRejectedSalaryAdvancesInput = {
@@ -6512,6 +7202,8 @@ export type UserUncheckedCreateWithoutRejectedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutRejectedSalaryAdvancesInput = {
@@ -6580,6 +7272,8 @@ export type UserUpdateWithoutApprovedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovedSalaryAdvancesInput = {
@@ -6632,6 +7326,8 @@ export type UserUncheckedUpdateWithoutApprovedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUpsertWithoutRejectedSalaryAdvancesInput = {
@@ -6695,6 +7391,8 @@ export type UserUpdateWithoutRejectedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRejectedSalaryAdvancesInput = {
@@ -6747,6 +7445,8 @@ export type UserUncheckedUpdateWithoutRejectedSalaryAdvancesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutMarkedPayrollPaymentsInput = {
@@ -6799,6 +7499,8 @@ export type UserCreateWithoutMarkedPayrollPaymentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutMarkedPayrollPaymentsInput = {
@@ -6851,6 +7553,8 @@ export type UserUncheckedCreateWithoutMarkedPayrollPaymentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutMarkedPayrollPaymentsInput = {
@@ -6919,6 +7623,8 @@ export type UserUpdateWithoutMarkedPayrollPaymentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMarkedPayrollPaymentsInput = {
@@ -6971,6 +7677,8 @@ export type UserUncheckedUpdateWithoutMarkedPayrollPaymentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedPayrollAdjustmentsInput = {
@@ -7023,6 +7731,8 @@ export type UserCreateWithoutCreatedPayrollAdjustmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedPayrollAdjustmentsInput = {
@@ -7075,6 +7785,8 @@ export type UserUncheckedCreateWithoutCreatedPayrollAdjustmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedPayrollAdjustmentsInput = {
@@ -7143,6 +7855,8 @@ export type UserUpdateWithoutCreatedPayrollAdjustmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedPayrollAdjustmentsInput = {
@@ -7195,6 +7909,8 @@ export type UserUncheckedUpdateWithoutCreatedPayrollAdjustmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutPayrollApprovalsInput = {
@@ -7247,6 +7963,8 @@ export type UserCreateWithoutPayrollApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutPayrollApprovalsInput = {
@@ -7299,6 +8017,8 @@ export type UserUncheckedCreateWithoutPayrollApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutPayrollApprovalsInput = {
@@ -7367,6 +8087,8 @@ export type UserUpdateWithoutPayrollApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPayrollApprovalsInput = {
@@ -7419,6 +8141,8 @@ export type UserUncheckedUpdateWithoutPayrollApprovalsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedRolesInput = {
@@ -7471,6 +8195,8 @@ export type UserCreateWithoutCreatedRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedRolesInput = {
@@ -7523,6 +8249,8 @@ export type UserUncheckedCreateWithoutCreatedRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedRolesInput = {
@@ -7591,6 +8319,8 @@ export type UserUpdateWithoutCreatedRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedRolesInput = {
@@ -7643,6 +8373,8 @@ export type UserUncheckedUpdateWithoutCreatedRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutOrganizationRoleAssignmentsInput = {
@@ -7695,6 +8427,8 @@ export type UserCreateWithoutOrganizationRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutOrganizationRoleAssignmentsInput = {
@@ -7747,6 +8481,8 @@ export type UserUncheckedCreateWithoutOrganizationRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutOrganizationRoleAssignmentsInput = {
@@ -7804,6 +8540,8 @@ export type UserCreateWithoutGrantedOrganizationRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutGrantedOrganizationRolesInput = {
@@ -7856,6 +8594,8 @@ export type UserUncheckedCreateWithoutGrantedOrganizationRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutGrantedOrganizationRolesInput = {
@@ -7924,6 +8664,8 @@ export type UserUpdateWithoutOrganizationRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrganizationRoleAssignmentsInput = {
@@ -7976,6 +8718,8 @@ export type UserUncheckedUpdateWithoutOrganizationRoleAssignmentsInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUpsertWithoutGrantedOrganizationRolesInput = {
@@ -8039,6 +8783,8 @@ export type UserUpdateWithoutGrantedOrganizationRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGrantedOrganizationRolesInput = {
@@ -8091,6 +8837,8 @@ export type UserUncheckedUpdateWithoutGrantedOrganizationRolesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedApprovalPoliciesInput = {
@@ -8143,6 +8891,8 @@ export type UserCreateWithoutCreatedApprovalPoliciesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedApprovalPoliciesInput = {
@@ -8195,6 +8945,8 @@ export type UserUncheckedCreateWithoutCreatedApprovalPoliciesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedApprovalPoliciesInput = {
@@ -8263,6 +9015,8 @@ export type UserUpdateWithoutCreatedApprovalPoliciesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedApprovalPoliciesInput = {
@@ -8315,6 +9069,8 @@ export type UserUncheckedUpdateWithoutCreatedApprovalPoliciesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutApprovalPolicyStepsInput = {
@@ -8367,6 +9123,8 @@ export type UserCreateWithoutApprovalPolicyStepsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutApprovalPolicyStepsInput = {
@@ -8419,6 +9177,8 @@ export type UserUncheckedCreateWithoutApprovalPolicyStepsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutApprovalPolicyStepsInput = {
@@ -8487,6 +9247,8 @@ export type UserUpdateWithoutApprovalPolicyStepsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovalPolicyStepsInput = {
@@ -8539,6 +9301,8 @@ export type UserUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutCreatedSourceChangesInput = {
@@ -8591,6 +9355,8 @@ export type UserCreateWithoutCreatedSourceChangesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedSourceChangesInput = {
@@ -8643,6 +9409,8 @@ export type UserUncheckedCreateWithoutCreatedSourceChangesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedSourceChangesInput = {
@@ -8711,6 +9479,8 @@ export type UserUpdateWithoutCreatedSourceChangesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedSourceChangesInput = {
@@ -8763,6 +9533,8 @@ export type UserUncheckedUpdateWithoutCreatedSourceChangesInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutRevokedWebauthnCredentialsInput = {
@@ -8815,6 +9587,8 @@ export type UserCreateWithoutRevokedWebauthnCredentialsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutRevokedWebauthnCredentialsInput = {
@@ -8867,6 +9641,8 @@ export type UserUncheckedCreateWithoutRevokedWebauthnCredentialsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutRevokedWebauthnCredentialsInput = {
@@ -8935,6 +9711,8 @@ export type UserUpdateWithoutRevokedWebauthnCredentialsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRevokedWebauthnCredentialsInput = {
@@ -8987,6 +9765,8 @@ export type UserUncheckedUpdateWithoutRevokedWebauthnCredentialsInput = {
   markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserCreateWithoutEmployeeInput = {
@@ -9039,6 +9819,8 @@ export type UserCreateWithoutEmployeeInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserUncheckedCreateWithoutEmployeeInput = {
@@ -9091,6 +9873,8 @@ export type UserUncheckedCreateWithoutEmployeeInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
 }
 
 export type UserCreateOrConnectWithoutEmployeeInput = {
@@ -9159,6 +9943,8 @@ export type UserUpdateWithoutEmployeeInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmployeeInput = {
@@ -9211,6 +9997,8 @@ export type UserUncheckedUpdateWithoutEmployeeInput = {
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
   updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
   revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
 }
 
 
@@ -9253,6 +10041,8 @@ export type UserCountOutputType = {
   approvalPolicySteps: number
   updatedOrganizationCapabilities: number
   revokedWebauthnCredentials: number
+  createdEmployeeAccessCodes: number
+  activatedEmployeeAccessCodes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -9290,6 +10080,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   approvalPolicySteps?: boolean | UserCountOutputTypeCountApprovalPolicyStepsArgs
   updatedOrganizationCapabilities?: boolean | UserCountOutputTypeCountUpdatedOrganizationCapabilitiesArgs
   revokedWebauthnCredentials?: boolean | UserCountOutputTypeCountRevokedWebauthnCredentialsArgs
+  createdEmployeeAccessCodes?: boolean | UserCountOutputTypeCountCreatedEmployeeAccessCodesArgs
+  activatedEmployeeAccessCodes?: boolean | UserCountOutputTypeCountActivatedEmployeeAccessCodesArgs
 }
 
 /**
@@ -9540,6 +10332,20 @@ export type UserCountOutputTypeCountRevokedWebauthnCredentialsArgs<ExtArgs exten
   where?: Prisma.WebauthnCredentialWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedEmployeeAccessCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeAccessCodeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountActivatedEmployeeAccessCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeAccessCodeWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -9592,6 +10398,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   approvalPolicySteps?: boolean | Prisma.User$approvalPolicyStepsArgs<ExtArgs>
   updatedOrganizationCapabilities?: boolean | Prisma.User$updatedOrganizationCapabilitiesArgs<ExtArgs>
   revokedWebauthnCredentials?: boolean | Prisma.User$revokedWebauthnCredentialsArgs<ExtArgs>
+  createdEmployeeAccessCodes?: boolean | Prisma.User$createdEmployeeAccessCodesArgs<ExtArgs>
+  activatedEmployeeAccessCodes?: boolean | Prisma.User$activatedEmployeeAccessCodesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -9686,6 +10494,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   approvalPolicySteps?: boolean | Prisma.User$approvalPolicyStepsArgs<ExtArgs>
   updatedOrganizationCapabilities?: boolean | Prisma.User$updatedOrganizationCapabilitiesArgs<ExtArgs>
   revokedWebauthnCredentials?: boolean | Prisma.User$revokedWebauthnCredentialsArgs<ExtArgs>
+  createdEmployeeAccessCodes?: boolean | Prisma.User$createdEmployeeAccessCodesArgs<ExtArgs>
+  activatedEmployeeAccessCodes?: boolean | Prisma.User$activatedEmployeeAccessCodesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -9729,6 +10539,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     approvalPolicySteps: Prisma.$ApprovalPolicyStepPayload<ExtArgs>[]
     updatedOrganizationCapabilities: Prisma.$OrganizationFederationCapabilityPayload<ExtArgs>[]
     revokedWebauthnCredentials: Prisma.$WebauthnCredentialPayload<ExtArgs>[]
+    createdEmployeeAccessCodes: Prisma.$EmployeeAccessCodePayload<ExtArgs>[]
+    activatedEmployeeAccessCodes: Prisma.$EmployeeAccessCodePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -10175,6 +10987,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   approvalPolicySteps<T extends Prisma.User$approvalPolicyStepsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvalPolicyStepsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalPolicyStepPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   updatedOrganizationCapabilities<T extends Prisma.User$updatedOrganizationCapabilitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$updatedOrganizationCapabilitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationFederationCapabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   revokedWebauthnCredentials<T extends Prisma.User$revokedWebauthnCredentialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$revokedWebauthnCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebauthnCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdEmployeeAccessCodes<T extends Prisma.User$createdEmployeeAccessCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdEmployeeAccessCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeAccessCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activatedEmployeeAccessCodes<T extends Prisma.User$activatedEmployeeAccessCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activatedEmployeeAccessCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeAccessCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11444,6 +12258,54 @@ export type User$revokedWebauthnCredentialsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.WebauthnCredentialScalarFieldEnum | Prisma.WebauthnCredentialScalarFieldEnum[]
+}
+
+/**
+ * User.createdEmployeeAccessCodes
+ */
+export type User$createdEmployeeAccessCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeAccessCode
+   */
+  select?: Prisma.EmployeeAccessCodeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeAccessCode
+   */
+  omit?: Prisma.EmployeeAccessCodeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeAccessCodeInclude<ExtArgs> | null
+  where?: Prisma.EmployeeAccessCodeWhereInput
+  orderBy?: Prisma.EmployeeAccessCodeOrderByWithRelationInput | Prisma.EmployeeAccessCodeOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeAccessCodeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeAccessCodeScalarFieldEnum | Prisma.EmployeeAccessCodeScalarFieldEnum[]
+}
+
+/**
+ * User.activatedEmployeeAccessCodes
+ */
+export type User$activatedEmployeeAccessCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeAccessCode
+   */
+  select?: Prisma.EmployeeAccessCodeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeAccessCode
+   */
+  omit?: Prisma.EmployeeAccessCodeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeAccessCodeInclude<ExtArgs> | null
+  where?: Prisma.EmployeeAccessCodeWhereInput
+  orderBy?: Prisma.EmployeeAccessCodeOrderByWithRelationInput | Prisma.EmployeeAccessCodeOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeAccessCodeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeAccessCodeScalarFieldEnum | Prisma.EmployeeAccessCodeScalarFieldEnum[]
 }
 
 /**

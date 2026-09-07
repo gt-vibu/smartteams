@@ -38,7 +38,7 @@ export function PersonaSwitcher() {
       {/* Avatar Pill Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2.5 py-1 rounded-[5px] bg-[#112340] hover:bg-[#182E52] text-white border border-[#1E3860] transition-all cursor-pointer shadow-xs group"
+        className="flex items-center gap-2 px-2.5 py-1 rounded-[5px] bg-sidebar-accent/20 hover:bg-sidebar-accent/30 text-white border border-sidebar-border transition-all cursor-pointer shadow-xs group"
         title="Account"
         aria-haspopup="true"
         aria-expanded={isOpen}
@@ -48,7 +48,7 @@ export function PersonaSwitcher() {
         </div>
         <div className="text-left hidden lg:block">
           <div className="text-[11px] font-bold text-white leading-none">{persona.name}</div>
-          <div className="text-[9px] font-semibold text-sky-300 leading-none mt-0.5">
+          <div className="text-[9px] font-semibold text-sidebar-foreground/80 leading-none mt-0.5">
             {displayedRoleLabel}
           </div>
         </div>
@@ -76,7 +76,7 @@ export function PersonaSwitcher() {
               <div className="text-[10px] text-muted-foreground truncate mt-0.5">
                 {persona.email}
               </div>
-              <div className="text-[9px] text-sky-700 font-semibold mt-0.5">
+              <div className="text-[9px] text-primary font-semibold mt-0.5">
                 {displayedRoleLabel}
               </div>
             </div>
@@ -148,12 +148,12 @@ export function PersonaSwitcher() {
             <span
               className={`inline-flex items-center gap-1.5 text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-wider ${
                 workspaceContext === 'ADMIN'
-                  ? 'bg-violet-50 text-violet-700 border-violet-200'
-                  : 'bg-sky-50 text-sky-700 border-sky-200'
+                  ? 'bg-primary/10 text-primary border-primary/25'
+                  : 'bg-muted text-muted-foreground border-border'
               }`}
             >
               <span
-                className={`h-1.5 w-1.5 rounded-full ${workspaceContext === 'ADMIN' ? 'bg-violet-600' : 'bg-sky-600'} animate-pulse`}
+                className={`h-1.5 w-1.5 rounded-full ${workspaceContext === 'ADMIN' ? 'bg-primary' : 'bg-muted-foreground'} animate-pulse`}
               />
               {workspaceContext === 'ADMIN' ? 'Admin Workspace' : 'Employee Workspace'}
             </span>
@@ -168,7 +168,7 @@ export function PersonaSwitcher() {
                 // shell re-renders to the sign-in screen when the promise settles.
                 void logout();
               }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-[6px] text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
+              className="w-full flex items-center gap-2.5 rounded-[6px] border border-destructive/25 bg-destructive/10 px-3 py-2 text-xs font-semibold text-destructive transition-all hover:bg-destructive/15 cursor-pointer"
             >
               <svg
                 className="h-4 w-4"

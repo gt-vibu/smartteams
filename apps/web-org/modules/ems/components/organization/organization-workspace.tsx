@@ -8,11 +8,15 @@ import { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useScreenTab } from '../../hooks/use-screen-tab';
 import { BotanicalCover } from '../layout/botanical-cover';
-import { OrgProfilePanel, Unavailable } from './org-profile-panel';
+import { OrgProfilePanel } from './org-profile-panel';
 import { OrgBranchesPanel } from './org-branches-panel';
 import { OrgShortcuts } from './org-shortcuts';
 import { OrgIdentityRail } from './org-identity-rail';
 import { OrgPeoplePanel } from './org-people-panel';
+import { OrgAccessPanel } from './org-access-panel';
+import { useAuth } from '../../hooks/use-auth';
+import { hasPermission } from '@smarteam/contracts';
+import { PageBleed, PageShell } from '../layout/page-shell';
 
 const TABS = [
   'overview',
@@ -20,8 +24,8 @@ const TABS = [
   'departments',
   'reporting',
   'branches',
+  'access',
   'profile',
-  'unavailable',
 ] as const;
 
 type Tab = (typeof TABS)[number];
@@ -47,7 +51,14 @@ export function OrganizationWorkspace({
   const organization = useOrganization();
   const directory = useEmployeeDirectory();
   const holidays = useHolidays();
+  const { persona } = useAuth();
   const [tab, setTab] = useScreenTab<Tab>('orgSection', TABS, 'overview');
+
+  // Absent rather than disabled for a caller who can read neither members nor roles — an
+  // organization with nothing behind the tab is not worth a click that only reports "forbidden".
+  const canSeeAccess =
+    hasPermission(persona.permissions, 'members.read') ||
+    hasPermission(persona.permissions, 'rbac.read');
 
   const tabs: Array<{ id: Tab; label: string }> = [
     { id: 'overview', label: 'Overview' },
@@ -61,18 +72,20 @@ export function OrganizationWorkspace({
       id: 'branches',
       label: `Branches${organization.branches.length ? ` (${organization.branches.length})` : ''}`,
     },
+    ...(canSeeAccess ? [{ id: 'access' as const, label: 'Access' }] : []),
     { id: 'profile', label: 'Profile' },
-    { id: 'unavailable', label: 'Not available' },
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] px-4 pb-6 sm:px-6">
+    <PageShell gap="none">
       {/*
         Sticky. The tab bar is how you move around this screen, so it should not scroll away as
-        soon as the content below it gets long. The negative margin lets the background span the
-        full width while the text stays aligned with the page.
+        soon as the content below it gets long. `PageBleed` lets the rule and its backdrop reach
+        the page edges while the heading stays on the same left edge as the content below —
+        previously a hand-kept `-mx-4 sm:-mx-6` that matched the screen's own gutter but not the
+        shell's, so the header and the content it sat above were aligned to different columns.
       */}
-      <div className="sticky top-0 z-20 -mx-4 border-b border-border bg-background/95 px-4 pt-4 backdrop-blur-sm sm:-mx-6 sm:px-6">
+      <PageBleed className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-background/95 pt-4 backdrop-blur-sm">
         <div className="flex items-start gap-3">
           <span
             aria-hidden="true"
@@ -108,7 +121,7 @@ export function OrganizationWorkspace({
             </Button>
           ))}
         </div>
-      </div>
+      </PageBleed>
 
       <div className="mt-4 overflow-hidden rounded-xl border border-border">
         <BotanicalCover heightClass="h-24 sm:h-32" />
@@ -142,60 +155,10 @@ export function OrganizationWorkspace({
             />
           )}
           {tab === 'branches' && <OrgBranchesPanel organization={organization} />}
+          {tab === 'access' && <OrgAccessPanel />}
           {tab === 'profile' && <OrgProfilePanel organization={organization} />}
-          {tab === 'unavailable' && <BackendCapabilityGaps />}
         </div>
       </div>
-    </div>
-  );
-}
-
-/**
- * What the backend still does not hold.
- *
- * Shorter than it was: departments, the reporting hierarchy and headcount left this list once a
- * native directory projection made them readable. What remains has no entity at all.
- */
-function BackendCapabilityGaps() {
-  const items = [
-    { title: 'Announcements', detail: 'No announcement entity exists.' },
-    {
-      title: 'Milestones',
-      detail: 'No milestone entity exists. Company milestones were previously sample data.',
-    },
-    {
-      title: 'Quick links',
-      detail:
-        'Previously stored per browser, so a link one person added was invisible to everyone else. Navigation lives in the sidebar; configurable links are not organization data the backend holds.',
-    },
-    {
-      title: 'Cover image and branding',
-      detail:
-        'No asset is stored against an organization. A cover image was previously a data URL in one browser.',
-    },
-    {
-      title: 'Department as an entity',
-      detail:
-        'Departments are grouped from the free-text field on each employment record, which is why one exists exactly as long as someone is in it. There is no department to rename, own or archive.',
-    },
-  ];
-
-  return (
-    <div className="space-y-3">
-      <Unavailable
-        detail="Each of these is a backend capability gap rather than a missing screen. They are listed with the reason, rather than shown with sample data."
-        title="Not currently available"
-      />
-      <dl className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-        {items.map((item) => (
-          <div className="px-4 py-3" key={item.title}>
-            <dt className="text-xs font-bold text-foreground">{item.title}</dt>
-            <dd className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-              {item.detail}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </div>
+    </PageShell>
   );
 }

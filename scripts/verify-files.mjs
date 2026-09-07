@@ -11,9 +11,10 @@
  * store and five checks skipped. Skipping was hiding two real crashes, so the round trip is now
  * the point of the script rather than an extra.
  *
- * Needs the API, PostgreSQL, Redis and MinIO up:
+ * Needs the API, PostgreSQL, Redis and a reachable S3 bucket. Locally that is real AWS S3 —
+ * set AWS_REGION, AWS_S3_BUCKET, AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in .env. CI points
+ * the same variables at a MinIO container instead, which is the only place a test double exists.
  *
- *   docker compose up -d postgres redis minio minio-bucket
  *   pnpm verify:files
  */
 import { readFileSync } from 'node:fs';
@@ -189,8 +190,8 @@ async function main() {
   check('the API can presign an upload', r.status, [200, 201]);
   if (r.status !== 200 && r.status !== 201) {
     console.log(
-      '\n  object storage is unreachable. Start it with:\n' +
-        '    docker compose up -d minio minio-bucket\n',
+      '\n  Object storage is unreachable. Check AWS_REGION, AWS_S3_BUCKET, AWS_ACCESS_KEY_ID\n' +
+        '  and AWS_SECRET_ACCESS_KEY in .env, and that the bucket exists in that region.\n',
     );
   } else {
     check(

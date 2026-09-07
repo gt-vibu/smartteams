@@ -1,13 +1,24 @@
-# The services Smarteam needs to run, for local development and for CI.
+# OPTIONAL. Nothing in the normal local workflow uses this file.
 #
-# Only the dependencies are here, not the apps: the apps are run from the workspace during
-# development (`pnpm dev`) so that hot reload works, and from the images in the Dockerfile
-# everywhere else. Putting them here too would give a third way to run them and a third thing to
-# keep in step.
+# Smarteam runs against native services: PostgreSQL and a Redis-compatible server installed as
+# ordinary OS services, and real AWS S3 for files. `pnpm dev`, `pnpm test`, `pnpm verify:*` and
+# `pnpm db:*` all work with Docker stopped — see docs/local-development.md, which is the
+# authoritative setup.
 #
-#   docker compose up -d
-#   pnpm db:deploy && pnpm db:seed
-#   pnpm dev
+# This file exists only as a fallback for a machine that has neither database installed. Be aware
+# that it cannot run alongside native services: both would bind 5432 and 6379, and whichever
+# starts second silently loses. If you use this, stop your native PostgreSQL and Redis services
+# first.
+#
+#   docker compose up -d          # optional, only if you have no native services
+#
+# Object storage is deliberately absent. Files go to real AWS S3 in development exactly as in
+# production, through the same StorageService and the same four AWS_* variables, so the one part
+# of the stack that used to behave differently on a developer's machine no longer does.
+#
+# CI is the one exception in the repository, and it does not use this file: the workflow starts a
+# MinIO container directly as an S3-compatible test double, so the storage suite stays gated
+# without long-lived AWS keys in GitHub.
 
 services:
   postgres:
@@ -41,53 +52,5 @@ services:
       timeout: 5s
       retries: 20
 
-  # Object storage. The files module presigns uploads and downloads and never streams bytes
-  # itself, so without something S3-compatible here those routes cannot be exercised at all —
-  # which is why the files verification suite reports five skipped checks rather than passing.
-  minio:
-    image: minio/minio:latest
-    command: ['server', '/data', '--console-address', ':9001']
-    # Interpolated from the gitignored .env, so no local credential and no KMS master key is
-    # committed. MINIO_KMS_SECRET_KEY is what makes SSE-S3 work: StorageService signs every
-    # upload with ServerSideEncryption AES256, and without a master key MinIO answers
-    # "KMS not configured" with 501 while real S3 accepts it. Configuring the container rather
-    # than branching in the application is what keeps one image valid for both providers.
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
-      MINIO_KMS_SECRET_KEY: ${MINIO_KMS_SECRET_KEY:?set MINIO_KMS_SECRET_KEY in .env}
-    ports:
-      - '9000:9000'
-      - '9001:9001'
-    volumes:
-      - minio-data:/data
-    healthcheck:
-      test: ['CMD', 'mc', 'ready', 'local']
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  # Creates the bucket the API expects, then exits. `docker compose up` will show it as stopped;
-  # that is success, not a failure.
-  minio-bucket:
-    image: minio/mc:latest
-    depends_on:
-      minio:
-        condition: service_healthy
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
-    # The bucket is created private and left that way: every read and write reaches it through a
-    # presigned URL the API issues after it has authorized the caller. `mc anonymous set none` is
-    # the default rather than a change, and is stated here so that it stays deliberate.
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
-      mc mb --ignore-existing local/smarteam-files &&
-      mc anonymous set none local/smarteam-files &&
-      echo 'bucket ready'
-      "
-
 volumes:
   postgres-data:
-  minio-data:

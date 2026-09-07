@@ -47,6 +47,8 @@ export type OnboardingResult = {
   failure: { step: OnboardingStep; message: string } | null;
   /** Returned once, for the administrator to pass on. Never stored. */
   temporaryPassword: string | null;
+  /** The address the new login signs in with. Needed alongside the password to be any use. */
+  accountEmail: string | null;
 };
 
 export function useEmployeeOnboarding() {
@@ -71,9 +73,10 @@ export function useEmployeeOnboarding() {
       const completed: OnboardingStep[] = [];
       let employee: Employee | null = null;
       let temporaryPassword: string | null = null;
+      let accountEmail: string | null = null;
 
       const finish = (failure: OnboardingResult['failure']): OnboardingResult => {
-        const value = { employee, completed, failure, temporaryPassword };
+        const value = { employee, completed, failure, temporaryPassword, accountEmail };
         setResult(value);
         setBusy(false);
         return value;
@@ -157,6 +160,7 @@ export function useEmployeeOnboarding() {
             throw new Error('The account was created but no user id came back.');
           userId = created.userId;
           temporaryPassword = created.temporaryPassword ?? null;
+          accountEmail = input.account.email.trim();
           completed.push('account');
         } catch (caught) {
           return finish({

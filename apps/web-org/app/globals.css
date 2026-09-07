@@ -11,40 +11,65 @@
 }
 
 :root {
-  --ink: oklch(0.2 0.03 165);
-  --ink-soft: oklch(0.32 0.03 165);
-  --paper: oklch(0.977 0.003 247);
-  --accent: oklch(0.68 0.14 46);
-  --line: oklch(0.2 0.03 165 / 0.17);
+  /*
+   * Height of the breadcrumb/context bar, including its bottom border.
+   *
+   * The bar and every screen's own sticky tab strip live in the same scroll container, so a strip
+   * that pins at `top-0` lands underneath the bar rather than below it. Screens offset themselves
+   * by this value instead of repeating a pixel figure that would drift the moment the bar changes.
+   */
+  --ems-context-bar-height: 41px;
+
+  --ink: oklch(0.23 0.022 155);
+  --ink-soft: oklch(0.42 0.02 155);
+  --paper: oklch(0.9715 0.0155 92);
+  --accent: oklch(0.935 0.018 92);
+  --line: oklch(0.23 0.022 155 / 0.15);
 
   /* Canonical Smarteam semantic tokens consumed by @smarteam/ui. */
-  --background: oklch(0.977 0.003 247);
-  --foreground: oklch(0.2 0.03 165);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.03 165);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.03 165);
+
+  /* Warm cream page canvas, with surfaces stepping *up* toward white rather than down toward
+     grey. That direction matters: on a cream ground a cool white card reads as a hole punched in
+     the page, which is what the previous blue-grey palette did. */
+  --background: oklch(0.9715 0.0155 92);
+  --foreground: oklch(0.23 0.022 155);
+  --card: oklch(0.995 0.005 92);
+  --card-foreground: oklch(0.23 0.022 155);
+  --popover: oklch(0.995 0.005 92);
+  --popover-foreground: oklch(0.23 0.022 155);
   --primary: var(--smarteam-primary);
   --primary-foreground: var(--smarteam-primary-foreground);
-  --secondary: oklch(0.92 0.025 220);
-  --secondary-foreground: oklch(0.28 0.05 230);
-  --muted: oklch(0.93 0.018 220);
-  --muted-foreground: oklch(0.48 0.035 220);
-  --accent-foreground: oklch(0.25 0.045 72);
+  --secondary: oklch(0.93 0.018 92);
+  --secondary-foreground: oklch(0.3 0.03 155);
+  --muted: oklch(0.945 0.0175 92);
+  --muted-foreground: oklch(0.47 0.022 150);
+  --accent-foreground: oklch(0.23 0.022 155);
   --destructive: oklch(0.56 0.17 27);
   --destructive-foreground: oklch(0.985 0 0);
-  --success: oklch(0.61 0.13 153);
-  --success-foreground: oklch(0.3 0.07 153);
-  --border: oklch(0.2 0.03 165 / 0.14);
-  --input: oklch(0.2 0.03 165 / 0.2);
-  /* Control surface for inputs, textareas and select triggers. Neutral by intent: the page
-     canvas is a warm off-white, and a field that inherits that tint reads as discoloured. */
+
+  /* Success stays its own hue, deliberately lighter and more saturated than the brand. With a
+     green primary the two would otherwise be indistinguishable, and "this worked" would look
+     like "this is a button". */
+  --success: oklch(0.63 0.14 148);
+  --success-foreground: oklch(0.3 0.07 148);
+
+  --border: oklch(0.23 0.022 155 / 0.13);
+  --input: oklch(0.23 0.022 155 / 0.2);
+  /* Control surface for inputs, textareas and select triggers. Held a step brighter than the
+     canvas so a field reads as something you type into rather than part of the page. */
   --input-surface: oklch(1 0 0);
-  --input-surface-disabled: oklch(0.97 0.004 240);
+  --input-surface-disabled: oklch(0.955 0.012 92);
+
+  /* Table header: one warm step darker than the canvas, so a header row separates from both the
+     page behind it and the rows beneath it without needing a heavy rule. */
+  --table-header: oklch(0.9435 0.0175 92);
+  --table-header-foreground: oklch(0.36 0.025 155);
+
   --ring: var(--smarteam-primary);
-  --sidebar: oklch(0.17 0.045 245);
-  --sidebar-foreground: oklch(0.9 0.025 220);
-  --sidebar-accent: var(--smarteam-primary);
+  --sidebar: oklch(0.345 0.062 158);
+  --sidebar-foreground: oklch(0.955 0.016 120);
+  --sidebar-border: oklch(0.43 0.055 158);
+  --sidebar-accent: oklch(0.72 0.13 145);
   --radius: 0.75rem;
 }
 
@@ -76,6 +101,8 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent: var(--sidebar-accent);
+  --color-table-header: var(--table-header);
+  --color-table-header-foreground: var(--table-header-foreground);
   --radius-sm: calc(var(--radius) - 0.25rem);
   --radius-md: calc(var(--radius) - 0.125rem);
   --radius-lg: var(--radius);
@@ -153,7 +180,7 @@ a {
   width: 9px;
   height: 9px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--primary);
 }
 .nav-caption,
 .welcome-footer {
@@ -193,7 +220,7 @@ a {
 .eyebrow__line {
   width: 34px;
   height: 1px;
-  background: var(--accent);
+  background: var(--primary);
 }
 .welcome-shell h1 {
   margin: 0;
@@ -332,32 +359,33 @@ body {
 
 html.dark body,
 html[data-theme='dark'] body {
-  --background: oklch(0.16 0.025 245);
-  --foreground: oklch(0.96 0.01 220);
-  --card: oklch(0.21 0.025 245);
-  --card-foreground: oklch(0.96 0.01 220);
-  --popover: oklch(0.21 0.025 245);
-  --popover-foreground: oklch(0.96 0.01 220);
-  --secondary: oklch(0.25 0.035 245);
-  --secondary-foreground: oklch(0.92 0.015 220);
-  --muted: oklch(0.25 0.035 245);
-  --muted-foreground: oklch(0.7 0.025 220);
-  --border: oklch(0.33 0.04 245 / 0.8);
-  --input: oklch(0.33 0.04 245);
-  --input-surface: oklch(0.185 0.022 245);
-  --input-surface-disabled: oklch(0.23 0.025 245);
-  --sidebar: oklch(0.13 0.03 245);
-  --sidebar-foreground: oklch(0.9 0.025 220);
-  --sidebar-border: oklch(0.25 0.04 245);
+  /* Hue 158, matching the brand, rather than the old 245 blue. A dark theme carrying a blue
+     cast under a green brand reads as two products; the neutrals are barely chromatic either
+     way, but the little colour they do carry should point the same direction as the light theme. */
+  --background: oklch(0.17 0.018 158);
+  --foreground: oklch(0.96 0.008 120);
+  --card: oklch(0.215 0.02 158);
+  --card-foreground: oklch(0.96 0.008 120);
+  --popover: oklch(0.215 0.02 158);
+  --popover-foreground: oklch(0.96 0.008 120);
+  --secondary: oklch(0.26 0.025 158);
+  --secondary-foreground: oklch(0.92 0.012 120);
+  --muted: oklch(0.26 0.025 158);
+  --muted-foreground: oklch(0.71 0.018 140);
+  --border: oklch(0.34 0.03 158 / 0.8);
+  --input: oklch(0.34 0.03 158);
+  --input-surface: oklch(0.195 0.018 158);
+  --input-surface-disabled: oklch(0.24 0.02 158);
+  --accent: oklch(0.27 0.025 158);
+  --accent-foreground: oklch(0.96 0.008 120);
+  --table-header: oklch(0.245 0.024 158);
+  --table-header-foreground: oklch(0.78 0.02 140);
+  --sidebar: oklch(0.145 0.022 158);
+  --sidebar-foreground: oklch(0.9 0.018 120);
+  --sidebar-border: oklch(0.26 0.03 158);
   --sidebar-accent: var(--smarteam-primary);
   background-color: var(--background) !important;
   color: var(--foreground) !important;
-}
-
-/* Dark Mode Canvas & App Background */
-html.dark #ems-main-canvas,
-html.dark #ems-main-canvas {
-  background-color: #12151a !important;
 }
 
 /* Dark Mode Cards & Panels */

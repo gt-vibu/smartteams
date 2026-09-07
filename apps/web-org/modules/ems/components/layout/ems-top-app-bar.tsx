@@ -56,7 +56,7 @@ export function EmsTopAppBar({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-card/5 hover:bg-card/10 text-slate-200 border border-white/10 rounded text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer max-w-[140px] sm:max-w-none truncate"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 bg-card/5 hover:bg-card/10 text-sidebar-foreground border border-white/10 rounded text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer max-w-[140px] sm:max-w-none truncate"
                 title="Switch Operating Workspace"
                 aria-haspopup="true"
                 aria-expanded={isWorkspaceMenuOpen}
@@ -66,7 +66,7 @@ export function EmsTopAppBar({
                   {workspaceContext === 'ADMIN' ? 'Admin' : 'Employee'}
                 </span>
                 <svg
-                  className="h-3 w-3 text-muted-foreground shrink-0"
+                  className="h-3 w-3 text-sidebar-foreground/70 shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -82,8 +82,8 @@ export function EmsTopAppBar({
                     onClick={() => setIsWorkspaceMenuOpen(false)}
                     className="fixed inset-0 z-40"
                   />
-                  <div className="absolute left-0 mt-1.5 w-52 bg-[#0F172A] border border-slate-700/70 rounded-md shadow-xl z-50 py-1 text-xs text-slate-200">
-                    <div className="px-3 py-1.5 border-b border-slate-700/60 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                  <div className="absolute left-0 mt-1.5 w-52 bg-sidebar border border-sidebar-border rounded-md shadow-xl z-50 py-1 text-xs text-sidebar-foreground">
+                    <div className="px-3 py-1.5 border-b border-sidebar-border text-[10px] uppercase font-bold text-sidebar-foreground/70 tracking-wider">
                       Operating Context
                     </div>
                     <Button
@@ -92,7 +92,7 @@ export function EmsTopAppBar({
                       className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-card/10 cursor-pointer ${
                         workspaceContext === 'ADMIN'
                           ? 'text-white font-bold bg-card/10'
-                          : 'text-slate-300'
+                          : 'text-sidebar-foreground/80'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -107,7 +107,7 @@ export function EmsTopAppBar({
                       className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-card/10 cursor-pointer ${
                         workspaceContext === 'EMPLOYEE'
                           ? 'text-white font-bold bg-card/10'
-                          : 'text-slate-300'
+                          : 'text-sidebar-foreground/80'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export function EmsTopAppBar({
                     className={`px-3 py-1 text-xs font-semibold rounded-[5px] transition-all cursor-pointer whitespace-nowrap ${
                       isActive
                         ? 'bg-card/15 text-white shadow-xs font-bold'
-                        : 'text-slate-300 hover:text-white hover:bg-card/10'
+                        : 'text-sidebar-foreground/80 hover:text-white hover:bg-card/10'
                     }`}
                   >
                     {space}
@@ -148,7 +148,7 @@ export function EmsTopAppBar({
         </div>
 
         {/* Right: Quick Action, Global Search, Notification Bell, Theme Switcher, User Avatar */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2 text-slate-300 shrink-0">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 text-sidebar-foreground/85 shrink-0">
           {/* Quick Create + Action (Strictly for ADMIN context) */}
           {workspaceContext === 'ADMIN' && (
             <Button
@@ -176,7 +176,7 @@ export function EmsTopAppBar({
             variant="ghost"
             size="sm"
             onClick={onOpenSearch}
-            className="flex items-center gap-1.5 p-1.5 text-slate-300 hover:text-white hover:bg-card/10 rounded transition-colors cursor-pointer h-8"
+            className="flex items-center gap-1.5 p-1.5 text-sidebar-foreground/85 hover:text-white hover:bg-card/10 rounded transition-colors cursor-pointer h-8"
             title="Open Command & Search (⌘K / Ctrl+K)"
             aria-label="Search"
           >
@@ -193,7 +193,7 @@ export function EmsTopAppBar({
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            <span className="hidden lg:inline text-[10px] font-mono text-slate-300 bg-[#0E2038] px-1.5 py-0.5 rounded border border-slate-700/60">
+            <span className="hidden lg:inline text-[10px] font-mono text-sidebar-foreground/85 bg-black/20 px-1.5 py-0.5 rounded border border-sidebar-border">
               ⌘K
             </span>
           </Button>
@@ -203,7 +203,7 @@ export function EmsTopAppBar({
             variant="ghost"
             size="icon"
             onClick={onOpenNotifications}
-            className="p-1.5 text-slate-300 hover:text-white hover:bg-card/10 rounded transition-colors cursor-pointer relative h-8 w-8"
+            className="p-1.5 text-sidebar-foreground/85 hover:text-white hover:bg-card/10 rounded transition-colors cursor-pointer relative h-8 w-8"
             title="Notifications"
             aria-label="Notifications"
           >
@@ -231,7 +231,7 @@ export function EmsTopAppBar({
             className={`h-8 p-1.5 sm:px-2.5 sm:py-1 rounded-[5px] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer border ${
               isDark
                 ? 'bg-[#1E2530] text-amber-400 border-amber-400/30 hover:bg-[#283242]'
-                : 'bg-card/10 text-slate-200 border-white/15 hover:bg-card/15'
+                : 'bg-card/10 text-sidebar-foreground border-white/15 hover:bg-card/15'
             }`}
             title={
               isDark
@@ -260,7 +260,7 @@ export function EmsTopAppBar({
             ) : (
               <>
                 <svg
-                  className="h-3.5 w-3.5 text-slate-300"
+                  className="h-3.5 w-3.5 text-sidebar-foreground/85"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -272,7 +272,9 @@ export function EmsTopAppBar({
                     d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
                   />
                 </svg>
-                <span className="hidden sm:inline text-[11px] font-bold text-slate-200">Light</span>
+                <span className="hidden sm:inline text-[11px] font-bold text-sidebar-foreground">
+                  Light
+                </span>
               </>
             )}
           </Button>

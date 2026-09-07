@@ -10,6 +10,7 @@ import {
   type SessionMetadata,
 } from './auth.session.service';
 import { AuthTokenService } from './auth.tokens';
+import { seedLeaveDefaults, seedStandardRoles } from '../organizations/organization-roles';
 
 export type RegisterInput = {
   organizationName: string;
@@ -61,7 +62,23 @@ export class AuthRegistrationService {
           source: 'NATIVE',
         },
       });
-      await grantOrganizationAdmin(tx, user.id, organization.id);
+      // A default branch, as platform onboarding creates. Leave requests require the employee to
+      // have one, so a tenant without any branch could never approve a day off — the request was
+      // refused with "an employee branch is required" and there was no branch to assign.
+      const branch = await tx.branch.create({
+        data: {
+          organizationId: organization.id,
+          name: 'Headquarters',
+          code: 'HQ',
+          source: 'NATIVE',
+        },
+      });
+      const adminRoleId = await grantOrganizationAdmin(tx, user.id, organization.id);
+      // The same three roles platform onboarding seeds. Without them a self-registered tenant had
+      // only the wildcard role, so there was nothing to give a new joiner and the onboarding form
+      // fell back to creating employees who could never sign in.
+      await seedStandardRoles(tx, organization.id);
+      await seedLeaveDefaults(tx, organization.id, branch.id, adminRoleId);
       return { userId: user.id, tokenVersion: user.tokenVersion, organizationId: organization.id };
     });
     return this.sessions.issue(result.userId, result.tokenVersion, result.organizationId);
@@ -146,7 +163,7 @@ async function grantOrganizationAdmin(
   tx: Prisma.TransactionClient,
   userId: string,
   organizationId: string,
-) {
+): Promise<string> {
   const role = await tx.role.create({
     data: {
       organizationId,
@@ -166,6 +183,8 @@ async function grantOrganizationAdmin(
   await tx.userRole.create({
     data: { userId, organizationId, roleId: role.id, assignmentSource: 'NATIVE' },
   });
+  // Returned so the caller can route the default approval policy at this role.
+  return role.id;
 }
 
 async function grantEmployeeRole(

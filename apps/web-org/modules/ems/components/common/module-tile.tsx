@@ -23,7 +23,7 @@ export type TileTone = 'primary' | 'accent' | 'success' | 'warning' | 'neutral';
  */
 const TONES: Record<TileTone, string> = {
   primary: 'bg-primary/10 text-primary',
-  accent: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
+  accent: 'bg-primary/10 text-primary',
   success: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
   warning: 'bg-amber-500/10 text-amber-600 dark:text-amber-500',
   neutral: 'bg-muted text-muted-foreground',

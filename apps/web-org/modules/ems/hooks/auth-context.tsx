@@ -31,6 +31,8 @@ export type SessionState = {
   visibleSpaces: ReturnType<typeof getVisibleSpaces>;
   login: (email: string, password: string, organizationId?: string) => Promise<LoginResult>;
   logout: () => Promise<void>;
+  /** Re-reads `GET /v1/auth/me`, so a changed role or a new employee link takes effect at once. */
+  refreshSession: () => Promise<void>;
   switchWorkspace: (context: WorkspaceContext) => WorkspaceContext;
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
@@ -108,6 +110,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sync(null);
   }, [sync]);
 
+  /**
+   * Re-asks the API who this session is.
+   *
+   * Identity can change underneath a live session — an administrator links themselves an employee
+   * record, or someone else's role is granted or revoked — and the shell had no way to pick that
+   * up short of a full page load. This re-reads `GET /v1/auth/me`, so roles, permissions and the
+   * employee link all come back from the server rather than being patched locally. A failure
+   * leaves the current persona alone rather than signing the user out: a transient network error
+   * is not a logout.
+   */
+  const refreshSession = useCallback(async () => {
+    try {
+      sync(await authRepository.restore());
+    } catch {
+      // Keep the existing persona; the API still authorizes every request independently.
+    }
+  }, [sync]);
+
   const switchWorkspace = useCallback((context: WorkspaceContext) => {
     const updated = authRepository.setWorkspaceContext(context);
     setWorkspaceContextState(updated);
@@ -175,6 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       visibleSpaces,
       login,
       logout,
+      refreshSession,
       switchWorkspace,
       hasPermission: (permission) => authRepository.hasPermission(permission),
       hasAnyPermission: (candidates) => authRepository.hasAnyPermission(candidates),
@@ -195,6 +216,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAssignedToAnyTeam,
     login,
     logout,
+    refreshSession,
     switchWorkspace,
   ]);
 

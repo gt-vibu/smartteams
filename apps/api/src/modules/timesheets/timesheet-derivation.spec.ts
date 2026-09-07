@@ -88,7 +88,26 @@ function setup(employeeCount: number, recordsPerEmployee: number) {
       createMany: jest.fn((args: { data: unknown[] }) =>
         track('entry.createMany', { count: args.data.length }),
       ),
+      // Totals are summed from the sheet's own entries so manual ones are not dropped. That is
+      // one statement for the whole period, not one per employee, which is what these tests
+      // actually guard.
+      findMany: jest.fn(() => track('entry.findMany', [])),
       create: jest.fn(() => track('entry.create', {})),
+    },
+    // Deriving invalidates any calculated run over the period. Tracked like every other statement
+    // so the counts below still prove it is one statement for the period, not one per employee.
+    payrollRun: {
+      updateMany: jest.fn(() => track('payrollRun.updateMany', { count: 0 })),
+    },
+    // Deriving opens a new approval cycle, so the previous cycle's rows are cleared. Tracked so
+    // the counts below prove that is one statement for the period, not one per sheet.
+    timesheetApproval: {
+      deleteMany: jest.fn(
+        (args: { where: { organizationId: string; timesheetId: { in: string[] } } }) => {
+          void args;
+          return track('approval.deleteMany', { count: 0 });
+        },
+      ),
     },
   };
 
@@ -118,6 +137,10 @@ describe('timesheet derivation', () => {
     // 4,000 records previously meant 4,000 inserts.
     expect(calls.filter((c) => c === 'entry.create')).toHaveLength(0);
     expect(calls.filter((c) => c === 'entry.createMany')).toHaveLength(1);
+    // One invalidation for the whole period.
+    expect(calls.filter((c) => c === 'payrollRun.updateMany')).toHaveLength(1);
+    // One approval-cycle reset for the whole period.
+    expect(calls.filter((c) => c === 'approval.deleteMany')).toHaveLength(1);
   });
 
   it('keeps the statement count flat as the tenant grows', async () => {
@@ -156,7 +179,27 @@ describe('timesheet derivation', () => {
     const { calls, service } = setup(4, 2);
     await service.derive(context(), PERIOD);
 
-    expect(calls.some((c) => c.startsWith('timesheet.updateMany:status,version'))).toBe(true);
+    expect(
+      calls.some((c) => c.startsWith('timesheet.updateMany:status,submittedAt,approvedAt,version')),
+    ).toBe(true);
+  });
+
+  it('opens a fresh approval cycle rather than leaving the previous one attached', async () => {
+    const { tx, service } = setup(4, 2);
+    await service.derive(context(), PERIOD);
+
+    // The status reset alone is not enough: the sheet keeps the previous cycle's approval rows and
+    // timestamps, and `@@unique([timesheetId, approverUserId])` then stops the same approver from
+    // deciding again. Both halves of the reset are pinned here.
+    const [reset] = tx.timesheet.updateMany.mock.calls as [{ data: Record<string, unknown> }][];
+    expect(reset?.[0].data.submittedAt).toBeNull();
+    expect(reset?.[0].data.approvedAt).toBeNull();
+
+    const [cleared] = tx.timesheetApproval.deleteMany.mock.calls as [
+      { where: { organizationId: string; timesheetId: { in: string[] } } },
+    ][];
+    expect(cleared?.[0].where.organizationId).toBe(ORG);
+    expect(cleared?.[0].where.timesheetId.in.length).toBeGreaterThan(0);
   });
 
   it('rebuilds only attendance-derived entries, leaving manual ones alone', async () => {

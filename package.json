@@ -44,7 +44,13 @@
     "verify:holidays": "node scripts/verify-holidays.mjs",
     "verify:employee-detail": "node scripts/verify-employee-detail.mjs",
     "verify:employee-directory": "node scripts/verify-employee-directory.mjs",
-    "verify:onboarding": "node scripts/verify-onboarding.mjs"
+    "verify:onboarding": "node scripts/verify-onboarding.mjs",
+    "verify:payroll-staleness": "node scripts/verify-payroll-staleness.mjs",
+    "verify:timesheet-approval-cycle": "node scripts/verify-timesheet-approval-cycle.mjs",
+    "verify:concurrency": "node scripts/verify-concurrency.mjs",
+    "perf:payroll": "node scripts/perf-payroll.mjs",
+    "db:backup": "node scripts/backup-database.mjs",
+    "db:verify-restore": "node scripts/verify-restore.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.2",
@@ -53,6 +59,7 @@
     "@types/node": "26.2.0",
     "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "17.11.0",
     "husky": "9.1.7",
     "lint-staged": "17.3.0",

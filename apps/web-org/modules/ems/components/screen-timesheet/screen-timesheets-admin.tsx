@@ -2,10 +2,13 @@
 
 import React, { useMemo, useState } from 'react';
 import type { ColumnDef } from '@smarteam/ui';
-import { Select, StandardDataTable } from '@smarteam/ui';
+import { Button, Select, StandardDataTable } from '@smarteam/ui';
 import { useTimesheetAdmin } from '../../hooks/use-timesheet-admin';
+import { DecisionReasonDialog } from '../common/decision-reason-dialog';
+import { OpenPeriodDialog } from './open-period-dialog';
 import { StatusPill, TimesheetAuditDrawer } from './timesheet-audit-drawer';
 import { toAuditRows, type TimesheetAuditRow } from './timesheet-audit-row';
+import { PageShell } from '../layout/page-shell';
 
 /**
  * Timesheet operations: the approval queue for an organization.
@@ -20,6 +23,8 @@ import { toAuditRows, type TimesheetAuditRow } from './timesheet-audit-row';
  */
 export function ScreenTimesheetsAdmin() {
   const admin = useTimesheetAdmin();
+  const [openingPeriod, setOpeningPeriod] = useState(false);
+  const [pendingDecision, setPendingDecision] = useState<'APPROVED' | 'REJECTED' | null>(null);
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [activeRow, setActiveRow] = useState<TimesheetAuditRow | null>(null);
 
@@ -104,24 +109,57 @@ export function ScreenTimesheetsAdmin() {
 
   return (
     <div className="w-full">
-      <div className="sticky top-0 z-20 bg-background">
+      <div className="sticky top-[var(--ems-context-bar-height)] z-20 bg-background">
         <div className="flex w-full flex-col justify-between gap-2.5 border-b border-border/90 bg-card/95 px-4 py-2.5 backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
           <span className="border-b-2 border-foreground pb-1 text-xs font-bold text-foreground">
             Time logs and timesheets
           </span>
-          <div className="w-48">
-            <Select onChange={(e) => setSelectedStatus(e.target.value)} value={selectedStatus}>
-              <option value="ALL">All statuses</option>
-              <option value="SUBMITTED">Submitted (pending review)</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="DRAFT">Draft</option>
-            </Select>
+          <div className="flex items-center gap-2">
+            {admin.canWrite && (
+              <Button onClick={() => setOpeningPeriod(true)} size="sm" type="button">
+                Open a period
+              </Button>
+            )}
+            <div className="w-48">
+              <Select onChange={(e) => setSelectedStatus(e.target.value)} value={selectedStatus}>
+                <option value="ALL">All statuses</option>
+                <option value="SUBMITTED">Submitted (pending review)</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
+                <option value="DRAFT">Draft</option>
+              </Select>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
+      <DecisionReasonDialog
+        busy={admin.saving}
+        confirmLabel={pendingDecision === 'APPROVED' ? 'Approve timesheet' : 'Reject timesheet'}
+        destructive={pendingDecision === 'REJECTED'}
+        error={admin.saveError}
+        isOpen={pendingDecision !== null && activeRow !== null}
+        onClose={() => setPendingDecision(null)}
+        onConfirm={async (reason) => {
+          if (!activeRow || !pendingDecision) return;
+          const ok = await admin.decide(activeRow.id, pendingDecision, reason);
+          if (ok !== false) {
+            setPendingDecision(null);
+            setActiveRow(null);
+          }
+        }}
+        title={pendingDecision === 'APPROVED' ? 'Approve this timesheet' : 'Reject this timesheet'}
+      />
+
+      <OpenPeriodDialog
+        isOpen={openingPeriod}
+        onClose={() => setOpeningPeriod(false)}
+        onOpen={admin.openPeriod}
+        saveError={admin.saveError}
+        saving={admin.saving}
+      />
+
+      <PageShell>
         <div>
           <h1 className="text-lg font-bold text-foreground">Timesheet operations</h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -197,18 +235,13 @@ export function ScreenTimesheetsAdmin() {
             busy={admin.saving}
             canDecide={admin.canDecide}
             onClose={() => setActiveRow(null)}
-            onDecide={async (status) => {
-              const ok = await admin.decide(
-                activeRow.id,
-                status,
-                `Timesheet ${status.toLowerCase()} from the approval queue`,
-              );
-              if (ok !== false) setActiveRow(null);
-            }}
+            // The approver is asked why rather than having a canned string posted for them: this
+            // comment is the audit record and is shown to the employee.
+            onDecide={(status) => setPendingDecision(status)}
             row={activeRow}
           />
         )}
-      </div>
+      </PageShell>
     </div>
   );
 }
@@ -247,7 +280,10 @@ function Notice({
   title: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-10 text-center" role={role}>
+    <div
+      className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+      role={role}
+    >
       <p className="text-sm font-bold text-foreground">{title}</p>
       <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
     </div>

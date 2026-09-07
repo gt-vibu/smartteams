@@ -1,4 +1,5 @@
-import { hasPermission, type AuthenticatedSession } from '@smarteam/contracts';
+import type { AuthenticatedSession } from '@smarteam/contracts';
+import { canAdministerOrganization } from '../services/authorization.policy';
 import { emsStorageAdapter } from '../storage/storage.adapter';
 import type { Persona, WorkspaceContext } from '../types/auth.types';
 
@@ -37,7 +38,17 @@ export class PersonaRepository {
 
     // Workspace capability follows the server's permission set. A tenant administrator onboarded
     // through the platform console would otherwise be stranded in the employee workspace.
-    const canAdminister = hasPermission(session.permissions, 'organizations.read');
+    //
+    // Decided by the shared policy rather than by a permission named here: this used to test
+    // `organizations.read`, which the seeded EMPLOYEE role also holds, so every ordinary employee
+    // was treated as an administrator and landed in the Organization workspace.
+    const canAdminister = canAdministerOrganization(session.permissions);
+    // The Employee Workspace resolves *this* user's own employee record — `session.employee`,
+    // never a chosen one — so switching into it only makes sense when that record exists. Without
+    // this check an administrator with no employee identity could still toggle into a workspace
+    // with nothing behind it: `session.employee` stays null, and every screen that reads it
+    // renders a broken or empty employee experience instead of the workspace being unavailable.
+    const hasEmployeeIdentity = session.employee !== null;
 
     return {
       id: session.user.id,
@@ -58,7 +69,7 @@ export class PersonaRepository {
       directReportEmployeeIds: [],
       managerEmployeeId: null,
       managerName: null,
-      canSwitchWorkspace: canAdminister,
+      canSwitchWorkspace: canAdminister && hasEmployeeIdentity,
       defaultWorkspace: canAdminister ? 'ADMIN' : 'EMPLOYEE',
       user: {
         id: session.user.id,

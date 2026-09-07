@@ -62,8 +62,16 @@ export function EmsLayout({
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
       />
 
-      {/* 2. Workspace Body (Left Rail + Main Canvas) */}
-      <div className="flex-1 flex min-h-0 w-full overflow-hidden relative bg-slate-100 dark:bg-background">
+      {/*
+        2. Workspace Body (Left Rail + Main Canvas)
+
+        One page ground, not three. This and the canvas below each used to paint their own
+        near-white — so the page was a cream base, with a grey sheet on it, with a lighter sheet
+        on that, and only then the content. Every card therefore read as floating on a panel
+        rather than sitting on the page, which is the "detached component" feeling. Both now
+        inherit, so content sits directly on the background.
+      */}
+      <div className="flex-1 flex min-h-0 w-full overflow-hidden relative">
         {/* Desktop Left Rail (hidden on mobile — bottom nav handles mobile) */}
         {showLeftRail && (
           <div className="hidden md:flex shrink-0 h-full">
@@ -78,7 +86,7 @@ export function EmsLayout({
         {/* Dedicated Scrollable Main Content Canvas with Context Bar */}
         <main
           id="ems-main-canvas"
-          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[72px] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col bg-slate-50 dark:bg-background"
+          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[72px] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col"
         >
           {/* Context Breadcrumbs & Scope Indicator */}
           <ContextBar
@@ -90,9 +98,12 @@ export function EmsLayout({
             onNavigateModule={onSelectModule}
           />
 
-          <div className="flex-1 min-w-0 px-3.5 sm:px-6 lg:px-8 py-4 sm:py-5 max-w-[1400px] w-full mx-auto">
-            {children}
-          </div>
+          {/*
+            The scroll canvas only. Width, gutters and rhythm belong to `PageShell`, which each
+            screen renders — this used to set them too, so every screen's own container nested
+            inside this one and the two sets of gutters added up.
+          */}
+          <div className="flex min-w-0 flex-1 flex-col">{children}</div>
         </main>
       </div>
 

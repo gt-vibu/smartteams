@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Prisma } from '../../generated/prisma/client';
 import type {
   PayComponentCalculationType,
@@ -23,77 +24,89 @@ import {
  * here, it can be read, and eventually tested, without standing a service up first.
  */
 
-export async function calculateLine(
-  tx: Prisma.TransactionClient,
-  organizationId: string,
-  payrollRunId: string,
-  item: {
-    employeeId: string;
-    compensation: {
-      baseAmount: Prisma.Decimal;
-      grossSalary: Prisma.Decimal | null;
-      overtimeMultiplier: Prisma.Decimal;
-    } | null;
-    employeePolicy: {
-      payrollEnabled: boolean;
-      pfEnabled: boolean;
-      esiEnabled: boolean;
-      ptEnabled: boolean;
-      statutoryJurisdiction: string | null;
-    } | null;
-    policy: {
-      payrollDayBasis: number;
-      basePercentage: Prisma.Decimal;
-      baseMinimum: Prisma.Decimal;
-      hraPercentage: Prisma.Decimal;
-      roundingMode: 'HALF_UP' | 'DOWN' | 'UP';
-      pfDefault: boolean;
-      esiDefault: boolean;
-      ptDefault: boolean;
-      statutoryJurisdiction: string | null;
-    };
-    statutoryRules: Array<{
-      schemeCode: string;
-      employeeRate: Prisma.Decimal | null;
-      employerRate: Prisma.Decimal | null;
-      wageCeiling: Prisma.Decimal | null;
-      employeeThreshold: Prisma.Decimal | null;
-      flatAmount: Prisma.Decimal | null;
-      metadata: unknown;
-    }>;
-    components: Array<{
-      componentId: string;
-      amount: Prisma.Decimal | null;
-      percentage: Prisma.Decimal | null;
-      component: {
-        id: string;
-        code: string;
-        name: string;
-        componentType: PayComponentType;
-        calculationType: PayComponentCalculationType;
-        formulaDefinition: unknown;
-        isTaxable: boolean;
-        displayOrder: number;
-      };
-    }>;
-    timesheet: { regularMinutes: number; overtimeMinutes: number } | null;
-    leave: { paidDays: number; unpaidDays: number };
-    attendance: { absentDays: number; halfDays: number };
-    unemployedDays: number;
-    periodWorkingDays: number;
-    adjustments: Array<{
-      type: PayrollAdjustmentType;
-      amount: Prisma.Decimal;
-      description: string;
-    }>;
-    advances: Array<{
+/**
+ * Everything one employee's pay for one period is computed from.
+ *
+ * Named because two callers now assemble it: the payroll run, which persists the result, and the
+ * preview, which does not. They must gather the same inputs or the number an administrator is
+ * shown is not the number that will be paid.
+ */
+export type PayrollLineInput = {
+  employeeId: string;
+  compensation: {
+    baseAmount: Prisma.Decimal;
+    grossSalary: Prisma.Decimal | null;
+    overtimeMultiplier: Prisma.Decimal;
+  } | null;
+  employeePolicy: {
+    payrollEnabled: boolean;
+    pfEnabled: boolean;
+    esiEnabled: boolean;
+    ptEnabled: boolean;
+    statutoryJurisdiction: string | null;
+  } | null;
+  policy: {
+    payrollDayBasis: number;
+    basePercentage: Prisma.Decimal;
+    baseMinimum: Prisma.Decimal;
+    hraPercentage: Prisma.Decimal;
+    roundingMode: 'HALF_UP' | 'DOWN' | 'UP';
+    pfDefault: boolean;
+    esiDefault: boolean;
+    ptDefault: boolean;
+    statutoryJurisdiction: string | null;
+  };
+  statutoryRules: Array<{
+    schemeCode: string;
+    employeeRate: Prisma.Decimal | null;
+    employerRate: Prisma.Decimal | null;
+    wageCeiling: Prisma.Decimal | null;
+    employeeThreshold: Prisma.Decimal | null;
+    flatAmount: Prisma.Decimal | null;
+    metadata: unknown;
+  }>;
+  components: Array<{
+    componentId: string;
+    amount: Prisma.Decimal | null;
+    percentage: Prisma.Decimal | null;
+    component: {
       id: string;
-      approvedAmount: Prisma.Decimal | null;
-      recoveredAmount: Prisma.Decimal;
-    }>;
-  },
-  standardDayMinutes: number,
-) {
+      code: string;
+      name: string;
+      componentType: PayComponentType;
+      calculationType: PayComponentCalculationType;
+      formulaDefinition: unknown;
+      isTaxable: boolean;
+      displayOrder: number;
+    };
+  }>;
+  timesheet: { regularMinutes: number; overtimeMinutes: number } | null;
+  leave: { paidDays: number; unpaidDays: number };
+  attendance: { absentDays: number; halfDays: number };
+  unemployedDays: number;
+  periodWorkingDays: number;
+  adjustments: Array<{
+    type: PayrollAdjustmentType;
+    amount: Prisma.Decimal;
+    description: string;
+  }>;
+  advances: Array<{
+    id: string;
+    approvedAmount: Prisma.Decimal | null;
+    recoveredAmount: Prisma.Decimal;
+  }>;
+};
+
+/**
+ * The payroll engine: inputs in, money out, nothing written.
+ *
+ * Split out of `calculateLine` so the preview can run the real calculation instead of its own
+ * parallel arithmetic. The preview used to re-implement proration, statutory deduction and
+ * advance recovery inline, and had quietly drifted — it read neither timesheets, nor holidays,
+ * nor adjustments, nor pay components, so a previewed figure could differ from the released one
+ * with nothing on screen to say why.
+ */
+export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: number) {
   const grossSalary =
     item.compensation?.grossSalary ?? item.compensation?.baseAmount ?? new Prisma.Decimal(0);
   const monthlyStructure = calculateSalaryStructure(grossSalary, {
@@ -215,8 +228,108 @@ export async function calculateLine(
   );
   const deduction = beforeAdvanceDeductions.add(advanceRecoveryTotal);
   const net = gross.sub(deduction);
-  const line = await tx.payrollLineItem.create({
-    data: {
+  return {
+    monthlyStructure,
+    proratedStructure,
+    payableDays,
+    unpaidAttendanceDays,
+    regular,
+    overtime,
+    components,
+    componentDeduction,
+    earningAdjustmentTotal,
+    deductionAdjustmentTotal,
+    unpaidLeaveAdjustment,
+    statutory,
+    statutoryDeduction,
+    advanceRecoveries,
+    advanceRecoveryTotal,
+    gross,
+    deduction,
+    net,
+  };
+}
+
+/**
+ * The database rows one employee's calculated pay becomes.
+ *
+ * Returned rather than written, so the caller can insert a whole run set-based. `calculateLine`
+ * used to do both: compute, then issue a `create` for the line, a `create` for the payment and a
+ * create/update pair per advance recovery — two to four round trips per employee, run
+ * sequentially inside the write transaction. That is the same shape `createPayslips` below was
+ * already rewritten away from, for the same reason.
+ *
+ * The arithmetic is untouched: this calls `computePayrollLine` and only shapes its output.
+ */
+export type PayrollLineRows = {
+  line: Prisma.PayrollLineItemCreateManyInput;
+  components: Prisma.PayrollLineItemComponentCreateManyInput[];
+  payment: Prisma.PayrollPaymentCreateManyInput;
+  recoveries: Prisma.SalaryAdvanceRecoveryCreateManyInput[];
+  /** Final state per advance this line recovered against; the caller applies one update each. */
+  advanceUpdates: Array<{
+    id: string;
+    recoveredAmount: Prisma.Decimal;
+    status: 'RECOVERED' | 'PARTIALLY_RECOVERED';
+  }>;
+  result: {
+    employeeId: string;
+    grossAmount: Prisma.Decimal;
+    deductionAmount: Prisma.Decimal;
+    netAmount: Prisma.Decimal;
+    components: Array<{ code: string; amount: Prisma.Decimal }>;
+    lineId: string;
+  };
+};
+
+export function buildPayrollLineRows(
+  organizationId: string,
+  payrollRunId: string,
+  item: PayrollLineInput,
+  standardDayMinutes: number,
+  lineId: string = randomUUID(),
+): PayrollLineRows {
+  const {
+    monthlyStructure,
+    proratedStructure,
+    unpaidAttendanceDays,
+    regular,
+    overtime,
+    components,
+    earningAdjustmentTotal,
+    deductionAdjustmentTotal,
+    unpaidLeaveAdjustment,
+    statutory,
+    advanceRecoveries,
+    advanceRecoveryTotal,
+    gross,
+    deduction,
+    net,
+  } = computePayrollLine(item, standardDayMinutes);
+
+  const recoveries: Prisma.SalaryAdvanceRecoveryCreateManyInput[] = [];
+  const advanceUpdates: PayrollLineRows['advanceUpdates'] = [];
+  for (const recovery of advanceRecoveries) {
+    if (!recovery.amount.greaterThan(0)) continue;
+    recoveries.push({
+      organizationId,
+      salaryAdvanceId: recovery.advance.id,
+      payrollRunId,
+      employeeId: item.employeeId,
+      amount: recovery.amount,
+    });
+    const recovered = recovery.advance.recoveredAmount.add(recovery.amount);
+    const approved = recovery.advance.approvedAmount ?? new Prisma.Decimal(0);
+    advanceUpdates.push({
+      id: recovery.advance.id,
+      recoveredAmount: recovered,
+      status: recovered.greaterThanOrEqualTo(approved) ? 'RECOVERED' : 'PARTIALLY_RECOVERED',
+    });
+  }
+
+  return {
+    line: {
+      id: lineId,
       organizationId,
       payrollRunId,
       employeeId: item.employeeId,
@@ -246,63 +359,41 @@ export async function calculateLine(
         unpaidAttendanceDays,
         periodWorkingDays: item.periodWorkingDays,
       }),
-      components: {
-        create: components.map(({ assignment, amount }) => ({
-          organizationId,
-          payComponentId: assignment.component.id,
-          componentCode: assignment.component.code,
-          componentName: assignment.component.name,
-          componentType: assignment.component.componentType,
-          calculationType: assignment.component.calculationType,
-          amount,
-          isTaxable: assignment.component.isTaxable,
-          calculationSnapshot: jsonSnapshot(assignment),
-          displayOrder: assignment.component.displayOrder,
-        })),
-      },
     },
-  });
-  for (const recovery of advanceRecoveries) {
-    if (!recovery.amount.greaterThan(0)) continue;
-    await tx.salaryAdvanceRecovery.create({
-      data: {
-        organizationId,
-        salaryAdvanceId: recovery.advance.id,
-        payrollRunId,
-        employeeId: item.employeeId,
-        amount: recovery.amount,
-      },
-    });
-    const recovered = recovery.advance.recoveredAmount.add(recovery.amount);
-    const approved = recovery.advance.approvedAmount ?? new Prisma.Decimal(0);
-    await tx.salaryAdvance.update({
-      where: { id: recovery.advance.id },
-      data: {
-        recoveredAmount: recovered,
-        status: recovered.greaterThanOrEqualTo(approved) ? 'RECOVERED' : 'PARTIALLY_RECOVERED',
-      },
-    });
-  }
-  await tx.payrollPayment.create({
-    data: {
+    components: components.map(({ assignment, amount }) => ({
+      organizationId,
+      payrollLineItemId: lineId,
+      payComponentId: assignment.component.id,
+      componentCode: assignment.component.code,
+      componentName: assignment.component.name,
+      componentType: assignment.component.componentType,
+      calculationType: assignment.component.calculationType,
+      amount,
+      isTaxable: assignment.component.isTaxable,
+      calculationSnapshot: jsonSnapshot(assignment),
+      displayOrder: assignment.component.displayOrder,
+    })),
+    payment: {
       organizationId,
       payrollRunId,
-      payrollLineItemId: line.id,
+      payrollLineItemId: lineId,
       employeeId: item.employeeId,
       amount: net,
       status: 'PENDING',
     },
-  });
-  return {
-    employeeId: item.employeeId,
-    grossAmount: gross,
-    deductionAmount: deduction,
-    netAmount: net,
-    components: components.map(({ assignment, amount }) => ({
-      code: assignment.component.code,
-      amount,
-    })),
-    lineId: line.id,
+    recoveries,
+    advanceUpdates,
+    result: {
+      employeeId: item.employeeId,
+      grossAmount: gross,
+      deductionAmount: deduction,
+      netAmount: net,
+      components: components.map(({ assignment, amount }) => ({
+        code: assignment.component.code,
+        amount,
+      })),
+      lineId,
+    },
   };
 }
 

@@ -11,6 +11,33 @@ import type { CommandItem } from './command-palette-types';
  * projects are not here — those come from the API at render time and belong with the component
  * that fetches them.
  */
+/**
+ * Which module each command opens or acts on.
+ *
+ * Kept next to the commands themselves so the two cannot drift: the palette filters against this
+ * map and withholds anything missing from it, so a command added without an entry is hidden
+ * rather than shown to everybody. `command-palette.test.ts` asserts every id built below appears
+ * here, which is the check that would have caught the ten unmapped commands this replaced.
+ */
+export const COMMAND_MODULE_BY_ID: Record<string, string> = {
+  'nav-home': 'home',
+  'nav-attendance': 'attendance',
+  'nav-time-off': 'time-off',
+  'nav-timesheet': 'timesheet',
+  'nav-projects': 'projects',
+  'nav-payroll': 'payroll',
+  'nav-approvals': 'approvals',
+  'nav-team': 'teams',
+  'nav-admin-team': 'teams',
+  'nav-admin-org': 'home',
+  'act-punch': 'attendance',
+  'act-leave': 'time-off',
+  'act-logtime': 'timesheet',
+  'act-admin-payroll': 'payroll',
+  'act-admin-leave-policy': 'time-off',
+  'act-admin-attendance-roster': 'attendance',
+};
+
 export function buildCommandItems({
   canAccessModule,
   checkIn,

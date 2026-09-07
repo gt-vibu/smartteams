@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import {
   Button,
-  Checkbox,
   DatePicker,
   Dialog,
   DialogContent,
@@ -74,21 +73,24 @@ export function OnboardEmployeeDialog({
   onSubmit,
 }: Props) {
   const [form, setForm] = useState({ ...EMPTY });
-  const [withAccount, setWithAccount] = useState(false);
 
   const set = (key: keyof typeof EMPTY, value: string) =>
     setForm((current) => ({ ...current, [key]: value }));
 
   const accountEmail = form.workEmail.trim();
   const accountPossible = canCreateAccount && Boolean(employeeRoleId);
-  const wantsAccount = withAccount && accountPossible && accountEmail.length > 0;
+  // The login is part of onboarding, not an extra. It used to be an unticked box beside an
+  // optional email, so leaving the email blank produced an employee who could never sign in and
+  // no password to hand over — which is the same as not having onboarded them at all.
+  const wantsAccount = accountPossible && accountEmail.length > 0;
 
   const complete =
     form.employeeNumber.trim().length > 0 &&
     form.firstName.trim().length > 0 &&
     form.lastName.trim().length > 0 &&
     form.dateOfJoining.length === 10 &&
-    (!withAccount || !accountPossible || accountEmail.length > 0);
+    // Required whenever a login can be made: it is the address they sign in with.
+    (!accountPossible || accountEmail.length > 0);
 
   const submit = () => {
     if (!complete || busy) return;
@@ -122,7 +124,6 @@ export function OnboardEmployeeDialog({
       onOpenChange={(next) => {
         if (!next) {
           setForm({ ...EMPTY });
-          setWithAccount(false);
         }
         onOpenChange(next);
       }}
@@ -131,8 +132,7 @@ export function OnboardEmployeeDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogTitle>Add employee</DialogTitle>
         <p className="mt-1 text-xs text-muted-foreground">
-          Every field here is stored server-side. Leave anything you do not know yet blank and add
-          it from the employee&apos;s record later.
+          Leave anything you do not know yet blank &mdash; you can add it to their record later.
         </p>
 
         <div className="mt-5 space-y-5">
@@ -143,7 +143,7 @@ export function OnboardEmployeeDialog({
             <Field label="Last name" required>
               <Input onChange={(e) => set('lastName', e.target.value)} value={form.lastName} />
             </Field>
-            <Field label="Work email">
+            <Field label="Work email" required={accountPossible}>
               <Input
                 onChange={(e) => set('workEmail', e.target.value)}
                 type="email"
@@ -239,33 +239,21 @@ export function OnboardEmployeeDialog({
           <Fieldset legend="Access">
             <div className="sm:col-span-2">
               {accountPossible ? (
-                <>
-                  <label className="flex items-start gap-2.5 text-xs text-foreground">
-                    <Checkbox
-                      checked={withAccount}
-                      disabled={accountEmail.length === 0}
-                      onCheckedChange={(value) => setWithAccount(value === true)}
-                    />
-                    <span>
-                      Create a login for this person
-                      <span className="mt-0.5 block text-[11px] font-normal text-muted-foreground">
-                        They receive the Employee role — access to their own attendance, leave,
-                        timesheets, payslips and files, and nobody else&apos;s. A temporary password
-                        is shown once, for you to pass on.
-                      </span>
-                    </span>
-                  </label>
-                  {accountEmail.length === 0 && (
-                    <p className="mt-2 text-[11px] text-muted-foreground">
-                      Add a work email above to enable this.
-                    </p>
-                  )}
-                </>
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  A login is created with the Employee role, and{' '}
+                  <span className="font-semibold text-foreground">
+                    {accountEmail || 'the work email above'}
+                  </span>{' '}
+                  is what they sign in with. You get their password on the next screen, once.
+                </p>
               ) : (
-                <p className="text-[11px] text-muted-foreground">
+                <p
+                  className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+                  role="alert"
+                >
                   {canCreateAccount
-                    ? 'The Employee role could not be read, so a login cannot be created here.'
-                    : 'You do not have permission to create logins. The employee record will be created without one.'}
+                    ? 'This organization has no Employee role, so no login can be created. Add one under Organization → Access before onboarding, or this person will not be able to sign in.'
+                    : 'You do not have permission to create logins. The employee record will be created without one, and they will not be able to sign in until someone grants them access.'}
                 </p>
               )}
             </div>

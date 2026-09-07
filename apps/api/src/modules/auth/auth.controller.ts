@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import type { AuthenticatedSession, LoginResponse } from '@smarteam/contracts';
+import type { AccessCodePreview, AuthenticatedSession, LoginResponse } from '@smarteam/contracts';
 import { UnauthorizedDomainError } from '../../common/errors/domain-error';
+import { AuthActivationService } from './auth.activation.service';
 import { AuthCookieService } from './auth.cookies';
 import { AuthIdentityService } from './auth.identity.service';
 import { AuthRecoveryService } from './auth.recovery.service';
@@ -9,6 +10,8 @@ import { AuthRegistrationService } from './auth.registration.service';
 import { AuthService } from './auth.service';
 import type { IssuedSession, SessionMetadata } from './auth.session.service';
 import {
+  AccessCodeActivateDto,
+  AccessCodePreviewDto,
   InvitationAcceptDto,
   LoginDto,
   PasswordResetConfirmDto,
@@ -34,6 +37,7 @@ export class AuthController {
     private readonly registration: AuthRegistrationService,
     private readonly recovery: AuthRecoveryService,
     private readonly identity: AuthIdentityService,
+    private readonly activation: AuthActivationService,
     private readonly cookies: AuthCookieService,
   ) {}
 
@@ -136,6 +140,31 @@ export class AuthController {
       body.token,
       body.displayName,
       body.password,
+      metadataOf(request),
+    );
+    return this.establish(session, response);
+  }
+
+  /**
+   * Confirms an employee access code and says who it belongs to.
+   *
+   * Unauthenticated by necessity — the caller has no account yet — and covered by this
+   * controller's rate limiter, which is what keeps it from being a way to enumerate codes.
+   */
+  @Post('activation/preview')
+  previewAccessCode(@Body() body: AccessCodePreviewDto): Promise<AccessCodePreview> {
+    return this.activation.preview(body.code);
+  }
+
+  /** Redeems the code: creates the employee's login, links it, and signs them in. */
+  @Post('activation/activate')
+  async activate(
+    @Body() body: AccessCodeActivateDto,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<LoginResponse> {
+    const session = await this.activation.activate(
+      { code: body.code, email: body.email, password: body.password },
       metadataOf(request),
     );
     return this.establish(session, response);

@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { PayrollRunStatus } from '../../generated/prisma/enums';
 import type { DomainContext } from '../../common/context/domain-context';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService } from '../audit/audit.service';
+import { MetricsService } from '../../common/metrics/metrics.service';
 import { OutboxService } from '../federation/outbox.service';
 import { PayrollCalendarService } from './payroll-calendar.service';
 import { PayrollCalculationService } from './payroll-calculation.service';
@@ -37,9 +39,15 @@ export class PayrollService {
   private readonly payslips: PayrollPayslipsService;
   private readonly runs: PayrollRunsService;
 
-  constructor(database: TenantDatabaseService, audit: AuditService, outbox: OutboxService) {
+  constructor(
+    database: TenantDatabaseService,
+    audit: AuditService,
+    outbox: OutboxService,
+    metrics: MetricsService,
+    config: ConfigService,
+  ) {
     this.calendar = new PayrollCalendarService(database, audit);
-    this.calculation = new PayrollCalculationService(database, audit, outbox);
+    this.calculation = new PayrollCalculationService(database, audit, outbox, metrics, config);
     this.components = new PayrollComponentsService(database, audit);
     this.payslips = new PayrollPayslipsService(database);
     this.runs = new PayrollRunsService(database, audit);

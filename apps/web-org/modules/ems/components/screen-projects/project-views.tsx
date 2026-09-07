@@ -61,7 +61,7 @@ export function ProjectTable({
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full min-w-[720px] text-left text-xs">
-        <thead className="border-b border-border bg-muted/40">
+        <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Project</th>
             <th className="px-4 py-2.5 font-bold">Code</th>

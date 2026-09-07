@@ -18,6 +18,7 @@ import { formatFileSize, type FilePurpose } from '@smarteam/contracts';
 import { FolderOpen } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
 import { useFiles } from '../../hooks/use-files';
+import { PageShell } from '../layout/page-shell';
 
 /**
  * Files.
@@ -62,7 +63,7 @@ export function ScreenFiles() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+    <PageShell>
       <ScreenHeader
         description="Upload a document to secure storage, then download or remove it."
         icon={FolderOpen}
@@ -71,7 +72,10 @@ export function ScreenFiles() {
       />
 
       {!files.canWrite && !files.canRead && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="status"
+        >
           <p className="text-sm font-bold text-foreground">Not available</p>
           <p className="mt-1 text-xs text-muted-foreground">
             You do not have permission to work with files.
@@ -166,7 +170,7 @@ export function ScreenFiles() {
         {files.files.length > 0 && (
           <div className="overflow-x-auto rounded-xl border border-border bg-card">
             <table className="w-full min-w-[720px] text-left text-xs">
-              <thead className="border-b border-border bg-muted/40">
+              <thead className="border-b border-border bg-table-header">
                 <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   <th className="px-4 py-2.5 font-bold">File</th>
                   <th className="px-4 py-2.5 font-bold">Purpose</th>
@@ -260,6 +264,7 @@ export function ScreenFiles() {
                 disabled={files.busy || reason.trim().length < 3}
                 onClick={() => void confirmDelete()}
                 type="button"
+                variant="destructive"
               >
                 {files.busy ? 'Deleting...' : 'Delete'}
               </Button>
@@ -267,6 +272,6 @@ export function ScreenFiles() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </PageShell>
   );
 }

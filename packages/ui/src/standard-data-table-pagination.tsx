@@ -24,19 +24,19 @@ export function StandardDataTablePagination({
 }: StandardDataTablePaginationProps) {
   const firstItem = totalItems > 0 ? (currentPage - 1) * pageSize + 1 : 0;
   const lastItem = Math.min(currentPage * pageSize, totalItems);
-  const buttonClassName = 'h-8 w-8 border border-slate-200 shadow-2xs dark:border-border';
+  const buttonClassName = 'h-8 w-8 border border-border shadow-2xs';
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200/90 bg-slate-50/70 p-3 text-xs font-medium text-slate-600 dark:border-border dark:bg-card dark:text-slate-300 sm:px-4">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-muted/40 p-3 text-xs font-medium text-muted-foreground sm:px-4">
       <div className="flex flex-wrap items-center gap-3">
         <div>
-          Showing <span className="font-bold text-slate-900 dark:text-white">{firstItem}</span> to{' '}
-          <span className="font-bold text-slate-900 dark:text-white">{lastItem}</span> of{' '}
-          <span className="font-bold text-slate-900 dark:text-white">{totalItems}</span> entries
+          Showing <span className="font-bold text-foreground">{firstItem}</span> to{' '}
+          <span className="font-bold text-foreground">{lastItem}</span> of{' '}
+          <span className="font-bold text-foreground">{totalItems}</span> entries
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-slate-400 dark:text-slate-600">|</span>
-          <span className="text-slate-500 dark:text-slate-400">Rows:</span>
+          <span className="text-muted-foreground/60">|</span>
+          <span className="text-muted-foreground">Rows:</span>
           <div className="w-20">
             <Select
               value={String(pageSize)}
@@ -96,9 +96,9 @@ export function StandardDataTablePagination({
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </Button>
-        <span className="px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
-          Page <span className="font-bold text-slate-900 dark:text-white">{currentPage}</span> of{' '}
-          <span className="font-bold text-slate-900 dark:text-white">{totalPages}</span>
+        <span className="px-2.5 py-1 text-xs font-semibold text-table-header-foreground">
+          Page <span className="font-bold text-foreground">{currentPage}</span> of{' '}
+          <span className="font-bold text-foreground">{totalPages}</span>
         </span>
         <Button
           type="button"

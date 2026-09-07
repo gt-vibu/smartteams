@@ -101,6 +101,85 @@ describe('holidaysRepository', () => {
     expect(JSON.parse(init.body)).toEqual({ reason: 'Declared a working day' });
   });
 
+  it('fetches holiday settings', async () => {
+    const spy = mockFetch(200, { optionalHolidayAllowance: 3 });
+    const res = await holidaysRepository.getSettings(ORG);
+
+    const [url] = spy.mock.calls[0] as [string];
+    expect(url).toContain(`/v1/organizations/${ORG}/holidays/settings`);
+    expect(res.optionalHolidayAllowance).toBe(3);
+  });
+
+  it('updates holiday allowance settings', async () => {
+    const spy = mockFetch(200, { optionalHolidayAllowance: 4 });
+    const res = await holidaysRepository.updateSettings(ORG, { optionalHolidayAllowance: 4 });
+
+    const [url, init] = spy.mock.calls[0] as [string, { body: string; method: string }];
+    expect(url).toContain(`/v1/organizations/${ORG}/holidays/settings`);
+    expect(init.method).toBe('PATCH');
+    expect(JSON.parse(init.body)).toEqual({ optionalHolidayAllowance: 4 });
+    expect(res.optionalHolidayAllowance).toBe(4);
+  });
+
+  it('fetches employee holiday summary', async () => {
+    const spy = mockFetch(200, {
+      year: 2026,
+      allowance: 3,
+      usedCount: 1,
+      remainingCount: 2,
+      mandatory: [holiday()],
+      optionalPool: [holiday({ id: '33333333-3333-4333-8333-333333333333', isOptional: true })],
+      selectedHolidayIds: [],
+      selections: [],
+    });
+    const summary = await holidaysRepository.getMySummary(ORG, '2026');
+
+    const [url] = spy.mock.calls[0] as [string];
+    expect(url).toContain(`/v1/organizations/${ORG}/holidays/my-summary?year=2026`);
+    expect(summary.allowance).toBe(3);
+    expect(summary.remainingCount).toBe(2);
+  });
+
+  it('posts holiday selection', async () => {
+    const spy = mockFetch(200, [
+      {
+        id: '44444444-4444-4444-8444-444444444444',
+        organizationId: ORG,
+        employeeId: '55555555-5555-4555-8555-555555555555',
+        holidayId: HOLIDAY,
+        year: 2026,
+        status: 'CONFIRMED',
+        selectedAt: '2026-09-07T00:00:00.000Z',
+        cancelledAt: null,
+      },
+    ]);
+    const selections = await holidaysRepository.selectHolidays(ORG, [HOLIDAY]);
+
+    const [url, init] = spy.mock.calls[0] as [string, { body: string; method: string }];
+    expect(url).toContain(`/v1/organizations/${ORG}/holidays/select`);
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body)).toEqual({ holidayIds: [HOLIDAY] });
+    expect(selections).toHaveLength(1);
+  });
+
+  it('posts holiday cancellation', async () => {
+    const spy = mockFetch(200, { success: true });
+    await holidaysRepository.cancelSelection(ORG, HOLIDAY);
+
+    const [url, init] = spy.mock.calls[0] as [string, { body: string; method: string }];
+    expect(url).toContain(`/v1/organizations/${ORG}/holidays/cancel`);
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(init.body)).toEqual({ holidayId: HOLIDAY });
+  });
+
+  it('lists admin holiday selections with query params', async () => {
+    const spy = mockFetch(200, []);
+    await holidaysRepository.listSelections(ORG, { year: '2026' });
+
+    const [url] = spy.mock.calls[0] as [string];
+    expect(url).toContain(`/v1/organizations/${ORG}/holidays/selections?year=2026`);
+  });
+
   it('propagates a duplicate-date conflict from the API', async () => {
     mockFetch(409, { detail: 'A holiday already exists on that date for this scope' });
     await expect(

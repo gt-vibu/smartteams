@@ -129,11 +129,34 @@ model Holiday {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   branch       Branch?      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  selections   EmployeeHolidaySelection[]
 
   @@unique([organizationId, branchId, holidayDate])
   @@unique([organizationId, externalId])
   @@index([organizationId, holidayDate, isActive])
   @@map("holidays")
+}
+
+model EmployeeHolidaySelection {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @map("organization_id") @db.Uuid
+  employeeId     String          @map("employee_id") @db.Uuid
+  holidayId      String          @map("holiday_id") @db.Uuid
+  year           Int             @db.SmallInt
+  status         SelectionStatus @default(CONFIRMED)
+  selectedAt     DateTime        @default(now()) @map("selected_at") @db.Timestamptz(6)
+  cancelledAt    DateTime?       @map("cancelled_at") @db.Timestamptz(6)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  holiday      Holiday      @relation(fields: [holidayId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, holidayId])
+  @@index([organizationId, employeeId, year])
+  @@index([organizationId, holidayId, status])
+  @@map("employee_holiday_selections")
 }
 
 model LeaveType {

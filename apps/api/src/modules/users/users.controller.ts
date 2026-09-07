@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
@@ -61,5 +61,14 @@ export class UsersController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.rbac.assign(context, body));
+  }
+  @Delete('role-assignments/:userRoleId') revoke(
+    @Param('organizationId') organizationId: string,
+    @Param('userRoleId') userRoleId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.rbac.revoke(context, userRoleId));
   }
 }

@@ -15,7 +15,7 @@ export function HeroBanner({ activeTab, onSelectTab }: HeroBannerProps) {
   return (
     <div className="relative w-full">
       {/* Sticky space sub-navigation */}
-      <div className="sticky top-0 z-30 flex h-10 items-center justify-between border-b border-border bg-card/95 px-4 shadow-xs backdrop-blur-md sm:px-6">
+      <div className="sticky top-[var(--ems-context-bar-height)] z-30 flex h-10 items-center justify-between border-b border-border bg-card/95 px-4 shadow-xs backdrop-blur-md sm:px-6">
         {/*
           Underline tabs, not filled buttons. These previously rendered with the Button
           component's `default` variant (solid `bg-slate-900`), which fought the underline

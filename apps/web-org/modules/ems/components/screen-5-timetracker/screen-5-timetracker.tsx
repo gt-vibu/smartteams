@@ -5,6 +5,7 @@ import { Badge, Button, SegmentedTabs } from '@smarteam/ui';
 import { formatWorkMinutes, isEditable } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import { LogTimeModal } from '../screen-6-logtime/logtime-modal';
+import { PageShell } from '../layout/page-shell';
 
 /**
  * The employee's own time log.
@@ -33,7 +34,7 @@ export function Screen5TimeTracker() {
   }));
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+    <PageShell>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border">
         {tabs.length > 0 && (
           <SegmentedTabs
@@ -75,7 +76,10 @@ export function Screen5TimeTracker() {
       )}
 
       {!timesheet.loading && timesheet.forbidden && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="status"
+        >
           <p className="text-sm font-semibold text-foreground">Not available</p>
           <p className="mt-1 text-xs text-muted-foreground">
             You do not have permission to view timesheets.
@@ -84,7 +88,10 @@ export function Screen5TimeTracker() {
       )}
 
       {!timesheet.loading && timesheet.error && !timesheet.forbidden && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="alert"
+        >
           <p className="text-sm font-semibold text-foreground">Could not load timesheets</p>
           <p className="mt-1 text-xs text-muted-foreground">{timesheet.error}</p>
           <Button
@@ -134,7 +141,7 @@ export function Screen5TimeTracker() {
           )}
 
           {groups.length === 0 ? (
-            <div className="rounded-lg border border-border bg-card p-10 text-center">
+            <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
               <p className="text-sm font-semibold text-foreground">
                 {timesheet.timesheets.length === 0 ? 'No timesheets' : 'No entries logged'}
               </p>
@@ -188,6 +195,6 @@ export function Screen5TimeTracker() {
           saving={timesheet.saving}
         />
       )}
-    </div>
+    </PageShell>
   );
 }

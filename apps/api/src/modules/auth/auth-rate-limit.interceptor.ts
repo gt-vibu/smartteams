@@ -37,6 +37,12 @@ export class AuthRateLimitInterceptor implements NestInterceptor {
     const account = accountOf(request);
     if (account) keys.push(`auth:rate:account:${account}:${window}`);
 
+    // Access codes are guessable in a way an email is not — they are the secret itself — so they
+    // get their own counter. Without it, the per-address limit would let a botnet spread guesses
+    // against a single code across many hosts and stay under every cap.
+    const code = accessCodeOf(request);
+    if (code) keys.push(`auth:rate:code:${code}:${window}`);
+
     try {
       for (const key of keys) {
         const count = await this.redis.client.incr(key);
@@ -49,6 +55,25 @@ export class AuthRateLimitInterceptor implements NestInterceptor {
     }
     return next.handle();
   }
+}
+
+/**
+ * Digest of the access code in the request body, when one is present.
+ *
+ * Normalized the same way the activation service normalizes before hashing, so `a1b2-c3d4` and
+ * `A1B2C3D4` share a counter — otherwise an attacker would get a fresh budget per spelling.
+ */
+function accessCodeOf(request: Request): string | undefined {
+  const body: unknown = request.body;
+  if (typeof body !== 'object' || body === null) return undefined;
+  const code = (body as { code?: unknown }).code;
+  if (typeof code !== 'string' || code.length === 0) return undefined;
+  const normalized = code
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '');
+  if (normalized.length === 0) return undefined;
+  return createHash('sha256').update(normalized).digest('hex').slice(0, 32);
 }
 
 /** Digest of the normalized email in the request body, when one is present. */

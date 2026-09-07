@@ -13,6 +13,7 @@ import {
 } from './payroll-policy.types';
 import { findPolicy, requireEmployee } from './payroll-policy-access';
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
+import { markPayrollStale } from './payroll-staleness';
 
 /**
  * The payroll policy itself: the organization-wide rules and the per-employee overrides.
@@ -126,6 +127,10 @@ export class PayrollPolicySettingsService {
           });
         }
       }
+      // `payrollDayBasis`, the base and HRA percentages and the rounding mode all feed
+      // `computePayrollLine`, so a calculated run inside this policy's effective window is no
+      // longer derived from the policy it claims. Scoped to that window rather than to all time.
+      await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo ?? undefined);
       await this.audit.record(
         context,
         {
@@ -183,6 +188,9 @@ export class PayrollPolicySettingsService {
               ...toEmployeePolicyData(input, effectiveTo),
             },
           });
+      // `payrollEnabled` decides whether this employee is paid at all, and the PF/ESI/PT
+      // toggles and jurisdiction decide which statutory deductions apply to them.
+      await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo ?? undefined);
       await this.audit.record(
         context,
         {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EmsLayout } from './components/layout/ems-layout';
 import { Screen1Overview } from './components/screen-1-overview/screen-1-overview';
 import { Screen2Timeline } from './components/screen-2-attendance/screen-2-timeline';
@@ -21,6 +21,7 @@ import { ScreenTimesheetsAdmin } from './components/screen-timesheet/screen-time
 import { ScreenPayrollAdmin } from './components/screen-payroll/screen-payroll-admin';
 import { ScreenShifts } from './components/screen-shifts/screen-shifts';
 import { ScreenHolidays } from './components/screen-holidays/screen-holidays';
+import { ActivateAccountScreen } from './components/auth/activate-account-screen';
 import { LoginScreen } from './components/auth/login-screen';
 import { useEmsNavigation } from './hooks/use-ems-navigation';
 import { AuthProvider, useSession } from './hooks/auth-context';
@@ -37,6 +38,10 @@ export function EmsWorkspace() {
 }
 
 function EmsWorkspaceInner() {
+  // Declared before every early return below, so the hook order does not depend on whether the
+  // session has been restored yet.
+  const [showActivation, setShowActivation] = useState(false);
+
   // The shell is the one place the unauthenticated case is expected, so it reads the session
   // directly rather than through `useAuth`, which asserts a signed-in persona.
   const {
@@ -76,7 +81,13 @@ function EmsWorkspaceInner() {
   if (isRestoring) return <WorkspaceLoading />;
 
   if (!isAuthenticated) {
-    return <LoginScreen onLogin={login} />;
+    // A new employee arrives holding an access code and no account, so activation has to be
+    // reachable from the sign-in screen rather than sitting behind a link only staff know about.
+    return showActivation ? (
+      <ActivateAccountScreen onSignIn={() => setShowActivation(false)} />
+    ) : (
+      <LoginScreen onActivate={() => setShowActivation(true)} onLogin={login} />
+    );
   }
 
   // Safety fallback if active space is not permitted in current context

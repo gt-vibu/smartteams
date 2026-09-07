@@ -30,3 +30,6 @@ apps/*/public/uploads/
 .idea/
 .vscode/settings.json
 !.vscode/extensions.json
+
+# Local database backup artifacts. Production backups never live in the repository.
+backups/

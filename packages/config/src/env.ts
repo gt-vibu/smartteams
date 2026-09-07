@@ -22,11 +22,49 @@ export const serverEnvSchema = z
     // that is allowed to bypass RLS.
     DATABASE_SYSTEM_URL: z.string().min(1).optional().or(z.literal('')),
     DATABASE_PLATFORM_URL: z.string().min(1).optional().or(z.literal('')),
+    /*
+     * Connection pooling.
+     *
+     * Three pools are opened per process — runtime, system and platform — so a deployment's total
+     * demand on PostgreSQL is `3 x DATABASE_POOL_MAX x instances`, and that has to stay under the
+     * server's `max_connections` with headroom for migrations, psql sessions and backups. The
+     * default of 10 mirrors node-postgres' own, which is a reasonable single-instance figure;
+     * anything running more than a couple of instances should lower it or put PgBouncer in front.
+     * See docs/operations/database-pooling.md.
+     */
+    DATABASE_POOL_MAX: positiveInt.default(10),
+    DATABASE_POOL_IDLE_TIMEOUT_MS: positiveInt.default(10_000),
+    DATABASE_POOL_CONNECTION_TIMEOUT_MS: positiveInt.default(5_000),
+    /*
+     * Server-side ceiling on any single statement. Without it one pathological query holds a
+     * connection until the client gives up, and under load that is how a pool is exhausted.
+     */
+    DATABASE_STATEMENT_TIMEOUT_MS: positiveInt.default(30_000),
+    /*
+     * Payroll calculates a whole tenant in one transaction, so it cannot live inside Prisma's
+     * 5s interactive default. The work inside that transaction is set-based rather than
+     * per-employee; this bounds the remainder rather than excusing it.
+     */
+    PAYROLL_TRANSACTION_TIMEOUT_MS: positiveInt.default(120_000),
+    PAYROLL_TRANSACTION_MAX_WAIT_MS: positiveInt.default(10_000),
     REDIS_URL: z.string().url().default('redis://localhost:6379'),
     REDIS_TLS: booleanFromEnv.default(false),
     REDIS_KEY_PREFIX: z.string().default('smarteam:'),
     AWS_REGION: z.string().min(1).default('ap-south-1'),
     AWS_S3_BUCKET: z.string().min(1),
+    /*
+     * S3-compatible endpoint override. Empty for AWS, which is development and production both.
+     *
+     * These are not a provider abstraction and there is no branch on them anywhere in the
+     * application: the SDK resolves AWS's own endpoint when the value is blank, and path-style
+     * addressing is off by default. They survive for exactly one caller — the CI workflow, which
+     * runs the storage suite against a MinIO container so that 45 real storage checks stay gated
+     * without long-lived AWS keys living in GitHub.
+     *
+     * Deleting them would mean either dropping that coverage or putting AWS credentials into CI,
+     * and neither trade is worth the two lines. Nothing outside .github/workflows/ci.yml sets
+     * them.
+     */
     AWS_S3_ENDPOINT: z.string().url().optional().or(z.literal('')),
     AWS_S3_FORCE_PATH_STYLE: booleanFromEnv.default(false),
     AWS_ACCESS_KEY_ID: z.string().optional().or(z.literal('')),

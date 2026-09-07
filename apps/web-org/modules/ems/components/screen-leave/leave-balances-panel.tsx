@@ -76,7 +76,7 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
       />
 
       {rows.length === 0 ? (
-        <div className="rounded-lg border border-border bg-card p-10 text-center">
+        <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
           <p className="text-sm font-semibold text-foreground">No balances</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Balances are provisioned once a leave type is assigned to a branch.
@@ -85,7 +85,7 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
       ) : (
         <div className="overflow-x-auto rounded-xl border border-border bg-card">
           <table className="w-full min-w-[820px] text-left text-xs">
-            <thead className="border-b border-border bg-muted/40">
+            <thead className="border-b border-border bg-table-header">
               <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-2.5 font-semibold">Employee</th>
                 <th className="px-4 py-2.5 font-semibold">Type</th>

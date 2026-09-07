@@ -8,13 +8,14 @@ import { AttendanceSummaryFooter } from './attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
 import { toTimelineStatus } from '../../services/attendance-view';
 import { formatDateRangeFromValues } from '../../utils/formatters';
+import { PageShell } from '../layout/page-shell';
 
 interface Screen2TimelineProps {
   onToggleView?: (view: 'timeline' | 'table' | 'calendar') => void;
 }
 
 export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
-  const { days: records } = useAttendance();
+  const { days: records, isCheckedIn, timerDisplay } = useAttendance();
 
   const timelineDays = records.map((r) => ({
     id: r.id,
@@ -25,6 +26,12 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     firstInTime: r.firstInTime || undefined,
     lastOutTime: r.lastOutTime || undefined,
     workedMinutes: r.workedMinutes,
+    // The open day's total is what has been recorded plus what is still being worked; anything
+    // else leaves the row reading 00:00 next to a running timer on the same screen.
+    inProgressMinutes:
+      r.isToday && isCheckedIn
+        ? r.workedMinutes + Math.floor(timerDisplay.totalSeconds / 60)
+        : undefined,
     status: toTimelineStatus(r.dayStatus),
     // Holiday naming is not wired; the bar is drawn from the punches alone.
     holidayName: r.holidayName ?? undefined,
@@ -46,7 +53,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
   return (
     <div className="w-full flex flex-col">
       {/* 1. Header Toolbar — sticky within scroll container */}
-      <div className="sticky top-0 z-20 px-4 sm:px-6 bg-muted">
+      <div className="sticky top-[var(--ems-context-bar-height)] z-20 px-4 sm:px-6 bg-muted">
         <AttendanceToolbar
           title="Attendance Summary"
           dateRange={dateRange || 'Current period'}
@@ -56,7 +63,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
       </div>
 
       {/* 2. Scrollable content below toolbar */}
-      <div className="w-full max-w-[1380px] mx-auto px-4 sm:px-6 pb-6 space-y-3.5 pt-3.5">
+      <PageShell gap="tight">
         {/* Shift Info & Check-in / Check-out Action Bar */}
         <AttendanceActionBar />
 
@@ -65,7 +72,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
 
         {/* Bottom Summary Metric Strip */}
         <AttendanceSummaryFooter stats={stats} />
-      </div>
+      </PageShell>
     </div>
   );
 }

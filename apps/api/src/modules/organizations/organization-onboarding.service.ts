@@ -5,11 +5,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { PasswordService } from '../auth/auth.passwords';
 import type { AuditContext } from '../audit/audit.service';
-import {
-  EMPLOYEE_SELF_SERVICE_PERMISSIONS,
-  HR_ADMIN_PERMISSIONS,
-  MANAGER_PERMISSIONS,
-} from './organization-roles';
+import { seedLeaveDefaults, seedStandardRoles } from './organization-roles';
 import { branchDto, toDto } from './organization-shared';
 
 /**
@@ -222,59 +218,13 @@ export class OrganizationOnboardingService {
         },
       });
 
-      // 7b. Seed a least-privilege EMPLOYEE role.
-      //
-      // ORG_ADMIN above holds the wildcard, which is right for the tenant's bootstrap
-      // administrator and wrong for everyone else. Without a second role there was nothing to
-      // assign a normal joiner, so the only way to make the product work for them was to hand out
-      // administrator access. Every key below is one the services self-scope — none is a `.all` —
-      // so this role reaches the holder's own attendance, leave, timesheets, payslips and files,
-      // and nobody else's.
-      //
-      // `employees.read` was the exception when this role was first written, and the reason the
-      // whole staff directory briefly became readable by every employee: the employee services
-      // read that key as "read everyone" while the rest of the product read it as "read your
-      // own". They agree now — see `employee-access.ts`. A key belongs in this list only once
-      // its service enforces that split.
-      const employeeRole = await tx.role.create({
-        data: {
-          organizationId: organization.id,
-          code: 'EMPLOYEE',
-          name: 'Employee',
-          description: 'Self-service access to your own records',
-          scope: 'ORGANIZATION',
-          isSystem: true,
-        },
-      });
-      const grant = async (roleId: string, keys: readonly string[]) => {
-        for (const key of keys) {
-          const permission = await tx.permission.upsert({
-            where: { key },
-            create: { key, description: key },
-            update: {},
-          });
-          await tx.rolePermission.create({ data: { roleId, permissionId: permission.id } });
-        }
-      };
-      await grant(employeeRole.id, EMPLOYEE_SELF_SERVICE_PERMISSIONS);
-
-      // 7c. Manager and HR Admin, the two roles FR-11 requires that had never been seeded.
-      for (const [code, name, description, keys] of [
-        ['MANAGER', 'Manager', 'Approves what their reports submit', MANAGER_PERMISSIONS],
-        ['HR_ADMIN', 'HR Admin', 'People operations across the organization', HR_ADMIN_PERMISSIONS],
-      ] as const) {
-        const role = await tx.role.create({
-          data: {
-            organizationId: organization.id,
-            code,
-            name,
-            description,
-            scope: 'ORGANIZATION',
-            isSystem: true,
-          },
-        });
-        await grant(role.id, keys);
-      }
+      // 7b. The three non-administrator roles, shared with self-service registration so a
+      // tenant created either way ends up with the same set. ORG_ADMIN above holds the wildcard,
+      // which is right for the bootstrap administrator and wrong for everyone else.
+      await seedStandardRoles(tx, organization.id);
+      // Leave types, their branch assignments and a default approval policy — without these a
+      // new tenant's Leave screen is a dead end no matter which path created the tenant.
+      await seedLeaveDefaults(tx, organization.id, branch.id, role.id);
 
       // 8. Record audit log
       await this.audit.record(

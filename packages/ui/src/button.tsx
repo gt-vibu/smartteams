@@ -6,22 +6,21 @@ const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 cursor-pointer',
   {
     variants: {
+      // Every variant reads from the token layer. These were hardcoded slate, which meant the
+      // primary action on every screen in both apps was near-black regardless of the brand —
+      // and stayed near-black when the brand changed.
       variant: {
-        default:
-          'bg-slate-900 text-white hover:bg-slate-800 shadow-xs dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white',
-        primary:
-          'bg-slate-900 text-white hover:bg-slate-800 shadow-xs dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
+        primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs',
-        outline:
-          'border border-slate-200 dark:border-slate-800 bg-white dark:bg-card text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 hover:text-slate-900 dark:hover:text-white shadow-2xs',
-        secondary:
-          'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700',
-        ghost:
-          'bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100',
-        link: 'bg-transparent text-slate-900 dark:text-slate-100 underline-offset-4 hover:underline hover:text-slate-700 dark:hover:text-slate-300 p-0 h-auto',
-        success: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs',
-        quiet:
-          'bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300',
+        outline: 'border border-border bg-card text-foreground hover:bg-muted/60 shadow-2xs',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'bg-transparent text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+        link: 'bg-transparent text-primary underline-offset-4 hover:underline p-0 h-auto',
+        // Distinct from `primary` on purpose: with a green brand, a success button that simply
+        // reused the brand colour would say nothing the default button does not already say.
+        success: 'bg-success text-white hover:bg-success/90 shadow-xs',
+        quiet: 'bg-transparent text-foreground hover:bg-muted/60',
       },
       size: {
         default: 'h-8 px-3 py-1.5',

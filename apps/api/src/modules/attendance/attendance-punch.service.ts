@@ -12,6 +12,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 import {
   attendanceTotals,
   canReadAllEmployees,
@@ -192,6 +193,9 @@ export class AttendancePunchService {
           version: { increment: 1 },
         },
       });
+      // Worked and overtime minutes are payroll inputs, so a run already calculated over this
+      // date is no longer derived from the attendance it claims to be.
+      await markPayrollStale(tx, context.organizationId, record.workDate, record.workDate);
       const reviewReasons = [
         mode === GeofenceMode.REQUIRED && geofence.isWithin !== true
           ? 'Punch requires geofence review'

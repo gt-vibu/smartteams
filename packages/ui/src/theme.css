@@ -1,10 +1,21 @@
 /* Shared Smarteam brand tokens. App shells may extend the semantic surface tokens. */
+
+/*
+ * The brand is a deep, restrained green — the colour of a primary action, not of a status.
+ * `--success` is defined separately in each app shell and is deliberately lighter and more
+ * saturated, so "this worked" never reads as "this is a button".
+ *
+ * This file is the one definition of the brand, and both app shells import it. Changing the two
+ * values below recolours every surface that goes through the token layer in both.
+ */
 :root {
-  --smarteam-primary: #0284c7;
+  --smarteam-primary: oklch(0.4085 0.0995 158);
   --smarteam-primary-foreground: #ffffff;
 }
 
 .dark {
-  --smarteam-primary: #38bdf8;
-  --smarteam-primary-foreground: #0f172a;
+  /* Lifted and desaturated for a dark ground: the light-mode green does not carry enough
+     luminance contrast against a dark surface to be legible as an action. */
+  --smarteam-primary: oklch(0.72 0.13 155);
+  --smarteam-primary-foreground: oklch(0.18 0.04 158);
 }

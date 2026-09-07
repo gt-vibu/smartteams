@@ -9,6 +9,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { PasswordService } from '../auth/auth.passwords';
+import { RbacService } from '../rbac/rbac.service';
 
 /**
  * Organization membership.
@@ -30,23 +31,64 @@ export class MembersService {
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
     private readonly passwords: PasswordService,
+    private readonly rbac: RbacService,
   ) {}
 
+  /**
+   * Members with the roles currently assigned to them.
+   *
+   * A People view cannot say "Employee · Payroll Admin" from just this list — it needs the role
+   * every member actually holds, which used to mean a second round trip per row. `UserRole` is
+   * fetched once for the whole page and grouped in memory instead, so the response stays a single
+   * query regardless of how many members are on it.
+   */
   async list(context: DomainContext) {
     requirePermission(context, 'members.read');
     return this.database.run(context, async (tx) => {
-      const memberships = await tx.userOrganization.findMany({
-        where: { organizationId: context.organizationId, status: 'ACTIVE' },
-        include: { user: { select: { id: true, email: true, displayName: true, isActive: true } } },
-        orderBy: { joinedAt: 'asc' },
-        take: 200,
-      });
+      const now = new Date();
+      const [memberships, assignments] = await Promise.all([
+        tx.userOrganization.findMany({
+          where: { organizationId: context.organizationId, status: 'ACTIVE' },
+          include: {
+            user: { select: { id: true, email: true, displayName: true, isActive: true } },
+          },
+          orderBy: { joinedAt: 'asc' },
+          take: 200,
+        }),
+        tx.userRole.findMany({
+          where: {
+            organizationId: context.organizationId,
+            startsAt: { lte: now },
+            OR: [{ endsAt: null }, { endsAt: { gt: now } }],
+          },
+          select: {
+            id: true,
+            userId: true,
+            branchId: true,
+            role: { select: { id: true, code: true, name: true, scope: true } },
+          },
+        }),
+      ]);
+      const rolesByUser = new Map<string, typeof assignments>();
+      for (const assignment of assignments) {
+        const list = rolesByUser.get(assignment.userId) ?? [];
+        list.push(assignment);
+        rolesByUser.set(assignment.userId, list);
+      }
       return memberships.map((membership) => ({
         userId: membership.user.id,
         email: membership.user.email,
         displayName: membership.user.displayName,
         isActive: membership.user.isActive,
         joinedAt: membership.joinedAt,
+        roles: (rolesByUser.get(membership.user.id) ?? []).map((assignment) => ({
+          userRoleId: assignment.id,
+          id: assignment.role.id,
+          code: assignment.role.code,
+          name: assignment.role.name,
+          scope: assignment.role.scope,
+          branchId: assignment.branchId,
+        })),
       }));
     });
   }
@@ -74,9 +116,17 @@ export class MembersService {
     return this.database.run(context, async (tx) => {
       const roles = await tx.role.findMany({
         where: { id: { in: input.roleIds }, organizationId: context.organizationId },
+        include: { permissions: { include: { permission: true } } },
       });
       if (roles.length !== input.roleIds.length) throw new NotFoundError('Role');
       if (roles.length === 0) throw new ConflictError('A member needs at least one role');
+      // Adding a member with roles is a grant, same as `RbacAdminService.assign` — a caller with
+      // only `members.write` (HR_ADMIN, not the wildcard) must not be able to onboard a puppet
+      // account carrying ORG_ADMIN by naming its role id in this call instead of that one.
+      this.rbac.assertGrantable(
+        context,
+        roles.flatMap((role) => role.permissions.map((entry) => entry.permission.key)),
+      );
 
       const existing = await tx.user.findUnique({ where: { emailNormalized } });
       if (existing) {

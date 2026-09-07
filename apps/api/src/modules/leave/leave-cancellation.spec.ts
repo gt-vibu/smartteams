@@ -52,6 +52,18 @@ function setup(status: 'PENDING' | 'APPROVED') {
       update: jest.fn().mockResolvedValue({}),
     },
     leaveBalanceTransaction: { create: jest.fn().mockResolvedValue({}) },
+    // Cancelling an approved request also invalidates any calculated payroll run covering those
+    // dates. `count: 0` means "no calculated run over this period", the ordinary case here.
+    payrollRun: { updateMany: jest.fn().mockResolvedValue({ count: 0 }) },
+    // Cancelling an approved request now takes the days back off the attendance calendar.
+    // `null` here means "no attendance row for that date", which is the ordinary case and keeps
+    // these tests about the balance ledger rather than about attendance.
+    attendanceRecord: {
+      findUnique: jest.fn().mockResolvedValue(null),
+      create: jest.fn().mockResolvedValue({}),
+      update: jest.fn().mockResolvedValue({}),
+      delete: jest.fn().mockResolvedValue({}),
+    },
   };
   const database = {
     run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),

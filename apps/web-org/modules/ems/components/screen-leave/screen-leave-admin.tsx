@@ -10,6 +10,7 @@ import { useTeamDirectory } from '../../hooks/use-team-directory';
 import { LeaveRequestQueue } from './leave-request-queue';
 import { LeavePolicyPanel } from './leave-policy-panel';
 import { LeaveBalancesPanel } from './leave-balances-panel';
+import { PageShell } from '../layout/page-shell';
 
 type Tab = 'requests' | 'balances' | 'types';
 
@@ -56,7 +57,7 @@ export function ScreenLeaveAdmin() {
       : admin.requests.filter((request) => request.status === status);
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+    <PageShell>
       <ScreenHeader
         description="Requests, balances and the leave types they draw from."
         icon={CalendarDays}
@@ -86,7 +87,10 @@ export function ScreenLeaveAdmin() {
       )}
 
       {!admin.loading && admin.forbidden && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="status"
+        >
           <p className="text-sm font-semibold text-foreground">Not available</p>
           <p className="mt-1 text-xs text-muted-foreground">
             You do not have permission to view leave.
@@ -95,7 +99,10 @@ export function ScreenLeaveAdmin() {
       )}
 
       {!admin.loading && admin.error && !admin.forbidden && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="alert"
+        >
           <p className="text-sm font-semibold text-foreground">Could not load leave</p>
           <p className="mt-1 text-xs text-muted-foreground">{admin.error}</p>
           <Button
@@ -129,6 +136,6 @@ export function ScreenLeaveAdmin() {
           {tab === 'types' && <LeavePolicyPanel admin={admin} branches={directory.branches} />}
         </>
       )}
-    </div>
+    </PageShell>
   );
 }

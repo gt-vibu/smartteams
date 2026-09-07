@@ -47,6 +47,12 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
 
           {days.map((day) => {
             const durationStr = formatMinutesToDuration(day.workedMinutes);
+            const inProgress = day.inProgressMinutes !== undefined;
+            // `formatMinutesToDuration` returns '' below a minute, which would read as nothing at
+            // all in the first sixty seconds after a check-in.
+            const inProgressStr = inProgress
+              ? formatMinutesToDuration(day.inProgressMinutes ?? 0) || '00h 00m'
+              : '';
             const isSameTime =
               day.firstInTime && day.lastOutTime && day.firstInTime === day.lastOutTime;
 
@@ -137,9 +143,22 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
 
                 {/* Right Total Worked Hours Column */}
                 <div className="col-span-2 text-right">
-                  <div className="text-xs font-mono font-bold text-foreground">
-                    {durationStr ? `${durationStr} worked` : '00:00 Hrs worked'}
+                  <div
+                    className={`text-xs font-mono font-bold ${
+                      inProgress ? 'text-primary' : 'text-foreground'
+                    }`}
+                  >
+                    {inProgress
+                      ? `${inProgressStr} so far`
+                      : durationStr
+                        ? `${durationStr} worked`
+                        : '00:00 Hrs worked'}
                   </div>
+                  {inProgress && (
+                    <div className="text-[10px] font-medium text-muted-foreground mt-0.5">
+                      Still checked in
+                    </div>
+                  )}
                 </div>
               </div>
             );

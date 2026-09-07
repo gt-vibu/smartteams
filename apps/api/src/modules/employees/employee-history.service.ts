@@ -5,6 +5,7 @@ import { requirePermission, type DomainContext } from '../../common/context/doma
 import { ConflictError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 import { dateOnly } from './employee-mappers';
 import { assertMayReadEmployee } from './employee-access';
 
@@ -255,6 +256,12 @@ export class EmployeeHistoryService {
           effectiveTo,
         },
       });
+      // `baseAmount` and `overtimeMultiplier` are read straight off this record by the payroll
+      // engine, so a run already calculated inside the new record's window was derived from pay
+      // that no longer applies. This is the second writer of compensation — the salary profile is
+      // the other — and both have to invalidate, or the choice of route decides whether payroll
+      // notices. Scoped to the record's own window rather than to all time.
+      await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo);
       await this.audit.record(
         context,
         {

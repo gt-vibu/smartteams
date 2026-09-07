@@ -303,6 +303,16 @@ export const ApprovalStatus = {
 export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
 
 
+export const SelectionStatus = {
+  CONFIRMED: 'CONFIRMED',
+  PENDING: 'PENDING',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SelectionStatus = (typeof SelectionStatus)[keyof typeof SelectionStatus]
+
+
 export const LeaveAccrualType = {
   NONE: 'NONE',
   FIXED_ANNUAL: 'FIXED_ANNUAL',

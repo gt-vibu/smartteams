@@ -1,4 +1,11 @@
 import { PayrollService } from './payroll.service';
+import { MetricsService } from '../../common/metrics/metrics.service';
+
+/** Config stub: every lookup falls through to the caller's own default. */
+const defaultConfig = {
+  get: (_: string, fallback?: unknown) => fallback,
+  getOrThrow: () => undefined,
+};
 import type { DomainContext } from '../../common/context/domain-context';
 import type { AccessMode } from '../../generated/prisma/enums';
 
@@ -25,6 +32,10 @@ function context(permissions: string[], overrides: Partial<DomainContext> = {}):
  */
 function setup(self: { id: string } | null = { id: EMPLOYEE_A }) {
   const tx = {
+    // The transition and calculation paths take a row lock before reading the state they judge,
+    // so concurrent callers serialise instead of both passing the guard. The mock only has to
+    // answer it.
+    $queryRaw: jest.fn().mockResolvedValue([]),
     employee: { findFirst: jest.fn().mockResolvedValue(self) },
     payslip: { findMany: jest.fn().mockResolvedValue([]) },
     payrollLineItem: { findMany: jest.fn().mockResolvedValue([]) },
@@ -33,7 +44,16 @@ function setup(self: { id: string } | null = { id: EMPLOYEE_A }) {
     run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),
   };
   const stub: unknown = { record: jest.fn(), append: jest.fn() };
-  return { tx, service: new PayrollService(database as never, stub as never, stub as never) };
+  return {
+    tx,
+    service: new PayrollService(
+      database as never,
+      stub as never,
+      stub as never,
+      new MetricsService(),
+      defaultConfig as never,
+    ),
+  };
 }
 
 type ListCall = [{ where: { employeeId?: string; organizationId: string } }];

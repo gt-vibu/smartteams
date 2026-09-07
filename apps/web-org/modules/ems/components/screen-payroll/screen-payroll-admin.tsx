@@ -10,6 +10,7 @@ import { PayrollRunsPanel } from './payroll-runs-panel';
 import { PayrollEmployeePayPanel } from './payroll-employee-pay-panel';
 import { ScreenPayrollLegalConfig } from './screen-payroll-legal-config';
 import { ScreenCompensation } from './screen-compensation';
+import { PageShell } from '../layout/page-shell';
 
 type Tab = 'RUNS' | 'COMPENSATION' | 'STATUTORY' | 'EMPLOYEE_PAY';
 
@@ -38,7 +39,7 @@ export function ScreenPayrollAdmin() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+    <PageShell>
       <ScreenHeader
         description="Runs, compensation, statutory configuration and employee pay."
         icon={Wallet}
@@ -68,6 +69,6 @@ export function ScreenPayrollAdmin() {
       {tab === 'EMPLOYEE_PAY' && <PayrollEmployeePayPanel admin={admin} />}
       {tab === 'STATUTORY' && <ScreenPayrollLegalConfig />}
       {tab === 'COMPENSATION' && <ScreenCompensation />}
-    </div>
+    </PageShell>
   );
 }

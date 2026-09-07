@@ -12,6 +12,8 @@ export type LoginAttempt =
 
 interface LoginScreenProps {
   onLogin: (email: string, password: string, organizationId?: string) => Promise<LoginAttempt>;
+  /** Sends a new employee to the access-code flow, where they have no credentials to type yet. */
+  onActivate: () => void;
 }
 
 /**
@@ -21,7 +23,7 @@ interface LoginScreenProps {
  * previously rendered committed fixture passwords as click-to-fill buttons has been removed:
  * it published working sign-ins for accounts holding the tenant wildcard.
  */
-export function LoginScreen({ onLogin }: LoginScreenProps) {
+export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -52,12 +54,12 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Ambient background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-sky-900/20 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-indigo-900/20 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-slate-900/40 blur-3xl" />
+        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-secondary/30 blur-3xl" />
         {/* Subtle grid */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -77,19 +79,21 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               <path d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Smarteam</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Smarteam</h1>
           <p className="text-sm text-muted-foreground mt-1">Employee Management System</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-[#111827] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-card border border-border rounded-2xl shadow-lg overflow-hidden">
           <div className="px-6 pt-6 pb-5">
-            <h2 className="text-base font-bold text-white mb-0.5">Sign in to your workspace</h2>
+            <h2 className="text-base font-bold text-foreground mb-0.5">
+              Sign in to your workspace
+            </h2>
             <p className="text-xs text-muted-foreground">Enter your work email and password</p>
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-slate-800 mx-6" />
+          <div className="h-px bg-border mx-6" />
 
           <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
             {/* Email */}
@@ -107,7 +111,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 }}
                 placeholder="you@smarteam.cloud"
                 required
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/60 focus:border-sky-500/60 transition-all"
+                className="w-full bg-input-surface border border-input rounded-lg px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/60 focus:border-ring/60 transition-all"
               />
             </div>
 
@@ -127,13 +131,18 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                   }}
                   placeholder="••••••••"
                   required
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/60 focus:border-sky-500/60 transition-all pr-10"
+                  className="w-full bg-input-surface border border-input rounded-lg px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/60 focus:border-ring/60 transition-all pr-10"
                 />
+                {/* An affordance inside the field, not an action of its own — so `ghost`, and
+                    sized to the icon rather than to a button. */}
                 <Button
-                  type="button"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 p-0 text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-slate-200 transition-colors"
+                  size="icon"
                   tabIndex={-1}
+                  type="button"
+                  variant="ghost"
                 >
                   {showPassword ? (
                     <svg
@@ -185,7 +194,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                     setError('');
                   }}
                   required
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/60"
+                  className="w-full bg-input-surface border border-input rounded-lg px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/60"
                 >
                   <option value="">Select an organization…</option>
                   {organizations.map((organization) => (
@@ -213,7 +222,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                     d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <p className="text-xs text-rose-300">{error}</p>
+                <p className="text-xs text-destructive">{error}</p>
               </div>
             )}
 
@@ -222,7 +231,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               type="submit"
               variant="default"
               disabled={isLoading || !email || !password}
-              className="w-full py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -251,7 +260,18 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[11px] text-muted-foreground mt-5">Smarteam EMS · v0.1.0</p>
+        <div className="mt-5 text-center">
+          <p className="text-[11px] text-muted-foreground">Don&apos;t have an account yet?</p>
+          <Button
+            className="mt-0.5 text-xs font-semibold text-primary hover:opacity-80"
+            onClick={onActivate}
+            type="button"
+            variant="ghost"
+          >
+            Activate your employee account
+          </Button>
+          <p className="mt-2 text-[11px] text-muted-foreground">Smarteam EMS · v0.1.0</p>
+        </div>
       </div>
     </div>
   );

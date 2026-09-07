@@ -24,7 +24,10 @@ export function ApprovalPolicyBuilder() {
 
   if (policies.forbidden) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+      <div
+        className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+        role="status"
+      >
         <p className="text-sm font-bold text-foreground">Not available</p>
         <p className="mt-1 text-xs text-muted-foreground">
           You do not have permission to view approval policies.
@@ -67,7 +70,10 @@ export function ApprovalPolicyBuilder() {
       )}
 
       {!policies.loading && policies.error && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="alert"
+        >
           <p className="text-sm font-bold text-foreground">Could not load approval policies</p>
           <p className="mt-1 text-xs text-muted-foreground">{policies.error}</p>
           <Button
@@ -83,7 +89,7 @@ export function ApprovalPolicyBuilder() {
       )}
 
       {!policies.loading && !policies.error && policies.policies.length === 0 && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center">
+        <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
           <p className="text-sm font-bold text-foreground">No approval policies</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Leave and attendance requests cannot be submitted until a default policy exists for
@@ -97,7 +103,7 @@ export function ApprovalPolicyBuilder() {
           <h3 className="text-xs font-bold text-foreground">{approvalDomainLabel[domain]}</h3>
           <div className="overflow-hidden rounded-lg border border-border bg-card">
             <table className="w-full text-left text-xs">
-              <thead className="border-b border-border bg-muted/40">
+              <thead className="border-b border-border bg-table-header">
                 <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   <th className="px-4 py-2.5 font-bold">Policy</th>
                   <th className="px-4 py-2.5 font-bold">Steps</th>

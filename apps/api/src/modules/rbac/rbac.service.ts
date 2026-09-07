@@ -71,6 +71,31 @@ export class RbacService {
     );
   }
 
+  /**
+   * A caller may grant only the authority they already hold.
+   *
+   * Without this, any principal holding `rbac.write` or `members.write` — permissions HR_ADMIN
+   * carries, not just the ORG_ADMIN wildcard — could create a role bundling the tenant wildcard,
+   * or assign an existing wildcard role, and reach full administrative control with no privilege
+   * higher than "manages people operations." Both `RbacAdminService` and `MembersService` call
+   * this before writing a role or a role assignment.
+   *
+   * Wildcard holders pass unconditionally, which grants them nothing new: `hasPermission` already
+   * treats `*` as satisfying every check, so an ORG_ADMIN could reach the same result one way or
+   * another. What this closes is every other holder of `rbac.write`.
+   */
+  assertGrantable(
+    context: { permissions: ReadonlySet<string> },
+    permissionKeys: readonly string[],
+  ) {
+    if (context.permissions.has('*')) return;
+    const ungranted = permissionKeys.filter((key) => !context.permissions.has(key));
+    if (ungranted.length > 0)
+      throw new ForbiddenDomainError(
+        `Cannot grant a permission you do not hold: ${ungranted.join(', ')}`,
+      );
+  }
+
   async assertOrganizationPermission(
     userId: string,
     organizationId: string,

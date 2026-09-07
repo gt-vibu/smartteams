@@ -867,6 +867,23 @@ export type EnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumApprovalStatusFilter<$PrismaModel>
 }
 
+export type EnumSelectionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SelectionStatus | Prisma.EnumSelectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSelectionStatusFilter<$PrismaModel> | $Enums.SelectionStatus
+}
+
+export type EnumSelectionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SelectionStatus | Prisma.EnumSelectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSelectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.SelectionStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSelectionStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSelectionStatusFilter<$PrismaModel>
+}
+
 export type EnumLeaveAccrualTypeFilter<$PrismaModel = never> = {
   equals?: $Enums.LeaveAccrualType | Prisma.EnumLeaveAccrualTypeFieldRefInput<$PrismaModel>
   in?: $Enums.LeaveAccrualType[] | Prisma.ListEnumLeaveAccrualTypeFieldRefInput<$PrismaModel>
@@ -2295,6 +2312,23 @@ export type NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumApprovalStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumApprovalStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumSelectionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SelectionStatus | Prisma.EnumSelectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSelectionStatusFilter<$PrismaModel> | $Enums.SelectionStatus
+}
+
+export type NestedEnumSelectionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SelectionStatus | Prisma.EnumSelectionStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SelectionStatus[] | Prisma.ListEnumSelectionStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSelectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.SelectionStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSelectionStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSelectionStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumLeaveAccrualTypeFilter<$PrismaModel = never> = {

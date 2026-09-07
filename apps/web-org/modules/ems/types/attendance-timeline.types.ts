@@ -7,6 +7,13 @@ export interface TimelineDayRecord {
   firstInTime?: string;
   lastOutTime?: string;
   workedMinutes: number;
+  /**
+   * Minutes worked so far on a day whose punch is still open, including any earlier closed pairs.
+   *
+   * `workedMinutes` only counts an IN once an OUT has closed it, so a day someone is still working
+   * reports zero until they check out. Undefined whenever the day is settled.
+   */
+  inProgressMinutes?: number;
   status: 'PRESENT' | 'WEEKEND' | 'HOLIDAY' | 'LEAVE' | 'EMPTY';
   holidayName?: string;
   isRestrictedHoliday?: boolean;

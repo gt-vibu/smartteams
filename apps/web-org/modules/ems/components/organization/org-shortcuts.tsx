@@ -13,6 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { ModuleTile, type TileTone } from '../common/module-tile';
+import { useSession } from '../../hooks/auth-context';
 
 /**
  * Where to go from here.
@@ -90,14 +91,20 @@ export function OrgShortcuts({
 }: {
   onNavigateModule?: (module: string) => void;
 }) {
+  // These are module launchers, so they answer to the same rule the sidebar and the router do.
+  // Left unfiltered they offered every module to everyone: a viewer with payroll access alone
+  // was invited into Attendance and Onboarding, and the router — which does check — bounced them
+  // straight back to this page. A tile that cannot open its screen should not be drawn.
+  const { canAccessModule } = useSession();
+  const visible = SHORTCUTS.filter((shortcut) => canAccessModule(shortcut.module));
+
+  if (visible.length === 0) return null;
+
   return (
     <section className="rounded-xl border border-border bg-card p-4 shadow-2xs">
       <h2 className="text-xs font-bold text-foreground">Go to</h2>
-      <p className="mt-0.5 text-[11px] text-muted-foreground">
-        The modules this workspace manages. Each opens its own screen.
-      </p>
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        {SHORTCUTS.map((shortcut) => (
+        {visible.map((shortcut) => (
           <ModuleTile
             detail={shortcut.detail}
             icon={shortcut.icon}

@@ -29,14 +29,21 @@ export function countWorkingDays(
   start: Date,
   end: Date,
   workWeekDays: number[],
-  holidays: Array<{ holidayDate: Date; branchId: string | null }>,
+  holidays: Array<{ holidayDate: Date; branchId: string | null; isOptional?: boolean }>,
   branchId: string | null,
+  employeeSelectedDates?: Set<string> | string[],
 ) {
   const holidayDates = new Set(
     holidays
-      .filter((holiday) => holiday.branchId === null || holiday.branchId === branchId)
+      .filter(
+        (holiday) =>
+          (holiday.branchId === null || holiday.branchId === branchId) && !holiday.isOptional,
+      )
       .map((holiday) => holiday.holidayDate.toISOString().slice(0, 10)),
   );
+  if (employeeSelectedDates) {
+    for (const d of employeeSelectedDates) holidayDates.add(d);
+  }
   let count = 0;
   for (const date = new Date(start); date <= end; date.setUTCDate(date.getUTCDate() + 1)) {
     const weekday = date.getUTCDay() === 0 ? 7 : date.getUTCDay();

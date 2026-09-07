@@ -10,11 +10,11 @@ import { PhotoUploadModal } from '../profile/photo-upload-modal';
 import { ProfileEditDrawer } from '../profile/profile-edit-drawer';
 
 export function EmployeeProfilePanel() {
+  // Every hook runs on every render, before any early return. An account can gain an employee
+  // record while this component is mounted — an administrator enrolling themselves — and the
+  // branch below flips from the "no profile" state to real content. Hooks placed after that
+  // branch would appear only on the second of those renders, which React rejects outright.
   const { employee, loading, error, forbidden, hasEmployeeRecord, refetch } = useEmployee();
-
-  const state = ProfileState({ loading, error, forbidden, hasEmployeeRecord, onRetry: refetch });
-  if (state || !employee) return state;
-
   const { isCheckedIn: checkedIn, timerDisplay, checkIn, checkOut } = useAttendance();
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
@@ -23,6 +23,9 @@ export function EmployeeProfilePanel() {
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const state = ProfileState({ loading, error, forbidden, hasEmployeeRecord, onRetry: refetch });
+  if (state || !employee) return state;
 
   const isCheckedIn = isMounted && checkedIn;
 
@@ -87,9 +90,15 @@ export function EmployeeProfilePanel() {
             {employee.jobTitle}
           </p>
 
+          {/*
+            A link, not a filled button. It previously used the default variant — which paints
+            `bg-primary` — while overriding the label to `text-primary`, so the text was the same
+            colour as the fill and only became readable when hover added the underline.
+          */}
           <Button
+            variant="link"
             onClick={() => setIsEditDrawerOpen(true)}
-            className="text-[11px] font-semibold text-primary dark:text-primary hover:underline mt-1 cursor-pointer"
+            className="text-[11px] font-semibold mt-1 cursor-pointer"
           >
             Edit Profile
           </Button>

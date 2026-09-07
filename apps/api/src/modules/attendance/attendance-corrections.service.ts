@@ -9,6 +9,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertApprover, assertResolvableApprovers } from '../approvals/approval-authorization';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 import {
   attendanceTotals,
   correctionPunchUpdates,
@@ -212,6 +213,12 @@ export class AttendanceCorrectionsService {
             version: { increment: 1 },
           },
         });
+        await markPayrollStale(
+          tx,
+          context.organizationId,
+          correction.attendanceRecord.workDate,
+          correction.attendanceRecord.workDate,
+        );
       }
       await this.audit.record(
         context,

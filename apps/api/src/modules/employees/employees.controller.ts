@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -14,6 +15,7 @@ import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
+  AccessCodeIssueDto,
   BranchAssignmentDto,
   CompensationDto,
   CreateEmployeeDto,
@@ -28,6 +30,7 @@ import {
 import { ConflictError } from '../../common/errors/domain-error';
 import { EmployeesService } from './employees.service';
 import { EmployeeDetailService } from './employee-detail.service';
+import { EmployeeAccessCodeService } from './employee-access-code.service';
 
 @Controller('v1/organizations/:organizationId/employees')
 @UseGuards(NativeJwtGuard)
@@ -35,6 +38,7 @@ export class EmployeesController {
   constructor(
     private readonly employees: EmployeesService,
     private readonly employeeDetail: EmployeeDetailService,
+    private readonly accessCodes: EmployeeAccessCodeService,
     private readonly contexts: DomainContextFactory,
   ) {}
 
@@ -185,6 +189,50 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.employees.linkUser(context, employeeId, body.userId));
   }
+  /**
+   * Whether this employee can sign in yet, and if not, how far along giving them access is.
+   *
+   * An employee record and a login are separate things here, so this gap is a state to show
+   * rather than an error to hide.
+   */
+  @Get(':employeeId/access-code') accessCodeStatus(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.accessCodes.status(context, employeeId));
+  }
+
+  /**
+   * Issues a one-time code the employee uses to activate their own login.
+   *
+   * The plaintext code is in this response and nowhere else, so a caller that loses it has to
+   * issue a new one — which withdraws the old.
+   */
+  @Post(':employeeId/access-code') issueAccessCode(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: AccessCodeIssueDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.accessCodes.issue(context, employeeId, body.roleIds ?? []));
+  }
+
+  /** Withdraws an outstanding code, for one shared with the wrong person. */
+  @Delete(':employeeId/access-code') revokeAccessCode(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.accessCodes.revoke(context, employeeId));
+  }
+
   @Put(':employeeId/manager') manager(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,

@@ -58,3 +58,4 @@ export * from './shifts';
 export * from './organization';
 export * from './files';
 export * from './holidays';
+export * from './rbac';

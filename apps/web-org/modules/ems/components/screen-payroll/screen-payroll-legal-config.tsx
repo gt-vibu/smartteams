@@ -76,7 +76,7 @@ function PolicySummary({ policy }: { policy: PayrollPolicy }) {
 function RulesTable({ rules }: { rules: StatutoryRule[] }) {
   if (rules.length === 0) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center">
+      <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
         <p className="text-sm font-bold text-foreground">No statutory rules configured</p>
         <p className="mt-1 text-xs text-muted-foreground">
           Payroll applies no PF, ESI or professional-tax deduction until a rule exists.
@@ -87,7 +87,7 @@ function RulesTable({ rules }: { rules: StatutoryRule[] }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full min-w-[820px] text-left text-xs">
-        <thead className="border-b border-border bg-muted/40">
+        <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Scheme</th>
             <th className="px-4 py-2.5 font-bold">Jurisdiction</th>
@@ -152,7 +152,10 @@ export function ScreenPayrollLegalConfig() {
 
   if (!canRead || policyResource.forbidden || rulesResource.forbidden) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+      <div
+        className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+        role="status"
+      >
         <p className="text-sm font-bold text-foreground">Not available</p>
         <p className="mt-1 text-xs text-muted-foreground">
           You do not have permission to view payroll policy.
@@ -172,7 +175,10 @@ export function ScreenPayrollLegalConfig() {
   const error = policyResource.error ?? rulesResource.error;
   if (error || !policyResource.data) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+      <div
+        className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+        role="alert"
+      >
         <p className="text-sm font-bold text-foreground">Could not load payroll policy</p>
         <p className="mt-1 text-xs text-muted-foreground">{error ?? 'No policy was returned.'}</p>
         <Button

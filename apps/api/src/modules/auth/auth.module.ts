@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthActivationService } from './auth.activation.service';
 import { AuthController } from './auth.controller';
 import { AuthCookieService } from './auth.cookies';
 import { AuthIdentityService } from './auth.identity.service';
@@ -17,6 +18,7 @@ const providers = [
   AuthService,
   AuthSessionService,
   AuthRegistrationService,
+  AuthActivationService,
   AuthRecoveryService,
   AuthIdentityService,
   AuthTokenService,

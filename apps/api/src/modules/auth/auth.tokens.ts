@@ -56,7 +56,27 @@ export class AuthTokenService {
     return createHash('sha256').update(value).digest('hex');
   }
 
+  /**
+   * Digest of an employee access code, over its canonical form.
+   *
+   * Access codes are the one credential here that a person reads off a screen and types back in,
+   * so the two ends must agree on what "the same code" means: `a1b2c3d4e5f6` and `A1B2-C3D4-E5F6`
+   * are one code. Normalizing inside the hash is what keeps issuing and redeeming from disagreeing
+   * — they cannot drift apart the way two separate call sites would.
+   */
+  hashAccessCode(code: string): string {
+    return this.hashOpaqueToken(normalizeAccessCode(code));
+  }
+
   refreshTokenExpiry(from: Date = new Date()): Date {
     return new Date(from.getTime() + this.refreshTokenTtlSeconds * 1000);
   }
+}
+
+/** Upper case, separators dropped: how a code is compared, never how it is displayed. */
+export function normalizeAccessCode(code: string): string {
+  return code
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '');
 }

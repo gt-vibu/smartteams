@@ -7,6 +7,7 @@ import { usePayroll } from '../../hooks/use-payroll';
 import { PayrollStructurePanel } from './payroll-structure-panel';
 import { PayrollPayslipsPanel } from './payroll-payslips-panel';
 import { PayrollAdvancesPanel } from './payroll-advances-panel';
+import { PageShell } from '../layout/page-shell';
 
 type Tab = 'structure' | 'payslips' | 'advances';
 
@@ -39,7 +40,7 @@ export function ScreenPayroll() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1380px] space-y-4 px-4 py-4 sm:px-6">
+    <PageShell>
       <div className="flex items-center gap-4 border-b border-border pb-2">
         {tabs.map((entry) => (
           <Button
@@ -60,7 +61,10 @@ export function ScreenPayroll() {
       </div>
 
       {payroll.hasNoEmployeeRecord && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="status"
+        >
           <p className="text-sm font-bold text-foreground">No employee record</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Your account is not linked to an employee, so payroll cannot be resolved for you.
@@ -75,7 +79,10 @@ export function ScreenPayroll() {
       )}
 
       {!payroll.hasNoEmployeeRecord && !payroll.loading && payroll.error && (
-        <div className="rounded-lg border border-border bg-card p-10 text-center" role="alert">
+        <div
+          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+          role="alert"
+        >
           <p className="text-sm font-bold text-foreground">Could not load payroll</p>
           <p className="mt-1 text-xs text-muted-foreground">{payroll.error}</p>
           <Button
@@ -129,13 +136,16 @@ export function ScreenPayroll() {
             ))}
         </>
       )}
-    </div>
+    </PageShell>
   );
 }
 
 function Unavailable({ title, detail }: { title: string; detail: string }) {
   return (
-    <div className="rounded-lg border border-border bg-card p-10 text-center" role="status">
+    <div
+      className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+      role="status"
+    >
       <p className="text-sm font-bold text-foreground">{title}</p>
       <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
     </div>

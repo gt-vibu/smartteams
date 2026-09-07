@@ -61,7 +61,7 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
 
   if (payslips.length === 0) {
     return (
-      <div className="rounded-lg border border-border bg-card p-10 text-center">
+      <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
         <p className="text-sm font-bold text-foreground">No payslips yet</p>
         <p className="mt-1 text-xs text-muted-foreground">
           A payslip appears here once a payroll run covering you has been released.

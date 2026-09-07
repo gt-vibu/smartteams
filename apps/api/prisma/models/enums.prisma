@@ -199,6 +199,13 @@ enum ApprovalStatus {
   CANCELLED
 }
 
+enum SelectionStatus {
+  CONFIRMED
+  PENDING
+  REJECTED
+  CANCELLED
+}
+
 enum LeaveAccrualType {
   NONE
   FIXED_ANNUAL

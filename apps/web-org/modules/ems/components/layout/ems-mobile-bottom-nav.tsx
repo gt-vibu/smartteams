@@ -41,8 +41,12 @@ export function EmsMobileBottomNav({
   const isOrgSpace = activeSpace === 'Organization';
 
   const candidateItems = isOrgSpace ? adminNavItems : employeeNavItems;
+  // Filtered in both spaces. The organization space used to skip the check entirely, so the
+  // mobile bar offered every administrative module to anyone who could reach that space — while
+  // the left rail, which never skipped it, showed the correct shorter list. Two navigations
+  // disagreeing about the same permission set is the bug; `canAccessModule` is the one answer.
   const allItems = isMounted
-    ? candidateItems.filter((item) => (isOrgSpace ? true : canAccessModule(item.id)))
+    ? candidateItems.filter((item) => canAccessModule(item.id))
     : candidateItems;
 
   // Show 4 primary items + the "More" button

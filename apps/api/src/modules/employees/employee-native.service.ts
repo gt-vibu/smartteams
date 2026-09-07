@@ -19,6 +19,7 @@ import { OutboxService } from '../federation/outbox.service';
 import { toEmployeeDto } from './employee-mappers';
 import { assertMayReadEmployee, canReadAllEmployees, findSelfEmployeeId } from './employee-access';
 import { endOpenPrimaryAssignments, externallyOwnedFields, setOwnership } from './employee-shared';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 
 /**
  * Employees this tenant owns: creating, reading, listing, editing, moving between branches and
@@ -325,6 +326,14 @@ export class EmployeeNativeService {
         where: { id: employeeId },
         data: { status: 'INACTIVE', deactivatedAt: new Date(), version: { increment: 1 } },
       });
+      // The payroll run selects `status: 'ACTIVE'` employees, so deactivating someone removes
+      // them from the population entirely — a calculated run that still includes them would pay
+      // a person the engine would no longer select.
+      //
+      // Scoped forward from the deactivation rather than across all history. That filter carries
+      // no date, so recalculating a long-settled period would drop them from it too; invalidating
+      // those runs is a decision about closed payroll, not something this change should make.
+      await markPayrollStale(tx, context.organizationId, updated.deactivatedAt ?? new Date());
       if (employee.userId)
         await this.sessions.revokeAllSessions(employee.userId, 'EMPLOYEE_DEACTIVATED', tx);
       await this.audit.record(
