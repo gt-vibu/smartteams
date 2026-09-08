@@ -100,12 +100,12 @@ export function ApplyLeaveModal({
       }}
       open={isOpen}
     >
-      <DialogContent className="max-w-lg gap-0 p-0">
-        <DialogTitle className="border-b border-border px-5 py-4 text-sm font-semibold">
+      <DialogContent className="flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[85vh] w-[95vw] sm:max-w-lg gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
+        <DialogTitle className="shrink-0 border-b border-border px-5 py-3.5 text-sm font-semibold">
           Apply for leave
         </DialogTitle>
 
-        <div className="space-y-4 p-5">
+        <div className="flex-1 overflow-y-auto space-y-4 p-5 text-xs">
           {types.length === 0 ? (
             <p className="text-xs text-muted-foreground">
               No leave types are available for your branch yet.
@@ -185,7 +185,7 @@ export function ApplyLeaveModal({
           )}
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
+        <div className="shrink-0 flex items-center justify-between gap-3 border-t border-border px-5 py-3.5 bg-muted/20">
           <p className="text-[11px] font-medium text-destructive" role="alert">
             {error || saveError}
           </p>

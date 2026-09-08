@@ -6,6 +6,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { useSession } from '../../hooks/auth-context';
 import { useEmployeeDetail } from '../../hooks/use-employee-detail';
+import { ProfileEditDrawer } from '../profile/profile-edit-drawer';
 
 export function PersonaSwitcher() {
   const { persona, logout, workspaceContext } = useAuth();
@@ -16,6 +17,7 @@ export function PersonaSwitcher() {
   const jobTitle = detail.data?.jobTitle ?? null;
   const department = detail.data?.department ?? null;
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
@@ -159,8 +161,32 @@ export function PersonaSwitcher() {
             </span>
           </div>
 
-          {/* Sign Out */}
-          <div className="border-t border-border p-2">
+          {/* Actions */}
+          <div className="border-t border-border p-2 space-y-1">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setIsOpen(false);
+                setIsProfileDrawerOpen(true);
+              }}
+              className="w-full flex items-center justify-start gap-2.5 rounded-[6px] px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all cursor-pointer"
+            >
+              <svg
+                className="h-4 w-4 text-muted-foreground"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              <span>Edit Profile</span>
+            </Button>
+
             <Button
               onClick={() => {
                 setIsOpen(false);
@@ -188,6 +214,12 @@ export function PersonaSwitcher() {
           </div>
         </div>
       )}
+
+      {/* Profile Edit Drawer */}
+      <ProfileEditDrawer
+        isOpen={isProfileDrawerOpen}
+        onClose={() => setIsProfileDrawerOpen(false)}
+      />
     </div>
   );
 }

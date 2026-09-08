@@ -76,7 +76,7 @@ export function EntityDetailDrawer({ isOpen, onClose, employeeId }: EntityDetail
 
           {detail.data && (
             <>
-              <div className="flex items-start justify-between border-b border-border bg-muted/40 p-5">
+              <div className="flex items-start justify-between border-b border-border bg-muted/40 p-5 pr-14">
                 <div className="flex items-center gap-3.5">
                   <span
                     aria-hidden="true"

@@ -147,6 +147,12 @@ export class AttendancePunchService {
           version: { increment: 1 },
         },
       });
+      const meta =
+        settings.metadata && typeof settings.metadata === 'object'
+          ? (settings.metadata as Record<string, unknown>)
+          : {};
+      const sessionMode = meta.attendanceSessionMode === 'MULTIPLE' ? 'MULTIPLE' : 'SINGLE';
+
       const existingPunches = await tx.attendancePunch.findMany({
         where: { attendanceRecordId: record.id, organizationId: context.organizationId },
         orderBy: { occurredAt: 'asc' },
@@ -157,6 +163,15 @@ export class AttendancePunchService {
         throw new ConflictError('An open attendance interval already exists');
       if (type === AttendancePunchType.OUT && !hasOpenInterval)
         throw new ConflictError('A check-out requires an open check-in interval');
+      if (
+        type === AttendancePunchType.IN &&
+        sessionMode === 'SINGLE' &&
+        existingPunches.length >= 2
+      ) {
+        throw new ConflictError(
+          'An attendance session has already been completed for today (Single Session mode)',
+        );
+      }
       const punch = await tx.attendancePunch.create({
         data: {
           organizationId: context.organizationId,

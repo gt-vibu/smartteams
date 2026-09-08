@@ -3,7 +3,9 @@ import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
+  CreateJobTypeDto,
   ManualEntryDto,
+  QuickCreateProjectDto,
   TimesheetDecisionDto,
   TimesheetPeriodDto,
   TimesheetQueryDto,
@@ -25,6 +27,41 @@ export class TimesheetsController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.timesheets.list(context, query));
+  }
+  @Get('job-types') listJobTypes(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.timesheets.listJobTypes(context));
+  }
+  @Post('job-types') createJobType(
+    @Param('organizationId') organizationId: string,
+    @Body() body: CreateJobTypeDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.timesheets.createJobType(context, body.name));
+  }
+  @Post('projects') quickCreateProject(
+    @Param('organizationId') organizationId: string,
+    @Body() body: QuickCreateProjectDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.timesheets.quickCreateProject(context, body.name, body.description));
+  }
+  @Post('entries') addEntryDirect(
+    @Param('organizationId') organizationId: string,
+    @Body() body: ManualEntryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.timesheets.addManualEntry(context, body.timesheetId, body));
   }
   @Post('periods') period(
     @Param('organizationId') organizationId: string,
@@ -62,6 +99,15 @@ export class TimesheetsController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.timesheets.submit(context, timesheetId));
+  }
+  @Post(':timesheetId/unsubmit') unsubmit(
+    @Param('organizationId') organizationId: string,
+    @Param('timesheetId') timesheetId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.timesheets.unsubmit(context, timesheetId));
   }
   @Post(':timesheetId/decision') decision(
     @Param('organizationId') organizationId: string,

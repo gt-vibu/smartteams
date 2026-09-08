@@ -56,7 +56,7 @@ export function TeamDetailDrawer({
         <SheetContent className="max-w-md gap-0 p-0">
           <SheetTitle className="sr-only">Team details</SheetTitle>
 
-          <div className="border-b border-border bg-muted/40 p-5">
+          <div className="border-b border-border bg-muted/40 p-5 pr-14">
             <p className="text-sm font-bold text-foreground">{team.team.name}</p>
             <p className="text-xs text-muted-foreground">{team.branchName ?? 'No branch'}</p>
             {team.team.description && (

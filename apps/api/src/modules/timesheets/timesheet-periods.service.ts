@@ -10,7 +10,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from '../payroll/payroll-staleness';
 
-import { dateOnly } from './timesheet-shared';
+import { dateOnly, decodeEntry } from './timesheet-shared';
 
 @Injectable()
 export class TimesheetPeriodsService {
@@ -55,7 +55,7 @@ export class TimesheetPeriodsService {
         regularMinutes: timesheet.regularMinutes,
         overtimeMinutes: timesheet.overtimeMinutes,
         version: timesheet.version,
-        entries: timesheet.entries,
+        entries: timesheet.entries.map(decodeEntry),
       }));
     });
   }

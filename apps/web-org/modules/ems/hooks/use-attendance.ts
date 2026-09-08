@@ -7,6 +7,7 @@ import {
   openCheckInAt,
   workDateKey,
   type AttendanceRecord,
+  type AttendancePreferences,
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { attendanceRepository } from '../repositories/attendance.repository';
@@ -68,6 +69,14 @@ export function useAttendance(rangeDays = 30) {
 
   const records = useMemo(() => resource.data ?? [], [resource.data]);
 
+  const preferencesResource = useAsyncResource<AttendancePreferences>(
+    () => attendanceRepository.getPreferences(organizationId!),
+    [organizationId],
+    { enabled: Boolean(organizationId) && canRead },
+  );
+
+  const sessionMode = preferencesResource.data?.attendanceSessionMode ?? 'SINGLE';
+
   const todayKey = localDateKey();
   const todayRecord = useMemo(
     () => records.find((record) => workDateKey(record) === todayKey) ?? null,
@@ -76,27 +85,39 @@ export function useAttendance(rangeDays = 30) {
 
   const checkedIn = derivedCheckedIn(todayRecord);
   const checkInTimestamp = openCheckInAt(todayRecord);
+  const isDayCompleted = Boolean(todayRecord && todayRecord.status === 'COMPLETED' && !checkedIn);
 
-  // Live timer, driven purely by the open punch's timestamp.
+  // Live timer or completed day duration
   useEffect(() => {
-    if (!checkInTimestamp) {
-      setTimerDisplay(ZERO_TIMER);
+    if (checkInTimestamp) {
+      const tick = () => {
+        const started = new Date(checkInTimestamp).getTime();
+        const seconds = Math.max(0, Math.floor((Date.now() - started) / 1000));
+        setTimerDisplay({
+          hrs: String(Math.floor(seconds / 3600)).padStart(2, '0'),
+          mins: String(Math.floor((seconds % 3600) / 60)).padStart(2, '0'),
+          secs: String(seconds % 60).padStart(2, '0'),
+          totalSeconds: seconds,
+        });
+      };
+      tick();
+      const interval = setInterval(tick, 1000);
+      return () => clearInterval(interval);
+    }
+
+    if (todayRecord && todayRecord.workedMinutes > 0) {
+      const totalSec = todayRecord.workedMinutes * 60;
+      setTimerDisplay({
+        hrs: String(Math.floor(totalSec / 3600)).padStart(2, '0'),
+        mins: String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0'),
+        secs: '00',
+        totalSeconds: totalSec,
+      });
       return;
     }
-    const tick = () => {
-      const started = new Date(checkInTimestamp).getTime();
-      const seconds = Math.max(0, Math.floor((Date.now() - started) / 1000));
-      setTimerDisplay({
-        hrs: String(Math.floor(seconds / 3600)).padStart(2, '0'),
-        mins: String(Math.floor((seconds % 3600) / 60)).padStart(2, '0'),
-        secs: String(seconds % 60).padStart(2, '0'),
-        totalSeconds: seconds,
-      });
-    };
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [checkInTimestamp]);
+
+    setTimerDisplay(ZERO_TIMER);
+  }, [checkInTimestamp, todayRecord]);
 
   const run = useCallback(
     async (operation: () => Promise<unknown>) => {
@@ -158,6 +179,9 @@ export function useAttendance(rangeDays = 30) {
     days,
     todayRecord,
     isCheckedIn: checkedIn,
+    isDayCompleted,
+    sessionMode,
+    canCheckInAgain: sessionMode === 'MULTIPLE' || !isDayCompleted,
     checkInTimestamp,
     timerDisplay,
     loading: resource.loading,

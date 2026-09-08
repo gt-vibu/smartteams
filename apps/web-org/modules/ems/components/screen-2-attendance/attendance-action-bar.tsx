@@ -13,16 +13,33 @@ import { useAttendance } from '../../hooks/use-attendance';
  * employee regardless of their actual schedule.
  */
 export function AttendanceActionBar() {
-  const { isCheckedIn, checkIn, checkOut, saving, saveError, canWrite, hasNoEmployeeRecord } =
-    useAttendance();
+  const {
+    isCheckedIn,
+    isDayCompleted,
+    sessionMode,
+    checkIn,
+    checkOut,
+    saving,
+    saveError,
+    canWrite,
+    hasNoEmployeeRecord,
+  } = useAttendance();
 
-  const disabled = saving || !canWrite || hasNoEmployeeRecord;
+  const isSingleCompleted = isDayCompleted && sessionMode === 'SINGLE';
+  const disabled =
+    saving || !canWrite || hasNoEmployeeRecord || (isSingleCompleted && !isCheckedIn);
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-card p-3 shadow-xs">
       <div className="min-w-0">
         <p className="text-xs font-bold text-foreground">
-          {isCheckedIn ? 'Checked in' : 'Not checked in'}
+          {isCheckedIn
+            ? 'Checked in'
+            : isSingleCompleted
+              ? 'Attendance completed for today'
+              : isDayCompleted
+                ? 'Checked out'
+                : 'Not checked in'}
         </p>
         <p className="text-[11px] text-muted-foreground" role={saveError ? 'alert' : undefined}>
           {saveError ??
@@ -30,7 +47,9 @@ export function AttendanceActionBar() {
               ? 'This account has no employee record, so attendance cannot be recorded.'
               : !canWrite
                 ? 'You do not have permission to record attendance.'
-                : 'Your punches are recorded automatically.')}
+                : isSingleCompleted
+                  ? 'Your attendance session for today is complete.'
+                  : 'Your punches are recorded automatically.')}
         </p>
       </div>
 
@@ -39,9 +58,17 @@ export function AttendanceActionBar() {
         disabled={disabled}
         onClick={() => void (isCheckedIn ? checkOut() : checkIn())}
         type="button"
-        variant={isCheckedIn ? 'destructive' : 'default'}
+        variant={isCheckedIn ? 'destructive' : isSingleCompleted ? 'outline' : 'default'}
       >
-        {saving ? 'Recording...' : isCheckedIn ? 'Check out' : 'Check in'}
+        {saving
+          ? 'Recording...'
+          : isCheckedIn
+            ? 'Check out'
+            : isSingleCompleted
+              ? 'Attendance completed'
+              : isDayCompleted
+                ? 'Check in again'
+                : 'Check in'}
       </Button>
     </div>
   );

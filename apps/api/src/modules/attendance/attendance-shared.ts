@@ -110,12 +110,20 @@ export function toPreferencesDto(value: {
   biometricVerificationMode: BiometricVerificationMode | null;
   geofenceOwnerSource: string;
   biometricOwnerSource: string;
+  metadata?: unknown;
 }) {
+  const meta =
+    value.metadata && typeof value.metadata === 'object'
+      ? (value.metadata as Record<string, unknown>)
+      : {};
+  const mode = meta.attendanceSessionMode === 'MULTIPLE' ? 'MULTIPLE' : 'SINGLE';
+
   return {
     id: value.id,
     organizationId: value.organizationId,
     geofenceMode: value.geofenceMode,
     biometricVerificationMode: value.biometricVerificationMode,
+    attendanceSessionMode: mode,
     geofenceOwnerSource: value.geofenceOwnerSource,
     biometricOwnerSource: value.biometricOwnerSource,
   };

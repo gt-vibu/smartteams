@@ -47,6 +47,16 @@ export function useEmployeeHolidays() {
     [organizationId, run],
   );
 
+  const cancelMultipleSelections = useCallback(
+    (holidayIds: string[]) =>
+      run(async () => {
+        for (const holidayId of holidayIds) {
+          await holidaysRepository.cancelSelection(organizationId!, holidayId);
+        }
+      }, 'Could not cancel the holiday selection(s).'),
+    [organizationId, run],
+  );
+
   const summary = resource.data ?? null;
 
   return {
@@ -68,6 +78,7 @@ export function useEmployeeHolidays() {
     dismissError: () => setSaveError(null),
     selectHolidays,
     cancelSelection,
+    cancelMultipleSelections,
   };
 }
 

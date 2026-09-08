@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { hasPermission, type Timesheet } from '@smarteam/contracts';
+import { hasPermission, type JobType, type Project, type Timesheet } from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { timesheetRepository, type ManualEntryInput } from '../repositories/timesheet.repository';
+import { workforceRepository } from '../repositories/workforce.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
 import {
@@ -15,11 +16,7 @@ import {
 } from '../services/timesheet-view';
 
 /**
- * The signed-in employee's own timesheets.
- *
- * No `employeeId` is sent: the API narrows the query to the caller's own record unless they hold
- * `timesheets.read.all`, so asking for a specific employee here would be redundant at best and
- * rejected at worst.
+ * The signed-in employee's own timesheets, projects, and reusable job types.
  */
 export function useTimesheet() {
   const { session, persona } = useSession();
@@ -29,6 +26,7 @@ export function useTimesheet() {
 
   const canRead = hasPermission(permissions, 'timesheets.read');
   const canWrite = hasPermission(permissions, 'timesheets.write');
+  const canReadProjects = hasPermission(permissions, 'projects.read') || canRead;
 
   const resource = useAsyncResource<Timesheet[]>(
     () => timesheetRepository.list(organizationId!),
@@ -36,20 +34,61 @@ export function useTimesheet() {
     { enabled: Boolean(organizationId) && canRead },
   );
 
-  const { saving, saveError, run } = useMutationRunner(resource.refetch);
+  const jobTypesResource = useAsyncResource<JobType[]>(
+    () => timesheetRepository.listJobTypes(organizationId!),
+    [organizationId],
+    { enabled: Boolean(organizationId) && canRead },
+  );
+
+  const projectsResource = useAsyncResource<Project[]>(
+    () => workforceRepository.listProjects(organizationId!),
+    [organizationId],
+    { enabled: Boolean(organizationId) && canReadProjects },
+  );
+
+  const { saving, saveError, run } = useMutationRunner(async () => {
+    await resource.refetch();
+    await jobTypesResource.refetch();
+  });
 
   const timesheets = useMemo(() => resource.data ?? [], [resource.data]);
+  const jobTypes = useMemo(() => jobTypesResource.data ?? [], [jobTypesResource.data]);
+  const projects = useMemo(() => projectsResource.data ?? [], [projectsResource.data]);
 
   /** The most recent period's sheet, which is the one the log screen works against. */
   const current = timesheets[0] ?? null;
 
   const addEntry = useCallback(
-    (timesheetId: string, input: ManualEntryInput) =>
+    (input: ManualEntryInput, timesheetId?: string) =>
       run(
-        () => timesheetRepository.addEntry(organizationId!, timesheetId, input),
+        () => timesheetRepository.addEntry(organizationId!, timesheetId || current?.id, input),
         'The time entry could not be saved.',
       ),
-    [organizationId, run],
+    [organizationId, current?.id, run],
+  );
+
+  const createJobType = useCallback(
+    (name: string) =>
+      run(async () => {
+        const created = await timesheetRepository.createJobType(organizationId!, name);
+        await jobTypesResource.refetch();
+        return created;
+      }, 'Could not create job type.'),
+    [organizationId, jobTypesResource, run],
+  );
+
+  const quickCreateProject = useCallback(
+    (name: string, description?: string) =>
+      run(async () => {
+        const created = await timesheetRepository.quickCreateProject(
+          organizationId!,
+          name,
+          description,
+        );
+        await projectsResource.refetch();
+        return created;
+      }, 'Could not create project.'),
+    [organizationId, projectsResource, run],
   );
 
   const submit = useCallback(
@@ -57,6 +96,15 @@ export function useTimesheet() {
       run(
         () => timesheetRepository.submit(organizationId!, timesheetId),
         'The timesheet could not be submitted.',
+      ),
+    [organizationId, run],
+  );
+
+  const unsubmit = useCallback(
+    (timesheetId: string) =>
+      run(
+        () => timesheetRepository.unsubmit(organizationId!, timesheetId),
+        'The timesheet could not be recalled.',
       ),
     [organizationId, run],
   );
@@ -72,15 +120,22 @@ export function useTimesheet() {
     summary,
     groupedLogs,
     approvedTimesheet,
-    loading: resource.loading,
+    jobTypes,
+    projects,
+    loading: resource.loading || jobTypesResource.loading,
     refreshing: resource.refreshing,
     error: resource.error,
     forbidden: resource.forbidden,
     refetch: resource.refetch,
+    refetchProjects: projectsResource.refetch,
+    refetchJobTypes: jobTypesResource.refetch,
     saving,
     saveError,
     addEntry,
+    createJobType,
+    quickCreateProject,
     submit,
+    unsubmit,
     canRead,
     canWrite,
     /** True when the signed-in user has no employee record, so time cannot be logged. */

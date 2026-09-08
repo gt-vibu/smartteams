@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AttendanceLocationService } from './attendance-location.service';
 import { GeofenceMode, BiometricVerificationMode } from '../../generated/prisma/enums';
+import { Prisma } from '../../generated/prisma/client';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
@@ -28,6 +29,7 @@ export class AttendancePreferencesService {
       branchId?: string;
       geofenceMode?: GeofenceMode;
       biometricVerificationMode?: BiometricVerificationMode;
+      attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
       workLocations?: WorkLocationInput[];
     },
   ) {
@@ -35,7 +37,8 @@ export class AttendancePreferencesService {
     if (
       input.geofenceMode === undefined &&
       input.biometricVerificationMode === undefined &&
-      input.workLocations === undefined
+      input.workLocations === undefined &&
+      input.attendanceSessionMode === undefined
     )
       throw new ConflictError('At least one attendance preference must be supplied');
     return this.database.run(context, async (tx) => {
@@ -101,11 +104,22 @@ export class AttendancePreferencesService {
         settings.biometricOwnerClientId,
         'biometric',
       );
+
+      const existingMeta =
+        settings.metadata && typeof settings.metadata === 'object'
+          ? (settings.metadata as Record<string, unknown>)
+          : {};
+      const updatedMeta =
+        input.attendanceSessionMode !== undefined
+          ? { ...existingMeta, attendanceSessionMode: input.attendanceSessionMode }
+          : existingMeta;
+
       const updated = await tx.organizationSettings.update({
         where: { organizationId: context.organizationId },
         data: {
           geofenceMode: input.geofenceMode,
           biometricVerificationMode: input.biometricVerificationMode,
+          metadata: updatedMeta as Prisma.InputJsonValue,
         },
       });
       await this.locations.syncWorkLocations(tx, context.organizationId, null, input.workLocations);
@@ -139,9 +153,9 @@ export class AttendancePreferencesService {
           },
         });
         if (!branch) throw new NotFoundError('Branch');
-        return branch;
+        return toPreferencesDto(branch);
       }
-      return tx.organizationSettings.findUniqueOrThrow({
+      const settings = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
         select: {
           organizationId: true,
@@ -149,8 +163,10 @@ export class AttendancePreferencesService {
           biometricVerificationMode: true,
           geofenceOwnerSource: true,
           biometricOwnerSource: true,
+          metadata: true,
         },
       });
+      return toPreferencesDto(settings);
     });
   }
 

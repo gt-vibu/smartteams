@@ -189,6 +189,7 @@ export function canAccessModule(
     case 'home':
     case 'projects':
     case 'files':
+    case 'holidays':
       return true;
     case 'attendance':
       return can(permissions, 'attendance.read');

@@ -113,6 +113,23 @@ export const employeePayComponentSchema = z.object({
 export type PayComponentDefinition = z.infer<typeof payComponentDefinitionSchema>;
 export type EmployeePayComponent = z.infer<typeof employeePayComponentSchema>;
 
+export const payrollPolicySchema = z.object({
+  id: z.string().uuid().optional(),
+  effectiveFrom: z.string().optional(),
+  effectiveTo: z.string().nullable().optional(),
+  payrollDayBasis: z.number(),
+  basePercentage: money,
+  baseMinimum: money,
+  hraPercentage: money,
+  roundingMode: z.string(),
+  pfDefault: z.boolean(),
+  esiDefault: z.boolean(),
+  ptDefault: z.boolean(),
+  salarySlipDefault: z.boolean(),
+  payrollEnabledDefault: z.boolean(),
+  statutoryJurisdiction: z.string().nullable().optional(),
+});
+
 export const salaryProfileSchema = z.object({
   employeeId: z.string().uuid(),
   compensation: z
@@ -135,6 +152,7 @@ export const salaryProfileSchema = z.object({
       statutoryJurisdiction: z.string().nullable().optional(),
     })
     .nullable(),
+  organizationPolicy: payrollPolicySchema.optional(),
   structure: z.object({
     gross: money,
     base: money,
@@ -180,23 +198,6 @@ export const payrollPaymentSchema = z.object({
       status: payrollRunStatusSchema,
     })
     .optional(),
-});
-
-export const payrollPolicySchema = z.object({
-  id: z.string().uuid().optional(),
-  effectiveFrom: z.string().optional(),
-  effectiveTo: z.string().nullable().optional(),
-  payrollDayBasis: z.number(),
-  basePercentage: money,
-  baseMinimum: money,
-  hraPercentage: money,
-  roundingMode: z.string(),
-  pfDefault: z.boolean(),
-  esiDefault: z.boolean(),
-  ptDefault: z.boolean(),
-  salarySlipDefault: z.boolean(),
-  payrollEnabledDefault: z.boolean(),
-  statutoryJurisdiction: z.string().nullable().optional(),
 });
 
 export const statutoryRuleSchema = z.object({

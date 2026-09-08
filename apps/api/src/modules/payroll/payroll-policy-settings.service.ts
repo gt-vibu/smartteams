@@ -115,10 +115,10 @@ export class PayrollPolicySettingsService {
                 flatAmount: 200,
                 metadata: {
                   source:
-                    'Karnataka Professional Tax notification; verify for the effective period',
+                    'Karnataka Professional Tax notification (effective April 1, 2025; Feb is ₹300)',
                   slabs: [
                     { min: 0, max: 24999.99, amount: 0 },
-                    { min: 25000, max: null, amount: 200 },
+                    { min: 25000, max: null, amount: 200, monthOverrides: { '2': 300 } },
                   ],
                 },
               },

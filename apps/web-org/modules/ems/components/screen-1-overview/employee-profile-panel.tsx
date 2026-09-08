@@ -7,7 +7,6 @@ import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
 import { PhotoUploadModal } from '../profile/photo-upload-modal';
-import { ProfileEditDrawer } from '../profile/profile-edit-drawer';
 
 export function EmployeeProfilePanel() {
   // Every hook runs on every render, before any early return. An account can gain an employee
@@ -15,9 +14,17 @@ export function EmployeeProfilePanel() {
   // branch below flips from the "no profile" state to real content. Hooks placed after that
   // branch would appear only on the second of those renders, which React rejects outright.
   const { employee, loading, error, forbidden, hasEmployeeRecord, refetch } = useEmployee();
-  const { isCheckedIn: checkedIn, timerDisplay, checkIn, checkOut } = useAttendance();
+  const {
+    isCheckedIn: checkedIn,
+    isDayCompleted,
+    sessionMode,
+    canCheckInAgain,
+    timerDisplay,
+    checkIn,
+    checkOut,
+    saving,
+  } = useAttendance();
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
-  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   React.useEffect(() => {
@@ -32,10 +39,12 @@ export function EmployeeProfilePanel() {
   const handleToggleAttendance = () => {
     if (checkedIn) {
       void checkOut();
-    } else {
+    } else if (canCheckInAgain) {
       void checkIn();
     }
   };
+
+  const isSingleCompleted = isDayCompleted && sessionMode === 'SINGLE';
 
   return (
     <>
@@ -89,19 +98,6 @@ export function EmployeeProfilePanel() {
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
             {employee.jobTitle}
           </p>
-
-          {/*
-            A link, not a filled button. It previously used the default variant — which paints
-            `bg-primary` — while overriding the label to `text-primary`, so the text was the same
-            colour as the fill and only became readable when hover added the underline.
-          */}
-          <Button
-            variant="link"
-            onClick={() => setIsEditDrawerOpen(true)}
-            className="text-[11px] font-semibold mt-1 cursor-pointer"
-          >
-            Edit Profile
-          </Button>
         </div>
 
         {/* Live Attendance / Timer Card */}
@@ -109,39 +105,68 @@ export function EmployeeProfilePanel() {
           <div className="flex items-center gap-1.5 text-xs font-bold">
             <span
               className={`h-2 w-2 rounded-full ${
-                isCheckedIn ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
+                isCheckedIn
+                  ? 'bg-emerald-500 animate-pulse'
+                  : isSingleCompleted
+                    ? 'bg-blue-500'
+                    : 'bg-slate-400'
               }`}
             />
             <span
               className={
                 isCheckedIn
                   ? 'text-emerald-700 dark:text-emerald-400'
-                  : 'text-slate-600 dark:text-slate-400'
+                  : isSingleCompleted
+                    ? 'text-blue-700 dark:text-blue-400'
+                    : 'text-slate-600 dark:text-slate-400'
               }
             >
-              {isCheckedIn ? 'In' : 'Out'}
+              {isCheckedIn ? 'In' : isSingleCompleted ? 'Completed' : 'Out'}
             </span>
           </div>
 
-          {/* Timestamp-derived live timer */}
+          {/* Timestamp-derived live timer or completed day duration */}
           <div className="text-xl font-bold font-mono tracking-wider text-slate-800 dark:text-white">
             {isMounted
               ? `${timerDisplay.hrs} : ${timerDisplay.mins} : ${timerDisplay.secs}`
               : '00 : 00 : 00'}
           </div>
 
-          <Button
-            variant={isCheckedIn ? 'outline' : 'default'}
-            size="sm"
-            onClick={handleToggleAttendance}
-            className={`w-full py-1.5 px-3 rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
-              isCheckedIn
-                ? 'bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
-                : 'bg-slate-900 hover:bg-slate-800 text-white font-bold'
-            }`}
-          >
-            {isCheckedIn ? 'Check out' : 'Check in'}
-          </Button>
+          {isSingleCompleted ? (
+            <div className="w-full text-center">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="w-full py-1.5 px-3 rounded text-xs font-medium bg-muted/60 text-muted-foreground border-border cursor-not-allowed"
+              >
+                Attendance completed
+              </Button>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                Completed today (1 session policy)
+              </p>
+            </div>
+          ) : (
+            <Button
+              variant={isCheckedIn ? 'outline' : 'default'}
+              size="sm"
+              disabled={saving}
+              onClick={handleToggleAttendance}
+              className={`w-full py-1.5 px-3 rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
+                isCheckedIn
+                  ? 'bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
+                  : 'bg-slate-900 hover:bg-slate-800 text-white font-bold'
+              }`}
+            >
+              {saving
+                ? 'Processing...'
+                : isCheckedIn
+                  ? 'Check out'
+                  : isDayCompleted
+                    ? 'Check in again'
+                    : 'Check in'}
+            </Button>
+          )}
         </div>
 
         {/* Reporting Manager Section */}
@@ -242,9 +267,6 @@ export function EmployeeProfilePanel() {
 
       {/* Interactive Photo Upload Modal */}
       <PhotoUploadModal isOpen={isPhotoModalOpen} onClose={() => setIsPhotoModalOpen(false)} />
-
-      {/* Interactive Profile Edit Drawer */}
-      <ProfileEditDrawer isOpen={isEditDrawerOpen} onClose={() => setIsEditDrawerOpen(false)} />
     </>
   );
 }

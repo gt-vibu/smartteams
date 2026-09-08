@@ -30,6 +30,8 @@ export function useCompensation() {
   const canReadProfile = hasPermission(permissions, 'payroll.employee-profile.read.all');
   const canWriteProfile = hasPermission(permissions, 'payroll.employee-profile.write');
 
+  const canWritePolicy = hasPermission(permissions, 'payroll.policy.write');
+
   const [employeeId, setEmployeeId] = useState<string | null>(null);
 
   const catalog = useAsyncResource<PayComponentDefinition[]>(
@@ -105,6 +107,48 @@ export function useCompensation() {
     [employeeId, organizationId, run],
   );
 
+  const savePolicy = useCallback(
+    (input: {
+      effectiveFrom: string;
+      basePercentage: number;
+      hraPercentage: number;
+      baseMinimum?: number;
+      payrollDayBasis?: number;
+      salarySlipDefault?: boolean;
+      payrollEnabledDefault?: boolean;
+      pfDefault?: boolean;
+      esiDefault?: boolean;
+      ptDefault?: boolean;
+      statutoryJurisdiction?: string;
+      roundingMode?: 'HALF_UP' | 'DOWN' | 'UP';
+    }) =>
+      run(() => {
+        const currentPolicy = profile.data?.organizationPolicy;
+        return payrollRepository.savePolicy(organizationId!, {
+          effectiveFrom: input.effectiveFrom,
+          basePercentage: input.basePercentage,
+          hraPercentage: input.hraPercentage,
+          baseMinimum:
+            input.baseMinimum ??
+            (currentPolicy?.baseMinimum ? Number(currentPolicy.baseMinimum) : 15000),
+          payrollDayBasis: input.payrollDayBasis ?? currentPolicy?.payrollDayBasis ?? 30,
+          salarySlipDefault: input.salarySlipDefault ?? currentPolicy?.salarySlipDefault ?? true,
+          payrollEnabledDefault:
+            input.payrollEnabledDefault ?? currentPolicy?.payrollEnabledDefault ?? true,
+          pfDefault: input.pfDefault ?? currentPolicy?.pfDefault ?? true,
+          esiDefault: input.esiDefault ?? currentPolicy?.esiDefault ?? true,
+          ptDefault: input.ptDefault ?? currentPolicy?.ptDefault ?? true,
+          statutoryJurisdiction:
+            input.statutoryJurisdiction ?? currentPolicy?.statutoryJurisdiction ?? 'KARNATAKA',
+          roundingMode:
+            input.roundingMode ??
+            (currentPolicy?.roundingMode as 'HALF_UP' | 'DOWN' | 'UP' | undefined) ??
+            'HALF_UP',
+        });
+      }, 'The salary policy could not be saved.'),
+    [organizationId, profile.data, run],
+  );
+
   return {
     components: useMemo(() => catalog.data ?? [], [catalog.data]),
     componentsLoading: catalog.loading,
@@ -124,11 +168,13 @@ export function useCompensation() {
     createComponent,
     assignComponent,
     saveSalary,
+    savePolicy,
     refetch: refetchAll,
     can: {
       createComponent: canWriteComponents,
       assign: canWriteComponents,
       saveSalary: canWriteProfile,
+      savePolicy: canWritePolicy || canWriteProfile,
     },
   };
 }

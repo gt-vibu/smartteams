@@ -1,4 +1,12 @@
-import { parseTimesheet, parseTimesheetList, type Timesheet } from '@smarteam/contracts';
+import {
+  parseJobTypeList,
+  parseProject,
+  parseTimesheet,
+  parseTimesheetList,
+  type JobType,
+  type Project,
+  type Timesheet,
+} from '@smarteam/contracts';
 import { apiRequest } from '../lib/api-client';
 import { expectShape, orgPath, queryString } from './api-helpers';
 
@@ -21,6 +29,15 @@ export type ManualEntryInput = {
   minutes: number;
   overtimeMinutes?: number;
   description?: string;
+  projectId?: string;
+  projectName?: string;
+  jobName?: string;
+  workItem?: string;
+  billable?: boolean;
+  attachmentUrl?: string;
+  startTime?: string;
+  endTime?: string;
+  timesheetId?: string;
 };
 
 export const timesheetRepository = {
@@ -33,6 +50,39 @@ export const timesheetRepository = {
         await apiRequest(`${base(organizationId)}${queryString(filters)}`, { method: 'GET' }),
       ),
       'timesheet list',
+    );
+  },
+
+  /** Lists reusable job/work types from backend */
+  async listJobTypes(organizationId: string): Promise<JobType[]> {
+    return (
+      parseJobTypeList(await apiRequest(`${base(organizationId)}/job-types`, { method: 'GET' })) ??
+      []
+    );
+  },
+
+  /** Quick-adds a new reusable job/work type to the backend */
+  async createJobType(organizationId: string, name: string): Promise<JobType> {
+    return (await apiRequest(`${base(organizationId)}/job-types`, {
+      method: 'POST',
+      body: { name },
+    })) as JobType;
+  },
+
+  /** Quick-adds a new project to the backend */
+  async quickCreateProject(
+    organizationId: string,
+    name: string,
+    description?: string,
+  ): Promise<Project> {
+    return expectShape(
+      parseProject(
+        await apiRequest(`${base(organizationId)}/projects`, {
+          method: 'POST',
+          body: { name, description },
+        }),
+      ),
+      'project',
     );
   },
 
@@ -49,9 +99,6 @@ export const timesheetRepository = {
 
   /**
    * Builds timesheets for a period from recorded attendance.
-   *
-   * This is the only route that creates timesheets in bulk; entries added by hand go through
-   * `addEntry` against an existing sheet.
    */
   async derivePeriod(organizationId: string, periodId: string): Promise<unknown> {
     return apiRequest(`${base(organizationId)}/periods/${encodeURIComponent(periodId)}/derive`, {
@@ -59,16 +106,24 @@ export const timesheetRepository = {
     });
   },
 
+  /**
+   * Records a project-centric time entry. If timesheetId is provided, writes to that sheet;
+   * otherwise writes to the direct entry endpoint which auto-resolves/provisions the draft sheet.
+   */
   async addEntry(
     organizationId: string,
-    timesheetId: string,
+    timesheetId: string | undefined,
     input: ManualEntryInput,
   ): Promise<Timesheet> {
+    const url = timesheetId
+      ? `${base(organizationId)}/${encodeURIComponent(timesheetId)}/entries`
+      : `${base(organizationId)}/entries`;
+
     return expectShape(
       parseTimesheet(
-        await apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/entries`, {
+        await apiRequest(url, {
           method: 'POST',
-          body: input,
+          body: { ...input, timesheetId },
         }),
       ),
       'timesheet entry',
@@ -77,6 +132,12 @@ export const timesheetRepository = {
 
   async submit(organizationId: string, timesheetId: string): Promise<unknown> {
     return apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/submit`, {
+      method: 'POST',
+    });
+  },
+
+  async unsubmit(organizationId: string, timesheetId: string): Promise<unknown> {
+    return apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/unsubmit`, {
       method: 'POST',
     });
   },

@@ -21,6 +21,7 @@ import { ScreenTimesheetsAdmin } from './components/screen-timesheet/screen-time
 import { ScreenPayrollAdmin } from './components/screen-payroll/screen-payroll-admin';
 import { ScreenShifts } from './components/screen-shifts/screen-shifts';
 import { ScreenHolidays } from './components/screen-holidays/screen-holidays';
+import { ScreenEmployeeHolidays } from './components/screen-holidays/screen-employee-holidays';
 import { ActivateAccountScreen } from './components/auth/activate-account-screen';
 import { LoginScreen } from './components/auth/login-screen';
 import { useEmsNavigation } from './hooks/use-ems-navigation';
@@ -166,6 +167,8 @@ function EmsWorkspaceInner() {
           {effectiveModule === 'timesheet' && <Screen5TimeTracker />}
 
           {effectiveModule === 'time-off' && <Screen7TimeOff />}
+
+          {effectiveModule === 'holidays' && <ScreenEmployeeHolidays />}
 
           {effectiveModule === 'projects' && <ScreenProjects />}
 

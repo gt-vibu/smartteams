@@ -34,7 +34,11 @@ export function useAttendancePreferences(branchId?: string) {
   );
 
   const save = useCallback(
-    async (input: { geofenceMode?: string; biometricVerificationMode?: string }) => {
+    async (input: {
+      geofenceMode?: string;
+      biometricVerificationMode?: string;
+      attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
+    }) => {
       if (!organizationId) return false;
       setSaving(true);
       setSaveError(null);

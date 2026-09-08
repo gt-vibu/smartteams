@@ -93,6 +93,7 @@ export const attendancePreferencesSchema = z.object({
   organizationId: z.string().optional(),
   geofenceMode: z.string().nullable(),
   biometricVerificationMode: z.string().nullable(),
+  attendanceSessionMode: z.enum(['SINGLE', 'MULTIPLE']).optional().default('SINGLE'),
   geofenceOwnerSource: z.string(),
   biometricOwnerSource: z.string(),
 });

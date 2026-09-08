@@ -24,6 +24,14 @@ export const timesheetEntrySchema = z.object({
   overtimeMinutes: z.number().optional(),
   description: z.string().nullable().optional(),
   source: z.string().optional(),
+  projectId: z.string().uuid().nullable().optional(),
+  projectName: z.string().nullable().optional(),
+  jobName: z.string().nullable().optional(),
+  workItem: z.string().nullable().optional(),
+  billable: z.boolean().optional(),
+  attachmentUrl: z.string().nullable().optional(),
+  startTime: z.string().nullable().optional(),
+  endTime: z.string().nullable().optional(),
 });
 
 export const timesheetSchema = z.object({
@@ -39,9 +47,15 @@ export const timesheetSchema = z.object({
   entries: z.array(timesheetEntrySchema).optional(),
 });
 
+export const jobTypeSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
 export type TimesheetPeriod = z.infer<typeof timesheetPeriodSchema>;
 export type TimesheetEntry = z.infer<typeof timesheetEntrySchema>;
 export type Timesheet = z.infer<typeof timesheetSchema>;
+export type JobType = z.infer<typeof jobTypeSchema>;
 
 function parseList<T>(schema: z.ZodType<T>, payload: unknown): T[] | null {
   const items =
@@ -53,11 +67,26 @@ function parseList<T>(schema: z.ZodType<T>, payload: unknown): T[] | null {
 }
 
 export const parseTimesheetList = (payload: unknown) => parseList(timesheetSchema, payload);
+export const parseJobTypeList = (payload: unknown) => parseList(jobTypeSchema, payload);
 
 export function parseTimesheet(payload: unknown): Timesheet | null {
   const result = timesheetSchema.safeParse(payload);
   return result.success ? result.data : null;
 }
+
+/** Default enterprise job types */
+export const DEFAULT_JOB_TYPES: string[] = [
+  'Development',
+  'Testing',
+  'Code Review',
+  'Bug Fixing',
+  'Documentation',
+  'Meeting',
+  'Research',
+  'Deployment',
+  'Support',
+  'UI/UX Design',
+];
 
 /** A timesheet the employee can still edit. Anything submitted is locked pending a decision. */
 export function isEditable(timesheet: Pick<Timesheet, 'status'>): boolean {

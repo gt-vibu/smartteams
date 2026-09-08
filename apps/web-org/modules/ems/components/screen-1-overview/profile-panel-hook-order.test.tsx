@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import React from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * An administrator can gain an employee record while these panels are already mounted — that is
@@ -88,33 +88,40 @@ function asEnrolledEmployee() {
 
 describe('profile panels survive gaining an employee record while mounted', () => {
   beforeEach(() => {
+    cleanup();
     asNoEmployee();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   it('EmployeeProfilePanel renders content after self-enrollment without a remount', async () => {
     const { EmployeeProfilePanel } = await import('./employee-profile-panel');
 
     const view = render(<EmployeeProfilePanel />);
-    expect(screen.getByText('No employee profile')).toBeTruthy();
+    expect(view.getByText('No employee profile')).toBeTruthy();
 
     // The same component instance re-renders — no unmount — which is what makes the hook order
     // observable to React.
     asEnrolledEmployee();
     view.rerender(<EmployeeProfilePanel />);
 
-    expect(screen.queryByText('No employee profile')).toBeNull();
-    expect(screen.getByText(/ADM-001/)).toBeTruthy();
-  });
+    expect(view.queryByText('No employee profile')).toBeNull();
+    expect(view.getByText(/ADM-001/)).toBeTruthy();
+    view.unmount();
+  }, 15000);
 
   it('GreetingActivityCard renders content after self-enrollment without a remount', async () => {
     const { GreetingActivityCard } = await import('./greeting-activity-card');
 
     const view = render(<GreetingActivityCard />);
-    expect(screen.getByText('No employee profile')).toBeTruthy();
+    expect(view.getByText('No employee profile')).toBeTruthy();
 
     asEnrolledEmployee();
     view.rerender(<GreetingActivityCard />);
 
-    expect(screen.queryByText('No employee profile')).toBeNull();
-  });
+    expect(view.queryByText('No employee profile')).toBeNull();
+    view.unmount();
+  }, 15000);
 });

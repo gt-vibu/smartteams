@@ -71,8 +71,7 @@ export function buildCommandItems({
         title: 'Start New Payroll Run',
         subtitle: 'Initiate monthly compensation run and calculation',
         category: 'Actions',
-        badge: 'Admin',
-        icon: <span className="text-sky-400">💳</span>,
+        icon: <span className="text-sky-500">💳</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
           onClose();
@@ -83,8 +82,7 @@ export function buildCommandItems({
         title: 'Create Leave Policy',
         subtitle: 'Configure annual allowance, accrual frequency & branch rules',
         category: 'Actions',
-        badge: 'Admin',
-        icon: <span className="text-purple-400">🌴</span>,
+        icon: <span className="text-purple-500">🌴</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
           onClose();
@@ -95,8 +93,7 @@ export function buildCommandItems({
         title: 'Inspect Attendance Daily Roster',
         subtitle: 'Filter organizational daily presence and punch logs',
         category: 'Actions',
-        badge: 'Admin',
-        icon: <span className="text-emerald-400">⏱️</span>,
+        icon: <span className="text-emerald-500">⏱️</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
           onClose();
@@ -134,7 +131,6 @@ export function buildCommandItems({
         title: isCheckedIn ? 'Check Out of Attendance' : 'Check In to Attendance',
         subtitle: isCheckedIn ? 'Stop active session timer' : 'Start attendance timer',
         category: 'Actions',
-        badge: 'Action',
         icon: (
           <svg
             className="h-4 w-4 text-emerald-500"
@@ -162,7 +158,6 @@ export function buildCommandItems({
         title: 'Log Work Time to Project',
         subtitle: 'Record time entry on active timesheet',
         category: 'Actions',
-        badge: 'Action',
         icon: (
           <svg
             className="h-4 w-4 text-sky-500"
@@ -185,7 +180,6 @@ export function buildCommandItems({
         title: 'Apply for Leave / Time Off',
         subtitle: 'Submit casual or sick leave request',
         category: 'Actions',
-        badge: 'Action',
         icon: (
           <svg
             className="h-4 w-4 text-purple-500"

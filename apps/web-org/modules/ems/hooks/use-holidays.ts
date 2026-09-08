@@ -117,12 +117,32 @@ export function useHolidays() {
     [organizationId, run],
   );
 
+  const renameHolidayGroup = useCallback(
+    (holidayIds: string[], input: { name?: string; isOptional?: boolean }) =>
+      run(async () => {
+        for (const holidayId of holidayIds) {
+          await holidaysRepository.update(organizationId!, holidayId, input);
+        }
+      }, 'One or more holidays could not be updated.'),
+    [organizationId, run],
+  );
+
   const retireHoliday = useCallback(
     (holidayId: string, reason: string) =>
       run(
         () => holidaysRepository.deactivate(organizationId!, holidayId, reason),
         'The holiday could not be retired.',
       ),
+    [organizationId, run],
+  );
+
+  const retireHolidayGroup = useCallback(
+    (holidayIds: string[], reason: string) =>
+      run(async () => {
+        for (const holidayId of holidayIds) {
+          await holidaysRepository.deactivate(organizationId!, holidayId, reason);
+        }
+      }, 'One or more holidays could not be retired.'),
     [organizationId, run],
   );
 
@@ -176,7 +196,9 @@ export function useHolidays() {
     createHoliday,
     createHolidayRange,
     renameHoliday,
+    renameHolidayGroup,
     retireHoliday,
+    retireHolidayGroup,
     updateAllowance,
     upsertEmployeePolicy,
     deleteEmployeePolicy,

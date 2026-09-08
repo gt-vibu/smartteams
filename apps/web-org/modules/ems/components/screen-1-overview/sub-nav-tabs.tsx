@@ -21,7 +21,7 @@ export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
   // Approvals is only in the tab list for actual line managers with explicit approval authority
   const tabs = [
     'Activities',
-    'Feeds',
+    // 'Feeds', // Commented out until real backend persistence is connected
     'Profile',
     ...(isManagerApprover ? ['Approvals'] : []),
     'Leave',

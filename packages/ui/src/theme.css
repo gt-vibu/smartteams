@@ -14,8 +14,7 @@
 }
 
 .dark {
-  /* Lifted and desaturated for a dark ground: the light-mode green does not carry enough
-     luminance contrast against a dark surface to be legible as an action. */
-  --smarteam-primary: oklch(0.72 0.13 155);
-  --smarteam-primary-foreground: oklch(0.18 0.04 158);
+  /* Lifted and desaturated for a dark ground */
+  --smarteam-primary: #059669;
+  --smarteam-primary-foreground: #ffffff;
 }

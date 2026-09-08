@@ -25,6 +25,11 @@ const BIOMETRIC_MODES = [
   { value: 'REQUIRED', label: 'Required' },
 ];
 
+const SESSION_MODES = [
+  { value: 'SINGLE', label: 'One session per day (Check in & out once)' },
+  { value: 'MULTIPLE', label: 'Multiple sessions per day (Multiple check-ins)' },
+];
+
 /**
  * Attendance policy: geofencing and biometric verification.
  *
@@ -112,6 +117,39 @@ export function AttendancePolicyPanel() {
                   </SelectTrigger>
                   <SelectContent>
                     {BIOMETRIC_MODES.map((mode) => (
+                      <SelectItem key={mode.value} value={mode.value}>
+                        {mode.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectMenu>
+              </div>
+
+              <div className="sm:col-span-2 border-t border-border pt-3">
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <div>
+                    <Label htmlFor="session-mode" className="text-xs font-semibold">
+                      Attendance Sessions
+                    </Label>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Determines whether employees record a single completed shift or multiple
+                      clock-ins per day.
+                    </p>
+                  </div>
+                  <Badge variant="outline">Organization Default</Badge>
+                </div>
+                <SelectMenu
+                  disabled={!policy.canWrite || policy.saving}
+                  onValueChange={(value) =>
+                    void policy.save({ attendanceSessionMode: value as 'SINGLE' | 'MULTIPLE' })
+                  }
+                  value={policy.preferences.attendanceSessionMode}
+                >
+                  <SelectTrigger id="session-mode" className="w-full mt-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SESSION_MODES.map((mode) => (
                       <SelectItem key={mode.value} value={mode.value}>
                         {mode.label}
                       </SelectItem>

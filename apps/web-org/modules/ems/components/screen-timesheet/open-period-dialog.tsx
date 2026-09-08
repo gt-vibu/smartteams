@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, Input, Label, Select } from '@smarteam/ui';
+import {
+  Button,
+  DatePicker,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Label,
+  Select,
+} from '@smarteam/ui';
 
 /**
  * Opening a timesheet period, and deriving the sheets for it.
@@ -40,6 +48,19 @@ export function OpenPeriodDialog({
 
   const ready = periodStart.length === 10 && periodEnd.length === 10 && periodEnd >= periodStart;
 
+  const handlePeriodTypeChange = (newType: string) => {
+    setPeriodType(newType);
+    const defaults = getPeriodDefaults(newType);
+    setPeriodStart(defaults.start);
+    setPeriodEnd(defaults.end);
+  };
+
+  const applyPreset = (type: string, start: string, end: string) => {
+    setPeriodType(type);
+    setPeriodStart(start);
+    setPeriodEnd(end);
+  };
+
   const submit = async () => {
     if (!ready) return;
     const opened = await onOpen({ periodType, periodStart, periodEnd });
@@ -71,36 +92,120 @@ export function OpenPeriodDialog({
                 for each employee from their recorded attendance.
               </p>
 
+              {/* Quick Preset Buttons */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Timeline Presets
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const now = new Date();
+                      const day = now.getDay();
+                      const diffToMonday = (day === 0 ? -6 : 1) - day;
+                      const monday = new Date(now.getTime() + diffToMonday * 86400000);
+                      const sunday = new Date(monday.getTime() + 6 * 86400000);
+                      applyPreset(
+                        'WEEKLY',
+                        monday.toISOString().slice(0, 10),
+                        sunday.toISOString().slice(0, 10),
+                      );
+                    }}
+                    className={`text-[11px] px-2.5 py-1 rounded border transition-colors cursor-pointer ${
+                      periodType === 'WEEKLY'
+                        ? 'bg-primary text-primary-foreground border-primary font-bold'
+                        : 'bg-muted/50 text-muted-foreground border-border hover:text-foreground'
+                    }`}
+                  >
+                    This Week
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const now = new Date();
+                      const start = now.toISOString().slice(0, 10);
+                      const end = new Date(now.getTime() + 13 * 86400000)
+                        .toISOString()
+                        .slice(0, 10);
+                      applyPreset('BIWEEKLY', start, end);
+                    }}
+                    className={`text-[11px] px-2.5 py-1 rounded border transition-colors cursor-pointer ${
+                      periodType === 'BIWEEKLY'
+                        ? 'bg-primary text-primary-foreground border-primary font-bold'
+                        : 'bg-muted/50 text-muted-foreground border-border hover:text-foreground'
+                    }`}
+                  >
+                    Fortnight (14d)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const now = new Date();
+                      const y = now.getFullYear();
+                      const m = now.getMonth();
+                      const start = new Date(y, m, 1).toISOString().slice(0, 10);
+                      const end = new Date(y, m + 1, 0).toISOString().slice(0, 10);
+                      applyPreset('MONTHLY', start, end);
+                    }}
+                    className={`text-[11px] px-2.5 py-1 rounded border transition-colors cursor-pointer ${
+                      periodType === 'MONTHLY'
+                        ? 'bg-primary text-primary-foreground border-primary font-bold'
+                        : 'bg-muted/50 text-muted-foreground border-border hover:text-foreground'
+                    }`}
+                  >
+                    This Month
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPeriodType('CUSTOM');
+                    }}
+                    className={`text-[11px] px-2.5 py-1 rounded border transition-colors cursor-pointer ${
+                      periodType === 'CUSTOM'
+                        ? 'bg-primary text-primary-foreground border-primary font-bold'
+                        : 'bg-muted/50 text-muted-foreground border-border hover:text-foreground'
+                    }`}
+                  >
+                    Custom Range
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-1.5">
                 <Label htmlFor="period-type">Period type</Label>
                 <Select
                   id="period-type"
-                  onChange={(event) => setPeriodType(event.target.value)}
+                  onChange={(event) => handlePeriodTypeChange(event.target.value)}
                   value={periodType}
                 >
-                  <option value="WEEKLY">Weekly</option>
-                  <option value="BIWEEKLY">Fortnightly</option>
-                  <option value="MONTHLY">Monthly</option>
-                  <option value="CUSTOM">Custom</option>
+                  <option value="WEEKLY">Weekly (7 days)</option>
+                  <option value="BIWEEKLY">Bi-weekly / Fortnightly (14 days)</option>
+                  <option value="MONTHLY">Monthly (Full Calendar Month)</option>
+                  <option value="CUSTOM">Custom Date Range</option>
                 </Select>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="period-start">Starts</Label>
-                  <Input
+                  <DatePicker
+                    disabled={saving}
                     id="period-start"
-                    onChange={(event) => setPeriodStart(event.target.value)}
-                    type="date"
+                    onChange={setPeriodStart}
                     value={periodStart}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="period-end">Ends</Label>
-                  <Input
+                  <DatePicker
+                    disabled={saving}
                     id="period-end"
-                    onChange={(event) => setPeriodEnd(event.target.value)}
-                    type="date"
+                    min={periodStart}
+                    onChange={setPeriodEnd}
                     value={periodEnd}
                   />
                 </div>
@@ -140,6 +245,31 @@ export function OpenPeriodDialog({
       </DialogContent>
     </Dialog>
   );
+}
+
+function getPeriodDefaults(type: string): { start: string; end: string } {
+  const now = new Date();
+  if (type === 'MONTHLY') {
+    const y = now.getFullYear();
+    const m = now.getMonth();
+    const start = new Date(y, m, 1).toISOString().slice(0, 10);
+    const end = new Date(y, m + 1, 0).toISOString().slice(0, 10);
+    return { start, end };
+  }
+  if (type === 'BIWEEKLY') {
+    const start = now.toISOString().slice(0, 10);
+    const end = new Date(now.getTime() + 13 * 86400000).toISOString().slice(0, 10);
+    return { start, end };
+  }
+  if (type === 'WEEKLY') {
+    const start = now.toISOString().slice(0, 10);
+    const end = new Date(now.getTime() + 6 * 86400000).toISOString().slice(0, 10);
+    return { start, end };
+  }
+  return {
+    start: now.toISOString().slice(0, 10),
+    end: new Date(now.getTime() + 29 * 86400000).toISOString().slice(0, 10),
+  };
 }
 
 function isoToday(): string {

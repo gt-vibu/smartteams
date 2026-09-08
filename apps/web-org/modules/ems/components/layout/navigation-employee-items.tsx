@@ -42,6 +42,25 @@ export const employeeNavItems: NavItem[] = [
     ),
   },
   {
+    id: 'holidays',
+    label: 'Holidays',
+    icon: (className: string) => (
+      <svg
+        className={className}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M5 3v4M19 3v4M2 11h20M5 7h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2zM12 14l1 2 2-1-1 2 2 1-2 1 1 2-2-1-1 2-1-2-2 1 1-2-2-1 2-1-1-2 2 1 1-2z"
+        />
+      </svg>
+    ),
+  },
+  {
     id: 'timesheet',
     label: 'Timesheet',
     icon: (className: string) => (
@@ -132,25 +151,6 @@ export const employeeNavItems: NavItem[] = [
           strokeLinecap="round"
           strokeLinejoin="round"
           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: 'holidays',
-    label: 'Holidays',
-    icon: (className: string) => (
-      <svg
-        className={className}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
         />
       </svg>
     ),

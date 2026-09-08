@@ -47,5 +47,4 @@ Textarea.displayName = 'Textarea';
 
 export { Label, Input, Textarea };
 export * from './switch';
-export * from './select';
 export * from './checkbox';

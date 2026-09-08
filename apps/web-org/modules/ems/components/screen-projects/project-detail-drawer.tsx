@@ -39,18 +39,29 @@ export function ProjectDetailDrawer({
         <SheetContent className="max-w-md gap-0 p-0">
           <SheetTitle className="sr-only">Project details</SheetTitle>
 
-          <div className="border-b border-border bg-muted/40 p-5">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-foreground">{view.project.name}</p>
-                <p className="truncate font-mono text-[11px] text-muted-foreground">
+          <div className="border-b border-border bg-muted/40 p-5 pr-14">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-base font-bold text-foreground">{view.project.name}</p>
+                <p className="truncate font-mono text-[11px] text-muted-foreground mt-0.5">
                   {view.project.code ?? '--'} · {view.branchName ?? 'No branch'}
                 </p>
               </div>
-              <Badge variant="outline">{view.project.status ?? 'UNKNOWN'}</Badge>
+              <Badge
+                variant={view.project.status === 'ACTIVE' ? 'outline' : 'secondary'}
+                className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 ${
+                  view.project.status === 'ACTIVE'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    : ''
+                }`}
+              >
+                {view.project.status ?? 'UNKNOWN'}
+              </Badge>
             </div>
             {view.project.description && (
-              <p className="mt-2 text-xs text-muted-foreground">{view.project.description}</p>
+              <p className="mt-2.5 text-xs text-muted-foreground leading-relaxed">
+                {view.project.description}
+              </p>
             )}
             <p className="mt-2 text-[11px] text-muted-foreground">
               {view.project.startDate

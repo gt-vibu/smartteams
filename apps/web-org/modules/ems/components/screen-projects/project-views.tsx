@@ -7,19 +7,27 @@ import type { ProjectView } from '../../services/team-directory';
 /**
  * Project roster presentation.
  *
- * Allocation percentages are the values the API stored. Where an allocation was never recorded
- * the cell reads `--` rather than 0%, because "not recorded" and "zero capacity" are different
- * facts and the roster must not turn one into the other.
+ * Team capacity reflects average allocation across assigned active members.
+ * For example, 7 full-time members allocated at 100% capacity each displays 100% average capacity.
  */
+export function averageAllocation(view: ProjectView): number {
+  if (view.activeMembers.length === 0) return 0;
+  const sum = view.activeMembers.reduce((acc, m) => acc + (m.allocationPercentage ?? 100), 0);
+  return Math.round(sum / view.activeMembers.length);
+}
 
+/** Legacy alias returning bounded capacity percentage */
 export function totalAllocation(view: ProjectView): number {
-  return view.activeMembers.reduce((sum, member) => sum + (member.allocationPercentage ?? 0), 0);
+  return averageAllocation(view);
 }
 
 export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () => void }) {
+  const avg = averageAllocation(view);
+  const count = view.activeMembers.length;
+
   return (
     <button
-      className="flex w-full flex-col gap-3 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/40"
+      className="flex w-full flex-col gap-3 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/40 cursor-pointer"
       onClick={onClick}
       type="button"
     >
@@ -39,13 +47,12 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
 
       <div className="space-y-1.5 border-t border-border pt-3">
         <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-          <span>{view.activeMembers.length} allocated</span>
-          <span className="font-mono font-bold text-foreground">{totalAllocation(view)}%</span>
+          <span>
+            {count} {count === 1 ? 'member' : 'members'} allocated
+          </span>
+          <span className="font-mono font-bold text-foreground">{avg}%</span>
         </div>
-        <Progress
-          aria-label={`Total allocation ${totalAllocation(view)}%`}
-          value={Math.min(totalAllocation(view), 100)}
-        />
+        <Progress aria-label={`Team average allocation ${avg}%`} value={avg} />
       </div>
     </button>
   );
@@ -73,7 +80,7 @@ export function ProjectTable({
         <tbody>
           {views.map((view) => (
             <tr
-              className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-muted/40 hover:bg-muted/40"
+              className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-muted/40"
               key={view.project.id}
               onClick={() => onSelect(view)}
             >
@@ -84,7 +91,7 @@ export function ProjectTable({
               <td className="px-4 py-2.5 text-muted-foreground">{view.branchName ?? '--'}</td>
               <td className="px-4 py-2.5 text-muted-foreground">{view.project.status ?? '--'}</td>
               <td className="px-4 py-2.5 font-mono font-bold text-foreground">
-                {view.activeMembers.length}
+                {view.activeMembers.length} {view.activeMembers.length === 1 ? 'member' : 'members'}
               </td>
             </tr>
           ))}

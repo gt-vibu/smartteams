@@ -77,6 +77,7 @@ export class AttendancePreferencesDto {
     'DISABLED' | 'FLAG_ONLY' | 'REQUIRED';
   @IsOptional() @IsEnum(['DISABLED', 'OPTIONAL', 'REQUIRED']) biometricVerificationMode?:
     'DISABLED' | 'OPTIONAL' | 'REQUIRED';
+  @IsOptional() @IsEnum(['SINGLE', 'MULTIPLE']) attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional()
   @IsArray()

@@ -78,6 +78,8 @@ export function calculateStatutoryDeduction(
   rule: StatutoryRuleInput,
   roundingMode: PayrollRoundingMode,
   eligibilityStructure = structure,
+  customWageBasis?: Prisma.Decimal,
+  periodMonth?: number,
 ): StatutoryResult {
   const scheme = rule.schemeCode.toUpperCase();
   const rate = decimal(rule.employeeRate ?? 0);
@@ -96,7 +98,7 @@ export function calculateStatutoryDeduction(
         reason: 'Employee wage is below the configured professional-tax threshold',
       };
     }
-    const slabAmount = metadataSlabAmount(rule.metadata, eligibilityStructure.gross);
+    const slabAmount = metadataSlabAmount(rule.metadata, eligibilityStructure.gross, periodMonth);
     const flatAmount =
       slabAmount ??
       (rule.flatAmount === null || rule.flatAmount === undefined
@@ -125,7 +127,8 @@ export function calculateStatutoryDeduction(
     };
   }
 
-  const wageBasis = scheme === 'EPF' || scheme === 'PF' ? structure.base : structure.gross;
+  const defaultWageBasis = scheme === 'EPF' || scheme === 'PF' ? structure.base : structure.gross;
+  const wageBasis = customWageBasis ?? defaultWageBasis;
   const basis = ceiling ? Prisma.Decimal.min(wageBasis, ceiling) : wageBasis;
   const employeeAmount = roundMoney(basis.mul(rate).div(100), roundingMode);
   const employerAmount = roundMoney(basis.mul(employerRate).div(100), roundingMode);
@@ -182,7 +185,7 @@ function metadataNumber(metadata: unknown, key: string) {
     : null;
 }
 
-function metadataSlabAmount(metadata: unknown, gross: Prisma.Decimal) {
+function metadataSlabAmount(metadata: unknown, gross: Prisma.Decimal, periodMonth?: number) {
   if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return null;
   const slabs = (metadata as Record<string, unknown>).slabs;
   if (!isUnknownArray(slabs)) return null;
@@ -200,6 +203,18 @@ function metadataSlabAmount(metadata: unknown, gross: Prisma.Decimal) {
     );
   });
   if (!slab || typeof slab !== 'object' || Array.isArray(slab)) return null;
-  const amount = Number((slab as Record<string, unknown>).amount);
+  const record = slab as Record<string, unknown>;
+  if (
+    periodMonth !== undefined &&
+    record.monthOverrides &&
+    typeof record.monthOverrides === 'object'
+  ) {
+    const monthKey = String(periodMonth);
+    const override = (record.monthOverrides as Record<string, unknown>)[monthKey];
+    if (typeof override === 'number' && Number.isFinite(override) && override >= 0) {
+      return override;
+    }
+  }
+  const amount = Number(record.amount);
   return Number.isFinite(amount) && amount >= 0 ? amount : null;
 }

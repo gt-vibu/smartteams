@@ -20,7 +20,19 @@ export type TimesheetSummary = {
 export type TimesheetDayGroup = {
   workDate: string;
   totalLabel: string;
-  entries: { id: string; minutes: number; label: string; description: string | null }[];
+  entries: {
+    id: string;
+    minutes: number;
+    label: string;
+    description: string | null;
+    projectId?: string | null;
+    projectName?: string | null;
+    jobName?: string | null;
+    workItem?: string | null;
+    billable?: boolean;
+    startTime?: string | null;
+    endTime?: string | null;
+  }[];
 };
 
 /**
@@ -58,6 +70,13 @@ export function toDayGroups(timesheet: Timesheet | null): TimesheetDayGroup[] {
       minutes: entry.minutes,
       label: formatWorkMinutes(entry.minutes),
       description: entry.description ?? null,
+      projectId: entry.projectId ?? null,
+      projectName: entry.projectName ?? null,
+      jobName: entry.jobName ?? null,
+      workItem: entry.workItem ?? null,
+      billable: entry.billable ?? true,
+      startTime: entry.startTime ?? null,
+      endTime: entry.endTime ?? null,
     })),
   }));
 }

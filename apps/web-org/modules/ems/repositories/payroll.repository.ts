@@ -240,6 +240,36 @@ export const payrollRepository = {
     );
   },
 
+  /** Saves organization payroll policy settings (Base %, HRA %, Base Minimum, Rounding). */
+  async savePolicy(
+    organizationId: string,
+    input: {
+      effectiveFrom: string;
+      effectiveTo?: string;
+      salarySlipDefault: boolean;
+      payrollEnabledDefault: boolean;
+      payrollDayBasis: number;
+      basePercentage: number;
+      baseMinimum: number;
+      hraPercentage: number;
+      pfDefault: boolean;
+      esiDefault: boolean;
+      ptDefault: boolean;
+      statutoryJurisdiction?: string;
+      roundingMode: 'HALF_UP' | 'DOWN' | 'UP';
+    },
+  ): Promise<PayrollPolicy> {
+    return expectShape(
+      parsePayrollPolicy(
+        await apiRequest(`${base(organizationId)}/policy`, {
+          method: 'PUT',
+          body: input,
+        }),
+      ),
+      'payroll policy',
+    );
+  },
+
   /** The statutory rules payroll applies. Rates and ceilings are the backend's, never the UI's. */
   async listStatutoryRules(
     organizationId: string,

@@ -6,7 +6,6 @@ import { useLeave } from '../../hooks/use-leave';
 import { LeaveBalanceCards } from './leave-balance-cards';
 import { LeaveApplicationsTable } from './leave-applications-table';
 import { ApplyLeaveModal } from './apply-leave-modal';
-import { FloatingHolidaysCard } from './floating-holidays-card';
 import { PageShell } from '../layout/page-shell';
 
 const STATUS_FILTERS = [
@@ -121,8 +120,6 @@ export function Screen7TimeOff() {
                 No leave balances have been provisioned for you yet.
               </p>
             )}
-
-            <FloatingHolidaysCard />
 
             <LeaveBalanceCards balances={leave.balances} typesById={leave.typesById} />
 

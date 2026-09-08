@@ -26,8 +26,7 @@ export function EmployeeSelectionsTable({
       <div className="flex min-h-[clamp(180px,35vh,320px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
         <p className="text-sm font-semibold text-foreground">No selections recorded</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          When employees select optional/floating holidays from the pool, their selections will
-          appear here.
+          When employees select optional holidays from the pool, their selections will appear here.
         </p>
       </div>
     );

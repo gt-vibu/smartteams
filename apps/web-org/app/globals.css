@@ -359,30 +359,27 @@ body {
 
 html.dark body,
 html[data-theme='dark'] body {
-  /* Hue 158, matching the brand, rather than the old 245 blue. A dark theme carrying a blue
-     cast under a green brand reads as two products; the neutrals are barely chromatic either
-     way, but the little colour they do carry should point the same direction as the light theme. */
-  --background: oklch(0.17 0.018 158);
-  --foreground: oklch(0.96 0.008 120);
-  --card: oklch(0.215 0.02 158);
-  --card-foreground: oklch(0.96 0.008 120);
-  --popover: oklch(0.215 0.02 158);
-  --popover-foreground: oklch(0.96 0.008 120);
-  --secondary: oklch(0.26 0.025 158);
-  --secondary-foreground: oklch(0.92 0.012 120);
-  --muted: oklch(0.26 0.025 158);
-  --muted-foreground: oklch(0.71 0.018 140);
-  --border: oklch(0.34 0.03 158 / 0.8);
-  --input: oklch(0.34 0.03 158);
-  --input-surface: oklch(0.195 0.018 158);
-  --input-surface-disabled: oklch(0.24 0.02 158);
-  --accent: oklch(0.27 0.025 158);
-  --accent-foreground: oklch(0.96 0.008 120);
-  --table-header: oklch(0.245 0.024 158);
-  --table-header-foreground: oklch(0.78 0.02 140);
-  --sidebar: oklch(0.145 0.022 158);
-  --sidebar-foreground: oklch(0.9 0.018 120);
-  --sidebar-border: oklch(0.26 0.03 158);
+  --background: #0d1117;
+  --foreground: #f0f6fc;
+  --card: #161b22;
+  --card-foreground: #f0f6fc;
+  --popover: #161b22;
+  --popover-foreground: #f0f6fc;
+  --secondary: #21262d;
+  --secondary-foreground: #f0f6fc;
+  --muted: #21262d;
+  --muted-foreground: #8b949e;
+  --border: #262f3d;
+  --input: #262f3d;
+  --input-surface: #0d1117;
+  --input-surface-disabled: #161b22;
+  --accent: #21262d;
+  --accent-foreground: #f0f6fc;
+  --table-header: #161b22;
+  --table-header-foreground: #8b949e;
+  --sidebar: #0d1117;
+  --sidebar-foreground: #f0f6fc;
+  --sidebar-border: #262f3d;
   --sidebar-accent: var(--smarteam-primary);
   background-color: var(--background) !important;
   color: var(--foreground) !important;

@@ -12,7 +12,15 @@ import { markPayrollStale } from '../payroll/payroll-staleness';
 import { OutboxService } from '../federation/outbox.service';
 import { assertApprover } from '../approvals/approval-authorization';
 
-import { dateOnly } from './timesheet-shared';
+import { toProjectDto } from '../platform/workforce-mappers';
+import {
+  dateOnly,
+  decodeEntry,
+  encodeEntryDescription,
+  DEFAULT_JOB_TYPES,
+  derivePeriodBounds,
+} from './timesheet-shared';
+import type { ManualEntryDto } from './timesheets.dto';
 
 @Injectable()
 export class TimesheetEntriesService {
@@ -22,40 +30,264 @@ export class TimesheetEntriesService {
     private readonly outbox: OutboxService,
   ) {}
 
+  async listJobTypes(context: DomainContext) {
+    requirePermission(context, 'timesheets.read');
+    return this.database.run(context, async (tx) => {
+      const settings = await tx.organizationSettings.findUnique({
+        where: { organizationId: context.organizationId },
+        select: { metadata: true },
+      });
+      const meta =
+        typeof settings?.metadata === 'object' &&
+        settings.metadata !== null &&
+        !Array.isArray(settings.metadata)
+          ? (settings.metadata as Record<string, unknown>)
+          : {};
+      const customJobs = Array.isArray(meta.jobTypes) ? (meta.jobTypes as string[]) : [];
+      const allNames = Array.from(new Set([...DEFAULT_JOB_TYPES, ...customJobs]));
+      return allNames.map((name) => ({ id: name, name }));
+    });
+  }
+
+  async createJobType(context: DomainContext, name: string) {
+    requirePermission(context, 'timesheets.write');
+    const cleanName = name.trim();
+    if (!cleanName || cleanName.length < 2) throw new ConflictError('Job type name is invalid');
+    return this.database.run(context, async (tx) => {
+      // Ensure the organization settings row exists before row-locking
+      await tx.organizationSettings.upsert({
+        where: { organizationId: context.organizationId },
+        create: {
+          organizationId: context.organizationId,
+          metadata: {},
+        },
+        update: {},
+      });
+      // Acquire row-level lock on organization settings to serialize concurrent job-type creations
+      await tx.$queryRaw`SELECT organization_id FROM organization_settings WHERE organization_id = ${context.organizationId}::uuid FOR UPDATE`;
+
+      const settings = await tx.organizationSettings.findUnique({
+        where: { organizationId: context.organizationId },
+      });
+      const meta =
+        typeof settings?.metadata === 'object' &&
+        settings.metadata !== null &&
+        !Array.isArray(settings.metadata)
+          ? (settings.metadata as { jobTypes?: string[] })
+          : {};
+      const current = Array.isArray(meta.jobTypes) ? meta.jobTypes : [];
+      if (!current.includes(cleanName)) {
+        const updatedJobs = [...current, cleanName];
+        await tx.organizationSettings.update({
+          where: { organizationId: context.organizationId },
+          data: {
+            metadata: { ...meta, jobTypes: updatedJobs },
+          },
+        });
+        await this.audit.record(
+          context,
+          {
+            entityType: 'JOB_TYPE',
+            entityId: cleanName,
+            action: 'JOB_TYPE_CREATED',
+            afterState: jsonSnapshot({ name: cleanName }),
+          },
+          tx,
+        );
+      }
+      return { id: cleanName, name: cleanName };
+    });
+  }
+
+  async quickCreateProject(context: DomainContext, name: string, description?: string) {
+    requirePermission(context, 'timesheets.write');
+    const cleanName = name.trim();
+    if (!cleanName || cleanName.length < 2) throw new ConflictError('Project name is invalid');
+    return this.database.run(context, async (tx) => {
+      const codeBase =
+        cleanName
+          .replace(/[^a-zA-Z0-9]/g, '')
+          .slice(0, 6)
+          .toUpperCase() || 'PRJ';
+      let code = codeBase;
+      let counter = 1;
+      while (
+        await tx.project.findFirst({
+          where: { organizationId: context.organizationId, code },
+          select: { id: true },
+        })
+      ) {
+        code = `${codeBase}-${counter++}`;
+      }
+      const project = await tx.project.create({
+        data: {
+          organizationId: context.organizationId,
+          code,
+          name: cleanName,
+          description: description?.trim() || undefined,
+          status: 'ACTIVE',
+        },
+      });
+
+      const employee = await tx.employee.findFirst({
+        where: { organizationId: context.organizationId, userId: context.actor.userId },
+        select: { id: true },
+      });
+      if (employee) {
+        await tx.projectMember.create({
+          data: {
+            organizationId: context.organizationId,
+            projectId: project.id,
+            employeeId: employee.id,
+            projectRole: 'Contributor',
+            startsOn: new Date(),
+          },
+        });
+      }
+
+      await this.audit.record(
+        context,
+        {
+          entityType: 'PROJECT',
+          entityId: project.id,
+          action: 'PROJECT_QUICK_CREATED',
+          afterState: jsonSnapshot(project),
+        },
+        tx,
+      );
+      return toProjectDto({ ...project, members: [] });
+    });
+  }
+
   async addManualEntry(
     context: DomainContext,
-    timesheetId: string,
-    input: { workDate: string; minutes: number; overtimeMinutes?: number; description?: string },
+    timesheetId: string | undefined,
+    input: ManualEntryDto,
   ) {
     requirePermission(context, 'timesheets.write');
     if (input.minutes <= 0 || (input.overtimeMinutes ?? 0) > input.minutes)
       throw new ConflictError('Timesheet minutes are invalid');
+    const workDateObj = dateOnly(input.workDate);
+
     return this.database.run(context, async (tx) => {
+      let targetTimesheetId = timesheetId || input.timesheetId;
+
+      if (!targetTimesheetId) {
+        // Resolve or provision the employee's active timesheet for the work date so the employee is
+        // never blocked by a missing admin-created timesheet period.
+        const employee = await tx.employee.findFirst({
+          where: { organizationId: context.organizationId, userId: context.actor.userId },
+          select: { id: true, primaryBranchId: true },
+        });
+        if (!employee) throw new ConflictError('Employee profile not found for user');
+
+        // Check if an existing timesheet period already covers this work date
+        let period = await tx.timesheetPeriod.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            periodStart: { lte: workDateObj },
+            periodEnd: { gte: workDateObj },
+          },
+          orderBy: { periodStart: 'desc' },
+        });
+
+        if (!period) {
+          // Read organizational payroll/timesheet cadence settings
+          const orgSettings = await tx.organizationSettings.findUnique({
+            where: { organizationId: context.organizationId },
+            select: { payrollFrequency: true },
+          });
+
+          const derived = derivePeriodBounds(workDateObj, orgSettings?.payrollFrequency);
+
+          period = await tx.timesheetPeriod.upsert({
+            where: {
+              organizationId_periodStart_periodEnd: {
+                organizationId: context.organizationId,
+                periodStart: derived.periodStart,
+                periodEnd: derived.periodEnd,
+              },
+            },
+            create: {
+              organizationId: context.organizationId,
+              periodType: derived.periodType,
+              periodStart: derived.periodStart,
+              periodEnd: derived.periodEnd,
+              status: TimesheetStatus.DRAFT,
+            },
+            update: {},
+          });
+        }
+
+        const timesheet = await tx.timesheet.upsert({
+          where: {
+            employeeId_timesheetPeriodId: {
+              employeeId: employee.id,
+              timesheetPeriodId: period.id,
+            },
+          },
+          create: {
+            organizationId: context.organizationId,
+            timesheetPeriodId: period.id,
+            employeeId: employee.id,
+            branchId: context.branchId ?? employee.primaryBranchId,
+            status: TimesheetStatus.DRAFT,
+            sourceAccessMode: context.accessMode,
+          },
+          update: {},
+        });
+        targetTimesheetId = timesheet.id;
+      }
+
       const timesheet = await tx.timesheet.findFirst({
         where: {
-          id: timesheetId,
+          id: targetTimesheetId,
           organizationId: context.organizationId,
           ...(context.branchId ? { branchId: context.branchId } : {}),
         },
       });
-      if (!timesheet || timesheet.status !== TimesheetStatus.DRAFT)
-        throw new ConflictError('Only a draft timesheet can be edited');
+      if (
+        !timesheet ||
+        (timesheet.status !== TimesheetStatus.DRAFT &&
+          timesheet.status !== TimesheetStatus.SUBMITTED &&
+          timesheet.status !== TimesheetStatus.REJECTED)
+      )
+        throw new ConflictError('Only an editable timesheet can accept new time entries');
+
+      // Verify project access if specified
+      let resolvedProjectName = input.projectName;
+      if (input.projectId) {
+        const project = await tx.project.findFirst({
+          where: { id: input.projectId, organizationId: context.organizationId },
+          select: { id: true, name: true },
+        });
+        if (!project) throw new ConflictError('Project not found or inaccessible');
+        resolvedProjectName = project.name;
+      }
+
       const overtime = input.overtimeMinutes ?? 0;
+      const encodedDescription = encodeEntryDescription({
+        ...input,
+        projectName: resolvedProjectName,
+      });
+
       const entry = await tx.timesheetEntry.create({
         data: {
           organizationId: context.organizationId,
-          timesheetId,
-          workDate: dateOnly(input.workDate),
+          timesheetId: targetTimesheetId,
+          workDate: workDateObj,
           minutes: input.minutes,
           regularMinutes: input.minutes - overtime,
           overtimeMinutes: overtime,
           source: TimesheetEntrySource.MANUAL,
-          description: input.description,
+          description: encodedDescription,
         },
       });
       const updated = await tx.timesheet.update({
         where: { id: timesheet.id },
         data: {
+          status: TimesheetStatus.DRAFT,
+          submittedAt: null,
           totalMinutes: { increment: input.minutes },
           regularMinutes: { increment: input.minutes - overtime },
           overtimeMinutes: { increment: overtime },
@@ -72,7 +304,42 @@ export class TimesheetEntriesService {
         },
         tx,
       );
-      return { timesheet: updated, entry };
+      return { timesheet: updated, entry: decodeEntry(entry) };
+    });
+  }
+
+  async unsubmit(context: DomainContext, timesheetId: string) {
+    requirePermission(context, 'timesheets.write');
+    return this.database.run(context, async (tx) => {
+      const timesheet = await tx.timesheet.findFirst({
+        where: {
+          id: timesheetId,
+          organizationId: context.organizationId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+      });
+      if (!timesheet || timesheet.status !== TimesheetStatus.SUBMITTED)
+        throw new ConflictError('Only a submitted timesheet can be recalled');
+      const updated = await tx.timesheet.update({
+        where: { id: timesheet.id },
+        data: {
+          status: TimesheetStatus.DRAFT,
+          submittedAt: null,
+          version: { increment: 1 },
+        },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'TIMESHEET',
+          entityId: timesheet.id,
+          action: 'TIMESHEET_RECALLED',
+          beforeState: jsonSnapshot(timesheet),
+          afterState: jsonSnapshot(updated),
+        },
+        tx,
+      );
+      return updated;
     });
   }
 
@@ -88,6 +355,10 @@ export class TimesheetEntriesService {
       });
       if (!timesheet || timesheet.status !== TimesheetStatus.DRAFT)
         throw new ConflictError('Only a draft timesheet can be submitted');
+      if (timesheet.totalMinutes <= 0)
+        throw new ConflictError(
+          'Cannot submit an empty timesheet. Please log your work hours before submitting.',
+        );
       // Re-read under a row lock: without it two concurrent submissions both see DRAFT, both pass
       // the guard above, and the sheet is submitted twice — same row, but two audit events and two
       // version increments describing one submission.

@@ -38,8 +38,24 @@ export class TimesheetsService {
     return this.entries.addManualEntry(...args);
   }
 
+  listJobTypes(...args: Parameters<TimesheetEntriesService['listJobTypes']>) {
+    return this.entries.listJobTypes(...args);
+  }
+
+  createJobType(...args: Parameters<TimesheetEntriesService['createJobType']>) {
+    return this.entries.createJobType(...args);
+  }
+
+  quickCreateProject(...args: Parameters<TimesheetEntriesService['quickCreateProject']>) {
+    return this.entries.quickCreateProject(...args);
+  }
+
   submit(...args: Parameters<TimesheetEntriesService['submit']>) {
     return this.entries.submit(...args);
+  }
+
+  unsubmit(...args: Parameters<TimesheetEntriesService['unsubmit']>) {
+    return this.entries.unsubmit(...args);
   }
 
   decide(...args: Parameters<TimesheetEntriesService['decide']>) {

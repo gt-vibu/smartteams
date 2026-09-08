@@ -1,18 +1,19 @@
 'use client';
 
 import React from 'react';
-import { formatMoney, type SalaryProfile } from '@smarteam/contracts';
+import { formatMoney, type Employee, type SalaryProfile } from '@smarteam/contracts';
+import { Button } from '@smarteam/ui';
+import { FileSpreadsheet, Printer } from 'lucide-react';
+import {
+  downloadSalaryStructureCsv,
+  openSalaryStructurePrintView,
+} from './salary-structure-export';
 
 /**
  * The employee's salary structure, exactly as the backend derives it.
  *
  * Every figure here comes from `GET /payroll/profile`, which applies the organisation's payroll
- * policy and its statutory rules. The screen this replaced computed its own: PF was hardcoded to
- * 1800, professional tax to 200, and income tax to ten percent of gross — none of which the
- * backend had agreed to, and none of which matched what a payroll run would actually pay.
- *
- * Income tax, gratuity and annual CTC are absent because the backend does not calculate them.
- * They are stated as unavailable rather than estimated.
+ * policy and its statutory rules.
  */
 
 function Row({
@@ -74,12 +75,57 @@ function Section({
   );
 }
 
-export function PayrollStructurePanel({ profile }: { profile: SalaryProfile }) {
+export function PayrollStructurePanel({
+  profile,
+  employee,
+  orgName,
+}: {
+  profile: SalaryProfile;
+  employee?: Employee | null;
+  orgName?: string;
+}) {
   const { salaryBreakdown } = profile;
   const totalEarnings = salaryBreakdown.earnings.reduce((sum, item) => sum + item.amount, 0);
 
+  const handlePrint = () => {
+    openSalaryStructurePrintView({ profile, employee, orgName });
+  };
+
+  const handleCsv = () => {
+    downloadSalaryStructureCsv({ profile, employee, orgName });
+  };
+
   return (
     <div className="space-y-4">
+      {/* Header bar with download options */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          Your configured compensation structure and statutory allowances.
+        </p>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs font-medium gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-2xs"
+            onClick={handlePrint}
+            title="Download official Salary Annexure as PDF / Printable format"
+          >
+            <Printer className="h-3.5 w-3.5" />
+            <span>Download Annexure (PDF)</span>
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 text-xs font-medium gap-1.5 text-muted-foreground hover:text-foreground"
+            onClick={handleCsv}
+            title="Export Salary Structure to CSV"
+          >
+            <FileSpreadsheet className="h-3.5 w-3.5" />
+            <span>Export CSV</span>
+          </Button>
+        </div>
+      </div>
+
       <dl className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
         {[
           { label: 'Monthly gross', value: salaryBreakdown.gross },

@@ -9,7 +9,7 @@ import { GreetingCard } from './greeting-card';
 import { TimesheetStatusCard } from './timesheet-status-card';
 import { WorkScheduleCard } from './work-schedule-card';
 import { UpcomingHolidaysCard } from './upcoming-holidays-card';
-import { OverviewFeedsTab } from './overview-feeds-tab';
+import { CompanyDocumentsCard } from './company-documents-card';
 import { OverviewProfileTab } from './overview-profile-tab';
 import { OverviewApprovalsTab } from './overview-approvals-tab';
 import { OverviewDashboardTab } from './overview-dashboard-tab';
@@ -36,7 +36,7 @@ const TOP_TABS = ['Overview', 'Dashboard', 'Calendar'] as const;
  */
 const SUB_TABS = [
   'Activities',
-  'Feeds',
+  // 'Feeds', // Commented out until real backend persistence is connected
   'Profile',
   'Approvals',
   'Leave',
@@ -182,11 +182,13 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
                     loading={holidays.loading}
                     unavailable={holidays.forbidden}
                   />
+
+                  <CompanyDocumentsCard />
                 </>
               )}
 
-              {/* Tab 2: Feeds */}
-              {activeSubTab === 'Feeds' && <OverviewFeedsTab />}
+              {/* Tab 2: Feeds (Commented out until real backend persistence is connected) */}
+              {/* {activeSubTab === 'Feeds' && <OverviewFeedsTab />} */}
 
               {/* Tab 3: Full Profile */}
               {activeSubTab === 'Profile' && <OverviewProfileTab />}
