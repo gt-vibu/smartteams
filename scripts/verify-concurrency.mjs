@@ -17,12 +17,13 @@
  *   pnpm verify:concurrency
  */
 import { createRequire } from 'node:module';
+import { resolveDatabaseUrl } from './lib/database-url.mjs';
 
 const require = createRequire(new URL('../apps/api/package.json', import.meta.url));
 const { Client } = require('pg');
 
 const BASE = process.env.CONCURRENCY_API_URL ?? 'http://localhost:4000';
-const DB = process.env.DATABASE_URL ?? 'postgresql://postgres:Qwerty%40123@localhost:5432/smarteam';
+const DB = resolveDatabaseUrl();
 
 let pass = 0;
 let fail = 0;
@@ -129,6 +130,24 @@ async function tenant(tag) {
 
   const roles = rows((await org('GET', '/roles')).payload);
   const branchId = rows((await org('GET', '/branches')).payload)[0].id;
+
+  // Timesheet submission now requires a configured approval policy, the same rule leave and
+  // attendance corrections already enforce. A tenant configures one; these suites do the same.
+  await org('POST', '/approval-policies', {
+    domain: 'TIMESHEET',
+    code: 'TS_DEFAULT',
+    name: 'Timesheet approval',
+    isDefault: true,
+    steps: [
+      {
+        stepNumber: 1,
+        approverType: 'ROLE',
+        roleId: (roles.find((role) => role.code === 'ORG_ADMIN') ?? roles[0]).id,
+        required: true,
+      },
+    ],
+  });
+
   const email = 'e.' + slug + '@t.test';
   const employee = await org('POST', '/employees', {
     employeeNumber: 'EMP-1',
@@ -310,9 +329,16 @@ console.log('\nduplicate leave decision');
 console.log('\nduplicate timesheet submission');
 {
   const t = await tenant('cc5');
+  // Closed pair: an open punch derives an empty sheet, which cannot be submitted.
   await t.org('POST', '/attendance/check-ins', {
     employeeId: t.employeeId,
     occurredAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    workDate: daysAgo(3),
+    branchId: t.branchId,
+  });
+  await t.org('POST', '/attendance/check-outs', {
+    employeeId: t.employeeId,
+    occurredAt: new Date(Date.now() - 3 * 86400000 + 8 * 3600000).toISOString(),
     workDate: daysAgo(3),
     branchId: t.branchId,
   });

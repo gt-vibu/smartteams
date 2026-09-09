@@ -6,6 +6,13 @@ export interface CalendarDayItem {
   isCurrentMonth: boolean;
   isToday?: boolean;
   dayStatus: CalendarDayStatus;
+  /**
+   * The attendance record this day was built from, when the server returned one.
+   *
+   * A correction is raised against a record, so a day with no attendance has nothing to correct —
+   * which is why this is optional rather than defaulted to an empty string.
+   */
+  attendanceRecordId?: string;
   hoursLabel?: string; // "08:15 Hrs"
   holidayName?: string;
   isRestrictedHoliday?: boolean;

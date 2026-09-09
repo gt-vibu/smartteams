@@ -1,3 +1,13 @@
+/**
+ * How long an attendance correction reason must be.
+ *
+ * Shared because it was not: the drawer enabled its submit button at five characters while
+ * `AttendanceCorrectionDto` required ten, so a reason of six to nine characters passed the form,
+ * failed the API, and the drawer reported success anyway. One number, imported by both sides.
+ */
+export const ATTENDANCE_CORRECTION_REASON_MIN_LENGTH = 10;
+export const ATTENDANCE_CORRECTION_REASON_MAX_LENGTH = 500;
+
 import { z } from 'zod';
 
 /**

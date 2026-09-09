@@ -15,14 +15,14 @@ import type { ApprovalDomainType, WorkspaceContext } from '../types/auth.types';
 
 const EXPLICIT_APPROVAL_PERMISSIONS: Record<ApprovalDomainType, string[]> = {
   LEAVE: ['leave.approve'],
-  TIMESHEET: ['timesheets.approve'],
+  TIMESHEET: ['timesheets.decide'],
   ATTENDANCE_CORRECTION: ['attendance.approve'],
   PAYROLL: ['payroll.approve'],
 };
 
 const ADMIN_APPROVAL_PERMISSIONS: Record<ApprovalDomainType, string[]> = {
   LEAVE: ['leave.approve', 'leave.write'],
-  TIMESHEET: ['timesheets.approve', 'timesheets.write'],
+  TIMESHEET: ['timesheets.decide', 'timesheets.write'],
   ATTENDANCE_CORRECTION: ['attendance.approve', 'attendance.write'],
   PAYROLL: ['payroll.approve', 'payroll.write'],
 };
@@ -203,7 +203,7 @@ export function canAccessModule(
       // Wildcard alone is not enough here, for the reason given on `canApprove`.
       return (
         canExplicitly(permissions, 'leave.approve') ||
-        canExplicitly(permissions, 'timesheets.approve') ||
+        canExplicitly(permissions, 'timesheets.decide') ||
         canExplicitly(permissions, 'attendance.approve')
       );
     case 'teams':

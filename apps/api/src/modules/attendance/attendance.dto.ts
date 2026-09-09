@@ -17,6 +17,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { AttendanceDayStatus } from '../../generated/prisma/enums';
+import {
+  ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
+  ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+} from '@smarteam/contracts';
 export class PunchDto {
   @IsUUID() employeeId!: string;
   @IsDateString() occurredAt!: string;
@@ -55,7 +59,12 @@ export class AttendancePreferencesQueryDto {
 }
 
 export class AttendanceCorrectionDto {
-  @IsString() @MinLength(10) @MaxLength(500) reason!: string;
+  // The same constants the drawer disables its submit button on, so the form cannot accept a
+  // reason this DTO will reject.
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
   @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;
 }
 

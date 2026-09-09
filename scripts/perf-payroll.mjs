@@ -19,12 +19,13 @@
  */
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
+import { resolveDatabaseUrl } from './lib/database-url.mjs';
 
 const require = createRequire(new URL('../apps/api/package.json', import.meta.url));
 const { Client } = require('pg');
 
 const BASE = process.env.PERF_API_URL ?? 'http://localhost:4000';
-const DB = process.env.DATABASE_URL ?? 'postgresql://postgres:Qwerty%40123@localhost:5432/smarteam';
+const DB = resolveDatabaseUrl();
 const METRICS_TOKEN = process.env.METRICS_TOKEN ?? '';
 /** Attendance rows seeded per employee. The product of this and headcount is what used to be scanned per employee. */
 const ATTENDANCE_DAYS = Number(process.env.PERF_ATTENDANCE_DAYS ?? 20);

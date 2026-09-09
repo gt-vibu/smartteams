@@ -227,3 +227,27 @@ export function snapshotDate(value: unknown, label: string) {
     throw new ConflictError(`Attendance corrected ${label} must be a valid date`);
   return new Date(value);
 }
+
+/**
+ * The calendar date a moment falls on, in a given IANA timezone, as `YYYY-MM-DD`.
+ *
+ * A punch is filed against the organisation's own day, not the server's. At 00:30 in
+ * Asia/Kolkata the UTC date is still yesterday, so deriving the work date from UTC would file the
+ * first punches of the morning under the previous day — and with them the whole day's hours.
+ *
+ * `en-CA` is used because it formats as `YYYY-MM-DD`, which is the shape the column wants; the
+ * locale is an implementation detail of that formatting and carries no user-facing meaning. An
+ * unknown timezone would make `Intl` throw, so it falls back to UTC rather than failing a punch.
+ */
+export function workDateInTimeZone(moment: Date, timeZone: string): string {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(moment);
+  } catch {
+    return moment.toISOString().slice(0, 10);
+  }
+}

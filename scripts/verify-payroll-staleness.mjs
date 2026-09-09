@@ -111,6 +111,24 @@ async function tenant(tag) {
     call(A, m, '/v1/organizations/' + orgId + p, b, m === 'GET' ? undefined : AH);
   const roles = rows((await org('GET', '/roles')).payload);
   const branchId = rows((await org('GET', '/branches')).payload)[0].id;
+
+  // Timesheet submission now requires a configured approval policy, the same rule leave and
+  // attendance corrections already enforce. A tenant configures one; these suites do the same.
+  await org('POST', '/approval-policies', {
+    domain: 'TIMESHEET',
+    code: 'TS_DEFAULT',
+    name: 'Timesheet approval',
+    isDefault: true,
+    steps: [
+      {
+        stepNumber: 1,
+        approverType: 'ROLE',
+        roleId: (roles.find((role) => role.code === 'ORG_ADMIN') ?? roles[0]).id,
+        required: true,
+      },
+    ],
+  });
+
   const email = 'e.' + slug + '@t.test';
   r = await org('POST', '/employees', {
     employeeNumber: 'EMP-1',
@@ -482,9 +500,16 @@ const derived = await scenario(
   {
     stopAfterStale: true,
     setup: async (t) => {
+      // Closed pair: an open punch derives an empty sheet, which cannot be submitted.
       await t.org('POST', '/attendance/check-ins', {
         employeeId: t.employeeId,
         occurredAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+        workDate: daysAgo(3),
+        branchId: t.branchId,
+      });
+      await t.org('POST', '/attendance/check-outs', {
+        employeeId: t.employeeId,
+        occurredAt: new Date(Date.now() - 3 * 86400000 + 8 * 3600000).toISOString(),
         workDate: daysAgo(3),
         branchId: t.branchId,
       });

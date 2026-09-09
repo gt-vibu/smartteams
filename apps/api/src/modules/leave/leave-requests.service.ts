@@ -6,6 +6,7 @@ import { LeaveRequestStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { resolveActingEmployeeId } from '../employees/employee-scope';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 import { assertResolvableApprovers, canApprove } from '../approvals/approval-authorization';
@@ -170,10 +171,18 @@ export class LeaveRequestsService {
       const start = dateOnly(input.startDate);
       const end = dateOnly(input.endDate);
       if (end < start) throw new ConflictError('Leave end date must not precede start date');
+      // `leave.requests.write` is a self-service permission, so the employee a request is booked
+      // against comes from the session unless the caller can see everyone's leave.
+      const employeeId = await resolveActingEmployeeId(
+        tx,
+        context,
+        input.employeeId,
+        'leave.requests.read.all',
+      );
       const [employee, type, settings] = await Promise.all([
         tx.employee.findFirst({
           where: {
-            id: input.employeeId,
+            id: employeeId,
             organizationId: context.organizationId,
             status: 'ACTIVE',
             ...(context.branchId ? employeeScope(context) : {}),

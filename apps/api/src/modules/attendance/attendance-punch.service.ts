@@ -13,6 +13,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 import { markPayrollStale } from '../payroll/payroll-staleness';
+import { canActForAllEmployees, resolveActingEmployeeId } from '../employees/employee-scope';
 import {
   attendanceTotals,
   canReadAllEmployees,
@@ -22,6 +23,7 @@ import {
   isUuid,
   toPunchDto,
   toRecordDto,
+  workDateInTimeZone,
 } from './attendance-shared';
 
 export type PunchInput = {
@@ -56,6 +58,24 @@ export class AttendancePunchService {
     private readonly locations: AttendanceLocationService,
   ) {}
 
+  /**
+   * Records a punch.
+   *
+   * Two things here are deliberately not taken from the request when an employee punches for
+   * themselves: who the punch belongs to, and when it happened.
+   *
+   * The employee is resolved from the session. `attendance.write` is a self-service permission —
+   * every seeded employee holds it — so trusting `employeeId` from the body let anyone with a
+   * colleague's id punch on their behalf.
+   *
+   * The time is the server's. A punch is evidence that someone was present at a moment, and a
+   * value the browser chose is not evidence of anything; accepting it let an employee book a
+   * historical or future shift, which flows straight into attendance, overtime and pay. Callers
+   * with organisation-wide breadth — HR, an administrator, a federation partner importing from a
+   * device — still supply their own timestamps, because for them the request *is* the record of
+   * something that happened elsewhere. An employee correcting a genuine mistake uses the
+   * correction workflow, which is permissioned, audited and keeps the original event.
+   */
   async punch(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
     requirePermission(context, 'attendance.write');
     if (
@@ -69,8 +89,15 @@ export class AttendancePunchService {
       throw new ConflictError('Absence and leave statuses must be recorded by their workflows');
     }
     return this.database.run(context, async (tx) => {
+      const actsForOthers = canActForAllEmployees(context, 'attendance.read.all');
+      const employeeId = await resolveActingEmployeeId(
+        tx,
+        context,
+        input.employeeId,
+        'attendance.read.all',
+      );
       const employee = await tx.employee.findFirst({
-        where: { id: input.employeeId, organizationId: context.organizationId },
+        where: { id: employeeId, organizationId: context.organizationId },
         include: {
           branchAssignments: {
             where: { isPrimary: true, endsOn: null },
@@ -85,6 +112,18 @@ export class AttendancePunchService {
       const settings = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
       });
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      // The work date follows the organisation's own calendar, not the server's: a punch at
+      // 00:30 in Asia/Kolkata belongs to that day locally, and UTC would file it under the
+      // previous one.
+      const now = new Date();
+      const occurredAt = actsForOthers ? new Date(input.occurredAt) : now;
+      const workDate = actsForOthers
+        ? new Date(input.workDate)
+        : new Date(workDateInTimeZone(now, organization.timezone));
       const branch = branchId
         ? await tx.branch.findFirst({
             where: { id: branchId, organizationId: context.organizationId },
@@ -113,7 +152,7 @@ export class AttendancePunchService {
         const credential = await tx.webauthnCredential.findFirst({
           where: {
             organizationId: context.organizationId,
-            employeeId: input.employeeId,
+            employeeId,
             status: 'ACTIVE',
             reviewRequired: false,
             ...credentialSelector,
@@ -129,13 +168,13 @@ export class AttendancePunchService {
       const biometricVerified = Boolean(webauthnCredentialId);
       const record = await tx.attendanceRecord.upsert({
         where: {
-          employeeId_workDate: { employeeId: input.employeeId, workDate: new Date(input.workDate) },
+          employeeId_workDate: { employeeId, workDate },
         },
         create: {
           organizationId: context.organizationId,
-          employeeId: input.employeeId,
+          employeeId,
           branchId,
-          workDate: new Date(input.workDate),
+          workDate,
           status: AttendanceStatus.OPEN,
           dayStatus: input.dayStatus ?? AttendanceDayStatus.PRESENT,
           sourceAccessMode: context.accessMode,
@@ -176,9 +215,9 @@ export class AttendancePunchService {
         data: {
           organizationId: context.organizationId,
           attendanceRecordId: record.id,
-          employeeId: input.employeeId,
+          employeeId,
           punchType: type,
-          occurredAt: new Date(input.occurredAt),
+          occurredAt,
           source: input.source,
           capturedByUserId: input.capturedByUserId ?? context.actor.userId,
           metadata: input.manualEntry ? { captureMode: 'MANUAL' } : { captureMode: 'SELF_SERVICE' },

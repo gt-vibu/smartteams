@@ -7,6 +7,7 @@ import {
 } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { assertMayActForEmployee } from '../employees/employee-scope';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertApprover, assertResolvableApprovers } from '../approvals/approval-authorization';
 import { markPayrollStale } from '../payroll/payroll-staleness';
@@ -50,6 +51,10 @@ export class AttendanceCorrectionsService {
         },
       });
       if (!record) throw new NotFoundError('Attendance record');
+      // The record is reached by its own id, so ownership comes off the row rather than the
+      // request. Without this an employee holding `attendance.corrections.write` — which every
+      // seeded employee holds — could raise a correction against a colleague's day.
+      await assertMayActForEmployee(tx, context, record.employeeId, 'attendance.read.all');
       const activePolicies = await tx.approvalPolicy.findMany({
         where: {
           organizationId: context.organizationId,

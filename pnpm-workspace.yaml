@@ -11,3 +11,26 @@ onlyBuiltDependencies:
 ignoredBuiltDependencies:
   - '@scarf/scarf'
   - msgpackr-extract
+
+# Transitive versions this workspace pins.
+#
+# These live here rather than under `pnpm.overrides` in package.json: pnpm 10 reads its settings
+# from this file, and the package.json block was being ignored — so the pins it declared were not
+# actually applied to the tree.
+#
+# Each entry is an advisory, not a preference:
+#   qs      — GHSA parsing/stringify denial of service, patched in 6.16.0
+#   multer  — patched in 2.3.0, reached through @nestjs/platform-express
+#   sharp   — patched in 0.35.4, reached through the Next.js image pipeline
+#   js-yaml — patched in 3.15.2 and 4.3.2; both majors are present, reached only through jest and
+#             commitlint, so this is tooling rather than shipped code — pinned anyway because the
+#             audit gate is the same either way
+overrides:
+  deepmerge-ts: 8.0.1
+  fast-uri: '>=3.1.6'
+  mysql2: '>=3.22.0'
+  qs: '>=6.16.0'
+  multer: '>=2.3.0'
+  sharp: '>=0.35.4'
+  js-yaml@3: '>=3.15.2'
+  js-yaml@4: '>=4.3.2'

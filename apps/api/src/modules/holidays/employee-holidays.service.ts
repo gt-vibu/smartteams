@@ -36,90 +36,104 @@ export class EmployeeHolidaysService {
    */
   async getMyHolidaySummary(context: DomainContext, requestedYear?: number) {
     requirePermission(context, 'organizations.read');
+    return this.database.run(context, (tx) => this.buildHolidaySummary(tx, context, requestedYear));
+  }
+
+  /**
+   * The holiday summary, built from a transaction the caller already owns.
+   *
+   * Selection and cancellation return this so the response reflects the change they just
+   * made. They used to call `getMyHolidaySummary`, which opened a second transaction while
+   * the first had not committed — so the read could not see the write, and the employee was
+   * told their selection had succeeded while being handed a summary that omitted it.
+   */
+  private async buildHolidaySummary(
+    tx: Prisma.TransactionClient,
+    context: DomainContext,
+    requestedYear?: number,
+  ) {
     const year = requestedYear ?? new Date().getUTCFullYear();
     const yearStart = new Date(Date.UTC(year, 0, 1));
     const yearEnd = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
 
-    return this.database.run(context, async (tx) => {
-      const employee = await this.resolveSelfEmployee(tx, context);
-      const settings = await tx.organizationSettings.findUniqueOrThrow({
-        where: { organizationId: context.organizationId },
-      });
-
-      // Load per-employee policy if any
-      const employeePolicy = await tx.employeeHolidayPolicy.findFirst({
-        where: { employeeId: employee.id, organizationId: context.organizationId },
-      });
-
-      // Tiered allowance resolution
-      const allowance =
-        employeePolicy?.allowanceOverride != null
-          ? employeePolicy.allowanceOverride
-          : settings.optionalHolidayAllowance;
-
-      const branchId = employee.primaryBranchId;
-
-      // Active holidays for this employee's branch/org scope in the year
-      const allHolidays = await tx.holiday.findMany({
-        where: {
-          organizationId: context.organizationId,
-          isActive: true,
-          holidayDate: { gte: yearStart, lte: yearEnd },
-          ...(branchId ? { OR: [{ branchId }, { branchId: null }] } : { branchId: null }),
-        },
-        orderBy: [{ holidayDate: 'asc' }, { name: 'asc' }],
-      });
-
-      const mandatory = allHolidays.filter((h) => !h.isOptional).map(toHolidayDto);
-      const fullOptionalPool = allHolidays.filter((h) => h.isOptional);
-
-      // Tiered pool resolution: if employee has restricted holiday IDs, filter to them
-      const restrictedIds =
-        employeePolicy && employeePolicy.restrictedHolidayIds.length > 0
-          ? new Set(employeePolicy.restrictedHolidayIds)
-          : null;
-
-      const optionalPool = (
-        restrictedIds ? fullOptionalPool.filter((h) => restrictedIds.has(h.id)) : fullOptionalPool
-      ).map(toHolidayDto);
-
-      const selections = await tx.employeeHolidaySelection.findMany({
-        where: {
-          organizationId: context.organizationId,
-          employeeId: employee.id,
-          year,
-          status: 'CONFIRMED',
-        },
-        include: {
-          holiday: true,
-        },
-        orderBy: { selectedAt: 'asc' },
-      });
-
-      const usedCount = selections.length;
-      const remainingCount = Math.max(0, allowance - usedCount);
-
-      return {
-        year,
-        allowance,
-        usedCount,
-        remainingCount,
-        mandatory,
-        optionalPool,
-        selectedHolidayIds: selections.map((s) => s.holidayId),
-        selections: selections.map((s) => ({
-          id: s.id,
-          organizationId: s.organizationId,
-          employeeId: s.employeeId,
-          holidayId: s.holidayId,
-          year: s.year,
-          status: s.status,
-          selectedAt: s.selectedAt.toISOString(),
-          cancelledAt: s.cancelledAt ? s.cancelledAt.toISOString() : null,
-          holiday: toHolidayDto(s.holiday),
-        })),
-      };
+    const employee = await this.resolveSelfEmployee(tx, context);
+    const settings = await tx.organizationSettings.findUniqueOrThrow({
+      where: { organizationId: context.organizationId },
     });
+
+    // Load per-employee policy if any
+    const employeePolicy = await tx.employeeHolidayPolicy.findFirst({
+      where: { employeeId: employee.id, organizationId: context.organizationId },
+    });
+
+    // Tiered allowance resolution
+    const allowance =
+      employeePolicy?.allowanceOverride != null
+        ? employeePolicy.allowanceOverride
+        : settings.optionalHolidayAllowance;
+
+    const branchId = employee.primaryBranchId;
+
+    // Active holidays for this employee's branch/org scope in the year
+    const allHolidays = await tx.holiday.findMany({
+      where: {
+        organizationId: context.organizationId,
+        isActive: true,
+        holidayDate: { gte: yearStart, lte: yearEnd },
+        ...(branchId ? { OR: [{ branchId }, { branchId: null }] } : { branchId: null }),
+      },
+      orderBy: [{ holidayDate: 'asc' }, { name: 'asc' }],
+    });
+
+    const mandatory = allHolidays.filter((h) => !h.isOptional).map(toHolidayDto);
+    const fullOptionalPool = allHolidays.filter((h) => h.isOptional);
+
+    // Tiered pool resolution: if employee has restricted holiday IDs, filter to them
+    const restrictedIds =
+      employeePolicy && employeePolicy.restrictedHolidayIds.length > 0
+        ? new Set(employeePolicy.restrictedHolidayIds)
+        : null;
+
+    const optionalPool = (
+      restrictedIds ? fullOptionalPool.filter((h) => restrictedIds.has(h.id)) : fullOptionalPool
+    ).map(toHolidayDto);
+
+    const selections = await tx.employeeHolidaySelection.findMany({
+      where: {
+        organizationId: context.organizationId,
+        employeeId: employee.id,
+        year,
+        status: 'CONFIRMED',
+      },
+      include: {
+        holiday: true,
+      },
+      orderBy: { selectedAt: 'asc' },
+    });
+
+    const usedCount = selections.length;
+    const remainingCount = Math.max(0, allowance - usedCount);
+
+    return {
+      year,
+      allowance,
+      usedCount,
+      remainingCount,
+      mandatory,
+      optionalPool,
+      selectedHolidayIds: selections.map((s) => s.holidayId),
+      selections: selections.map((s) => ({
+        id: s.id,
+        organizationId: s.organizationId,
+        employeeId: s.employeeId,
+        holidayId: s.holidayId,
+        year: s.year,
+        status: s.status,
+        selectedAt: s.selectedAt.toISOString(),
+        cancelledAt: s.cancelledAt ? s.cancelledAt.toISOString() : null,
+        holiday: toHolidayDto(s.holiday),
+      })),
+    };
   }
 
   /**
@@ -305,7 +319,8 @@ export class EmployeeHolidaysService {
         tx,
       );
 
-      return this.getMyHolidaySummary(context, targetYear);
+      // Built from this transaction, so the selection just written is present in the reply.
+      return this.buildHolidaySummary(tx, context, targetYear);
     });
   }
 
@@ -393,7 +408,8 @@ export class EmployeeHolidaysService {
         tx,
       );
 
-      return this.getMyHolidaySummary(context, selection.year);
+      // Built from this transaction, so the cancelled selection is already gone from the reply.
+      return this.buildHolidaySummary(tx, context, selection.year);
     });
   }
 

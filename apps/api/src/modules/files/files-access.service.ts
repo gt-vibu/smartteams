@@ -103,6 +103,21 @@ export class FilesAccessService {
     };
   }
 
+  /**
+   * Whether the caller may delete files that are not their own.
+   *
+   * `files.read.all` is the breadth marker the listing and download paths already use; deletion
+   * is a strictly greater power than reading, so it is gated on the same permission rather than
+   * on `files.write`, which every self-service employee holds.
+   */
+  private static canDeleteAny(context: DomainContext): boolean {
+    return (
+      context.accessMode === 'FEDERATION' ||
+      context.permissions.has('*') ||
+      context.permissions.has('files.read.all')
+    );
+  }
+
   async softDelete(
     context: DomainContext,
     fileId: string,
@@ -123,6 +138,22 @@ export class FilesAccessService {
         },
       });
       if (!file) throw new NotFoundError('File');
+      // Listing and downloading already narrow to the caller's own files; deleting did not, so a
+      // employee holding `files.write` could destroy a colleague's payslip or leave attachment
+      // from its id alone. The same self/all split now governs all three.
+      //
+      // A file with no employee — an organisation-level document — is deletable only by a caller
+      // with `files.read.all`, because there is no owner for a self-scoped caller to match.
+      if (!FilesAccessService.canDeleteAny(context)) {
+        const self = await tx.employee.findFirst({
+          where: { organizationId: context.organizationId, userId: context.actor.userId },
+          select: { id: true },
+        });
+        // Reported as missing rather than forbidden, so the endpoint cannot confirm that a file
+        // id exists in the tenant.
+        if (!self || !file.employeeId || file.employeeId !== self.id)
+          throw new NotFoundError('File');
+      }
       const updated = await tx.fileObject.update({
         where: { id: file.id },
         data: { status: FileStatus.DELETED, deletedAt: new Date() },

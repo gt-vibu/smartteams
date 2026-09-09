@@ -1,12 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
+import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 
 interface AttendanceDetailDrawerProps {
   row: AttendanceTableRow | null;
   isOpen: boolean;
   onClose: () => void;
-  onSubmitRegularization?: (recordId: string, reason: string) => void;
+  /**
+   * Sends the correction. Resolving means the server accepted it; rejecting carries the reason to
+   * show. Returning `void` is what let the drawer treat a rejected request as a success.
+   */
+  onSubmitRegularization?: (recordId: string, reason: string) => Promise<unknown>;
 }
 
 export function AttendanceDetailDrawer({
@@ -17,18 +22,37 @@ export function AttendanceDetailDrawer({
 }: AttendanceDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   useFocusTrap(isOpen, panelRef, onClose);
 
   if (!isOpen || !row) return null;
 
-  const handleSubmitRegularization = () => {
-    onSubmitRegularization?.(row.id, reason);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      onClose();
-    }, 1000);
+  /**
+   * Submits the correction and reports what actually happened.
+   *
+   * This used to fire the callback, set `submitted`, and close after a second — without waiting
+   * for the request. A rejected correction was indistinguishable from an accepted one, and the
+   * employee's reason was discarded along with the drawer.
+   */
+  const handleSubmitRegularization = async () => {
+    if (!onSubmitRegularization || saving) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await onSubmitRegularization(row.id, reason);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        onClose();
+      }, 1000);
+    } catch (caught) {
+      // The drawer stays open with the text intact, so the reason can be corrected and resent.
+      setError(caught instanceof Error ? caught.message : 'The correction could not be submitted.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -162,14 +186,21 @@ export function AttendanceDetailDrawer({
                     placeholder="Reason for regularization (min 10 characters)..."
                     className="bg-muted/40 focus:bg-card"
                   />
+                  {error && (
+                    <p role="alert" className="text-[11px] font-medium text-destructive">
+                      {error}
+                    </p>
+                  )}
                   <Button
                     type="button"
                     variant="default"
-                    disabled={reason.length < 5}
-                    onClick={handleSubmitRegularization}
+                    disabled={
+                      saving || reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH
+                    }
+                    onClick={() => void handleSubmitRegularization()}
                     className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 text-xs shadow-xs"
                   >
-                    Submit Correction Request
+                    {saving ? 'Submitting…' : 'Submit Correction Request'}
                   </Button>
                 </div>
               )}

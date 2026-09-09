@@ -1,20 +1,51 @@
 import React, { useRef, useState } from 'react';
 import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
+import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
 import type { CalendarDayItem } from '../../types/calendar.types';
 
 interface CalendarDetailDrawerProps {
   day: CalendarDayItem | null;
   isOpen: boolean;
   onClose: () => void;
+  /**
+   * Raises the correction. Resolving means the server accepted it.
+   *
+   * The button used to call `setSubmitted(true)` and nothing else: the drawer showed a success
+   * message while no request was ever made, and neither a refresh nor the approval inbox had any
+   * record of it.
+   */
+  onSubmitCorrection?: (recordId: string, reason: string) => Promise<unknown>;
 }
 
-export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDrawerProps) {
+export function CalendarDetailDrawer({
+  day,
+  isOpen,
+  onClose,
+  onSubmitCorrection,
+}: CalendarDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   useFocusTrap(isOpen, panelRef, onClose);
 
   if (!isOpen || !day) return null;
+
+  const recordId = day.attendanceRecordId;
+  const handleSubmit = async () => {
+    if (!onSubmitCorrection || !recordId || saving) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await onSubmitCorrection(recordId, reason);
+      setSubmitted(true);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'The correction could not be submitted.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true">
@@ -142,16 +173,30 @@ export function CalendarDetailDrawer({ day, isOpen, onClose }: CalendarDetailDra
                       rows={3}
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
-                      placeholder="Reason for regularization..."
+                      placeholder="Reason for regularization (min 10 characters)..."
                       className="bg-muted/40 focus:bg-card"
                     />
+                    {error && (
+                      <p role="alert" className="text-[11px] font-medium text-destructive">
+                        {error}
+                      </p>
+                    )}
+                    {!recordId && (
+                      <p className="text-[11px] text-muted-foreground">
+                        There is no attendance record for this day to correct.
+                      </p>
+                    )}
                     <Button
                       type="button"
-                      disabled={reason.length < 5}
-                      onClick={() => setSubmitted(true)}
+                      disabled={
+                        saving ||
+                        !recordId ||
+                        reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH
+                      }
+                      onClick={() => void handleSubmit()}
                       className="w-full"
                     >
-                      Submit Correction Request
+                      {saving ? 'Submitting…' : 'Submit Correction Request'}
                     </Button>
                   </div>
                 )}

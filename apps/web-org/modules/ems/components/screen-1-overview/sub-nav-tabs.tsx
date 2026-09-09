@@ -15,7 +15,7 @@ export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
 
   const isManagerApprover =
     hasExplicitPermission('leave.approve') ||
-    hasExplicitPermission('timesheets.approve') ||
+    hasExplicitPermission('timesheets.decide') ||
     hasExplicitPermission('attendance.approve');
 
   // Approvals is only in the tab list for actual line managers with explicit approval authority

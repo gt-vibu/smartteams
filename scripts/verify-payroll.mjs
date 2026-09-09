@@ -297,6 +297,17 @@ async function main() {
   });
   check('create a default leave approval policy', r.status, [200, 201]);
 
+  // Timesheet submission requires a configured approval policy, the same rule leave and
+  // attendance corrections enforce. A tenant configures one; this script does what a tenant does.
+  r = await org('POST', '/approval-policies', {
+    domain: 'TIMESHEET',
+    code: 'TS-DEF',
+    name: 'Timesheet approvals',
+    isDefault: true,
+    steps: [{ stepNumber: 1, approverType: 'ROLE', roleId }],
+  });
+  check('create a default timesheet approval policy', r.status, [200, 201]);
+
   const paidStart = mondayOnOrAfter(period.start);
   const unpaidStart = mondayOnOrAfter(addDays(period.start, 14));
   const approve = async (requestId, comment) =>

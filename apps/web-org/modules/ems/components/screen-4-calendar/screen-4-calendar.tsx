@@ -16,7 +16,7 @@ interface Screen4CalendarProps {
 }
 
 export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
-  const { days: records } = useAttendance();
+  const { days: records, requestCorrection, saveError } = useAttendance();
   const holidays = useHolidays();
   const employeeHolidays = useEmployeeHolidays();
 
@@ -101,6 +101,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         isCurrentMonth: true,
         isToday,
         dayStatus,
+        attendanceRecordId: record?.id,
         holidayName: holidayInfo?.name,
         isRestrictedHoliday: holidayInfo?.isOptional,
         hoursLabel: record && record.workedMinutes > 0 ? record.workedLabel : undefined,
@@ -147,6 +148,17 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     setIsDrawerOpen(true);
   };
 
+  /**
+   * Raises an attendance correction for the selected day.
+   *
+   * Rejecting is what keeps the drawer open with the reason intact; `run` reports failure by
+   * resolving `false` and holding the message, so it is converted here.
+   */
+  const handleSubmitCorrection = async (recordId: string, reason: string) => {
+    const raised = await requestCorrection(recordId, reason);
+    if (!raised) throw new Error(saveError ?? 'The correction could not be submitted.');
+  };
+
   return (
     <div className="w-full flex flex-col">
       {/* 1. Month Navigator & View Switcher — sticky within scroll container */}
@@ -176,6 +188,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         day={selectedDay}
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
+        onSubmitCorrection={handleSubmitCorrection}
       />
     </div>
   );

@@ -4,13 +4,6 @@
   "version": "0.1.0",
   "description": "Smarteam V2 People Management platform",
   "packageManager": "pnpm@10.24.0",
-  "pnpm": {
-    "overrides": {
-      "deepmerge-ts": "8.0.1",
-      "fast-uri": ">=3.1.6",
-      "mysql2": ">=3.22.0"
-    }
-  },
   "engines": {
     "node": ">=20.9 <25"
   },
@@ -47,6 +40,7 @@
     "verify:onboarding": "node scripts/verify-onboarding.mjs",
     "verify:payroll-staleness": "node scripts/verify-payroll-staleness.mjs",
     "verify:timesheet-approval-cycle": "node scripts/verify-timesheet-approval-cycle.mjs",
+    "verify:authorization-boundaries": "node scripts/verify-authorization-boundaries.mjs",
     "verify:concurrency": "node scripts/verify-concurrency.mjs",
     "perf:payroll": "node scripts/perf-payroll.mjs",
     "db:backup": "node scripts/backup-database.mjs",

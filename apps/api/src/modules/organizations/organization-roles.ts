@@ -41,7 +41,7 @@ export const MANAGER_PERMISSIONS = [
   ...EMPLOYEE_SELF_SERVICE_PERMISSIONS,
   'leave.requests.decide',
   'attendance.corrections.decide',
-  'timesheets.approve',
+  'timesheets.decide',
   'rbac.read',
 ] as const;
 

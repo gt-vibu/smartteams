@@ -199,7 +199,7 @@ jobs:
           failed=""
           for suite in auth employees teams attendance leave payroll organization files \
                        holidays employee-detail employee-directory onboarding \
-                       payroll-staleness timesheet-approval-cycle concurrency; do
+                       payroll-staleness timesheet-approval-cycle concurrency \n                       authorization-boundaries; do
             echo "::group::verify:$suite"
             pnpm "verify:$suite" || failed="$failed $suite"
             echo "::endgroup::"
@@ -291,8 +291,14 @@ jobs:
           curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
           sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client-17
       - run: pnpm db:deploy
+      # The runner ships an older pg_dump on PATH, and pg_dump refuses to dump a newer server.
+      # Point at the client just installed rather than hoping PATH resolution favours it.
       - run: pnpm db:backup
+        env:
+          PG_DUMP_PATH: /usr/lib/postgresql/17/bin/pg_dump
       - run: pnpm db:verify-restore
+        env:
+          PG_RESTORE_PATH: /usr/lib/postgresql/17/bin/pg_restore
 
   # The deployable artifact. Building it here is what keeps the Dockerfile honest: without this a
   # change that breaks the production image is only discovered at deploy time.
@@ -300,6 +306,17 @@ jobs:
     name: Container images
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: smarteam
+          POSTGRES_PASSWORD: smarteam
+          POSTGRES_DB: smarteam
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U smarteam -d smarteam"
+          --health-interval 5s --health-timeout 5s --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -313,32 +330,26 @@ jobs:
           tags: smarteam/api:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: The API image starts and reports readiness shape
+      - name: The API image serves against a real database
         run: |
-          # No database is attached, so readiness is expected to report not-ready (503). What is
-          # being proved is that the image boots, serves, and fails the way an orchestrator can act
-          # on, rather than crashing on start. Liveness must answer 200 even with no database,
-          # because that is exactly what an orchestrator restarts the container for getting wrong.
-          docker run -d --name api-smoke -p 4000:4000 \
-            -e NODE_ENV=development \
-            -e DATABASE_URL=postgresql://unused:unused@127.0.0.1:5432/unused \
-            -e JWT_SECRET=0123456789012345678901234567890123456789 \
-            -e FEDERATION_BOOTSTRAP_SECRET=0123456789012345 \
-            -e AWS_S3_BUCKET=smoke \
-            smarteam/api:ci
-          for i in $(seq 1 30); do
+          # `RlsEnforcementGuard` verifies at bootstrap that the runtime role cannot bypass RLS, so
+          # the container deliberately refuses to start without a database. Giving it one is what
+          # makes this a smoke test of the image rather than of the guard.
+          docker run -d --name api-smoke --network host             -e NODE_ENV=development             -e DATABASE_URL=postgresql://smarteam:smarteam@127.0.0.1:5432/smarteam             -e JWT_SECRET=0123456789012345678901234567890123456789             -e FEDERATION_BOOTSTRAP_SECRET=0123456789012345             -e AWS_S3_BUCKET=smoke             smarteam/api:ci
+          for i in $(seq 1 45); do
             live=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/health/live || true)
             if [ "$live" = "200" ]; then
               ready=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/health/ready || true)
               echo "liveness $live, readiness $ready"
-              # 503 is the correct readiness answer with no database attached; 200 would mean the
-              # readiness check is not actually checking anything.
-              [ "$ready" = "503" ] || { echo "readiness should be 503 without a database, got $ready"; exit 1; }
+              # Readiness reports on the dependencies it actually reached; with a database attached
+              # it must say so, or the check is not checking anything.
+              [ "$ready" = "200" ] || { echo "readiness should be 200 with a database, got $ready"; exit 1; }
               exit 0
             fi
             sleep 2
           done
           echo "API image never reported liveness"; docker logs api-smoke | tail -50; exit 1
+
       - name: Container log on failure
         if: failure()
         run: docker logs api-smoke | tail -100

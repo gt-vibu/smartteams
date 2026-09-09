@@ -20,7 +20,7 @@ export function OverviewApprovalsTab() {
 
   const isManagerApprover =
     hasExplicitPermission('leave.approve') ||
-    hasExplicitPermission('timesheets.approve') ||
+    hasExplicitPermission('timesheets.decide') ||
     hasExplicitPermission('attendance.approve');
 
   const [approvals, setApprovals] = useState<ApprovalItem[]>([

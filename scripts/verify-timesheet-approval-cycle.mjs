@@ -16,12 +16,13 @@
  *   pnpm verify:timesheet-approval-cycle
  */
 import { createRequire } from 'node:module';
+import { resolveDatabaseUrl } from './lib/database-url.mjs';
 
 const BASE = 'http://localhost:4000';
 // `pg` is a dependency of the API workspace, not of the repo root, so resolve it from there.
 const require = createRequire(new URL('../apps/api/package.json', import.meta.url));
 const { Client } = require('pg');
-const DB = 'postgresql://postgres:Qwerty%40123@localhost:5432/smarteam';
+const DB = resolveDatabaseUrl();
 
 let pass = 0;
 let fail = 0;
@@ -139,6 +140,24 @@ async function tenant(tag) {
 
   const roles = rows((await org('GET', '/roles')).payload);
   const branchId = rows((await org('GET', '/branches')).payload)[0].id;
+
+  // Timesheet submission now requires a configured approval policy, the same rule leave and
+  // attendance corrections already enforce. A tenant configures one; these suites do the same.
+  await org('POST', '/approval-policies', {
+    domain: 'TIMESHEET',
+    code: 'TS_DEFAULT',
+    name: 'Timesheet approval',
+    isDefault: true,
+    steps: [
+      {
+        stepNumber: 1,
+        approverType: 'ROLE',
+        roleId: (roles.find((role) => role.code === 'ORG_ADMIN') ?? roles[0]).id,
+        required: true,
+      },
+    ],
+  });
+
   const email = 'e.' + slug + '@t.test';
   let created = await org('POST', '/employees', {
     employeeNumber: 'EMP-1',
@@ -164,9 +183,17 @@ async function tenant(tag) {
 
   const today = iso(new Date());
   const monthStart = today.slice(0, 8) + '01';
+  // A closed punch pair, not just a check-in: worked minutes only accrue when an OUT closes an
+  // IN, and a timesheet derived from an open punch has nothing in it to submit.
   await org('POST', '/attendance/check-ins', {
     employeeId,
     occurredAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    workDate: daysAgo(3),
+    branchId,
+  });
+  await org('POST', '/attendance/check-outs', {
+    employeeId,
+    occurredAt: new Date(Date.now() - 3 * 86400000 + 8 * 3600000).toISOString(),
     workDate: daysAgo(3),
     branchId,
   });
