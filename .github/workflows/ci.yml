@@ -332,15 +332,34 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: The API image serves against a real database
+        # Bounded well inside the job budget. The previous version of this step produced no output
+        # at all and was killed by the job timeout 21 minutes in, which loses a cancelled step's
+        # log and leaves nothing to diagnose. Everything below is time-limited and traced, so a
+        # hang fails here with the reason attached instead of eating the job.
+        timeout-minutes: 6
         run: |
+          set -x
           # `RlsEnforcementGuard` verifies at bootstrap that the runtime role cannot bypass RLS, so
           # the container deliberately refuses to start without a database. Giving it one is what
           # makes this a smoke test of the image rather than of the guard.
-          docker run -d --name api-smoke --network host             -e NODE_ENV=development             -e DATABASE_URL=postgresql://smarteam:smarteam@127.0.0.1:5432/smarteam             -e JWT_SECRET=0123456789012345678901234567890123456789             -e FEDERATION_BOOTSTRAP_SECRET=0123456789012345             -e AWS_S3_BUCKET=smoke             smarteam/api:ci
+          docker image inspect smarteam/api:ci >/dev/null
+          # --pull=never: the image was just built and loaded. Without this, a missing image sends
+          # docker to Docker Hub for a repository that does not exist, which is a hang rather than
+          # an error worth waiting on.
+          timeout 60 docker run -d --pull=never --name api-smoke --network host \
+            -e NODE_ENV=development \
+            -e DATABASE_URL=postgresql://smarteam:smarteam@127.0.0.1:5432/smarteam \
+            -e JWT_SECRET=0123456789012345678901234567890123456789 \
+            -e FEDERATION_BOOTSTRAP_SECRET=0123456789012345 \
+            -e AWS_S3_BUCKET=smoke \
+            smarteam/api:ci
           for i in $(seq 1 45); do
-            live=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/health/live || true)
+            if ! docker inspect -f '{{.State.Running}}' api-smoke | grep -q true; then
+              echo "the container exited before it served"; docker logs api-smoke | tail -50; exit 1
+            fi
+            live=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://localhost:4000/health/live || true)
             if [ "$live" = "200" ]; then
-              ready=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/health/ready || true)
+              ready=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://localhost:4000/health/ready || true)
               echo "liveness $live, readiness $ready"
               # Readiness reports on the dependencies it actually reached; with a database attached
               # it must say so, or the check is not checking anything.
@@ -353,7 +372,7 @@ jobs:
 
       - name: Container log on failure
         if: failure()
-        run: docker logs api-smoke | tail -100
+        run: docker logs api-smoke 2>&1 | tail -100 || true
       - name: Build the web images
         uses: docker/build-push-action@v6
         with:
