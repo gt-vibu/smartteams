@@ -228,6 +228,25 @@ async function submitAndApprove(t, comment) {
  * employee linked to that user, not merely an administrator, so each one needs a full employee
  * record and a session of their own.
  */
+/**
+ * Signs a seeded member in, waiting out the auth rate limit rather than continuing without a
+ * session.
+ *
+ * A failed login used to be silent: `login.payload.csrfToken` became undefined, every later
+ * request went out unauthenticated, and the suite reported 401s that said nothing about the
+ * boundary under test. CI runs these suites back to back, so 30 logins a minute is reachable.
+ */
+async function signIn(cookies, email, password) {
+  let login = await call(cookies, 'POST', '/v1/auth/login', { email, password });
+  for (let attempt = 0; login.status === 429 && attempt < 4; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 20000));
+    login = await call(cookies, 'POST', '/v1/auth/login', { email, password });
+  }
+  if (!good(login) || !login.payload?.csrfToken)
+    throw new Error(`sign-in failed for ${email}: HTTP ${login.status}`);
+  return { 'x-csrf-token': login.payload.csrfToken };
+}
+
 async function addApprover(t, tag, label) {
   const email = tag + '.' + t.slug + '@t.test';
   const adminRole = t.roles.find((role) => role.code === 'ORG_ADMIN') ?? t.roles[0];
@@ -254,11 +273,7 @@ async function addApprover(t, tag, label) {
     isPrimary: true,
   });
   const cookies = jar();
-  const login = await call(cookies, 'POST', '/v1/auth/login', {
-    email,
-    password: member.payload.temporaryPassword,
-  });
-  const csrf = { 'x-csrf-token': login.payload.csrfToken };
+  const csrf = await signIn(cookies, email, member.payload.temporaryPassword);
   return {
     userId: member.payload.userId,
     employeeId: employee.payload.id,

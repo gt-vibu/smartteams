@@ -199,7 +199,8 @@ jobs:
           failed=""
           for suite in auth employees teams attendance leave payroll organization files \
                        holidays employee-detail employee-directory onboarding \
-                       payroll-staleness timesheet-approval-cycle concurrency \n                       authorization-boundaries; do
+                       payroll-staleness timesheet-approval-cycle concurrency \
+                       authorization-boundaries; do
             echo "::group::verify:$suite"
             pnpm "verify:$suite" || failed="$failed $suite"
             echo "::endgroup::"

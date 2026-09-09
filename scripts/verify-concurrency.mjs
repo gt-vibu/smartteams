@@ -37,6 +37,20 @@ const ok = (label, condition, detail = '') => {
   }
 };
 
+/**
+ * A cookie jar pinned to what it holds right now.
+ *
+ * The concurrent bursts below fire several requests against one session. They used to share the
+ * live jar, so whichever response landed first could mutate it — and a response that clears the
+ * session cookie left its siblings unauthenticated, turning the 409 under test into a 401 about
+ * the harness. Each attempt now carries an immutable copy of the header, which is what a browser
+ * firing four requests in the same tick actually sends.
+ */
+function frozen(cookies) {
+  const header = cookies.header();
+  return { absorb: () => {}, header: () => header };
+}
+
 function jar() {
   const store = new Map();
   return {
@@ -127,6 +141,15 @@ async function tenant(tag) {
       body,
       method === 'GET' ? undefined : csrf,
     );
+  /** The same request, but with a cookie header the siblings in a burst cannot disturb. */
+  const orgConcurrent = (method, path, body) =>
+    call(
+      frozen(cookies),
+      method,
+      '/v1/organizations/' + orgId + path,
+      body,
+      method === 'GET' ? undefined : csrf,
+    );
 
   const roles = rows((await org('GET', '/roles')).payload);
   const branchId = rows((await org('GET', '/branches')).payload)[0].id;
@@ -187,6 +210,7 @@ async function tenant(tag) {
   const today = iso(new Date());
   return {
     org,
+    orgConcurrent,
     orgId,
     cookies,
     csrf,
@@ -208,7 +232,7 @@ console.log('duplicate payroll calculation');
   });
   const attempts = await Promise.all(
     Array.from({ length: 4 }, () =>
-      t.org('POST', '/payroll/runs/' + run.payload.id + '/calculate', {}),
+      t.orgConcurrent('POST', '/payroll/runs/' + run.payload.id + '/calculate', {}),
     ),
   );
   const lines = await count(
@@ -241,7 +265,7 @@ console.log('\nduplicate payroll approval');
   await t.org('POST', '/payroll/runs/' + run.payload.id + '/calculate', {});
   const attempts = await Promise.all(
     Array.from({ length: 4 }, () =>
-      t.org('POST', '/payroll/runs/' + run.payload.id + '/action', {
+      t.orgConcurrent('POST', '/payroll/runs/' + run.payload.id + '/action', {
         target: 'APPROVED',
         comment: 'concurrent approval attempt',
       }),
@@ -275,7 +299,7 @@ console.log('\nduplicate advance approval');
   });
   const attempts = await Promise.all(
     Array.from({ length: 4 }, () =>
-      t.org('POST', '/payroll/advances/' + advance.payload.id + '/decision', {
+      t.orgConcurrent('POST', '/payroll/advances/' + advance.payload.id + '/decision', {
         status: 'APPROVED',
         comment: 'concurrent decision attempt',
       }),
@@ -306,7 +330,7 @@ console.log('\nduplicate leave decision');
   });
   const attempts = await Promise.all(
     Array.from({ length: 4 }, () =>
-      t.org('POST', '/leave/requests/' + request.payload.id + '/decision', {
+      t.orgConcurrent('POST', '/leave/requests/' + request.payload.id + '/decision', {
         status: 'APPROVED',
         comment: 'concurrent decision attempt',
       }),
@@ -350,9 +374,13 @@ console.log('\nduplicate timesheet submission');
   await t.org('POST', '/timesheets/periods/' + period.payload.id + '/derive', {});
   const sheet = rows((await t.org('GET', '/timesheets')).payload)[0];
   const attempts = await Promise.all(
-    Array.from({ length: 4 }, () => t.org('POST', '/timesheets/' + sheet.id + '/submit', {})),
+    Array.from({ length: 4 }, () =>
+      t.orgConcurrent('POST', '/timesheets/' + sheet.id + '/submit', {}),
+    ),
   );
-  const state = rows((await t.org('GET', '/timesheets')).payload).find((x) => x.id === sheet.id);
+  const state = rows((await t.orgConcurrent('GET', '/timesheets')).payload).find(
+    (x) => x.id === sheet.id,
+  );
   ok(
     'exactly one concurrent submission is accepted',
     succeeded(attempts) === 1,
@@ -362,7 +390,7 @@ console.log('\nduplicate timesheet submission');
 
   const decisions = await Promise.all(
     Array.from({ length: 4 }, () =>
-      t.org('POST', '/timesheets/' + sheet.id + '/decision', {
+      t.orgConcurrent('POST', '/timesheets/' + sheet.id + '/decision', {
         status: 'APPROVED',
         comment: 'concurrent timesheet decision',
       }),
@@ -400,7 +428,9 @@ console.log('\nconcurrent version updates on one employee');
       ),
     ),
   );
-  const after = rows((await t.org('GET', '/employees')).payload).find((e) => e.id === t.employeeId);
+  const after = rows((await t.orgConcurrent('GET', '/employees')).payload).find(
+    (e) => e.id === t.employeeId,
+  );
   ok(
     'exactly one concurrent update wins',
     succeeded(attempts) === 1,

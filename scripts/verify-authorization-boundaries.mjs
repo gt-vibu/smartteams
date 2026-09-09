@@ -81,6 +81,25 @@ const refused = (r) => r.status === 403 || r.status === 404;
 const iso = (d) => d.toISOString().slice(0, 10);
 const daysAgo = (n) => iso(new Date(Date.now() - n * 86400000));
 
+/**
+ * Signs a seeded member in, waiting out the auth rate limit rather than continuing without a
+ * session.
+ *
+ * A failed login used to be silent: `login.payload.csrfToken` became undefined, every later
+ * request went out unauthenticated, and the suite reported 401s that said nothing about the
+ * boundary under test. CI runs these suites back to back, so 30 logins a minute is reachable.
+ */
+async function signIn(cookies, email, password) {
+  let login = await call(cookies, 'POST', '/v1/auth/login', { email, password });
+  for (let attempt = 0; login.status === 429 && attempt < 4; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 20000));
+    login = await call(cookies, 'POST', '/v1/auth/login', { email, password });
+  }
+  if (!good(login) || !login.payload?.csrfToken)
+    throw new Error(`sign-in failed for ${email}: HTTP ${login.status}`);
+  return { 'x-csrf-token': login.payload.csrfToken };
+}
+
 /** A tenant with two employees who can each sign in, plus the administrator. */
 async function tenant(tag) {
   const admin = jar();
@@ -111,8 +130,14 @@ async function tenant(tag) {
     );
 
   const roles = rows((await org('GET', '/roles')).payload);
-  const branchId = rows((await org('GET', '/branches')).payload)[0].id;
-  const employeeRoleId = roles.find((role) => role.code === 'EMPLOYEE').id;
+  const branches = rows((await org('GET', '/branches')).payload);
+  const employeeRole = roles.find((role) => role.code === 'EMPLOYEE');
+  // Asserted rather than indexed: a setup call that quietly failed used to surface as
+  // "Cannot read properties of undefined", which says nothing about what went wrong.
+  if (!branches[0] || !employeeRole)
+    throw new Error(`tenant setup incomplete: ${branches.length} branches, ${roles.length} roles`);
+  const branchId = branches[0].id;
+  const employeeRoleId = employeeRole.id;
 
   await org('POST', '/approval-policies', {
     domain: 'TIMESHEET',
@@ -169,11 +194,7 @@ async function tenant(tag) {
       isPrimary: true,
     });
     const cookies = jar();
-    const login = await call(cookies, 'POST', '/v1/auth/login', {
-      email,
-      password: member.payload.temporaryPassword,
-    });
-    const employeeCsrf = { 'x-csrf-token': login.payload.csrfToken };
+    const employeeCsrf = await signIn(cookies, email, member.payload.temporaryPassword);
     return {
       id: employee.payload.id,
       as: (method, path, body) =>
