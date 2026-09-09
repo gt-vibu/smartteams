@@ -318,6 +318,15 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U smarteam -d smarteam"
           --health-interval 5s --health-timeout 5s --health-retries 20
+      # Readiness probes the database *and* Redis. Without this the image came up live in two
+      # seconds and then `/health/ready` never answered at all: ioredis keeps retrying a refused
+      # connection rather than failing, so the check hung instead of reporting redis down.
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -351,6 +360,7 @@ jobs:
             -e DATABASE_URL=postgresql://smarteam:smarteam@127.0.0.1:5432/smarteam \
             -e JWT_SECRET=0123456789012345678901234567890123456789 \
             -e FEDERATION_BOOTSTRAP_SECRET=0123456789012345 \
+            -e REDIS_URL=redis://127.0.0.1:6379 \
             -e AWS_S3_BUCKET=smoke \
             smarteam/api:ci
           for i in $(seq 1 45); do
@@ -359,12 +369,24 @@ jobs:
             fi
             live=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://localhost:4000/health/live || true)
             if [ "$live" = "200" ]; then
-              ready=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://localhost:4000/health/ready || true)
-              echo "liveness $live, readiness $ready"
-              # Readiness reports on the dependencies it actually reached; with a database attached
-              # it must say so, or the check is not checking anything.
-              [ "$ready" = "200" ] || { echo "readiness should be 200 with a database, got $ready"; exit 1; }
-              exit 0
+              echo "liveness $live after ${i} attempts"
+              # Readiness is polled, not sampled. It fans out to the database and Redis, so it can
+              # answer later and more slowly than liveness — reading it once at the moment liveness
+              # first turns 200 measured the connection pools warming up, not the image.
+              # Bounded so the worst case (90s waiting for liveness, then 15 * 12s here) still
+              # lands inside the step's six minutes and fails with a message rather than a kill.
+              for j in $(seq 1 15); do
+                ready=$(curl -s --max-time 10 -o /dev/null -w '%{http_code}' http://localhost:4000/health/ready || true)
+                [ "$ready" = "200" ] && { echo "readiness $ready after ${j} attempts"; exit 0; }
+                sleep 2
+              done
+              # Readiness reports on the dependencies it actually reached; with a database and
+              # Redis attached it must say so, or the check is not checking anything. The body
+              # names which dependency is down, which the status code alone does not.
+              echo "readiness should be 200 with a database and redis, got $ready"
+              curl -s --max-time 15 http://localhost:4000/health/ready || true
+              docker logs api-smoke | tail -50
+              exit 1
             fi
             sleep 2
           done
