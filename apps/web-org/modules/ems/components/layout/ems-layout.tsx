@@ -86,7 +86,7 @@ export function EmsLayout({
         {/* Dedicated Scrollable Main Content Canvas with Context Bar */}
         <main
           id="ems-main-canvas"
-          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[72px] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col"
+          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col"
         >
           {/* Context Breadcrumbs & Scope Indicator */}
           <ContextBar

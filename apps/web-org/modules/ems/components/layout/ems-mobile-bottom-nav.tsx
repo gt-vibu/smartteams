@@ -1,17 +1,34 @@
 'use client';
 
-import { Button } from '@smarteam/ui';
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { adminNavItems } from './navigation-admin-items';
 import { employeeNavItems } from './navigation-employee-items';
+import type { NavItem } from './navigation-items';
 
 interface EmsMobileBottomNavProps {
   activeModule: string;
   onSelectModule: (module: string) => void;
   activeSpace: string;
 }
+
+/**
+ * The bar is 4rem tall plus the device's home-indicator inset. Two other places have to agree with
+ * that number — the scroll container's bottom padding in `ems-layout`, and the sheet's offset
+ * below — so it is written the same way in both rather than rounded differently in each.
+ */
+const BAR_OFFSET = 'calc(4rem + env(safe-area-inset-bottom))';
+
+/**
+ * A tinted pill, not a hairline.
+ *
+ * The active tab used to be marked by a 2px rule along the top edge of the bar, which sits against
+ * the bar's own border and reads as part of the chrome rather than as "you are here". The brand
+ * tint fills the whole target, so the current section is legible at a glance, and it carries
+ * `aria-current` for anyone not reading colour at all.
+ */
+const ACTIVE = 'bg-primary/12 text-primary dark:bg-primary/20';
+const INACTIVE = 'text-muted-foreground active:bg-muted/60 hover:text-foreground';
 
 export function EmsMobileBottomNav({
   activeModule,
@@ -27,20 +44,23 @@ export function EmsMobileBottomNav({
     setIsMounted(true);
   }, []);
 
-  // Close "More" panel when clicking outside
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-        setIsMoreOpen(false);
-      }
+    if (!isMoreOpen) return;
+    const onPointerDown = (event: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(event.target as Node)) setIsMoreOpen(false);
     };
-    if (isMoreOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMoreOpen(false);
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
   }, [isMoreOpen]);
 
-  const isOrgSpace = activeSpace === 'Organization';
-
-  const candidateItems = isOrgSpace ? adminNavItems : employeeNavItems;
+  const candidateItems = activeSpace === 'Organization' ? adminNavItems : employeeNavItems;
   // Filtered in both spaces. The organization space used to skip the check entirely, so the
   // mobile bar offered every administrative module to anyone who could reach that space — while
   // the left rail, which never skipped it, showed the correct shorter list. Two navigations
@@ -49,13 +69,10 @@ export function EmsMobileBottomNav({
     ? candidateItems.filter((item) => canAccessModule(item.id))
     : candidateItems;
 
-  // Show 4 primary items + the "More" button
   const PRIMARY_COUNT = 4;
   const primaryItems = allItems.slice(0, PRIMARY_COUNT);
   const overflowItems = allItems.slice(PRIMARY_COUNT);
   const hasOverflow = overflowItems.length > 0;
-
-  // Is any overflow item currently active?
   const isOverflowActive = overflowItems.some((item) => item.id === activeModule);
 
   const handleSelect = (id: string) => {
@@ -65,115 +82,92 @@ export function EmsMobileBottomNav({
 
   return (
     <>
-      {/* More panel backdrop */}
       {isMoreOpen && (
         <div
           className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-xs md:hidden"
           onClick={() => setIsMoreOpen(false)}
+          aria-hidden="true"
         />
       )}
 
-      {/* More panel popover — slides up from bottom nav */}
       {isMoreOpen && (
         <div
           ref={moreRef}
-          className="fixed bottom-[57px] left-0 right-0 z-50 md:hidden bg-white dark:bg-card border-t border-slate-200 dark:border-slate-800 rounded-t-2xl shadow-2xl px-4 pt-4 pb-3 animate-in slide-in-from-bottom-4 duration-200"
+          role="dialog"
+          aria-label="More sections"
+          style={{ bottom: BAR_OFFSET }}
+          className="fixed left-0 right-0 z-50 md:hidden bg-card border-t border-border rounded-t-2xl shadow-2xl px-3 pt-3 pb-4 animate-in slide-in-from-bottom-4 duration-200"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              More
+          <div className="flex items-center justify-between px-1 pb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              More sections
             </span>
-            <Button
+            <button
+              type="button"
               onClick={() => setIsMoreOpen(false)}
-              className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Close"
+              className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors cursor-pointer"
             >
               <svg
-                className="h-4 w-4"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={2}
+                strokeWidth={1.75}
+                aria-hidden="true"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </Button>
+            </button>
           </div>
-          <div className="grid grid-cols-4 gap-1.5">
-            {overflowItems.map((item) => {
-              const isActive = activeModule === item.id;
-              return (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  onClick={() => handleSelect(item.id)}
-                  className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold'
-                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  <div className={isActive ? 'text-slate-900 dark:text-white' : ''}>
-                    {item.icon('h-5 w-5')}
-                  </div>
-                  <span className="text-[10px] font-semibold text-center leading-tight break-words max-w-[56px]">
-                    {item.label}
-                  </span>
-                </Button>
-              );
-            })}
+          {/* Three across, not four: at four a label like "Attendance" had 56px to sit in and wrapped
+              to two lines of 10px type, which is where the panel stopped being readable. */}
+          <div className="grid grid-cols-3 gap-1.5">
+            {overflowItems.map((item) => (
+              <NavTarget
+                key={item.id}
+                item={item}
+                isActive={activeModule === item.id}
+                onSelect={handleSelect}
+                className="gap-2 rounded-xl px-1 py-3"
+              />
+            ))}
           </div>
         </div>
       )}
 
-      {/* Bottom Nav Bar — only visible on mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-card border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.3)] flex items-stretch">
-        {primaryItems.map((item) => {
-          const isActive = activeModule === item.id;
-          return (
-            <Button
-              key={item.id}
-              variant="ghost"
-              onClick={() => handleSelect(item.id)}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative rounded-none ${
-                isActive
-                  ? 'text-slate-900 dark:text-white font-bold'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              {/* Active indicator line */}
-              {isActive && (
-                <span className="absolute top-0 left-3 right-3 h-[2px] bg-slate-900 dark:bg-white rounded-full" />
-              )}
-              <div className={isActive ? 'text-slate-900 dark:text-white' : ''}>
-                {item.icon('h-5 w-5')}
-              </div>
-              <span className="text-[10px] font-semibold leading-tight truncate max-w-[56px] text-center">
-                {item.label}
-              </span>
-            </Button>
-          );
-        })}
+      <nav
+        aria-label="Sections"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-stretch bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.3)]"
+      >
+        {primaryItems.map((item) => (
+          <NavTarget
+            key={item.id}
+            item={item}
+            isActive={activeModule === item.id}
+            onSelect={handleSelect}
+            className="flex-1 gap-1 rounded-xl mx-1 my-1.5 px-0.5 py-1.5"
+          />
+        ))}
 
-        {/* More Button */}
         {hasOverflow && (
-          <Button
-            variant="ghost"
+          <button
+            type="button"
             onClick={() => setIsMoreOpen(!isMoreOpen)}
-            className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 transition-all cursor-pointer relative rounded-none ${
-              isOverflowActive || isMoreOpen
-                ? 'text-slate-900 dark:text-white font-bold'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            aria-expanded={isMoreOpen}
+            aria-current={isOverflowActive ? 'page' : undefined}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 rounded-xl mx-1 my-1.5 px-0.5 py-1.5 min-h-[52px] transition-colors cursor-pointer ${
+              isOverflowActive || isMoreOpen ? ACTIVE : INACTIVE
             }`}
           >
-            {(isOverflowActive || isMoreOpen) && (
-              <span className="absolute top-0 left-3 right-3 h-[2px] bg-slate-900 dark:bg-white rounded-full" />
-            )}
             <svg
-              className="h-5 w-5"
+              className="h-6 w-6 shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={1.75}
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -181,10 +175,44 @@ export function EmsMobileBottomNav({
                 d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
               />
             </svg>
-            <span className="text-[10px] font-semibold leading-tight">More</span>
-          </Button>
+            <span className="text-[11px] font-semibold leading-none">More</span>
+          </button>
         )}
       </nav>
     </>
+  );
+}
+
+/**
+ * One tab. Deliberately a plain `button` rather than the shared `Button`: that component's base
+ * sets `h-8` and `[&_svg]:size-3.5`, and both won here — the fixed height cropped the label out of
+ * the bar entirely, and the descendant selector out-specified each icon's own `h-5 w-5`, which is
+ * why every icon rendered at 14px.
+ */
+function NavTarget({
+  item,
+  isActive,
+  onSelect,
+  className,
+}: {
+  item: NavItem;
+  isActive: boolean;
+  onSelect: (id: string) => void;
+  className: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(item.id)}
+      aria-current={isActive ? 'page' : undefined}
+      className={`flex flex-col items-center justify-center min-h-[52px] transition-colors cursor-pointer ${className} ${
+        isActive ? ACTIVE : INACTIVE
+      }`}
+    >
+      {item.icon('h-6 w-6 shrink-0')}
+      <span className="text-[11px] font-semibold leading-none text-center truncate max-w-full px-0.5">
+        {item.label}
+      </span>
+    </button>
   );
 }
