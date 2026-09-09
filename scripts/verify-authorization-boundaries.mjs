@@ -16,6 +16,8 @@
  *
  *   pnpm verify:authorization-boundaries
  */
+import { setupCall as setup } from './lib/setup-call.mjs';
+
 const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 
 let pass = 0;
@@ -87,16 +89,13 @@ const daysAgo = (n) => iso(new Date(Date.now() - n * 86400000));
  *
  * A failed login used to be silent: `login.payload.csrfToken` became undefined, every later
  * request went out unauthenticated, and the suite reported 401s that said nothing about the
- * boundary under test. CI runs these suites back to back, so 30 logins a minute is reachable.
+ * boundary under test.
  */
 async function signIn(cookies, email, password) {
-  let login = await call(cookies, 'POST', '/v1/auth/login', { email, password });
-  for (let attempt = 0; login.status === 429 && attempt < 4; attempt += 1) {
-    await new Promise((resolve) => setTimeout(resolve, 20000));
-    login = await call(cookies, 'POST', '/v1/auth/login', { email, password });
-  }
-  if (!good(login) || !login.payload?.csrfToken)
-    throw new Error(`sign-in failed for ${email}: HTTP ${login.status}`);
+  const login = await setup(`sign-in for ${email}`, () =>
+    call(cookies, 'POST', '/v1/auth/login', { email, password }),
+  );
+  if (!login.payload?.csrfToken) throw new Error(`sign-in for ${email} returned no CSRF token`);
   return { 'x-csrf-token': login.payload.csrfToken };
 }
 
@@ -112,14 +111,12 @@ async function tenant(tag) {
     displayName: 'Boss Person',
     password: 'Str0ng-Passw0rd!',
   };
-  let response = await call(admin, 'POST', '/v1/auth/register', credentials);
-  for (let attempt = 0; response.status === 429 && attempt < 4; attempt += 1) {
-    await new Promise((resolve) => setTimeout(resolve, 20000));
-    response = await call(admin, 'POST', '/v1/auth/register', credentials);
-  }
-  if (!good(response)) throw new Error('registration failed: ' + response.status);
+  const response = await setup(`registration of ${slug}`, () =>
+    call(admin, 'POST', '/v1/auth/register', credentials),
+  );
   const csrf = { 'x-csrf-token': response.payload.csrfToken };
-  const orgId = (await call(admin, 'GET', '/v1/auth/me')).payload.organization.id;
+  const me = await setup(`session lookup for ${slug}`, () => call(admin, 'GET', '/v1/auth/me'));
+  const orgId = me.payload.organization.id;
   const org = (method, path, body) =>
     call(
       admin,
@@ -129,8 +126,8 @@ async function tenant(tag) {
       method === 'GET' ? undefined : csrf,
     );
 
-  const roles = rows((await org('GET', '/roles')).payload);
-  const branches = rows((await org('GET', '/branches')).payload);
+  const roles = rows((await setup('role listing', () => org('GET', '/roles'))).payload);
+  const branches = rows((await setup('branch listing', () => org('GET', '/branches'))).payload);
   const employeeRole = roles.find((role) => role.code === 'EMPLOYEE');
   // Asserted rather than indexed: a setup call that quietly failed used to surface as
   // "Cannot read properties of undefined", which says nothing about what went wrong.
@@ -171,28 +168,36 @@ async function tenant(tag) {
   /** An employee with their own session, so requests carry a real self-service identity. */
   const makeEmployee = async (index, firstName) => {
     const email = 'e' + index + '.' + slug + '@t.test';
-    const employee = await org('POST', '/employees', {
-      employeeNumber: 'EMP-' + index,
-      firstName,
-      lastName: 'Case',
-      workEmail: email,
-      employmentType: 'FULL_TIME',
-      dateOfJoining: '2026-01-01',
-    });
-    const member = await org('POST', '/members', {
-      email,
-      displayName: firstName + ' Case',
-      roleIds: [employeeRoleId],
-      reason: 'authorization boundary regression',
-    });
-    await org('POST', '/employees/' + employee.payload.id + '/user', {
-      userId: member.payload.userId,
-    });
-    await org('POST', '/employees/' + employee.payload.id + '/branches', {
-      branchId,
-      startsOn: '2026-01-01',
-      isPrimary: true,
-    });
+    const employee = await setup(`employee ${index}`, () =>
+      org('POST', '/employees', {
+        employeeNumber: 'EMP-' + index,
+        firstName,
+        lastName: 'Case',
+        workEmail: email,
+        employmentType: 'FULL_TIME',
+        dateOfJoining: '2026-01-01',
+      }),
+    );
+    const member = await setup(`member ${index}`, () =>
+      org('POST', '/members', {
+        email,
+        displayName: firstName + ' Case',
+        roleIds: [employeeRoleId],
+        reason: 'authorization boundary regression',
+      }),
+    );
+    await setup(`user link for employee ${index}`, () =>
+      org('POST', '/employees/' + employee.payload.id + '/user', {
+        userId: member.payload.userId,
+      }),
+    );
+    await setup(`branch posting for employee ${index}`, () =>
+      org('POST', '/employees/' + employee.payload.id + '/branches', {
+        branchId,
+        startsOn: '2026-01-01',
+        isPrimary: true,
+      }),
+    );
     const cookies = jar();
     const employeeCsrf = await signIn(cookies, email, member.payload.temporaryPassword);
     return {

@@ -18,6 +18,8 @@
 import { createRequire } from 'node:module';
 import { resolveDatabaseUrl } from './lib/database-url.mjs';
 
+import { setupCall } from './lib/setup-call.mjs';
+
 const BASE = 'http://localhost:4000';
 // `pg` is a dependency of the API workspace, not of the repo root, so resolve it from there.
 const require = createRequire(new URL('../apps/api/package.json', import.meta.url));
@@ -126,7 +128,9 @@ async function tenant(tag) {
     throw new Error('registration failed: HTTP ' + response.status + ' ' + detail(response));
 
   const csrf = { 'x-csrf-token': response.payload.csrfToken };
-  const me = (await call(cookies, 'GET', '/v1/auth/me')).payload;
+  const me = (
+    await setupCall('session lookup for ' + slug, () => call(cookies, 'GET', '/v1/auth/me'))
+  ).payload;
   const orgId = me.organization.id;
   const adminUserId = me.user.id;
   const org = (method, path, body) =>

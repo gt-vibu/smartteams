@@ -22,6 +22,8 @@ import { resolveDatabaseUrl } from './lib/database-url.mjs';
 const require = createRequire(new URL('../apps/api/package.json', import.meta.url));
 const { Client } = require('pg');
 
+import { setupCall } from './lib/setup-call.mjs';
+
 const BASE = process.env.CONCURRENCY_API_URL ?? 'http://localhost:4000';
 const DB = resolveDatabaseUrl();
 
@@ -132,7 +134,10 @@ async function tenant(tag) {
   if (!good(response))
     throw new Error('registration failed: HTTP ' + response.status + ' ' + detail(response));
   const csrf = { 'x-csrf-token': response.payload.csrfToken };
-  const orgId = (await call(cookies, 'GET', '/v1/auth/me')).payload.organization.id;
+  const me = await setupCall('session lookup for ' + slug, () =>
+    call(cookies, 'GET', '/v1/auth/me'),
+  );
+  const orgId = me.payload.organization.id;
   const org = (method, path, body) =>
     call(
       cookies,

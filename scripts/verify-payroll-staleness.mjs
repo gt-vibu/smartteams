@@ -14,6 +14,8 @@
  *
  *   pnpm verify:payroll-staleness
  */
+import { setupCall } from './lib/setup-call.mjs';
+
 const BASE = 'http://localhost:4000';
 let pass = 0,
   fail = 0;
@@ -106,7 +108,8 @@ async function tenant(tag) {
   }
   if (!good(r)) throw new Error('tenant registration failed: HTTP ' + r.status + ' ' + detail(r));
   const AH = { 'x-csrf-token': r.payload.csrfToken };
-  const orgId = (await call(A, 'GET', '/v1/auth/me')).payload.organization.id;
+  const me = await setupCall('session lookup for ' + slug, () => call(A, 'GET', '/v1/auth/me'));
+  const orgId = me.payload.organization.id;
   const org = (m, p, b) =>
     call(A, m, '/v1/organizations/' + orgId + p, b, m === 'GET' ? undefined : AH);
   const roles = rows((await org('GET', '/roles')).payload);
