@@ -44,8 +44,14 @@ model User {
   createdPayrollRuns              PayrollRun[]
   createdPayrollAdjustments       PayrollAdjustment[]
   payrollApprovals                PayrollApproval[]
+  approvedSalaryAdvances          SalaryAdvance[]                    @relation("AdvanceApprovedBy")
+  rejectedSalaryAdvances          SalaryAdvance[]                    @relation("AdvanceRejectedBy")
+  markedPayrollPayments           PayrollPayment[]                   @relation("PayrollPaymentMarkedBy")
   approvalPolicySteps             ApprovalPolicyStep[]
   updatedOrganizationCapabilities OrganizationFederationCapability[] @relation("OrganizationCapabilityUpdatedBy")
+  revokedWebauthnCredentials      WebauthnCredential[]               @relation("WebauthnCredentialRevokedBy")
+  createdEmployeeAccessCodes      EmployeeAccessCode[]               @relation("AccessCodeCreatedBy")
+  activatedEmployeeAccessCodes    EmployeeAccessCode[]               @relation("AccessCodeActivatedBy")
 
   @@unique([externalIdentityProvider, externalOrganizationId, externalIdentityId])
   @@index([identityType, isActive])
@@ -71,6 +77,43 @@ model UserInvitation {
   @@index([organizationId, emailNormalized])
   @@index([organizationId, expiresAt])
   @@map("user_invitations")
+}
+
+/**
+ * A one-time code that lets an employee activate their own Smarteam login.
+ *
+ * Distinct from `UserInvitation`, which is addressed to an email and delivered by email. This is
+ * addressed to an *employee record*: an administrator hands the code over out of band, and the
+ * employee chooses their own email and password when they redeem it. That is why there is no
+ * email column here — at the time the code is issued, nobody has decided what it will be.
+ *
+ * The code is a bootstrap credential, never a permanent one. Only its digest is stored, it is
+ * single-use (`activatedAt`), short-lived (`expiresAt`), revocable (`revokedAt`), and it is
+ * pinned to exactly one organization and one employee. It carries no authority of its own: the
+ * roles it results in are the ones recorded in `roleIds`, which the issuing administrator had to
+ * already hold themselves.
+ */
+model EmployeeAccessCode {
+  id                String    @id @default(uuid()) @db.Uuid
+  organizationId    String    @map("organization_id") @db.Uuid
+  employeeId        String    @map("employee_id") @db.Uuid
+  codeHash          String    @unique @map("code_hash")
+  roleIds           String[]  @map("role_ids") @db.Uuid
+  createdByUserId   String    @map("created_by_user_id") @db.Uuid
+  activatedByUserId String?   @map("activated_by_user_id") @db.Uuid
+  expiresAt         DateTime  @map("expires_at") @db.Timestamptz(6)
+  activatedAt       DateTime? @map("activated_at") @db.Timestamptz(6)
+  revokedAt         DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  createdBy    User         @relation("AccessCodeCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  activatedBy  User?        @relation("AccessCodeActivatedBy", fields: [activatedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, employeeId])
+  @@index([organizationId, expiresAt])
+  @@map("employee_access_codes")
 }
 
 model PasswordResetToken {

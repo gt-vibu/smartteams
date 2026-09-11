@@ -8,7 +8,11 @@ import { parseServerEnv } from '@smarteam/config';
   imports: [
     ConfigModule.forRoot({
       cache: true,
-      envFilePath: resolve(process.cwd(), '../../.env'),
+      envFilePath: [
+        resolve(process.cwd(), '.env'),
+        resolve(process.cwd(), '../../.env'),
+        resolve(__dirname, '../../../../.env'),
+      ],
       isGlobal: true,
       validate: (env) => parseServerEnv(env),
     }),

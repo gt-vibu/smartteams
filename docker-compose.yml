@@ -1,0 +1,56 @@
+# OPTIONAL. Nothing in the normal local workflow uses this file.
+#
+# Smarteam runs against native services: PostgreSQL and a Redis-compatible server installed as
+# ordinary OS services, and real AWS S3 for files. `pnpm dev`, `pnpm test`, `pnpm verify:*` and
+# `pnpm db:*` all work with Docker stopped — see docs/local-development.md, which is the
+# authoritative setup.
+#
+# This file exists only as a fallback for a machine that has neither database installed. Be aware
+# that it cannot run alongside native services: both would bind 5432 and 6379, and whichever
+# starts second silently loses. If you use this, stop your native PostgreSQL and Redis services
+# first.
+#
+#   docker compose up -d          # optional, only if you have no native services
+#
+# Object storage is deliberately absent. Files go to real AWS S3 in development exactly as in
+# production, through the same StorageService and the same four AWS_* variables, so the one part
+# of the stack that used to behave differently on a developer's machine no longer does.
+#
+# CI is the one exception in the repository, and it does not use this file: the workflow starts a
+# MinIO container directly as an S3-compatible test double, so the storage suite stays gated
+# without long-lived AWS keys in GitHub.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: smarteam
+      POSTGRES_PASSWORD: smarteam
+      POSTGRES_DB: smarteam
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # `pg_isready` alone reports true while the server is still starting up, which lets a
+      # migration run against a database that is not accepting writes yet.
+      test: ['CMD-SHELL', 'pg_isready -U smarteam -d smarteam']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    # No persistence: everything here is a rate-limit counter, a nonce or a queued job, all of
+    # which are safe to lose and none of which should survive a restart into a stale state.
+    command: ['redis-server', '--save', '', '--appendonly', 'no']
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  postgres-data:

@@ -1,19 +1,20 @@
 model AttendanceRecord {
-  id               String           @id @default(uuid()) @db.Uuid
-  organizationId   String           @map("organization_id") @db.Uuid
-  employeeId       String           @map("employee_id") @db.Uuid
-  branchId         String?          @map("branch_id") @db.Uuid
-  workDate         DateTime         @map("work_date") @db.Date
-  status           AttendanceStatus @default(OPEN)
-  scheduledMinutes Int?             @map("scheduled_minutes")
-  workedMinutes    Int              @default(0) @map("worked_minutes")
-  overtimeMinutes  Int              @default(0) @map("overtime_minutes")
-  sourceAccessMode AccessMode       @map("source_access_mode")
-  externalId       String?          @map("external_id")
-  correctionNote   String?          @map("correction_note")
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
-  version          Int              @default(1)
+  id               String              @id @default(uuid()) @db.Uuid
+  organizationId   String              @map("organization_id") @db.Uuid
+  employeeId       String              @map("employee_id") @db.Uuid
+  branchId         String?             @map("branch_id") @db.Uuid
+  workDate         DateTime            @map("work_date") @db.Date
+  status           AttendanceStatus    @default(OPEN)
+  dayStatus        AttendanceDayStatus @default(PRESENT) @map("day_status")
+  scheduledMinutes Int?                @map("scheduled_minutes")
+  workedMinutes    Int                 @default(0) @map("worked_minutes")
+  overtimeMinutes  Int                 @default(0) @map("overtime_minutes")
+  sourceAccessMode AccessMode          @map("source_access_mode")
+  externalId       String?             @map("external_id")
+  correctionNote   String?             @map("correction_note")
+  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version          Int                 @default(1)
 
   organization     Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   employee         Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
@@ -45,15 +46,19 @@ model AttendancePunch {
   workLocationId             String?               @map("work_location_id") @db.Uuid
   isWithinGeofence           Boolean?              @map("is_within_geofence")
   distanceFromLocationMeters Decimal?              @map("distance_from_location_meters") @db.Decimal(10, 2)
+  biometricVerified          Boolean               @default(false) @map("biometric_verified")
+  webauthnCredentialId       String?               @map("webauthn_credential_id") @db.Uuid
   metadata                   Json                  @default("{}")
   createdAt                  DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  organization     Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  attendanceRecord AttendanceRecord       @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
-  employee         Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-  capturedBy       User?                  @relation(fields: [capturedByUserId], references: [id], onDelete: SetNull)
-  workLocation     WorkLocation?          @relation(fields: [workLocationId], references: [id], onDelete: Restrict)
-  corrections      AttendanceCorrection[]
+  organization       Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  attendanceRecord   AttendanceRecord       @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
+  employee           Employee               @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  capturedBy         User?                  @relation(fields: [capturedByUserId], references: [id], onDelete: SetNull)
+  workLocation       WorkLocation?          @relation(fields: [workLocationId], references: [id], onDelete: Restrict)
+  corrections        AttendanceCorrection[]
+  webauthnCredential WebauthnCredential?    @relation(fields: [webauthnCredentialId], references: [id], onDelete: Restrict)
+  webauthnChallenges WebauthnChallenge[]    @relation("ChallengePunch")
 
   @@unique([organizationId, externalId])
   @@index([organizationId, employeeId, occurredAt])
@@ -124,11 +129,34 @@ model Holiday {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   branch       Branch?      @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  selections   EmployeeHolidaySelection[]
 
   @@unique([organizationId, branchId, holidayDate])
   @@unique([organizationId, externalId])
   @@index([organizationId, holidayDate, isActive])
   @@map("holidays")
+}
+
+model EmployeeHolidaySelection {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @map("organization_id") @db.Uuid
+  employeeId     String          @map("employee_id") @db.Uuid
+  holidayId      String          @map("holiday_id") @db.Uuid
+  year           Int             @db.SmallInt
+  status         SelectionStatus @default(CONFIRMED)
+  selectedAt     DateTime        @default(now()) @map("selected_at") @db.Timestamptz(6)
+  cancelledAt    DateTime?       @map("cancelled_at") @db.Timestamptz(6)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  holiday      Holiday      @relation(fields: [holidayId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, holidayId])
+  @@index([organizationId, employeeId, year])
+  @@index([organizationId, holidayId, status])
+  @@map("employee_holiday_selections")
 }
 
 model LeaveType {
@@ -146,13 +174,32 @@ model LeaveType {
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  balances     LeaveBalance[]
-  requests     LeaveRequest[]
+  organization      Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  policyAssignments LeavePolicyAssignment[]
+  balances          LeaveBalance[]
+  requests          LeaveRequest[]
 
   @@unique([organizationId, code])
   @@index([organizationId, isActive])
   @@map("leave_types")
+}
+
+model LeavePolicyAssignment {
+  id               String     @id @default(uuid()) @db.Uuid
+  organizationId   String     @map("organization_id") @db.Uuid
+  branchId         String     @map("branch_id") @db.Uuid
+  leaveTypeId      String     @map("leave_type_id") @db.Uuid
+  sourceAccessMode AccessMode @map("source_access_mode")
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  branch       Branch       @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  leaveType    LeaveType    @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, branchId, leaveTypeId])
+  @@index([organizationId, branchId, createdAt])
+  @@map("leave_policy_assignments")
 }
 
 model LeaveBalance {

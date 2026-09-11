@@ -1,0 +1,231 @@
+'use client';
+
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import type { OrganizationMembership } from '@smarteam/contracts';
+import { authRepository } from '../repositories/auth.repository';
+import { workforceRepository } from '../repositories/workforce.repository';
+import { hasPermission } from '@smarteam/contracts';
+import { canAccessModule as evaluateModuleAccess } from '../services/authorization.policy';
+import type {
+  ApprovalDomainType,
+  AuthSession,
+  Persona,
+  WorkspaceContext,
+} from '../types/auth.types';
+import { getVisibleSpaces } from '../services/navigation.service';
+
+export type LoginResult =
+  | { status: 'AUTHENTICATED' }
+  | { status: 'SELECT_ORGANIZATION'; organizations: OrganizationMembership[] }
+  | { status: 'FAILED'; message: string };
+
+export type SessionState = {
+  persona: Persona | null;
+  session: AuthSession | null;
+  memberships: OrganizationMembership[];
+  isAuthenticated: boolean;
+  /** True until the initial `GET /v1/auth/me` settles, so the shell can avoid flashing login. */
+  isRestoring: boolean;
+  workspaceContext: WorkspaceContext;
+  canSwitchWorkspace: boolean;
+  visibleSpaces: ReturnType<typeof getVisibleSpaces>;
+  login: (email: string, password: string, organizationId?: string) => Promise<LoginResult>;
+  logout: () => Promise<void>;
+  /** Re-reads `GET /v1/auth/me`, so a changed role or a new employee link takes effect at once. */
+  refreshSession: () => Promise<void>;
+  switchWorkspace: (context: WorkspaceContext) => WorkspaceContext;
+  hasPermission: (permission: string) => boolean;
+  hasAnyPermission: (permissions: string[]) => boolean;
+  hasExplicitPermission: (permission: string) => boolean;
+  canApprove: (
+    domain: ApprovalDomainType,
+    resource?: { requesterId?: string; employeeId?: string },
+  ) => boolean;
+  isAssignedToAnyTeam: boolean;
+  canAccessSpace: (space: string) => boolean;
+  canAccessModule: (moduleName: string) => boolean;
+};
+
+const AuthContext = createContext<SessionState | null>(null);
+
+/**
+ * Owns the authenticated session for the workspace.
+ *
+ * The session is restored by asking the API (`GET /v1/auth/me`), never by reading local
+ * storage, and every permission exposed below is the server's answer. This state decides what
+ * is rendered; the API independently authorizes every request it receives, so editing this
+ * state in devtools grants nothing.
+ */
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [persona, setPersona] = useState<Persona | null>(null);
+  const [isRestoring, setIsRestoring] = useState(true);
+  const [workspaceContext, setWorkspaceContextState] = useState<WorkspaceContext>('EMPLOYEE');
+
+  const sync = useCallback((next: Persona | null) => {
+    setPersona(next);
+    setWorkspaceContextState(authRepository.getWorkspaceContext());
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    authRepository
+      .restore()
+      .then((restored) => {
+        if (active) sync(restored);
+      })
+      .catch(() => {
+        if (active) sync(null);
+      })
+      .finally(() => {
+        if (active) setIsRestoring(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [sync]);
+
+  const login = useCallback(
+    async (email: string, password: string, organizationId?: string): Promise<LoginResult> => {
+      try {
+        const outcome = await authRepository.login(email, password, organizationId);
+        if (outcome.status === 'SELECT_ORGANIZATION') {
+          return { status: 'SELECT_ORGANIZATION', organizations: outcome.organizations };
+        }
+        sync(authRepository.getCurrentPersona());
+        return { status: 'AUTHENTICATED' };
+      } catch (error) {
+        // A failed sign-in stays failed. There is no local fallback identity.
+        sync(null);
+        return {
+          status: 'FAILED',
+          message: error instanceof Error ? error.message : 'Unable to sign in.',
+        };
+      }
+    },
+    [sync],
+  );
+
+  const logout = useCallback(async () => {
+    await authRepository.logout();
+    sync(null);
+  }, [sync]);
+
+  /**
+   * Re-asks the API who this session is.
+   *
+   * Identity can change underneath a live session — an administrator links themselves an employee
+   * record, or someone else's role is granted or revoked — and the shell had no way to pick that
+   * up short of a full page load. This re-reads `GET /v1/auth/me`, so roles, permissions and the
+   * employee link all come back from the server rather than being patched locally. A failure
+   * leaves the current persona alone rather than signing the user out: a transient network error
+   * is not a logout.
+   */
+  const refreshSession = useCallback(async () => {
+    try {
+      sync(await authRepository.restore());
+    } catch {
+      // Keep the existing persona; the API still authorizes every request independently.
+    }
+  }, [sync]);
+
+  const switchWorkspace = useCallback((context: WorkspaceContext) => {
+    const updated = authRepository.setWorkspaceContext(context);
+    setWorkspaceContextState(updated);
+    return updated;
+  }, []);
+
+  const permissions = persona?.permissions ?? [];
+
+  /**
+   * Whether the signed-in employee is on a team, from the teams API.
+   *
+   * This gates the Team space and several modules. It previously read `assignedTeamIds` off the
+   * persona fixture, which is empty for every real onboarded user — so a genuine team member
+   * never saw the Team space. False until the check settles, so access is never granted on an
+   * assumption.
+   */
+  const [isAssignedToAnyTeam, setIsAssignedToAnyTeam] = useState(false);
+  // `hasPermission` understands the tenant wildcard, so the check goes through it rather than a
+  // string comparison; the joined key exists only to give the effect a stable dependency.
+  const canReadTeams = hasPermission(permissions, 'teams.read');
+  const sessionOrganizationId = persona ? authRepository.getAuthSession()?.organizationId : null;
+  const sessionEmployeeId = persona ? authRepository.getAuthSession()?.employeeId : null;
+
+  useEffect(() => {
+    if (!sessionOrganizationId || !sessionEmployeeId || !canReadTeams) {
+      setIsAssignedToAnyTeam(false);
+      return;
+    }
+    let cancelled = false;
+    void workforceRepository
+      .listTeams(sessionOrganizationId)
+      .then((teams) => {
+        if (cancelled) return;
+        setIsAssignedToAnyTeam(
+          teams.some(
+            (team) =>
+              team.teamLeadEmployeeId === sessionEmployeeId ||
+              (team.members ?? []).some(
+                (member) => member.employeeId === sessionEmployeeId && !member.leftAt,
+              ),
+          ),
+        );
+      })
+      // A failed check must not grant access; it leaves the flag false.
+      .catch(() => {
+        if (!cancelled) setIsAssignedToAnyTeam(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionOrganizationId, sessionEmployeeId, canReadTeams]);
+
+  const value = useMemo<SessionState>(() => {
+    const visibleSpaces = persona
+      ? getVisibleSpaces(persona, workspaceContext, isAssignedToAnyTeam)
+      : [];
+    return {
+      persona,
+      session: authRepository.getAuthSession(),
+      memberships: authRepository.getMemberships(),
+      isAuthenticated: persona !== null,
+      isRestoring,
+      workspaceContext,
+      canSwitchWorkspace: Boolean(persona?.canSwitchWorkspace),
+      visibleSpaces,
+      login,
+      logout,
+      refreshSession,
+      switchWorkspace,
+      hasPermission: (permission) => authRepository.hasPermission(permission),
+      hasAnyPermission: (candidates) => authRepository.hasAnyPermission(candidates),
+      hasExplicitPermission: (permission) => authRepository.hasExplicitPermission(permission),
+      canApprove: (domain, resource) => authRepository.canApprove(domain, resource),
+      isAssignedToAnyTeam,
+      canAccessSpace: (space) => visibleSpaces.some((entry) => entry.id === space),
+      canAccessModule: (moduleName) =>
+        evaluateModuleAccess(moduleName, workspaceContext, permissions, isAssignedToAnyTeam),
+    };
+    // `persona` carries the server's permission set, so it is the only input the permission
+    // helpers below depend on.
+  }, [
+    persona,
+    permissions,
+    isRestoring,
+    workspaceContext,
+    isAssignedToAnyTeam,
+    login,
+    logout,
+    refreshSession,
+    switchWorkspace,
+  ]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+/** Session state including the unauthenticated case. Used by the workspace shell. */
+export function useSession(): SessionState {
+  const value = useContext(AuthContext);
+  if (!value) throw new Error('useSession must be used within an AuthProvider');
+  return value;
+}

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -13,11 +14,9 @@ import { randomUUID } from 'node:crypto';
 export class StorageService {
   private readonly bucket: string;
   private readonly client: S3Client;
-  private readonly kmsKeyId?: string;
 
   constructor(config: ConfigService) {
     this.bucket = config.getOrThrow<string>('AWS_S3_BUCKET');
-    this.kmsKeyId = config.get<string>('AWS_S3_KMS_KEY_ID') || undefined;
     this.client = new S3Client({
       endpoint: config.get<string>('AWS_S3_ENDPOINT') || undefined,
       forcePathStyle: config.get<boolean>('AWS_S3_FORCE_PATH_STYLE', false),
@@ -33,6 +32,10 @@ export class StorageService {
     });
   }
 
+  getBucket() {
+    return this.bucket;
+  }
+
   createObjectKey(organizationId: string, purpose: string, originalName: string) {
     const extension = originalName
       .split('.')
@@ -42,17 +45,32 @@ export class StorageService {
     return `${organizationId}/${purpose}/${randomUUID()}${extension ? `.${extension}` : ''}`;
   }
 
-  async createUploadUrl(input: { key: string; contentType: string; expiresIn?: number }) {
+  async createUploadUrl(input: {
+    key: string;
+    contentType: string;
+    byteSize?: number;
+    checksumSha256?: string;
+    expiresIn?: number;
+  }) {
     return getSignedUrl(
       this.client,
       new PutObjectCommand({
         Bucket: this.bucket,
         ContentType: input.contentType,
         Key: input.key,
-        ServerSideEncryption: 'aws:kms',
-        ...(this.kmsKeyId ? { SSEKMSKeyId: this.kmsKeyId } : {}),
+        ...(input.byteSize === undefined ? {} : { ContentLength: input.byteSize }),
+        ...(input.checksumSha256 && /^[0-9a-f]{64}$/i.test(input.checksumSha256)
+          ? { ChecksumSHA256: Buffer.from(input.checksumSha256, 'hex').toString('base64') }
+          : {}),
+        ServerSideEncryption: 'AES256',
       }),
       { expiresIn: input.expiresIn ?? 600 },
+    );
+  }
+
+  async head(key: string) {
+    return this.client.send(
+      new HeadObjectCommand({ Bucket: this.bucket, Key: key, ChecksumMode: 'ENABLED' }),
     );
   }
 

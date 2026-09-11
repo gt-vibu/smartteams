@@ -42,6 +42,7 @@ model Employee {
   projectMemberships       ProjectMember[]
   attendanceRecords        AttendanceRecord[]
   attendancePunches        AttendancePunch[]
+  holidaySelections        EmployeeHolidaySelection[]
   leaveBalances            LeaveBalance[]
   leaveRequests            LeaveRequest[]
   shifts                   EmployeeShiftAssignment[]
@@ -49,14 +50,48 @@ model Employee {
   payrollLines             PayrollLineItem[]
   payslips                 Payslip[]
   payrollAdjustments       PayrollAdjustment[]
+  statutoryProfiles        EmployeeStatutoryProfile[]
+  statutoryRecords         EmployeeStatutoryRecord[]
+  payrollPolicies          EmployeePayrollPolicy[]
+  salaryAdvances           SalaryAdvance[]
+  advanceRecoveries        SalaryAdvanceRecovery[]
+  payrollPayments          PayrollPayment[]
   files                    FileObject[]
   teamLeadOf               Team[]
+  webauthnCredentials      WebauthnCredential[]
+  webauthnChallenges       WebauthnChallenge[]
+  accessCodes              EmployeeAccessCode[]
+  holidayPolicy            EmployeeHolidayPolicy?
 
   @@unique([organizationId, employeeNumber])
   @@unique([organizationId, externalId])
   @@index([organizationId, status])
+  @@index([organizationId, managerEmployeeId])
   @@index([organizationId, lastName, firstName])
   @@map("employees")
+}
+
+/**
+ * Per-employee optional holiday policy override.
+ *
+ * When present, `allowanceOverride` takes precedence over `OrganizationSettings.optionalHolidayAllowance`.
+ * When `restrictedHolidayIds` is non-empty, only those holiday IDs are available in the employee's
+ * optional pool; otherwise the full org/branch pool applies.
+ */
+model EmployeeHolidayPolicy {
+  id                   String   @id @default(uuid()) @db.Uuid
+  organizationId       String   @map("organization_id") @db.Uuid
+  employeeId           String   @unique @map("employee_id") @db.Uuid
+  allowanceOverride    Int?     @map("allowance_override") @db.SmallInt
+  restrictedHolidayIds String[] @default([]) @map("restricted_holiday_ids") @db.Uuid
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId])
+  @@map("employee_holiday_policies")
 }
 
 model EmployeeEmergencyContact {
@@ -147,6 +182,7 @@ model EmployeeCompensation {
   payType            PayType      @map("pay_type")
   payFrequency       PayFrequency @map("pay_frequency")
   baseAmount         Decimal      @map("base_amount") @db.Decimal(14, 2)
+  grossSalary        Decimal?     @map("gross_salary") @db.Decimal(14, 2)
   currencyCode       String       @map("currency_code") @db.Char(3)
   overtimeMultiplier Decimal      @map("overtime_multiplier") @db.Decimal(6, 3)
   effectiveFrom      DateTime     @map("effective_from") @db.Date
@@ -160,6 +196,77 @@ model EmployeeCompensation {
 
   @@index([organizationId, employeeId, effectiveFrom])
   @@map("employee_compensation")
+}
+
+model EmployeePayrollPolicy {
+  id                    String         @id @default(uuid()) @db.Uuid
+  organizationId        String         @map("organization_id") @db.Uuid
+  employeeId            String         @map("employee_id") @db.Uuid
+  effectiveFrom         DateTime       @map("effective_from") @db.Date
+  effectiveTo           DateTime?      @map("effective_to") @db.Date
+  payrollEnabled        Boolean        @default(true) @map("payroll_enabled")
+  salarySlipMode        SalarySlipMode @default(ENABLED) @map("salary_slip_mode")
+  pfEnabled             Boolean        @default(false) @map("pf_enabled")
+  esiEnabled            Boolean        @default(false) @map("esi_enabled")
+  ptEnabled             Boolean        @default(false) @map("pt_enabled")
+  statutoryJurisdiction String?        @map("statutory_jurisdiction")
+  metadata              Json           @default("{}")
+  createdAt             DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, employeeId, effectiveFrom])
+  @@index([organizationId, employeeId, effectiveFrom])
+  @@map("employee_payroll_policies")
+}
+
+model EmployeeStatutoryProfile {
+  id                 String    @id @default(uuid()) @db.Uuid
+  organizationId     String    @map("organization_id") @db.Uuid
+  employeeId         String    @map("employee_id") @db.Uuid
+  schemeCode         String    @map("scheme_code")
+  registrationNumber String?   @map("registration_number")
+  effectiveFrom      DateTime  @map("effective_from") @db.Date
+  effectiveTo        DateTime? @map("effective_to") @db.Date
+  employeeRate       Decimal?  @map("employee_rate") @db.Decimal(8, 4)
+  employerRate       Decimal?  @map("employer_rate") @db.Decimal(8, 4)
+  metadata           Json      @default("{}")
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, employeeId, schemeCode, effectiveFrom])
+  @@map("employee_statutory_profiles")
+}
+
+model EmployeeStatutoryRecord {
+  id              String                 @id @default(uuid()) @db.Uuid
+  organizationId  String                 @map("organization_id") @db.Uuid
+  employeeId      String                 @map("employee_id") @db.Uuid
+  schemeCode      String                 @map("scheme_code")
+  periodStart     DateTime               @map("period_start") @db.Date
+  periodEnd       DateTime               @map("period_end") @db.Date
+  status          ComplianceRecordStatus @default(DRAFT)
+  employeeAmount  Decimal?               @map("employee_amount") @db.Decimal(14, 2)
+  employerAmount  Decimal?               @map("employer_amount") @db.Decimal(14, 2)
+  dueDate         DateTime?              @map("due_date") @db.Date
+  submittedAt     DateTime?              @map("submitted_at") @db.Timestamptz(6)
+  filingReference String?                @map("filing_reference")
+  metadata        Json                   @default("{}")
+  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  version         Int                    @default(1)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, employeeId, schemeCode, periodStart, periodEnd])
+  @@index([organizationId, schemeCode, periodStart, status])
+  @@map("employee_statutory_records")
 }
 
 model PayComponent {
