@@ -24,6 +24,17 @@ export class FilesAccessService {
     @InjectQueue('file-lifecycle') private readonly lifecycleQueue: Queue,
   ) {}
 
+  /**
+   * Files the caller may see.
+   *
+   * Deliberately added only after `download` was self-scoped: a listing on top of an unscoped read
+   * would have turned "guess a file id" into "enumerate every payslip in the tenant".
+   *
+   * The boundary is the same one `download` enforces. `files.read` returns the caller's own
+   * employee's files and nothing else — not even organization-level files, which belong to nobody
+   * in particular. `files.read.all` (or the wildcard) returns the tenant's. Deleted files are
+   * excluded, and the page is bounded so the list cannot sweep the tenant in one call.
+   */
   async list(
     context: DomainContext,
     filters: { purpose?: FilePurpose; employeeId?: string; limit?: number } = {},
@@ -70,6 +81,18 @@ export class FilesAccessService {
     });
   }
 
+  /**
+   * A short-lived download URL for one file.
+   *
+   * `files.read` alone used to be enough for any file in the tenant, which meant a colleague's
+   * payslip or leave attachment was reachable by anyone who knew its id. Reads are now self-scoped
+   * the way Leave, Attendance and Payroll already are: `files.read` reaches your own employee's
+   * files, `files.read.all` (or the tenant wildcard) reaches everyone's, and a federation grant
+   * keeps the breadth its scope carries.
+   *
+   * A file with no employee — a payroll export, an import, an organization document — is not
+   * anyone's own file, so it needs the broader permission too.
+   */
   async download(context: DomainContext, fileId: string) {
     requirePermission(context, 'files.read');
     const canReadAll =

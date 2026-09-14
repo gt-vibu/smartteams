@@ -4,22 +4,26 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 import { TimesheetEntriesService } from './timesheet-entries.service';
+import { TimesheetLifecycleService } from './timesheet-lifecycle.service';
 import { TimesheetPeriodsService } from './timesheet-periods.service';
 
 /**
  * The timesheets module's entry point.
  *
  * Building a period from attendance is bulk work; everything after it happens one timesheet at a
- * time. Those are two services now, behind the constructor Nest already resolves.
+ * time, split between recording time and moving a sheet through approval. Those are three
+ * services, behind the constructor Nest already resolves.
  */
 @Injectable()
 export class TimesheetsService {
   private readonly entries: TimesheetEntriesService;
   private readonly periods: TimesheetPeriodsService;
+  private readonly lifecycle: TimesheetLifecycleService;
 
   constructor(database: TenantDatabaseService, audit: AuditService, outbox: OutboxService) {
-    this.entries = new TimesheetEntriesService(database, audit, outbox);
+    this.entries = new TimesheetEntriesService(database, audit);
     this.periods = new TimesheetPeriodsService(database, audit);
+    this.lifecycle = new TimesheetLifecycleService(database, audit, outbox);
   }
 
   list(...args: Parameters<TimesheetPeriodsService['list']>) {
@@ -50,15 +54,15 @@ export class TimesheetsService {
     return this.entries.quickCreateProject(...args);
   }
 
-  submit(...args: Parameters<TimesheetEntriesService['submit']>) {
-    return this.entries.submit(...args);
+  submit(...args: Parameters<TimesheetLifecycleService['submit']>) {
+    return this.lifecycle.submit(...args);
   }
 
-  unsubmit(...args: Parameters<TimesheetEntriesService['unsubmit']>) {
-    return this.entries.unsubmit(...args);
+  unsubmit(...args: Parameters<TimesheetLifecycleService['unsubmit']>) {
+    return this.lifecycle.unsubmit(...args);
   }
 
-  decide(...args: Parameters<TimesheetEntriesService['decide']>) {
-    return this.entries.decide(...args);
+  decide(...args: Parameters<TimesheetLifecycleService['decide']>) {
+    return this.lifecycle.decide(...args);
   }
 }

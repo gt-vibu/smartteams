@@ -15,6 +15,7 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   EmployeePayrollPolicyDto,
+  PayrollListQueryDto,
   PayrollPaymentDto,
   PayrollPolicyDto,
   PayrollPreviewDto,
@@ -131,12 +132,16 @@ export class PayrollPolicyController {
 
   @Get('advances') advances(
     @Param('organizationId') organizationId: string,
-    @Query('employeeId') employeeId: string | undefined,
+    @Query() query: PayrollListQueryDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.payroll.listAdvances(context, employeeId));
+    // Paged: `{ items, nextCursor }`. Federation's route of the same name is not.
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.payroll.listAdvances(context, query.employeeId, {
+        limit: query.limit,
+        cursor: query.cursor,
+      }),
+    );
   }
 
   @Post('advances') requestAdvance(
@@ -169,12 +174,16 @@ export class PayrollPolicyController {
 
   @Get('payments') payments(
     @Param('organizationId') organizationId: string,
-    @Query('employeeId') employeeId: string | undefined,
+    @Query() query: PayrollListQueryDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.payroll.listPayments(context, employeeId));
+    // Paged: `{ items, nextCursor }`. Federation's route of the same name is not.
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.payroll.listPayments(context, query.employeeId, {
+        limit: query.limit,
+        cursor: query.cursor,
+      }),
+    );
   }
 
   @Post('payments/:lineItemId/paid') markPaid(

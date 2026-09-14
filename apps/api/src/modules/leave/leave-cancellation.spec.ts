@@ -5,6 +5,8 @@ import type { DomainContext } from '../../common/context/domain-context';
 const ORG = '11111111-1111-4111-8111-111111111111';
 const REQUEST = '22222222-2222-4222-8222-222222222222';
 const BALANCE = '33333333-3333-4333-8333-333333333333';
+const OWNER = '55555555-5555-4555-8555-555555555555';
+const COLLEAGUE = '77777777-7777-4777-8777-777777777777';
 
 function context(permissions: string[]): DomainContext {
   return {
@@ -18,8 +20,12 @@ function context(permissions: string[]): DomainContext {
   };
 }
 
-function setup(status: 'PENDING' | 'APPROVED') {
+function setup(status: 'PENDING' | 'APPROVED', callerEmployeeId: string | null = OWNER) {
   const tx = {
+    // The caller's own employee record; by default the caller owns the request.
+    employee: {
+      findFirst: jest.fn().mockResolvedValue(callerEmployeeId ? { id: callerEmployeeId } : null),
+    },
     leaveRequest: {
       findFirst: jest.fn().mockResolvedValue({
         id: REQUEST,
@@ -126,5 +132,61 @@ describe('LeaveService.cancel', () => {
 
     const [call] = tx.leaveRequest.update.mock.calls as [{ data: Record<string, unknown> }][];
     expect(call?.[0].data).toMatchObject({ status: 'CANCELLED' });
+  });
+});
+
+/**
+ * `leave.requests.write` is the permission every employee holds to raise their own leave. It used to
+ * be all `cancel` checked, so any employee could cancel a colleague's request by id — an approved
+ * one included, which reverses the ledger and reopens the colleague's attendance and payroll.
+ */
+describe('LeaveService.cancel ownership', () => {
+  it("refuses to cancel a colleague's approved request", async () => {
+    const { tx, service } = setup('APPROVED', COLLEAGUE);
+
+    await expect(
+      service.cancel(context(['leave.requests.write']), REQUEST, 'Plans changed'),
+    ).rejects.toThrow('You may only act on your own records');
+    expect(tx.leaveRequest.update).not.toHaveBeenCalled();
+    expect(tx.leaveBalance.update).not.toHaveBeenCalled();
+    expect(tx.leaveBalanceTransaction.create).not.toHaveBeenCalled();
+  });
+
+  it("refuses to cancel a colleague's pending request", async () => {
+    const { tx, service } = setup('PENDING', COLLEAGUE);
+
+    await expect(
+      service.cancel(context(['leave.requests.write']), REQUEST, 'Plans changed'),
+    ).rejects.toThrow('You may only act on your own records');
+    expect(tx.leaveRequest.update).not.toHaveBeenCalled();
+  });
+
+  it('refuses a caller with no employee record', async () => {
+    const { tx, service } = setup('PENDING', null);
+
+    await expect(
+      service.cancel(context(['leave.requests.write']), REQUEST, 'Plans changed'),
+    ).rejects.toThrow('You may only act on your own records');
+    expect(tx.leaveRequest.update).not.toHaveBeenCalled();
+  });
+
+  it('lets HR, who can see everyone’s leave, cancel on an employee’s behalf', async () => {
+    const { tx, service } = setup('APPROVED', COLLEAGUE);
+
+    await service.cancel(
+      context(['leave.requests.write', 'leave.requests.read.all']),
+      REQUEST,
+      'Plans changed',
+    );
+    expect(tx.leaveRequest.update).toHaveBeenCalled();
+    // The ownership lookup is skipped for a caller with breadth.
+    expect(tx.employee.findFirst).not.toHaveBeenCalled();
+  });
+
+  it('leaves the wildcard admin unrestricted', async () => {
+    const { tx, service } = setup('APPROVED', null);
+
+    await service.cancel(context(['*']), REQUEST, 'Plans changed');
+    expect(tx.leaveRequest.update).toHaveBeenCalled();
   });
 });

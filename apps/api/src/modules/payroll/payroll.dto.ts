@@ -73,6 +73,13 @@ export class PayrollPayslipQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
 }
 
+/** One page of advances or payments on the native routes. */
+export class PayrollListQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsString() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(1) @Max(500) limit?: number;
+}
+
 export class PayrollLedgerQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
   @IsOptional() @IsString() cursor?: string;

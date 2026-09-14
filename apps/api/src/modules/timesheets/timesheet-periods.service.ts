@@ -9,8 +9,23 @@ import { ConflictError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from '../payroll/payroll-staleness';
+import { actingForOthersError, canActForAllEmployees } from '../employees/employee-scope';
 
 import { dateOnly, decodeEntry } from './timesheet-shared';
+
+/**
+ * Periods belong to the whole organization, so managing them is an act on everyone's timesheet.
+ *
+ * Both operations used to need only `timesheets.write`, the permission every employee holds to log
+ * their own time. Any employee could therefore change the organization's period type or re-derive
+ * a period — which returns every sheet in it to draft and withdraws approvals already given, and
+ * with them the payroll calculated from those approvals. The breadth marker is the module's
+ * existing `timesheets.read.all`, the same split every other self-scoped timesheet write uses.
+ */
+function requirePeriodManagement(context: DomainContext) {
+  requirePermission(context, 'timesheets.write');
+  if (!canActForAllEmployees(context, 'timesheets.read.all')) throw actingForOthersError();
+}
 
 @Injectable()
 export class TimesheetPeriodsService {
@@ -64,7 +79,7 @@ export class TimesheetPeriodsService {
     context: DomainContext,
     input: { periodType: TimesheetPeriodType; periodStart: string; periodEnd: string },
   ) {
-    requirePermission(context, 'timesheets.write');
+    requirePeriodManagement(context);
     return this.database.run(context, async (tx) => {
       const period = await tx.timesheetPeriod.upsert({
         where: {
@@ -98,7 +113,7 @@ export class TimesheetPeriodsService {
   }
 
   async derive(context: DomainContext, periodId: string) {
-    requirePermission(context, 'timesheets.write');
+    requirePeriodManagement(context);
     return this.database.run(context, async (tx) => {
       const period = await tx.timesheetPeriod.findFirst({
         where: { id: periodId, organizationId: context.organizationId },

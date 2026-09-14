@@ -215,4 +215,69 @@ describe('timesheet derivation', () => {
       'Missing permission: timesheets.write',
     );
   });
+
+  /*
+   * `timesheets.write` is every employee's permission to log their own time. Deriving resets every
+   * sheet in the period to draft and withdraws its approvals, so it must also need breadth.
+   */
+  it('refuses an employee who can only write their own timesheet', async () => {
+    const { service, tx } = setup(3, 1);
+    await expect(service.derive(context(['timesheets.write']), PERIOD)).rejects.toThrow(
+      'You may only act on your own records',
+    );
+    expect(tx.timesheetPeriod.findFirst).not.toHaveBeenCalled();
+    expect(tx.timesheet.updateMany).not.toHaveBeenCalled();
+    expect(tx.timesheetApproval.deleteMany).not.toHaveBeenCalled();
+  });
+
+  it('lets a timesheet administrator derive the period', async () => {
+    const { service, tx } = setup(3, 1);
+    await service.derive(context(['timesheets.write', 'timesheets.read.all']), PERIOD);
+    expect(tx.timesheet.updateMany).toHaveBeenCalled();
+  });
+
+  it('keeps the federation breadth its grant already carries', async () => {
+    const { service, tx } = setup(3, 1);
+    await service.derive(
+      {
+        ...context(['timesheets.write']),
+        accessMode: 'FEDERATION',
+        actor: { type: 'FEDERATION_CLIENT', clientId: 'partner' },
+      },
+      PERIOD,
+    );
+    expect(tx.timesheet.updateMany).toHaveBeenCalled();
+  });
+});
+
+describe('timesheet period creation', () => {
+  function periodSetup() {
+    const tx = { timesheetPeriod: { upsert: jest.fn().mockResolvedValue({ id: PERIOD }) } };
+    const database = {
+      run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),
+    };
+    const service = new TimesheetsService(database as never, { record: jest.fn() }, {
+      publish: jest.fn(),
+    } as never);
+    return { service, tx };
+  }
+  const input = {
+    periodType: 'MONTHLY' as const,
+    periodStart: '2026-09-01',
+    periodEnd: '2026-09-30',
+  };
+
+  it("refuses an employee, since the upsert rewrites the organization's period", async () => {
+    const { service, tx } = periodSetup();
+    await expect(service.createPeriod(context(['timesheets.write']), input)).rejects.toThrow(
+      'You may only act on your own records',
+    );
+    expect(tx.timesheetPeriod.upsert).not.toHaveBeenCalled();
+  });
+
+  it('lets a timesheet administrator open a period', async () => {
+    const { service, tx } = periodSetup();
+    await service.createPeriod(context(['timesheets.write', 'timesheets.read.all']), input);
+    expect(tx.timesheetPeriod.upsert).toHaveBeenCalled();
+  });
 });

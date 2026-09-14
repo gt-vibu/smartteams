@@ -2,7 +2,6 @@ import { TimesheetEntriesService } from './timesheet-entries.service';
 import type { DomainContext } from '../../common/context/domain-context';
 import type { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import type { AuditService } from '../audit/audit.service';
-import type { OutboxService } from '../federation/outbox.service';
 
 /**
  * Creating a project from the Log Time form is creating a project.
@@ -53,8 +52,7 @@ function setup() {
       ),
   } as unknown as TenantDatabaseService;
   const audit = { record: jest.fn().mockResolvedValue({}) } as unknown as AuditService;
-  const outbox = { append: jest.fn().mockResolvedValue({}) } as unknown as OutboxService;
-  return { tx, service: new TimesheetEntriesService(database, audit, outbox) };
+  return { tx, service: new TimesheetEntriesService(database, audit) };
 }
 
 describe('TimesheetEntriesService.quickCreateProject', () => {

@@ -11,6 +11,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertApprover } from '../approvals/approval-authorization';
+import { assertMayActForEmployee } from '../employees/employee-scope';
 import { toRequestDto } from './leave-shared';
 import { ledger, releaseReservation } from './leave-balance-ops';
 import { clearLeaveDaysOnAttendance, markLeaveDaysOnAttendance } from './leave-attendance-sync';
@@ -174,6 +175,10 @@ export class LeaveDecisionsService {
           request.status !== LeaveRequestStatus.APPROVED)
       )
         throw new ConflictError('Leave request cannot be cancelled');
+      // `leave.requests.write` is every employee's permission to raise their own leave. Without
+      // this, it also let them cancel a colleague's — an approved one included, which hands the
+      // days back and reopens attendance and payroll for that colleague.
+      await assertMayActForEmployee(tx, context, request.employeeId, 'leave.requests.read.all');
       const balance = await tx.leaveBalance.findFirst({
         where: {
           organizationId: context.organizationId,

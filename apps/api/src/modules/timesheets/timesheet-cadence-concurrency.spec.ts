@@ -3,7 +3,6 @@ import { derivePeriodBounds, decodeEntry, encodeEntryDescription } from './times
 import type { DomainContext } from '../../common/context/domain-context';
 import type { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import type { AuditService } from '../audit/audit.service';
-import type { OutboxService } from '../federation/outbox.service';
 
 const ORG = '11111111-1111-4111-8111-111111111111';
 const USER = '44444444-4444-4444-8444-444444444444';
@@ -97,11 +96,7 @@ describe('JobType Concurrency & Row Locking', () => {
       record: jest.fn().mockResolvedValue({}),
     } as unknown as AuditService;
 
-    const mockOutbox = {
-      append: jest.fn().mockResolvedValue({}),
-    } as unknown as OutboxService;
-
-    const service = new TimesheetEntriesService(mockDatabase, mockAudit, mockOutbox);
+    const service = new TimesheetEntriesService(mockDatabase, mockAudit);
 
     const res1 = await service.createJobType(testContext(), 'Security Review');
     expect(res1).toEqual({ id: 'Security Review', name: 'Security Review' });
@@ -162,6 +157,7 @@ describe('Timesheet Entry Auto-Provisioning & Project Logging', () => {
         findFirst: jest.fn().mockResolvedValue({ id: 'prj-1', name: 'Core Engine' }),
       },
       timesheetEntry: {
+        aggregate: jest.fn().mockResolvedValue({ _sum: { minutes: null } }),
         create: jest
           .fn()
           .mockImplementation((args: { data: Record<string, unknown> }) =>
@@ -180,9 +176,8 @@ describe('Timesheet Entry Auto-Provisioning & Project Logging', () => {
     } as unknown as TenantDatabaseService;
 
     const mockAudit = { record: jest.fn().mockResolvedValue({}) } as unknown as AuditService;
-    const mockOutbox = { append: jest.fn().mockResolvedValue({}) } as unknown as OutboxService;
 
-    const service = new TimesheetEntriesService(mockDatabase, mockAudit, mockOutbox);
+    const service = new TimesheetEntriesService(mockDatabase, mockAudit);
 
     const result = await service.addManualEntry(testContext(), undefined, {
       workDate: '2026-09-09',
@@ -233,6 +228,7 @@ describe('Timesheet Entry Auto-Provisioning & Project Logging', () => {
         findFirst: jest.fn().mockResolvedValue({ id: 'prj-1', name: 'Core Engine' }),
       },
       timesheetEntry: {
+        aggregate: jest.fn().mockResolvedValue({ _sum: { minutes: null } }),
         create: jest
           .fn()
           .mockImplementation((args: { data: Record<string, unknown> }) =>
@@ -251,9 +247,8 @@ describe('Timesheet Entry Auto-Provisioning & Project Logging', () => {
     } as unknown as TenantDatabaseService;
 
     const mockAudit = { record: jest.fn().mockResolvedValue({}) } as unknown as AuditService;
-    const mockOutbox = { append: jest.fn().mockResolvedValue({}) } as unknown as OutboxService;
 
-    const service = new TimesheetEntriesService(mockDatabase, mockAudit, mockOutbox);
+    const service = new TimesheetEntriesService(mockDatabase, mockAudit);
 
     await service.addManualEntry(testContext(), undefined, {
       workDate: '2026-09-09',

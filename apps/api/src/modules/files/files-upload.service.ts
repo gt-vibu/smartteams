@@ -1,11 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { FilePurpose, FileStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
-import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import {
+  ConflictError,
+  ForbiddenDomainError,
+  NotFoundError,
+} from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { StorageService } from '../../infrastructure/storage/storage.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { canActForAllEmployees, resolveActingEmployeeId } from '../employees/employee-scope';
 import { limits, toFileDto } from './files-shared';
+
+/**
+ * The breadth marker for files, as in listing, download and deletion: `files.read.all`, the
+ * wildcard, or a federation grant.
+ */
+const FILES_BREADTH = 'files.read.all';
+
+/**
+ * Purposes that describe the organization's own records rather than an employee's documents.
+ * A payslip in particular is something employees are shown and trust; letting anyone who can
+ * upload their own resume also file a "payslip" against themselves would let them forge one.
+ */
+const ORGANIZATION_PURPOSES: ReadonlySet<FilePurpose> = new Set([
+  FilePurpose.PAYSLIP,
+  FilePurpose.PAYROLL_EXPORT,
+  FilePurpose.IMPORT,
+]);
 
 @Injectable()
 export class FilesUploadService {
@@ -28,6 +50,12 @@ export class FilesUploadService {
     },
   ) {
     requirePermission(context, 'files.write');
+    // `files.write` is a self-service permission. It used to accept any employee id and any
+    // purpose, so an employee could attach documents to a colleague's record or leave request, and
+    // file payroll documents under anyone's name.
+    const breadth = canActForAllEmployees(context, FILES_BREADTH);
+    if (!breadth && ORGANIZATION_PURPOSES.has(input.purpose))
+      throw new ForbiddenDomainError('Only file administrators may upload this kind of file');
     const rule = limits[input.purpose];
     if (
       !rule.types.includes(input.contentType) ||
@@ -49,13 +77,18 @@ export class FilesUploadService {
       input.originalName,
     );
     const file = await this.database.run(context, async (tx) => {
-      const employee = input.employeeId
+      // A self-service upload is always the caller's own, whether or not it named them: a file
+      // with no employee is readable only with breadth, so the uploader could not see it again.
+      const employeeId = breadth
+        ? input.employeeId
+        : await resolveActingEmployeeId(tx, context, input.employeeId, FILES_BREADTH);
+      const employee = employeeId
         ? await tx.employee.findFirst({
-            where: { id: input.employeeId, organizationId: context.organizationId },
+            where: { id: employeeId, organizationId: context.organizationId },
             select: { id: true },
           })
         : undefined;
-      if (input.employeeId && !employee) throw new NotFoundError('Employee');
+      if (employeeId && !employee) throw new NotFoundError('Employee');
       const leaveRequest = input.leaveRequestId
         ? await tx.leaveRequest.findFirst({
             where: { id: input.leaveRequestId, organizationId: context.organizationId },
@@ -69,7 +102,7 @@ export class FilesUploadService {
         data: {
           organizationId: context.organizationId,
           uploadedByUserId: context.actor.userId,
-          employeeId: input.employeeId ?? leaveRequest?.employeeId,
+          employeeId: employeeId ?? leaveRequest?.employeeId,
           leaveRequestId: input.leaveRequestId,
           purpose: input.purpose,
           bucket: this.storage.getBucket(),
@@ -141,6 +174,11 @@ export class FilesUploadService {
           organizationId: context.organizationId,
           status: { in: [FileStatus.PENDING_UPLOAD, FileStatus.AVAILABLE] },
           ...(employeeId ? { employeeId } : {}),
+          // Completing publishes the file. A self-service caller may only complete an upload they
+          // began; anyone else's pending file reads as missing, as it does everywhere else.
+          ...(canActForAllEmployees(context, FILES_BREADTH)
+            ? {}
+            : { uploadedByUserId: context.actor.userId ?? null }),
         },
       }),
     );
@@ -198,28 +236,4 @@ export class FilesUploadService {
       return { ...toFileDto(updated), versionId: version.id };
     });
   }
-
-  /**
-   * A short-lived download URL for one file.
-   *
-   * `files.read` alone used to be enough for any file in the tenant, which meant a colleague's
-   * payslip or leave attachment was reachable by anyone who knew its id. Reads are now self-scoped
-   * the way Leave, Attendance and Payroll already are: `files.read` reaches your own employee's
-   * files, `files.read.all` (or the tenant wildcard) reaches everyone's, and a federation grant
-   * keeps the breadth its scope carries.
-   *
-   * A file with no employee — a payroll export, an import, an organization document — is not
-   * anyone's own file, so it needs the broader permission too.
-   */
-  /**
-   * Files the caller may see.
-   *
-   * Deliberately added only after `download` was self-scoped: a listing on top of an unscoped read
-   * would have turned "guess a file id" into "enumerate every payslip in the tenant".
-   *
-   * The boundary is the same one `download` enforces. `files.read` returns the caller's own
-   * employee's files and nothing else — not even organization-level files, which belong to nobody
-   * in particular. `files.read.all` (or the wildcard) returns the tenant's. Deleted files are
-   * excluded, and the page is bounded so the list cannot sweep the tenant in one call.
-   */
 }

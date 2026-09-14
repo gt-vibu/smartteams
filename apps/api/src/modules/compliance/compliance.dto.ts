@@ -40,6 +40,13 @@ export class StatutoryRecordWriteDto extends StatutoryRecordDto {
 }
 
 export class ComplianceQueryDto {
+  /**
+   * Both record routes read this with `@Query('employeeId')` as well, but it has to be declared
+   * here too: the global pipe forbids undeclared properties, so without it every request that
+   * filtered by employee — the filter the integration guide documents — was refused with 400.
+   * A string, not a UUID: the Federation route receives the partner's external employee id.
+   */
+  @IsOptional() @IsString() @MaxLength(255) employeeId?: string;
   @IsOptional() @IsString() @MaxLength(40) schemeCode?: string;
   @IsOptional() @IsDateString() periodStart?: string;
   @IsOptional() @IsDateString() periodEnd?: string;

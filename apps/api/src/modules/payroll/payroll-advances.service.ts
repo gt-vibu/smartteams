@@ -11,7 +11,11 @@ import {
   type DomainContext,
 } from '../../common/context/domain-context';
 import { markPayrollStale } from './payroll-staleness';
-import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import {
+  ConflictError,
+  ForbiddenDomainError,
+  NotFoundError,
+} from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import {
   type AdvanceDecisionInput,
@@ -19,6 +23,8 @@ import {
   type PaymentInput,
 } from './payroll-policy.types';
 import { employeeScope, resolveEmployeeId } from './payroll-policy-access';
+import { pageArgs, toPage, type ListPage } from './payroll-list-page';
+import { canActForAllEmployees, resolveActingEmployeeId } from '../employees/employee-scope';
 
 /**
  * Salary advances and payment marking.
@@ -30,7 +36,8 @@ import { employeeScope, resolveEmployeeId } from './payroll-policy-access';
 export class PayrollAdvancesService {
   constructor(private readonly database: TenantDatabaseService) {}
 
-  async listAdvances(context: DomainContext, requestedEmployeeId?: string) {
+  /** Every advance when called without a page (Federation's frozen shape); one page otherwise. */
+  async listAdvances(context: DomainContext, requestedEmployeeId?: string, page?: ListPage) {
     requirePermission(context, 'payroll.advances.read');
     return this.database.run(context, async (tx) => {
       const employeeId = await resolveEmployeeId(
@@ -40,15 +47,25 @@ export class PayrollAdvancesService {
         true,
         'payroll.advances.read.all',
       );
-      return tx.salaryAdvance.findMany({
-        where: {
-          organizationId: context.organizationId,
-          ...(employeeId ? { employeeId } : {}),
-          ...(context.branchId ? { employee: employeeScope(context) } : {}),
-        },
+      const where = {
+        organizationId: context.organizationId,
+        ...(employeeId ? { employeeId } : {}),
+        ...(context.branchId ? { employee: employeeScope(context) } : {}),
+      };
+      if (!page)
+        return tx.salaryAdvance.findMany({
+          where,
+          include: { recoveries: true },
+          orderBy: { requestedAt: 'desc' },
+        });
+      const rows = await tx.salaryAdvance.findMany({
+        where,
         include: { recoveries: true },
-        orderBy: { requestedAt: 'desc' },
+        // The id breaks ties, so two advances raised in the same instant cannot swap across pages.
+        orderBy: [{ requestedAt: 'desc' }, { id: 'desc' }],
+        ...pageArgs(page),
       });
+      return toPage(rows, page);
     });
   }
 
@@ -56,6 +73,16 @@ export class PayrollAdvancesService {
     requirePermission(context, 'payroll.advances.request');
     requireReason({ ...context, reason: input.reason }, 'Advance request requires a reason');
     return this.database.run(context, async (tx) => {
+      // Raising an advance for someone else is acting for them, and is refused the way every other
+      // self-service write is (403). The lookup below used to be the only guard, and it reports a
+      // refusal the way a read does, as a conflict.
+      if (!canActForAllEmployees(context, 'payroll.employee-profile.read.all'))
+        await resolveActingEmployeeId(
+          tx,
+          context,
+          input.employeeId,
+          'payroll.employee-profile.read.all',
+        );
       const employeeId = await resolveEmployeeId(
         tx,
         context,
@@ -93,9 +120,15 @@ export class PayrollAdvancesService {
           organizationId: context.organizationId,
           ...(context.branchId ? { employee: employeeScope(context) } : {}),
         },
+        include: { employee: { select: { userId: true } } },
       });
       if (!advance || advance.status !== SalaryAdvanceStatus.REQUESTED)
         throw new ConflictError('Advance is not awaiting a decision');
+      // An advance is money paid out ahead of payroll. Holding `payroll.advances.approve` must not
+      // let a payroll officer approve, or reject and re-raise, an advance to themselves. A
+      // federation context has no user and so no "self"; its grants bound it upstream.
+      if (context.actor.userId && advance.employee.userId === context.actor.userId)
+        throw new ForbiddenDomainError('You cannot decide your own salary advance');
       if (input.status === 'APPROVED') {
         const amount = input.approvedAmount ?? Number(advance.requestedAmount);
         if (amount <= 0 || amount > Number(advance.requestedAmount))
@@ -124,7 +157,8 @@ export class PayrollAdvancesService {
     });
   }
 
-  async listPayments(context: DomainContext, requestedEmployeeId?: string) {
+  /** Every payment when called without a page (Federation's frozen shape); one page otherwise. */
+  async listPayments(context: DomainContext, requestedEmployeeId?: string, page?: ListPage) {
     requirePermission(context, 'payroll.payments.read');
     return this.database.run(context, async (tx) => {
       const employeeId = await resolveEmployeeId(
@@ -134,15 +168,23 @@ export class PayrollAdvancesService {
         true,
         'payroll.payments.read.all',
       );
-      return tx.payrollPayment.findMany({
-        where: {
-          organizationId: context.organizationId,
-          ...(employeeId ? { employeeId } : {}),
-          ...(context.branchId ? { employee: employeeScope(context) } : {}),
-        },
-        include: { payrollRun: { select: { periodStart: true, periodEnd: true, status: true } } },
-        orderBy: { createdAt: 'desc' },
+      const where = {
+        organizationId: context.organizationId,
+        ...(employeeId ? { employeeId } : {}),
+        ...(context.branchId ? { employee: employeeScope(context) } : {}),
+      };
+      const include = {
+        payrollRun: { select: { periodStart: true, periodEnd: true, status: true } },
+      };
+      if (!page)
+        return tx.payrollPayment.findMany({ where, include, orderBy: { createdAt: 'desc' } });
+      const rows = await tx.payrollPayment.findMany({
+        where,
+        include,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        ...pageArgs(page),
       });
+      return toPage(rows, page);
     });
   }
 
