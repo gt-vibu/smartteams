@@ -23,6 +23,7 @@ const require = createRequire(new URL('../apps/api/package.json', import.meta.ur
 const { Client } = require('pg');
 
 import { setupCall } from './lib/setup-call.mjs';
+import { weekdaysAgo } from './lib/dates.mjs';
 
 const BASE = process.env.CONCURRENCY_API_URL ?? 'http://localhost:4000';
 const DB = resolveDatabaseUrl();
@@ -329,8 +330,8 @@ console.log('\nduplicate leave decision');
   const request = await t.org('POST', '/leave/requests', {
     employeeId: t.employeeId,
     leaveTypeId: paid.id,
-    startDate: daysAgo(2),
-    endDate: daysAgo(2),
+    startDate: weekdaysAgo(2),
+    endDate: weekdaysAgo(2),
     reason: 'concurrency regression leave',
   });
   const attempts = await Promise.all(

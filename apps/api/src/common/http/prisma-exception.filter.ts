@@ -47,6 +47,14 @@ function translate(exception: Prisma.PrismaClientKnownRequestError) {
     case 'P2034':
       // Two transactions touched the same rows; the caller can simply try again.
       return new ConflictError('The request conflicted with another change. Please try again.');
+    case 'P2007':
+      // A path id that is not a UUID — `/leave/requests/undefined/decision`, a truncated link —
+      // reaches Postgres, which refuses it, and every such route answered 500. It cannot name a
+      // record, so it is the same answer as an id that names none. Narrowed to the UUID case:
+      // other data-validation failures may be the server's own values, and stay a 500.
+      return /invalid input syntax for type uuid/i.test(exception.message)
+        ? new NotFoundError('Record')
+        : null;
     default:
       return null;
   }

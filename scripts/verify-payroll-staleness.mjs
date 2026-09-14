@@ -15,6 +15,7 @@
  *   pnpm verify:payroll-staleness
  */
 import { setupCall } from './lib/setup-call.mjs';
+import { weekdaysAgo } from './lib/dates.mjs';
 
 const BASE = 'http://localhost:4000';
 let pass = 0,
@@ -355,8 +356,8 @@ await scenario('6. leave approved', async (t) => {
   const r = await t.org('POST', '/leave/requests', {
     employeeId: t.employeeId,
     leaveTypeId: paid.id,
-    startDate: daysAgo(2),
-    endDate: daysAgo(2),
+    startDate: weekdaysAgo(2),
+    endDate: weekdaysAgo(2),
     reason: 'regression leave',
   });
   if (!good(r)) return 'skip';

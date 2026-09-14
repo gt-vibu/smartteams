@@ -17,6 +17,7 @@
  *   pnpm verify:authorization-boundaries
  */
 import { setupCall as setup } from './lib/setup-call.mjs';
+import { weekdaysAgo } from './lib/dates.mjs';
 
 const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 
@@ -352,8 +353,8 @@ console.log('\nleave requests');
   const own = await t.a.as('POST', '/leave/requests', {
     employeeId: t.a.id,
     leaveTypeId: paid.id,
-    startDate: daysAgo(2),
-    endDate: daysAgo(2),
+    startDate: weekdaysAgo(2),
+    endDate: weekdaysAgo(2),
     reason: 'Own leave request',
   });
   ok('an employee may request their own leave', good(own), 'HTTP ' + own.status);
@@ -446,6 +447,34 @@ console.log('\nadministrative breadth still works');
   // Breadth includes supplying the time: an administrator importing from a device is recording
   // something that happened elsewhere, which is exactly what a self-service punch is not.
   ok('and may supply the moment it happened', backdated.length === 1, backdated.length + ' rows');
+}
+
+console.log('\nproject quick-add from Log Time');
+{
+  // Creating a project from a timesheet is creating a project, so it takes the Projects module's
+  // `projects.write` — not the `timesheets.write` every employee holds, which it used to check.
+  const byEmployee = await t.a.as('POST', '/timesheets/projects', { name: 'Shadow Project' });
+  ok(
+    'an employee may not create a project from Log Time',
+    refused(byEmployee),
+    'HTTP ' + byEmployee.status,
+  );
+
+  const listed = rows((await t.org('GET', '/projects')).payload);
+  ok(
+    'and no such project was created',
+    !listed.some((project) => project.name === 'Shadow Project'),
+    listed.length + ' projects',
+  );
+
+  const byAdmin = await t.org('POST', '/timesheets/projects', { name: 'Website Redesign' });
+  ok('an administrator may', good(byAdmin), 'HTTP ' + byAdmin.status);
+  const afterAdmin = rows((await t.org('GET', '/projects')).payload);
+  ok(
+    'and the new project is in the list the Log Time dropdown reads',
+    afterAdmin.some((project) => project.id === byAdmin.payload?.id),
+    afterAdmin.length + ' projects',
+  );
 }
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
