@@ -5,10 +5,11 @@ import { dirname, join } from 'node:path';
 /**
  * The database URL a script should connect to.
  *
- * Resolution order, with no literal anywhere in the repository:
+ * Resolution order, with no literal anywhere in the repository (for `DATABASE_SYSTEM_URL`, then
+ * `DATABASE_URL`):
  *
- *   1. `DATABASE_URL` in the environment.
- *   2. `DATABASE_URL` in the repository's `.env` — the same file the API and a developer already
+ *   1. the environment.
+ *   2. the repository's `.env` — the same file the API and a developer already
  *      use, and the one CI writes before running these suites. Read here because a plain
  *      `node scripts/…` process does not load it the way Nest's config module does.
  *   3. Nothing: exit with the variable's name.
@@ -18,11 +19,14 @@ import { dirname, join } from 'node:path';
  * half of the problem: it silently connects somewhere instead of saying what is missing.
  */
 export function resolveDatabaseUrl() {
-  const fromEnvironment = process.env.DATABASE_URL;
-  if (fromEnvironment) return fromEnvironment;
-
-  const fromDotEnv = readDotEnvValue('DATABASE_URL');
-  if (fromDotEnv) return fromDotEnv;
+  // The suites read rows across tenants to check what the API wrote, which the least-privilege
+  // runtime role cannot do — RLS shows it nothing without a tenant selected. So the elevated
+  // `DATABASE_SYSTEM_URL` comes first where it is configured, as the seeds already do, and
+  // `DATABASE_URL` is the fallback (CI's superuser, or a setup that has not split the roles).
+  for (const key of ['DATABASE_SYSTEM_URL', 'DATABASE_URL']) {
+    const value = process.env[key] || readDotEnvValue(key);
+    if (value) return value;
+  }
 
   console.error(
     'DATABASE_URL is not set and no .env in the repository root defines it.\n' +

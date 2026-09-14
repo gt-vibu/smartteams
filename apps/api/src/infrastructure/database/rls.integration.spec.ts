@@ -26,7 +26,9 @@ function clientFor(connectionString: string) {
  * silently, so a suite that ran as one would pass while proving nothing.
  */
 
-const ADMIN_URL = process.env.DATABASE_URL ?? '';
+// Creates and drops a probe role, so it needs the elevated connection where one is configured —
+// the same preference the seeds use — and falls back to `DATABASE_URL` (CI's superuser).
+const ADMIN_URL = process.env.DATABASE_SYSTEM_URL || process.env.DATABASE_URL || '';
 const PROBE_ROLE = 'smarteam_rls_probe';
 const PROBE_PASSWORD = 'rls-probe-local-only';
 

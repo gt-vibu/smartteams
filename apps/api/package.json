@@ -20,7 +20,8 @@
     "test": "jest --runInBand --passWithNoTests",
     "test:watch": "jest --watch",
     "typecheck": "node scripts/prisma-generate.mjs && tsc -p tsconfig.json --noEmit",
-    "test:integration": "jest --config jest.integration.config.cjs --runInBand"
+    "test:integration": "jest --config jest.integration.config.cjs --runInBand",
+    "db:provision-runtime-role": "node scripts/provision-runtime-role.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1114.0",

@@ -26,7 +26,9 @@ import { createReadStream } from 'node:fs';
 import { mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 
-const DATABASE_URL = process.env.DATABASE_URL;
+// A dump has to read every tenant's rows, which the least-privilege runtime role cannot: prefer
+// the elevated connection where one is configured, as the seeds do.
+const DATABASE_URL = process.env.DATABASE_SYSTEM_URL || process.env.DATABASE_URL;
 const BACKUP_DIR = resolve(process.env.BACKUP_DIR ?? 'backups');
 const RETENTION_DAYS = Number(process.env.BACKUP_RETENTION_DAYS ?? 14);
 const PG_DUMP = process.env.PG_DUMP_PATH ?? 'pg_dump';
