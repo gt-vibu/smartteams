@@ -26,11 +26,15 @@ packages=(postgresql-17 postgresql-client-17)
 $WITH_REDIS && packages+=(redis-server)
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends "${packages[@]}"
 
-# A runner image may already carry an older cluster holding port 5432, which would push the new
-# one to 5433. Drop every other cluster, then pin 17 to 5432.
+# A runner image may already carry an older cluster holding port 5432. Drop every other cluster.
 while read -r version name _; do
   if [ "$version" != "17" ]; then sudo pg_dropcluster --stop "$version" "$name"; fi
 done < <(pg_lsclusters --no-header)
+# The GitHub runner image disables automatic cluster creation on package install, so installing
+# postgresql-17 leaves no cluster at all. Create it where it does not exist, on 5432.
+if ! pg_lsclusters --no-header | awk '$1 == "17" && $2 == "main" { found = 1 } END { exit !found }'; then
+  sudo pg_createcluster 17 main --port 5432
+fi
 sudo pg_conftool 17 main set port 5432
 sudo pg_ctlcluster 17 main restart
 
