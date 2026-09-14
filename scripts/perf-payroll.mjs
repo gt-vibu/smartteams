@@ -96,6 +96,40 @@ async function dbSeconds() {
   return null;
 }
 
+/** One gauge or counter from the API's `/metrics`, or null when it is not exposed. */
+async function metric(name) {
+  const response = await fetch(BASE + '/metrics', {
+    headers: METRICS_TOKEN ? { Authorization: 'Bearer ' + METRICS_TOKEN } : {},
+  });
+  if (!response.ok) return null;
+  for (const line of (await response.text()).split(String.fromCharCode(10)))
+    if (line.startsWith(name + ' ')) return Number(line.slice(name.length + 1));
+  return null;
+}
+
+/**
+ * The API process's peak resident memory while `work` runs, sampled from its own metrics.
+ *
+ * A sample every 100 ms can miss a short spike, so this is a lower bound on the true peak.
+ */
+async function withPeakMemory(work) {
+  let peak = (await metric('process_resident_memory_bytes')) ?? 0;
+  let sampling = true;
+  const sampler = (async () => {
+    while (sampling) {
+      const rss = await metric('process_resident_memory_bytes');
+      if (rss !== null && rss > peak) peak = rss;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  })();
+  try {
+    return { result: await work(), peakRss: () => peak };
+  } finally {
+    sampling = false;
+    await sampler;
+  }
+}
+
 /** Total database statements the API has issued, from its own metrics. */
 async function statementCount() {
   const response = await fetch(BASE + '/metrics', {
@@ -218,6 +252,7 @@ console.log(
   '----------+--------------+------------+------------+----------------+-------------+------------------+--------',
 );
 
+const details = [];
 for (const headcount of sizes) {
   const tenant = await seedTenant(db, headcount);
   const run = await tenant.org('POST', '/payroll/runs', {
@@ -229,21 +264,49 @@ for (const headcount of sizes) {
 
   const before = await statementCount();
   const dbBefore = await dbSeconds();
+  const cpuBefore = await metric('process_cpu_seconds_total');
+  const rssBefore = await metric('process_resident_memory_bytes');
   const started = process.hrtime.bigint();
-  const calculated = await tenant.org('POST', '/payroll/runs/' + run.payload.id + '/calculate', {});
+  const measured = await withPeakMemory(() =>
+    tenant.org('POST', '/payroll/runs/' + run.payload.id + '/calculate', {}),
+  );
+  const calculated = measured.result;
   const wall = Number(process.hrtime.bigint() - started) / 1e6;
   const after = await statementCount();
   const dbAfter = await dbSeconds();
+  const cpuAfter = await metric('process_cpu_seconds_total');
   const dbMs = dbBefore !== null && dbAfter !== null ? (dbAfter - dbBefore) * 1000 : null;
+  const cpuMs = cpuBefore !== null && cpuAfter !== null ? (cpuAfter - cpuBefore) * 1000 : null;
 
-  const lines = Number(
-    (
-      await db.query(
-        'SELECT count(*)::int AS n FROM payroll_line_items WHERE payroll_run_id = $1',
-        [run.payload.id],
-      )
-    ).rows[0].n,
-  );
+  // What the calculation wrote, and how large the two full-run JSON documents are.
+  const written = (
+    await db.query(
+      `SELECT
+         (SELECT count(*)::int FROM payroll_line_items WHERE payroll_run_id = $1) AS lines,
+         (SELECT count(*)::int FROM payroll_line_item_components c
+            JOIN payroll_line_items l ON l.id = c.payroll_line_item_id
+           WHERE l.payroll_run_id = $1) AS components,
+         (SELECT coalesce(max(pg_column_size(after_state)), 0)::int FROM audit_logs
+           WHERE entity_id = $1 AND action = 'PAYROLL_RUN_CALCULATED') AS audit_bytes,
+         (SELECT coalesce(max(pg_column_size(payload)), 0)::int FROM outbox_events
+           WHERE aggregate_id = $1 AND event_type = 'payroll.run.calculated') AS outbox_bytes`,
+      [run.payload.id],
+    )
+  ).rows[0];
+  const lines = written.lines;
+  details.push({
+    headcount,
+    attendanceRows: tenant.attendanceRows,
+    wallMs: Math.round(wall),
+    dbMs: dbMs === null ? null : Math.round(dbMs),
+    cpuMs: cpuMs === null ? null : Math.round(cpuMs),
+    rssBeforeMb: rssBefore === null ? null : Math.round(rssBefore / 1048576),
+    peakRssMb: Math.round(measured.peakRss() / 1048576),
+    lines,
+    components: written.components,
+    auditKb: Math.round(written.audit_bytes / 1024),
+    outboxKb: Math.round(written.outbox_bytes / 1024),
+  });
   const statements = before !== null && after !== null ? after - before : null;
   const outcome = good(calculated)
     ? lines === headcount
@@ -267,5 +330,10 @@ for (const headcount of sizes) {
     ].join(' | '),
   );
 }
+
+// Resources per run: CPU and memory of the API process, rows written, and the size of the audit
+// and outbox documents, each of which carries every line of the run.
+console.log('');
+console.table(details);
 
 await db.end();

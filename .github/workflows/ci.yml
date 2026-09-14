@@ -200,7 +200,7 @@ jobs:
           for suite in auth employees teams attendance leave payroll organization files \
                        holidays employee-detail employee-directory onboarding \
                        payroll-staleness timesheet-approval-cycle concurrency \
-                       authorization-boundaries; do
+                       authorization-boundaries ownership-and-approvals; do
             echo "::group::verify:$suite"
             pnpm "verify:$suite" || failed="$failed $suite"
             echo "::endgroup::"

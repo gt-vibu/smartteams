@@ -25,7 +25,9 @@ import { runRoundTrip } from './files-round-trip.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contracts = createRequire(import.meta.url)(resolve(ROOT, 'packages/contracts/dist/index.js'));
-const BASE = 'http://localhost:4000';
+// Overridable like the other suites, so the round trip can run against a second API instance
+// pointed at a different bucket without touching the one a developer has running.
+const BASE = process.env.FILES_API_URL ?? 'http://localhost:4000';
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, '.env'), 'utf8')
     .split(/\r?\n/)
