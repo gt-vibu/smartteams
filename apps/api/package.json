@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "prisma generate && nest build",
+    "build": "node scripts/prisma-generate.mjs && nest build",
     "clean": "rm -rf dist src/generated",
-    "db:generate": "prisma generate",
+    "db:generate": "node scripts/prisma-generate.mjs --force",
     "db:format": "prisma format",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -14,12 +14,12 @@
     "db:diff": "prisma migrate diff",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "dev": "nest start --watch",
+    "dev": "node scripts/dev.mjs",
     "lint": "eslint . --max-warnings=0",
     "start": "node dist/main.js",
     "test": "jest --runInBand --passWithNoTests",
     "test:watch": "jest --watch",
-    "typecheck": "prisma generate && tsc -p tsconfig.json --noEmit",
+    "typecheck": "node scripts/prisma-generate.mjs && tsc -p tsconfig.json --noEmit",
     "test:integration": "jest --config jest.integration.config.cjs --runInBand"
   },
   "dependencies": {

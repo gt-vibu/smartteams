@@ -7,6 +7,7 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { ProblemDetailsFilter } from './common/http/problem-details.filter';
 import { PrismaExceptionFilter } from './common/http/prisma-exception.filter';
+import { installProcessDiagnostics } from './common/runtime/process-diagnostics';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
@@ -50,4 +51,6 @@ async function bootstrap() {
   await app.listen(port, host);
 }
 
+// First, so that a failure anywhere in bootstrap is reported too.
+installProcessDiagnostics();
 void bootstrap();
