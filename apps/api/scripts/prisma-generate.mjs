@@ -53,9 +53,21 @@ function inputsHash() {
   return hash.digest('hex');
 }
 
+/** The hash this machine last generated from, or null when there is none yet. */
+function readStamp() {
+  // Read directly rather than checking for the file first: a check followed by a read of the
+  // same path is a race, and a missing stamp is an ordinary answer, not an error.
+  try {
+    return readFileSync(stampFile, 'utf8').trim();
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
 const force = process.argv.includes('--force');
 const current = inputsHash();
-const previous = existsSync(stampFile) ? readFileSync(stampFile, 'utf8').trim() : null;
+const previous = readStamp();
 
 if (!force && previous === current && existsSync(generatedEntry)) {
   console.log('Prisma client is up to date with the schema; not regenerating.');
