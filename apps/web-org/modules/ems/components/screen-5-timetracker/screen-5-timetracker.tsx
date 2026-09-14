@@ -275,8 +275,10 @@ export function Screen5TimeTracker() {
         onSubmit={(input) => timesheet.addEntry(input, selected?.id)}
         projects={timesheet.projects}
         jobTypes={timesheet.jobTypes}
-        onCreateJobType={timesheet.createJobType}
-        onCreateProject={timesheet.quickCreateProject}
+        // Each quick-add is offered only to someone the API will let use it: job types need
+        // `timesheets.write`, projects the Projects module's `projects.write`.
+        onCreateJobType={timesheet.canWrite ? timesheet.createJobType : undefined}
+        onCreateProject={timesheet.canCreateProject ? timesheet.quickCreateProject : undefined}
         periodStart={
           selected?.period?.periodStart ? selected.period.periodStart.slice(0, 10) : undefined
         }

@@ -100,8 +100,16 @@ export class TimesheetEntriesService {
     });
   }
 
+  /**
+   * A project created from the Log Time form.
+   *
+   * Held to `projects.write`, the permission the Projects module requires to create the same row.
+   * This route used to check only `timesheets.write`, which every employee holds, so anyone could
+   * create organization-wide projects from a timesheet that they could not create on the Projects
+   * screen — a second way in with a weaker lock.
+   */
   async quickCreateProject(context: DomainContext, name: string, description?: string) {
-    requirePermission(context, 'timesheets.write');
+    requirePermission(context, 'projects.write');
     const cleanName = name.trim();
     if (!cleanName || cleanName.length < 2) throw new ConflictError('Project name is invalid');
     return this.database.run(context, async (tx) => {

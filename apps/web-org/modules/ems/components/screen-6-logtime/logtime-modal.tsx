@@ -30,8 +30,10 @@ interface LogTimeModalProps {
   projects?: Project[];
   jobTypes?: JobType[];
   onSubmit: (input: ManualEntryInput) => Promise<boolean>;
-  onCreateJobType?: (name: string) => Promise<unknown>;
-  onCreateProject?: (name: string, description?: string) => Promise<unknown>;
+  /** Absent when the caller may not create job types; the quick-add control is hidden. */
+  onCreateJobType?: (name: string) => Promise<JobType>;
+  /** Absent when the caller may not create projects (`projects.write`); likewise hidden. */
+  onCreateProject?: (name: string, description?: string) => Promise<Project>;
 }
 
 export function LogTimeModal({
@@ -167,7 +169,7 @@ export function LogTimeModal({
           }
         }}
       >
-        <DialogContent className="flex flex-col max-h-[82vh] sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl z-[60]">
+        <DialogContent className="flex flex-col max-h-[82vh] sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
           {/* Header */}
           <DialogHeader className="shrink-0 flex flex-row items-center justify-between border-b border-border/80 px-6 py-3 bg-muted/20">
             <DialogTitle className="text-base font-semibold text-foreground tracking-tight">
@@ -197,16 +199,19 @@ export function LogTimeModal({
                     </option>
                   ))}
                 </Select>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsQuickAddProjectOpen(true)}
-                  className="h-8 w-8 p-0 shrink-0 border-border text-muted-foreground hover:text-foreground cursor-pointer"
-                  title="Quick-add Project"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                {onCreateProject && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsQuickAddProjectOpen(true)}
+                    className="h-8 w-8 p-0 shrink-0 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+                    title="Add a new project"
+                    aria-label="Add a new project"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -230,16 +235,19 @@ export function LogTimeModal({
                     </option>
                   ))}
                 </Select>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsQuickAddJobOpen(true)}
-                  className="h-8 w-8 p-0 shrink-0 border-border text-muted-foreground hover:text-foreground cursor-pointer"
-                  title="Quick-add Job Type"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                {onCreateJobType && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsQuickAddJobOpen(true)}
+                    className="h-8 w-8 p-0 shrink-0 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+                    title="Add a new job type"
+                    aria-label="Add a new job type"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -480,30 +488,34 @@ export function LogTimeModal({
         </DialogContent>
       </Dialog>
 
-      {/* Quick Add Dialogs */}
-      <QuickAddJobDialog
-        isOpen={isQuickAddJobOpen}
-        onClose={() => setIsQuickAddJobOpen(false)}
-        onAdd={async (name) => {
-          if (onCreateJobType) {
-            await onCreateJobType(name);
-            setJobName(name);
-          }
-        }}
-      />
+      {/*
+        Quick-add dialogs. They open over this one, so this one must not raise its own stacking
+        order: it used to carry `z-[60]` over the default `z-50`, which put the Add Project dialog
+        underneath it — invisible, while its autofocused field still took focus (and, on a phone,
+        opened the keyboard over nothing). Each resolves with the created row, selects it, and
+        closes; a failure rejects, and the dialog stays open showing the server's reason.
+      */}
+      {onCreateJobType && (
+        <QuickAddJobDialog
+          isOpen={isQuickAddJobOpen}
+          onClose={() => setIsQuickAddJobOpen(false)}
+          onAdd={async (name) => {
+            const created = await onCreateJobType(name);
+            setJobName(created.name);
+          }}
+        />
+      )}
 
-      <QuickAddProjectDialog
-        isOpen={isQuickAddProjectOpen}
-        onClose={() => setIsQuickAddProjectOpen(false)}
-        onAdd={async (name, description) => {
-          if (onCreateProject) {
-            const created = (await onCreateProject(name, description)) as Project | undefined;
-            if (created && 'id' in created && typeof created.id === 'string') {
-              setProjectId(created.id);
-            }
-          }
-        }}
-      />
+      {onCreateProject && (
+        <QuickAddProjectDialog
+          isOpen={isQuickAddProjectOpen}
+          onClose={() => setIsQuickAddProjectOpen(false)}
+          onAdd={async (name, description) => {
+            const created = await onCreateProject(name, description);
+            setProjectId(created.id);
+          }}
+        />
+      )}
     </>
   );
 }

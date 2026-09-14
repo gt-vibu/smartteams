@@ -27,6 +27,9 @@ export function useTimesheet() {
   const canRead = hasPermission(permissions, 'timesheets.read');
   const canWrite = hasPermission(permissions, 'timesheets.write');
   const canReadProjects = hasPermission(permissions, 'projects.read') || canRead;
+  // The API holds project quick-add to the Projects module's own rule; the form hides the control
+  // from anyone it would refuse.
+  const canCreateProject = hasPermission(permissions, 'projects.write');
 
   const resource = useAsyncResource<Timesheet[]>(
     () => timesheetRepository.list(organizationId!),
@@ -67,28 +70,36 @@ export function useTimesheet() {
     [organizationId, current?.id, run],
   );
 
+  /*
+   * The two quick-add actions do not go through `run`. `run` reports success as `true` and
+   * failure as `false` with the message parked in `saveError` — right for a form's own save,
+   * wrong for a dialog that needs the created row back and its own error to show. The Log Time
+   * form was doing `'id' in created` on that boolean, which throws: a project that *had* been
+   * created was reported as a TypeError and never selected. These resolve with the row and
+   * reject with the server's reason, and the quick-add dialog shows either.
+   */
   const createJobType = useCallback(
-    (name: string) =>
-      run(async () => {
-        const created = await timesheetRepository.createJobType(organizationId!, name);
-        await jobTypesResource.refetch();
-        return created;
-      }, 'Could not create job type.'),
-    [organizationId, jobTypesResource, run],
+    async (name: string): Promise<JobType> => {
+      const created = await timesheetRepository.createJobType(organizationId!, name);
+      await jobTypesResource.refetch();
+      return created;
+    },
+    [organizationId, jobTypesResource],
   );
 
   const quickCreateProject = useCallback(
-    (name: string, description?: string) =>
-      run(async () => {
-        const created = await timesheetRepository.quickCreateProject(
-          organizationId!,
-          name,
-          description,
-        );
-        await projectsResource.refetch();
-        return created;
-      }, 'Could not create project.'),
-    [organizationId, projectsResource, run],
+    async (name: string, description?: string): Promise<Project> => {
+      const created = await timesheetRepository.quickCreateProject(
+        organizationId!,
+        name,
+        description,
+      );
+      // Refetched before resolving, so the new project is already an option when the form
+      // selects it.
+      await projectsResource.refetch();
+      return created;
+    },
+    [organizationId, projectsResource],
   );
 
   const submit = useCallback(
@@ -138,6 +149,7 @@ export function useTimesheet() {
     unsubmit,
     canRead,
     canWrite,
+    canCreateProject,
     /** True when the signed-in user has no employee record, so time cannot be logged. */
     hasNoEmployeeRecord: !employeeId,
   };
