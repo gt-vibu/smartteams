@@ -22,8 +22,9 @@ export function TimeTrackerToolbar({
 }: TimeTrackerToolbarProps) {
   return (
     <div className="flex w-full flex-col justify-between gap-2 border-b border-border/90 bg-card/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
+      {/* Wraps on the narrowest phones instead of panning; five labels are ~330px wide. */}
       <Tabs aria-label="Time tracking views" onValueChange={onSelectSubTab} value={activeSubTab}>
-        <TabsList className="h-auto gap-4 overflow-x-auto bg-transparent p-0 sm:gap-5">
+        <TabsList className="h-auto flex-wrap justify-start gap-x-3 gap-y-2 bg-transparent p-0 sm:gap-x-5">
           {TABS.map((tab) => (
             <TabsTrigger
               className="whitespace-nowrap rounded-none border-b-2 border-transparent px-0 pb-1 text-xs font-semibold text-muted-foreground data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:font-bold data-[state=active]:text-foreground data-[state=active]:shadow-none"

@@ -10,15 +10,25 @@ interface SubNavTabsProps {
   onSelectTab: (tab: string) => void;
 }
 
-export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
+/**
+ * Whether the Approvals tab belongs on Home: only for a line manager with explicit authority to
+ * decide something. One rule for the laptop and phone strips, so they cannot disagree.
+ */
+export function useIsManagerApprover(): boolean {
   const { hasExplicitPermission } = useAuth();
-
-  const isManagerApprover =
+  return (
     hasExplicitPermission('leave.approve') ||
     hasExplicitPermission('timesheets.decide') ||
-    hasExplicitPermission('attendance.approve');
+    hasExplicitPermission('attendance.approve')
+  );
+}
 
-  // Approvals is only in the tab list for actual line managers with explicit approval authority
+export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
+  const isManagerApprover = useIsManagerApprover();
+
+  // "Time Logs" and "Timesheets" were both here and rendered the same component, so the strip
+  // offered two tabs that were one page. A link naming "Time Logs" still opens it (see
+  // `screen-1-overview`), and marks this tab as the current one.
   const tabs = [
     'Activities',
     // 'Feeds', // Commented out until real backend persistence is connected
@@ -26,15 +36,15 @@ export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
     ...(isManagerApprover ? ['Approvals'] : []),
     'Leave',
     'Attendance',
-    'Time Logs',
     'Timesheets',
   ];
+  const current = activeTab === 'Time Logs' ? 'Timesheets' : activeTab;
 
   return (
     <div className="bg-white dark:bg-card rounded-[6px] border border-slate-200 dark:border-border px-3 sm:px-4 h-11 flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.05)] w-full max-w-full">
       <div className="flex items-center space-x-4 sm:space-x-6 h-full overflow-x-auto no-scrollbar py-1">
         {tabs.map((tab) => {
-          const isActive = activeTab === tab;
+          const isActive = current === tab;
           return (
             <Button
               key={tab}
@@ -52,28 +62,6 @@ export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
           );
         })}
       </div>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        className="p-1 text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded transition-colors shrink-0 ml-2 cursor-pointer h-7 w-7"
-        title="View Settings / Filters"
-        aria-label="Filter"
-      >
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-          />
-        </svg>
-      </Button>
     </div>
   );
 }

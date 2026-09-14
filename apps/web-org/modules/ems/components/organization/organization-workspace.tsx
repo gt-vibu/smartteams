@@ -7,6 +7,7 @@ import { useOrganization } from '../../hooks/use-organization';
 import { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useScreenTab } from '../../hooks/use-screen-tab';
+import { useMediaQuery, WIDE_LAYOUT_QUERY } from '../../hooks/use-media-query';
 import { BotanicalCover } from '../layout/botanical-cover';
 import { OrgProfilePanel } from './org-profile-panel';
 import { OrgBranchesPanel } from './org-branches-panel';
@@ -53,6 +54,10 @@ export function OrganizationWorkspace({
   const holidays = useHolidays();
   const { persona } = useAuth();
   const [tab, setTab] = useScreenTab<Tab>('orgSection', TABS, 'overview');
+  const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
+  // On a phone the organization's card and cover belong to Overview alone. Below `lg` they used
+  // to stack above every tab, so People or Branches opened on a screen of someone else's subject.
+  const showIdentity = isWide || tab === 'overview';
 
   // Absent rather than disabled for a caller who can read neither members nor roles — an
   // organization with nothing behind the tab is not worth a click that only reports "forbidden".
@@ -103,7 +108,24 @@ export function OrganizationWorkspace({
           </div>
         </div>
 
-        <div className="mt-3 flex items-center gap-4 overflow-x-auto">
+        {/* Seven sections do not fit across a phone. There they are a native picker — the OS
+            opens its own sheet — rather than a strip that pans sideways. */}
+        <label className="mt-3 block pb-3 lg:hidden">
+          <span className="sr-only">Section</span>
+          <select
+            value={tab}
+            onChange={(event) => setTab(event.target.value as Tab)}
+            className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground"
+          >
+            {tabs.map((entry) => (
+              <option key={entry.id} value={entry.id}>
+                {entry.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div className="mt-3 hidden items-center gap-4 lg:flex">
           {tabs.map((entry) => (
             <Button
               className={`shrink-0 rounded-none border-b-2 pb-2 text-xs font-semibold ${
@@ -123,13 +145,17 @@ export function OrganizationWorkspace({
         </div>
       </PageBleed>
 
-      <div className="mt-4 overflow-hidden rounded-xl border border-border">
-        <BotanicalCover heightClass="h-24 sm:h-32" />
-      </div>
+      {showIdentity && (
+        <div className="mt-4 overflow-hidden rounded-xl border border-border">
+          <BotanicalCover heightClass="h-24 sm:h-32" />
+        </div>
+      )}
 
       {/* The rail is part of the shell; only the panel beside it belongs to the active tab. */}
-      <div className="relative z-10 -mt-8 grid gap-4 lg:grid-cols-3">
-        <OrgIdentityRail directory={directory} holidays={holidays} organization={organization} />
+      <div className={`relative z-10 grid gap-4 lg:grid-cols-3 ${showIdentity ? '-mt-8' : 'mt-4'}`}>
+        {showIdentity && (
+          <OrgIdentityRail directory={directory} holidays={holidays} organization={organization} />
+        )}
 
         <div className="lg:col-span-2">
           {tab === 'overview' && <OrgShortcuts onNavigateModule={onNavigateModule} />}

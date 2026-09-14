@@ -210,8 +210,9 @@ export function CommandPalette({
           </kbd>
         </div>
 
-        {/* Quick Filter Badges Bar */}
-        <div className="px-3 py-1.5 border-b border-border bg-muted/30 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+        {/* Quick Filter Badges Bar. Wraps rather than panning: five chips and a label are wider
+            than a phone, and a sideways strip inside a dialog is easy to miss entirely. */}
+        <div className="px-3 py-1.5 border-b border-border bg-muted/30 flex flex-wrap items-center gap-1.5 text-[11px]">
           <span className="text-[10px] uppercase font-semibold text-muted-foreground mr-1 tracking-wider">
             Filter:
           </span>

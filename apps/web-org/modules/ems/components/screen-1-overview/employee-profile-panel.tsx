@@ -7,6 +7,7 @@ import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
 import { useAttendance } from '../../hooks/use-attendance';
 import { PhotoUploadModal } from '../profile/photo-upload-modal';
+import type { EmployeeProfile } from '../../types/employee.types';
 
 export function EmployeeProfilePanel() {
   // Every hook runs on every render, before any early return. An account can gain an employee
@@ -169,104 +170,67 @@ export function EmployeeProfilePanel() {
           )}
         </div>
 
-        {/* Reporting Manager Section */}
-        {employee.manager ? (
-          <div className="pt-2 border-t border-slate-100 dark:border-border">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block mb-2">
-              Reporting Manager
-            </span>
-            <div className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center">
-                {employee.manager.firstName.charAt(0)}
-              </div>
-              <div className="text-xs">
-                <div className="font-semibold text-slate-800 dark:text-slate-100 truncate">
-                  {employee.manager.employeeNumber} · {employee.manager.firstName}{' '}
-                  {employee.manager.lastName}
-                </div>
-                <div className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  In
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="pt-2 border-t border-slate-100 dark:border-border">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block mb-1">
-              Reporting Manager
-            </span>
-            <span className="text-xs text-slate-400 dark:text-slate-400 font-medium italic">
-              Executive / Head of Department
-            </span>
-          </div>
+        {/*
+          People around this employee, when they are known. Neither is today: the profile carries
+          only `managerEmployeeId` and there is no endpoint for the manager's details, and
+          `department` is free text with no membership behind it (see `useEmployee`). The panel
+          used to fill the gap anyway — "Executive / Head of Department" for anyone without a
+          manager on record, a green "In" beside every name whatever `isOnline` said, and a
+          "Tax & Statutory Identity" block showing the same PAN, UAN and TDS rate to every
+          employee. Unknown is shown as absent, not invented; statutory identity comes from the
+          compliance API in `EmployeeStatutorySection`.
+        */}
+        {employee.manager && (
+          <PeopleSection title="Reporting manager" people={[employee.manager]} />
         )}
-
-        {/* Department Members Section */}
-        <div className="pt-2 border-t border-slate-100 dark:border-border">
-          <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block mb-2">
-            Department Members ({employee.departmentMembers.length})
-          </span>
-          <div className="space-y-2">
-            {employee.departmentMembers.map((member) => (
-              <div key={member.id} className="flex items-center gap-2.5">
-                <div className="h-7 w-7 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] flex items-center justify-center">
-                  {member.firstName.charAt(0)}
-                </div>
-                <div className="text-xs">
-                  <div className="font-medium text-slate-800 dark:text-slate-100 truncate">
-                    {member.employeeNumber} · {member.firstName} {member.lastName}
-                  </div>
-                  <div className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                    In
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Tax & Statutory Identity Section */}
-        <div className="pt-2 border-t border-slate-100 dark:border-border space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">
-              Tax & Statutory Identity
-            </span>
-            <span className="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.2 rounded font-mono">
-              TY 2026-27
-            </span>
-          </div>
-
-          <div className="p-2.5 bg-slate-50 dark:bg-card rounded-md border border-slate-200 dark:border-slate-800 space-y-1.5 text-xs font-mono">
-            <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-muted-foreground">PAN:</span>
-              <span className="font-bold">AAAPM0192L</span>
-            </div>
-            <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-muted-foreground">UAN (PF):</span>
-              <span className="font-bold">101928374650</span>
-            </div>
-            <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-muted-foreground">Tax Regime:</span>
-              <span className="font-sans text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                New (115BAC)
-              </span>
-            </div>
-            <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-muted-foreground">Prof. Tax (PT):</span>
-              <span>₹200 / mo</span>
-            </div>
-            <div className="flex justify-between text-slate-700 dark:text-slate-300">
-              <span className="font-sans text-[11px] text-muted-foreground">TDS Rate:</span>
-              <span>10% Statutory</span>
-            </div>
-          </div>
-        </div>
+        {employee.departmentMembers.length > 0 && (
+          <PeopleSection
+            title={`Department members (${employee.departmentMembers.length})`}
+            people={employee.departmentMembers}
+          />
+        )}
       </div>
 
       {/* Interactive Photo Upload Modal */}
       <PhotoUploadModal isOpen={isPhotoModalOpen} onClose={() => setIsPhotoModalOpen(false)} />
     </>
+  );
+}
+
+type Person = EmployeeProfile['departmentMembers'][number];
+
+function PeopleSection({ title, people }: { title: string; people: Person[] }) {
+  return (
+    <div className="border-t border-slate-100 pt-2 dark:border-border">
+      <span className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">
+        {title}
+      </span>
+      <div className="space-y-2">
+        {people.map((person) => (
+          <div key={person.id} className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              {person.firstName.charAt(0)}
+            </div>
+            <div className="min-w-0 text-xs">
+              <div className="truncate font-semibold text-slate-800 dark:text-slate-100">
+                {person.employeeNumber} · {person.firstName} {person.lastName}
+              </div>
+              <div
+                className={`flex items-center gap-1 text-[10px] font-medium ${
+                  person.isOnline
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-muted-foreground'
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${person.isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`}
+                />
+                {person.isOnline ? 'In' : 'Out'}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
