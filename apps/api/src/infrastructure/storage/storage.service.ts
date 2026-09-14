@@ -17,9 +17,9 @@ export class StorageService {
 
   constructor(config: ConfigService) {
     this.bucket = config.getOrThrow<string>('AWS_S3_BUCKET');
+    // AWS S3 only: the SDK resolves AWS's own endpoint. There is no endpoint override — the one
+    // that existed served a MinIO test double, and the project uses no emulator anywhere.
     this.client = new S3Client({
-      endpoint: config.get<string>('AWS_S3_ENDPOINT') || undefined,
-      forcePathStyle: config.get<boolean>('AWS_S3_FORCE_PATH_STYLE', false),
       region: config.getOrThrow<string>('AWS_REGION'),
       ...(config.get<string>('AWS_ACCESS_KEY_ID') && config.get<string>('AWS_SECRET_ACCESS_KEY')
         ? {

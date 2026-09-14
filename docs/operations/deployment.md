@@ -1,37 +1,35 @@
 # Deployment and rollback
 
-One deployment path: **container images built from the repository's `Dockerfile`**. There is
-deliberately no second mechanism — a service that can be deployed two ways is a service where
-nobody is certain what is running.
+One deployment model: **direct process deployment on managed servers, run by PM2** —
+`docs/chore/TECHSTACK.v1.md` ("No containerization"). There is no Docker image, no Dockerfile and
+no compose file; the services are Node processes started from a per-commit release directory.
 
-## The artifact
+## The artifact and the pipeline
 
-`Dockerfile` has three targets sharing one workspace install:
+`.gitlab-ci.yml` builds each service (`api`, `web-org`, `web-admin`) and ships it by `rsync` to
+`$DEPLOY_ROOT/incoming/<commit>/<service>/` on the server. `scripts/ci/activate-dev-release.sh`
+then, for that service:
 
-```bash
-docker build --target api       -t smarteam/api:$VERSION .
-docker build --target web-org   -t smarteam/web-org:$VERSION .
-docker build --target web-admin -t smarteam/web-admin:$VERSION .
-```
+1. moves it into **`$DEPLOY_ROOT/releases/<commit>/<service>`** — one immutable directory per
+   commit, which is what makes rollback possible;
+2. for the API, writes `$DEPLOY_ROOT/shared/.env` (mode 600) from **AWS Secrets Manager** — secrets
+   never live in the repository or a release directory;
+3. for the API, runs **`prisma migrate deploy`** before anything new starts;
+4. starts the release under PM2 and waits up to 30 s for its health URL, restoring the previous
+   process if it never answers.
 
-CI builds the API image on every push (job `images`) and boots it, so a change that breaks the
-production image fails the build rather than the deploy.
+The script in the repository targets the development environment (`smarteam-*-dev` PM2 names,
+ports 3010–3012). A production activation with its own names, ports and secret id is an
+infrastructure deliverable; until it exists, production deployment is an external release
+condition.
 
-**Tag with an immutable version — the commit SHA.** Never deploy `:latest`: rollback needs a tag
-that still means what it meant yesterday.
-
-Each image runs as `USER node`, exposes its port, and carries a `HEALTHCHECK` against
-`/health/ready` (API) or `/` (web).
+GitHub Actions (`.github/workflows/ci.yml`) is the verification gate; it deploys nothing.
 
 ## Migration safety
 
-Migrations run as a **separate step before** the new image is released, never from application
+Migrations run as a **separate step before** the new release starts, never from application
 start-up: several instances starting at once would race, and a failed migration inside a starting
-container is a crash loop rather than a clear failure.
-
-```bash
-docker run --rm -e DATABASE_URL="$DATABASE_URL" smarteam/api:$VERSION pnpm db:deploy
-```
+process is a crash loop rather than a clear failure.
 
 Because migrations run first, **every migration must be backward compatible with the currently
 deployed version** — the old code runs against the new schema for the length of the rollout, and
@@ -42,66 +40,69 @@ again if you roll back. In practice:
 - never rename or drop in the same release that stops using the thing being dropped
 - index creation on a large table should be `CONCURRENTLY`, which means its own migration
 
-This is why rollback is an image-tag change and **not** a database rollback. Down-migrations on
-payroll data are not part of this procedure; recovering from a bad migration is
+This is why rollback is starting the previous release and **not** a database rollback.
+Down-migrations on payroll data are not part of this procedure; recovering from a bad migration is
 `docs/operations/backup-and-recovery.md`, using PITR to just before it ran.
 
 ## Deploy
 
 1. **Pre-flight.** Confirm a backup newer than the deploy exists, and that CI is green on the
    commit being deployed.
-2. **Migrate** as above. Stop here if it fails; nothing has been released yet.
-3. **Release** the new image to one instance.
+2. **Migrate** — the activation script does this for the API. Stop if it fails; nothing new has
+   started.
+3. **Release** to one server.
 4. **Verify** before proceeding:
    ```bash
    curl -fsS https://<host>/health/ready     # 200 with database and redis "up"
    ```
    `/health/live` is liveness — the process is running. `/health/ready` is readiness — its
-   dependencies answer, and it returns 503 when they do not. An orchestrator should gate traffic on
-   readiness and restart on liveness. There is no bare `/health` route: pointing a probe at it
-   returns 404, which an orchestrator reads as a failing container.
-5. **Smoke test** against the released instance: sign in, open a payroll run, confirm a released
-   run still shows the net totals it had. Readiness proves the process is up, not that the
-   application is correct.
-6. **Roll forward** the remaining instances.
+   dependencies answer, and it returns 503 when they do not. There is no bare `/health` route.
+5. **Smoke test** the released service: sign in, open a payroll run, confirm a released run still
+   shows the net totals it had. Readiness proves the process is up, not that the application is
+   correct.
+6. **Roll forward** the remaining servers.
 
 Configuration is validated at boot by `packages/config/src/env.ts`. Outside development the process
 **refuses to start** with insecure settings — `SESSION_COOKIE_SECURE=false`, plaintext `http://`
 CORS origins, Swagger enabled, a missing `METRICS_TOKEN`, or elevated database roles that are not
-distinct from the runtime role. A container that exits immediately after a config change is
-reporting one of these; the reason is on stderr.
+distinct from the runtime role. A process that exits immediately after a configuration change is
+reporting one of these; the reason is in `pm2 logs`.
 
 ## Rollback
 
-Rollback is redeploying the previous image tag. It is fast because it does not touch the database.
+Rollback is starting the previous release directory. It is fast because it does not touch the
+database.
 
-1. Identify the previous good tag (the commit SHA deployed before this one).
-2. Release it to all instances.
+1. Identify the previous good commit in `$DEPLOY_ROOT/releases/`.
+2. Start that release's `start.sh` under the service's PM2 name (`pm2 delete <name>`, then
+   `pm2 start <release>/<service>/start.sh --name <name>`), and `pm2 save`.
 3. Verify `/health/ready` and re-run the smoke test.
 4. Leave the schema alone. The backward-compatibility rule above is what makes this safe.
 
 **When rollback is not enough** — the schema is damaged, or a migration destroyed data — stop and
-follow the restore runbook. Rolling the image back does not undo a migration.
+follow the restore runbook. Starting an older release does not undo a migration.
 
 ## Deploying during payroll
 
-A payroll calculation is a single transaction. If the container is stopped mid-calculation the
+A payroll calculation is a single transaction. If the process is stopped mid-calculation the
 transaction rolls back: the run stays in its previous state with no partial line items, and it can
-simply be calculated again. Nothing is half-paid.
-
-What is lost is the work, not the integrity. `enableShutdownHooks()` plus explicit pool teardown
-means an orderly stop waits for in-flight work; a `SIGKILL` does not. Prefer to deploy when no run
-is calculating — `smarteam_payroll_calculation_duration_seconds_count` rising tells you one is.
+simply be calculated again. Nothing is half-paid. Prefer to deploy when no run is calculating —
+`smarteam_payroll_calculation_duration_seconds_count` rising tells you one is.
 
 ## Graceful shutdown
 
 `main.ts` calls `enableShutdownHooks()`, and `PrismaService.onModuleDestroy` disconnects all three
-clients and ends all three pools. On `SIGTERM` the process stops accepting new work, finishes
-in-flight requests, and releases its connections. Give the orchestrator a termination grace period
-longer than the slowest expected request — `PAYROLL_TRANSACTION_TIMEOUT_MS` is the upper bound.
+clients and ends all three pools. On `SIGINT`/`SIGTERM` the process stops accepting new work,
+finishes in-flight requests, and releases its connections.
+
+**PM2 only waits `kill_timeout` before `SIGKILL` — 1.6 seconds by default**, and the activation
+script does not raise it. A calculation at 10,000 employees takes about 22 s
+(`scripts/perf-payroll.mjs`), so a restart during one kills it and it rolls back. Start the API
+with `--kill-timeout` at least `PAYROLL_TRANSACTION_TIMEOUT_MS` (120 s) in the production
+activation.
 
 ## Environment
 
 `.env.example` is the complete list; `packages/config/src/env.ts` is the authority on what is
-required and what is refused. Secrets come from the platform's secret manager, never from an image
-layer or a committed file — CI scans history for both.
+required and what is refused. Secrets come from AWS Secrets Manager into the server's
+`shared/.env`, never from a committed file — CI scans history for them.

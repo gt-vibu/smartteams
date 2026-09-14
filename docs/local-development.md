@@ -20,7 +20,7 @@ uses an access key, production resolves an IAM role.
 | Memurai (or Redis) | Redis-compatible, installed as a Windows service |
 | An AWS account | one private S3 bucket and one IAM user |
 
-Docker is optional and used by nothing here.
+Docker is not used anywhere in this project — not locally, not in CI, not in deployment.
 
 ## PostgreSQL
 
@@ -145,13 +145,10 @@ AWS_REGION=eu-north-1
 AWS_S3_BUCKET=your-bucket-name
 AWS_ACCESS_KEY_ID=your-access-key
 AWS_SECRET_ACCESS_KEY=your-secret-key
-AWS_S3_ENDPOINT=
-AWS_S3_FORCE_PATH_STYLE=false
 ```
 
-Leave `AWS_S3_ENDPOINT` empty. Setting it is the one thing that would send your uploads somewhere
-other than AWS, and removing that difference is the point of this setup. The two endpoint
-variables exist solely for CI, which runs the storage suite against a MinIO container.
+There is no endpoint override: uploads always go to AWS, exactly as in production. CI uses real S3
+too — a dedicated test bucket reached through the `CI_S3_*` repository secrets.
 
 The frontend never receives AWS credentials. Only the API talks to S3.
 
@@ -214,19 +211,18 @@ to preflight; the browser is. Check `x-amz-server-side-encryption` is in `Allowe
 **`/health/ready` reports redis down** — the Memurai service is stopped, or a container is
 holding 6379. Both cannot bind it; whichever starts second loses.
 
-**Port 5432 or 6379 already in use** — a leftover container. `docker ps` and stop it; the native
-service takes the port on its next restart.
+**Port 5432 or 6379 already in use** — another PostgreSQL or Redis instance holds it. Stop that
+service; the Smarteam one takes the port on its next restart.
 
 **`pnpm db:deploy` cannot connect** — check `DATABASE_URL` and that the PostgreSQL service is
 running.
 
 ## What is *not* required
 
-- **Docker** — `docker-compose.yml` is an optional fallback for a machine with no native
-  databases, and cannot run alongside them because both would bind the same ports. Nothing in
-  `pnpm dev`, `pnpm test`, `pnpm verify:*` or `pnpm db:*` touches it.
-- **MinIO** — not used locally. It exists only inside `.github/workflows/ci.yml`, as an
-  S3-compatible test double so the storage suite stays gated without long-lived AWS keys in
-  GitHub. No application code knows it exists.
+- **Docker** — not used by anything. There is no Dockerfile or compose file; PostgreSQL and Redis
+  run as native services here, on the CI runner, and on the servers (`docs/chore/TECHSTACK.v1.md`:
+  no containerization).
+- **MinIO** — not used anywhere, including CI. The storage suite runs against a real S3 test
+  bucket, or is reported as not run.
 - **LocalStack, an S3 emulator, or a filesystem fallback** — none of these exist, deliberately.
   Local storage behaviour that differs from production is the bug this setup removes.

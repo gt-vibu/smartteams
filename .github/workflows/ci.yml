@@ -46,21 +46,13 @@ jobs:
     name: Migrations and database-backed tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: smarteam
-          POSTGRES_PASSWORD: smarteam
-          POSTGRES_DB: smarteam
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U smarteam -d smarteam"
-          --health-interval 5s --health-timeout 5s --health-retries 20
     env:
       DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
     steps:
       - uses: actions/checkout@v4
+      # PostgreSQL runs natively on the runner; the project has no Docker dependency.
+      - name: Start PostgreSQL
+        run: bash scripts/ci/native-services.sh
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -106,57 +98,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: [verify]
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: smarteam
-          POSTGRES_PASSWORD: smarteam
-          POSTGRES_DB: smarteam
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U smarteam -d smarteam"
-          --health-interval 5s --health-timeout 5s --health-retries 20
-      redis:
-        image: redis:7-alpine
-        ports: ['6379:6379']
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      # Object storage is real AWS S3, as in development and production. CI reaches a dedicated
+      # test bucket through repository secrets; there is no emulator and no Docker. Without the
+      # secrets the storage suite cannot run, and it is reported as NOT RUN rather than passing.
+      S3_REGION: ${{ secrets.CI_S3_REGION }}
+      S3_BUCKET: ${{ secrets.CI_S3_BUCKET }}
+      S3_ACCESS_KEY_ID: ${{ secrets.CI_S3_ACCESS_KEY_ID }}
+      S3_SECRET_ACCESS_KEY: ${{ secrets.CI_S3_SECRET_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v4
+      # PostgreSQL and Redis run natively on the runner; the project has no Docker dependency.
+      - name: Start PostgreSQL and Redis
+        run: bash scripts/ci/native-services.sh --redis
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-
-      # MinIO exists ONLY here, as CI's S3-compatible test double.
-      #
-      # Development and production both use real AWS S3 through the same StorageService; nothing
-      # in the application, docker-compose.yml or .env.example knows this container exists. It is
-      # here because the alternative to a test double is either long-lived AWS keys in GitHub or
-      # an ungated storage suite, and 45 real storage checks are worth more than either.
-      #
-      # Started with `docker run` rather than as a service container because it needs a command
-      # and a KMS master key. The key is what makes SSE-S3 work: the API signs every upload with
-      # ServerSideEncryption AES256, which real S3 accepts and MinIO answers 501 to without one.
-      - name: Start MinIO with SSE-S3 (CI-only S3 test double)
-        run: |
-          docker run -d --name minio -p 9000:9000 \
-            -e MINIO_ROOT_USER=smarteam \
-            -e MINIO_ROOT_PASSWORD=smarteam-ci-only \
-            -e MINIO_KMS_SECRET_KEY="ci-key:$(openssl rand -base64 32)" \
-            minio/minio:latest server /data
-          for i in $(seq 1 40); do
-            curl -fsS http://localhost:9000/minio/health/live && break || sleep 2
-          done
-          # `minio/mc` sets its entrypoint to `mc`, so a shell has to be asked for explicitly.
-          docker run --rm --network host --entrypoint sh minio/mc:latest -c "
-            mc alias set local http://localhost:9000 smarteam smarteam-ci-only &&
-            mc mb --ignore-existing local/smarteam-files &&
-            mc anonymous set none local/smarteam-files"
 
       # The verify scripts read .env from the repository root, the same file a developer uses.
       # Written here rather than committed so CI has no credential of its own to leak.
@@ -170,14 +130,13 @@ jobs:
           FEDERATION_BOOTSTRAP_SECRET=ci-only-federation-secret
           SUPERADMIN_EMAIL=ci-superadmin@smarteam.test
           SUPERADMIN_PASSWORD=ci-only-superadmin-password
-          AWS_REGION=us-east-1
-          AWS_S3_BUCKET=smarteam-files
-          # CI-only: points the SDK at the MinIO container above. Blank everywhere else.
-          AWS_S3_ENDPOINT=http://localhost:9000
-          AWS_S3_FORCE_PATH_STYLE=true
-          AWS_ACCESS_KEY_ID=smarteam
-          AWS_SECRET_ACCESS_KEY=smarteam-ci-only
           ENV
+          {
+            echo "AWS_REGION=${S3_REGION:-us-east-1}"
+            echo "AWS_S3_BUCKET=${S3_BUCKET:-storage-not-configured-in-ci}"
+            echo "AWS_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}"
+            echo "AWS_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}"
+          } >> .env
 
       - run: pnpm db:deploy
       - run: pnpm --filter @smarteam/api db:seed
@@ -197,14 +156,25 @@ jobs:
       - name: Run the verify suites
         run: |
           failed=""
+          not_run=""
           for suite in auth employees teams attendance leave payroll organization files \
                        holidays employee-detail employee-directory onboarding \
                        payroll-staleness timesheet-approval-cycle concurrency \
                        authorization-boundaries ownership-and-approvals; do
+            # The storage round trip needs a real bucket. Without one it is not run, and says so;
+            # it is never counted as a pass.
+            if [ "$suite" = files ] && { [ -z "$S3_BUCKET" ] || [ -z "$S3_ACCESS_KEY_ID" ]; }; then
+              echo "::warning title=verify:files NOT RUN::No CI_S3_* repository secrets are set, so the storage round trip against real S3 did not run."
+              not_run="$not_run $suite"
+              continue
+            fi
             echo "::group::verify:$suite"
             pnpm "verify:$suite" || failed="$failed $suite"
             echo "::endgroup::"
           done
+          if [ -n "$not_run" ]; then
+            echo "### NOT RUN:$not_run — needs the CI_S3_* repository secrets (real S3 test bucket)" >> "$GITHUB_STEP_SUMMARY"
+          fi
           if [ -n "$failed" ]; then echo "FAILED:$failed"; exit 1; fi
 
       - name: API log on failure
@@ -247,10 +217,20 @@ jobs:
           # Whole history, not just the tip. A secret removed in the latest commit is still a
           # secret if it is reachable from an earlier one.
           fetch-depth: 0
-      - name: Scan for committed secrets
+      # The gitleaks release binary, pinned and checked against the release's own checksums —
+      # no container image involved.
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
         run: |
-          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest \
-            detect --source /repo --redact --verbose --no-banner
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -fsSLO "$base/$archive"
+          curl -fsSL "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt" | grep " $archive\$" | sha256sum -c -
+          tar -xzf "$archive" gitleaks
+          sudo install -m 755 gitleaks /usr/local/bin/gitleaks
+      - name: Scan for committed secrets
+        run: gitleaks detect --source . --redact --verbose --no-banner
 
   # Backup and restore, exercised rather than assumed.
   #
@@ -263,21 +243,14 @@ jobs:
     name: Backup and restore drill
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: smarteam
-          POSTGRES_PASSWORD: smarteam
-          POSTGRES_DB: smarteam
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U smarteam -d smarteam"
-          --health-interval 5s --health-timeout 5s --health-retries 20
     env:
       DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
     steps:
       - uses: actions/checkout@v4
+      # Server and client tools installed together, natively, so their versions match — pg_dump
+      # refuses a server newer than itself.
+      - name: Start PostgreSQL
+        run: bash scripts/ci/native-services.sh
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -285,121 +258,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:generate
-      # The client tools must match the server, or pg_dump refuses on a version mismatch.
-      - name: Install PostgreSQL 17 client
-        run: |
-          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
-          sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client-17
       - run: pnpm db:deploy
-      # The runner ships an older pg_dump on PATH, and pg_dump refuses to dump a newer server.
-      # Point at the client just installed rather than hoping PATH resolution favours it.
+      # The runner may ship an older pg_dump on PATH. Point at the 17 tools explicitly.
       - run: pnpm db:backup
         env:
           PG_DUMP_PATH: /usr/lib/postgresql/17/bin/pg_dump
       - run: pnpm db:verify-restore
         env:
           PG_RESTORE_PATH: /usr/lib/postgresql/17/bin/pg_restore
-
-  # The deployable artifact. Building it here is what keeps the Dockerfile honest: without this a
-  # change that breaks the production image is only discovered at deploy time.
-  images:
-    name: Container images
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: smarteam
-          POSTGRES_PASSWORD: smarteam
-          POSTGRES_DB: smarteam
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U smarteam -d smarteam"
-          --health-interval 5s --health-timeout 5s --health-retries 20
-      # Readiness probes the database *and* Redis. Without this the image came up live in two
-      # seconds and then `/health/ready` never answered at all: ioredis keeps retrying a refused
-      # connection rather than failing, so the check hung instead of reporting redis down.
-      redis:
-        image: redis:7-alpine
-        ports: ['6379:6379']
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 5s --health-timeout 5s --health-retries 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - name: Build the API image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          target: api
-          push: false
-          load: true
-          tags: smarteam/api:ci
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-      - name: The API image serves against a real database
-        # Bounded well inside the job budget. The previous version of this step produced no output
-        # at all and was killed by the job timeout 21 minutes in, which loses a cancelled step's
-        # log and leaves nothing to diagnose. Everything below is time-limited and traced, so a
-        # hang fails here with the reason attached instead of eating the job.
-        timeout-minutes: 6
-        run: |
-          set -x
-          # `RlsEnforcementGuard` verifies at bootstrap that the runtime role cannot bypass RLS, so
-          # the container deliberately refuses to start without a database. Giving it one is what
-          # makes this a smoke test of the image rather than of the guard.
-          docker image inspect smarteam/api:ci >/dev/null
-          # --pull=never: the image was just built and loaded. Without this, a missing image sends
-          # docker to Docker Hub for a repository that does not exist, which is a hang rather than
-          # an error worth waiting on.
-          timeout 60 docker run -d --pull=never --name api-smoke --network host \
-            -e NODE_ENV=development \
-            -e DATABASE_URL=postgresql://smarteam:smarteam@127.0.0.1:5432/smarteam \
-            -e JWT_SECRET=0123456789012345678901234567890123456789 \
-            -e FEDERATION_BOOTSTRAP_SECRET=0123456789012345 \
-            -e REDIS_URL=redis://127.0.0.1:6379 \
-            -e AWS_S3_BUCKET=smoke \
-            smarteam/api:ci
-          for i in $(seq 1 45); do
-            if ! docker inspect -f '{{.State.Running}}' api-smoke | grep -q true; then
-              echo "the container exited before it served"; docker logs api-smoke | tail -50; exit 1
-            fi
-            live=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://localhost:4000/health/live || true)
-            if [ "$live" = "200" ]; then
-              echo "liveness $live after ${i} attempts"
-              # Readiness is polled, not sampled. It fans out to the database and Redis, so it can
-              # answer later and more slowly than liveness — reading it once at the moment liveness
-              # first turns 200 measured the connection pools warming up, not the image.
-              # Bounded so the worst case (90s waiting for liveness, then 15 * 12s here) still
-              # lands inside the step's six minutes and fails with a message rather than a kill.
-              for j in $(seq 1 15); do
-                ready=$(curl -s --max-time 10 -o /dev/null -w '%{http_code}' http://localhost:4000/health/ready || true)
-                [ "$ready" = "200" ] && { echo "readiness $ready after ${j} attempts"; exit 0; }
-                sleep 2
-              done
-              # Readiness reports on the dependencies it actually reached; with a database and
-              # Redis attached it must say so, or the check is not checking anything. The body
-              # names which dependency is down, which the status code alone does not.
-              echo "readiness should be 200 with a database and redis, got $ready"
-              curl -s --max-time 15 http://localhost:4000/health/ready || true
-              docker logs api-smoke | tail -50
-              exit 1
-            fi
-            sleep 2
-          done
-          echo "API image never reported liveness"; docker logs api-smoke | tail -50; exit 1
-
-      - name: Container log on failure
-        if: failure()
-        run: docker logs api-smoke 2>&1 | tail -100 || true
-      - name: Build the web images
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          target: web-org
-          push: false
-          tags: smarteam/web-org:ci
-          cache-from: type=gha

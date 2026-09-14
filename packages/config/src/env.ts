@@ -52,21 +52,6 @@ export const serverEnvSchema = z
     REDIS_KEY_PREFIX: z.string().default('smarteam:'),
     AWS_REGION: z.string().min(1).default('ap-south-1'),
     AWS_S3_BUCKET: z.string().min(1),
-    /*
-     * S3-compatible endpoint override. Empty for AWS, which is development and production both.
-     *
-     * These are not a provider abstraction and there is no branch on them anywhere in the
-     * application: the SDK resolves AWS's own endpoint when the value is blank, and path-style
-     * addressing is off by default. They survive for exactly one caller — the CI workflow, which
-     * runs the storage suite against a MinIO container so that 45 real storage checks stay gated
-     * without long-lived AWS keys living in GitHub.
-     *
-     * Deleting them would mean either dropping that coverage or putting AWS credentials into CI,
-     * and neither trade is worth the two lines. Nothing outside .github/workflows/ci.yml sets
-     * them.
-     */
-    AWS_S3_ENDPOINT: z.string().url().optional().or(z.literal('')),
-    AWS_S3_FORCE_PATH_STYLE: booleanFromEnv.default(false),
     AWS_ACCESS_KEY_ID: z.string().optional().or(z.literal('')),
     AWS_SECRET_ACCESS_KEY: z.string().optional().or(z.literal('')),
     JWT_ISSUER: z.string().min(1).default('smarteam-api'),

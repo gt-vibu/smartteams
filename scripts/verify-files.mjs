@@ -12,8 +12,9 @@
  * the point of the script rather than an extra.
  *
  * Needs the API, PostgreSQL, Redis and a reachable S3 bucket. Locally that is real AWS S3 —
- * set AWS_REGION, AWS_S3_BUCKET, AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in .env. CI points
- * the same variables at a MinIO container instead, which is the only place a test double exists.
+ * set AWS_REGION, AWS_S3_BUCKET, AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in .env. CI uses a
+ * real S3 test bucket from the CI_S3_* repository secrets, and reports this suite as not run
+ * without them. There is no S3 emulator or test double anywhere.
  *
  *   pnpm verify:files
  */
