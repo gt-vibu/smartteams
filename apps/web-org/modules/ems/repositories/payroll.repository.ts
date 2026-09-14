@@ -94,15 +94,26 @@ export const payrollRepository = {
     );
   },
 
+  /**
+   * Salary advances, newest first, read a page at a time.
+   *
+   * The route used to return every advance in the tenant at once; it now pages. The pages are
+   * followed here up to a fixed ceiling, so a long history cannot turn into an unbounded loop.
+   */
   async listAdvances(organizationId: string, employeeId?: string): Promise<SalaryAdvance[]> {
-    return expectShape(
-      parseSalaryAdvanceList(
-        await apiRequest(`${base(organizationId)}/advances${queryString({ employeeId })}`, {
-          method: 'GET',
-        }),
-      ),
-      'salary advance list',
-    );
+    const MAX_PAGES = 25;
+    const advances: SalaryAdvance[] = [];
+    let cursor: string | undefined;
+    for (let page = 0; page < MAX_PAGES; page += 1) {
+      const payload = await apiRequest(
+        `${base(organizationId)}/advances${queryString({ employeeId, limit: 200, cursor })}`,
+        { method: 'GET' },
+      );
+      advances.push(...expectShape(parseSalaryAdvanceList(payload), 'salary advance list'));
+      cursor = nextCursorOf(payload);
+      if (!cursor) break;
+    }
+    return advances;
   },
 
   async requestAdvance(
@@ -299,3 +310,10 @@ export const payrollRepository = {
     })) as { id: string };
   },
 };
+
+/** The paging cursor from a list envelope; absent on the last page. */
+function nextCursorOf(payload: unknown): string | undefined {
+  if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) return undefined;
+  const cursor = (payload as { nextCursor?: unknown }).nextCursor;
+  return typeof cursor === 'string' && cursor.length > 0 ? cursor : undefined;
+}

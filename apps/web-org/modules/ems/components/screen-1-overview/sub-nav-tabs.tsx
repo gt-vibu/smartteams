@@ -4,6 +4,7 @@ import { Button } from '@smarteam/ui';
 
 import React from 'react';
 import { useAuth } from '../../hooks/use-auth';
+import { APPROVAL_DECISION_PERMISSIONS } from '../../services/authorization.policy';
 
 interface SubNavTabsProps {
   activeTab: string;
@@ -16,11 +17,7 @@ interface SubNavTabsProps {
  */
 export function useIsManagerApprover(): boolean {
   const { hasExplicitPermission } = useAuth();
-  return (
-    hasExplicitPermission('leave.approve') ||
-    hasExplicitPermission('timesheets.decide') ||
-    hasExplicitPermission('attendance.approve')
-  );
+  return APPROVAL_DECISION_PERMISSIONS.some((permission) => hasExplicitPermission(permission));
 }
 
 export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {

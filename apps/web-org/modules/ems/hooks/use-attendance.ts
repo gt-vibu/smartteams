@@ -161,11 +161,26 @@ export function useAttendance(rangeDays = 30) {
   const checkIn = useCallback(() => punch('IN'), [punch]);
   const checkOut = useCallback(() => punch('OUT'), [punch]);
 
-  /** Raises a correction request. The API rejects a reason under ten characters. */
+  /**
+   * Raises a correction request, rejecting with the API's own reason when it is refused.
+   *
+   * The correction drawers own their saving and error state and wait on this promise. It used to
+   * go through `run`, which resolves `false` and parks the message in state; the screens then
+   * threw from a `saveError` captured before the request, so the drawer said "could not be
+   * submitted" instead of what the API said — for example that the reason was too short.
+   */
   const requestCorrection = useCallback(
-    (attendanceId: string, reason: string) =>
-      run(() => attendanceRepository.requestCorrection(organizationId!, attendanceId, reason)),
-    [organizationId, run],
+    async (attendanceId: string, reason: string) => {
+      if (!organizationId || !employeeId)
+        throw new Error('This account has no employee record, so attendance cannot be recorded.');
+      try {
+        await attendanceRepository.requestCorrection(organizationId, attendanceId, reason);
+      } finally {
+        // As `run` does, on failure too: show the records as the server holds them.
+        await resource.refetch();
+      }
+    },
+    [employeeId, organizationId, resource],
   );
 
   // Presentation shape the screens render, derived from the same records.

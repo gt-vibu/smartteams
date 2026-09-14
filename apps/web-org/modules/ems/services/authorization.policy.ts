@@ -13,19 +13,40 @@ import type { ApprovalDomainType, WorkspaceContext } from '../types/auth.types';
  * the API's `requirePermission`.
  */
 
+/**
+ * The catalogue keys that let someone decide each kind of approval — the keys the API's decision
+ * routes check. These read `leave.approve`, `attendance.approve` and `payroll.approve`, which are
+ * not in the catalogue and are granted to nobody, so a manager holding the real keys was never
+ * offered their approvals.
+ */
 const EXPLICIT_APPROVAL_PERMISSIONS: Record<ApprovalDomainType, string[]> = {
-  LEAVE: ['leave.approve'],
+  LEAVE: ['leave.requests.decide'],
   TIMESHEET: ['timesheets.decide'],
-  ATTENDANCE_CORRECTION: ['attendance.approve'],
-  PAYROLL: ['payroll.approve'],
+  ATTENDANCE_CORRECTION: ['attendance.corrections.decide'],
+  PAYROLL: ['payroll.runs.approve'],
 };
 
-const ADMIN_APPROVAL_PERMISSIONS: Record<ApprovalDomainType, string[]> = {
-  LEAVE: ['leave.approve', 'leave.write'],
-  TIMESHEET: ['timesheets.decide', 'timesheets.write'],
-  ATTENDANCE_CORRECTION: ['attendance.approve', 'attendance.write'],
-  PAYROLL: ['payroll.approve', 'payroll.write'],
-};
+/**
+ * In the Organization workspace the wildcard counts too. The `.write` keys that used to sit here
+ * are the permissions every employee holds to act on their own records, not to decide anyone
+ * else's.
+ */
+const ADMIN_APPROVAL_PERMISSIONS = EXPLICIT_APPROVAL_PERMISSIONS;
+
+/** Decisions with a queue somewhere in the product; payroll runs are approved from Payroll. */
+export const APPROVAL_DECISION_PERMISSIONS = [
+  ...EXPLICIT_APPROVAL_PERMISSIONS.LEAVE,
+  ...EXPLICIT_APPROVAL_PERMISSIONS.TIMESHEET,
+  ...EXPLICIT_APPROVAL_PERMISSIONS.ATTENDANCE_CORRECTION,
+];
+
+/**
+ * Whether someone decides approvals as part of their job, as opposed to holding the wildcard.
+ * Explicit on purpose, for the reason given on `canApprove`.
+ */
+export function decidesApprovals(permissions: readonly string[]): boolean {
+  return APPROVAL_DECISION_PERMISSIONS.some((permission) => canExplicitly(permissions, permission));
+}
 
 export function can(permissions: readonly string[], permission: string): boolean {
   return hasPermission(permissions, permission);
@@ -201,11 +222,7 @@ export function canAccessModule(
       return canOpenPayroll(permissions);
     case 'approvals':
       // Wildcard alone is not enough here, for the reason given on `canApprove`.
-      return (
-        canExplicitly(permissions, 'leave.approve') ||
-        canExplicitly(permissions, 'timesheets.decide') ||
-        canExplicitly(permissions, 'attendance.approve')
-      );
+      return decidesApprovals(permissions);
     case 'teams':
       return isAssignedToAnyTeam;
     case 'onboarding':

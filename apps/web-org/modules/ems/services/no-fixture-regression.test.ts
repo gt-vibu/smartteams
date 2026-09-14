@@ -125,6 +125,24 @@ describe('retired fixtures stay retired', () => {
   });
 });
 
+/**
+ * Records written inline, where no import guard can see them.
+ *
+ * Home's Approvals tab was exactly this: `useState<ApprovalItem[]>([{ requesterName: ... }])`, three
+ * invented people whose Approve buttons only edited that array. It imported no fixture file, so
+ * the guard above passed it. Component state that starts life holding records is the shape; real
+ * lists start empty and are filled from the API.
+ */
+describe('no component seeds its state with records', () => {
+  it('no runtime file initialises state with an array of objects', () => {
+    const offenders = sourceFiles(MODULE_ROOT)
+      .filter((file) => /useState(<[^()]*>)?\(\[\s*\{/.test(code(readFileSync(file, 'utf8'))))
+      .map((file) => relative(MODULE_ROOT, file));
+
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe('reconciled modules keep server state on the server', () => {
   it.each(SERVER_STATE_PATHS)('%s does not touch browser storage', (relativePath) => {
     const text = code(readFileSync(join(MODULE_ROOT, relativePath), 'utf8'));

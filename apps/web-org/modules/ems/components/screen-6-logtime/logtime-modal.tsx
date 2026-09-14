@@ -13,12 +13,13 @@ import {
   Select,
   Textarea,
 } from '@smarteam/ui';
-import { HelpCircle, Plus, Upload, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { parseDuration } from '../../services/timesheet-view';
 import type { ManualEntryInput } from '../../repositories/timesheet.repository';
 import type { JobType, Project } from '@smarteam/contracts';
 import { QuickAddJobDialog } from './quick-add-job-dialog';
 import { QuickAddProjectDialog } from './quick-add-project-dialog';
+import { LogTimeHoursField, type HoursMode } from './logtime-hours-field';
 
 interface LogTimeModalProps {
   isOpen: boolean;
@@ -56,7 +57,7 @@ export function LogTimeModal({
   const [workItem, setWorkItem] = useState('');
   const [workDate, setWorkDate] = useState(initialDate);
   const [description, setDescription] = useState('');
-  const [hoursMode, setHoursMode] = useState<'TOTAL' | 'START_END'>('TOTAL');
+  const [hoursMode, setHoursMode] = useState<HoursMode>('TOTAL');
   // Hours start empty. They were pre-filled as 08:00 (and 09:00–17:00), so saving without looking
   // recorded a full day whatever was worked — and logged time feeds timesheets, approvals and pay.
   // A form that records effort should ask for it, not assume it.
@@ -64,7 +65,6 @@ export function LogTimeModal({
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [billable, setBillable] = useState<boolean>(true);
-  const [attachmentName, setAttachmentName] = useState<string | null>(null);
   const [error, setError] = useState('');
 
   const [isQuickAddJobOpen, setIsQuickAddJobOpen] = useState(false);
@@ -95,7 +95,6 @@ export function LogTimeModal({
     setStartTime('');
     setEndTime('');
     setBillable(true);
-    setAttachmentName(null);
     setError('');
   };
 
@@ -161,7 +160,6 @@ export function LogTimeModal({
       billable,
       startTime: hoursMode === 'START_END' ? startTime : undefined,
       endTime: hoursMode === 'START_END' ? endTime : undefined,
-      attachmentUrl: attachmentName ? `https://storage.local/${attachmentName}` : undefined,
     });
 
     if (saved) {
@@ -333,88 +331,17 @@ export function LogTimeModal({
               </div>
             </div>
 
-            {/* Hours */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
-              <Label className="text-foreground/80 font-medium pt-1 sm:col-span-1 text-xs">
-                Hours <span className="text-destructive font-bold">*</span>
-              </Label>
-              <div className="space-y-3 sm:col-span-3">
-                {/* Radio selection */}
-                <div className="flex items-center gap-6 pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-normal text-foreground">
-                    <input
-                      type="radio"
-                      name="hours-mode"
-                      checked={hoursMode === 'TOTAL'}
-                      onChange={() => setHoursMode('TOTAL')}
-                      className="text-primary focus:ring-primary h-3.5 w-3.5"
-                    />
-                    <span>Total hours</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-normal text-foreground">
-                    <input
-                      type="radio"
-                      name="hours-mode"
-                      checked={hoursMode === 'START_END'}
-                      onChange={() => setHoursMode('START_END')}
-                      className="text-primary focus:ring-primary h-3.5 w-3.5"
-                    />
-                    <span>Start and end time</span>
-                  </label>
-                </div>
-
-                {hoursMode === 'TOTAL' ? (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={totalHours}
-                      onChange={(e) => setTotalHours(e.target.value)}
-                      placeholder="e.g. 2:30"
-                      aria-label="Hours worked"
-                      disabled={saving}
-                      className="w-24 font-mono text-xs h-8 text-center"
-                    />
-                    <span title="Enter hours in HH:MM or duration format">
-                      <HelpCircle className="h-4 w-4 text-amber-500/80 shrink-0 cursor-help" />
-                    </span>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-3 max-w-xs">
-                    <div>
-                      <Label
-                        htmlFor="start-time"
-                        className="text-[11px] text-muted-foreground mb-1 block"
-                      >
-                        Start time
-                      </Label>
-                      <Input
-                        id="start-time"
-                        type="time"
-                        value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
-                        disabled={saving}
-                        className="font-mono text-xs h-8"
-                      />
-                    </div>
-                    <div>
-                      <Label
-                        htmlFor="end-time"
-                        className="text-[11px] text-muted-foreground mb-1 block"
-                      >
-                        End time
-                      </Label>
-                      <Input
-                        id="end-time"
-                        type="time"
-                        value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
-                        disabled={saving}
-                        className="font-mono text-xs h-8"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <LogTimeHoursField
+              disabled={saving}
+              endTime={endTime}
+              mode={hoursMode}
+              onEndTimeChange={setEndTime}
+              onModeChange={setHoursMode}
+              onStartTimeChange={setStartTime}
+              onTotalHoursChange={setTotalHours}
+              startTime={startTime}
+              totalHours={totalHours}
+            />
 
             {/* Billable Status */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
@@ -431,51 +358,6 @@ export function LogTimeModal({
                   <option value="BILLABLE">Billable</option>
                   <option value="NON_BILLABLE">Non-Billable</option>
                 </Select>
-              </div>
-            </div>
-
-            {/* Attachment */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
-              <Label className="text-foreground/80 font-medium pt-1 sm:col-span-1 text-xs">
-                Attachment
-              </Label>
-              <div className="sm:col-span-3 space-y-1">
-                {attachmentName ? (
-                  <div className="flex items-center justify-between p-2.5 border border-border rounded-md bg-muted/20 max-w-md">
-                    <span className="truncate font-medium text-xs text-foreground">
-                      {attachmentName}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAttachmentName(null)}
-                      className="text-muted-foreground hover:text-destructive p-1 cursor-pointer"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="border border-border/80 rounded-md p-4 bg-muted/10 text-center space-y-1.5 hover:bg-muted/20 transition-colors">
-                    <label className="cursor-pointer block text-xs text-muted-foreground">
-                      <span>Upload from </span>
-                      <span className="text-primary font-medium hover:underline inline-flex items-center gap-1">
-                        <Upload className="h-3 w-3 inline" /> Desktop
-                      </span>
-                      <span> / </span>
-                      <span className="text-primary font-medium hover:underline">WorkDrive</span>
-                      <span> / </span>
-                      <span className="text-primary font-medium hover:underline">Others</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f) setAttachmentName(f.name);
-                        }}
-                      />
-                    </label>
-                    <p className="text-[10px] text-muted-foreground">Max. size is 5 MB</p>
-                  </div>
-                )}
               </div>
             </div>
 

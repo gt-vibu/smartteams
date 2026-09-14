@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
-import { Badge, Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
-import { useApprovalInbox, type ApprovalInboxItem } from '../../hooks/use-approval-inbox';
+import { Button } from '@smarteam/ui';
+import { useApprovalInbox } from '../../hooks/use-approval-inbox';
 import { ApprovalPolicyBuilder } from './approval-policy-builder';
+import { ApprovalQueue } from './approval-queue';
 import { PageShell } from '../layout/page-shell';
 
 type View = 'queue' | 'policies';
@@ -24,20 +25,6 @@ type View = 'queue' | 'policies';
 export function ScreenApprovals() {
   const inbox = useApprovalInbox();
   const [view, setView] = useState<View>('queue');
-  const [deciding, setDeciding] = useState<{
-    item: ApprovalInboxItem;
-    status: 'APPROVED' | 'REJECTED';
-  } | null>(null);
-  const [comment, setComment] = useState('');
-
-  const confirm = async () => {
-    if (!deciding) return;
-    const ok = await inbox.decide(deciding.item, deciding.status, comment.trim());
-    if (ok) {
-      setComment('');
-      setDeciding(null);
-    }
-  };
 
   return (
     <PageShell>
@@ -76,140 +63,7 @@ export function ScreenApprovals() {
 
       {view === 'policies' && <ApprovalPolicyBuilder />}
 
-      {view === 'queue' && (
-        <div className="space-y-3">
-          {inbox.saveError && (
-            <p
-              className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
-              role="alert"
-            >
-              {inbox.saveError}
-            </p>
-          )}
-
-          {inbox.loading && (
-            <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-              Loading approvals...
-            </p>
-          )}
-
-          {!inbox.loading && inbox.error && (
-            <div
-              className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
-              role="alert"
-            >
-              <p className="text-sm font-bold text-foreground">Could not load approvals</p>
-              <p className="mt-1 text-xs text-muted-foreground">{inbox.error}</p>
-              <Button
-                className="mt-3"
-                onClick={() => void inbox.refetch()}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                Try again
-              </Button>
-            </div>
-          )}
-
-          {!inbox.loading && !inbox.error && inbox.items.length === 0 && (
-            <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
-              <p className="text-sm font-bold text-foreground">Nothing awaiting your decision</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Leave requests and attendance corrections routed to you appear here.
-              </p>
-            </div>
-          )}
-
-          {!inbox.loading &&
-            !inbox.error &&
-            inbox.items.map((item) => (
-              <div
-                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3"
-                key={`${item.domain}-${item.id}`}
-              >
-                <div>
-                  <p className="text-xs font-bold text-foreground">{item.title}</p>
-                  <p className="mt-0.5 text-[11px] text-muted-foreground">{item.detail}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">
-                    {item.submittedAt ? item.submittedAt.slice(0, 10) : 'pending'}
-                  </Badge>
-                  {inbox.canDecide(item) ? (
-                    <>
-                      <Button
-                        disabled={inbox.saving}
-                        onClick={() => setDeciding({ item, status: 'REJECTED' })}
-                        size="sm"
-                        type="button"
-                        variant="outline"
-                      >
-                        Reject
-                      </Button>
-                      <Button
-                        disabled={inbox.saving}
-                        onClick={() => setDeciding({ item, status: 'APPROVED' })}
-                        size="sm"
-                        type="button"
-                      >
-                        Approve
-                      </Button>
-                    </>
-                  ) : (
-                    <span className="text-[11px] text-muted-foreground">
-                      You cannot decide this
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-        </div>
-      )}
-
-      <Dialog onOpenChange={(open) => !open && setDeciding(null)} open={deciding !== null}>
-        <DialogContent className="sm:max-w-md">
-          <DialogTitle>
-            {deciding?.status === 'APPROVED' ? 'Approve' : 'Reject'} this request
-          </DialogTitle>
-          <p className="mt-1 text-xs text-muted-foreground">
-            The comment is recorded against the decision and shown to the requester.
-          </p>
-          <div className="mt-4 space-y-3">
-            <Label className="block" htmlFor="decision-comment">
-              Comment
-            </Label>
-            <Textarea
-              disabled={inbox.saving}
-              id="decision-comment"
-              onChange={(event) => setComment(event.target.value)}
-              value={comment}
-            />
-            <div className="flex justify-end gap-2">
-              <Button
-                disabled={inbox.saving}
-                onClick={() => setDeciding(null)}
-                type="button"
-                variant="outline"
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={inbox.saving || comment.trim().length < 2}
-                onClick={() => void confirm()}
-                type="button"
-                variant={deciding?.status === 'APPROVED' ? 'default' : 'destructive'}
-              >
-                {inbox.saving
-                  ? 'Recording...'
-                  : deciding?.status === 'APPROVED'
-                    ? 'Approve'
-                    : 'Reject'}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {view === 'queue' && <ApprovalQueue inbox={inbox} />}
     </PageShell>
   );
 }

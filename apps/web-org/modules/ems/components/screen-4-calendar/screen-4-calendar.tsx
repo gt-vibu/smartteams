@@ -16,7 +16,7 @@ interface Screen4CalendarProps {
 }
 
 export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
-  const { days: records, requestCorrection, saveError } = useAttendance();
+  const { days: records, requestCorrection } = useAttendance();
   const holidays = useHolidays();
   const employeeHolidays = useEmployeeHolidays();
 
@@ -151,12 +151,11 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
   /**
    * Raises an attendance correction for the selected day.
    *
-   * Rejecting is what keeps the drawer open with the reason intact; `run` reports failure by
-   * resolving `false` and holding the message, so it is converted here.
+   * `requestCorrection` rejects with the API's reason, which is what keeps the drawer open and
+   * shows the employee why.
    */
   const handleSubmitCorrection = async (recordId: string, reason: string) => {
-    const raised = await requestCorrection(recordId, reason);
-    if (!raised) throw new Error(saveError ?? 'The correction could not be submitted.');
+    await requestCorrection(recordId, reason);
   };
 
   return (

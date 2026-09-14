@@ -16,7 +16,7 @@ interface Screen3TableProps {
 }
 
 export function Screen3Table({ onToggleView }: Screen3TableProps) {
-  const { days: records, requestCorrection, canRequestCorrection, saveError } = useAttendance();
+  const { days: records, requestCorrection, canRequestCorrection } = useAttendance();
   const [selectedRow, setSelectedRow] = useState<AttendanceTableRow | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -87,14 +87,12 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   /**
    * Raises the correction and lets the drawer see the outcome.
    *
-   * `run` reports failure by resolving `false` and holding the message in `saveError`, which is
-   * the right shape for a screen that renders the error itself. The drawer awaits this promise
-   * instead, so a rejection is what tells it to stay open — swallowing the result here is what
-   * let a rejected correction close the drawer as though it had been accepted.
+   * The drawer awaits this promise, so a rejection — carrying the API's reason — is what tells it
+   * to stay open. Swallowing the result here is what once let a rejected correction close the
+   * drawer as though it had been accepted.
    */
   const handleRegularize = async (recordId: string, reason: string) => {
-    const raised = await requestCorrection(recordId, reason);
-    if (!raised) throw new Error(saveError ?? 'The correction could not be submitted.');
+    await requestCorrection(recordId, reason);
     setSelectedRow(null);
   };
 

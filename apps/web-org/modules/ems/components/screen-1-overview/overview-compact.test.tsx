@@ -69,10 +69,20 @@ describe('OverviewCompact', () => {
     expect(tabs).toEqual(['Profile', 'Activities', 'Dashboard']);
   });
 
-  it('offers Approvals to a manager with decision authority, and to no one else', () => {
-    explicit = new Set(['leave.approve']);
+  it.each(['leave.requests.decide', 'attendance.corrections.decide', 'timesheets.decide'])(
+    'offers Approvals to a manager holding %s',
+    (key) => {
+      explicit = new Set([key]);
+      renderAt('Profile');
+      expect(screen.getByRole('tab', { name: 'Approvals' })).toBeInTheDocument();
+    },
+  );
+
+  it('does not offer Approvals for keys the catalogue does not have', () => {
+    // These were the keys checked here, and no role holds them, so no manager ever saw the tab.
+    explicit = new Set(['leave.approve', 'attendance.approve']);
     renderAt('Profile');
-    expect(screen.getByRole('tab', { name: 'Approvals' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Approvals' })).not.toBeInTheDocument();
   });
 
   it('still opens a preview a link names, on its own', () => {

@@ -69,3 +69,25 @@ describe('Log Time without permission to add projects', () => {
     expect(screen.queryByText(/an admin or project manager can add them/i)).not.toBeInTheDocument();
   });
 });
+
+/**
+ * The attachment control was decorative: the chosen file was never uploaded, and the entry was
+ * saved with `https://storage.local/<file name>` as though it had been. Time entries have no
+ * attachment flow, so the form no longer pretends to offer one.
+ */
+describe('Log Time attachments', () => {
+  it('offers no attachment it cannot store', () => {
+    renderModal();
+    expect(screen.queryByText(/upload from/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/workdrive/i)).not.toBeInTheDocument();
+  });
+
+  it('never sends an attachment address', async () => {
+    const onSubmit = renderModal();
+    await userEvent.type(screen.getByRole('textbox', { name: /hours worked/i }), '1:00');
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }));
+
+    const [sent] = onSubmit.mock.calls[0] as [Record<string, unknown>];
+    expect(sent).not.toHaveProperty('attachmentUrl');
+  });
+});

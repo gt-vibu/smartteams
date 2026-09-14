@@ -27,6 +27,8 @@ export function useTimesheetAdmin() {
   const canDecide = hasPermission(permissions, 'timesheets.decide');
   const canWrite = hasPermission(permissions, 'timesheets.write');
   const canReadEmployees = hasPermission(permissions, 'employees.read');
+  // Opening a period re-derives every employee's sheet, so the API asks for breadth as well.
+  const canManagePeriods = canWrite && canReadAll;
 
   const resource = useAsyncResource<Loaded>(
     async () => {
@@ -103,6 +105,7 @@ export function useTimesheetAdmin() {
     openPeriod,
     canDecide,
     canWrite,
+    canManagePeriods,
     /** False when the caller can only see their own sheets, which the queue must state. */
     canReadAll,
   };

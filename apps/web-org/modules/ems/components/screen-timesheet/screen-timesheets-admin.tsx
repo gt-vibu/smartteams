@@ -115,7 +115,7 @@ export function ScreenTimesheetsAdmin() {
             Time logs and timesheets
           </span>
           <div className="flex items-center gap-2">
-            {admin.canWrite && (
+            {admin.canManagePeriods && (
               <Button onClick={() => setOpeningPeriod(true)} size="sm" type="button">
                 Open a period
               </Button>
