@@ -30,8 +30,8 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
 
   return (
     <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full relative">
-      {/* Cards below 720px of its own width; see `stack-table` in app/responsive.css. */}
-      <Table className="stack-table">
+      {/* Cards below 860px of its own width; see `stack-table` in app/responsive.css. */}
+      <Table className="stack-table stack-wide">
         <TableBody>
           {groupedLogs.map((group) => {
             const allGroupSelected = group.entries.every((e) => selectedIds.has(e.id));

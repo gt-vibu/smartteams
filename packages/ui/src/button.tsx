@@ -2,6 +2,18 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from './cn';
 
+/** Every variant except `link`, which sits inside running text; see `compoundVariants`. */
+const DRAWN_BIGGER_ON_TOUCH = [
+  'default',
+  'primary',
+  'destructive',
+  'outline',
+  'secondary',
+  'ghost',
+  'success',
+  'quiet',
+] as const;
+
 const buttonVariants = cva(
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 cursor-pointer',
@@ -36,6 +48,33 @@ const buttonVariants = cva(
         icon: 'h-8 w-8 p-0',
       },
     },
+    // On a touchscreen the dense desktop sizes are also *drawn* bigger, not only hit-tested
+    // bigger: a 32px button is tappable with the hit area above but reads as too small to aim
+    // at. Minimums, not heights — a caller's own `h-7` survives tailwind-merge untouched and the
+    // button grows only where it is smaller than a thumb needs. `link` is excluded because it
+    // sits inside running text, where extra height would push the line apart.
+    compoundVariants: [
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'default',
+        class: 'pointer-coarse:min-h-10',
+      },
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'sm',
+        class: 'pointer-coarse:min-h-9',
+      },
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'lg',
+        class: 'pointer-coarse:min-h-11',
+      },
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'icon',
+        class: 'pointer-coarse:min-h-10 pointer-coarse:min-w-10',
+      },
+    ],
     defaultVariants: {
       variant: 'default',
       size: 'default',

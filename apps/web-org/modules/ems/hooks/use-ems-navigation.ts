@@ -170,11 +170,15 @@ export function useEmsNavigation() {
         normalizedModule = moduleName as EmsModule;
 
       pushNavState({
+        // Team is a single screen with no modules, so a module chosen from it — the phone's
+        // bottom bar is available there — is a module of My Space. Merging it into Team would
+        // change the URL and nothing on screen.
+        ...(navState.space === 'Team' ? { space: 'My Space' as const } : {}),
         module: normalizedModule,
         ...(subView ? { attendanceView: subView } : {}),
       });
     },
-    [pushNavState],
+    [pushNavState, navState.space],
   );
 
   const navigateToOrgTab = useCallback(

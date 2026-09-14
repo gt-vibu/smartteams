@@ -68,7 +68,7 @@ export function LeaveRequestQueue({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="stack-table w-full min-w-[860px] text-left text-xs">
+      <table className="stack-table stack-wide w-full min-w-[860px] text-left text-xs">
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-semibold">Employee</th>

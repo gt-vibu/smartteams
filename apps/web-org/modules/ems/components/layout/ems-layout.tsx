@@ -107,10 +107,15 @@ export function EmsLayout({
         </main>
       </div>
 
-      {/* 3. Mobile Bottom Navigation (replaces hamburger drawer on mobile) */}
-      {showLeftRail && (
+      {/*
+        3. Mobile Bottom Navigation (replaces hamburger drawer on mobile).
+        Also in Team, which has no rail of its own: without it a phone user who reached Team had
+        only the app-bar menu to leave by. Team shows My Space's modules, none highlighted since
+        none of them is the screen on show; choosing one moves to My Space (`navigateToModule`).
+      */}
+      {(showLeftRail || activeSpace === 'Team') && (
         <EmsMobileBottomNav
-          activeModule={activeModule}
+          activeModule={activeSpace === 'Team' ? '' : activeModule}
           onSelectModule={onSelectModule}
           activeSpace={activeSpace}
         />
