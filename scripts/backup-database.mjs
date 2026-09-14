@@ -25,6 +25,7 @@ import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { libpqUrl } from './lib/libpq-url.mjs';
 
 // A dump has to read every tenant's rows, which the least-privilege runtime role cannot: prefer
 // the elevated connection where one is configured, as the seeds do.
@@ -101,19 +102,28 @@ const started = Date.now();
 // --format=custom for parallel and selective restore; --no-owner/--no-privileges so the dump can
 // be restored by a different role than the one that produced it, which is what a recovery drill
 // into a scratch database actually does.
-await run(PG_DUMP, [
-  '--dbname',
-  DATABASE_URL,
-  '--format=custom',
-  '--compress=9',
-  '--no-owner',
-  '--no-privileges',
-  '--file',
-  artifact,
-]);
+try {
+  await run(PG_DUMP, [
+    '--dbname',
+    libpqUrl(DATABASE_URL),
+    '--format=custom',
+    '--compress=9',
+    '--no-owner',
+    '--no-privileges',
+    '--file',
+    artifact,
+  ]);
+} catch (error) {
+  // A failed dump must not leave a partial file behind: it would be the newest artifact, and the
+  // restore drill verifies the newest one.
+  await rm(artifact, { force: true });
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+}
 
 const { size } = await stat(artifact);
 if (size === 0) {
+  await rm(artifact, { force: true });
   console.error('Backup artifact is empty; refusing to report success.');
   process.exit(1);
 }

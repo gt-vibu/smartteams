@@ -14,6 +14,11 @@ implemented in the repository, and the one part that is server configuration rat
 | Restore drill | `scripts/verify-restore.mjs` | `pnpm db:verify-restore` |
 | Automated drill | `.github/workflows/ci.yml`, job `backup-restore` | every push |
 
+Both scripts accept the Prisma-style `DATABASE_URL` from `.env.example` (`?schema=public`): Prisma's
+own parameters are removed before the URL reaches `pg_dump`/`pg_restore`, and libpq parameters such
+as `sslmode` are kept. A failed dump removes its partial file rather than leaving it as the newest
+artifact.
+
 The drill restores into a scratch database and asserts the migration ledger, row-level security
 (tables *and* policies), and per-table row counts. It drops the scratch database afterwards, including
 on failure.
@@ -64,7 +69,7 @@ somewhere that survives the loss of the database host.
 | | Target | Determined by |
 |---|---|---|
 | **RPO** | ≤ 5 minutes | `archive_timeout`; without WAL archiving the RPO degrades to the dump interval |
-| **RTO** | ≤ 60 minutes for a full restore | measured: a 36 MiB dump with ~680k attendance rows restored in 17s locally; the RTO allowance is for provisioning, credentials and verification, not the restore itself |
+| **RTO** | ≤ 60 minutes for a full restore | measured 2026-09-15: a 66 MiB dump (65k employees, 1.28M attendance rows) took 24s to write and 34s to restore locally; the RTO allowance is for provisioning, credentials and verification, not the restore itself |
 
 These are targets the configuration must be set to meet, not guarantees. Re-measure after the
 database grows an order of magnitude.

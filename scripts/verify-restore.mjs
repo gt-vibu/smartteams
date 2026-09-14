@@ -27,6 +27,7 @@ import { createReadStream } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { createRequire } from 'node:module';
+import { libpqUrl } from './lib/libpq-url.mjs';
 
 const require = createRequire(new URL('../apps/api/package.json', import.meta.url));
 const { Client } = require('pg');
@@ -103,11 +104,9 @@ async function newestArtifact() {
   return join(BACKUP_DIR, entries.sort().at(-1));
 }
 
+/** The scratch database on the same server, keeping TLS and other libpq settings. */
 function scratchUrl(base, database) {
-  const url = new URL(base);
-  url.pathname = `/${database}`;
-  url.search = '';
-  return url.toString();
+  return libpqUrl(base, database);
 }
 
 const artifact = process.argv[2] ? resolve(process.argv[2]) : await newestArtifact();
