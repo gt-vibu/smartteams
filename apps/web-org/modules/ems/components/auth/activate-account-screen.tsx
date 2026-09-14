@@ -57,13 +57,13 @@ export function ActivateAccountScreen({ onSignIn }: { onSignIn: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="h-dvh overflow-y-auto overflow-x-hidden bg-background flex flex-col items-center p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] relative">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl" />
       </div>
 
-      <div className="relative w-full max-w-sm">
+      <div className="relative w-full max-w-sm my-auto">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-lg">
           <h1 className="text-lg font-bold text-foreground">
             {preview ? 'Set up your account' : 'Activate your account'}

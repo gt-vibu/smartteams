@@ -8,7 +8,7 @@ const FIELD =
   'w-full rounded-lg border border-input bg-input-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none';
 const LABEL = 'block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5';
 const SUBMIT =
-  'w-full py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold transition-all shadow-md cursor-pointer';
+  'w-full h-11 sm:h-10 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold transition-all shadow-md cursor-pointer';
 
 /** Step one: prove you hold a code, and see who it belongs to before going further. */
 export function CodeStep({

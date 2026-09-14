@@ -55,17 +55,19 @@ export function CalendarDetailDrawer({
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
       />
 
-      {/* Slide-In Panel */}
-      <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+      {/* Slide-In Panel. Full width on a phone: the panel used to be `w-screen` inside a wrapper
+          padded 40px on the left, so it began 40px in and ran 40px past the right edge — where
+          `overflow-hidden` cut off everything right-aligned, the close button included. */}
+      <div className="absolute inset-y-0 right-0 flex w-full max-w-full sm:w-auto sm:pl-10">
         <div
           ref={panelRef}
           role="dialog"
           aria-labelledby="calendar-details-title"
           tabIndex={-1}
-          className="flex w-screen max-w-md flex-col justify-between border-l border-border bg-card shadow-2xl"
+          className="flex w-full max-w-full flex-col justify-between border-l border-border bg-card shadow-2xl sm:w-screen sm:max-w-md"
         >
           {/* Header */}
-          <div className="p-5 border-b border-border flex items-center justify-between bg-muted/40/70">
+          <div className="p-5 border-b border-border flex items-center justify-between bg-muted/40">
             <div>
               <h2 id="calendar-details-title" className="!m-0 !text-sm !font-bold !text-foreground">
                 Shift & Day Schedule

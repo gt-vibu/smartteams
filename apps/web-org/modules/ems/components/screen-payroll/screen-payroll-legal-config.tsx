@@ -86,7 +86,7 @@ function RulesTable({ rules }: { rules: StatutoryRule[] }) {
   }
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[820px] text-left text-xs">
+      <table className="stack-table w-full min-w-[820px] text-left text-xs">
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Scheme</th>
@@ -105,24 +105,46 @@ function RulesTable({ rules }: { rules: StatutoryRule[] }) {
               className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
               key={rule.id ?? `${rule.schemeCode}-${rule.jurisdiction}-${rule.effectiveFrom}`}
             >
-              <td className="px-4 py-2.5 font-semibold text-foreground">{rule.schemeCode}</td>
-              <td className="px-4 py-2.5 text-muted-foreground">{rule.jurisdiction}</td>
-              <td className="px-4 py-2.5 font-mono text-muted-foreground">
+              <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
+                {rule.schemeCode}
+              </td>
+              <td data-label="Jurisdiction" className="px-4 py-2.5 text-muted-foreground">
+                {rule.jurisdiction}
+              </td>
+              <td
+                data-label="Effective from"
+                className="px-4 py-2.5 font-mono text-muted-foreground"
+              >
                 {rule.effectiveFrom.slice(0, 10)}
               </td>
-              <td className="px-4 py-2.5 text-right font-mono text-muted-foreground">
+              <td
+                data-label="Employee"
+                className="px-4 py-2.5 text-right font-mono text-muted-foreground"
+              >
                 {rate(rule.employeeRate)}
               </td>
-              <td className="px-4 py-2.5 text-right font-mono text-muted-foreground">
+              <td
+                data-label="Employer"
+                className="px-4 py-2.5 text-right font-mono text-muted-foreground"
+              >
                 {rate(rule.employerRate)}
               </td>
-              <td className="px-4 py-2.5 text-right font-mono text-muted-foreground">
+              <td
+                data-label="Wage ceiling"
+                className="px-4 py-2.5 text-right font-mono text-muted-foreground"
+              >
                 {amount(rule.wageCeiling)}
               </td>
-              <td className="px-4 py-2.5 text-right font-mono text-muted-foreground">
+              <td
+                data-label="Threshold"
+                className="px-4 py-2.5 text-right font-mono text-muted-foreground"
+              >
                 {amount(rule.employeeThreshold)}
               </td>
-              <td className="px-4 py-2.5 text-right font-mono text-muted-foreground">
+              <td
+                data-label="Flat amount"
+                className="px-4 py-2.5 text-right font-mono text-muted-foreground"
+              >
                 {amount(rule.flatAmount)}
               </td>
             </tr>

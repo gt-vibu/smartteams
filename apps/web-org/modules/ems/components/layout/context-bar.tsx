@@ -48,8 +48,12 @@ export function ContextBar({
     }
   };
 
+  // Not drawn on a phone. There it restated what the app bar's space label and the bottom bar's
+  // highlighted tab already say, in a sticky strip that took ~8% of the screen for good; the
+  // `--ems-context-bar-height` token drops to zero with it, so each screen's own sticky toolbar
+  // moves up into the space.
   return (
-    <div className="sticky top-0 z-30 h-[var(--ems-context-bar-height)] w-full shrink-0 select-none border-b border-border bg-background/95 px-3 text-xs text-muted-foreground backdrop-blur-sm sm:px-6 flex min-w-0 items-center justify-between gap-2">
+    <div className="sticky top-0 z-30 hidden h-[var(--ems-context-bar-height)] w-full min-w-0 shrink-0 select-none items-center justify-between gap-2 border-b border-border bg-background/95 px-3 text-xs text-muted-foreground backdrop-blur-sm sm:px-6 md:flex">
       {/* Left: Breadcrumbs Path */}
       <nav
         aria-label="Context Breadcrumbs"

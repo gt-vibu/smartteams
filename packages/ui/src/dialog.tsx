@@ -43,13 +43,20 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4',
+        // A bottom sheet on a phone, a centred dialog from `sm`. A centred box on a 375px screen
+        // is an edge-to-edge card floating mid-screen with its actions out of thumb reach; the
+        // sheet rises from the bottom edge and keeps them there. Horizontal centring is kept at
+        // every size so callers that set their own width (`w-[95vw]`) still sit in the middle.
+        'fixed bottom-0 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 gap-4',
+        'sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2',
         // `overflow-x-hidden`: a dialog scrolls vertically when its form is tall, and nothing in
         // one should produce a sideways scrollbar. The popovers that used to cause exactly that —
         // a calendar overflowing its dialog — are portalled to the body now rather than clipped.
-        'max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden rounded-xl border border-border bg-card p-6 shadow-2xl',
-        'duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-        'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+        'max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden border border-border bg-card shadow-2xl',
+        'rounded-t-2xl p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:rounded-xl sm:p-6',
+        'duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
+        'max-sm:data-[state=open]:slide-in-from-bottom-10 max-sm:data-[state=closed]:slide-out-to-bottom-10',
+        'sm:data-[state=open]:zoom-in-95 sm:data-[state=closed]:zoom-out-95',
         className,
       )}
       {...props}

@@ -229,28 +229,28 @@ export function ConfigureSalaryPolicyDialog({
                 Monthly Gross: {formatMoney(preview.gross)}
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-              <div className="rounded border border-border/60 bg-card/80 p-1.5">
+            <div className="grid grid-cols-1 gap-1.5 pt-1 sm:grid-cols-3 sm:gap-2 sm:text-center">
+              <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
                 <span className="block text-[10px] text-muted-foreground font-medium">
                   Base ({numBasePct}%)
                 </span>
-                <span className="block font-mono text-xs font-bold text-foreground mt-0.5">
+                <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
                   {formatMoney(preview.base)}
                 </span>
               </div>
-              <div className="rounded border border-border/60 bg-card/80 p-1.5">
+              <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
                 <span className="block text-[10px] text-muted-foreground font-medium">
                   HRA ({numHraPct}% of Base)
                 </span>
-                <span className="block font-mono text-xs font-bold text-foreground mt-0.5">
+                <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
                   {formatMoney(preview.hra)}
                 </span>
               </div>
-              <div className="rounded border border-border/60 bg-card/80 p-1.5">
+              <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
                 <span className="block text-[10px] text-muted-foreground font-medium">
                   Other Allowance
                 </span>
-                <span className="block font-mono text-xs font-bold text-foreground mt-0.5">
+                <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
                   {formatMoney(preview.otherAllowance)}
                 </span>
               </div>

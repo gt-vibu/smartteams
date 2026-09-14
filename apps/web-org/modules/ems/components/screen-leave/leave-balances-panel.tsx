@@ -84,7 +84,7 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full min-w-[820px] text-left text-xs">
+          <table className="stack-table w-full min-w-[820px] text-left text-xs">
             <thead className="border-b border-border bg-table-header">
               <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-2.5 font-semibold">Employee</th>
@@ -103,7 +103,7 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                 return (
                   <React.Fragment key={balance.id}>
                     <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
-                      <td className="px-4 py-2.5">
+                      <td data-cell="primary" className="px-4 py-2.5">
                         <span className="block font-semibold text-foreground">
                           {employee ? employeeDisplayName(employee) : 'Not in the directory'}
                         </span>
@@ -111,20 +111,34 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                           {employee?.employeeNumber ?? '--'}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5 text-foreground">{type?.name ?? 'Leave'}</td>
-                      <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
+                      <td data-label="Type" className="px-4 py-2.5 text-foreground">
+                        {type?.name ?? 'Leave'}
+                      </td>
+                      <td
+                        data-label="Entitled"
+                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                      >
                         {entitlementOf(balance)}
                       </td>
-                      <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
+                      <td
+                        data-label="Used"
+                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                      >
                         {balance.usedAmount}
                       </td>
-                      <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
+                      <td
+                        data-label="Pending"
+                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                      >
                         {balance.reservedAmount}
                       </td>
-                      <td className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground">
+                      <td
+                        data-label="Available"
+                        className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                      >
                         {balance.availableAmount}
                       </td>
-                      <td className="px-4 py-2.5 text-right">
+                      <td data-cell="actions" className="px-4 py-2.5 text-right">
                         {admin.canAdjust && activeId !== balance.id && (
                           <Button
                             onClick={() => {

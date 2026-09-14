@@ -63,18 +63,20 @@ export function WorkScheduleCard({
         </div>
       </div>
 
-      {/* 7-Day Timeline Ruler */}
-      <div className="relative pt-2 pb-1 w-full overflow-x-auto no-scrollbar">
-        <div className="min-w-[340px] sm:min-w-[420px] relative">
+      {/* 7-Day Timeline Ruler. No minimum width and no hidden scroller: on a phone each day is
+          about 36px, so the status word gives way to the coloured dot below `sm` rather than
+          spilling into the next day's column. */}
+      <div className="relative pt-2 pb-1 w-full">
+        <div className="relative">
           {/* Horizontal Connector Line */}
           <div className="absolute top-[24px] left-6 right-6 h-0.5 bg-slate-200/80 dark:bg-slate-700 -z-0" />
 
-          <div className="grid grid-cols-7 gap-2 relative z-10 text-center">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2 relative z-10 text-center">
             {attendanceDays.map((item) => {
               const durationStr = isMounted ? formatMinutesToDuration(item.workedMinutes) : '';
 
               return (
-                <div key={item.id} className="flex flex-col items-center">
+                <div key={item.id} className="flex min-w-0 flex-col items-center">
                   {/* 1. Date Hierarchy: Day of Week + Day Number */}
                   <div className="flex flex-col items-center mb-2">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-400 mb-0.5">
@@ -105,7 +107,7 @@ export function WorkScheduleCard({
                   />
 
                   {/* 2. Status Hierarchy */}
-                  <div className="min-h-[16px] flex items-center justify-center">
+                  <div className="min-h-[16px] hidden items-center justify-center sm:flex">
                     {item.dayStatus === 'PRESENT' && (
                       <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
                         Present
@@ -126,7 +128,7 @@ export function WorkScheduleCard({
                   {/* 3. Worked Hours Hierarchy */}
                   <div className="min-h-[16px] flex items-center justify-center mt-0.5">
                     {durationStr ? (
-                      <span className="text-[10px] font-mono font-medium text-slate-500 dark:text-slate-400">
+                      <span className="whitespace-nowrap text-[9px] font-mono font-medium tracking-tight text-slate-500 dark:text-slate-400 sm:text-[10px] sm:tracking-normal">
                         {durationStr}
                       </span>
                     ) : (

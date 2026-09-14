@@ -54,7 +54,7 @@ export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="h-dvh overflow-y-auto overflow-x-hidden bg-background flex flex-col items-center p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] relative">
       {/* Ambient background glows */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl" />
@@ -71,7 +71,7 @@ export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
         />
       </div>
 
-      <div className="relative w-full max-w-sm">
+      <div className="relative w-full max-w-sm my-auto">
         {/* Brand Mark */}
         <div className="flex flex-col items-center mb-8 select-none">
           <div className="h-12 w-12 rounded-[10px] bg-primary flex items-center justify-center shadow-lg shadow-sky-500/30 mb-3">
@@ -137,7 +137,7 @@ export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
                     sized to the icon rather than to a button. */}
                 <Button
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 p-0 text-muted-foreground hover:text-foreground"
+                  className="absolute right-1 top-1/2 h-9 w-9 -translate-y-1/2 p-0 text-muted-foreground hover:text-foreground sm:right-2 sm:h-7 sm:w-7"
                   onClick={() => setShowPassword(!showPassword)}
                   size="icon"
                   tabIndex={-1}
@@ -231,7 +231,7 @@ export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
               type="submit"
               variant="default"
               disabled={isLoading || !email || !password}
-              className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full h-11 sm:h-10 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               {isLoading ? (
                 <>

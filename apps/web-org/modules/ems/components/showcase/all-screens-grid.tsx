@@ -88,7 +88,7 @@ export function AllScreensGrid({ onSelectScreen }: AllScreensGridProps) {
             className="bg-card rounded-[8px] border border-border shadow-md overflow-hidden flex flex-col group hover:border-slate-400 transition-all"
           >
             {/* Screen Header Bar */}
-            <div className="px-5 py-3 border-b border-border bg-muted/40/80 flex items-center justify-between">
+            <div className="px-5 py-3 border-b border-border bg-muted/40 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="h-6 w-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
                   {index + 1}

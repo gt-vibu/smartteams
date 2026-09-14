@@ -89,7 +89,7 @@ function DirectoryTable({
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[760px] text-left text-xs">
+        <table className="stack-table w-full min-w-[760px] text-left text-xs">
           <thead>
             <tr className="border-b border-border bg-table-header text-[10px] uppercase tracking-wider text-muted-foreground">
               <th className="px-4 py-2.5 font-bold">Name</th>
@@ -107,7 +107,7 @@ function DirectoryTable({
               >
                 {/* Name and job title in one cell: they are one fact about a person, and splitting
                   them across columns left the title column half empty for anyone without one. */}
-                <td className="px-4 py-2.5">
+                <td data-cell="primary" className="px-4 py-2.5">
                   <div className="flex items-center gap-2.5">
                     <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
                     <div className="min-w-0">
@@ -120,14 +120,22 @@ function DirectoryTable({
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
+                <td
+                  data-label="Number"
+                  className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                >
                   {entry.employeeNumber}
                 </td>
-                <td className="px-4 py-2.5 text-muted-foreground">{entry.department ?? '--'}</td>
-                <td className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground">
+                <td data-label="Department" className="px-4 py-2.5 text-muted-foreground">
+                  {entry.department ?? '--'}
+                </td>
+                <td
+                  data-label="Joined"
+                  className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                >
                   {entry.dateOfJoining ?? '--'}
                 </td>
-                <td className="px-4 py-2.5">
+                <td data-label="Status" className="px-4 py-2.5">
                   <StatusPill status={entry.status} />
                 </td>
               </tr>

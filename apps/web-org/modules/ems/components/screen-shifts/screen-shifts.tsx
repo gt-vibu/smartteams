@@ -103,7 +103,7 @@ export function ScreenShifts() {
 
       {!shifts.loading && !shifts.error && shifts.shifts.length > 0 && (
         <div className="overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full min-w-[820px] text-left text-xs">
+          <table className="stack-table w-full min-w-[820px] text-left text-xs">
             <thead className="border-b border-border bg-table-header">
               <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-2.5 font-bold">Shift</th>
@@ -122,26 +122,26 @@ export function ScreenShifts() {
                     className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                     key={shift.id}
                   >
-                    <td className="px-4 py-2.5">
+                    <td data-cell="primary" className="px-4 py-2.5">
                       <span className="block font-semibold text-foreground">{shift.name}</span>
                       <span className="font-mono text-[10px] text-muted-foreground">
                         {shift.code}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 text-muted-foreground">
+                    <td data-label="Days" className="px-4 py-2.5 text-muted-foreground">
                       {formatWeekdays(shift.daysOfWeek)}
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                    <td data-label="Hours" className="px-4 py-2.5 font-mono text-muted-foreground">
                       {shift.startsAt.slice(0, 5)} – {shift.endsAt.slice(0, 5)}
                       {shift.crossesMidnight && <span className="ml-1 text-[10px]">(+1 day)</span>}
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                    <td data-label="Break" className="px-4 py-2.5 font-mono text-muted-foreground">
                       {shift.breakMinutes}m
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-foreground">
+                    <td data-label="Net" className="px-4 py-2.5 font-mono text-foreground">
                       {Math.floor(minutes / 60)}h {minutes % 60}m
                     </td>
-                    <td className="px-4 py-2.5 text-right">
+                    <td data-cell="actions" className="px-4 py-2.5 text-right">
                       {shifts.canWrite && (
                         <div className="flex justify-end gap-2">
                           <Button

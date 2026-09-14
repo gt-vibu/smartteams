@@ -3,7 +3,14 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from './cn';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 cursor-pointer',
+  [
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 cursor-pointer',
+    // On a touchscreen the tappable area reaches 4px past every edge, so the 32px default is a
+    // 40px target for a thumb. It is a hit area, not a size: raising the height instead would
+    // override callers that deliberately set `h-auto` — an inline link-button inside a sentence —
+    // because tailwind-merge keeps a variant class alongside the plain one it would replace.
+    "relative pointer-coarse:after:absolute pointer-coarse:after:-inset-1 pointer-coarse:after:content-['']",
+  ],
   {
     variants: {
       // Every variant reads from the token layer. These were hardcoded slate, which meant the

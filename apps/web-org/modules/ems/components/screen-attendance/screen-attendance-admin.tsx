@@ -165,7 +165,7 @@ export function ScreenAttendanceAdmin() {
 
           {!admin.loading && !admin.error && filtered.length > 0 && (
             <div className="overflow-x-auto rounded-xl border border-border bg-card">
-              <table className="w-full min-w-[820px] text-left text-xs">
+              <table className="stack-table w-full min-w-[820px] text-left text-xs">
                 <thead className="border-b border-border bg-table-header">
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 py-2.5 font-bold">Date</th>
@@ -183,8 +183,10 @@ export function ScreenAttendanceAdmin() {
                       className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                       key={row.id}
                     >
-                      <td className="px-4 py-2.5 font-mono text-foreground">{row.workDate}</td>
-                      <td className="px-4 py-2.5">
+                      <td data-label="Date" className="px-4 py-2.5 font-mono text-foreground">
+                        {row.workDate}
+                      </td>
+                      <td data-cell="primary" className="px-4 py-2.5">
                         <span className="block font-semibold text-foreground">
                           {row.employeeName ?? 'Not in the directory'}
                         </span>
@@ -192,19 +194,31 @@ export function ScreenAttendanceAdmin() {
                           {row.employeeNumber ?? '--'}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                      <td
+                        data-label="First in"
+                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                      >
                         {row.firstInTime ?? '--'}
                       </td>
-                      <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                      <td
+                        data-label="Last out"
+                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                      >
                         {row.lastOutTime ?? '--'}
                       </td>
-                      <td className="px-4 py-2.5 font-mono font-bold text-foreground">
+                      <td
+                        data-label="Worked"
+                        className="px-4 py-2.5 font-mono font-bold text-foreground"
+                      >
                         {row.workedLabel}
                       </td>
-                      <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                      <td
+                        data-label="Overtime"
+                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                      >
                         {row.overtimeLabel}
                       </td>
-                      <td className="px-4 py-2.5">
+                      <td data-label="Status" className="px-4 py-2.5">
                         <Badge variant="outline">{row.dayStatus}</Badge>
                         {row.correctionStatus === 'PENDING' && (
                           <Badge className="ml-1" variant="secondary">

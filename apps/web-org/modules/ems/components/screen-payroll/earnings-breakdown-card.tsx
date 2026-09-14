@@ -67,7 +67,7 @@ export function EarningsBreakdownCard({
 
       {/* Responsive Table */}
       <div className="w-full overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="stack-table w-full text-left text-xs">
           <thead className="border-b border-border/60 bg-muted/30 text-[10px] uppercase tracking-wider text-muted-foreground">
             <tr>
               <th className="px-3.5 py-2 font-bold">Component</th>
@@ -120,7 +120,7 @@ export function EarningsBreakdownCard({
 
               return (
                 <tr key={item.code} className="transition-colors hover:bg-muted/20">
-                  <td className="px-3.5 py-2">
+                  <td data-cell="primary" className="px-3.5 py-2">
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-foreground">{item.name}</span>
                       {isConfigurable && (
@@ -135,8 +135,10 @@ export function EarningsBreakdownCard({
                       )}
                     </div>
                   </td>
-                  <td className="px-2.5 py-2 text-muted-foreground">{typeLabel}</td>
-                  <td className="px-2.5 py-2 font-mono text-muted-foreground">
+                  <td data-label="Type" className="px-2.5 py-2 text-muted-foreground">
+                    {typeLabel}
+                  </td>
+                  <td data-label="Value" className="px-2.5 py-2 font-mono text-muted-foreground">
                     {isConfigurable ? (
                       <button
                         type="button"
@@ -151,13 +153,19 @@ export function EarningsBreakdownCard({
                       valueLabel
                     )}
                   </td>
-                  <td className="px-2.5 py-2 text-right font-mono font-semibold text-foreground">
+                  <td
+                    data-label="Monthly (₹)"
+                    className="px-2.5 py-2 text-right font-mono font-semibold text-foreground"
+                  >
                     {formatMoney(item.amount)}
                   </td>
-                  <td className="px-2.5 py-2 text-right font-mono text-muted-foreground">
+                  <td
+                    data-label="Annual (₹)"
+                    className="px-2.5 py-2 text-right font-mono text-muted-foreground"
+                  >
                     {formatMoney(annualAmount)}
                   </td>
-                  <td className="px-3 py-2 text-center">
+                  <td data-label="Active" className="px-3 py-2 text-center">
                     <span
                       className="inline-block h-2 w-2 rounded-full bg-emerald-500"
                       title="Active"

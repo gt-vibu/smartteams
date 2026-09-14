@@ -201,7 +201,7 @@ function PeopleTable({
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[640px] text-left text-xs">
+        <table className="stack-table w-full min-w-[640px] text-left text-xs">
           <thead>
             <tr className="border-b border-border bg-table-header text-[10px] uppercase tracking-wider text-muted-foreground">
               <th className="px-4 py-2.5 font-bold">Member</th>
@@ -216,11 +216,11 @@ function PeopleTable({
                 className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                 key={member.userId}
               >
-                <td className="px-4 py-2.5">
+                <td data-cell="primary" className="px-4 py-2.5">
                   <div className="font-semibold text-foreground">{member.displayName}</div>
                   <div className="text-[11px] text-muted-foreground">{member.email}</div>
                 </td>
-                <td className="px-4 py-2.5">
+                <td data-label="Roles" className="px-4 py-2.5">
                   {member.roles.length === 0 ? (
                     <span className="text-muted-foreground">No roles</span>
                   ) : (
@@ -229,7 +229,7 @@ function PeopleTable({
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-2.5">
+                <td data-label="Status" className="px-4 py-2.5">
                   <span
                     className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                       member.isActive
@@ -240,7 +240,7 @@ function PeopleTable({
                     {member.isActive ? 'active' : 'inactive'}
                   </span>
                 </td>
-                <td className="px-4 py-2.5 text-right">
+                <td data-cell="actions" className="px-4 py-2.5 text-right">
                   {canManage && (
                     <Button
                       className="h-auto px-2 py-1 text-[11px]"

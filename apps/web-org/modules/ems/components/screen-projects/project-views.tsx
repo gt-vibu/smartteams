@@ -67,7 +67,7 @@ export function ProjectTable({
 }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[720px] text-left text-xs">
+      <table className="stack-table w-full min-w-[720px] text-left text-xs">
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Project</th>
@@ -84,13 +84,22 @@ export function ProjectTable({
               key={view.project.id}
               onClick={() => onSelect(view)}
             >
-              <td className="px-4 py-2.5 font-semibold text-foreground">{view.project.name}</td>
-              <td className="px-4 py-2.5 font-mono text-muted-foreground">
+              <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
+                {view.project.name}
+              </td>
+              <td data-label="Code" className="px-4 py-2.5 font-mono text-muted-foreground">
                 {view.project.code ?? '--'}
               </td>
-              <td className="px-4 py-2.5 text-muted-foreground">{view.branchName ?? '--'}</td>
-              <td className="px-4 py-2.5 text-muted-foreground">{view.project.status ?? '--'}</td>
-              <td className="px-4 py-2.5 font-mono font-bold text-foreground">
+              <td data-label="Branch" className="px-4 py-2.5 text-muted-foreground">
+                {view.branchName ?? '--'}
+              </td>
+              <td data-label="Status" className="px-4 py-2.5 text-muted-foreground">
+                {view.project.status ?? '--'}
+              </td>
+              <td
+                data-label="Allocated"
+                className="px-4 py-2.5 font-mono font-bold text-foreground"
+              >
                 {view.activeMembers.length} {view.activeMembers.length === 1 ? 'member' : 'members'}
               </td>
             </tr>

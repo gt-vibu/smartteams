@@ -82,7 +82,7 @@ export function PayrollAdvancesPanel({
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full min-w-[640px] text-left text-xs">
+          <table className="stack-table w-full min-w-[640px] text-left text-xs">
             <thead className="border-b border-border bg-table-header">
               <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-2.5 font-bold">Requested</th>
@@ -99,22 +99,30 @@ export function PayrollAdvancesPanel({
                   className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                   key={advance.id}
                 >
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                  <td
+                    data-label="Requested"
+                    className="px-4 py-2.5 font-mono text-muted-foreground"
+                  >
                     {advance.requestedAt.slice(0, 10)}
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-foreground">
+                  <td data-label="Amount" className="px-4 py-2.5 font-mono text-foreground">
                     {formatMoney(advance.requestedAmount)}
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                  <td data-label="Approved" className="px-4 py-2.5 font-mono text-muted-foreground">
                     {advance.approvedAmount === null || advance.approvedAmount === undefined
                       ? '--'
                       : formatMoney(advance.approvedAmount)}
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                  <td
+                    data-label="Recovered"
+                    className="px-4 py-2.5 font-mono text-muted-foreground"
+                  >
                     {formatMoney(advance.recoveredAmount)}
                   </td>
-                  <td className="px-4 py-2.5 text-muted-foreground">{advance.reason ?? '--'}</td>
-                  <td className="px-4 py-2.5">
+                  <td data-label="Reason" className="px-4 py-2.5 text-muted-foreground">
+                    {advance.reason ?? '--'}
+                  </td>
+                  <td data-label="Status" className="px-4 py-2.5">
                     <Badge variant={advance.status === 'APPROVED' ? 'success' : 'secondary'}>
                       {advance.status.replace(/_/g, ' ').toLowerCase()}
                     </Badge>

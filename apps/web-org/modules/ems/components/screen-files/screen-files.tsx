@@ -169,7 +169,7 @@ export function ScreenFiles() {
 
         {files.files.length > 0 && (
           <div className="overflow-x-auto rounded-xl border border-border bg-card">
-            <table className="w-full min-w-[720px] text-left text-xs">
+            <table className="stack-table w-full min-w-[720px] text-left text-xs">
               <thead className="border-b border-border bg-table-header">
                 <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   <th className="px-4 py-2.5 font-bold">File</th>
@@ -185,19 +185,19 @@ export function ScreenFiles() {
                     className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                     key={file.id}
                   >
-                    <td className="px-4 py-2.5 font-semibold text-foreground">
+                    <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
                       {file.originalName}
                     </td>
-                    <td className="px-4 py-2.5 text-muted-foreground">
+                    <td data-label="Purpose" className="px-4 py-2.5 text-muted-foreground">
                       {file.purpose.replace(/_/g, ' ').toLowerCase()}
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                    <td data-label="Size" className="px-4 py-2.5 font-mono text-muted-foreground">
                       {formatFileSize(file.byteSize)}
                     </td>
-                    <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                    <td data-label="Added" className="px-4 py-2.5 font-mono text-muted-foreground">
                       {file.createdAt.slice(0, 10)}
                     </td>
-                    <td className="px-4 py-2.5 text-right">
+                    <td data-cell="actions" className="px-4 py-2.5 text-right">
                       <div className="flex justify-end gap-2">
                         <Button
                           disabled={files.busy}

@@ -29,8 +29,9 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
   };
 
   return (
-    <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full overflow-x-auto relative">
-      <Table className="min-w-[650px] sm:min-w-[850px]">
+    <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden w-full relative">
+      {/* Cards below 720px of its own width; see `stack-table` in app/responsive.css. */}
+      <Table className="stack-table">
         <TableBody>
           {groupedLogs.map((group) => {
             const allGroupSelected = group.entries.every((e) => selectedIds.has(e.id));
@@ -38,8 +39,11 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
             return (
               <React.Fragment key={group.date}>
                 {/* Date Group Header Row */}
-                <TableRow className="bg-muted/40/90 border-t border-b border-border/90 text-foreground">
-                  <TableCell className="py-2.5 px-4 w-10">
+                <TableRow
+                  data-row="group"
+                  className="bg-muted/40 border-t border-b border-border/90 text-foreground"
+                >
+                  <TableCell data-cell="select" className="py-2.5 px-4 w-10">
                     <Checkbox
                       checked={allGroupSelected}
                       aria-label={`Select all time logs for ${group.date}`}
@@ -66,12 +70,13 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                     <TableRow
                       key={entry.id}
                       onClick={() => onSelectEntry && onSelectEntry(entry.id)}
-                      className={`border-b border-border hover:bg-muted/40/60 transition-colors cursor-pointer group ${
+                      className={`border-b border-border hover:bg-muted/40 transition-colors cursor-pointer group ${
                         isChecked ? 'bg-sky-50/20' : ''
                       }`}
                     >
                       {/* Checkbox */}
                       <TableCell
+                        data-cell="select"
                         className="py-3 px-4 w-10"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -87,7 +92,7 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                       </TableCell>
 
                       {/* Job Name · Project Name */}
-                      <TableCell className="py-3 px-3 max-w-[280px]">
+                      <TableCell data-cell="primary" className="py-3 px-3 max-w-[280px]">
                         <div className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                           {entry.jobName}{' '}
                           <span className="text-muted-foreground font-normal">
@@ -97,24 +102,33 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                       </TableCell>
 
                       {/* Description */}
-                      <TableCell className="py-3 px-3 text-muted-foreground max-w-[360px]">
+                      <TableCell
+                        data-cell="block"
+                        className="py-3 px-3 text-muted-foreground max-w-[360px]"
+                      >
                         <div className="line-clamp-2 text-[11px] leading-relaxed">
                           {entry.description}
                         </div>
                       </TableCell>
 
                       {/* Billable Status */}
-                      <TableCell className="py-3 px-3 w-24 text-muted-foreground font-medium">
+                      <TableCell
+                        data-label="Billing"
+                        className="py-3 px-3 w-24 text-muted-foreground font-medium"
+                      >
                         {entry.isBillable ? 'Billable' : 'Non-billable'}
                       </TableCell>
 
                       {/* Duration */}
-                      <TableCell className="py-3 px-4 w-20 font-mono font-semibold text-foreground text-right">
+                      <TableCell
+                        data-label="Duration"
+                        className="py-3 px-4 w-20 font-mono font-semibold text-foreground text-right"
+                      >
                         {entry.duration}
                       </TableCell>
 
                       {/* Location Pin Icon */}
-                      <TableCell className="py-3 px-3 w-10 text-center text-muted-foreground hover:text-muted-foreground">
+                      <TableCell className="hidden md:table-cell py-3 px-3 w-10 text-center text-muted-foreground">
                         <svg
                           className="h-3.5 w-3.5 inline-block"
                           fill="none"

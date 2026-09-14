@@ -257,7 +257,7 @@ export function ScreenEmployeeHolidays() {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-xs">
-              <table className="w-full min-w-[650px] text-left text-xs">
+              <table className="stack-table w-full min-w-[650px] text-left text-xs">
                 <thead className="border-b border-border bg-table-header">
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 py-2.5 font-bold">Date</th>
@@ -277,12 +277,19 @@ export function ScreenEmployeeHolidays() {
                         key={item.id}
                         className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
                       >
-                        <td className="px-4 py-3 font-mono font-medium text-foreground">
+                        <td
+                          data-label="Date"
+                          className="px-4 py-3 font-mono font-medium text-foreground"
+                        >
                           {formatted}
                         </td>
-                        <td className="px-4 py-3 text-muted-foreground">{dayName}</td>
-                        <td className="px-4 py-3 font-semibold text-foreground">{item.name}</td>
-                        <td className="px-4 py-3">
+                        <td data-label="Day" className="px-4 py-3 text-muted-foreground">
+                          {dayName}
+                        </td>
+                        <td data-cell="primary" className="px-4 py-3 font-semibold text-foreground">
+                          {item.name}
+                        </td>
+                        <td data-label="Type" className="px-4 py-3">
                           <Badge
                             variant={item.isOptional ? 'outline' : 'secondary'}
                             className={`text-[10px] font-medium ${
@@ -294,7 +301,7 @@ export function ScreenEmployeeHolidays() {
                             {item.typeLabel}
                           </Badge>
                         </td>
-                        <td className="px-4 py-3">
+                        <td data-label="Status" className="px-4 py-3">
                           {item.statusLabel === 'Required' && (
                             <span className="text-muted-foreground text-[11px] font-medium">
                               Required
@@ -311,7 +318,7 @@ export function ScreenEmployeeHolidays() {
                             </span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td data-cell="actions" className="px-4 py-3 text-right">
                           {!item.isOptional && (
                             <span className="text-muted-foreground font-mono">—</span>
                           )}

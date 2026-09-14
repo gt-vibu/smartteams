@@ -102,7 +102,7 @@ export function ApprovalPolicyBuilder() {
         <section className="space-y-2" key={domain}>
           <h3 className="text-xs font-bold text-foreground">{approvalDomainLabel[domain]}</h3>
           <div className="overflow-hidden rounded-lg border border-border bg-card">
-            <table className="w-full text-left text-xs">
+            <table className="stack-table w-full text-left text-xs">
               <thead className="border-b border-border bg-table-header">
                 <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   <th className="px-4 py-2.5 font-bold">Policy</th>
@@ -117,18 +117,18 @@ export function ApprovalPolicyBuilder() {
                     className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                     key={policy.id}
                   >
-                    <td className="px-4 py-2.5">
+                    <td data-cell="primary" className="px-4 py-2.5">
                       <span className="block font-semibold text-foreground">{policy.name}</span>
                       <span className="font-mono text-[10px] text-muted-foreground">
                         {policy.code}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5 text-muted-foreground">
+                    <td data-label="Steps" className="px-4 py-2.5 text-muted-foreground">
                       {policy.steps
                         .map((step) => `${step.stepNumber}. ${step.approverType.toLowerCase()}`)
                         .join('  ·  ')}
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td data-label="Status" className="px-4 py-2.5">
                       <div className="flex flex-wrap gap-1.5">
                         {policy.isDefault && <Badge variant="sky">Default</Badge>}
                         <Badge variant={policy.isActive ? 'success' : 'secondary'}>
@@ -136,7 +136,7 @@ export function ApprovalPolicyBuilder() {
                         </Badge>
                       </div>
                     </td>
-                    <td className="px-4 py-2.5 text-right">
+                    <td data-cell="actions" className="px-4 py-2.5 text-right">
                       {policies.canWrite && policy.isActive && (
                         <Button
                           onClick={() => setEditing(policy)}

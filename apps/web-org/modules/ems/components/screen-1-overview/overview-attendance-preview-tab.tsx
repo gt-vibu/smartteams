@@ -39,7 +39,7 @@ export function OverviewAttendancePreviewTab() {
 
       {/* Recent Daily Punch Logs Table */}
       <div className="bg-card rounded-[6px] border border-border shadow-xs overflow-hidden">
-        <div className="p-3.5 border-b border-border bg-muted/40/80 flex items-center justify-between">
+        <div className="p-3.5 border-b border-border bg-muted/40 flex items-center justify-between">
           <h4 className="text-xs font-bold text-foreground">
             Attendance Log Preview (Current Pay Period)
           </h4>
@@ -48,7 +48,7 @@ export function OverviewAttendancePreviewTab() {
           </span>
         </div>
 
-        <Table>
+        <Table className="stack-table">
           <TableHeader>
             <TableRow className="bg-muted/60 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
               <TableHead className="py-2.5 px-4">Date</TableHead>
@@ -61,21 +61,29 @@ export function OverviewAttendancePreviewTab() {
           </TableHeader>
           <TableBody className="divide-y divide-slate-100">
             {records.slice(0, 7).map((r) => (
-              <TableRow key={r.id} className="hover:bg-muted/40/60 transition-colors">
-                <TableCell className="py-2.5 px-4 font-mono font-semibold text-foreground">
+              <TableRow key={r.id} className="hover:bg-muted/40 transition-colors">
+                <TableCell
+                  data-cell="primary"
+                  className="py-2.5 px-4 font-mono font-semibold text-foreground"
+                >
                   {r.workDate}
                 </TableCell>
-                <TableCell className="py-2.5 px-3 text-muted-foreground">{r.dayOfWeek}</TableCell>
-                <TableCell className="py-2.5 px-3 font-mono text-foreground">
+                <TableCell data-label="Day" className="py-2.5 px-3 text-muted-foreground">
+                  {r.dayOfWeek}
+                </TableCell>
+                <TableCell data-label="First in" className="py-2.5 px-3 font-mono text-foreground">
                   {r.firstInTime || '—'}
                 </TableCell>
-                <TableCell className="py-2.5 px-3 font-mono text-foreground">
+                <TableCell data-label="Last out" className="py-2.5 px-3 font-mono text-foreground">
                   {r.lastOutTime || '—'}
                 </TableCell>
-                <TableCell className="py-2.5 px-3 font-bold text-foreground font-mono">
+                <TableCell
+                  data-label="Payable hours"
+                  className="py-2.5 px-3 font-bold text-foreground font-mono"
+                >
                   {r.workedLabel}
                 </TableCell>
-                <TableCell className="py-2.5 px-3 text-right">
+                <TableCell data-label="Status" className="py-2.5 px-3 text-right">
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
                       r.dayStatus === 'PRESENT'

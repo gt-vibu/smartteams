@@ -218,7 +218,7 @@ export function ScreenHolidays() {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-xs">
-              <table className="w-full min-w-[760px] text-left text-xs">
+              <table className="stack-table w-full min-w-[760px] text-left text-xs">
                 <thead className="border-b border-border bg-table-header">
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 py-2.5 font-bold">Date Range</th>
@@ -244,7 +244,7 @@ export function ScreenHolidays() {
                         key={`${group.name}-${group.startDate}-${group.isOptional}`}
                       >
                         {/* Date column (From → To format in one line) */}
-                        <td className="px-4 py-3 font-mono text-foreground">
+                        <td data-label="Date Range" className="px-4 py-3 font-mono text-foreground">
                           <div className="flex items-center gap-2">
                             <span>
                               {isMultiDay
@@ -267,10 +267,12 @@ export function ScreenHolidays() {
                         </td>
 
                         {/* Holiday Plan Name */}
-                        <td className="px-4 py-3 font-semibold text-foreground">{group.name}</td>
+                        <td data-cell="primary" className="px-4 py-3 font-semibold text-foreground">
+                          {group.name}
+                        </td>
 
                         {/* Type */}
-                        <td className="px-4 py-3">
+                        <td data-label="Type" className="px-4 py-3">
                           {group.isOptional ? (
                             <Badge
                               variant="outline"
@@ -286,19 +288,19 @@ export function ScreenHolidays() {
                         </td>
 
                         {/* Scope */}
-                        <td className="px-4 py-3 text-muted-foreground">
+                        <td data-label="Scope" className="px-4 py-3 text-muted-foreground">
                           {group.branchId ? 'One branch' : 'Whole organization'}
                         </td>
 
                         {/* Status */}
-                        <td className="px-4 py-3">
+                        <td data-label="Status" className="px-4 py-3">
                           <Badge variant={group.isActive ? 'success' : 'secondary'}>
                             {group.isActive ? 'Active' : 'Retired'}
                           </Badge>
                         </td>
 
                         {/* Employee Selections */}
-                        <td className="px-4 py-3">
+                        <td data-label="Employee Selections" className="px-4 py-3">
                           {group.isOptional ? (
                             <button
                               type="button"
@@ -317,7 +319,7 @@ export function ScreenHolidays() {
                         </td>
 
                         {/* Actions */}
-                        <td className="px-4 py-3 text-right">
+                        <td data-cell="actions" className="px-4 py-3 text-right">
                           {holidays.canWrite && group.isActive && (
                             <div className="flex justify-end items-center gap-2">
                               {group.isOptional && (

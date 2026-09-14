@@ -37,15 +37,19 @@ export function PersonaSwitcher() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Avatar Pill Button */}
-      <Button
+      {/* A bare avatar on a phone — the one control people expect in that corner — and the named
+          pill from `md`. A plain button: the shared one would pin the chevron to 14px and paint
+          the whole trigger in the primary fill. */}
+      <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-2.5 py-1 rounded-[5px] bg-sidebar-accent/20 hover:bg-sidebar-accent/30 text-white border border-sidebar-border transition-all cursor-pointer shadow-xs group"
+        className="group flex h-10 min-w-10 items-center justify-center gap-2 rounded-md text-white transition-all cursor-pointer md:h-8 md:border md:border-sidebar-border md:bg-sidebar-accent/20 md:px-2.5 md:shadow-xs md:hover:bg-sidebar-accent/30"
         title="Account"
+        aria-label="Account"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <div className="h-5 w-5 rounded-full bg-primary text-white font-bold text-[10px] flex items-center justify-center shadow-xs">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-xs ring-2 ring-white/15 md:h-5 md:w-5 md:text-[10px] md:ring-0">
           {persona.avatarInitials}
         </div>
         <div className="text-left hidden lg:block">
@@ -55,7 +59,7 @@ export function PersonaSwitcher() {
           </div>
         </div>
         <svg
-          className={`h-3 w-3 text-slate-300 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`hidden h-3 w-3 text-slate-300 transition-transform md:block ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -63,11 +67,11 @@ export function PersonaSwitcher() {
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
-      </Button>
+      </button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-card border border-border rounded-[10px] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+        <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-1.5rem)] bg-card border border-border rounded-[10px] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
           {/* Profile Header */}
           <div className="p-4 bg-muted/40 flex items-center gap-3 border-b border-border">
             <div className="h-10 w-10 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">

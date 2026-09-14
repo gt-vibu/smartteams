@@ -185,7 +185,7 @@ function EmsWorkspaceInner() {
 
 function WorkspaceLoading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0B1120] text-sm text-muted-foreground">
+    <div className="flex h-dvh items-center justify-center bg-[#0B1120] text-sm text-muted-foreground">
       Restoring your session…
     </div>
   );

@@ -68,7 +68,7 @@ export function LeaveRequestQueue({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[860px] text-left text-xs">
+      <table className="stack-table w-full min-w-[860px] text-left text-xs">
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-semibold">Employee</th>
@@ -88,7 +88,7 @@ export function LeaveRequestQueue({
             return (
               <React.Fragment key={request.id}>
                 <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
-                  <td className="px-4 py-2.5">
+                  <td data-cell="primary" className="px-4 py-2.5">
                     <span className="block font-semibold text-foreground">
                       {employee ? employeeDisplayName(employee) : 'Not in the directory'}
                     </span>
@@ -96,25 +96,28 @@ export function LeaveRequestQueue({
                       {employee?.employeeNumber ?? '--'}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 text-foreground">
+                  <td data-label="Type" className="px-4 py-2.5 text-foreground">
                     {type?.name ?? 'Leave'}
                     {type && !type.paid && (
                       <span className="ml-1.5 text-[10px] text-muted-foreground">Unpaid</span>
                     )}
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                  <td data-label="From" className="px-4 py-2.5 font-mono text-muted-foreground">
                     {dateKey(request.startDate)}
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                  <td data-label="To" className="px-4 py-2.5 font-mono text-muted-foreground">
                     {dateKey(request.endDate)}
                   </td>
-                  <td className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground">
+                  <td
+                    data-label="Days"
+                    className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                  >
                     {request.requestedDays}
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td data-label="Status" className="px-4 py-2.5">
                     <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
                   </td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td data-cell="actions" className="px-4 py-2.5 text-right">
                     {request.status === 'PENDING' && admin.canDecide && activeId !== request.id && (
                       <Button
                         disabled={!mine}

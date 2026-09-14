@@ -196,7 +196,7 @@ export function HolidaySelectionsDialog({
             </div>
           ) : (
             <div className="max-h-[340px] overflow-y-auto overflow-x-auto rounded-lg border border-border">
-              <table className="w-full text-left text-xs">
+              <table className="stack-table w-full text-left text-xs">
                 <thead className="border-b border-border bg-table-header">
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     <th className="px-3.5 py-2 font-bold">Employee</th>
@@ -210,16 +210,19 @@ export function HolidaySelectionsDialog({
                       key={i}
                       className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors"
                     >
-                      <td className="px-3.5 py-2.5 font-medium text-foreground">
+                      <td data-cell="primary" className="px-3.5 py-2.5 font-medium text-foreground">
                         <div>{emp.employeeName}</div>
                         {emp.workEmail !== '—' && (
                           <div className="text-[10px] text-muted-foreground">{emp.workEmail}</div>
                         )}
                       </td>
-                      <td className="px-3.5 py-2.5 font-mono text-muted-foreground">
+                      <td
+                        data-label="Employee ID"
+                        className="px-3.5 py-2.5 font-mono text-muted-foreground"
+                      >
                         {emp.employeeNumber}
                       </td>
-                      <td className="px-3.5 py-2.5">
+                      <td data-label="Selected Dates" className="px-3.5 py-2.5">
                         <div className="flex flex-wrap gap-1">
                           {emp.selectedDates.sort().map((dt) => (
                             <span

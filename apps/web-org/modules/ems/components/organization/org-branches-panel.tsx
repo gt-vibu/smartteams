@@ -71,7 +71,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
 
       {!state.loading && !state.error && state.branches.length > 0 && (
         <div className="overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full min-w-[640px] text-left text-xs">
+          <table className="stack-table w-full min-w-[640px] text-left text-xs">
             <thead className="border-b border-border bg-table-header">
               <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-2.5 font-bold">Branch</th>
@@ -86,14 +86,18 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                   className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                   key={branch.id}
                 >
-                  <td className="px-4 py-2.5 font-semibold text-foreground">{branch.name}</td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">{branch.code}</td>
-                  <td className="px-4 py-2.5">
+                  <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
+                    {branch.name}
+                  </td>
+                  <td data-label="Code" className="px-4 py-2.5 font-mono text-muted-foreground">
+                    {branch.code}
+                  </td>
+                  <td data-label="Status" className="px-4 py-2.5">
                     <Badge variant={branch.status === 'DEACTIVATED' ? 'secondary' : 'success'}>
                       {branch.status === 'DEACTIVATED' ? 'Retired' : 'Active'}
                     </Badge>
                   </td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td data-cell="actions" className="px-4 py-2.5 text-right">
                     {state.can.writeBranches && branch.status !== 'DEACTIVATED' && (
                       <div className="flex justify-end gap-2">
                         <Button

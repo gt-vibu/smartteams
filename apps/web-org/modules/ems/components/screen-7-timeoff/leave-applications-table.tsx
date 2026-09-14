@@ -44,7 +44,7 @@ export function LeaveApplicationsTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[720px] text-left text-xs">
+      <table className="stack-table w-full min-w-[720px] text-left text-xs">
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-semibold">Type</th>
@@ -62,25 +62,28 @@ export function LeaveApplicationsTable({
             return (
               <React.Fragment key={request.id}>
                 <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
-                  <td className="px-4 py-2.5">
+                  <td data-cell="primary" className="px-4 py-2.5">
                     <span className="font-semibold text-foreground">{type?.name ?? 'Leave'}</span>
                     {type && !type.paid && (
                       <span className="ml-1.5 text-[10px] text-muted-foreground">Unpaid</span>
                     )}
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                  <td data-label="From" className="px-4 py-2.5 font-mono text-muted-foreground">
                     {dateKey(request.startDate)}
                   </td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                  <td data-label="To" className="px-4 py-2.5 font-mono text-muted-foreground">
                     {dateKey(request.endDate)}
                   </td>
-                  <td className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground">
+                  <td
+                    data-label="Days"
+                    className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                  >
                     {request.requestedDays}
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td data-label="Status" className="px-4 py-2.5">
                     <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
                   </td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td data-cell="actions" className="px-4 py-2.5 text-right">
                     {cancellable && cancellingId !== request.id && (
                       <Button
                         onClick={() => {

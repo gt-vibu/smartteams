@@ -78,7 +78,7 @@ export function OverviewApprovalsTab() {
 
   return (
     <div className="bg-card rounded-[6px] border border-border/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
-      <div className="p-4 border-b border-border bg-muted/40/70 flex items-center justify-between">
+      <div className="p-4 border-b border-border bg-muted/40 flex items-center justify-between">
         <div>
           <h3 className="!text-xs !font-bold !text-foreground !m-0">
             Pending Team Approvals & Action Requests

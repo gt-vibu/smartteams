@@ -148,7 +148,7 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full min-w-[560px] text-left text-xs">
+      <table className="stack-table w-full min-w-[560px] text-left text-xs">
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Employee</th>
@@ -162,7 +162,7 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
               className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
               key={employee.id}
             >
-              <td className="px-4 py-2.5">
+              <td data-cell="primary" className="px-4 py-2.5">
                 <div className="flex items-center gap-2.5">
                   <PersonAvatar name={employeeDisplayName(employee)} size="sm" />
                   <span className="font-semibold text-foreground">
@@ -170,10 +170,12 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
                   </span>
                 </div>
               </td>
-              <td className="px-4 py-2.5 font-mono text-muted-foreground">
+              <td data-label="Number" className="px-4 py-2.5 font-mono text-muted-foreground">
                 {employee.employeeNumber}
               </td>
-              <td className="px-4 py-2.5 text-muted-foreground">{employee.status.toLowerCase()}</td>
+              <td data-label="Status" className="px-4 py-2.5 text-muted-foreground">
+                {employee.status.toLowerCase()}
+              </td>
             </tr>
           ))}
         </tbody>

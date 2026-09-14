@@ -130,7 +130,7 @@ export function ScreenCompensation() {
               <p className="px-1 py-3 text-xs text-muted-foreground">No employees found.</p>
             )}
 
-            <ul className="max-h-[calc(100vh-230px)] min-h-[160px] space-y-1.5 overflow-y-auto pr-1">
+            <ul className="max-h-[calc(100dvh-230px)] min-h-[160px] space-y-1.5 overflow-y-auto pr-1">
               {rows.map((employee) => {
                 const isSelected = compensation.employeeId === employee.id;
                 const initials =

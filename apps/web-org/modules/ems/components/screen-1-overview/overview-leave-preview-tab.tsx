@@ -49,7 +49,7 @@ export function OverviewLeavePreviewTab() {
             No leave requests submitted.
           </p>
         ) : (
-          <table className="w-full text-left text-xs">
+          <table className="stack-table w-full text-left text-xs">
             <tbody>
               {recent.map((request) => {
                 const type = leave.typesById.get(request.leaveTypeId);
@@ -58,16 +58,22 @@ export function OverviewLeavePreviewTab() {
                     className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                     key={request.id}
                   >
-                    <td className="px-4 py-2.5 font-medium text-foreground">
+                    <td data-cell="primary" className="px-4 py-2.5 font-medium text-foreground">
                       {type?.name ?? 'Leave'}
                     </td>
-                    <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
+                    <td
+                      data-label="Dates"
+                      className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground"
+                    >
                       {dateKey(request.startDate)} to {dateKey(request.endDate)}
                     </td>
-                    <td className="px-3 py-2.5 font-semibold tabular-nums text-foreground">
+                    <td
+                      data-label="Days"
+                      className="px-3 py-2.5 font-semibold tabular-nums text-foreground"
+                    >
                       {request.requestedDays}
                     </td>
-                    <td className="px-3 py-2.5 text-right">
+                    <td data-label="Status" className="px-3 py-2.5 text-right">
                       <Badge
                         variant={
                           request.status === 'REJECTED'

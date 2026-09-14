@@ -53,7 +53,7 @@ export function EmsLayout({
   const showLeftRail = activeSpace === 'My Space' || activeSpace === 'Organization';
 
   return (
-    <div className="h-screen w-full flex flex-col bg-background text-foreground antialiased overflow-hidden font-sans">
+    <div className="h-dvh w-full flex flex-col bg-background text-foreground antialiased overflow-hidden font-sans">
       {/* 1. Global Top App Bar */}
       <EmsTopAppBar
         activeSpace={activeSpace}

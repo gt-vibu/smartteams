@@ -146,13 +146,15 @@ export function CommandPalette({
 
   if (!isOpen) return null;
 
+  // On a phone the palette opens with the keyboard up, so it sits at the top and stops at about
+  // half the screen: at 80vh its lower results were behind the keyboard with no way to reach them.
   return (
     <div
-      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-24 px-4 animate-in fade-in duration-100"
+      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-start justify-center pt-[max(0.75rem,env(safe-area-inset-top))] sm:pt-24 px-3 sm:px-4 animate-in fade-in duration-100"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-popover border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in zoom-in-95 duration-100"
+        className="w-full max-w-xl bg-popover border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[55dvh] sm:max-h-[80vh] animate-in zoom-in-95 duration-100"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         role="dialog"
