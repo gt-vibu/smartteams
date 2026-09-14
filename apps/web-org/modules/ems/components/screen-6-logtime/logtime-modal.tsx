@@ -57,9 +57,12 @@ export function LogTimeModal({
   const [workDate, setWorkDate] = useState(initialDate);
   const [description, setDescription] = useState('');
   const [hoursMode, setHoursMode] = useState<'TOTAL' | 'START_END'>('TOTAL');
-  const [totalHours, setTotalHours] = useState('08:00');
-  const [startTime, setStartTime] = useState('09:00');
-  const [endTime, setEndTime] = useState('17:00');
+  // Hours start empty. They were pre-filled as 08:00 (and 09:00–17:00), so saving without looking
+  // recorded a full day whatever was worked — and logged time feeds timesheets, approvals and pay.
+  // A form that records effort should ask for it, not assume it.
+  const [totalHours, setTotalHours] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [billable, setBillable] = useState<boolean>(true);
   const [attachmentName, setAttachmentName] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -75,21 +78,22 @@ export function LogTimeModal({
         setProjectId(projects[0]?.id ?? '');
       }
       if (jobTypes.length > 0 && !jobName) {
-        setJobName(jobTypes[0]?.name ?? 'Development');
+        setJobName(jobTypes[0]?.name ?? '');
       }
     }
   }, [isOpen, projects, jobTypes, projectId, jobName]);
 
   const reset = () => {
     setProjectId(projects[0]?.id ?? '');
-    setJobName(jobTypes[0]?.name ?? 'Development');
+    // No invented job: with none defined the field stays empty, and it is required.
+    setJobName(jobTypes[0]?.name ?? '');
     setWorkItem('');
     setWorkDate(new Date().toISOString().slice(0, 10));
     setDescription('');
     setHoursMode('TOTAL');
-    setTotalHours('08:00');
-    setStartTime('09:00');
-    setEndTime('17:00');
+    setTotalHours('');
+    setStartTime('');
+    setEndTime('');
     setBillable(true);
     setAttachmentName(null);
     setError('');
@@ -120,13 +124,21 @@ export function LogTimeModal({
 
     let minutes = 0;
     if (hoursMode === 'TOTAL') {
+      if (!totalHours.trim()) {
+        setError('Enter the hours you worked (e.g. 2:30, 3h or 45m).');
+        return;
+      }
       const parsed = parseDuration(totalHours);
       if (parsed === null || parsed < 1) {
-        setError('Enter a valid duration (e.g. 8h, 08:30, or 45m).');
+        setError('Enter a valid duration (e.g. 2:30, 3h or 45m).');
         return;
       }
       minutes = parsed;
     } else {
+      if (!startTime || !endTime) {
+        setError('Enter both a start time and an end time.');
+        return;
+      }
       const diff = calculateMinutesFromStartEnd(startTime, endTime);
       if (diff === null || diff <= 0) {
         setError('End time must be after Start time.');
@@ -213,6 +225,15 @@ export function LogTimeModal({
                   </Button>
                 )}
               </div>
+              {/* Without the + and with nothing to pick, the field was a dead end with no reason
+                  given. Creating a project needs `projects.write`, which an employee role does not
+                  carry; say who can, rather than leave them wondering where the button went. */}
+              {!onCreateProject && projects.length === 0 && (
+                <p className="text-[11px] text-muted-foreground sm:col-span-3 sm:col-start-2">
+                  No projects yet. An admin or project manager can add them on the Projects screen —
+                  project is optional, so you can still log this time.
+                </p>
+              )}
             </div>
 
             {/* Job Name */}
@@ -347,7 +368,8 @@ export function LogTimeModal({
                     <Input
                       value={totalHours}
                       onChange={(e) => setTotalHours(e.target.value)}
-                      placeholder="00:00"
+                      placeholder="e.g. 2:30"
+                      aria-label="Hours worked"
                       disabled={saving}
                       className="w-24 font-mono text-xs h-8 text-center"
                     />
