@@ -70,6 +70,29 @@ export function parseCurrentShiftAssignment(payload: unknown) {
   return result.success ? result.data : null;
 }
 
+/** One row of "who is on which shift", with where it stands on the tenant's today. */
+export const shiftAssignmentSchema = z.object({
+  id: z.string().uuid(),
+  employee: z.object({
+    id: z.string().uuid(),
+    firstName: z.string(),
+    lastName: z.string().nullable().optional(),
+    employeeNumber: z.string().nullable().optional(),
+  }),
+  shift: z.object({ id: z.string().uuid(), name: z.string(), code: z.string() }),
+  startsOn: z.string(),
+  endsOn: z.string().nullable(),
+  state: z.enum(['CURRENT', 'UPCOMING', 'ENDED']),
+});
+export type ShiftAssignment = z.infer<typeof shiftAssignmentSchema>;
+
+export function parseShiftAssignmentPage(payload: unknown) {
+  const result = z
+    .object({ items: z.array(shiftAssignmentSchema), nextCursor: z.string().nullable() })
+    .safeParse(payload);
+  return result.success ? result.data : null;
+}
+
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 /** `Mon, Tue, Wed` — presentation only; the numbers are the backend's. */

@@ -1,6 +1,8 @@
 import {
   IsArray,
   IsBoolean,
+  IsIn,
+  IsInt,
   IsDateString,
   IsNumber,
   IsOptional,
@@ -9,6 +11,7 @@ import {
   Matches,
   Max,
   Min,
+  MaxLength,
   MinLength,
   ValidateNested,
 } from 'class-validator';
@@ -67,7 +70,24 @@ export class ShiftAssignmentDto {
   @IsOptional() @IsDateString() endsOn?: string;
 }
 
+/** `YYYY-MM-DD`; a date, not an instant. */
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
 export class CurrentShiftQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
-  @IsOptional() @Matches(/^\d{4}-\d{2}-\d{2}$/) on?: string;
+  @IsOptional() @Matches(DATE_ONLY) on?: string;
+}
+
+export class ShiftAssignmentListQueryDto {
+  @IsOptional() @IsUUID() shiftId?: string;
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsIn(['true', 'false']) includeEnded?: 'true' | 'false';
+  @IsOptional() @IsUUID() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+}
+
+/** The employee's last day on the shift, and why it ends. */
+export class EndShiftAssignmentDto {
+  @Matches(DATE_ONLY) endsOn!: string;
+  @IsString() @MinLength(3) @MaxLength(500) reason!: string;
 }

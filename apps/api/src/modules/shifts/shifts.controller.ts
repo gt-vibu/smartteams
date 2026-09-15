@@ -1,15 +1,28 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   CurrentShiftQueryDto,
+  EndShiftAssignmentDto,
+  ShiftAssignmentListQueryDto,
   ShiftAssignmentDto,
   ShiftDeactivationDto,
   ShiftDto,
   UpdateShiftDto,
 } from './shifts.dto';
-import { ShiftAssignmentLookupService } from './shift-assignment-lookup.service';
+import { ShiftAssignmentsService } from './shift-assignments.service';
 import { ShiftsService } from './shifts.service';
 
 @Controller('v1/organizations/:organizationId/shifts')
@@ -17,7 +30,7 @@ import { ShiftsService } from './shifts.service';
 export class ShiftsController {
   constructor(
     private readonly shifts: ShiftsService,
-    private readonly assignments: ShiftAssignmentLookupService,
+    private readonly assignments: ShiftAssignmentsService,
     private readonly contexts: DomainContextFactory,
   ) {}
   /** The shift an employee is assigned to on a day — the caller's own unless they may read others. */
@@ -29,6 +42,32 @@ export class ShiftsController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.assignments.current(context, query));
+  }
+  /** Who is on which shift; current and upcoming unless `includeEnded`. */
+  @Get('assignments') assignmentList(
+    @Param('organizationId') organizationId: string,
+    @Query() query: ShiftAssignmentListQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.assignments.list(context, {
+        ...(query.shiftId ? { shiftId: query.shiftId } : {}),
+        ...(query.employeeId ? { employeeId: query.employeeId } : {}),
+        ...(query.includeEnded ? { includeEnded: query.includeEnded === 'true' } : {}),
+        ...(query.cursor ? { cursor: query.cursor } : {}),
+        ...(query.limit ? { limit: query.limit } : {}),
+      }),
+    );
+  }
+  @Post('assignments/:assignmentId/end') endAssignment(
+    @Param('organizationId') organizationId: string,
+    @Param('assignmentId', ParseUUIDPipe) assignmentId: string,
+    @Body() body: EndShiftAssignmentDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.assignments.end(context, assignmentId, body));
   }
   @Get() list(
     @Param('organizationId') organizationId: string,

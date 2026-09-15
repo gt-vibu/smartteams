@@ -1,8 +1,10 @@
 import {
   parseCurrentShiftAssignment,
+  parseShiftAssignmentPage,
   parseShift,
   parseShiftList,
   type CurrentShiftAssignment,
+  type ShiftAssignment,
   type Shift,
 } from '@smarteam/contracts';
 import { apiRequest } from '../lib/api-client';
@@ -95,6 +97,37 @@ export const shiftsRepository = {
   ): Promise<unknown> {
     return apiRequest(
       `${base(organizationId)}/employees/${encodeURIComponent(employeeId)}/assignments`,
+      { method: 'POST', body: input },
+    );
+  },
+
+  /** Who is on a shift: current and upcoming, or every assignment with `includeEnded`. */
+  async assignments(
+    organizationId: string,
+    filters: { shiftId?: string; includeEnded?: boolean; cursor?: string; limit?: number },
+  ): Promise<{ items: ShiftAssignment[]; nextCursor: string | null }> {
+    return expectShape(
+      parseShiftAssignmentPage(
+        await apiRequest(
+          `${base(organizationId)}/assignments${queryString({
+            ...filters,
+            includeEnded: filters.includeEnded ? 'true' : undefined,
+          })}`,
+          { method: 'GET' },
+        ),
+      ),
+      'shift assignment list',
+    );
+  },
+
+  /** Ends an assignment on `endsOn`, the employee's last day on the shift. Audited with `reason`. */
+  async endAssignment(
+    organizationId: string,
+    assignmentId: string,
+    input: { endsOn: string; reason: string },
+  ): Promise<unknown> {
+    return apiRequest(
+      `${base(organizationId)}/assignments/${encodeURIComponent(assignmentId)}/end`,
       { method: 'POST', body: input },
     );
   },

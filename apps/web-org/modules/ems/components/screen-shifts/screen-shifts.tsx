@@ -7,6 +7,7 @@ import { Button } from '@smarteam/ui';
 import { formatWeekdays, shiftMinutes, type Shift } from '@smarteam/contracts';
 import { useShifts } from '../../hooks/use-shifts';
 import { AssignShiftDialog, RetireShiftDialog, ShiftDialog } from './shift-dialogs';
+import { ShiftAssignmentsDialog } from './shift-assignments-dialog';
 import { PageShell } from '../layout/page-shell';
 
 /**
@@ -26,6 +27,7 @@ export function ScreenShifts() {
   const [creating, setCreating] = useState(false);
   const [assigning, setAssigning] = useState<Shift | null>(null);
   const [retiring, setRetiring] = useState<Shift | null>(null);
+  const [viewingPeople, setViewingPeople] = useState<Shift | null>(null);
 
   if (shifts.forbidden) {
     return (
@@ -53,7 +55,7 @@ export function ScreenShifts() {
             </Button>
           )
         }
-        description="Working patterns attendance measures against. Assignments are effective-dated."
+        description="Working patterns attendance measures against. Assignments are effective-dated; see and end them under People."
         icon={CalendarClock}
         title="Shifts"
         tone="accent"
@@ -142,34 +144,44 @@ export function ScreenShifts() {
                       {Math.floor(minutes / 60)}h {minutes % 60}m
                     </td>
                     <td data-cell="actions" className="px-4 py-2.5 text-right">
-                      {shifts.canWrite && (
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            onClick={() => setAssigning(shift)}
-                            size="sm"
-                            type="button"
-                            variant="outline"
-                          >
-                            Assign
-                          </Button>
-                          <Button
-                            onClick={() => setEditing(shift)}
-                            size="sm"
-                            type="button"
-                            variant="outline"
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            onClick={() => setRetiring(shift)}
-                            size="sm"
-                            type="button"
-                            variant="ghost"
-                          >
-                            Retire
-                          </Button>
-                        </div>
-                      )}
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          onClick={() => setViewingPeople(shift)}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          People
+                        </Button>
+                        {shifts.canWrite && (
+                          <>
+                            <Button
+                              onClick={() => setAssigning(shift)}
+                              size="sm"
+                              type="button"
+                              variant="outline"
+                            >
+                              Assign
+                            </Button>
+                            <Button
+                              onClick={() => setEditing(shift)}
+                              size="sm"
+                              type="button"
+                              variant="outline"
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              onClick={() => setRetiring(shift)}
+                              size="sm"
+                              type="button"
+                              variant="ghost"
+                            >
+                              Retire
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
@@ -200,6 +212,11 @@ export function ScreenShifts() {
         open={assigning !== null}
         shift={assigning}
         shifts={shifts}
+      />
+      <ShiftAssignmentsDialog
+        canWrite={shifts.canWrite}
+        onOpenChange={(open) => !open && setViewingPeople(null)}
+        shift={viewingPeople}
       />
       <RetireShiftDialog
         onOpenChange={(open) => !open && setRetiring(null)}

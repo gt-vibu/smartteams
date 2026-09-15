@@ -291,6 +291,8 @@ export function AssignShiftDialog({
           {shifts.saveError && (
             <p className="text-xs text-destructive" role="alert">
               {shifts.saveError}
+              {/must not overlap/i.test(shifts.saveError) &&
+                '. End their current assignment first: open People on the shift they are on and choose End, on their last day before this one starts.'}
             </p>
           )}
           <div className="flex justify-end gap-2">
