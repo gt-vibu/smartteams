@@ -115,40 +115,51 @@ export function Screen7TimeOff() {
 
         {!leave.loading && !leave.error && (
           <>
-            {leave.balances.length === 0 && leave.canReadBalances && (
-              <p className="rounded-lg border border-border bg-card px-4 py-3 text-xs text-muted-foreground">
-                No leave balances have been provisioned for you yet.
-              </p>
-            )}
-
-            <LeaveBalanceCards balances={leave.balances} typesById={leave.typesById} />
-
             {leave.saveError && (
               <p className="text-xs font-medium text-destructive" role="alert">
                 {leave.saveError}
               </p>
             )}
 
-            {visible.length === 0 ? (
-              <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
-                <p className="text-sm font-semibold text-foreground">
-                  {leave.requests.length === 0 ? 'No leave requests' : 'Nothing in this status'}
+            {/* The status tabs filter these requests, so they come first. They used to sit under
+                the balance cards, where on a phone choosing a tab changed nothing in view. */}
+            <section aria-label="Leave requests" className="space-y-2">
+              <h2 className="text-xs font-bold text-foreground">
+                {status === 'ALL'
+                  ? 'Leave requests'
+                  : `${STATUS_FILTERS.find((filter) => filter.id === status)?.label ?? ''} requests`}
+              </h2>
+              {visible.length === 0 ? (
+                <div className="flex flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-8 text-center">
+                  <p className="text-sm font-semibold text-foreground">
+                    {leave.requests.length === 0 ? 'No leave requests' : 'Nothing in this status'}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {leave.requests.length === 0
+                      ? 'Requests you submit will appear here.'
+                      : 'Choose a different filter to see other requests.'}
+                  </p>
+                </div>
+              ) : (
+                <LeaveApplicationsTable
+                  canWrite={leave.canWrite}
+                  onCancel={leave.cancel}
+                  requests={visible}
+                  saving={leave.saving}
+                  typesById={leave.typesById}
+                />
+              )}
+            </section>
+
+            <section aria-label="Leave balances" className="space-y-2">
+              <h2 className="text-xs font-bold text-foreground">Balances</h2>
+              {leave.balances.length === 0 && leave.canReadBalances && (
+                <p className="rounded-lg border border-border bg-card px-4 py-3 text-xs text-muted-foreground">
+                  No leave balances have been provisioned for you yet.
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {leave.requests.length === 0
-                    ? 'Requests you submit will appear here.'
-                    : 'Choose a different filter to see other requests.'}
-                </p>
-              </div>
-            ) : (
-              <LeaveApplicationsTable
-                canWrite={leave.canWrite}
-                onCancel={leave.cancel}
-                requests={visible}
-                saving={leave.saving}
-                typesById={leave.typesById}
-              />
-            )}
+              )}
+              <LeaveBalanceCards balances={leave.balances} typesById={leave.typesById} />
+            </section>
           </>
         )}
       </PageShell>

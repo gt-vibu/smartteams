@@ -51,6 +51,25 @@ export function parseShift(payload: unknown): Shift | null {
   return result.success ? result.data : null;
 }
 
+/** The shift an employee is assigned to on a day, or null when they have none. */
+export const currentShiftAssignmentSchema = z.object({
+  assignment: z
+    .object({
+      id: z.string().uuid(),
+      employeeId: z.string().uuid(),
+      startsOn: z.string(),
+      endsOn: z.string().nullable(),
+      shift: shiftSchema,
+    })
+    .nullable(),
+});
+export type CurrentShiftAssignment = z.infer<typeof currentShiftAssignmentSchema>['assignment'];
+
+export function parseCurrentShiftAssignment(payload: unknown) {
+  const result = currentShiftAssignmentSchema.safeParse(payload);
+  return result.success ? result.data : null;
+}
+
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 /** `Mon, Tue, Wed` — presentation only; the numbers are the backend's. */

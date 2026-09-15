@@ -7,6 +7,7 @@ import { useAttendance } from '../../hooks/use-attendance';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
+import { useMyShift } from '../../hooks/use-my-shift';
 import type { DailyAttendanceItem } from '../../types/attendance.types';
 import { toDailyStatus } from '../../services/attendance-view';
 import { formatDateLabel } from '../../utils/formatters';
@@ -16,23 +17,20 @@ import { WorkScheduleCard } from './work-schedule-card';
 import { UpcomingHolidaysCard } from './upcoming-holidays-card';
 import { CompanyDocumentsCard } from './company-documents-card';
 
-/** Shift assignment is not wired; the card reports that rather than naming a shift. */
-const UNRECORDED_SHIFT = {
-  id: 'shift_general',
-  code: 'GEN',
-  name: 'Not recorded',
-  startsAt: '--',
-  endsAt: '--',
-};
-
 /**
  * The Activities tab: what is happening around the employee this week.
  *
  * Its own component so Home can place it in either layout — beside the profile on a laptop, as a
  * tab of its own on a phone — without the screen carrying every card's data derivation.
  */
-export function OverviewActivitiesTab() {
+interface OverviewActivitiesTabProps {
+  /** Opens another module; the holiday card's "View all" goes to the holiday calendar. */
+  onNavigateModule?: (module: string) => void;
+}
+
+export function OverviewActivitiesTab({ onNavigateModule }: OverviewActivitiesTabProps = {}) {
   const { employee } = useEmployee();
+  const myShift = useMyShift();
   const { days: records } = useAttendance();
   const { approvedTimesheet } = useTimesheet();
   const holidays = useHolidays();
@@ -81,7 +79,8 @@ export function OverviewActivitiesTab() {
       {employee && <GreetingCard employee={employee} />}
       {approvedTimesheet && <TimesheetStatusCard notification={approvedTimesheet} />}
       <WorkScheduleCard
-        shift={UNRECORDED_SHIFT}
+        shift={myShift.shift}
+        shiftStatus={myShift.loading ? 'loading' : myShift.error ? 'unavailable' : 'unassigned'}
         startDate={first ? formatDateLabel(first) : 'Current period'}
         endDate={last ? formatDateLabel(last) : ''}
         attendanceDays={weekScheduleDays}
@@ -90,6 +89,7 @@ export function OverviewActivitiesTab() {
         holidays={upcomingHolidays}
         loading={holidays.loading}
         unavailable={holidays.forbidden}
+        {...(onNavigateModule ? { onViewAll: () => onNavigateModule('holidays') } : {})}
       />
       <CompanyDocumentsCard />
     </div>

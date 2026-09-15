@@ -123,7 +123,9 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
               ) : (
                 <>
                   <SubNavTabs activeTab={activeSubTab} onSelectTab={handleSelectSubTab} />
-                  {activeSubTab === 'Activities' && <OverviewActivitiesTab />}
+                  {activeSubTab === 'Activities' && (
+                    <OverviewActivitiesTab onNavigateModule={onNavigateModule} />
+                  )}
                   {activeSubTab === 'Profile' && <OverviewProfileTab />}
                   {activeSubTab === 'Approvals' && <OverviewApprovalsTab />}
                   {activeSubTab === 'Leave' && <OverviewLeavePreviewTab />}

@@ -4,6 +4,7 @@ import { useAttendance } from '../../hooks/use-attendance';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import { useLeave } from '../../hooks/use-leave';
 import { useAuth } from '../../hooks/use-auth';
+import { useMyShift } from '../../hooks/use-my-shift';
 
 interface OverviewDashboardTabProps {
   onNavigateModule?: (module: string, subView?: 'timeline' | 'table' | 'calendar') => void;
@@ -15,6 +16,7 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
   const { days: records } = useAttendance();
   const { summary } = useTimesheet();
   const { balances } = useLeave();
+  const myShift = useMyShift();
 
   const presentCount = records.filter((r) => r.dayStatus === 'PRESENT').length;
   const totalDays = records.length;
@@ -69,14 +71,21 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
 
         <div className="bg-card rounded-[6px] border border-border p-4 shadow-xs">
           <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
-            <span>Shift Status</span>
-            <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold">
-              On Schedule
-            </span>
+            <span>Today&apos;s Shift</span>
           </div>
-          <div className="text-sm font-bold text-foreground mt-2">Not recorded</div>
+          <div className="text-sm font-bold text-foreground mt-2">
+            {myShift.shift
+              ? myShift.shift.name
+              : myShift.loading
+                ? 'Loading…'
+                : myShift.error
+                  ? 'Could not load'
+                  : 'No shift assigned'}
+          </div>
           <p className="text-[11px] text-muted-foreground mt-1">
-            Shift assignment is not available yet
+            {myShift.shift
+              ? `${myShift.shift.startsAt} - ${myShift.shift.endsAt}`
+              : 'From your shift assignment'}
           </p>
         </div>
       </div>

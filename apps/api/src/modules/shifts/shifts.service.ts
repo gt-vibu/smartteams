@@ -310,7 +310,8 @@ function validateDays(days: number[]) {
     throw new ConflictError('Shift days must be ISO weekdays from 1 to 7');
 }
 
-function toShiftDto(value: {
+/** Also used by the assignment lookup, so a shift reads the same wherever it is returned. */
+export function toShiftDto(value: {
   id: string;
   organizationId: string;
   branchId: string | null;

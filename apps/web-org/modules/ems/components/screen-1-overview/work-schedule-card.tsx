@@ -6,7 +6,10 @@ import type { ShiftInfo } from '../../types/shift.types';
 import { formatMinutesToDuration } from '../../utils/format.utils';
 
 interface WorkScheduleCardProps {
-  shift: ShiftInfo;
+  /** Today's assigned shift; null when none is assigned or it has not loaded yet. */
+  shift: ShiftInfo | null;
+  /** What the banner says when there is no shift: still loading, none assigned, or unreadable. */
+  shiftStatus?: 'loading' | 'unassigned' | 'unavailable';
   startDate: string;
   endDate: string;
   attendanceDays: DailyAttendanceItem[];
@@ -14,6 +17,7 @@ interface WorkScheduleCardProps {
 
 export function WorkScheduleCard({
   shift,
+  shiftStatus = 'unassigned',
   startDate,
   endDate,
   attendanceDays,
@@ -53,15 +57,26 @@ export function WorkScheduleCard({
         </div>
       </div>
 
-      {/* Shift Banner Bar */}
-      <div className="bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200/70 dark:border-rose-800/60 rounded px-3 py-1.5 mb-4 sm:mb-5 flex flex-wrap items-center justify-between gap-1">
-        <div className="text-xs font-semibold text-rose-900 dark:text-rose-200 truncate">
-          {shift.name}
+      {/* Today's shift, from the employee's assignment. A missing one is stated plainly, not as
+          an error: many organizations do not use shifts at all. */}
+      {shift ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-1 rounded border border-sky-200/70 bg-sky-50/80 px-3 py-1.5 dark:border-sky-800/60 dark:bg-sky-950/40 sm:mb-5">
+          <div className="truncate text-xs font-semibold text-sky-900 dark:text-sky-200">
+            {shift.name}
+          </div>
+          <div className="shrink-0 font-mono text-[11px] font-medium text-sky-700 dark:text-sky-300">
+            {shift.startsAt} - {shift.endsAt}
+          </div>
         </div>
-        <div className="text-[11px] text-rose-700 dark:text-rose-300 font-mono font-medium shrink-0">
-          {shift.startsAt} - {shift.endsAt}
+      ) : (
+        <div className="mb-4 rounded border border-border bg-muted/40 px-3 py-1.5 text-xs font-medium text-muted-foreground sm:mb-5">
+          {shiftStatus === 'loading'
+            ? 'Loading shift…'
+            : shiftStatus === 'unavailable'
+              ? 'Shift could not be loaded'
+              : 'No shift assigned for today'}
         </div>
-      </div>
+      )}
 
       {/* 7-Day Timeline Ruler. No minimum width and no hidden scroller: on a phone each day is
           about 36px, so the status word gives way to the coloured dot below `sm` rather than

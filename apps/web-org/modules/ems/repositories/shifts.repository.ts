@@ -1,6 +1,12 @@
-import { parseShift, parseShiftList, type Shift } from '@smarteam/contracts';
+import {
+  parseCurrentShiftAssignment,
+  parseShift,
+  parseShiftList,
+  type CurrentShiftAssignment,
+  type Shift,
+} from '@smarteam/contracts';
 import { apiRequest } from '../lib/api-client';
-import { expectShape, orgPath } from './api-helpers';
+import { expectShape, orgPath, queryString } from './api-helpers';
 
 /**
  * Shift data access.
@@ -27,6 +33,18 @@ export type ShiftInput = {
 };
 
 export const shiftsRepository = {
+  /** The signed-in employee's shift on `on` (YYYY-MM-DD); null when none is assigned. */
+  async current(organizationId: string, on: string): Promise<CurrentShiftAssignment> {
+    return expectShape(
+      parseCurrentShiftAssignment(
+        await apiRequest(`${base(organizationId)}/assignments/current${queryString({ on })}`, {
+          method: 'GET',
+        }),
+      ),
+      'current shift',
+    ).assignment;
+  },
+
   /** Active shifts, narrowed to the caller's branch scope by the API. */
   async list(organizationId: string): Promise<Shift[]> {
     return expectShape(

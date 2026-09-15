@@ -6,6 +6,8 @@ interface UpcomingHolidaysCardProps {
   holidays: Holiday[];
   loading?: boolean;
   unavailable?: boolean;
+  /** Opens the full holiday calendar. The link is shown only when there is somewhere to go. */
+  onViewAll?: () => void;
 }
 
 /** `Mon` — derived from the date the API returned, not stored alongside it. */
@@ -20,6 +22,7 @@ export function UpcomingHolidaysCard({
   holidays,
   loading = false,
   unavailable = false,
+  onViewAll,
 }: UpcomingHolidaysCardProps) {
   return (
     <div className="bg-white dark:bg-card rounded-[6px] border border-slate-200/90 dark:border-border p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
@@ -46,9 +49,16 @@ export function UpcomingHolidaysCard({
           </h2>
         </div>
 
-        <Button className="h-auto p-0 text-xs font-semibold" variant="link">
-          View all
-        </Button>
+        {onViewAll && (
+          <Button
+            className="h-auto p-0 text-xs font-semibold"
+            onClick={onViewAll}
+            type="button"
+            variant="link"
+          >
+            View all
+          </Button>
+        )}
       </div>
 
       {unavailable && (

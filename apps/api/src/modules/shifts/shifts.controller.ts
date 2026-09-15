@@ -1,8 +1,15 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
-import { ShiftAssignmentDto, ShiftDeactivationDto, ShiftDto, UpdateShiftDto } from './shifts.dto';
+import {
+  CurrentShiftQueryDto,
+  ShiftAssignmentDto,
+  ShiftDeactivationDto,
+  ShiftDto,
+  UpdateShiftDto,
+} from './shifts.dto';
+import { ShiftAssignmentLookupService } from './shift-assignment-lookup.service';
 import { ShiftsService } from './shifts.service';
 
 @Controller('v1/organizations/:organizationId/shifts')
@@ -10,8 +17,19 @@ import { ShiftsService } from './shifts.service';
 export class ShiftsController {
   constructor(
     private readonly shifts: ShiftsService,
+    private readonly assignments: ShiftAssignmentLookupService,
     private readonly contexts: DomainContextFactory,
   ) {}
+  /** The shift an employee is assigned to on a day — the caller's own unless they may read others. */
+  @Get('assignments/current') current(
+    @Param('organizationId') organizationId: string,
+    @Query() query: CurrentShiftQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.assignments.current(context, query));
+  }
   @Get() list(
     @Param('organizationId') organizationId: string,
     @Req() request: Request & { user: NativeRequestUser },

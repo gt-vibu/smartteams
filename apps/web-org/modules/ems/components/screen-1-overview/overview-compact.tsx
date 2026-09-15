@@ -101,7 +101,9 @@ export function OverviewCompact({
         </>
       ) : (
         <PageShell>
-          {section === 'Activities' && <OverviewActivitiesTab />}
+          {section === 'Activities' && (
+            <OverviewActivitiesTab onNavigateModule={onNavigateModule} />
+          )}
           {section === 'Approvals' && <OverviewApprovalsTab />}
           {section === 'Dashboard' && <OverviewDashboardTab onNavigateModule={onNavigateModule} />}
           {section === 'Leave' && <OverviewLeavePreviewTab />}

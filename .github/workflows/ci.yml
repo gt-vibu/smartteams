@@ -164,7 +164,7 @@ jobs:
                        holidays employee-detail employee-directory onboarding \
                        payroll-staleness timesheet-approval-cycle concurrency \
                        authorization-boundaries ownership-and-approvals missing-checkout \
-                       holiday-checkin; do
+                       holiday-checkin shift-assignment; do
             # The storage round trip needs a real bucket. Without one it is not run, and says so;
             # it is never counted as a pass.
             if [ "$suite" = files ] && { [ -z "$S3_BUCKET" ] || [ -z "$S3_ACCESS_KEY_ID" ]; }; then
