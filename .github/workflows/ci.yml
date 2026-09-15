@@ -41,6 +41,9 @@ jobs:
         env:
           DATABASE_URL: postgresql://build:build@localhost:5432/build
       - run: pnpm format:check
+      # The release-activation script, run against stubbed pm2/curl/aws: a failed release must
+      # restart the previous one, and the API must stop with a payroll-length kill timeout.
+      - run: bash scripts/ci/activate-dev-release.test.sh
 
   migrations:
     name: Migrations and database-backed tests

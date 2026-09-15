@@ -19,6 +19,9 @@ SERVICE_RELEASE_DIR="$RELEASE_DIR/$SERVICE"
 SHARED_DIR="$DEPLOY_ROOT/shared"
 LOCK_FILE="$DEPLOY_ROOT/$SERVICE.deploy.lock"
 PM2_SAVE_LOCK_FILE="$DEPLOY_ROOT/pm2.save.lock"
+# The start script of the last release that passed its health check. A failed release restarts it,
+# so a bad deploy does not leave the service down.
+ACTIVE_FILE="$DEPLOY_ROOT/$SERVICE.active"
 
 test -d "$INCOMING_SERVICE_DIR"
 install -d -o "$DEPLOY_USER" -g "$DEPLOY_USER" \
@@ -53,6 +56,11 @@ if [ "$SERVICE" = api ]; then
   chown "$DEPLOY_USER:$DEPLOY_USER" "$secret_tmp"
   mv -f "$secret_tmp" "$SHARED_DIR/.env"
 fi
+
+# How long PM2 waits after SIGINT before SIGKILL. Its default is 1.6 s; a payroll calculation is one
+# transaction bounded by PAYROLL_TRANSACTION_TIMEOUT_MS (120 s), so the API gets longer than that.
+KILL_TIMEOUT_MS=10000
+[ "$SERVICE" = api ] && KILL_TIMEOUT_MS=130000
 
 case "$SERVICE" in
   api)
@@ -104,6 +112,12 @@ save_pm2_state() {
   )
 }
 
+previous_start=""
+if [ -f "$ACTIVE_FILE" ]; then
+  previous_start="$(cat "$ACTIVE_FILE")"
+  [ -f "$previous_start" ] && [ "$previous_start" != "$START_FILE" ] || previous_start=""
+fi
+
 legacy_was_running=false
 if run_as_service_user "pm2 describe '$PM2_NAME' >/dev/null 2>&1"; then
   run_as_service_user "pm2 delete '$PM2_NAME' >/dev/null 2>&1 || true"
@@ -112,7 +126,7 @@ elif [ -n "$LEGACY_PM2_NAME" ] && run_as_service_user "pm2 describe '$LEGACY_PM2
   legacy_was_running=true
 fi
 
-run_as_service_user "pm2 start '$START_FILE' --name '$PM2_NAME'"
+run_as_service_user "pm2 start '$START_FILE' --name '$PM2_NAME' --kill-timeout $KILL_TIMEOUT_MS"
 
 healthy=false
 for _ in $(seq 1 30); do
@@ -127,10 +141,18 @@ if [ "$healthy" != true ]; then
   run_as_service_user "pm2 delete '$PM2_NAME' >/dev/null 2>&1 || true"
   if [ "$legacy_was_running" = true ]; then
     run_as_service_user "pm2 restart '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"
+    echo "Smart Team $SERVICE health check failed; the legacy service was restarted." >&2
+  elif [ -n "$previous_start" ]; then
+    run_as_service_user "pm2 start '$previous_start' --name '$PM2_NAME' --kill-timeout $KILL_TIMEOUT_MS"
+    save_pm2_state
+    echo "Smart Team $SERVICE health check failed; the previous release was restarted." >&2
+  else
+    echo "Smart Team $SERVICE health check failed; no previous release is recorded, so none is running." >&2
   fi
-  echo "Smart Team $SERVICE health check failed; previous service was restored when available." >&2
   exit 1
 fi
+printf '%s\n' "$START_FILE" > "$ACTIVE_FILE"
+chown "$DEPLOY_USER:$DEPLOY_USER" "$ACTIVE_FILE"
 
 if [ "$legacy_was_running" = true ]; then
   run_as_service_user "pm2 delete '$LEGACY_PM2_NAME' >/dev/null 2>&1 || true"

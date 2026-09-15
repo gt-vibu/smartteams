@@ -15,8 +15,13 @@ then, for that service:
 2. for the API, writes `$DEPLOY_ROOT/shared/.env` (mode 600) from **AWS Secrets Manager** — secrets
    never live in the repository or a release directory;
 3. for the API, runs **`prisma migrate deploy`** before anything new starts;
-4. starts the release under PM2 and waits up to 30 s for its health URL, restoring the previous
-   process if it never answers.
+4. starts the release under PM2 and waits up to 30 s for its health URL. If it never answers,
+   the new release is removed and **the last healthy release is started again** — recorded in
+   `$DEPLOY_ROOT/<service>.active` after every successful activation. A failed deploy used to leave
+   the service down; `scripts/ci/activate-dev-release.test.sh` (run in CI) pins that it does not.
+
+The old process is stopped before the new one starts, so each activation has a short gap in
+service for that component; it is not a zero-downtime rollout.
 
 The script in the repository targets the development environment (`smarteam-*-dev` PM2 names,
 ports 3010–3012). A production activation with its own names, ports and secret id is an
@@ -73,9 +78,11 @@ reporting one of these; the reason is in `pm2 logs`.
 Rollback is starting the previous release directory. It is fast because it does not touch the
 database.
 
-1. Identify the previous good commit in `$DEPLOY_ROOT/releases/`.
+1. Identify the previous good commit in `$DEPLOY_ROOT/releases/`. A release that failed its health
+   check has already been rolled back automatically.
 2. Start that release's `start.sh` under the service's PM2 name (`pm2 delete <name>`, then
-   `pm2 start <release>/<service>/start.sh --name <name>`), and `pm2 save`.
+   `pm2 start <release>/<service>/start.sh --name <name> --kill-timeout 130000` for the API), run
+   `pm2 save`, and write that `start.sh` path to `$DEPLOY_ROOT/<service>.active`.
 3. Verify `/health/ready` and re-run the smoke test.
 4. Leave the schema alone. The backward-compatibility rule above is what makes this safe.
 
@@ -95,11 +102,10 @@ simply be calculated again. Nothing is half-paid. Prefer to deploy when no run i
 clients and ends all three pools. On `SIGINT`/`SIGTERM` the process stops accepting new work,
 finishes in-flight requests, and releases its connections.
 
-**PM2 only waits `kill_timeout` before `SIGKILL` — 1.6 seconds by default**, and the activation
-script does not raise it. A calculation at 10,000 employees takes about 22 s
-(`scripts/perf-payroll.mjs`), so a restart during one kills it and it rolls back. Start the API
-with `--kill-timeout` at least `PAYROLL_TRANSACTION_TIMEOUT_MS` (120 s) in the production
-activation.
+PM2 waits `kill_timeout` after `SIGINT` before `SIGKILL`; its default is 1.6 seconds. The activation
+script starts the API with **`--kill-timeout 130000`** — longer than `PAYROLL_TRANSACTION_TIMEOUT_MS`
+(120 s) — so a restart lets an in-flight calculation (about 22 s at 10,000 employees) finish. The web
+apps get 10 s.
 
 ## Environment
 
