@@ -6,8 +6,8 @@ import { AttendanceActionBar } from './attendance-action-bar';
 import { TimelineTrackView } from './timeline-track-view';
 import { AttendanceSummaryFooter } from './attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
+import { useAttendanceWeek } from '../../hooks/use-attendance-week';
 import { toTimelineStatus } from '../../services/attendance-view';
-import { formatDateRangeFromValues } from '../../utils/formatters';
 import { PageShell } from '../layout/page-shell';
 
 interface Screen2TimelineProps {
@@ -15,7 +15,8 @@ interface Screen2TimelineProps {
 }
 
 export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
-  const { days: records, isCheckedIn, timerDisplay } = useAttendance();
+  const week = useAttendanceWeek();
+  const { days: records, isCheckedIn, timerDisplay } = useAttendance(30, week.window);
 
   const timelineDays = records.map((r) => ({
     id: r.id,
@@ -32,6 +33,9 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
       r.isToday && isCheckedIn
         ? r.workedMinutes + Math.floor(timerDisplay.totalSeconds / 60)
         : undefined,
+    // A past day whose last punch is a check-in never had its check-out recorded. It counts no
+    // worked time until a correction supplies one, and the row should say so rather than 00:00.
+    checkOutMissing: !r.isToday && r.record.punches?.at(-1)?.punchType === 'IN',
     status: toTimelineStatus(r.dayStatus),
     // Holiday naming is not wired; the bar is drawn from the punches alone.
     holidayName: r.holidayName ?? undefined,
@@ -48,7 +52,6 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     holidayDays: records.filter((r) => r.dayStatus === 'HOLIDAY').length,
     weekendDays: records.filter((r) => r.dayStatus === 'WEEKEND').length,
   };
-  const dateRange = formatDateRangeFromValues(records.map((record) => record.workDate));
 
   return (
     <div className="w-full flex flex-col">
@@ -56,7 +59,9 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 px-4 sm:px-6 bg-muted">
         <AttendanceToolbar
           title="Attendance Summary"
-          dateRange={dateRange || 'Current period'}
+          dateRange={week.label}
+          onPrevDate={week.previous}
+          onNextDate={week.next}
           viewMode="timeline"
           onChangeViewMode={onToggleView}
         />

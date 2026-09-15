@@ -37,7 +37,12 @@ const ZERO_TIMER: TimerDisplay = { hrs: '00', mins: '00', secs: '00', totalSecon
  * so a punch made on another device is reflected here after a refetch. The previous version kept
  * the whole thing in `localStorage`, where a punch was invisible to everyone else.
  */
-export function useAttendance(rangeDays = 30) {
+/**
+ * `window` narrows the records to a date range a screen is showing — a week on the summary, a
+ * month on the calendar. Without one the hook reads the last `rangeDays`, which is what the
+ * check-in controls and Home need.
+ */
+export function useAttendance(rangeDays = 30, window?: { from: string; to: string }) {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const employeeId = session?.employeeId ?? null;
@@ -51,8 +56,8 @@ export function useAttendance(rangeDays = 30) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [timerDisplay, setTimerDisplay] = useState<TimerDisplay>(ZERO_TIMER);
 
-  const from = daysAgo(rangeDays);
-  const to = localDateKey();
+  const from = window?.from ?? daysAgo(rangeDays);
+  const to = window?.to ?? localDateKey();
 
   const resource = useAsyncResource<AttendanceRecord[]>(
     async () => {

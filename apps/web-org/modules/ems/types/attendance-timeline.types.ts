@@ -14,6 +14,8 @@ export interface TimelineDayRecord {
    * reports zero until they check out. Undefined whenever the day is settled.
    */
   inProgressMinutes?: number;
+  /** A past day that ended on a check-in: no check-out was ever recorded, so no time counts. */
+  checkOutMissing?: boolean;
   status: 'PRESENT' | 'WEEKEND' | 'HOLIDAY' | 'LEAVE' | 'EMPTY';
   holidayName?: string;
   isRestrictedHoliday?: boolean;

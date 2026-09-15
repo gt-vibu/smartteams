@@ -99,17 +99,32 @@ function TimelineRow({ day }: { day: TimelineDayRecord }) {
 
       <div className="text-right sm:order-last sm:col-span-2">
         <div
-          className={`font-mono text-xs font-bold ${inProgress ? 'text-primary' : 'text-foreground'}`}
+          className={`font-mono text-xs font-bold ${
+            inProgress
+              ? 'text-primary'
+              : day.checkOutMissing
+                ? 'text-destructive'
+                : 'text-foreground'
+          }`}
         >
           {inProgress
             ? `${inProgressStr} so far`
-            : durationStr
-              ? `${durationStr} worked`
-              : '00:00 Hrs worked'}
+            : day.checkOutMissing
+              ? durationStr
+                ? `${durationStr} + no check-out`
+                : 'No check-out'
+              : durationStr
+                ? `${durationStr} worked`
+                : '00:00 Hrs worked'}
         </div>
         {inProgress && (
           <div className="mt-0.5 text-[10px] font-medium text-muted-foreground">
             Still checked in
+          </div>
+        )}
+        {day.checkOutMissing && (
+          <div className="mt-0.5 text-[10px] font-medium text-muted-foreground">
+            Request a correction with your check-out time
           </div>
         )}
       </div>

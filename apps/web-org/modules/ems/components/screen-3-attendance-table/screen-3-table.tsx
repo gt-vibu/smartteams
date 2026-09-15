@@ -7,8 +7,8 @@ import { AttendanceTableView } from './attendance-table-view';
 import { AttendanceDetailDrawer } from './attendance-detail-drawer';
 import { AttendanceSummaryFooter } from '../screen-2-attendance/attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
+import { useAttendanceWeek } from '../../hooks/use-attendance-week';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
-import { formatDateRangeFromValues } from '../../utils/formatters';
 import { PageShell } from '../layout/page-shell';
 
 interface Screen3TableProps {
@@ -16,7 +16,8 @@ interface Screen3TableProps {
 }
 
 export function Screen3Table({ onToggleView }: Screen3TableProps) {
-  const { days: records, requestCorrection, canRequestCorrection } = useAttendance();
+  const week = useAttendanceWeek();
+  const { days: records, requestCorrection, canRequestCorrection } = useAttendance(30, week.window);
   const [selectedRow, setSelectedRow] = useState<AttendanceTableRow | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -82,7 +83,6 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
     holidayDays: records.filter((r) => r.dayStatus === 'HOLIDAY').length,
     weekendDays: records.filter((r) => r.dayStatus === 'WEEKEND').length,
   };
-  const dateRange = formatDateRangeFromValues(records.map((record) => record.workDate));
 
   /**
    * Raises the correction and lets the drawer see the outcome.
@@ -102,7 +102,9 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 px-3 sm:px-6 bg-muted dark:bg-background">
         <AttendanceToolbar
           title="Attendance Summary"
-          dateRange={dateRange || 'Current period'}
+          dateRange={week.label}
+          onPrevDate={week.previous}
+          onNextDate={week.next}
           viewMode="table"
           onChangeViewMode={onToggleView}
           onFilterToggle={() => setIsFilterActive(!isFilterActive)}

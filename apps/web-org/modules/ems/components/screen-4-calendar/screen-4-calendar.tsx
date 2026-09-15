@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { CalendarToolbar } from './calendar-toolbar';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarDetailDrawer } from './calendar-detail-drawer';
-import { useAttendance } from '../../hooks/use-attendance';
+import { localDateKey, useAttendance } from '../../hooks/use-attendance';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
 import { toCalendarStatus } from '../../services/attendance-view';
@@ -16,14 +16,20 @@ interface Screen4CalendarProps {
 }
 
 export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
-  const { days: records, requestCorrection } = useAttendance();
-  const holidays = useHolidays();
-  const employeeHolidays = useEmployeeHolidays();
-
   const [selectedDay, setSelectedDay] = useState<CalendarDayItem | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   // Open on the current month rather than a hardcoded demo month.
   const [viewDate, setViewDate] = useState(() => new Date());
+  // Read the month being shown. The hook's default is the last thirty days, so paging back to an
+  // earlier month used to show an empty calendar however much had been recorded in it.
+  const monthWindow = useMemo(() => {
+    const first = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
+    const last = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0);
+    return { from: localDateKey(first), to: localDateKey(last) };
+  }, [viewDate]);
+  const { days: records, requestCorrection } = useAttendance(30, monthWindow);
+  const holidays = useHolidays();
+  const employeeHolidays = useEmployeeHolidays();
 
   // Map of effective holidays for this employee (mandatory + confirmed selected optional)
   const effectiveHolidayMap = useMemo(() => {
