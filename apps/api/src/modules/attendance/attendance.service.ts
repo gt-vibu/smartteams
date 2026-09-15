@@ -63,6 +63,12 @@ export class AttendanceService {
     return this.corrections.requestCorrection(...args);
   }
 
+  requestMissingCheckOut(
+    ...args: Parameters<AttendanceCorrectionsService['requestMissingCheckOut']>
+  ) {
+    return this.corrections.requestMissingCheckOut(...args);
+  }
+
   decideCorrection(...args: Parameters<AttendanceCorrectionsService['decideCorrection']>) {
     return this.corrections.decideCorrection(...args);
   }

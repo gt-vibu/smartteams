@@ -13,6 +13,8 @@ export interface CalendarDayItem {
    * which is why this is optional rather than defaulted to an empty string.
    */
   attendanceRecordId?: string;
+  /** The open check-in of a past day that never had a check-out, as an ISO instant. */
+  openCheckInAt?: string;
   hoursLabel?: string; // "08:15 Hrs"
   holidayName?: string;
   isRestrictedHoliday?: boolean;

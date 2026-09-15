@@ -4,6 +4,7 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   AttendanceCorrectionDto,
+  MissingCheckOutCorrectionDto,
   AttendanceCorrectionQueryDto,
   AttendanceDecisionDto,
   AttendancePreferencesDto,
@@ -110,6 +111,17 @@ export class AttendanceController {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.reason)
       .then((context) => this.attendance.requestCorrection(context, attendanceId, body));
+  }
+  /** Native only: supply the check-out a day never had. Federation has no equivalent route. */
+  @Post(':attendanceId/corrections/missing-check-out') missingCheckOut(
+    @Param('organizationId') organizationId: string,
+    @Param('attendanceId') attendanceId: string,
+    @Body() body: MissingCheckOutCorrectionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.attendance.requestMissingCheckOut(context, attendanceId, body));
   }
   @Post(':correctionId/decision') decision(
     @Param('organizationId') organizationId: string,

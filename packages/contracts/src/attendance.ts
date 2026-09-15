@@ -71,6 +71,8 @@ export const attendanceCorrectionSchema = z.object({
   reason: z.string().nullable().optional(),
   createdAt: z.string().optional(),
   workDate: z.string().optional(),
+  /** What the correction asks for; a missing check-out carries `missingCheckOut.occurredAt`. */
+  afterSnapshot: z.unknown().optional(),
   branchId: z.string().uuid().nullable().optional(),
   employee: attendanceEmployeeSchema.optional(),
   approvals: z

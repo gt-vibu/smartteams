@@ -17,7 +17,12 @@ interface Screen3TableProps {
 
 export function Screen3Table({ onToggleView }: Screen3TableProps) {
   const week = useAttendanceWeek();
-  const { days: records, requestCorrection, canRequestCorrection } = useAttendance(30, week.window);
+  const {
+    days: records,
+    requestCorrection,
+    requestMissingCheckOut,
+    canRequestCorrection,
+  } = useAttendance(30, week.window);
   const [selectedRow, setSelectedRow] = useState<AttendanceTableRow | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -45,6 +50,11 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
         // Shift assignment is not wired, so the row states that rather than naming a shift.
         shift: r.shiftName ?? 'Not recorded',
         canRegularize: canRequestCorrection && r.correctionStatus !== 'PENDING',
+        // A past day that ended on a check-in: the drawer offers to add the missing check-out.
+        openCheckInAt:
+          !r.isToday && dayPunches.at(-1)?.punchType === 'IN'
+            ? String(dayPunches.at(-1)?.occurredAt)
+            : undefined,
         punches: dayPunches.map((p) => ({
           type: p.punchType === 'IN' ? ('IN' as const) : ('OUT' as const),
           time: new Date(p.occurredAt).toLocaleTimeString(undefined, {
@@ -179,6 +189,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
         isOpen={Boolean(selectedRow)}
         onClose={() => setSelectedRow(null)}
         onSubmitRegularization={handleRegularize}
+        onSubmitMissingCheckOut={requestMissingCheckOut}
       />
     </div>
   );

@@ -84,13 +84,23 @@ export function useApprovalInbox() {
         employeeId?: string;
         reason?: string | null;
         requestedAt?: string;
+        afterSnapshot?: { missingCheckOut?: { occurredAt?: string } } | null;
       };
+      // The approver has to see the time they are being asked to accept, not only the reason.
+      const requestedCheckOut = correction.afterSnapshot?.missingCheckOut?.occurredAt;
       return {
         id: correction.id,
         domain: 'ATTENDANCE_CORRECTION' as const,
         employeeId: correction.employeeId ?? '',
-        title: 'Attendance correction',
-        detail: correction.reason ?? '--',
+        title: requestedCheckOut ? 'Missing check-out' : 'Attendance correction',
+        detail: requestedCheckOut
+          ? `Check-out at ${new Date(requestedCheckOut).toLocaleString(undefined, {
+              day: 'numeric',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+            })} · ${correction.reason ?? ''}`
+          : (correction.reason ?? '--'),
         submittedAt: correction.requestedAt ?? null,
       };
     });

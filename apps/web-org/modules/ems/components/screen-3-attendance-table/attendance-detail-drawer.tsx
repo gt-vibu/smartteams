@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
 import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
+import { MissingCheckOutForm } from '../common/missing-check-out-form';
 
 interface AttendanceDetailDrawerProps {
   row: AttendanceTableRow | null;
@@ -12,6 +13,12 @@ interface AttendanceDetailDrawerProps {
    * show. Returning `void` is what let the drawer treat a rejected request as a success.
    */
   onSubmitRegularization?: (recordId: string, reason: string) => Promise<unknown>;
+  /** Asks for a missing check-out to be added; same resolve/reject contract as above. */
+  onSubmitMissingCheckOut?: (
+    recordId: string,
+    checkOutAt: string,
+    reason: string,
+  ) => Promise<unknown>;
 }
 
 export function AttendanceDetailDrawer({
@@ -19,6 +26,7 @@ export function AttendanceDetailDrawer({
   isOpen,
   onClose,
   onSubmitRegularization,
+  onSubmitMissingCheckOut,
 }: AttendanceDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -169,44 +177,62 @@ export function AttendanceDetailDrawer({
               )}
             </div>
 
-            {/* Regularization Form */}
-            <div className="pt-2 border-t border-border">
-              <div className="text-xs font-bold text-foreground mb-1.5">Request Regularization</div>
-              <p className="text-[11px] text-muted-foreground mb-2.5">
-                Submit an attendance correction request for your reporting manager to review.
-              </p>
-              {submitted ? (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded font-medium">
-                  ✓ Regularization request submitted successfully (Pending approval).
+            {/* A day that ended on a check-in gets its check-out added; any other day's punches are
+                corrected. Two different requests, so two clearly named forms. */}
+            {row.openCheckInAt && onSubmitMissingCheckOut ? (
+              <div className="pt-2 border-t border-border">
+                <div className="text-xs font-bold text-foreground mb-1.5">
+                  Add missing check-out
                 </div>
-              ) : (
-                <div className="space-y-2.5">
-                  <Textarea
-                    rows={3}
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    placeholder="Reason for regularization (min 10 characters)..."
-                    className="bg-muted/40 focus:bg-card"
-                  />
-                  {error && (
-                    <p role="alert" className="text-[11px] font-medium text-destructive">
-                      {error}
-                    </p>
-                  )}
-                  <Button
-                    type="button"
-                    variant="default"
-                    disabled={
-                      saving || reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH
-                    }
-                    onClick={() => void handleSubmitRegularization()}
-                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 text-xs shadow-xs"
-                  >
-                    {saving ? 'Submitting…' : 'Submit Correction Request'}
-                  </Button>
+                <MissingCheckOutForm
+                  key={row.id}
+                  checkInAt={row.openCheckInAt}
+                  onSubmit={(checkOutAt, missingReason) =>
+                    onSubmitMissingCheckOut(row.id, checkOutAt, missingReason)
+                  }
+                />
+              </div>
+            ) : (
+              <div className="pt-2 border-t border-border">
+                <div className="text-xs font-bold text-foreground mb-1.5">
+                  Correct an existing punch
                 </div>
-              )}
-            </div>
+                <p className="text-[11px] text-muted-foreground mb-2.5">
+                  Submit an attendance correction request for your reporting manager to review.
+                </p>
+                {submitted ? (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded font-medium">
+                    ✓ Regularization request submitted successfully (Pending approval).
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    <Textarea
+                      rows={3}
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                      placeholder="Reason for regularization (min 10 characters)..."
+                      className="bg-muted/40 focus:bg-card"
+                    />
+                    {error && (
+                      <p role="alert" className="text-[11px] font-medium text-destructive">
+                        {error}
+                      </p>
+                    )}
+                    <Button
+                      type="button"
+                      variant="default"
+                      disabled={
+                        saving || reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH
+                      }
+                      onClick={() => void handleSubmitRegularization()}
+                      className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 text-xs shadow-xs"
+                    >
+                      {saving ? 'Submitting…' : 'Submit Correction Request'}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Footer */}

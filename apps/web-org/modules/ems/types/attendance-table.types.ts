@@ -10,6 +10,8 @@ export interface AttendanceTableRow {
   statusType: 'present' | 'weekend-present' | 'holiday' | 'weekend' | 'empty';
   shift: string; // "General Shift"
   canRegularize?: boolean;
+  /** The open check-in of a past day that never had a check-out, as an ISO instant. */
+  openCheckInAt?: string;
   punches?: Array<{
     type: 'IN' | 'OUT';
     time: string;

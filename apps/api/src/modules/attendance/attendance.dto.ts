@@ -6,6 +6,8 @@ import {
   IsEnum,
   IsNumber,
   IsInt,
+  IsISO8601,
+  Matches,
   MaxLength,
   IsOptional,
   IsObject,
@@ -66,6 +68,22 @@ export class AttendanceCorrectionDto {
   @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
   reason!: string;
   @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;
+}
+
+/**
+ * The native app's request to add a day's missing check-out. Its own DTO and route, so the general
+ * correction — which federation also uses — accepts exactly what it did before.
+ */
+export class MissingCheckOutCorrectionDto {
+  // An instant, with its offset: a bare local time would be read in the server's zone, which is
+  // not the employee's, and would move the check-out by hours near midnight.
+  @IsISO8601({ strict: true })
+  @Matches(/(Z|[+-]\d{2}:\d{2})$/, { message: 'checkOutAt must include a time zone offset' })
+  checkOutAt!: string;
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
 }
 
 export class AttendanceDecisionDto {

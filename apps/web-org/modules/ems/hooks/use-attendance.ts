@@ -188,6 +188,25 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     [employeeId, organizationId, resource],
   );
 
+  /** Asks for a day's missing check-out to be added; rejects with the API's reason. */
+  const requestMissingCheckOut = useCallback(
+    async (attendanceId: string, checkOutAt: string, reason: string) => {
+      if (!organizationId || !employeeId)
+        throw new Error('This account has no employee record, so attendance cannot be recorded.');
+      try {
+        await attendanceRepository.requestMissingCheckOut(
+          organizationId,
+          attendanceId,
+          checkOutAt,
+          reason,
+        );
+      } finally {
+        await resource.refetch();
+      }
+    },
+    [employeeId, organizationId, resource],
+  );
+
   // Presentation shape the screens render, derived from the same records.
   const days: AttendanceDayView[] = useMemo(
     () => toAttendanceDayViews(records, todayKey),
@@ -214,6 +233,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     checkIn,
     checkOut,
     requestCorrection,
+    requestMissingCheckOut,
     canRead,
     canWrite,
     canRequestCorrection,

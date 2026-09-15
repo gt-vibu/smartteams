@@ -69,6 +69,19 @@ export const attendanceRepository = {
    * Raises a correction request. The API requires at least ten characters of reason and writes
    * it to the audit trail, so the caller cannot submit an empty justification.
    */
+  /** Asks for a day's missing check-out to be added at `checkOutAt` (an ISO instant). */
+  async requestMissingCheckOut(
+    organizationId: string,
+    attendanceId: string,
+    checkOutAt: string,
+    reason: string,
+  ): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId, '/attendance')}/${encodeURIComponent(attendanceId)}/corrections/missing-check-out`,
+      { method: 'POST', body: { checkOutAt, reason } },
+    );
+  },
+
   async requestCorrection(
     organizationId: string,
     attendanceId: string,

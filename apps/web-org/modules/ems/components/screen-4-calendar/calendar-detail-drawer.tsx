@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
 import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
 import type { CalendarDayItem } from '../../types/calendar.types';
+import { MissingCheckOutForm } from '../common/missing-check-out-form';
 
 interface CalendarDetailDrawerProps {
   day: CalendarDayItem | null;
@@ -15,6 +16,12 @@ interface CalendarDetailDrawerProps {
    * record of it.
    */
   onSubmitCorrection?: (recordId: string, reason: string) => Promise<unknown>;
+  /** Asks for a missing check-out to be added; same resolve/reject contract as above. */
+  onSubmitMissingCheckOut?: (
+    recordId: string,
+    checkOutAt: string,
+    reason: string,
+  ) => Promise<unknown>;
 }
 
 export function CalendarDetailDrawer({
@@ -22,6 +29,7 @@ export function CalendarDetailDrawer({
   isOpen,
   onClose,
   onSubmitCorrection,
+  onSubmitMissingCheckOut,
 }: CalendarDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -156,11 +164,27 @@ export function CalendarDetailDrawer({
               )}
             </div>
 
-            {/* Request Regularization */}
-            {day.dayStatus === 'PRESENT' && (
+            {/* A day that ended on a check-in gets its check-out added instead. */}
+            {day.openCheckInAt && day.attendanceRecordId && onSubmitMissingCheckOut && (
               <div className="pt-2 border-t border-border">
                 <div className="text-xs font-bold text-foreground mb-1.5">
-                  Request Regularization
+                  Add missing check-out
+                </div>
+                <MissingCheckOutForm
+                  key={day.attendanceRecordId}
+                  checkInAt={day.openCheckInAt}
+                  onSubmit={(checkOutAt, missingReason) =>
+                    onSubmitMissingCheckOut(day.attendanceRecordId!, checkOutAt, missingReason)
+                  }
+                />
+              </div>
+            )}
+
+            {/* Correct an existing punch */}
+            {day.dayStatus === 'PRESENT' && !(day.openCheckInAt && onSubmitMissingCheckOut) && (
+              <div className="pt-2 border-t border-border">
+                <div className="text-xs font-bold text-foreground mb-1.5">
+                  Correct an existing punch
                 </div>
                 <p className="text-[11px] text-muted-foreground mb-2.5">
                   Submit an attendance correction request for your reporting manager to review.
