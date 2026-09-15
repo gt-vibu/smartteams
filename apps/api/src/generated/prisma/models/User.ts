@@ -318,6 +318,8 @@ export type UserWhereInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyListRelationFilter
   capturedAttendancePunches?: Prisma.AttendancePunchListRelationFilter
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionListRelationFilter
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
   attendanceApprovals?: Prisma.AttendanceApprovalListRelationFilter
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionListRelationFilter
   leaveApprovals?: Prisma.LeaveApprovalListRelationFilter
@@ -373,6 +375,8 @@ export type UserOrderByWithRelationInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyOrderByRelationAggregateInput
   capturedAttendancePunches?: Prisma.AttendancePunchOrderByRelationAggregateInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionOrderByRelationAggregateInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewOrderByRelationAggregateInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewOrderByRelationAggregateInput
   attendanceApprovals?: Prisma.AttendanceApprovalOrderByRelationAggregateInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionOrderByRelationAggregateInput
   leaveApprovals?: Prisma.LeaveApprovalOrderByRelationAggregateInput
@@ -432,6 +436,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdWebhookKeys?: Prisma.WebhookSigningKeyListRelationFilter
   capturedAttendancePunches?: Prisma.AttendancePunchListRelationFilter
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionListRelationFilter
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
   attendanceApprovals?: Prisma.AttendanceApprovalListRelationFilter
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionListRelationFilter
   leaveApprovals?: Prisma.LeaveApprovalListRelationFilter
@@ -531,6 +537,8 @@ export type UserCreateInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -586,6 +594,8 @@ export type UserUncheckedCreateInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -641,6 +651,8 @@ export type UserUpdateInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -696,6 +708,8 @@ export type UserUncheckedUpdateInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -1199,6 +1213,38 @@ export type UserUpdateOneRequiredWithoutTimesheetApprovalsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTimesheetApprovalsInput, Prisma.UserUpdateWithoutTimesheetApprovalsInput>, Prisma.UserUncheckedUpdateWithoutTimesheetApprovalsInput>
 }
 
+export type UserCreateNestedOneWithoutRequestedHolidayReviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRequestedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutRequestedHolidayReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRequestedHolidayReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutDecidedHolidayReviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDecidedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutDecidedHolidayReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDecidedHolidayReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutRequestedHolidayReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRequestedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutRequestedHolidayReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRequestedHolidayReviewsInput
+  upsert?: Prisma.UserUpsertWithoutRequestedHolidayReviewsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRequestedHolidayReviewsInput, Prisma.UserUpdateWithoutRequestedHolidayReviewsInput>, Prisma.UserUncheckedUpdateWithoutRequestedHolidayReviewsInput>
+}
+
+export type UserUpdateOneWithoutDecidedHolidayReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDecidedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutDecidedHolidayReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDecidedHolidayReviewsInput
+  upsert?: Prisma.UserUpsertWithoutDecidedHolidayReviewsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDecidedHolidayReviewsInput, Prisma.UserUpdateWithoutDecidedHolidayReviewsInput>, Prisma.UserUncheckedUpdateWithoutDecidedHolidayReviewsInput>
+}
+
 export type UserCreateNestedOneWithoutCreatedPayrollRunsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedPayrollRunsInput, Prisma.UserUncheckedCreateWithoutCreatedPayrollRunsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedPayrollRunsInput
@@ -1454,6 +1500,8 @@ export type UserCreateWithoutCreatedWebhookKeysInput = {
   createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -1508,6 +1556,8 @@ export type UserUncheckedCreateWithoutCreatedWebhookKeysInput = {
   createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -1578,6 +1628,8 @@ export type UserUpdateWithoutCreatedWebhookKeysInput = {
   createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -1632,6 +1684,8 @@ export type UserUncheckedUpdateWithoutCreatedWebhookKeysInput = {
   createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -1686,6 +1740,8 @@ export type UserCreateWithoutAuditLogsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -1740,6 +1796,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -1810,6 +1868,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -1864,6 +1924,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -1918,6 +1980,8 @@ export type UserCreateWithoutCreatedFederationClientsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -1972,6 +2036,8 @@ export type UserUncheckedCreateWithoutCreatedFederationClientsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -2042,6 +2108,8 @@ export type UserUpdateWithoutCreatedFederationClientsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -2096,6 +2164,8 @@ export type UserUncheckedUpdateWithoutCreatedFederationClientsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -2150,6 +2220,8 @@ export type UserCreateWithoutCreatedClientCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -2204,6 +2276,8 @@ export type UserUncheckedCreateWithoutCreatedClientCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -2274,6 +2348,8 @@ export type UserUpdateWithoutCreatedClientCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -2328,6 +2404,8 @@ export type UserUncheckedUpdateWithoutCreatedClientCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -2382,6 +2460,8 @@ export type UserCreateWithoutCreatedGrantsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -2436,6 +2516,8 @@ export type UserUncheckedCreateWithoutCreatedGrantsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -2506,6 +2588,8 @@ export type UserUpdateWithoutCreatedGrantsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -2560,6 +2644,8 @@ export type UserUncheckedUpdateWithoutCreatedGrantsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -2615,6 +2701,8 @@ export type UserCreateWithoutUpdatedOrganizationCapabilitiesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -2669,6 +2757,8 @@ export type UserUncheckedCreateWithoutUpdatedOrganizationCapabilitiesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -2739,6 +2829,8 @@ export type UserUpdateWithoutUpdatedOrganizationCapabilitiesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -2793,6 +2885,8 @@ export type UserUncheckedUpdateWithoutUpdatedOrganizationCapabilitiesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -2846,6 +2940,8 @@ export type UserCreateWithoutUploadedFilesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -2900,6 +2996,8 @@ export type UserUncheckedCreateWithoutUploadedFilesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -2970,6 +3068,8 @@ export type UserUpdateWithoutUploadedFilesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -3024,6 +3124,8 @@ export type UserUncheckedUpdateWithoutUploadedFilesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -3078,6 +3180,8 @@ export type UserCreateWithoutCreatedFileVersionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -3132,6 +3236,8 @@ export type UserUncheckedCreateWithoutCreatedFileVersionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -3202,6 +3308,8 @@ export type UserUpdateWithoutCreatedFileVersionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -3256,6 +3364,8 @@ export type UserUncheckedUpdateWithoutCreatedFileVersionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -3310,6 +3420,8 @@ export type UserCreateWithoutCreatedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -3364,6 +3476,8 @@ export type UserUncheckedCreateWithoutCreatedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -3423,6 +3537,8 @@ export type UserCreateWithoutAcceptedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -3477,6 +3593,8 @@ export type UserUncheckedCreateWithoutAcceptedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -3547,6 +3665,8 @@ export type UserUpdateWithoutCreatedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -3601,6 +3721,8 @@ export type UserUncheckedUpdateWithoutCreatedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -3666,6 +3788,8 @@ export type UserUpdateWithoutAcceptedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -3720,6 +3844,8 @@ export type UserUncheckedUpdateWithoutAcceptedInvitationsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -3775,6 +3901,8 @@ export type UserCreateWithoutCreatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -3829,6 +3957,8 @@ export type UserUncheckedCreateWithoutCreatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -3888,6 +4018,8 @@ export type UserCreateWithoutActivatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -3942,6 +4074,8 @@ export type UserUncheckedCreateWithoutActivatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -4012,6 +4146,8 @@ export type UserUpdateWithoutCreatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -4066,6 +4202,8 @@ export type UserUncheckedUpdateWithoutCreatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -4131,6 +4269,8 @@ export type UserUpdateWithoutActivatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -4185,6 +4325,8 @@ export type UserUncheckedUpdateWithoutActivatedEmployeeAccessCodesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -4238,6 +4380,8 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -4292,6 +4436,8 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -4362,6 +4508,8 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -4416,6 +4564,8 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -4470,6 +4620,8 @@ export type UserCreateWithoutMembershipsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -4524,6 +4676,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -4594,6 +4748,8 @@ export type UserUpdateWithoutMembershipsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -4648,6 +4804,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -4702,6 +4860,8 @@ export type UserCreateWithoutAuthSessionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -4756,6 +4916,8 @@ export type UserUncheckedCreateWithoutAuthSessionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -4826,6 +4988,8 @@ export type UserUpdateWithoutAuthSessionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -4880,6 +5044,8 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -4934,6 +5100,8 @@ export type UserCreateWithoutPlatformRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -4988,6 +5156,8 @@ export type UserUncheckedCreateWithoutPlatformRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -5047,6 +5217,8 @@ export type UserCreateWithoutGrantedPlatformRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -5101,6 +5273,8 @@ export type UserUncheckedCreateWithoutGrantedPlatformRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -5171,6 +5345,8 @@ export type UserUpdateWithoutPlatformRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -5225,6 +5401,8 @@ export type UserUncheckedUpdateWithoutPlatformRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -5290,6 +5468,8 @@ export type UserUpdateWithoutGrantedPlatformRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -5344,6 +5524,8 @@ export type UserUncheckedUpdateWithoutGrantedPlatformRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -5398,6 +5580,8 @@ export type UserCreateWithoutCapturedAttendancePunchesInput = {
   createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -5452,6 +5636,8 @@ export type UserUncheckedCreateWithoutCapturedAttendancePunchesInput = {
   createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -5522,6 +5708,8 @@ export type UserUpdateWithoutCapturedAttendancePunchesInput = {
   createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -5576,6 +5764,8 @@ export type UserUncheckedUpdateWithoutCapturedAttendancePunchesInput = {
   createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -5630,6 +5820,8 @@ export type UserCreateWithoutRequestedAttendanceCorrectionsInput = {
   createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -5684,6 +5876,8 @@ export type UserUncheckedCreateWithoutRequestedAttendanceCorrectionsInput = {
   createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -5754,6 +5948,8 @@ export type UserUpdateWithoutRequestedAttendanceCorrectionsInput = {
   createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -5808,6 +6004,8 @@ export type UserUncheckedUpdateWithoutRequestedAttendanceCorrectionsInput = {
   createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -5863,6 +6061,8 @@ export type UserCreateWithoutAttendanceApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
@@ -5917,6 +6117,8 @@ export type UserUncheckedCreateWithoutAttendanceApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -5987,6 +6189,8 @@ export type UserUpdateWithoutAttendanceApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
@@ -6041,6 +6245,8 @@ export type UserUncheckedUpdateWithoutAttendanceApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -6095,6 +6301,8 @@ export type UserCreateWithoutCreatedLeaveTransactionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
@@ -6149,6 +6357,8 @@ export type UserUncheckedCreateWithoutCreatedLeaveTransactionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -6219,6 +6429,8 @@ export type UserUpdateWithoutCreatedLeaveTransactionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
@@ -6273,6 +6485,8 @@ export type UserUncheckedUpdateWithoutCreatedLeaveTransactionsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -6327,6 +6541,8 @@ export type UserCreateWithoutLeaveApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
@@ -6381,6 +6597,8 @@ export type UserUncheckedCreateWithoutLeaveApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -6451,6 +6669,8 @@ export type UserUpdateWithoutLeaveApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
@@ -6505,6 +6725,8 @@ export type UserUncheckedUpdateWithoutLeaveApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -6559,6 +6781,8 @@ export type UserCreateWithoutTimesheetApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -6613,6 +6837,8 @@ export type UserUncheckedCreateWithoutTimesheetApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -6683,6 +6909,8 @@ export type UserUpdateWithoutTimesheetApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -6737,9 +6965,491 @@ export type UserUncheckedUpdateWithoutTimesheetApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserCreateWithoutRequestedHolidayReviewsInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserUncheckedCreateWithoutRequestedHolidayReviewsInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeUncheckedCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectUncheckedCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleUncheckedCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserCreateOrConnectWithoutRequestedHolidayReviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRequestedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutRequestedHolidayReviewsInput>
+}
+
+export type UserCreateWithoutDecidedHolidayReviewsInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserUncheckedCreateWithoutDecidedHolidayReviewsInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeUncheckedCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
+  uploadedFiles?: Prisma.FileObjectUncheckedCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleUncheckedCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserCreateOrConnectWithoutDecidedHolidayReviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDecidedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutDecidedHolidayReviewsInput>
+}
+
+export type UserUpsertWithoutRequestedHolidayReviewsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRequestedHolidayReviewsInput, Prisma.UserUncheckedUpdateWithoutRequestedHolidayReviewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRequestedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutRequestedHolidayReviewsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRequestedHolidayReviewsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRequestedHolidayReviewsInput, Prisma.UserUncheckedUpdateWithoutRequestedHolidayReviewsInput>
+}
+
+export type UserUpdateWithoutRequestedHolidayReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRequestedHolidayReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUncheckedUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUncheckedUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUncheckedUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserUpsertWithoutDecidedHolidayReviewsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDecidedHolidayReviewsInput, Prisma.UserUncheckedUpdateWithoutDecidedHolidayReviewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDecidedHolidayReviewsInput, Prisma.UserUncheckedCreateWithoutDecidedHolidayReviewsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDecidedHolidayReviewsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDecidedHolidayReviewsInput, Prisma.UserUncheckedUpdateWithoutDecidedHolidayReviewsInput>
+}
+
+export type UserUpdateWithoutDecidedHolidayReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDecidedHolidayReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.UserOrganizationUncheckedUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUncheckedUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
+  uploadedFiles?: Prisma.FileObjectUncheckedUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -6791,6 +7501,8 @@ export type UserCreateWithoutCreatedPayrollRunsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -6845,6 +7557,8 @@ export type UserUncheckedCreateWithoutCreatedPayrollRunsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -6915,6 +7629,8 @@ export type UserUpdateWithoutCreatedPayrollRunsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -6969,6 +7685,8 @@ export type UserUncheckedUpdateWithoutCreatedPayrollRunsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -7023,6 +7741,8 @@ export type UserCreateWithoutApprovedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -7077,6 +7797,8 @@ export type UserUncheckedCreateWithoutApprovedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -7136,6 +7858,8 @@ export type UserCreateWithoutRejectedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -7190,6 +7914,8 @@ export type UserUncheckedCreateWithoutRejectedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -7260,6 +7986,8 @@ export type UserUpdateWithoutApprovedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -7314,6 +8042,8 @@ export type UserUncheckedUpdateWithoutApprovedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -7379,6 +8109,8 @@ export type UserUpdateWithoutRejectedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -7433,6 +8165,8 @@ export type UserUncheckedUpdateWithoutRejectedSalaryAdvancesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -7487,6 +8221,8 @@ export type UserCreateWithoutMarkedPayrollPaymentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -7541,6 +8277,8 @@ export type UserUncheckedCreateWithoutMarkedPayrollPaymentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -7611,6 +8349,8 @@ export type UserUpdateWithoutMarkedPayrollPaymentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -7665,6 +8405,8 @@ export type UserUncheckedUpdateWithoutMarkedPayrollPaymentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -7719,6 +8461,8 @@ export type UserCreateWithoutCreatedPayrollAdjustmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -7773,6 +8517,8 @@ export type UserUncheckedCreateWithoutCreatedPayrollAdjustmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -7843,6 +8589,8 @@ export type UserUpdateWithoutCreatedPayrollAdjustmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -7897,6 +8645,8 @@ export type UserUncheckedUpdateWithoutCreatedPayrollAdjustmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -7951,6 +8701,8 @@ export type UserCreateWithoutPayrollApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -8005,6 +8757,8 @@ export type UserUncheckedCreateWithoutPayrollApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -8075,6 +8829,8 @@ export type UserUpdateWithoutPayrollApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -8129,6 +8885,8 @@ export type UserUncheckedUpdateWithoutPayrollApprovalsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -8182,6 +8940,8 @@ export type UserCreateWithoutCreatedRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -8236,6 +8996,8 @@ export type UserUncheckedCreateWithoutCreatedRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -8306,6 +9068,8 @@ export type UserUpdateWithoutCreatedRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -8360,6 +9124,8 @@ export type UserUncheckedUpdateWithoutCreatedRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -8414,6 +9180,8 @@ export type UserCreateWithoutOrganizationRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -8468,6 +9236,8 @@ export type UserUncheckedCreateWithoutOrganizationRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -8527,6 +9297,8 @@ export type UserCreateWithoutGrantedOrganizationRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -8581,6 +9353,8 @@ export type UserUncheckedCreateWithoutGrantedOrganizationRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -8651,6 +9425,8 @@ export type UserUpdateWithoutOrganizationRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -8705,6 +9481,8 @@ export type UserUncheckedUpdateWithoutOrganizationRoleAssignmentsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -8770,6 +9548,8 @@ export type UserUpdateWithoutGrantedOrganizationRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -8824,6 +9604,8 @@ export type UserUncheckedUpdateWithoutGrantedOrganizationRolesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -8878,6 +9660,8 @@ export type UserCreateWithoutCreatedApprovalPoliciesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -8932,6 +9716,8 @@ export type UserUncheckedCreateWithoutCreatedApprovalPoliciesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -9002,6 +9788,8 @@ export type UserUpdateWithoutCreatedApprovalPoliciesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -9056,6 +9844,8 @@ export type UserUncheckedUpdateWithoutCreatedApprovalPoliciesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -9111,6 +9901,8 @@ export type UserCreateWithoutApprovalPolicyStepsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -9165,6 +9957,8 @@ export type UserUncheckedCreateWithoutApprovalPolicyStepsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -9235,6 +10029,8 @@ export type UserUpdateWithoutApprovalPolicyStepsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -9289,6 +10085,8 @@ export type UserUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -9342,6 +10140,8 @@ export type UserCreateWithoutCreatedSourceChangesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -9396,6 +10196,8 @@ export type UserUncheckedCreateWithoutCreatedSourceChangesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -9466,6 +10268,8 @@ export type UserUpdateWithoutCreatedSourceChangesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -9520,6 +10324,8 @@ export type UserUncheckedUpdateWithoutCreatedSourceChangesInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -9575,6 +10381,8 @@ export type UserCreateWithoutRevokedWebauthnCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -9629,6 +10437,8 @@ export type UserUncheckedCreateWithoutRevokedWebauthnCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -9699,6 +10509,8 @@ export type UserUpdateWithoutRevokedWebauthnCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -9753,6 +10565,8 @@ export type UserUncheckedUpdateWithoutRevokedWebauthnCredentialsInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -9806,6 +10620,8 @@ export type UserCreateWithoutEmployeeInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
@@ -9860,6 +10676,8 @@ export type UserUncheckedCreateWithoutEmployeeInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
@@ -9930,6 +10748,8 @@ export type UserUpdateWithoutEmployeeInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
@@ -9984,6 +10804,8 @@ export type UserUncheckedUpdateWithoutEmployeeInput = {
   createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
   requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
@@ -10028,6 +10850,8 @@ export type UserCountOutputType = {
   createdWebhookKeys: number
   capturedAttendancePunches: number
   requestedAttendanceCorrections: number
+  requestedHolidayReviews: number
+  decidedHolidayReviews: number
   attendanceApprovals: number
   createdLeaveTransactions: number
   leaveApprovals: number
@@ -10067,6 +10891,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   createdWebhookKeys?: boolean | UserCountOutputTypeCountCreatedWebhookKeysArgs
   capturedAttendancePunches?: boolean | UserCountOutputTypeCountCapturedAttendancePunchesArgs
   requestedAttendanceCorrections?: boolean | UserCountOutputTypeCountRequestedAttendanceCorrectionsArgs
+  requestedHolidayReviews?: boolean | UserCountOutputTypeCountRequestedHolidayReviewsArgs
+  decidedHolidayReviews?: boolean | UserCountOutputTypeCountDecidedHolidayReviewsArgs
   attendanceApprovals?: boolean | UserCountOutputTypeCountAttendanceApprovalsArgs
   createdLeaveTransactions?: boolean | UserCountOutputTypeCountCreatedLeaveTransactionsArgs
   leaveApprovals?: boolean | UserCountOutputTypeCountLeaveApprovalsArgs
@@ -10244,6 +11070,20 @@ export type UserCountOutputTypeCountRequestedAttendanceCorrectionsArgs<ExtArgs e
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountRequestedHolidayReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceHolidayReviewWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDecidedHolidayReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceHolidayReviewWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountAttendanceApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AttendanceApprovalWhereInput
 }
@@ -10385,6 +11225,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdWebhookKeys?: boolean | Prisma.User$createdWebhookKeysArgs<ExtArgs>
   capturedAttendancePunches?: boolean | Prisma.User$capturedAttendancePunchesArgs<ExtArgs>
   requestedAttendanceCorrections?: boolean | Prisma.User$requestedAttendanceCorrectionsArgs<ExtArgs>
+  requestedHolidayReviews?: boolean | Prisma.User$requestedHolidayReviewsArgs<ExtArgs>
+  decidedHolidayReviews?: boolean | Prisma.User$decidedHolidayReviewsArgs<ExtArgs>
   attendanceApprovals?: boolean | Prisma.User$attendanceApprovalsArgs<ExtArgs>
   createdLeaveTransactions?: boolean | Prisma.User$createdLeaveTransactionsArgs<ExtArgs>
   leaveApprovals?: boolean | Prisma.User$leaveApprovalsArgs<ExtArgs>
@@ -10481,6 +11323,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdWebhookKeys?: boolean | Prisma.User$createdWebhookKeysArgs<ExtArgs>
   capturedAttendancePunches?: boolean | Prisma.User$capturedAttendancePunchesArgs<ExtArgs>
   requestedAttendanceCorrections?: boolean | Prisma.User$requestedAttendanceCorrectionsArgs<ExtArgs>
+  requestedHolidayReviews?: boolean | Prisma.User$requestedHolidayReviewsArgs<ExtArgs>
+  decidedHolidayReviews?: boolean | Prisma.User$decidedHolidayReviewsArgs<ExtArgs>
   attendanceApprovals?: boolean | Prisma.User$attendanceApprovalsArgs<ExtArgs>
   createdLeaveTransactions?: boolean | Prisma.User$createdLeaveTransactionsArgs<ExtArgs>
   leaveApprovals?: boolean | Prisma.User$leaveApprovalsArgs<ExtArgs>
@@ -10526,6 +11370,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdWebhookKeys: Prisma.$WebhookSigningKeyPayload<ExtArgs>[]
     capturedAttendancePunches: Prisma.$AttendancePunchPayload<ExtArgs>[]
     requestedAttendanceCorrections: Prisma.$AttendanceCorrectionPayload<ExtArgs>[]
+    requestedHolidayReviews: Prisma.$AttendanceHolidayReviewPayload<ExtArgs>[]
+    decidedHolidayReviews: Prisma.$AttendanceHolidayReviewPayload<ExtArgs>[]
     attendanceApprovals: Prisma.$AttendanceApprovalPayload<ExtArgs>[]
     createdLeaveTransactions: Prisma.$LeaveBalanceTransactionPayload<ExtArgs>[]
     leaveApprovals: Prisma.$LeaveApprovalPayload<ExtArgs>[]
@@ -10974,6 +11820,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   createdWebhookKeys<T extends Prisma.User$createdWebhookKeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdWebhookKeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookSigningKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   capturedAttendancePunches<T extends Prisma.User$capturedAttendancePunchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$capturedAttendancePunchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePunchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   requestedAttendanceCorrections<T extends Prisma.User$requestedAttendanceCorrectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$requestedAttendanceCorrectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceCorrectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  requestedHolidayReviews<T extends Prisma.User$requestedHolidayReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$requestedHolidayReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceHolidayReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  decidedHolidayReviews<T extends Prisma.User$decidedHolidayReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$decidedHolidayReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceHolidayReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendanceApprovals<T extends Prisma.User$attendanceApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$attendanceApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdLeaveTransactions<T extends Prisma.User$createdLeaveTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdLeaveTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveBalanceTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leaveApprovals<T extends Prisma.User$leaveApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$leaveApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -11946,6 +12794,54 @@ export type User$requestedAttendanceCorrectionsArgs<ExtArgs extends runtime.Type
   take?: number
   skip?: number
   distinct?: Prisma.AttendanceCorrectionScalarFieldEnum | Prisma.AttendanceCorrectionScalarFieldEnum[]
+}
+
+/**
+ * User.requestedHolidayReviews
+ */
+export type User$requestedHolidayReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceHolidayReview
+   */
+  select?: Prisma.AttendanceHolidayReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceHolidayReview
+   */
+  omit?: Prisma.AttendanceHolidayReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceHolidayReviewInclude<ExtArgs> | null
+  where?: Prisma.AttendanceHolidayReviewWhereInput
+  orderBy?: Prisma.AttendanceHolidayReviewOrderByWithRelationInput | Prisma.AttendanceHolidayReviewOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceHolidayReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceHolidayReviewScalarFieldEnum | Prisma.AttendanceHolidayReviewScalarFieldEnum[]
+}
+
+/**
+ * User.decidedHolidayReviews
+ */
+export type User$decidedHolidayReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceHolidayReview
+   */
+  select?: Prisma.AttendanceHolidayReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceHolidayReview
+   */
+  omit?: Prisma.AttendanceHolidayReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceHolidayReviewInclude<ExtArgs> | null
+  where?: Prisma.AttendanceHolidayReviewWhereInput
+  orderBy?: Prisma.AttendanceHolidayReviewOrderByWithRelationInput | Prisma.AttendanceHolidayReviewOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceHolidayReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceHolidayReviewScalarFieldEnum | Prisma.AttendanceHolidayReviewScalarFieldEnum[]
 }
 
 /**

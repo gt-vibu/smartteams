@@ -8,6 +8,7 @@ import { AttendanceDetailDrawer } from './attendance-detail-drawer';
 import { AttendanceSummaryFooter } from '../screen-2-attendance/attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useAttendanceWeek } from '../../hooks/use-attendance-week';
+import { attendanceSummaryStats } from '../../services/attendance-view';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { PageShell } from '../layout/page-shell';
 
@@ -21,6 +22,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
     days: records,
     requestCorrection,
     requestMissingCheckOut,
+    explainHolidayCheckIn,
     canRequestCorrection,
   } = useAttendance(30, week.window);
   const [selectedRow, setSelectedRow] = useState<AttendanceTableRow | null>(null);
@@ -45,8 +47,20 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
             : '-',
         payableHours: r.workedLabel,
         overtime: r.overtimeLabel,
-        status: r.dayStatus === 'PRESENT' ? 'Present' : r.dayStatus,
-        statusType: r.workedMinutes > 0 ? 'present' : r.isWeekend ? 'weekend' : 'empty',
+        // A check-in on an approved optional holiday reads by its review state, not "Present".
+        status: r.holidayConflict
+          ? `${r.holidayConflict.holidayName} · ${r.holidayConflict.label}`
+          : r.dayStatus === 'PRESENT'
+            ? 'Present'
+            : r.dayStatus,
+        statusType: r.holidayConflict
+          ? 'holiday-checkin'
+          : r.workedMinutes > 0
+            ? 'present'
+            : r.isWeekend
+              ? 'weekend'
+              : 'empty',
+        ...(r.holidayConflict ? { holidayConflict: r.holidayConflict } : {}),
         // Shift assignment is not wired, so the row states that rather than naming a shift.
         shift: r.shiftName ?? 'Not recorded',
         canRegularize: canRequestCorrection && r.correctionStatus !== 'PENDING',
@@ -84,15 +98,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
     });
   }, [rows, statusFilter, searchQuery]);
 
-  const stats = {
-    payableDays: records.filter((r) => r.dayStatus === 'PRESENT' || r.dayStatus === 'WEEKEND')
-      .length,
-    presentDays: records.filter((r) => r.dayStatus === 'PRESENT').length,
-    onDutyDays: 0,
-    paidLeaveDays: records.filter((r) => r.dayStatus === 'LEAVE').length,
-    holidayDays: records.filter((r) => r.dayStatus === 'HOLIDAY').length,
-    weekendDays: records.filter((r) => r.dayStatus === 'WEEKEND').length,
-  };
+  const stats = attendanceSummaryStats(records);
 
   /**
    * Raises the correction and lets the drawer see the outcome.
@@ -136,6 +142,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
                   <option value="ALL">All Statuses</option>
                   <option value="present">Present</option>
                   <option value="holiday">Holiday</option>
+                  <option value="holiday-checkin">Worked on holiday</option>
                   <option value="weekend">Weekend</option>
                   <option value="empty">Missed / Empty</option>
                 </Select>
@@ -190,6 +197,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
         onClose={() => setSelectedRow(null)}
         onSubmitRegularization={handleRegularize}
         onSubmitMissingCheckOut={requestMissingCheckOut}
+        onExplainHolidayCheckIn={explainHolidayCheckIn}
       />
     </div>
   );

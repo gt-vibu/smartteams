@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
@@ -10,6 +20,9 @@ import {
   AttendancePreferencesDto,
   AttendancePreferencesQueryDto,
   AttendanceQueryDto,
+  HolidayConflictQueryDto,
+  HolidayReviewDecisionDto,
+  HolidayReviewRequestDto,
   PunchDto,
 } from './attendance.dto';
 import { AttendanceService } from './attendance.service';
@@ -74,6 +87,51 @@ export class AttendanceController {
       );
   }
 
+  /**
+   * Check-ins on a granted optional holiday, and their review. Native only; see
+   * `attendance-holiday-review.service.ts`.
+   */
+  @Get('holiday-conflicts') holidayConflicts(
+    @Param('organizationId') organizationId: string,
+    @Query() query: HolidayConflictQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.attendance.listHolidayConflicts(context, {
+        ...(query.employeeId ? { employeeId: query.employeeId } : {}),
+        from: query.from,
+        to: query.to,
+      }),
+    );
+  }
+  @Get('holiday-conflicts/inbox') holidayReviewInbox(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.listHolidayReviewInbox(context));
+  }
+  @Post('holiday-conflicts/:reviewId/decision') decideHolidayReview(
+    @Param('organizationId') organizationId: string,
+    @Param('reviewId', ParseUUIDPipe) reviewId: string,
+    @Body() body: HolidayReviewDecisionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.decideHolidayReview(context, reviewId, body));
+  }
+  @Post(':attendanceId/holiday-conflict') requestHolidayReview(
+    @Param('organizationId') organizationId: string,
+    @Param('attendanceId', ParseUUIDPipe) attendanceId: string,
+    @Body() body: HolidayReviewRequestDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.requestHolidayReview(context, attendanceId, body));
+  }
   @Get('preferences') readPreferences(
     @Param('organizationId') organizationId: string,
     @Query() query: AttendancePreferencesQueryDto,
@@ -91,7 +149,7 @@ export class AttendanceController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.attendance.punch(context, 'IN', { ...body, source: 'NATIVE' }));
+      .then((context) => this.attendance.punchNative(context, 'IN', { ...body, source: 'NATIVE' }));
   }
   @Post('check-outs') checkOut(
     @Param('organizationId') organizationId: string,
@@ -100,7 +158,9 @@ export class AttendanceController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.attendance.punch(context, 'OUT', { ...body, source: 'NATIVE' }));
+      .then((context) =>
+        this.attendance.punchNative(context, 'OUT', { ...body, source: 'NATIVE' }),
+      );
   }
   @Post(':attendanceId/corrections') correction(
     @Param('organizationId') organizationId: string,

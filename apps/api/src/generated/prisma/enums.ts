@@ -303,6 +303,14 @@ export const ApprovalStatus = {
 export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
 
 
+export const HolidayReviewOutcome = {
+  KEEP_HOLIDAY: 'KEEP_HOLIDAY',
+  CONVERT_TO_WORKING_DAY: 'CONVERT_TO_WORKING_DAY'
+} as const
+
+export type HolidayReviewOutcome = (typeof HolidayReviewOutcome)[keyof typeof HolidayReviewOutcome]
+
+
 export const SelectionStatus = {
   CONFIRMED: 'CONFIRMED',
   PENDING: 'PENDING',

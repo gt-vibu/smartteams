@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Badge, Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
 import type { ApprovalInboxItem, ApprovalInboxState } from '../../hooks/use-approval-inbox';
+import { HolidayReviewDialog } from './holiday-review-dialog';
 
 /**
  * The queue of decisions routed to the signed-in user, and the dialog that records one.
@@ -18,6 +19,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
     status: 'APPROVED' | 'REJECTED';
   } | null>(null);
   const [comment, setComment] = useState('');
+  const [reviewing, setReviewing] = useState<ApprovalInboxItem | null>(null);
 
   const confirm = async () => {
     if (!deciding) return;
@@ -70,7 +72,8 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
           <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
             <p className="text-sm font-bold text-foreground">Nothing awaiting your decision</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Leave requests and attendance corrections routed to you appear here.
+              Leave requests, attendance corrections and holiday check-ins routed to you appear
+              here.
             </p>
           </div>
         )}
@@ -92,7 +95,19 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
                 <Badge variant="secondary">
                   {item.submittedAt ? item.submittedAt.slice(0, 10) : 'pending'}
                 </Badge>
-                {inbox.canDecide(item) ? (
+                {item.domain === 'HOLIDAY_CHECK_IN' && inbox.canDecide(item) ? (
+                  <Button
+                    disabled={inbox.saving}
+                    onClick={() => {
+                      inbox.dismissError();
+                      setReviewing(item);
+                    }}
+                    size="sm"
+                    type="button"
+                  >
+                    Review
+                  </Button>
+                ) : inbox.canDecide(item) ? (
                   <>
                     <Button
                       disabled={inbox.saving}
@@ -119,6 +134,8 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
             </div>
           ))}
       </div>
+
+      <HolidayReviewDialog item={reviewing} inbox={inbox} onClose={() => setReviewing(null)} />
 
       <Dialog onOpenChange={(open) => !open && setDeciding(null)} open={deciding !== null}>
         <DialogContent className="sm:max-w-md">

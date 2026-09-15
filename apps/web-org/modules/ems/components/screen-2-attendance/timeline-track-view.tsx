@@ -1,6 +1,14 @@
 import React from 'react';
 import type { TimelineDayRecord } from '../../types/attendance-timeline.types';
 import { formatMinutesToDuration } from '../../utils/format.utils';
+import { HOLIDAY_CONFLICT_PILL } from '../../services/holiday-conflict-view';
+
+/** The track's colours for a check-in on an approved optional holiday, by its review state. */
+const CONFLICT_TRACK = {
+  attention: { line: 'bg-amber-300', in: 'bg-amber-500', out: 'bg-amber-700' },
+  holiday: { line: 'bg-cyan-200', in: 'bg-cyan-400', out: 'bg-cyan-600' },
+  working: { line: 'bg-emerald-300', in: 'bg-emerald-500', out: 'bg-rose-500' },
+} as const;
 
 interface TimelineTrackViewProps {
   days: TimelineDayRecord[];
@@ -73,6 +81,7 @@ function TimelineRow({ day }: { day: TimelineDayRecord }) {
     ? formatMinutesToDuration(day.inProgressMinutes ?? 0) || '00h 00m'
     : '';
   const isSameTime = day.firstInTime && day.lastOutTime && day.firstInTime === day.lastOutTime;
+  const track = CONFLICT_TRACK[day.holidayConflict?.tone ?? 'working'];
   const times =
     day.status === 'PRESENT' && day.firstInTime
       ? `${day.firstInTime}${day.lastOutTime && !isSameTime ? ` → ${day.lastOutTime}` : ''}`
@@ -127,6 +136,14 @@ function TimelineRow({ day }: { day: TimelineDayRecord }) {
             Request a correction with your check-out time
           </div>
         )}
+        {day.holidayConflict && (
+          <span
+            className={`mt-1 inline-block max-w-full truncate rounded-full border px-2 py-0.5 text-[10px] font-semibold ${HOLIDAY_CONFLICT_PILL[day.holidayConflict.tone]}`}
+            title={day.holidayConflict.detail}
+          >
+            {day.holidayConflict.label}
+          </span>
+        )}
       </div>
 
       <div className="relative col-span-2 flex h-8 items-center px-2 sm:col-span-8">
@@ -138,14 +155,14 @@ function TimelineRow({ day }: { day: TimelineDayRecord }) {
 
         {day.status === 'PRESENT' && (
           <div className="relative flex w-full items-center">
-            <div className="relative h-0.5 w-full rounded-full bg-emerald-300">
+            <div className={`relative h-0.5 w-full rounded-full ${track.line}`}>
               {day.firstInTime && (
-                <TrackStamp percent={day.spanStartPercent ?? 0} dot="bg-emerald-500">
+                <TrackStamp percent={day.spanStartPercent ?? 0} dot={track.in}>
                   {day.firstInTime}
                 </TrackStamp>
               )}
               {day.lastOutTime && !isSameTime && (
-                <TrackStamp percent={day.spanEndPercent ?? 100} dot="bg-rose-500">
+                <TrackStamp percent={day.spanEndPercent ?? 100} dot={track.out}>
                   {day.lastOutTime}
                 </TrackStamp>
               )}

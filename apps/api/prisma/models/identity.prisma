@@ -37,6 +37,8 @@ model User {
   createdWebhookKeys              WebhookSigningKey[]                @relation("WebhookKeyCreatedBy")
   capturedAttendancePunches       AttendancePunch[]
   requestedAttendanceCorrections  AttendanceCorrection[]
+  requestedHolidayReviews         AttendanceHolidayReview[]          @relation("HolidayReviewRequestedBy")
+  decidedHolidayReviews           AttendanceHolidayReview[]          @relation("HolidayReviewDecidedBy")
   attendanceApprovals             AttendanceApproval[]
   createdLeaveTransactions        LeaveBalanceTransaction[]
   leaveApprovals                  LeaveApproval[]

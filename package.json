@@ -44,6 +44,7 @@
     "verify:concurrency": "node scripts/verify-concurrency.mjs",
     "verify:ownership-and-approvals": "node scripts/verify-ownership-and-approvals.mjs",
     "verify:missing-checkout": "node scripts/verify-missing-checkout.mjs",
+    "verify:holiday-checkin": "node scripts/verify-holiday-checkin.mjs",
     "perf:payroll": "node scripts/perf-payroll.mjs",
     "db:backup": "node scripts/backup-database.mjs",
     "db:verify-restore": "node scripts/verify-restore.mjs"

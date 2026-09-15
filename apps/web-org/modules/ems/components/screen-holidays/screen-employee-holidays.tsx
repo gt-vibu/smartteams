@@ -13,6 +13,8 @@ import {
 } from '@smarteam/ui';
 import { Calendar, ChevronLeft, ChevronRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
+import { useHolidayConflicts } from '../../hooks/use-holiday-conflicts';
+import { HOLIDAY_CONFLICT_PILL } from '../../services/holiday-conflict-view';
 import { PageShell } from '../layout/page-shell';
 import type { Holiday } from '@smarteam/contracts';
 
@@ -53,6 +55,12 @@ export function ScreenEmployeeHolidays() {
     'ALL',
   );
   const [holidayToApply, setHolidayToApply] = useState<Holiday | null>(null);
+  // Days this employee checked in on an approved optional holiday, and where each review stands.
+  const conflictWindow = useMemo(
+    () => ({ from: `${currentYearNum}-01-01`, to: `${currentYearNum}-12-31` }),
+    [currentYearNum],
+  );
+  const { byHoliday: conflicts } = useHolidayConflicts(conflictWindow);
 
   const handlePrevYear = () => {
     employeeHolidays.setYear(String(currentYearNum - 1));
@@ -302,6 +310,14 @@ export function ScreenEmployeeHolidays() {
                           </Badge>
                         </td>
                         <td data-label="Status" className="px-4 py-3">
+                          {conflicts.get(item.id) && (
+                            <span
+                              className={`mb-1 block w-fit rounded-full border px-2 py-0.5 text-[10px] font-semibold ${HOLIDAY_CONFLICT_PILL[conflicts.get(item.id)!.tone]}`}
+                              title={conflicts.get(item.id)!.detail}
+                            >
+                              {conflicts.get(item.id)!.label}
+                            </span>
+                          )}
                           {item.statusLabel === 'Required' && (
                             <span className="text-muted-foreground text-[11px] font-medium">
                               Required

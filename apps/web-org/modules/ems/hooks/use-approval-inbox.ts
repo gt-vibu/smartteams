@@ -1,12 +1,19 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { hasPermission } from '@smarteam/contracts';
+import {
+  hasPermission,
+  type HolidayReviewDecision,
+  type HolidayReviewInboxItem,
+  type HolidayReviewOutcome,
+} from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { leaveRepository } from '../repositories/leave.repository';
 import { attendanceRepository } from '../repositories/attendance.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { holidayConflictsRepository } from '../repositories/holiday-conflicts.repository';
+import { emitDataChanged, useDataChanged } from '../lib/data-events';
 
 /**
  * Everything awaiting the signed-in user's decision, across the domains that have an inbox.
@@ -16,9 +23,13 @@ import { useMutationRunner } from './use-mutation-runner';
  * exist — leave requests and attendance corrections — rather than inventing a third surface.
  *
  * Timesheet and payroll approvals have no inbox route, so they are not listed here at all.
+ *
+ * A check-in on an approved optional holiday is its own item: it is not approved or rejected but
+ * decided one of two ways — keep the holiday or make it a working day — so it carries the review
+ * the dialog needs.
  */
 
-export type ApprovalDomainKey = 'LEAVE' | 'ATTENDANCE_CORRECTION';
+export type ApprovalDomainKey = 'LEAVE' | 'ATTENDANCE_CORRECTION' | 'HOLIDAY_CHECK_IN';
 
 export type ApprovalInboxItem = {
   id: string;
@@ -27,6 +38,7 @@ export type ApprovalInboxItem = {
   title: string;
   detail: string;
   submittedAt: string | null;
+  holidayReview?: HolidayReviewInboxItem;
 };
 
 export function useApprovalInbox() {
@@ -51,9 +63,16 @@ export function useApprovalInbox() {
     { enabled: Boolean(organizationId) && canReadAttendance },
   );
 
+  const holidayReviews = useAsyncResource<HolidayReviewInboxItem[]>(
+    () => holidayConflictsRepository.inbox(organizationId!),
+    [organizationId],
+    { enabled: Boolean(organizationId) && canDecideAttendance },
+  );
+
   const refetchAll = useCallback(async () => {
-    await Promise.all([leave.refetch(), attendance.refetch()]);
-  }, [attendance, leave]);
+    await Promise.all([leave.refetch(), attendance.refetch(), holidayReviews.refetch()]);
+  }, [attendance, leave, holidayReviews]);
+  useDataChanged(['approvals'], refetchAll);
 
   const { saving, saveError, setSaveError, run } = useMutationRunner(refetchAll);
 
@@ -104,8 +123,41 @@ export function useApprovalInbox() {
         submittedAt: correction.requestedAt ?? null,
       };
     });
-    return [...leaveItems, ...attendanceItems];
-  }, [attendance.data, leave.data]);
+    const holidayItems = (holidayReviews.data ?? []).map((review) => ({
+      id: review.id,
+      domain: 'HOLIDAY_CHECK_IN' as const,
+      employeeId: review.employee.id,
+      title: 'Worked on an approved optional holiday',
+      detail: `${`${review.employee.firstName} ${review.employee.lastName ?? ''}`.trim()} · ${
+        review.holiday.name
+      } (${review.workDate}) · ${review.reason}`,
+      submittedAt: review.createdAt,
+      holidayReview: review,
+    }));
+    return [...leaveItems, ...attendanceItems, ...holidayItems];
+  }, [attendance.data, leave.data, holidayReviews.data]);
+
+  /**
+   * Keeps the holiday or converts the day. Resolves with the server's result only once it has
+   * accepted the decision, and announces the change so attendance, holiday and payroll screens
+   * read it again rather than showing what they loaded before.
+   */
+  const decideHolidayReview = useCallback(
+    async (item: ApprovalInboxItem, outcome: HolidayReviewOutcome, comment: string) => {
+      const recorded: { decision: HolidayReviewDecision | null } = { decision: null };
+      const ok = await run(async () => {
+        recorded.decision = await holidayConflictsRepository.decide(
+          organizationId!,
+          item.id,
+          outcome,
+          comment,
+        );
+      }, 'The decision could not be recorded.');
+      emitDataChanged('attendance', 'holidays', 'payroll', 'approvals');
+      return ok ? recorded.decision : null;
+    },
+    [organizationId, run],
+  );
 
   const decide = useCallback(
     (item: ApprovalInboxItem, status: 'APPROVED' | 'REJECTED', comment: string) =>
@@ -121,8 +173,8 @@ export function useApprovalInbox() {
 
   return {
     items,
-    loading: leave.loading || attendance.loading,
-    error: leave.error ?? attendance.error,
+    loading: leave.loading || attendance.loading || holidayReviews.loading,
+    error: leave.error ?? attendance.error ?? holidayReviews.error,
     leaveForbidden: leave.forbidden || !canReadLeave,
     attendanceForbidden: attendance.forbidden || !canReadAttendance,
     refetch: refetchAll,
@@ -130,6 +182,7 @@ export function useApprovalInbox() {
     saveError,
     dismissError: () => setSaveError(null),
     decide,
+    decideHolidayReview,
     canDecide: (item: ApprovalInboxItem) =>
       item.domain === 'LEAVE' ? canDecideLeave : canDecideAttendance,
   };

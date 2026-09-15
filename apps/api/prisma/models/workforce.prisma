@@ -43,6 +43,7 @@ model Employee {
   attendanceRecords        AttendanceRecord[]
   attendancePunches        AttendancePunch[]
   holidaySelections        EmployeeHolidaySelection[]
+  attendanceHolidayReviews AttendanceHolidayReview[]
   leaveBalances            LeaveBalance[]
   leaveRequests            LeaveRequest[]
   shifts                   EmployeeShiftAssignment[]

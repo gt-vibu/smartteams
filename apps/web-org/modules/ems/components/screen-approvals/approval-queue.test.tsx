@@ -32,6 +32,7 @@ function inbox(overrides: Partial<ApprovalInboxState> = {}): ApprovalInboxState 
     saveError: null,
     dismissError: vi.fn(),
     decide: vi.fn().mockResolvedValue(true),
+    decideHolidayReview: vi.fn().mockResolvedValue(null),
     canDecide: () => true,
     ...overrides,
   };

@@ -199,6 +199,12 @@ enum ApprovalStatus {
   CANCELLED
 }
 
+/// How a check-in on a granted optional holiday was resolved.
+enum HolidayReviewOutcome {
+  KEEP_HOLIDAY
+  CONVERT_TO_WORKING_DAY
+}
+
 enum SelectionStatus {
   CONFIRMED
   PENDING

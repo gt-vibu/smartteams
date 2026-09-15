@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CalendarDayItem } from '../../types/calendar.types';
+import { HOLIDAY_CONFLICT_PILL } from '../../services/holiday-conflict-view';
 
 interface CalendarDayCellProps {
   day: CalendarDayItem;
@@ -26,16 +27,24 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
   }
 
   const isWeekend = day.dayStatus === 'WEEKEND';
-  const statusLabel =
-    day.dayStatus === 'PRESENT'
+  // A check-in on an approved optional holiday is labelled by its review state, never "Present".
+  const conflict = day.holidayConflict;
+  const statusLabel = conflict
+    ? `${conflict.holidayName}: ${conflict.label}`
+    : day.dayStatus === 'PRESENT'
       ? `Present${day.hoursLabel ? `, ${day.hoursLabel}` : ''}`
       : day.dayStatus === 'HOLIDAY'
         ? (day.holidayName ?? 'Holiday')
         : isWeekend
           ? 'Weekend'
           : '';
-  const dot =
-    day.dayStatus === 'PRESENT'
+  const dot = conflict
+    ? conflict.tone === 'attention'
+      ? 'bg-amber-500'
+      : conflict.tone === 'holiday'
+        ? 'bg-cyan-500'
+        : 'bg-emerald-500'
+    : day.dayStatus === 'PRESENT'
       ? 'bg-emerald-500'
       : day.dayStatus === 'HOLIDAY'
         ? 'bg-cyan-500'
@@ -79,7 +88,17 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
 
       {/* From `sm`: the labelled badge. */}
       <div className="mt-0.5 hidden w-full min-w-0 flex-col gap-0.5 sm:flex">
-        {day.dayStatus === 'PRESENT' && (
+        {conflict && (
+          <div
+            className={`rounded border p-0.5 px-1 text-[9.5px] font-semibold shadow-2xs ${HOLIDAY_CONFLICT_PILL[conflict.tone]}`}
+            title={conflict.detail}
+          >
+            <span className="block truncate">{conflict.holidayName}</span>
+            <span className="block truncate font-medium">{conflict.label}</span>
+          </div>
+        )}
+
+        {!conflict && day.dayStatus === 'PRESENT' && (
           <div className="flex items-center gap-1 rounded border border-emerald-200/80 bg-emerald-50 p-0.5 px-1 text-[9.5px] font-semibold text-emerald-800 shadow-2xs">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
             <span className="truncate">Present {day.hoursLabel ? `· ${day.hoursLabel}` : ''}</span>

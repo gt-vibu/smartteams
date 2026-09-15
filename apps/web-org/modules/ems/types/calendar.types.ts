@@ -1,3 +1,5 @@
+import type { HolidayConflictView } from '../services/holiday-conflict-view';
+
 export type CalendarDayStatus = 'PRESENT' | 'ABSENT' | 'HOLIDAY' | 'WEEKEND' | 'UPCOMING' | 'EMPTY';
 
 export interface CalendarDayItem {
@@ -18,6 +20,8 @@ export interface CalendarDayItem {
   hoursLabel?: string; // "08:15 Hrs"
   holidayName?: string;
   isRestrictedHoliday?: boolean;
+  /** A check-in on the employee's approved optional holiday, shown by its review state. */
+  holidayConflict?: HolidayConflictView;
   shiftName?: string;
   punches?: Array<{
     type: 'IN' | 'OUT';

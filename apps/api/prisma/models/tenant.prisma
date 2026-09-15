@@ -53,6 +53,7 @@ model Organization {
   attendanceApprovals       AttendanceApproval[]
   holidays                  Holiday[]
   holidaySelections         EmployeeHolidaySelection[]
+  attendanceHolidayReviews  AttendanceHolidayReview[]
   employeeHolidayPolicies   EmployeeHolidayPolicy[]
   leaveTypes                LeaveType[]
   leavePolicyAssignments    LeavePolicyAssignment[]

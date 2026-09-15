@@ -5,6 +5,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
+import { cancelHolidaySelection } from './employee-holiday-cancellation';
 
 /**
  * Employee self-service for optional / floating holiday selection.
@@ -370,43 +371,7 @@ export class EmployeeHolidaysService {
         throw new ConflictError('Cannot cancel an optional holiday that has already passed');
       }
 
-      const updated = await tx.employeeHolidaySelection.update({
-        where: { id: selection.id },
-        data: {
-          status: 'CANCELLED',
-          cancelledAt: new Date(),
-        },
-      });
-
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE_HOLIDAY_SELECTION',
-          entityId: selection.id,
-          action: 'EMPLOYEE_HOLIDAY_CANCELLED',
-          beforeState: jsonSnapshot(selection),
-          afterState: jsonSnapshot(updated),
-          reason,
-        },
-        tx,
-      );
-
-      await this.outbox.append(
-        context,
-        {
-          aggregateType: 'EmployeeHolidaySelection',
-          aggregateId: selection.id,
-          aggregateVersion: 2,
-          eventType: 'employee.holiday.cancelled',
-          payload: jsonSnapshot({
-            selectionId: selection.id,
-            employeeId: employee.id,
-            holidayId,
-            reason,
-          }),
-        },
-        tx,
-      );
+      await cancelHolidaySelection(tx, this.audit, this.outbox, context, selection, reason);
 
       // Built from this transaction, so the cancelled selection is already gone from the reply.
       return this.buildHolidaySummary(tx, context, selection.year);

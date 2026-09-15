@@ -7,6 +7,7 @@ import { useEmployee } from './use-employee';
 import { holidaysRepository } from '../repositories/holidays.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { useDataChanged } from '../lib/data-events';
 
 /**
  * Employee self-service for floating/optional holiday summary and selection.
@@ -28,6 +29,8 @@ export function useEmployeeHolidays() {
   );
 
   const { saving, saveError, setSaveError, run } = useMutationRunner(resource.refetch);
+  // A manager converting a worked holiday cancels the selection; show it as the server holds it.
+  useDataChanged(['holidays'], resource.refetch);
 
   const selectHolidays = useCallback(
     (holidayIds: string[]) =>

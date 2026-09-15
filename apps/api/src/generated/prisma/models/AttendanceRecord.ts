@@ -321,6 +321,7 @@ export type AttendanceRecordWhereInput = {
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   punches?: Prisma.AttendancePunchListRelationFilter
   corrections?: Prisma.AttendanceCorrectionListRelationFilter
+  holidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
   timesheetEntries?: Prisma.TimesheetEntryListRelationFilter
 }
 
@@ -346,6 +347,7 @@ export type AttendanceRecordOrderByWithRelationInput = {
   branch?: Prisma.BranchOrderByWithRelationInput
   punches?: Prisma.AttendancePunchOrderByRelationAggregateInput
   corrections?: Prisma.AttendanceCorrectionOrderByRelationAggregateInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewOrderByRelationAggregateInput
   timesheetEntries?: Prisma.TimesheetEntryOrderByRelationAggregateInput
 }
 
@@ -376,6 +378,7 @@ export type AttendanceRecordWhereUniqueInput = Prisma.AtLeast<{
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   punches?: Prisma.AttendancePunchListRelationFilter
   corrections?: Prisma.AttendanceCorrectionListRelationFilter
+  holidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
   timesheetEntries?: Prisma.TimesheetEntryListRelationFilter
 }, "id" | "employeeId_workDate" | "organizationId_externalId">
 
@@ -444,6 +447,7 @@ export type AttendanceRecordCreateInput = {
   branch?: Prisma.BranchCreateNestedOneWithoutAttendanceRecordsInput
   punches?: Prisma.AttendancePunchCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -466,6 +470,7 @@ export type AttendanceRecordUncheckedCreateInput = {
   version?: number
   punches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -488,6 +493,7 @@ export type AttendanceRecordUpdateInput = {
   branch?: Prisma.BranchUpdateOneWithoutAttendanceRecordsNestedInput
   punches?: Prisma.AttendancePunchUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -510,6 +516,7 @@ export type AttendanceRecordUncheckedUpdateInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   punches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -720,6 +727,20 @@ export type AttendanceRecordUpdateOneWithoutTimesheetEntriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AttendanceRecordUpdateToOneWithWhereWithoutTimesheetEntriesInput, Prisma.AttendanceRecordUpdateWithoutTimesheetEntriesInput>, Prisma.AttendanceRecordUncheckedUpdateWithoutTimesheetEntriesInput>
 }
 
+export type AttendanceRecordCreateNestedOneWithoutHolidayReviewsInput = {
+  create?: Prisma.XOR<Prisma.AttendanceRecordCreateWithoutHolidayReviewsInput, Prisma.AttendanceRecordUncheckedCreateWithoutHolidayReviewsInput>
+  connectOrCreate?: Prisma.AttendanceRecordCreateOrConnectWithoutHolidayReviewsInput
+  connect?: Prisma.AttendanceRecordWhereUniqueInput
+}
+
+export type AttendanceRecordUpdateOneRequiredWithoutHolidayReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.AttendanceRecordCreateWithoutHolidayReviewsInput, Prisma.AttendanceRecordUncheckedCreateWithoutHolidayReviewsInput>
+  connectOrCreate?: Prisma.AttendanceRecordCreateOrConnectWithoutHolidayReviewsInput
+  upsert?: Prisma.AttendanceRecordUpsertWithoutHolidayReviewsInput
+  connect?: Prisma.AttendanceRecordWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AttendanceRecordUpdateToOneWithWhereWithoutHolidayReviewsInput, Prisma.AttendanceRecordUpdateWithoutHolidayReviewsInput>, Prisma.AttendanceRecordUncheckedUpdateWithoutHolidayReviewsInput>
+}
+
 export type AttendanceRecordCreateNestedManyWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.AttendanceRecordCreateWithoutOrganizationInput, Prisma.AttendanceRecordUncheckedCreateWithoutOrganizationInput> | Prisma.AttendanceRecordCreateWithoutOrganizationInput[] | Prisma.AttendanceRecordUncheckedCreateWithoutOrganizationInput[]
   connectOrCreate?: Prisma.AttendanceRecordCreateOrConnectWithoutOrganizationInput | Prisma.AttendanceRecordCreateOrConnectWithoutOrganizationInput[]
@@ -864,6 +885,7 @@ export type AttendanceRecordCreateWithoutPunchesInput = {
   employee: Prisma.EmployeeCreateNestedOneWithoutAttendanceRecordsInput
   branch?: Prisma.BranchCreateNestedOneWithoutAttendanceRecordsInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -885,6 +907,7 @@ export type AttendanceRecordUncheckedCreateWithoutPunchesInput = {
   updatedAt?: Date | string
   version?: number
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -922,6 +945,7 @@ export type AttendanceRecordUpdateWithoutPunchesInput = {
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendanceRecordsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutAttendanceRecordsNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -943,6 +967,7 @@ export type AttendanceRecordUncheckedUpdateWithoutPunchesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -964,6 +989,7 @@ export type AttendanceRecordCreateWithoutCorrectionsInput = {
   employee: Prisma.EmployeeCreateNestedOneWithoutAttendanceRecordsInput
   branch?: Prisma.BranchCreateNestedOneWithoutAttendanceRecordsInput
   punches?: Prisma.AttendancePunchCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -985,6 +1011,7 @@ export type AttendanceRecordUncheckedCreateWithoutCorrectionsInput = {
   updatedAt?: Date | string
   version?: number
   punches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -1022,6 +1049,7 @@ export type AttendanceRecordUpdateWithoutCorrectionsInput = {
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendanceRecordsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutAttendanceRecordsNestedInput
   punches?: Prisma.AttendancePunchUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1043,6 +1071,7 @@ export type AttendanceRecordUncheckedUpdateWithoutCorrectionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
   punches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1065,6 +1094,7 @@ export type AttendanceRecordCreateWithoutTimesheetEntriesInput = {
   branch?: Prisma.BranchCreateNestedOneWithoutAttendanceRecordsInput
   punches?: Prisma.AttendancePunchCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutAttendanceRecordInput
 }
 
 export type AttendanceRecordUncheckedCreateWithoutTimesheetEntriesInput = {
@@ -1086,6 +1116,7 @@ export type AttendanceRecordUncheckedCreateWithoutTimesheetEntriesInput = {
   version?: number
   punches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutAttendanceRecordInput
 }
 
 export type AttendanceRecordCreateOrConnectWithoutTimesheetEntriesInput = {
@@ -1123,6 +1154,7 @@ export type AttendanceRecordUpdateWithoutTimesheetEntriesInput = {
   branch?: Prisma.BranchUpdateOneWithoutAttendanceRecordsNestedInput
   punches?: Prisma.AttendancePunchUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutAttendanceRecordNestedInput
 }
 
 export type AttendanceRecordUncheckedUpdateWithoutTimesheetEntriesInput = {
@@ -1144,6 +1176,111 @@ export type AttendanceRecordUncheckedUpdateWithoutTimesheetEntriesInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   punches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+}
+
+export type AttendanceRecordCreateWithoutHolidayReviewsInput = {
+  id?: string
+  workDate: Date | string
+  status?: $Enums.AttendanceStatus
+  dayStatus?: $Enums.AttendanceDayStatus
+  scheduledMinutes?: number | null
+  workedMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  correctionNote?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutAttendanceRecordsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutAttendanceRecordsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutAttendanceRecordsInput
+  punches?: Prisma.AttendancePunchCreateNestedManyWithoutAttendanceRecordInput
+  corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendanceRecordInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutAttendanceRecordInput
+}
+
+export type AttendanceRecordUncheckedCreateWithoutHolidayReviewsInput = {
+  id?: string
+  organizationId: string
+  employeeId: string
+  branchId?: string | null
+  workDate: Date | string
+  status?: $Enums.AttendanceStatus
+  dayStatus?: $Enums.AttendanceDayStatus
+  scheduledMinutes?: number | null
+  workedMinutes?: number
+  overtimeMinutes?: number
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  correctionNote?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  punches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutAttendanceRecordInput
+}
+
+export type AttendanceRecordCreateOrConnectWithoutHolidayReviewsInput = {
+  where: Prisma.AttendanceRecordWhereUniqueInput
+  create: Prisma.XOR<Prisma.AttendanceRecordCreateWithoutHolidayReviewsInput, Prisma.AttendanceRecordUncheckedCreateWithoutHolidayReviewsInput>
+}
+
+export type AttendanceRecordUpsertWithoutHolidayReviewsInput = {
+  update: Prisma.XOR<Prisma.AttendanceRecordUpdateWithoutHolidayReviewsInput, Prisma.AttendanceRecordUncheckedUpdateWithoutHolidayReviewsInput>
+  create: Prisma.XOR<Prisma.AttendanceRecordCreateWithoutHolidayReviewsInput, Prisma.AttendanceRecordUncheckedCreateWithoutHolidayReviewsInput>
+  where?: Prisma.AttendanceRecordWhereInput
+}
+
+export type AttendanceRecordUpdateToOneWithWhereWithoutHolidayReviewsInput = {
+  where?: Prisma.AttendanceRecordWhereInput
+  data: Prisma.XOR<Prisma.AttendanceRecordUpdateWithoutHolidayReviewsInput, Prisma.AttendanceRecordUncheckedUpdateWithoutHolidayReviewsInput>
+}
+
+export type AttendanceRecordUpdateWithoutHolidayReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  workDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
+  dayStatus?: Prisma.EnumAttendanceDayStatusFieldUpdateOperationsInput | $Enums.AttendanceDayStatus
+  scheduledMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  workedMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  correctionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendanceRecordsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendanceRecordsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutAttendanceRecordsNestedInput
+  punches?: Prisma.AttendancePunchUpdateManyWithoutAttendanceRecordNestedInput
+  corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendanceRecordNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutAttendanceRecordNestedInput
+}
+
+export type AttendanceRecordUncheckedUpdateWithoutHolidayReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
+  dayStatus?: Prisma.EnumAttendanceDayStatusFieldUpdateOperationsInput | $Enums.AttendanceDayStatus
+  scheduledMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  workedMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  overtimeMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  correctionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  punches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutAttendanceRecordNestedInput
 }
 
 export type AttendanceRecordCreateWithoutOrganizationInput = {
@@ -1164,6 +1301,7 @@ export type AttendanceRecordCreateWithoutOrganizationInput = {
   branch?: Prisma.BranchCreateNestedOneWithoutAttendanceRecordsInput
   punches?: Prisma.AttendancePunchCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -1185,6 +1323,7 @@ export type AttendanceRecordUncheckedCreateWithoutOrganizationInput = {
   version?: number
   punches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -1254,6 +1393,7 @@ export type AttendanceRecordCreateWithoutBranchInput = {
   employee: Prisma.EmployeeCreateNestedOneWithoutAttendanceRecordsInput
   punches?: Prisma.AttendancePunchCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -1275,6 +1415,7 @@ export type AttendanceRecordUncheckedCreateWithoutBranchInput = {
   version?: number
   punches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -1322,6 +1463,7 @@ export type AttendanceRecordCreateWithoutEmployeeInput = {
   branch?: Prisma.BranchCreateNestedOneWithoutAttendanceRecordsInput
   punches?: Prisma.AttendancePunchCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -1343,6 +1485,7 @@ export type AttendanceRecordUncheckedCreateWithoutEmployeeInput = {
   version?: number
   punches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutAttendanceRecordInput
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendanceRecordInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutAttendanceRecordInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutAttendanceRecordInput
 }
 
@@ -1408,6 +1551,7 @@ export type AttendanceRecordUpdateWithoutOrganizationInput = {
   branch?: Prisma.BranchUpdateOneWithoutAttendanceRecordsNestedInput
   punches?: Prisma.AttendancePunchUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1429,6 +1573,7 @@ export type AttendanceRecordUncheckedUpdateWithoutOrganizationInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   punches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1486,6 +1631,7 @@ export type AttendanceRecordUpdateWithoutBranchInput = {
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendanceRecordsNestedInput
   punches?: Prisma.AttendancePunchUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1507,6 +1653,7 @@ export type AttendanceRecordUncheckedUpdateWithoutBranchInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   punches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1564,6 +1711,7 @@ export type AttendanceRecordUpdateWithoutEmployeeInput = {
   branch?: Prisma.BranchUpdateOneWithoutAttendanceRecordsNestedInput
   punches?: Prisma.AttendancePunchUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1585,6 +1733,7 @@ export type AttendanceRecordUncheckedUpdateWithoutEmployeeInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   punches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendanceRecordNestedInput
+  holidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutAttendanceRecordNestedInput
   timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutAttendanceRecordNestedInput
 }
 
@@ -1614,12 +1763,14 @@ export type AttendanceRecordUncheckedUpdateManyWithoutEmployeeInput = {
 export type AttendanceRecordCountOutputType = {
   punches: number
   corrections: number
+  holidayReviews: number
   timesheetEntries: number
 }
 
 export type AttendanceRecordCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   punches?: boolean | AttendanceRecordCountOutputTypeCountPunchesArgs
   corrections?: boolean | AttendanceRecordCountOutputTypeCountCorrectionsArgs
+  holidayReviews?: boolean | AttendanceRecordCountOutputTypeCountHolidayReviewsArgs
   timesheetEntries?: boolean | AttendanceRecordCountOutputTypeCountTimesheetEntriesArgs
 }
 
@@ -1645,6 +1796,13 @@ export type AttendanceRecordCountOutputTypeCountPunchesArgs<ExtArgs extends runt
  */
 export type AttendanceRecordCountOutputTypeCountCorrectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AttendanceCorrectionWhereInput
+}
+
+/**
+ * AttendanceRecordCountOutputType without action
+ */
+export type AttendanceRecordCountOutputTypeCountHolidayReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceHolidayReviewWhereInput
 }
 
 /**
@@ -1677,6 +1835,7 @@ export type AttendanceRecordSelect<ExtArgs extends runtime.Types.Extensions.Inte
   branch?: boolean | Prisma.AttendanceRecord$branchArgs<ExtArgs>
   punches?: boolean | Prisma.AttendanceRecord$punchesArgs<ExtArgs>
   corrections?: boolean | Prisma.AttendanceRecord$correctionsArgs<ExtArgs>
+  holidayReviews?: boolean | Prisma.AttendanceRecord$holidayReviewsArgs<ExtArgs>
   timesheetEntries?: boolean | Prisma.AttendanceRecord$timesheetEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.AttendanceRecordCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["attendanceRecord"]>
@@ -1751,6 +1910,7 @@ export type AttendanceRecordInclude<ExtArgs extends runtime.Types.Extensions.Int
   branch?: boolean | Prisma.AttendanceRecord$branchArgs<ExtArgs>
   punches?: boolean | Prisma.AttendanceRecord$punchesArgs<ExtArgs>
   corrections?: boolean | Prisma.AttendanceRecord$correctionsArgs<ExtArgs>
+  holidayReviews?: boolean | Prisma.AttendanceRecord$holidayReviewsArgs<ExtArgs>
   timesheetEntries?: boolean | Prisma.AttendanceRecord$timesheetEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.AttendanceRecordCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1773,6 +1933,7 @@ export type $AttendanceRecordPayload<ExtArgs extends runtime.Types.Extensions.In
     branch: Prisma.$BranchPayload<ExtArgs> | null
     punches: Prisma.$AttendancePunchPayload<ExtArgs>[]
     corrections: Prisma.$AttendanceCorrectionPayload<ExtArgs>[]
+    holidayReviews: Prisma.$AttendanceHolidayReviewPayload<ExtArgs>[]
     timesheetEntries: Prisma.$TimesheetEntryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2191,6 +2352,7 @@ export interface Prisma__AttendanceRecordClient<T, Null = never, ExtArgs extends
   branch<T extends Prisma.AttendanceRecord$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceRecord$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   punches<T extends Prisma.AttendanceRecord$punchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceRecord$punchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePunchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   corrections<T extends Prisma.AttendanceRecord$correctionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceRecord$correctionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceCorrectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  holidayReviews<T extends Prisma.AttendanceRecord$holidayReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceRecord$holidayReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceHolidayReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   timesheetEntries<T extends Prisma.AttendanceRecord$timesheetEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceRecord$timesheetEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimesheetEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2702,6 +2864,30 @@ export type AttendanceRecord$correctionsArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.AttendanceCorrectionScalarFieldEnum | Prisma.AttendanceCorrectionScalarFieldEnum[]
+}
+
+/**
+ * AttendanceRecord.holidayReviews
+ */
+export type AttendanceRecord$holidayReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceHolidayReview
+   */
+  select?: Prisma.AttendanceHolidayReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceHolidayReview
+   */
+  omit?: Prisma.AttendanceHolidayReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceHolidayReviewInclude<ExtArgs> | null
+  where?: Prisma.AttendanceHolidayReviewWhereInput
+  orderBy?: Prisma.AttendanceHolidayReviewOrderByWithRelationInput | Prisma.AttendanceHolidayReviewOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceHolidayReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceHolidayReviewScalarFieldEnum | Prisma.AttendanceHolidayReviewScalarFieldEnum[]
 }
 
 /**

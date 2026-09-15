@@ -4,6 +4,7 @@ import React from 'react';
 import type { ColumnDef } from '@smarteam/ui';
 import { Button, StandardDataTable } from '@smarteam/ui';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
+import { HOLIDAY_CONFLICT_PILL } from '../../services/holiday-conflict-view';
 
 interface AttendanceTableViewProps {
   rows: AttendanceTableRow[];
@@ -12,6 +13,16 @@ interface AttendanceTableViewProps {
 
 // ─── Status badge helper ──────────────────────────────────────────────────────
 function StatusBadge({ row }: { row: AttendanceTableRow }) {
+  if (row.holidayConflict) {
+    return (
+      <span
+        className={`inline-flex max-w-full items-center rounded border px-2 py-0.5 text-[11px] font-semibold ${HOLIDAY_CONFLICT_PILL[row.holidayConflict.tone]}`}
+        title={row.holidayConflict.detail}
+      >
+        <span className="truncate">{row.status}</span>
+      </span>
+    );
+  }
   if (row.statusType === 'present') {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">

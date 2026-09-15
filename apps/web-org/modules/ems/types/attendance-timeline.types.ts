@@ -19,6 +19,11 @@ export interface TimelineDayRecord {
   status: 'PRESENT' | 'WEEKEND' | 'HOLIDAY' | 'LEAVE' | 'EMPTY';
   holidayName?: string;
   isRestrictedHoliday?: boolean;
+  /**
+   * A check-in on the employee's approved optional holiday: the row shows this label and colour
+   * instead of an ordinary present day.
+   */
+  holidayConflict?: { label: string; detail: string; tone: 'attention' | 'holiday' | 'working' };
   // Visual bar span (percent of 10 AM - 6 PM scale)
   spanStartPercent?: number;
   spanEndPercent?: number;

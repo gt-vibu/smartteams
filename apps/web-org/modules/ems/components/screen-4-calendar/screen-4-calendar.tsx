@@ -31,6 +31,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     days: records,
     requestCorrection,
     requestMissingCheckOut,
+    explainHolidayCheckIn,
   } = useAttendance(30, monthWindow);
   const holidays = useHolidays();
   const employeeHolidays = useEmployeeHolidays();
@@ -118,6 +119,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
             : undefined,
         holidayName: holidayInfo?.name,
         isRestrictedHoliday: holidayInfo?.isOptional,
+        ...(record?.holidayConflict ? { holidayConflict: record.holidayConflict } : {}),
         hoursLabel: record && record.workedMinutes > 0 ? record.workedLabel : undefined,
         shiftName: undefined,
         punches:
@@ -203,6 +205,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         onClose={() => setIsDrawerOpen(false)}
         onSubmitCorrection={handleSubmitCorrection}
         onSubmitMissingCheckOut={requestMissingCheckOut}
+        onExplainHolidayCheckIn={explainHolidayCheckIn}
       />
     </div>
   );

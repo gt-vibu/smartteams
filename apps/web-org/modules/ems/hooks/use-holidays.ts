@@ -16,6 +16,7 @@ import {
 } from '../repositories/holidays.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { useDataChanged } from '../lib/data-events';
 
 /**
  * The organization's holiday calendar and administration.
@@ -75,6 +76,7 @@ export function useHolidays() {
   }, [resource, settingsResource, selectionsResource, employeePoliciesResource]);
 
   const { saving, saveError, setSaveError, run } = useMutationRunner(refetchAll);
+  useDataChanged(['holidays'], refetchAll);
 
   const createHoliday = useCallback(
     (input: HolidayInput) =>

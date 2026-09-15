@@ -16,6 +16,7 @@ import {
 } from '../repositories/payroll.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { useDataChanged } from '../lib/data-events';
 
 /**
  * Organization-wide payroll: runs, their lifecycle, and the payslips a released run produced.
@@ -61,6 +62,8 @@ export function usePayrollAdmin() {
   }, [payslipResource, runResource]);
 
   const { saving, saveError, setSaveError, run: mutate } = useMutationRunner(refetchAll);
+  // An attendance or holiday decision can make a calculated run stale; read the runs again.
+  useDataChanged(['payroll'], refetchAll);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 
   const runs = useMemo(() => runResource.data ?? [], [runResource.data]);

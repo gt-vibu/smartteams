@@ -1013,6 +1013,23 @@ export type EnumTimesheetEntrySourceWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumTimesheetEntrySourceFilter<$PrismaModel>
 }
 
+export type EnumHolidayReviewOutcomeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayReviewOutcome | Prisma.EnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHolidayReviewOutcomeNullableFilter<$PrismaModel> | $Enums.HolidayReviewOutcome | null
+}
+
+export type EnumHolidayReviewOutcomeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayReviewOutcome | Prisma.EnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHolidayReviewOutcomeNullableWithAggregatesFilter<$PrismaModel> | $Enums.HolidayReviewOutcome | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHolidayReviewOutcomeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHolidayReviewOutcomeNullableFilter<$PrismaModel>
+}
+
 export type EnumPayFrequencyFilter<$PrismaModel = never> = {
   equals?: $Enums.PayFrequency | Prisma.EnumPayFrequencyFieldRefInput<$PrismaModel>
   in?: $Enums.PayFrequency[] | Prisma.ListEnumPayFrequencyFieldRefInput<$PrismaModel>
@@ -2458,6 +2475,23 @@ export type NestedEnumTimesheetEntrySourceWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumTimesheetEntrySourceFilter<$PrismaModel>
   _max?: Prisma.NestedEnumTimesheetEntrySourceFilter<$PrismaModel>
+}
+
+export type NestedEnumHolidayReviewOutcomeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayReviewOutcome | Prisma.EnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHolidayReviewOutcomeNullableFilter<$PrismaModel> | $Enums.HolidayReviewOutcome | null
+}
+
+export type NestedEnumHolidayReviewOutcomeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HolidayReviewOutcome | Prisma.EnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HolidayReviewOutcome[] | Prisma.ListEnumHolidayReviewOutcomeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHolidayReviewOutcomeNullableWithAggregatesFilter<$PrismaModel> | $Enums.HolidayReviewOutcome | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHolidayReviewOutcomeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHolidayReviewOutcomeNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumPayFrequencyFilter<$PrismaModel = never> = {

@@ -3,6 +3,7 @@ import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
 import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
 import type { CalendarDayItem } from '../../types/calendar.types';
 import { MissingCheckOutForm } from '../common/missing-check-out-form';
+import { HolidayConflictSection } from '../common/holiday-conflict-section';
 
 interface CalendarDetailDrawerProps {
   day: CalendarDayItem | null;
@@ -22,6 +23,8 @@ interface CalendarDetailDrawerProps {
     checkOutAt: string,
     reason: string,
   ) => Promise<unknown>;
+  /** Explains a check-in on an approved optional holiday; same contract. */
+  onExplainHolidayCheckIn?: (recordId: string, reason: string, comment: string) => Promise<unknown>;
 }
 
 export function CalendarDetailDrawer({
@@ -30,6 +33,7 @@ export function CalendarDetailDrawer({
   onClose,
   onSubmitCorrection,
   onSubmitMissingCheckOut,
+  onExplainHolidayCheckIn,
 }: CalendarDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -115,7 +119,11 @@ export function CalendarDetailDrawer({
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-medium">Status</span>
                 <span className="font-semibold text-foreground">
-                  {day.holidayName ? day.holidayName : day.dayStatus}
+                  {day.holidayConflict
+                    ? day.holidayConflict.label
+                    : day.holidayName
+                      ? day.holidayName
+                      : day.dayStatus}
                 </span>
               </div>
               {day.hoursLabel && (
@@ -163,6 +171,14 @@ export function CalendarDetailDrawer({
                 </div>
               )}
             </div>
+
+            {day.holidayConflict && (
+              <HolidayConflictSection
+                conflict={day.holidayConflict}
+                attendanceId={day.attendanceRecordId}
+                onExplain={onExplainHolidayCheckIn}
+              />
+            )}
 
             {/* A day that ended on a check-in gets its check-out added instead. */}
             {day.openCheckInAt && day.attendanceRecordId && onSubmitMissingCheckOut && (

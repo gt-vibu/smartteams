@@ -99,6 +99,7 @@ export const ModelName = {
   Timesheet: 'Timesheet',
   TimesheetEntry: 'TimesheetEntry',
   TimesheetApproval: 'TimesheetApproval',
+  AttendanceHolidayReview: 'AttendanceHolidayReview',
   PayrollRun: 'PayrollRun',
   PayrollPolicy: 'PayrollPolicy',
   PayrollStatutoryRule: 'PayrollStatutoryRule',
@@ -969,6 +970,28 @@ export const TimesheetApprovalScalarFieldEnum = {
 } as const
 
 export type TimesheetApprovalScalarFieldEnum = (typeof TimesheetApprovalScalarFieldEnum)[keyof typeof TimesheetApprovalScalarFieldEnum]
+
+
+export const AttendanceHolidayReviewScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  attendanceRecordId: 'attendanceRecordId',
+  holidayId: 'holidayId',
+  selectionId: 'selectionId',
+  status: 'status',
+  outcome: 'outcome',
+  reason: 'reason',
+  comment: 'comment',
+  requestedByUserId: 'requestedByUserId',
+  decidedByUserId: 'decidedByUserId',
+  decisionComment: 'decisionComment',
+  decidedAt: 'decidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AttendanceHolidayReviewScalarFieldEnum = (typeof AttendanceHolidayReviewScalarFieldEnum)[keyof typeof AttendanceHolidayReviewScalarFieldEnum]
 
 
 export const PayrollRunScalarFieldEnum = {

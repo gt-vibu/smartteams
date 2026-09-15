@@ -7,7 +7,7 @@ import { TimelineTrackView } from './timeline-track-view';
 import { AttendanceSummaryFooter } from './attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useAttendanceWeek } from '../../hooks/use-attendance-week';
-import { toTimelineStatus } from '../../services/attendance-view';
+import { attendanceSummaryStats, toTimelineStatus } from '../../services/attendance-view';
 import { PageShell } from '../layout/page-shell';
 
 interface Screen2TimelineProps {
@@ -37,21 +37,20 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     // worked time until a correction supplies one, and the row should say so rather than 00:00.
     checkOutMissing: !r.isToday && r.record.punches?.at(-1)?.punchType === 'IN',
     status: toTimelineStatus(r.dayStatus),
-    // Holiday naming is not wired; the bar is drawn from the punches alone.
     holidayName: r.holidayName ?? undefined,
+    // A check-in on an approved optional holiday is shown by its review state, not as "Present".
+    holidayConflict: r.holidayConflict
+      ? {
+          label: r.holidayConflict.label,
+          detail: r.holidayConflict.detail,
+          tone: r.holidayConflict.tone,
+        }
+      : undefined,
     spanStartPercent: r.spanStartPercent ?? undefined,
     spanEndPercent: r.spanEndPercent ?? undefined,
   }));
 
-  const stats = {
-    payableDays: records.filter((r) => r.dayStatus === 'PRESENT' || r.dayStatus === 'WEEKEND')
-      .length,
-    presentDays: records.filter((r) => r.dayStatus === 'PRESENT').length,
-    onDutyDays: 0,
-    paidLeaveDays: records.filter((r) => r.dayStatus === 'LEAVE').length,
-    holidayDays: records.filter((r) => r.dayStatus === 'HOLIDAY').length,
-    weekendDays: records.filter((r) => r.dayStatus === 'WEEKEND').length,
-  };
+  const stats = attendanceSummaryStats(records);
 
   return (
     <div className="w-full flex flex-col">

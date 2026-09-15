@@ -50,6 +50,7 @@ export type ProblemDetails = z.infer<typeof problemDetailsSchema>;
 export * from './auth';
 export * from './workforce';
 export * from './attendance';
+export * from './attendance-holiday-conflicts';
 export * from './leave';
 export * from './timesheets';
 export * from './payroll';

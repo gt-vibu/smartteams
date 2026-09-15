@@ -92,6 +92,29 @@ export class AttendanceDecisionDto {
   @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
 }
 
+/** The date range of the optional-holiday conflicts to list. */
+export class HolidayConflictQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsDateString() from!: string;
+  @IsDateString() to!: string;
+}
+
+/** The employee's explanation of a check-in on their optional holiday. */
+export class HolidayReviewRequestDto {
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+}
+
+/** A manager's decision on it, always with the reason for it. */
+export class HolidayReviewDecisionDto {
+  @IsEnum(['KEEP_HOLIDAY', 'CONVERT_TO_WORKING_DAY']) outcome!:
+    'KEEP_HOLIDAY' | 'CONVERT_TO_WORKING_DAY';
+  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+}
+
 export class WorkLocationDto {
   @IsString() @MinLength(2) name!: string;
   @IsNumber() @Min(-90) @Max(90) latitude!: number;

@@ -5,6 +5,7 @@ import {
   type AttendanceCorrection,
   type AttendanceRecord,
 } from '@smarteam/contracts';
+import type { HolidayConflictView } from './holiday-conflict-view';
 
 /**
  * Presentation fields derived from an attendance record.
@@ -12,7 +13,8 @@ import {
  * Everything here is computed from what the API returned. Two fields the old fixture carried are
  * deliberately absent because nothing in the wired backend supplies them:
  *
- *  - `holidayName` / `isRestrictedHoliday` — the holiday calendar is not reconciled yet.
+ *  - `isRestrictedHoliday` — the holiday calendar is not reconciled yet. `holidayName` is set only
+ *    for a check-in on the employee's approved optional holiday, from the API's conflict list.
  *  - `shiftCode` / `shiftName` — the shifts module is not reconciled yet.
  *
  * They are null rather than invented, so a working day is never labelled as a holiday.
@@ -34,7 +36,7 @@ export type AttendanceDayView = {
   dayStatus: string;
   /** Null until the shifts module is wired. */
   shiftName: string | null;
-  /** Null until the holiday calendar is wired. */
+  /** The optional holiday this day's check-in landed on; null for any other day. */
   holidayName: string | null;
   /** Percentage across a 24-hour track, for the timeline. Null when there is no punch. */
   spanStartPercent: number | null;
@@ -42,6 +44,11 @@ export type AttendanceDayView = {
   employeeName: string | null;
   employeeNumber: string | null;
   correctionStatus: string | null;
+  /**
+   * Set when the day is a check-in on the employee's approved optional holiday. Such a day is
+   * shown by this state, never as a plain "Present".
+   */
+  holidayConflict: HolidayConflictView | null;
   record: AttendanceRecord;
 };
 
@@ -70,7 +77,11 @@ function dayPercent(iso: string | null | undefined): number | null {
 
 export function toAttendanceDayView(
   record: AttendanceRecord,
-  options: { todayKey: string; correction?: AttendanceCorrection | undefined } = {
+  options: {
+    todayKey: string;
+    correction?: AttendanceCorrection | undefined;
+    holidayConflict?: HolidayConflictView | undefined;
+  } = {
     todayKey: '',
   },
 ): AttendanceDayView {
@@ -95,7 +106,7 @@ export function toAttendanceDayView(
     overtimeLabel: formatMinutes(record.overtimeMinutes),
     dayStatus: record.dayStatus,
     shiftName: null,
-    holidayName: null,
+    holidayName: options.holidayConflict?.holidayName ?? null,
     spanStartPercent: dayPercent(checkIn?.occurredAt),
     spanEndPercent: dayPercent(checkOut?.occurredAt),
     employeeName: record.employee
@@ -103,6 +114,7 @@ export function toAttendanceDayView(
       : null,
     employeeNumber: record.employee?.employeeNumber ?? null,
     correctionStatus: options.correction?.status ?? null,
+    holidayConflict: options.holidayConflict ?? null,
     record,
   };
 }
@@ -111,6 +123,7 @@ export function toAttendanceDayViews(
   records: readonly AttendanceRecord[],
   todayKey: string,
   corrections: readonly AttendanceCorrection[] = [],
+  holidayConflicts: ReadonlyMap<string, HolidayConflictView> = new Map(),
 ): AttendanceDayView[] {
   // Most recent correction per attendance record, so a row can show that one is pending.
   const byRecord = new Map<string, AttendanceCorrection>();
@@ -119,7 +132,13 @@ export function toAttendanceDayViews(
     if (id && !byRecord.has(id)) byRecord.set(id, correction);
   }
   return records
-    .map((record) => toAttendanceDayView(record, { todayKey, correction: byRecord.get(record.id) }))
+    .map((record) =>
+      toAttendanceDayView(record, {
+        todayKey,
+        correction: byRecord.get(record.id),
+        holidayConflict: holidayConflicts.get(record.id),
+      }),
+    )
     .sort((a, b) => b.workDate.localeCompare(a.workDate));
 }
 
@@ -142,6 +161,28 @@ export function attendanceTotals(views: readonly AttendanceDayView[]) {
     workedMinutes,
     workedLabel: formatMinutes(workedMinutes),
     averageLabel: formatMinutes(present.length ? Math.round(workedMinutes / present.length) : 0),
+  };
+}
+
+/**
+ * The summary strip under the timeline and the table.
+ *
+ * A check-in on an approved optional holiday is not a present day until a manager converts it;
+ * once they keep the holiday, it counts as a holiday.
+ */
+export function attendanceSummaryStats(views: readonly AttendanceDayView[]) {
+  const present = (view: AttendanceDayView) =>
+    view.dayStatus === 'PRESENT' &&
+    (!view.holidayConflict || view.holidayConflict.state === 'CONVERTED_TO_WORKING_DAY');
+  return {
+    payableDays: views.filter((view) => present(view) || view.dayStatus === 'WEEKEND').length,
+    presentDays: views.filter(present).length,
+    onDutyDays: 0,
+    paidLeaveDays: views.filter((view) => view.dayStatus === 'LEAVE').length,
+    holidayDays: views.filter(
+      (view) => view.dayStatus === 'HOLIDAY' || view.holidayConflict?.state === 'HOLIDAY_KEPT',
+    ).length,
+    weekendDays: views.filter((view) => view.dayStatus === 'WEEKEND').length,
   };
 }
 

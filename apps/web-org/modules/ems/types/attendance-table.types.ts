@@ -1,3 +1,5 @@
+import type { HolidayConflictView } from '../services/holiday-conflict-view';
+
 export interface AttendanceTableRow {
   id: string;
   date: string; // "Sun, 23-Aug-2026"
@@ -7,7 +9,9 @@ export interface AttendanceTableRow {
   payableHours: string; // "08:00" or "-"
   overtime: string; // "00:48" or "-"
   status: string; // "Weekend, Present", "Present", "Onam(Restricted holiday)", "Weekend"
-  statusType: 'present' | 'weekend-present' | 'holiday' | 'weekend' | 'empty';
+  statusType: 'present' | 'weekend-present' | 'holiday' | 'holiday-checkin' | 'weekend' | 'empty';
+  /** A check-in on the employee's approved optional holiday, shown by its review state. */
+  holidayConflict?: HolidayConflictView;
   shift: string; // "General Shift"
   canRegularize?: boolean;
   /** The open check-in of a past day that never had a check-out, as an ISO instant. */

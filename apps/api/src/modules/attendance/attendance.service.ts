@@ -7,6 +7,7 @@ import { OutboxService } from '../federation/outbox.service';
 import { AttendanceLocationService } from './attendance-location.service';
 import { AttendanceCorrectionListsService } from './attendance-correction-lists.service';
 import { AttendanceCorrectionsService } from './attendance-corrections.service';
+import { AttendanceHolidayReviewService } from './attendance-holiday-review.service';
 import { AttendancePreferencesService } from './attendance-preferences.service';
 import { AttendancePunchService, type PunchInput } from './attendance-punch.service';
 
@@ -34,6 +35,7 @@ export class AttendanceService {
   private readonly correctionLists: AttendanceCorrectionListsService;
   private readonly preferences: AttendancePreferencesService;
   private readonly punches: AttendancePunchService;
+  private readonly holidayReviews: AttendanceHolidayReviewService;
 
   constructor(
     database: TenantDatabaseService,
@@ -45,12 +47,23 @@ export class AttendanceService {
     this.correctionLists = new AttendanceCorrectionListsService(database);
     this.preferences = new AttendancePreferencesService(database, audit, locations);
     this.punches = new AttendancePunchService(database, audit, outbox, locations);
+    this.holidayReviews = new AttendanceHolidayReviewService(database, audit, outbox);
   }
 
   // --- punching and reading records ----------------------------------------------------------
 
   punch(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
     return this.punches.punch(context, type, input);
+  }
+
+  /**
+   * The native app's punch: the same punch, plus the optional-holiday conflict it created, if any,
+   * so the app can ask for the reason straight away. Federation calls `punch` and is unchanged.
+   */
+  async punchNative(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
+    const result = await this.punches.punch(context, type, input);
+    const holidayConflict = await this.holidayReviews.conflictForRecord(context, result.record.id);
+    return { ...result, holidayConflict };
   }
 
   list(...args: Parameters<AttendancePunchService['list']>) {
@@ -81,6 +94,24 @@ export class AttendanceService {
     ...args: Parameters<AttendanceCorrectionListsService['listCorrectionRequests']>
   ) {
     return this.correctionLists.listCorrectionRequests(...args);
+  }
+
+  // --- a check-in on a granted optional holiday -------------------------------------------------
+
+  listHolidayConflicts(...args: Parameters<AttendanceHolidayReviewService['listConflicts']>) {
+    return this.holidayReviews.listConflicts(...args);
+  }
+
+  requestHolidayReview(...args: Parameters<AttendanceHolidayReviewService['requestReview']>) {
+    return this.holidayReviews.requestReview(...args);
+  }
+
+  listHolidayReviewInbox(context: DomainContext) {
+    return this.holidayReviews.listInbox(context);
+  }
+
+  decideHolidayReview(...args: Parameters<AttendanceHolidayReviewService['decide']>) {
+    return this.holidayReviews.decide(...args);
   }
 
   // --- per-branch capture settings ---------------------------------------------------------------

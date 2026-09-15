@@ -292,6 +292,12 @@ export type TimesheetEntry = Prisma.TimesheetEntryModel
  */
 export type TimesheetApproval = Prisma.TimesheetApprovalModel
 /**
+ * Model AttendanceHolidayReview
+ * A check-in on a granted optional holiday, explained by the employee and decided by a manager.
+ * At most one PENDING review per attendance record (a partial unique index in the migration).
+ */
+export type AttendanceHolidayReview = Prisma.AttendanceHolidayReviewModel
+/**
  * Model PayrollRun
  * 
  */

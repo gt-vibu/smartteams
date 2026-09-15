@@ -6,6 +6,7 @@ import { EmsLeftRail } from './ems-left-rail';
 import { EmsMobileBottomNav } from './ems-mobile-bottom-nav';
 import { ContextBar } from './context-bar';
 import { CommandPalette } from './command-palette';
+import { HolidayCheckInPrompt } from '../common/holiday-check-in-prompt';
 import { NotificationDrawer } from './notification-drawer';
 import { EntityDetailDrawer } from '../common/entity-detail-drawer';
 
@@ -129,6 +130,9 @@ export function EmsLayout({
         onNavigateSpace={onSelectSpace}
         onSelectEmployee={setSelectedEmployeeId}
       />
+
+      {/* Asks for a reason after a check-in on an approved optional holiday, from any screen. */}
+      <HolidayCheckInPrompt />
 
       {/* 5. Notifications Drawer */}
       <NotificationDrawer

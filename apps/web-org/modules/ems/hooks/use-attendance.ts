@@ -5,7 +5,9 @@ import {
   hasPermission,
   isCheckedIn as derivedCheckedIn,
   openCheckInAt,
+  parseCheckInHolidayConflict,
   workDateKey,
+  type HolidayConflict,
   type AttendanceRecord,
   type AttendancePreferences,
 } from '@smarteam/contracts';
@@ -13,6 +15,9 @@ import { useSession } from './auth-context';
 import { attendanceRepository } from '../repositories/attendance.repository';
 import { useAsyncResource } from './use-async-resource';
 import { toAttendanceDayViews, type AttendanceDayView } from '../services/attendance-view';
+import { holidayConflictsRepository } from '../repositories/holiday-conflicts.repository';
+import { holidayConflictsByRecord } from '../services/holiday-conflict-view';
+import { announceHolidayCheckIn, emitDataChanged, useDataChanged } from '../lib/data-events';
 
 /** Local calendar date as `YYYY-MM-DD`; attendance is recorded in the employee's own day. */
 export function localDateKey(date: Date = new Date()): string {
@@ -74,6 +79,23 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
 
   const records = useMemo(() => resource.data ?? [], [resource.data]);
 
+  // Check-ins on the employee's approved optional holidays in the same window, so those days are
+  // shown by their review state rather than as an ordinary present day.
+  const conflictsResource = useAsyncResource<HolidayConflict[]>(
+    () => holidayConflictsRepository.list(organizationId!, { from, to }),
+    [organizationId, employeeId, from, to],
+    { enabled: Boolean(organizationId && employeeId) && canRead },
+  );
+  const holidayConflicts = useMemo(
+    () => holidayConflictsByRecord(conflictsResource.data ?? []),
+    [conflictsResource.data],
+  );
+  const refetchAll = useCallback(async () => {
+    await Promise.all([resource.refetch(), conflictsResource.refetch()]);
+  }, [resource, conflictsResource]);
+  // A decision on another screen changes these days; read them again when one is announced.
+  useDataChanged(['attendance', 'holidays'], refetchAll);
+
   const preferencesResource = useAsyncResource<AttendancePreferences>(
     () => attendanceRepository.getPreferences(organizationId!),
     [organizationId],
@@ -134,31 +156,37 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
       setSaveError(null);
       try {
         await operation();
-        await resource.refetch();
+        await refetchAll();
         return true;
       } catch (caught) {
         setSaveError(caught instanceof Error ? caught.message : 'The punch could not be recorded.');
-        await resource.refetch();
+        await refetchAll();
         return false;
       } finally {
         setSaving(false);
       }
     },
-    [organizationId, employeeId, resource],
+    [organizationId, employeeId, refetchAll],
   );
 
   const punch = useCallback(
     (direction: 'IN' | 'OUT') =>
-      run(() => {
+      run(async () => {
         const now = new Date();
         const input = {
           employeeId: employeeId!,
           occurredAt: now.toISOString(),
           workDate: localDateKey(now),
         };
-        return direction === 'IN'
-          ? attendanceRepository.checkIn(organizationId!, input)
-          : attendanceRepository.checkOut(organizationId!, input);
+        const reply =
+          direction === 'IN'
+            ? await attendanceRepository.checkIn(organizationId!, input)
+            : await attendanceRepository.checkOut(organizationId!, input);
+        // The check-in is recorded either way. When it landed on an approved optional holiday the
+        // API says so, and the employee is asked for a reason straight away.
+        const conflict = parseCheckInHolidayConflict(reply);
+        if (direction === 'IN' && conflict?.state === 'AWAITING_REASON')
+          announceHolidayCheckIn(conflict);
       }),
     [employeeId, organizationId, run],
   );
@@ -207,10 +235,27 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     [employeeId, organizationId, resource],
   );
 
+  /** Explains a check-in on an approved optional holiday; rejects with the API's reason. */
+  const explainHolidayCheckIn = useCallback(
+    async (attendanceId: string, reason: string, comment?: string) => {
+      if (!organizationId) throw new Error('No organization is selected.');
+      try {
+        await holidayConflictsRepository.explain(organizationId, attendanceId, {
+          reason,
+          ...(comment ? { comment } : {}),
+        });
+        emitDataChanged('approvals');
+      } finally {
+        await refetchAll();
+      }
+    },
+    [organizationId, refetchAll],
+  );
+
   // Presentation shape the screens render, derived from the same records.
   const days: AttendanceDayView[] = useMemo(
-    () => toAttendanceDayViews(records, todayKey),
-    [records, todayKey],
+    () => toAttendanceDayViews(records, todayKey, [], holidayConflicts),
+    [records, todayKey, holidayConflicts],
   );
 
   return {
@@ -227,13 +272,14 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     refreshing: resource.refreshing,
     error: resource.error,
     forbidden: resource.forbidden,
-    refetch: resource.refetch,
+    refetch: refetchAll,
     saving,
     saveError,
     checkIn,
     checkOut,
     requestCorrection,
     requestMissingCheckOut,
+    explainHolidayCheckIn,
     canRead,
     canWrite,
     canRequestCorrection,

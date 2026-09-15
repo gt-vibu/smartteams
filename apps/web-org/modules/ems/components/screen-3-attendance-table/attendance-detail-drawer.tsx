@@ -3,6 +3,7 @@ import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
 import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { MissingCheckOutForm } from '../common/missing-check-out-form';
+import { HolidayConflictSection } from '../common/holiday-conflict-section';
 
 interface AttendanceDetailDrawerProps {
   row: AttendanceTableRow | null;
@@ -19,6 +20,8 @@ interface AttendanceDetailDrawerProps {
     checkOutAt: string,
     reason: string,
   ) => Promise<unknown>;
+  /** Explains a check-in on an approved optional holiday; same contract. */
+  onExplainHolidayCheckIn?: (recordId: string, reason: string, comment: string) => Promise<unknown>;
 }
 
 export function AttendanceDetailDrawer({
@@ -27,6 +30,7 @@ export function AttendanceDetailDrawer({
   onClose,
   onSubmitRegularization,
   onSubmitMissingCheckOut,
+  onExplainHolidayCheckIn,
 }: AttendanceDetailDrawerProps) {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -176,6 +180,14 @@ export function AttendanceDetailDrawer({
                 </div>
               )}
             </div>
+
+            {row.holidayConflict && (
+              <HolidayConflictSection
+                conflict={row.holidayConflict}
+                attendanceId={row.id}
+                onExplain={onExplainHolidayCheckIn}
+              />
+            )}
 
             {/* A day that ended on a check-in gets its check-out added; any other day's punches are
                 corrected. Two different requests, so two clearly named forms. */}
