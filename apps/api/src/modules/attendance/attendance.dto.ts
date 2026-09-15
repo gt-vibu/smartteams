@@ -1,0 +1,137 @@
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsInt,
+  IsISO8601,
+  Matches,
+  MaxLength,
+  IsOptional,
+  IsObject,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import { AttendanceDayStatus } from '../../generated/prisma/enums';
+import {
+  ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
+  ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+} from '@smarteam/contracts';
+export class PunchDto {
+  @IsUUID() employeeId!: string;
+  @IsDateString() occurredAt!: string;
+  @IsDateString() workDate!: string;
+  @IsOptional() @IsNumber() @Min(-90) @Max(90) latitude?: number;
+  @IsOptional() @IsNumber() @Min(-180) @Max(180) longitude?: number;
+  @IsOptional() @IsNumber() @Min(0) accuracyMeters?: number;
+  @IsOptional() @IsUUID() branchId?: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(512) webauthnCredentialId?: string;
+  @IsOptional() @IsString() externalId?: string;
+  @IsOptional() @IsBoolean() manualEntry?: boolean;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) managedByExternalEmployeeId?: string;
+  @IsOptional() @IsEnum(AttendanceDayStatus) dayStatus?: AttendanceDayStatus;
+}
+
+export class AttendanceQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsUUID() branchId?: string;
+  @IsOptional() @IsDateString() from?: string;
+  @IsOptional() @IsDateString() to?: string;
+  @IsOptional() @IsString() @MaxLength(256) cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+}
+
+/** Filters for the correction request list. Mirrors what the federation surface already accepts. */
+export class AttendanceCorrectionQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsEnum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']) status?:
+    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+}
+
+/** Selects which branch's attendance policy to read. */
+export class AttendancePreferencesQueryDto {
+  @IsOptional() @IsUUID() branchId?: string;
+}
+
+export class AttendanceCorrectionDto {
+  // The same constants the drawer disables its submit button on, so the form cannot accept a
+  // reason this DTO will reject.
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
+  @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;
+}
+
+/**
+ * The native app's request to add a day's missing check-out. Its own DTO and route, so the general
+ * correction — which federation also uses — accepts exactly what it did before.
+ */
+export class MissingCheckOutCorrectionDto {
+  // An instant, with its offset: a bare local time would be read in the server's zone, which is
+  // not the employee's, and would move the check-out by hours near midnight.
+  @IsISO8601({ strict: true })
+  @Matches(/(Z|[+-]\d{2}:\d{2})$/, { message: 'checkOutAt must include a time zone offset' })
+  checkOutAt!: string;
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
+}
+
+export class AttendanceDecisionDto {
+  @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
+  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
+}
+
+/** The date range of the optional-holiday conflicts to list. */
+export class HolidayConflictQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsDateString() from!: string;
+  @IsDateString() to!: string;
+}
+
+/** The employee's explanation of a check-in on their optional holiday. */
+export class HolidayReviewRequestDto {
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+}
+
+/** A manager's decision on it, always with the reason for it. */
+export class HolidayReviewDecisionDto {
+  @IsEnum(['KEEP_HOLIDAY', 'CONVERT_TO_WORKING_DAY']) outcome!:
+    'KEEP_HOLIDAY' | 'CONVERT_TO_WORKING_DAY';
+  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+}
+
+export class WorkLocationDto {
+  @IsString() @MinLength(2) name!: string;
+  @IsNumber() @Min(-90) @Max(90) latitude!: number;
+  @IsNumber() @Min(-180) @Max(180) longitude!: number;
+  @IsNumber() @Min(1) radiusMeters!: number;
+}
+
+export class AttendancePreferencesDto {
+  @IsOptional() @IsEnum(['DISABLED', 'FLAG_ONLY', 'REQUIRED']) geofenceMode?:
+    'DISABLED' | 'FLAG_ONLY' | 'REQUIRED';
+  @IsOptional() @IsEnum(['DISABLED', 'OPTIONAL', 'REQUIRED']) biometricVerificationMode?:
+    'DISABLED' | 'OPTIONAL' | 'REQUIRED';
+  @IsOptional() @IsEnum(['SINGLE', 'MULTIPLE']) attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
+  @IsOptional() @IsUUID() branchId?: string;
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => WorkLocationDto)
+  workLocations?: WorkLocationDto[];
+}

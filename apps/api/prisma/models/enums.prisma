@@ -43,7 +43,7 @@ enum AccessMode {
 
 enum OwnerSource {
   NATIVE
-  BLIZBOOKS
+  FEDERATED
 }
 
 enum RoleScope {
@@ -63,6 +63,14 @@ enum ApprovalDomain {
   ATTENDANCE_CORRECTION
   TIMESHEET
   PAYROLL
+}
+
+enum ComplianceRecordStatus {
+  DRAFT
+  READY
+  SUBMITTED
+  ACCEPTED
+  REJECTED
 }
 
 enum ApproverType {
@@ -85,10 +93,62 @@ enum PayFrequency {
   MONTHLY
 }
 
+enum PayrollRoundingMode {
+  HALF_UP
+  DOWN
+  UP
+}
+
+enum SalarySlipMode {
+  ENABLED
+  DISABLED
+}
+
+enum SalaryAdvanceStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  CANCELLED
+  PARTIALLY_RECOVERED
+  RECOVERED
+}
+
+enum PayrollPaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+enum PayrollPaymentMethod {
+  BANK_TRANSFER
+  CASH
+  UPI
+  CHEQUE
+  OTHER
+}
+
 enum GeofenceMode {
   DISABLED
   FLAG_ONLY
   REQUIRED
+}
+
+enum BiometricVerificationMode {
+  DISABLED
+  OPTIONAL
+  REQUIRED
+}
+
+enum WebauthnChallengePurpose {
+  ENROLLMENT
+  ASSERTION
+}
+
+enum WebauthnChallengeStatus {
+  PENDING
+  CONSUMED
+  EXPIRED
 }
 
 enum TeamStatus {
@@ -112,6 +172,14 @@ enum AttendanceStatus {
   REJECTED
 }
 
+enum AttendanceDayStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
+  ON_LEAVE
+}
+
 enum AttendancePunchType {
   IN
   OUT
@@ -127,6 +195,19 @@ enum AttendancePunchSource {
 enum ApprovalStatus {
   PENDING
   APPROVED
+  REJECTED
+  CANCELLED
+}
+
+/// How a check-in on a granted optional holiday was resolved.
+enum HolidayReviewOutcome {
+  KEEP_HOLIDAY
+  CONVERT_TO_WORKING_DAY
+}
+
+enum SelectionStatus {
+  CONFIRMED
+  PENDING
   REJECTED
   CANCELLED
 }
@@ -223,6 +304,12 @@ enum FederationClientStatus {
   SUSPENDED
   REVOKED
   EXPIRED
+}
+
+enum FederationEnvironment {
+  SANDBOX
+  STAGING
+  PRODUCTION
 }
 
 enum CredentialStatus {

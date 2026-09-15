@@ -1,0 +1,425 @@
+'use client';
+
+import React, { useState } from 'react';
+import {
+  Button,
+  DatePicker,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+  Select,
+  Textarea,
+} from '@smarteam/ui';
+import { Plus } from 'lucide-react';
+import { parseDuration } from '../../services/timesheet-view';
+import type { ManualEntryInput } from '../../repositories/timesheet.repository';
+import type { JobType, Project } from '@smarteam/contracts';
+import { QuickAddJobDialog } from './quick-add-job-dialog';
+import { QuickAddProjectDialog } from './quick-add-project-dialog';
+import { LogTimeHoursField, type HoursMode } from './logtime-hours-field';
+
+interface LogTimeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  saving: boolean;
+  saveError: string | null;
+  periodStart?: string;
+  periodEnd?: string;
+  projects?: Project[];
+  jobTypes?: JobType[];
+  onSubmit: (input: ManualEntryInput) => Promise<boolean>;
+  /** Absent when the caller may not create job types; the quick-add control is hidden. */
+  onCreateJobType?: (name: string) => Promise<JobType>;
+  /** Absent when the caller may not create projects (`projects.write`); likewise hidden. */
+  onCreateProject?: (name: string, description?: string) => Promise<Project>;
+}
+
+export function LogTimeModal({
+  isOpen,
+  onClose,
+  saving,
+  saveError,
+  periodStart,
+  periodEnd,
+  projects = [],
+  jobTypes = [],
+  onSubmit,
+  onCreateJobType,
+  onCreateProject,
+}: LogTimeModalProps) {
+  const initialDate = React.useMemo(() => new Date().toISOString().slice(0, 10), []);
+
+  const [projectId, setProjectId] = useState<string>('');
+  const [jobName, setJobName] = useState<string>('');
+  const [workItem, setWorkItem] = useState('');
+  const [workDate, setWorkDate] = useState(initialDate);
+  const [description, setDescription] = useState('');
+  const [hoursMode, setHoursMode] = useState<HoursMode>('TOTAL');
+  // Hours start empty. They were pre-filled as 08:00 (and 09:00–17:00), so saving without looking
+  // recorded a full day whatever was worked — and logged time feeds timesheets, approvals and pay.
+  // A form that records effort should ask for it, not assume it.
+  const [totalHours, setTotalHours] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [billable, setBillable] = useState<boolean>(true);
+  const [error, setError] = useState('');
+
+  const [isQuickAddJobOpen, setIsQuickAddJobOpen] = useState(false);
+  const [isQuickAddProjectOpen, setIsQuickAddProjectOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setError('');
+      setWorkDate(new Date().toISOString().slice(0, 10));
+      if (projects.length > 0 && !projectId) {
+        setProjectId(projects[0]?.id ?? '');
+      }
+      if (jobTypes.length > 0 && !jobName) {
+        setJobName(jobTypes[0]?.name ?? '');
+      }
+    }
+  }, [isOpen, projects, jobTypes, projectId, jobName]);
+
+  const reset = () => {
+    setProjectId(projects[0]?.id ?? '');
+    // No invented job: with none defined the field stays empty, and it is required.
+    setJobName(jobTypes[0]?.name ?? '');
+    setWorkItem('');
+    setWorkDate(new Date().toISOString().slice(0, 10));
+    setDescription('');
+    setHoursMode('TOTAL');
+    setTotalHours('');
+    setStartTime('');
+    setEndTime('');
+    setBillable(true);
+    setError('');
+  };
+
+  const calculateMinutesFromStartEnd = (start: string, end: string): number | null => {
+    try {
+      const [startH = 0, startM = 0] = start.split(':').map(Number);
+      const [endH = 0, endM = 0] = end.split(':').map(Number);
+      const startTotal = startH * 60 + startM;
+      const endTotal = endH * 60 + endM;
+      if (endTotal <= startTotal) return null;
+      return endTotal - startTotal;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!workDate) {
+      setError('Select the date the work was done.');
+      return;
+    }
+    if (!jobName.trim()) {
+      setError('Select a Job Name.');
+      return;
+    }
+
+    let minutes = 0;
+    if (hoursMode === 'TOTAL') {
+      if (!totalHours.trim()) {
+        setError('Enter the hours you worked (e.g. 2:30, 3h or 45m).');
+        return;
+      }
+      const parsed = parseDuration(totalHours);
+      if (parsed === null || parsed < 1) {
+        setError('Enter a valid duration (e.g. 2:30, 3h or 45m).');
+        return;
+      }
+      minutes = parsed;
+    } else {
+      if (!startTime || !endTime) {
+        setError('Enter both a start time and an end time.');
+        return;
+      }
+      const diff = calculateMinutesFromStartEnd(startTime, endTime);
+      if (diff === null || diff <= 0) {
+        setError('End time must be after Start time.');
+        return;
+      }
+      minutes = diff;
+    }
+
+    const selectedProject = projects.find((p) => p.id === projectId);
+
+    setError('');
+    const saved = await onSubmit({
+      workDate,
+      minutes,
+      description: description.trim() || undefined,
+      projectId: projectId || undefined,
+      projectName: selectedProject?.name,
+      jobName: jobName.trim(),
+      workItem: workItem.trim() || undefined,
+      billable,
+      startTime: hoursMode === 'START_END' ? startTime : undefined,
+      endTime: hoursMode === 'START_END' ? endTime : undefined,
+    });
+
+    if (saved) {
+      reset();
+      onClose();
+    }
+  };
+
+  return (
+    <>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            reset();
+            onClose();
+          }
+        }}
+      >
+        <DialogContent className="flex flex-col max-h-[82vh] sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
+          {/* Header */}
+          <DialogHeader className="shrink-0 flex flex-row items-center justify-between border-b border-border/80 px-6 py-3 bg-muted/20">
+            <DialogTitle className="text-base font-semibold text-foreground tracking-tight">
+              Log Time
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* Form Content - 2 Column Zoho People Layout */}
+          <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-5 space-y-3.5 text-xs">
+            {/* Project Name */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+              <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
+                Project Name
+              </Label>
+              <div className="flex items-center gap-2 sm:col-span-3">
+                <Select
+                  value={projectId}
+                  onValueChange={setProjectId}
+                  disabled={saving}
+                  placeholder="Select"
+                  className="w-full text-xs"
+                >
+                  <option value="">Select</option>
+                  {projects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </Select>
+                {onCreateProject && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsQuickAddProjectOpen(true)}
+                    className="h-8 w-8 p-0 shrink-0 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+                    title="Add a new project"
+                    aria-label="Add a new project"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              {/* Without the + and with nothing to pick, the field was a dead end with no reason
+                  given. Creating a project needs `projects.write`, which an employee role does not
+                  carry; say who can, rather than leave them wondering where the button went. */}
+              {!onCreateProject && projects.length === 0 && (
+                <p className="text-[11px] text-muted-foreground sm:col-span-3 sm:col-start-2">
+                  No projects yet. An admin or project manager can add them on the Projects screen —
+                  project is optional, so you can still log this time.
+                </p>
+              )}
+            </div>
+
+            {/* Job Name */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+              <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
+                Job Name <span className="text-destructive font-bold">*</span>
+              </Label>
+              <div className="flex items-center gap-2 sm:col-span-3">
+                <Select
+                  value={jobName}
+                  onValueChange={setJobName}
+                  disabled={saving}
+                  placeholder="Select"
+                  className="w-full text-xs"
+                >
+                  <option value="">Select</option>
+                  {jobTypes.map((j) => (
+                    <option key={j.id || j.name} value={j.name}>
+                      {j.name}
+                    </option>
+                  ))}
+                </Select>
+                {onCreateJobType && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsQuickAddJobOpen(true)}
+                    className="h-8 w-8 p-0 shrink-0 border-border text-muted-foreground hover:text-foreground cursor-pointer"
+                    title="Add a new job type"
+                    aria-label="Add a new job type"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Work Item */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+              <Label
+                htmlFor="log-work-item"
+                className="text-foreground/80 font-medium sm:col-span-1 text-xs"
+              >
+                Work Item
+              </Label>
+              <div className="sm:col-span-3">
+                <Input
+                  id="log-work-item"
+                  placeholder=""
+                  value={workItem}
+                  onChange={(e) => setWorkItem(e.target.value)}
+                  disabled={saving}
+                  className="text-xs h-8"
+                />
+              </div>
+            </div>
+
+            {/* Date */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+              <Label
+                htmlFor="log-date"
+                className="text-foreground/80 font-medium sm:col-span-1 text-xs"
+              >
+                Date <span className="text-destructive font-bold">*</span>
+              </Label>
+              <div className="sm:col-span-3">
+                <DatePicker
+                  id="log-date"
+                  value={workDate}
+                  onChange={setWorkDate}
+                  disabled={saving}
+                  min={periodStart}
+                  max={periodEnd}
+                />
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
+              <Label
+                htmlFor="log-description"
+                className="text-foreground/80 font-medium pt-2 sm:col-span-1 text-xs"
+              >
+                Description
+              </Label>
+              <div className="sm:col-span-3">
+                <Textarea
+                  id="log-description"
+                  placeholder=""
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={saving}
+                  rows={3}
+                  className="text-xs resize-none"
+                />
+              </div>
+            </div>
+
+            <LogTimeHoursField
+              disabled={saving}
+              endTime={endTime}
+              mode={hoursMode}
+              onEndTimeChange={setEndTime}
+              onModeChange={setHoursMode}
+              onStartTimeChange={setStartTime}
+              onTotalHoursChange={setTotalHours}
+              startTime={startTime}
+              totalHours={totalHours}
+            />
+
+            {/* Billable Status */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+              <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
+                Billable Status <span className="text-destructive font-bold">*</span>
+              </Label>
+              <div className="sm:col-span-3">
+                <Select
+                  value={billable ? 'BILLABLE' : 'NON_BILLABLE'}
+                  onValueChange={(val) => setBillable(val === 'BILLABLE')}
+                  disabled={saving}
+                  className="w-44 text-xs"
+                >
+                  <option value="BILLABLE">Billable</option>
+                  <option value="NON_BILLABLE">Non-Billable</option>
+                </Select>
+              </div>
+            </div>
+
+            {/* Error Display */}
+            {(error || saveError) && (
+              <p className="text-xs font-medium text-destructive pt-1" role="alert">
+                {error || saveError}
+              </p>
+            )}
+          </div>
+
+          {/* Bottom Actions - Aligned bottom-left matching Zoho People reference */}
+          <div className="shrink-0 flex items-center justify-start gap-2.5 border-t border-border/80 bg-muted/30 px-5 sm:px-8 py-3">
+            <Button
+              disabled={saving}
+              onClick={() => void handleSubmit()}
+              type="button"
+              className="px-5 font-semibold text-xs h-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs cursor-pointer"
+            >
+              {saving ? 'Saving...' : 'Save'}
+            </Button>
+            <Button
+              disabled={saving}
+              onClick={onClose}
+              type="button"
+              variant="outline"
+              className="px-5 text-xs h-8 border-border bg-card hover:bg-muted text-foreground cursor-pointer"
+            >
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/*
+        Quick-add dialogs. They open over this one, so this one must not raise its own stacking
+        order: it used to carry `z-[60]` over the default `z-50`, which put the Add Project dialog
+        underneath it — invisible, while its autofocused field still took focus (and, on a phone,
+        opened the keyboard over nothing). Each resolves with the created row, selects it, and
+        closes; a failure rejects, and the dialog stays open showing the server's reason.
+      */}
+      {onCreateJobType && (
+        <QuickAddJobDialog
+          isOpen={isQuickAddJobOpen}
+          onClose={() => setIsQuickAddJobOpen(false)}
+          onAdd={async (name) => {
+            const created = await onCreateJobType(name);
+            setJobName(created.name);
+          }}
+        />
+      )}
+
+      {onCreateProject && (
+        <QuickAddProjectDialog
+          isOpen={isQuickAddProjectOpen}
+          onClose={() => setIsQuickAddProjectOpen(false)}
+          onAdd={async (name, description) => {
+            const created = await onCreateProject(name, description);
+            setProjectId(created.id);
+          }}
+        />
+      )}
+    </>
+  );
+}

@@ -75,7 +75,7 @@ export type AccessMode = (typeof AccessMode)[keyof typeof AccessMode]
 
 export const OwnerSource = {
   NATIVE: 'NATIVE',
-  BLIZBOOKS: 'BLIZBOOKS'
+  FEDERATED: 'FEDERATED'
 } as const
 
 export type OwnerSource = (typeof OwnerSource)[keyof typeof OwnerSource]
@@ -109,6 +109,17 @@ export const ApprovalDomain = {
 export type ApprovalDomain = (typeof ApprovalDomain)[keyof typeof ApprovalDomain]
 
 
+export const ComplianceRecordStatus = {
+  DRAFT: 'DRAFT',
+  READY: 'READY',
+  SUBMITTED: 'SUBMITTED',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type ComplianceRecordStatus = (typeof ComplianceRecordStatus)[keyof typeof ComplianceRecordStatus]
+
+
 export const ApproverType = {
   ROLE: 'ROLE',
   USER: 'USER',
@@ -138,6 +149,56 @@ export const PayFrequency = {
 export type PayFrequency = (typeof PayFrequency)[keyof typeof PayFrequency]
 
 
+export const PayrollRoundingMode = {
+  HALF_UP: 'HALF_UP',
+  DOWN: 'DOWN',
+  UP: 'UP'
+} as const
+
+export type PayrollRoundingMode = (typeof PayrollRoundingMode)[keyof typeof PayrollRoundingMode]
+
+
+export const SalarySlipMode = {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED'
+} as const
+
+export type SalarySlipMode = (typeof SalarySlipMode)[keyof typeof SalarySlipMode]
+
+
+export const SalaryAdvanceStatus = {
+  REQUESTED: 'REQUESTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED',
+  PARTIALLY_RECOVERED: 'PARTIALLY_RECOVERED',
+  RECOVERED: 'RECOVERED'
+} as const
+
+export type SalaryAdvanceStatus = (typeof SalaryAdvanceStatus)[keyof typeof SalaryAdvanceStatus]
+
+
+export const PayrollPaymentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type PayrollPaymentStatus = (typeof PayrollPaymentStatus)[keyof typeof PayrollPaymentStatus]
+
+
+export const PayrollPaymentMethod = {
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  CASH: 'CASH',
+  UPI: 'UPI',
+  CHEQUE: 'CHEQUE',
+  OTHER: 'OTHER'
+} as const
+
+export type PayrollPaymentMethod = (typeof PayrollPaymentMethod)[keyof typeof PayrollPaymentMethod]
+
+
 export const GeofenceMode = {
   DISABLED: 'DISABLED',
   FLAG_ONLY: 'FLAG_ONLY',
@@ -145,6 +206,32 @@ export const GeofenceMode = {
 } as const
 
 export type GeofenceMode = (typeof GeofenceMode)[keyof typeof GeofenceMode]
+
+
+export const BiometricVerificationMode = {
+  DISABLED: 'DISABLED',
+  OPTIONAL: 'OPTIONAL',
+  REQUIRED: 'REQUIRED'
+} as const
+
+export type BiometricVerificationMode = (typeof BiometricVerificationMode)[keyof typeof BiometricVerificationMode]
+
+
+export const WebauthnChallengePurpose = {
+  ENROLLMENT: 'ENROLLMENT',
+  ASSERTION: 'ASSERTION'
+} as const
+
+export type WebauthnChallengePurpose = (typeof WebauthnChallengePurpose)[keyof typeof WebauthnChallengePurpose]
+
+
+export const WebauthnChallengeStatus = {
+  PENDING: 'PENDING',
+  CONSUMED: 'CONSUMED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type WebauthnChallengeStatus = (typeof WebauthnChallengeStatus)[keyof typeof WebauthnChallengeStatus]
 
 
 export const TeamStatus = {
@@ -177,6 +264,17 @@ export const AttendanceStatus = {
 export type AttendanceStatus = (typeof AttendanceStatus)[keyof typeof AttendanceStatus]
 
 
+export const AttendanceDayStatus = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  LATE: 'LATE',
+  HALF_DAY: 'HALF_DAY',
+  ON_LEAVE: 'ON_LEAVE'
+} as const
+
+export type AttendanceDayStatus = (typeof AttendanceDayStatus)[keyof typeof AttendanceDayStatus]
+
+
 export const AttendancePunchType = {
   IN: 'IN',
   OUT: 'OUT'
@@ -203,6 +301,24 @@ export const ApprovalStatus = {
 } as const
 
 export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
+
+
+export const HolidayReviewOutcome = {
+  KEEP_HOLIDAY: 'KEEP_HOLIDAY',
+  CONVERT_TO_WORKING_DAY: 'CONVERT_TO_WORKING_DAY'
+} as const
+
+export type HolidayReviewOutcome = (typeof HolidayReviewOutcome)[keyof typeof HolidayReviewOutcome]
+
+
+export const SelectionStatus = {
+  CONFIRMED: 'CONFIRMED',
+  PENDING: 'PENDING',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SelectionStatus = (typeof SelectionStatus)[keyof typeof SelectionStatus]
 
 
 export const LeaveAccrualType = {
@@ -333,6 +449,15 @@ export const FederationClientStatus = {
 } as const
 
 export type FederationClientStatus = (typeof FederationClientStatus)[keyof typeof FederationClientStatus]
+
+
+export const FederationEnvironment = {
+  SANDBOX: 'SANDBOX',
+  STAGING: 'STAGING',
+  PRODUCTION: 'PRODUCTION'
+} as const
+
+export type FederationEnvironment = (typeof FederationEnvironment)[keyof typeof FederationEnvironment]
 
 
 export const CredentialStatus = {

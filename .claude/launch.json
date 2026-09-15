@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@smarteam/api", "start"],
+      "port": 4000
+    },
+    {
+      "name": "web-org",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@smarteam/web-org", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "web-admin",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@smarteam/web-admin", "dev"],
+      "port": 3001
+    }
+  ]
+}

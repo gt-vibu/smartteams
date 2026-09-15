@@ -1,0 +1,272 @@
+name: CI
+
+# Every push and every pull request. Before this the only automated check on a change was a
+# pre-commit hook running on the author's own machine, which can be skipped with --no-verify.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  # A new push supersedes an in-flight run on the same ref.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Turborepo prunes to what a change actually affects (NFR-23), so this stays proportional to
+  # the diff rather than to the size of the monorepo.
+  TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+  verify:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Prisma's client is generated, not committed to the build — the typecheck needs it first.
+      - run: pnpm db:generate
+        env:
+          DATABASE_URL: postgresql://build:build@localhost:5432/build
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+        env:
+          DATABASE_URL: postgresql://build:build@localhost:5432/build
+      - run: pnpm format:check
+      # The release-activation script, run against stubbed pm2/curl/aws: a failed release must
+      # restart the previous one, and the API must stop with a payroll-length kill timeout.
+      - run: bash scripts/ci/activate-dev-release.test.sh
+
+  migrations:
+    name: Migrations and database-backed tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
+    steps:
+      - uses: actions/checkout@v4
+      # PostgreSQL runs natively on the runner; the project has no Docker dependency.
+      - name: Start PostgreSQL
+        run: bash scripts/ci/native-services.sh
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Proves the committed migrations apply to an empty database in order. A migration that
+      # only ever ran against the author's already-populated database fails here.
+      - run: pnpm db:deploy
+
+      # The tests that need a real database: row-level security, the cross-tenant policies and
+      # the structural invariants. The rest of the suite mocks Prisma and cannot see any of it.
+      #
+      # There is deliberately no `migrate diff` drift gate. The initial migration was written by
+      # hand rather than generated, so it differs from the datamodel in index names and in whether
+      # ids default in the database or in Prisma — cosmetic, pre-existing, and it would leave the
+      # gate permanently red while catching nothing. The integration suite asserts the structural
+      # properties that actually matter instead.
+      - run: pnpm --filter @smarteam/api test:integration
+        env:
+          # The suite creates its own restricted role, so it needs a role that can. The runtime
+          # role must NOT be this one — that is the whole point of the RLS guard.
+          DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
+
+  security:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # High and critical only. Failing on every low-severity transitive advisory trains people
+      # to ignore the job, which is worse than not having it.
+      - run: pnpm audit --audit-level high
+
+  end-to-end:
+    name: API end-to-end suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [verify]
+    env:
+      # Object storage is real AWS S3, as in development and production. CI reaches a dedicated
+      # test bucket through repository secrets; there is no emulator and no Docker. Without the
+      # secrets the storage suite cannot run, and it is reported as NOT RUN rather than passing.
+      S3_REGION: ${{ secrets.CI_S3_REGION }}
+      S3_BUCKET: ${{ secrets.CI_S3_BUCKET }}
+      S3_ACCESS_KEY_ID: ${{ secrets.CI_S3_ACCESS_KEY_ID }}
+      S3_SECRET_ACCESS_KEY: ${{ secrets.CI_S3_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      # PostgreSQL and Redis run natively on the runner; the project has no Docker dependency.
+      - name: Start PostgreSQL and Redis
+        run: bash scripts/ci/native-services.sh --redis
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # The verify scripts read .env from the repository root, the same file a developer uses.
+      # Written here rather than committed so CI has no credential of its own to leak.
+      - name: Write the environment the suites expect
+        run: |
+          cat > .env <<'ENV'
+          NODE_ENV=development
+          DATABASE_URL=postgresql://smarteam:smarteam@localhost:5432/smarteam
+          REDIS_URL=redis://localhost:6379
+          JWT_SECRET=ci-only-jwt-secret-value-at-least-32-chars
+          FEDERATION_BOOTSTRAP_SECRET=ci-only-federation-secret
+          SUPERADMIN_EMAIL=ci-superadmin@smarteam.test
+          SUPERADMIN_PASSWORD=ci-only-superadmin-password
+          ENV
+          {
+            echo "AWS_REGION=${S3_REGION:-us-east-1}"
+            echo "AWS_S3_BUCKET=${S3_BUCKET:-storage-not-configured-in-ci}"
+            echo "AWS_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}"
+            echo "AWS_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}"
+          } >> .env
+
+      - run: pnpm db:deploy
+      - run: pnpm --filter @smarteam/api db:seed
+      # `...` includes the workspace packages the API imports; building the app alone
+      # leaves @smarteam/contracts without its declarations.
+      - run: pnpm build --filter @smarteam/api...
+
+      - name: Start the API
+        run: |
+          pnpm --filter @smarteam/api start > /tmp/api.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fsS http://localhost:4000/health/ready && break || sleep 2
+          done
+
+      # Run every suite even if one fails, so a red build reports all the damage rather than the
+      # first symptom.
+      - name: Run the verify suites
+        run: |
+          failed=""
+          not_run=""
+          for suite in auth employees teams attendance leave payroll organization files \
+                       holidays employee-detail employee-directory onboarding \
+                       payroll-staleness timesheet-approval-cycle concurrency \
+                       authorization-boundaries ownership-and-approvals missing-checkout \
+                       holiday-checkin shift-assignment; do
+            # The storage round trip needs a real bucket. Without one it is not run, and says so;
+            # it is never counted as a pass.
+            if [ "$suite" = files ] && { [ -z "$S3_BUCKET" ] || [ -z "$S3_ACCESS_KEY_ID" ]; }; then
+              echo "::warning title=verify:files NOT RUN::No CI_S3_* repository secrets are set, so the storage round trip against real S3 did not run."
+              not_run="$not_run $suite"
+              continue
+            fi
+            echo "::group::verify:$suite"
+            pnpm "verify:$suite" || failed="$failed $suite"
+            echo "::endgroup::"
+          done
+          if [ -n "$not_run" ]; then
+            echo "### NOT RUN:$not_run — needs the CI_S3_* repository secrets (real S3 test bucket)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -n "$failed" ]; then echo "FAILED:$failed"; exit 1; fi
+
+      - name: API log on failure
+        if: failure()
+        run: tail -100 /tmp/api.log
+
+  # Static analysis of the code itself. `pnpm audit` only knows about published advisories in
+  # dependencies; it cannot see an injection or an unsafe comparison written here. CodeQL reads
+  # the source, which is the gap that dependency scanning alone always leaves.
+  codeql:
+    name: Static analysis (CodeQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+          # Scopes the scan to the shipped surface; see the file for what is excluded and why.
+          config-file: ./.github/codeql/codeql-config.yml
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:javascript-typescript
+
+  # Secrets, in the working tree and in history. A committed credential is not caught by any of
+  # the jobs above, and this repository has already had one: the superadmin password was quoted
+  # in a security document and reached a commit.
+  secrets-scan:
+    name: Secret scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Whole history, not just the tip. A secret removed in the latest commit is still a
+          # secret if it is reachable from an earlier one.
+          fetch-depth: 0
+      # The gitleaks release binary, pinned and checked against the release's own checksums —
+      # no container image involved.
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          archive="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl -fsSLO "$base/$archive"
+          curl -fsSL "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt" | grep " $archive\$" | sha256sum -c -
+          tar -xzf "$archive" gitleaks
+          sudo install -m 755 gitleaks /usr/local/bin/gitleaks
+      - name: Scan for committed secrets
+        run: gitleaks detect --source . --redact --verbose --no-banner
+
+  # Backup and restore, exercised rather than assumed.
+  #
+  # docs/chore/TECHSTACK.v1.md requires recoverable payroll data. A backup nobody has restored is
+  # a hypothesis, so this takes a real dump of a migrated database and restores it into a separate
+  # one, asserting that the migration ledger, row-level security and the data all survive. The
+  # WAL/PITR half of the requirement is server configuration and lives in
+  # docs/operations/backup-and-recovery.md; what can be verified in CI is verified here.
+  backup-restore:
+    name: Backup and restore drill
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
+    steps:
+      - uses: actions/checkout@v4
+      # Server and client tools installed together, natively, so their versions match — pg_dump
+      # refuses a server newer than itself.
+      - name: Start PostgreSQL
+        run: bash scripts/ci/native-services.sh
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - run: pnpm db:deploy
+      # The runner may ship an older pg_dump on PATH. Point at the 17 tools explicitly.
+      - run: pnpm db:backup
+        env:
+          PG_DUMP_PATH: /usr/lib/postgresql/17/bin/pg_dump
+      - run: pnpm db:verify-restore
+        env:
+          PG_RESTORE_PATH: /usr/lib/postgresql/17/bin/pg_restore

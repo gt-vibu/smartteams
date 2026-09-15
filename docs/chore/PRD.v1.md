@@ -154,7 +154,7 @@ Each requirement below applies **identically** regardless of access mode (native
 
 - FR-41: The system shall implement OAuth 2.0 client credentials for application authentication, matching the existing BlizBooks mechanism.
 - FR-42: The system shall support optional mutual TLS (mTLS) as an additional transport-level authentication option, matching current capability.
-- FR-43: The system shall verify signed federation requests, binding the signature to HTTP method, path, body hash, actor, tenant, outlet/branch, target, and nonce — matching current behavior.
+- FR-43: Inbound federation calls shall use OAuth 2.0 bearer authentication and optional mTLS certificate verification as defined by the current BlizBooks integration guide. Outbound webhooks shall use RSA-SHA256 signatures with published public keys.
 - FR-44: The system shall reject replayed federation requests using nonce tracking with a defined validity window.
 - FR-45: The system shall support tenant and branch provisioning via federation, mapping BlizBooks entities to Smarteam organizations/branches.
 - FR-46: The system shall support federation grants that define what a federation client is authorized to do, scoped by tenant/branch, independent of and in addition to OAuth scopes.
@@ -204,7 +204,7 @@ Each requirement below applies **identically** regardless of access mode (native
 ### 5.5 Compatibility
 
 - NFR-16: The Federation API shall remain backward-compatible with the existing BlizBooks integration guide's documented contract; any endpoint path changes shall be additive/versioned, not breaking.
-- NFR-17: The system shall support the existing federation authentication and request-signing mechanism without requiring BlizBooks to adopt a new signing scheme, credential format, or transport mechanism.
+- NFR-17: The system shall support the existing federation authentication and webhook-signing mechanism without requiring BlizBooks to adopt a new credential format or transport mechanism: OAuth 2.0 client credentials plus optional mTLS inbound, and RSA-SHA256 outbound webhook signatures.
 
 ### 5.6 Auditability and Observability
 
