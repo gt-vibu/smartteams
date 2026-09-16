@@ -62,6 +62,21 @@ export class EmployeeNativeService {
         }))
       )
         throw new NotFoundError('Branch');
+      // Named here rather than left to the database's unique index, whose generic "that value is
+      // already in use" tells an administrator neither which value nor whose it is. Onboarding is
+      // where this is hit: a second attempt after a half-finished one reuses the same number.
+      const duplicate = await tx.employee.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          employeeNumber: input.employeeNumber,
+        },
+        select: { firstName: true, lastName: true },
+      });
+      if (duplicate)
+        throw new ConflictError(
+          `Employee number ${input.employeeNumber} already belongs to ` +
+            `${duplicate.firstName} ${duplicate.lastName}. Use a different number.`,
+        );
       const employee = await tx.employee.create({
         data: {
           organizationId: context.organizationId,

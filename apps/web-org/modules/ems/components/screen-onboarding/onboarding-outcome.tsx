@@ -23,6 +23,21 @@ const STEP_LABELS: Record<OnboardingStep, string> = {
   link: 'Login linked to the employee record',
 };
 
+/**
+ * The same steps, said as failures.
+ *
+ * The completed list is written in the past tense because those things happened. Reusing those
+ * words on the step that did not produces "Employee record created — failed", which reads as a
+ * contradiction and leaves the administrator unsure what is in the database.
+ */
+const STEP_FAILURES: Record<OnboardingStep, string> = {
+  employee: 'The employee record could not be created.',
+  employment: 'The job title, department and reporting line could not be recorded.',
+  manager: 'The manager could not be assigned.',
+  account: 'The login could not be created.',
+  link: 'The login could not be linked to the employee record.',
+};
+
 export function OnboardingOutcome({
   onDismiss,
   result,
@@ -80,7 +95,7 @@ export function OnboardingOutcome({
 
       {result.failure && (
         <p className="mt-3 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
-          <span className="font-bold">{STEP_LABELS[result.failure.step]} — failed.</span>{' '}
+          <span className="font-bold">{STEP_FAILURES[result.failure.step]}</span>{' '}
           {result.failure.message}
         </p>
       )}
