@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { EmployeeAccessCodeState } from '@smarteam/contracts';
 import { Button } from '@smarteam/ui';
+import { hasPermission } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { accessCodeRepository } from '../../repositories/access-code.repository';
 
@@ -20,8 +21,10 @@ import { accessCodeRepository } from '../../repositories/access-code.repository'
  * nobody else has ever seen.
  */
 export function AccountAccessPanel({ employeeId }: { employeeId: string }) {
-  const { session } = useSession();
+  const { session, persona } = useSession();
   const organizationId = session?.organizationId ?? null;
+  // Issuing and revoking need employees.write; everyone else sees the state without the actions.
+  const canManage = hasPermission(persona?.permissions ?? [], 'employees.write');
 
   const [state, setState] = useState<EmployeeAccessCodeState | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -103,7 +106,7 @@ export function AccountAccessPanel({ employeeId }: { employeeId: string }) {
           </p>
         </div>
 
-        {state !== 'ACTIVE' && (
+        {state !== 'ACTIVE' && canManage && (
           <div className="flex items-center gap-2">
             {state === 'CODE_ISSUED' && (
               <Button

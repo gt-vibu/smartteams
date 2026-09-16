@@ -6,6 +6,7 @@ import { useEmployeeDetail } from '../../hooks/use-employee-detail';
 import { useAssignments } from '../../hooks/use-assignments';
 import { AssignEmployeeModal } from './assign-employee-modal';
 import { EmployeeStatutorySection } from './employee-statutory-section';
+import { AccountAccessPanel } from '../screen-onboarding/account-access-panel';
 import {
   EmployeeProjectsSection,
   EmployeeReportingSection,
@@ -148,6 +149,10 @@ export function EntityDetailDrawer({ isOpen, onClose, employeeId }: EntityDetail
                   canRead={detail.data.canReadCompliance}
                   profiles={detail.data.statutoryProfiles}
                 />
+                {/* Whether this employee can sign in yet, and the code that lets them activate
+                    their own login. The panel reads its own status and hides itself when the
+                    viewer may not see it. */}
+                {employeeId && <AccountAccessPanel employeeId={employeeId} />}
               </div>
             </>
           )}
