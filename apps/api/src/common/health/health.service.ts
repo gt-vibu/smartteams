@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../infrastructure/database/prisma.service';
 import { RedisService } from '../../infrastructure/redis/redis.service';
 
@@ -9,13 +10,14 @@ export class HealthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
+    private readonly config: ConfigService,
   ) {}
 
   liveness() {
     return {
       status: 'ok' as const,
       service: 'smarteam-api',
-      version: process.env.npm_package_version ?? '0.1.0',
+      version: this.config.getOrThrow<string>('APP_VERSION'),
     };
   }
 
@@ -29,7 +31,7 @@ export class HealthService {
     return {
       status: ready ? ('ok' as const) : ('unavailable' as const),
       service: 'smarteam-api',
-      version: process.env.npm_package_version ?? '0.1.0',
+      version: this.config.getOrThrow<string>('APP_VERSION'),
       checks,
     };
   }

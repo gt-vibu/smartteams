@@ -1,16 +1,32 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
+import { ProblemDetailsFilter } from './common/http/problem-details.filter';
+import { PrismaExceptionFilter } from './common/http/prisma-exception.filter';
+import { installProcessDiagnostics } from './common/runtime/process-diagnostics';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
+  const config = app.get(ConfigService);
   app.useLogger(app.get(Logger));
+  // Order matters: Nest tries the last-registered filter first, so the Prisma-specific one must
+  // come after the catch-all to be consulted before it.
+  app.useGlobalFilters(app.get(ProblemDetailsFilter), app.get(PrismaExceptionFilter));
   app.enableShutdownHooks();
+  const expressApplication = app.getHttpAdapter().getInstance() as {
+    set(name: string, value: unknown): void;
+  };
+  expressApplication.set('trust proxy', config.getOrThrow<number>('TRUST_PROXY_HOPS'));
   app.enableCors({
     credentials: true,
-    origin: process.env.CORS_ORIGINS?.split(',').map((origin) => origin.trim()) ?? false,
+    origin: config
+      .getOrThrow<string>('CORS_ORIGINS')
+      .split(',')
+      .map((origin) => origin.trim()),
   });
   app.useGlobalPipes(
     new ValidationPipe({
@@ -23,14 +39,18 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Smarteam V2 API')
     .setDescription('People Management, native application, and BlizBooks federation APIs.')
-    .setVersion('0.1.0')
+    .setVersion(config.getOrThrow<string>('APP_VERSION'))
     .addBearerAuth()
     .build();
-  SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, swaggerConfig));
+  if (config.getOrThrow<boolean>('SWAGGER_ENABLED')) {
+    SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, swaggerConfig));
+  }
 
-  const host = process.env.API_HOST ?? '0.0.0.0';
-  const port = Number(process.env.API_PORT ?? 4000);
+  const host = config.getOrThrow<string>('API_HOST');
+  const port = config.getOrThrow<number>('API_PORT');
   await app.listen(port, host);
 }
 
+// First, so that a failure anywhere in bootstrap is reported too.
+installProcessDiagnostics();
 void bootstrap();

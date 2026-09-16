@@ -681,10 +681,6 @@ export type EnumPayrollAdjustmentTypeFieldUpdateOperationsInput = {
   set?: $Enums.PayrollAdjustmentType
 }
 
-export type EnumPayrollAdjustmentSourceFieldUpdateOperationsInput = {
-  set?: $Enums.PayrollAdjustmentSource
-}
-
 export type PayrollAdjustmentCreateNestedManyWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.PayrollAdjustmentCreateWithoutOrganizationInput, Prisma.PayrollAdjustmentUncheckedCreateWithoutOrganizationInput> | Prisma.PayrollAdjustmentCreateWithoutOrganizationInput[] | Prisma.PayrollAdjustmentUncheckedCreateWithoutOrganizationInput[]
   connectOrCreate?: Prisma.PayrollAdjustmentCreateOrConnectWithoutOrganizationInput | Prisma.PayrollAdjustmentCreateOrConnectWithoutOrganizationInput[]

@@ -11,11 +11,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         connection: {
           maxRetriesPerRequest: null,
           url: config.getOrThrow<string>('REDIS_URL'),
+          ...(config.get<boolean>('REDIS_TLS', false) ? { tls: {} } : {}),
         },
         prefix: config.get<string>('REDIS_KEY_PREFIX', 'smarteam:'),
       }),
     }),
     BullModule.registerQueue({ name: 'webhook-delivery' }),
+    BullModule.registerQueue({ name: 'outbox-dispatch' }),
+    BullModule.registerQueue({ name: 'file-lifecycle' }),
+    BullModule.registerQueue({ name: 'attendance-auto-check-out' }),
   ],
   exports: [BullModule],
 })

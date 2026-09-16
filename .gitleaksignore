@@ -1,0 +1,24 @@
+# Accepted gitleaks findings, one fingerprint per line.
+#
+# A fingerprint pins a single finding to one commit, file, rule and line. That is deliberately
+# narrower than allowlisting a path: `.env.example` must keep being scanned, because the whole
+# risk it carries is somebody pasting a real credential into it, and a path allowlist is exactly
+# what would hide that.
+#
+# Nothing here may be a live secret. Anything that turns out to be one is rotated and removed
+# from history, not added to this file.
+
+# The federation idempotency key placeholder in `.env.example`, matched by the generic-api-key
+# rule on length alone. It was deliberately invalid, so copying the example file produced a
+# service that refused to start rather than one running on a guessable key. HEAD uses the
+# `<placeholder>` convention now, but the old value stays reachable from that commit, and history
+# is not worth rewriting for a string that was never a secret.
+#
+# The literal itself is not quoted here: this file is scanned too, and repeating a flagged value
+# in the note that excuses it simply relocates the finding.
+3704369ba41abad2518e0840d662a86c3b7f44b6:.env.example:generic-api-key:52
+
+# The same placeholder, as it appeared in the note in this file before the literal was removed
+# from it. Quoting a flagged value inside its own exemption simply moves the finding; the note
+# above is now written without it, but that commit stays in history.
+672434d29b5c803a2560d5bc8f96faf1ca33668b:.gitleaksignore:generic-api-key:11

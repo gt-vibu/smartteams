@@ -56,6 +56,8 @@ export type AttendancePunchMinAggregateOutputType = {
   workLocationId: string | null
   isWithinGeofence: boolean | null
   distanceFromLocationMeters: runtime.Decimal | null
+  biometricVerified: boolean | null
+  webauthnCredentialId: string | null
   createdAt: Date | null
 }
 
@@ -75,6 +77,8 @@ export type AttendancePunchMaxAggregateOutputType = {
   workLocationId: string | null
   isWithinGeofence: boolean | null
   distanceFromLocationMeters: runtime.Decimal | null
+  biometricVerified: boolean | null
+  webauthnCredentialId: string | null
   createdAt: Date | null
 }
 
@@ -94,6 +98,8 @@ export type AttendancePunchCountAggregateOutputType = {
   workLocationId: number
   isWithinGeofence: number
   distanceFromLocationMeters: number
+  biometricVerified: number
+  webauthnCredentialId: number
   metadata: number
   createdAt: number
   _all: number
@@ -130,6 +136,8 @@ export type AttendancePunchMinAggregateInputType = {
   workLocationId?: true
   isWithinGeofence?: true
   distanceFromLocationMeters?: true
+  biometricVerified?: true
+  webauthnCredentialId?: true
   createdAt?: true
 }
 
@@ -149,6 +157,8 @@ export type AttendancePunchMaxAggregateInputType = {
   workLocationId?: true
   isWithinGeofence?: true
   distanceFromLocationMeters?: true
+  biometricVerified?: true
+  webauthnCredentialId?: true
   createdAt?: true
 }
 
@@ -168,6 +178,8 @@ export type AttendancePunchCountAggregateInputType = {
   workLocationId?: true
   isWithinGeofence?: true
   distanceFromLocationMeters?: true
+  biometricVerified?: true
+  webauthnCredentialId?: true
   metadata?: true
   createdAt?: true
   _all?: true
@@ -275,6 +287,8 @@ export type AttendancePunchGroupByOutputType = {
   workLocationId: string | null
   isWithinGeofence: boolean | null
   distanceFromLocationMeters: runtime.Decimal | null
+  biometricVerified: boolean
+  webauthnCredentialId: string | null
   metadata: runtime.JsonValue
   createdAt: Date
   _count: AttendancePunchCountAggregateOutputType | null
@@ -318,6 +332,8 @@ export type AttendancePunchWhereInput = {
   workLocationId?: Prisma.UuidNullableFilter<"AttendancePunch"> | string | null
   isWithinGeofence?: Prisma.BoolNullableFilter<"AttendancePunch"> | boolean | null
   distanceFromLocationMeters?: Prisma.DecimalNullableFilter<"AttendancePunch"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFilter<"AttendancePunch"> | boolean
+  webauthnCredentialId?: Prisma.UuidNullableFilter<"AttendancePunch"> | string | null
   metadata?: Prisma.JsonFilter<"AttendancePunch">
   createdAt?: Prisma.DateTimeFilter<"AttendancePunch"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
@@ -326,6 +342,8 @@ export type AttendancePunchWhereInput = {
   capturedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   workLocation?: Prisma.XOR<Prisma.WorkLocationNullableScalarRelationFilter, Prisma.WorkLocationWhereInput> | null
   corrections?: Prisma.AttendanceCorrectionListRelationFilter
+  webauthnCredential?: Prisma.XOR<Prisma.WebauthnCredentialNullableScalarRelationFilter, Prisma.WebauthnCredentialWhereInput> | null
+  webauthnChallenges?: Prisma.WebauthnChallengeListRelationFilter
 }
 
 export type AttendancePunchOrderByWithRelationInput = {
@@ -344,6 +362,8 @@ export type AttendancePunchOrderByWithRelationInput = {
   workLocationId?: Prisma.SortOrderInput | Prisma.SortOrder
   isWithinGeofence?: Prisma.SortOrderInput | Prisma.SortOrder
   distanceFromLocationMeters?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricVerified?: Prisma.SortOrder
+  webauthnCredentialId?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
@@ -352,6 +372,8 @@ export type AttendancePunchOrderByWithRelationInput = {
   capturedBy?: Prisma.UserOrderByWithRelationInput
   workLocation?: Prisma.WorkLocationOrderByWithRelationInput
   corrections?: Prisma.AttendanceCorrectionOrderByRelationAggregateInput
+  webauthnCredential?: Prisma.WebauthnCredentialOrderByWithRelationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeOrderByRelationAggregateInput
 }
 
 export type AttendancePunchWhereUniqueInput = Prisma.AtLeast<{
@@ -374,6 +396,8 @@ export type AttendancePunchWhereUniqueInput = Prisma.AtLeast<{
   workLocationId?: Prisma.UuidNullableFilter<"AttendancePunch"> | string | null
   isWithinGeofence?: Prisma.BoolNullableFilter<"AttendancePunch"> | boolean | null
   distanceFromLocationMeters?: Prisma.DecimalNullableFilter<"AttendancePunch"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFilter<"AttendancePunch"> | boolean
+  webauthnCredentialId?: Prisma.UuidNullableFilter<"AttendancePunch"> | string | null
   metadata?: Prisma.JsonFilter<"AttendancePunch">
   createdAt?: Prisma.DateTimeFilter<"AttendancePunch"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
@@ -382,6 +406,8 @@ export type AttendancePunchWhereUniqueInput = Prisma.AtLeast<{
   capturedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   workLocation?: Prisma.XOR<Prisma.WorkLocationNullableScalarRelationFilter, Prisma.WorkLocationWhereInput> | null
   corrections?: Prisma.AttendanceCorrectionListRelationFilter
+  webauthnCredential?: Prisma.XOR<Prisma.WebauthnCredentialNullableScalarRelationFilter, Prisma.WebauthnCredentialWhereInput> | null
+  webauthnChallenges?: Prisma.WebauthnChallengeListRelationFilter
 }, "id" | "organizationId_externalId">
 
 export type AttendancePunchOrderByWithAggregationInput = {
@@ -400,6 +426,8 @@ export type AttendancePunchOrderByWithAggregationInput = {
   workLocationId?: Prisma.SortOrderInput | Prisma.SortOrder
   isWithinGeofence?: Prisma.SortOrderInput | Prisma.SortOrder
   distanceFromLocationMeters?: Prisma.SortOrderInput | Prisma.SortOrder
+  biometricVerified?: Prisma.SortOrder
+  webauthnCredentialId?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.AttendancePunchCountOrderByAggregateInput
@@ -428,6 +456,8 @@ export type AttendancePunchScalarWhereWithAggregatesInput = {
   workLocationId?: Prisma.UuidNullableWithAggregatesFilter<"AttendancePunch"> | string | null
   isWithinGeofence?: Prisma.BoolNullableWithAggregatesFilter<"AttendancePunch"> | boolean | null
   distanceFromLocationMeters?: Prisma.DecimalNullableWithAggregatesFilter<"AttendancePunch"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolWithAggregatesFilter<"AttendancePunch"> | boolean
+  webauthnCredentialId?: Prisma.UuidNullableWithAggregatesFilter<"AttendancePunch"> | string | null
   metadata?: Prisma.JsonWithAggregatesFilter<"AttendancePunch">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AttendancePunch"> | Date | string
 }
@@ -443,6 +473,7 @@ export type AttendancePunchCreateInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
@@ -451,6 +482,8 @@ export type AttendancePunchCreateInput = {
   capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
   workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUncheckedCreateInput = {
@@ -469,9 +502,12 @@ export type AttendancePunchUncheckedCreateInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUpdateInput = {
@@ -485,6 +521,7 @@ export type AttendancePunchUpdateInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
@@ -493,6 +530,8 @@ export type AttendancePunchUpdateInput = {
   capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
   workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateInput = {
@@ -511,9 +550,12 @@ export type AttendancePunchUncheckedUpdateInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchCreateManyInput = {
@@ -532,6 +574,8 @@ export type AttendancePunchCreateManyInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -547,6 +591,7 @@ export type AttendancePunchUpdateManyMutationInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -567,6 +612,8 @@ export type AttendancePunchUncheckedUpdateManyInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -602,6 +649,8 @@ export type AttendancePunchCountOrderByAggregateInput = {
   workLocationId?: Prisma.SortOrder
   isWithinGeofence?: Prisma.SortOrder
   distanceFromLocationMeters?: Prisma.SortOrder
+  biometricVerified?: Prisma.SortOrder
+  webauthnCredentialId?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -629,6 +678,8 @@ export type AttendancePunchMaxOrderByAggregateInput = {
   workLocationId?: Prisma.SortOrder
   isWithinGeofence?: Prisma.SortOrder
   distanceFromLocationMeters?: Prisma.SortOrder
+  biometricVerified?: Prisma.SortOrder
+  webauthnCredentialId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -648,6 +699,8 @@ export type AttendancePunchMinOrderByAggregateInput = {
   workLocationId?: Prisma.SortOrder
   isWithinGeofence?: Prisma.SortOrder
   distanceFromLocationMeters?: Prisma.SortOrder
+  biometricVerified?: Prisma.SortOrder
+  webauthnCredentialId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -867,6 +920,64 @@ export type AttendancePunchUncheckedUpdateManyWithoutWorkLocationNestedInput = {
   deleteMany?: Prisma.AttendancePunchScalarWhereInput | Prisma.AttendancePunchScalarWhereInput[]
 }
 
+export type AttendancePunchCreateNestedManyWithoutWebauthnCredentialInput = {
+  create?: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput> | Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput[] | Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput[]
+  connectOrCreate?: Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput | Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput[]
+  createMany?: Prisma.AttendancePunchCreateManyWebauthnCredentialInputEnvelope
+  connect?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+}
+
+export type AttendancePunchUncheckedCreateNestedManyWithoutWebauthnCredentialInput = {
+  create?: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput> | Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput[] | Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput[]
+  connectOrCreate?: Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput | Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput[]
+  createMany?: Prisma.AttendancePunchCreateManyWebauthnCredentialInputEnvelope
+  connect?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+}
+
+export type AttendancePunchUpdateManyWithoutWebauthnCredentialNestedInput = {
+  create?: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput> | Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput[] | Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput[]
+  connectOrCreate?: Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput | Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput[]
+  upsert?: Prisma.AttendancePunchUpsertWithWhereUniqueWithoutWebauthnCredentialInput | Prisma.AttendancePunchUpsertWithWhereUniqueWithoutWebauthnCredentialInput[]
+  createMany?: Prisma.AttendancePunchCreateManyWebauthnCredentialInputEnvelope
+  set?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  disconnect?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  delete?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  connect?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  update?: Prisma.AttendancePunchUpdateWithWhereUniqueWithoutWebauthnCredentialInput | Prisma.AttendancePunchUpdateWithWhereUniqueWithoutWebauthnCredentialInput[]
+  updateMany?: Prisma.AttendancePunchUpdateManyWithWhereWithoutWebauthnCredentialInput | Prisma.AttendancePunchUpdateManyWithWhereWithoutWebauthnCredentialInput[]
+  deleteMany?: Prisma.AttendancePunchScalarWhereInput | Prisma.AttendancePunchScalarWhereInput[]
+}
+
+export type AttendancePunchUncheckedUpdateManyWithoutWebauthnCredentialNestedInput = {
+  create?: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput> | Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput[] | Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput[]
+  connectOrCreate?: Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput | Prisma.AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput[]
+  upsert?: Prisma.AttendancePunchUpsertWithWhereUniqueWithoutWebauthnCredentialInput | Prisma.AttendancePunchUpsertWithWhereUniqueWithoutWebauthnCredentialInput[]
+  createMany?: Prisma.AttendancePunchCreateManyWebauthnCredentialInputEnvelope
+  set?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  disconnect?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  delete?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  connect?: Prisma.AttendancePunchWhereUniqueInput | Prisma.AttendancePunchWhereUniqueInput[]
+  update?: Prisma.AttendancePunchUpdateWithWhereUniqueWithoutWebauthnCredentialInput | Prisma.AttendancePunchUpdateWithWhereUniqueWithoutWebauthnCredentialInput[]
+  updateMany?: Prisma.AttendancePunchUpdateManyWithWhereWithoutWebauthnCredentialInput | Prisma.AttendancePunchUpdateManyWithWhereWithoutWebauthnCredentialInput[]
+  deleteMany?: Prisma.AttendancePunchScalarWhereInput | Prisma.AttendancePunchScalarWhereInput[]
+}
+
+export type AttendancePunchCreateNestedOneWithoutWebauthnChallengesInput = {
+  create?: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnChallengesInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnChallengesInput>
+  connectOrCreate?: Prisma.AttendancePunchCreateOrConnectWithoutWebauthnChallengesInput
+  connect?: Prisma.AttendancePunchWhereUniqueInput
+}
+
+export type AttendancePunchUpdateOneWithoutWebauthnChallengesNestedInput = {
+  create?: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnChallengesInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnChallengesInput>
+  connectOrCreate?: Prisma.AttendancePunchCreateOrConnectWithoutWebauthnChallengesInput
+  upsert?: Prisma.AttendancePunchUpsertWithoutWebauthnChallengesInput
+  disconnect?: Prisma.AttendancePunchWhereInput | boolean
+  delete?: Prisma.AttendancePunchWhereInput | boolean
+  connect?: Prisma.AttendancePunchWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AttendancePunchUpdateToOneWithWhereWithoutWebauthnChallengesInput, Prisma.AttendancePunchUpdateWithoutWebauthnChallengesInput>, Prisma.AttendancePunchUncheckedUpdateWithoutWebauthnChallengesInput>
+}
+
 export type AttendancePunchCreateNestedManyWithoutEmployeeInput = {
   create?: Prisma.XOR<Prisma.AttendancePunchCreateWithoutEmployeeInput, Prisma.AttendancePunchUncheckedCreateWithoutEmployeeInput> | Prisma.AttendancePunchCreateWithoutEmployeeInput[] | Prisma.AttendancePunchUncheckedCreateWithoutEmployeeInput[]
   connectOrCreate?: Prisma.AttendancePunchCreateOrConnectWithoutEmployeeInput | Prisma.AttendancePunchCreateOrConnectWithoutEmployeeInput[]
@@ -920,6 +1031,7 @@ export type AttendancePunchCreateWithoutCapturedByInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
@@ -927,6 +1039,8 @@ export type AttendancePunchCreateWithoutCapturedByInput = {
   employee: Prisma.EmployeeCreateNestedOneWithoutAttendancePunchesInput
   workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUncheckedCreateWithoutCapturedByInput = {
@@ -944,9 +1058,12 @@ export type AttendancePunchUncheckedCreateWithoutCapturedByInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchCreateOrConnectWithoutCapturedByInput = {
@@ -994,6 +1111,8 @@ export type AttendancePunchScalarWhereInput = {
   workLocationId?: Prisma.UuidNullableFilter<"AttendancePunch"> | string | null
   isWithinGeofence?: Prisma.BoolNullableFilter<"AttendancePunch"> | boolean | null
   distanceFromLocationMeters?: Prisma.DecimalNullableFilter<"AttendancePunch"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFilter<"AttendancePunch"> | boolean
+  webauthnCredentialId?: Prisma.UuidNullableFilter<"AttendancePunch"> | string | null
   metadata?: Prisma.JsonFilter<"AttendancePunch">
   createdAt?: Prisma.DateTimeFilter<"AttendancePunch"> | Date | string
 }
@@ -1009,6 +1128,7 @@ export type AttendancePunchCreateWithoutAttendanceRecordInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
@@ -1016,6 +1136,8 @@ export type AttendancePunchCreateWithoutAttendanceRecordInput = {
   capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
   workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUncheckedCreateWithoutAttendanceRecordInput = {
@@ -1033,9 +1155,12 @@ export type AttendancePunchUncheckedCreateWithoutAttendanceRecordInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchCreateOrConnectWithoutAttendanceRecordInput = {
@@ -1075,6 +1200,7 @@ export type AttendancePunchCreateWithoutCorrectionsInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
@@ -1082,6 +1208,8 @@ export type AttendancePunchCreateWithoutCorrectionsInput = {
   employee: Prisma.EmployeeCreateNestedOneWithoutAttendancePunchesInput
   capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
   workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUncheckedCreateWithoutCorrectionsInput = {
@@ -1100,8 +1228,11 @@ export type AttendancePunchUncheckedCreateWithoutCorrectionsInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchCreateOrConnectWithoutCorrectionsInput = {
@@ -1131,6 +1262,7 @@ export type AttendancePunchUpdateWithoutCorrectionsInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
@@ -1138,6 +1270,8 @@ export type AttendancePunchUpdateWithoutCorrectionsInput = {
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendancePunchesNestedInput
   capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
   workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateWithoutCorrectionsInput = {
@@ -1156,8 +1290,11 @@ export type AttendancePunchUncheckedUpdateWithoutCorrectionsInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchCreateWithoutOrganizationInput = {
@@ -1171,6 +1308,7 @@ export type AttendancePunchCreateWithoutOrganizationInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   attendanceRecord: Prisma.AttendanceRecordCreateNestedOneWithoutPunchesInput
@@ -1178,6 +1316,8 @@ export type AttendancePunchCreateWithoutOrganizationInput = {
   capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
   workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUncheckedCreateWithoutOrganizationInput = {
@@ -1195,9 +1335,12 @@ export type AttendancePunchUncheckedCreateWithoutOrganizationInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchCreateOrConnectWithoutOrganizationInput = {
@@ -1237,6 +1380,7 @@ export type AttendancePunchCreateWithoutWorkLocationInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
@@ -1244,6 +1388,8 @@ export type AttendancePunchCreateWithoutWorkLocationInput = {
   employee: Prisma.EmployeeCreateNestedOneWithoutAttendancePunchesInput
   capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUncheckedCreateWithoutWorkLocationInput = {
@@ -1261,9 +1407,12 @@ export type AttendancePunchUncheckedCreateWithoutWorkLocationInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchCreateOrConnectWithoutWorkLocationInput = {
@@ -1292,6 +1441,186 @@ export type AttendancePunchUpdateManyWithWhereWithoutWorkLocationInput = {
   data: Prisma.XOR<Prisma.AttendancePunchUpdateManyMutationInput, Prisma.AttendancePunchUncheckedUpdateManyWithoutWorkLocationInput>
 }
 
+export type AttendancePunchCreateWithoutWebauthnCredentialInput = {
+  id?: string
+  punchType: $Enums.AttendancePunchType
+  occurredAt: Date | string
+  source: $Enums.AttendancePunchSource
+  externalId?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isWithinGeofence?: boolean | null
+  distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
+  attendanceRecord: Prisma.AttendanceRecordCreateNestedOneWithoutPunchesInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutAttendancePunchesInput
+  capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
+  workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
+  corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
+}
+
+export type AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput = {
+  id?: string
+  organizationId: string
+  attendanceRecordId: string
+  employeeId: string
+  punchType: $Enums.AttendancePunchType
+  occurredAt: Date | string
+  source: $Enums.AttendancePunchSource
+  capturedByUserId?: string | null
+  externalId?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  workLocationId?: string | null
+  isWithinGeofence?: boolean | null
+  distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
+}
+
+export type AttendancePunchCreateOrConnectWithoutWebauthnCredentialInput = {
+  where: Prisma.AttendancePunchWhereUniqueInput
+  create: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput>
+}
+
+export type AttendancePunchCreateManyWebauthnCredentialInputEnvelope = {
+  data: Prisma.AttendancePunchCreateManyWebauthnCredentialInput | Prisma.AttendancePunchCreateManyWebauthnCredentialInput[]
+  skipDuplicates?: boolean
+}
+
+export type AttendancePunchUpsertWithWhereUniqueWithoutWebauthnCredentialInput = {
+  where: Prisma.AttendancePunchWhereUniqueInput
+  update: Prisma.XOR<Prisma.AttendancePunchUpdateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedUpdateWithoutWebauthnCredentialInput>
+  create: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnCredentialInput>
+}
+
+export type AttendancePunchUpdateWithWhereUniqueWithoutWebauthnCredentialInput = {
+  where: Prisma.AttendancePunchWhereUniqueInput
+  data: Prisma.XOR<Prisma.AttendancePunchUpdateWithoutWebauthnCredentialInput, Prisma.AttendancePunchUncheckedUpdateWithoutWebauthnCredentialInput>
+}
+
+export type AttendancePunchUpdateManyWithWhereWithoutWebauthnCredentialInput = {
+  where: Prisma.AttendancePunchScalarWhereInput
+  data: Prisma.XOR<Prisma.AttendancePunchUpdateManyMutationInput, Prisma.AttendancePunchUncheckedUpdateManyWithoutWebauthnCredentialInput>
+}
+
+export type AttendancePunchCreateWithoutWebauthnChallengesInput = {
+  id?: string
+  punchType: $Enums.AttendancePunchType
+  occurredAt: Date | string
+  source: $Enums.AttendancePunchSource
+  externalId?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isWithinGeofence?: boolean | null
+  distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
+  attendanceRecord: Prisma.AttendanceRecordCreateNestedOneWithoutPunchesInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutAttendancePunchesInput
+  capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
+  workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
+  corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+}
+
+export type AttendancePunchUncheckedCreateWithoutWebauthnChallengesInput = {
+  id?: string
+  organizationId: string
+  attendanceRecordId: string
+  employeeId: string
+  punchType: $Enums.AttendancePunchType
+  occurredAt: Date | string
+  source: $Enums.AttendancePunchSource
+  capturedByUserId?: string | null
+  externalId?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  workLocationId?: string | null
+  isWithinGeofence?: boolean | null
+  distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+}
+
+export type AttendancePunchCreateOrConnectWithoutWebauthnChallengesInput = {
+  where: Prisma.AttendancePunchWhereUniqueInput
+  create: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnChallengesInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnChallengesInput>
+}
+
+export type AttendancePunchUpsertWithoutWebauthnChallengesInput = {
+  update: Prisma.XOR<Prisma.AttendancePunchUpdateWithoutWebauthnChallengesInput, Prisma.AttendancePunchUncheckedUpdateWithoutWebauthnChallengesInput>
+  create: Prisma.XOR<Prisma.AttendancePunchCreateWithoutWebauthnChallengesInput, Prisma.AttendancePunchUncheckedCreateWithoutWebauthnChallengesInput>
+  where?: Prisma.AttendancePunchWhereInput
+}
+
+export type AttendancePunchUpdateToOneWithWhereWithoutWebauthnChallengesInput = {
+  where?: Prisma.AttendancePunchWhereInput
+  data: Prisma.XOR<Prisma.AttendancePunchUpdateWithoutWebauthnChallengesInput, Prisma.AttendancePunchUncheckedUpdateWithoutWebauthnChallengesInput>
+}
+
+export type AttendancePunchUpdateWithoutWebauthnChallengesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  punchType?: Prisma.EnumAttendancePunchTypeFieldUpdateOperationsInput | $Enums.AttendancePunchType
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.EnumAttendancePunchSourceFieldUpdateOperationsInput | $Enums.AttendancePunchSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
+  attendanceRecord?: Prisma.AttendanceRecordUpdateOneRequiredWithoutPunchesNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendancePunchesNestedInput
+  capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
+  workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
+  corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+}
+
+export type AttendancePunchUncheckedUpdateWithoutWebauthnChallengesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendanceRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  punchType?: Prisma.EnumAttendancePunchTypeFieldUpdateOperationsInput | $Enums.AttendancePunchType
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.EnumAttendancePunchSourceFieldUpdateOperationsInput | $Enums.AttendancePunchSource
+  capturedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+}
+
 export type AttendancePunchCreateWithoutEmployeeInput = {
   id?: string
   punchType: $Enums.AttendancePunchType
@@ -1303,6 +1632,7 @@ export type AttendancePunchCreateWithoutEmployeeInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendancePunchesInput
@@ -1310,6 +1640,8 @@ export type AttendancePunchCreateWithoutEmployeeInput = {
   capturedBy?: Prisma.UserCreateNestedOneWithoutCapturedAttendancePunchesInput
   workLocation?: Prisma.WorkLocationCreateNestedOneWithoutPunchesInput
   corrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutAttendancePunchInput
+  webauthnCredential?: Prisma.WebauthnCredentialCreateNestedOneWithoutAttendancePunchesInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchUncheckedCreateWithoutEmployeeInput = {
@@ -1327,9 +1659,12 @@ export type AttendancePunchUncheckedCreateWithoutEmployeeInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutAttendancePunchInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutRelatedPunchInput
 }
 
 export type AttendancePunchCreateOrConnectWithoutEmployeeInput = {
@@ -1373,6 +1708,8 @@ export type AttendancePunchCreateManyCapturedByInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -1388,6 +1725,7 @@ export type AttendancePunchUpdateWithoutCapturedByInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
@@ -1395,6 +1733,8 @@ export type AttendancePunchUpdateWithoutCapturedByInput = {
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendancePunchesNestedInput
   workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateWithoutCapturedByInput = {
@@ -1412,9 +1752,12 @@ export type AttendancePunchUncheckedUpdateWithoutCapturedByInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateManyWithoutCapturedByInput = {
@@ -1432,6 +1775,8 @@ export type AttendancePunchUncheckedUpdateManyWithoutCapturedByInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1451,6 +1796,8 @@ export type AttendancePunchCreateManyAttendanceRecordInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -1466,6 +1813,7 @@ export type AttendancePunchUpdateWithoutAttendanceRecordInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
@@ -1473,6 +1821,8 @@ export type AttendancePunchUpdateWithoutAttendanceRecordInput = {
   capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
   workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateWithoutAttendanceRecordInput = {
@@ -1490,9 +1840,12 @@ export type AttendancePunchUncheckedUpdateWithoutAttendanceRecordInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordInput = {
@@ -1510,6 +1863,8 @@ export type AttendancePunchUncheckedUpdateManyWithoutAttendanceRecordInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1529,6 +1884,8 @@ export type AttendancePunchCreateManyOrganizationInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -1544,6 +1901,7 @@ export type AttendancePunchUpdateWithoutOrganizationInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceRecord?: Prisma.AttendanceRecordUpdateOneRequiredWithoutPunchesNestedInput
@@ -1551,6 +1909,8 @@ export type AttendancePunchUpdateWithoutOrganizationInput = {
   capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
   workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateWithoutOrganizationInput = {
@@ -1568,9 +1928,12 @@ export type AttendancePunchUncheckedUpdateWithoutOrganizationInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateManyWithoutOrganizationInput = {
@@ -1588,6 +1951,8 @@ export type AttendancePunchUncheckedUpdateManyWithoutOrganizationInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1607,6 +1972,8 @@ export type AttendancePunchCreateManyWorkLocationInput = {
   accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -1622,6 +1989,7 @@ export type AttendancePunchUpdateWithoutWorkLocationInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
@@ -1629,6 +1997,8 @@ export type AttendancePunchUpdateWithoutWorkLocationInput = {
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendancePunchesNestedInput
   capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateWithoutWorkLocationInput = {
@@ -1646,9 +2016,12 @@ export type AttendancePunchUncheckedUpdateWithoutWorkLocationInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateManyWithoutWorkLocationInput = {
@@ -1666,6 +2039,96 @@ export type AttendancePunchUncheckedUpdateManyWithoutWorkLocationInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AttendancePunchCreateManyWebauthnCredentialInput = {
+  id?: string
+  organizationId: string
+  attendanceRecordId: string
+  employeeId: string
+  punchType: $Enums.AttendancePunchType
+  occurredAt: Date | string
+  source: $Enums.AttendancePunchSource
+  capturedByUserId?: string | null
+  externalId?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  workLocationId?: string | null
+  isWithinGeofence?: boolean | null
+  distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+}
+
+export type AttendancePunchUpdateWithoutWebauthnCredentialInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  punchType?: Prisma.EnumAttendancePunchTypeFieldUpdateOperationsInput | $Enums.AttendancePunchType
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.EnumAttendancePunchSourceFieldUpdateOperationsInput | $Enums.AttendancePunchSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
+  attendanceRecord?: Prisma.AttendanceRecordUpdateOneRequiredWithoutPunchesNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutAttendancePunchesNestedInput
+  capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
+  workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
+  corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
+}
+
+export type AttendancePunchUncheckedUpdateWithoutWebauthnCredentialInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendanceRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  punchType?: Prisma.EnumAttendancePunchTypeFieldUpdateOperationsInput | $Enums.AttendancePunchType
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.EnumAttendancePunchSourceFieldUpdateOperationsInput | $Enums.AttendancePunchSource
+  capturedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
+}
+
+export type AttendancePunchUncheckedUpdateManyWithoutWebauthnCredentialInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendanceRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  punchType?: Prisma.EnumAttendancePunchTypeFieldUpdateOperationsInput | $Enums.AttendancePunchType
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  source?: Prisma.EnumAttendancePunchSourceFieldUpdateOperationsInput | $Enums.AttendancePunchSource
+  capturedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1685,6 +2148,8 @@ export type AttendancePunchCreateManyEmployeeInput = {
   workLocationId?: string | null
   isWithinGeofence?: boolean | null
   distanceFromLocationMeters?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: boolean
+  webauthnCredentialId?: string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
 }
@@ -1700,6 +2165,7 @@ export type AttendancePunchUpdateWithoutEmployeeInput = {
   accuracyMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendancePunchesNestedInput
@@ -1707,6 +2173,8 @@ export type AttendancePunchUpdateWithoutEmployeeInput = {
   capturedBy?: Prisma.UserUpdateOneWithoutCapturedAttendancePunchesNestedInput
   workLocation?: Prisma.WorkLocationUpdateOneWithoutPunchesNestedInput
   corrections?: Prisma.AttendanceCorrectionUpdateManyWithoutAttendancePunchNestedInput
+  webauthnCredential?: Prisma.WebauthnCredentialUpdateOneWithoutAttendancePunchesNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateWithoutEmployeeInput = {
@@ -1724,9 +2192,12 @@ export type AttendancePunchUncheckedUpdateWithoutEmployeeInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   corrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutRelatedPunchNestedInput
 }
 
 export type AttendancePunchUncheckedUpdateManyWithoutEmployeeInput = {
@@ -1744,6 +2215,8 @@ export type AttendancePunchUncheckedUpdateManyWithoutEmployeeInput = {
   workLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isWithinGeofence?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   distanceFromLocationMeters?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  biometricVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  webauthnCredentialId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1755,10 +2228,12 @@ export type AttendancePunchUncheckedUpdateManyWithoutEmployeeInput = {
 
 export type AttendancePunchCountOutputType = {
   corrections: number
+  webauthnChallenges: number
 }
 
 export type AttendancePunchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   corrections?: boolean | AttendancePunchCountOutputTypeCountCorrectionsArgs
+  webauthnChallenges?: boolean | AttendancePunchCountOutputTypeCountWebauthnChallengesArgs
 }
 
 /**
@@ -1778,6 +2253,13 @@ export type AttendancePunchCountOutputTypeCountCorrectionsArgs<ExtArgs extends r
   where?: Prisma.AttendanceCorrectionWhereInput
 }
 
+/**
+ * AttendancePunchCountOutputType without action
+ */
+export type AttendancePunchCountOutputTypeCountWebauthnChallengesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WebauthnChallengeWhereInput
+}
+
 
 export type AttendancePunchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1795,6 +2277,8 @@ export type AttendancePunchSelect<ExtArgs extends runtime.Types.Extensions.Inter
   workLocationId?: boolean
   isWithinGeofence?: boolean
   distanceFromLocationMeters?: boolean
+  biometricVerified?: boolean
+  webauthnCredentialId?: boolean
   metadata?: boolean
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -1803,6 +2287,8 @@ export type AttendancePunchSelect<ExtArgs extends runtime.Types.Extensions.Inter
   capturedBy?: boolean | Prisma.AttendancePunch$capturedByArgs<ExtArgs>
   workLocation?: boolean | Prisma.AttendancePunch$workLocationArgs<ExtArgs>
   corrections?: boolean | Prisma.AttendancePunch$correctionsArgs<ExtArgs>
+  webauthnCredential?: boolean | Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs>
+  webauthnChallenges?: boolean | Prisma.AttendancePunch$webauthnChallengesArgs<ExtArgs>
   _count?: boolean | Prisma.AttendancePunchCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["attendancePunch"]>
 
@@ -1822,6 +2308,8 @@ export type AttendancePunchSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   workLocationId?: boolean
   isWithinGeofence?: boolean
   distanceFromLocationMeters?: boolean
+  biometricVerified?: boolean
+  webauthnCredentialId?: boolean
   metadata?: boolean
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -1829,6 +2317,7 @@ export type AttendancePunchSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   capturedBy?: boolean | Prisma.AttendancePunch$capturedByArgs<ExtArgs>
   workLocation?: boolean | Prisma.AttendancePunch$workLocationArgs<ExtArgs>
+  webauthnCredential?: boolean | Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs>
 }, ExtArgs["result"]["attendancePunch"]>
 
 export type AttendancePunchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1847,6 +2336,8 @@ export type AttendancePunchSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   workLocationId?: boolean
   isWithinGeofence?: boolean
   distanceFromLocationMeters?: boolean
+  biometricVerified?: boolean
+  webauthnCredentialId?: boolean
   metadata?: boolean
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -1854,6 +2345,7 @@ export type AttendancePunchSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   capturedBy?: boolean | Prisma.AttendancePunch$capturedByArgs<ExtArgs>
   workLocation?: boolean | Prisma.AttendancePunch$workLocationArgs<ExtArgs>
+  webauthnCredential?: boolean | Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs>
 }, ExtArgs["result"]["attendancePunch"]>
 
 export type AttendancePunchSelectScalar = {
@@ -1872,11 +2364,13 @@ export type AttendancePunchSelectScalar = {
   workLocationId?: boolean
   isWithinGeofence?: boolean
   distanceFromLocationMeters?: boolean
+  biometricVerified?: boolean
+  webauthnCredentialId?: boolean
   metadata?: boolean
   createdAt?: boolean
 }
 
-export type AttendancePunchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "attendanceRecordId" | "employeeId" | "punchType" | "occurredAt" | "source" | "capturedByUserId" | "externalId" | "latitude" | "longitude" | "accuracyMeters" | "workLocationId" | "isWithinGeofence" | "distanceFromLocationMeters" | "metadata" | "createdAt", ExtArgs["result"]["attendancePunch"]>
+export type AttendancePunchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "attendanceRecordId" | "employeeId" | "punchType" | "occurredAt" | "source" | "capturedByUserId" | "externalId" | "latitude" | "longitude" | "accuracyMeters" | "workLocationId" | "isWithinGeofence" | "distanceFromLocationMeters" | "biometricVerified" | "webauthnCredentialId" | "metadata" | "createdAt", ExtArgs["result"]["attendancePunch"]>
 export type AttendancePunchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   attendanceRecord?: boolean | Prisma.AttendanceRecordDefaultArgs<ExtArgs>
@@ -1884,6 +2378,8 @@ export type AttendancePunchInclude<ExtArgs extends runtime.Types.Extensions.Inte
   capturedBy?: boolean | Prisma.AttendancePunch$capturedByArgs<ExtArgs>
   workLocation?: boolean | Prisma.AttendancePunch$workLocationArgs<ExtArgs>
   corrections?: boolean | Prisma.AttendancePunch$correctionsArgs<ExtArgs>
+  webauthnCredential?: boolean | Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs>
+  webauthnChallenges?: boolean | Prisma.AttendancePunch$webauthnChallengesArgs<ExtArgs>
   _count?: boolean | Prisma.AttendancePunchCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AttendancePunchIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1892,6 +2388,7 @@ export type AttendancePunchIncludeCreateManyAndReturn<ExtArgs extends runtime.Ty
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   capturedBy?: boolean | Prisma.AttendancePunch$capturedByArgs<ExtArgs>
   workLocation?: boolean | Prisma.AttendancePunch$workLocationArgs<ExtArgs>
+  webauthnCredential?: boolean | Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs>
 }
 export type AttendancePunchIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
@@ -1899,6 +2396,7 @@ export type AttendancePunchIncludeUpdateManyAndReturn<ExtArgs extends runtime.Ty
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
   capturedBy?: boolean | Prisma.AttendancePunch$capturedByArgs<ExtArgs>
   workLocation?: boolean | Prisma.AttendancePunch$workLocationArgs<ExtArgs>
+  webauthnCredential?: boolean | Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs>
 }
 
 export type $AttendancePunchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1910,6 +2408,8 @@ export type $AttendancePunchPayload<ExtArgs extends runtime.Types.Extensions.Int
     capturedBy: Prisma.$UserPayload<ExtArgs> | null
     workLocation: Prisma.$WorkLocationPayload<ExtArgs> | null
     corrections: Prisma.$AttendanceCorrectionPayload<ExtArgs>[]
+    webauthnCredential: Prisma.$WebauthnCredentialPayload<ExtArgs> | null
+    webauthnChallenges: Prisma.$WebauthnChallengePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1927,6 +2427,8 @@ export type $AttendancePunchPayload<ExtArgs extends runtime.Types.Extensions.Int
     workLocationId: string | null
     isWithinGeofence: boolean | null
     distanceFromLocationMeters: runtime.Decimal | null
+    biometricVerified: boolean
+    webauthnCredentialId: string | null
     metadata: runtime.JsonValue
     createdAt: Date
   }, ExtArgs["result"]["attendancePunch"]>
@@ -2329,6 +2831,8 @@ export interface Prisma__AttendancePunchClient<T, Null = never, ExtArgs extends 
   capturedBy<T extends Prisma.AttendancePunch$capturedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendancePunch$capturedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   workLocation<T extends Prisma.AttendancePunch$workLocationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendancePunch$workLocationArgs<ExtArgs>>): Prisma.Prisma__WorkLocationClient<runtime.Types.Result.GetResult<Prisma.$WorkLocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   corrections<T extends Prisma.AttendancePunch$correctionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendancePunch$correctionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceCorrectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  webauthnCredential<T extends Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendancePunch$webauthnCredentialArgs<ExtArgs>>): Prisma.Prisma__WebauthnCredentialClient<runtime.Types.Result.GetResult<Prisma.$WebauthnCredentialPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  webauthnChallenges<T extends Prisma.AttendancePunch$webauthnChallengesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendancePunch$webauthnChallengesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebauthnChallengePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2373,6 +2877,8 @@ export interface AttendancePunchFieldRefs {
   readonly workLocationId: Prisma.FieldRef<"AttendancePunch", 'String'>
   readonly isWithinGeofence: Prisma.FieldRef<"AttendancePunch", 'Boolean'>
   readonly distanceFromLocationMeters: Prisma.FieldRef<"AttendancePunch", 'Decimal'>
+  readonly biometricVerified: Prisma.FieldRef<"AttendancePunch", 'Boolean'>
+  readonly webauthnCredentialId: Prisma.FieldRef<"AttendancePunch", 'String'>
   readonly metadata: Prisma.FieldRef<"AttendancePunch", 'Json'>
   readonly createdAt: Prisma.FieldRef<"AttendancePunch", 'DateTime'>
 }
@@ -2835,6 +3341,49 @@ export type AttendancePunch$correctionsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.AttendanceCorrectionScalarFieldEnum | Prisma.AttendanceCorrectionScalarFieldEnum[]
+}
+
+/**
+ * AttendancePunch.webauthnCredential
+ */
+export type AttendancePunch$webauthnCredentialArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WebauthnCredential
+   */
+  select?: Prisma.WebauthnCredentialSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WebauthnCredential
+   */
+  omit?: Prisma.WebauthnCredentialOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WebauthnCredentialInclude<ExtArgs> | null
+  where?: Prisma.WebauthnCredentialWhereInput
+}
+
+/**
+ * AttendancePunch.webauthnChallenges
+ */
+export type AttendancePunch$webauthnChallengesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WebauthnChallenge
+   */
+  select?: Prisma.WebauthnChallengeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WebauthnChallenge
+   */
+  omit?: Prisma.WebauthnChallengeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WebauthnChallengeInclude<ExtArgs> | null
+  where?: Prisma.WebauthnChallengeWhereInput
+  orderBy?: Prisma.WebauthnChallengeOrderByWithRelationInput | Prisma.WebauthnChallengeOrderByWithRelationInput[]
+  cursor?: Prisma.WebauthnChallengeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WebauthnChallengeScalarFieldEnum | Prisma.WebauthnChallengeScalarFieldEnum[]
 }
 
 /**

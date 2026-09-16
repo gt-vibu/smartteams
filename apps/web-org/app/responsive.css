@@ -1,0 +1,189 @@
+/*
+ * Phone-first rules that no single component can own.
+ *
+ * The workspace is laid out for a laptop and then has to behave like an installed app on a
+ * phone — which, for a non-technical workforce checking attendance or applying for leave, is
+ * where most sessions actually happen. The desktop layout is not changed by anything here except
+ * that no table may be wider than the space it is given.
+ *
+ * Deliberately unlayered. Tailwind v4 emits its utilities inside `@layer`, and unlayered rules
+ * outrank any layer regardless of specificity — which is what lets `.stack-table` override a
+ * table's `min-w-[860px]` and its cells' `px-4` without an `!important` on every line. The cost is
+ * that a utility cannot hide a stacked cell; see the `.hidden` guard below.
+ */
+
+@media (max-width: 767.98px) {
+  /*
+   * iOS Safari zooms the page when a focused field's text is under 16px, and does not zoom back
+   * out. On an app-like screen that reads as the layout breaking every time someone taps a
+   * search box. Sixteen pixels is the threshold, not a style choice.
+   */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/*
+ * Tables.
+ *
+ * Every data table used to carry a `min-w-[640px]`–`[860px]` inside an `overflow-x-auto`. That did
+ * not overflow the page, but it made people pan sideways to find the column they came for — and
+ * the Decision button is always the last column. It happened on phones, and also on tablets and
+ * narrow laptop windows.
+ *
+ * So the switch is keyed to the table's own width, not the screen's: its box is a size container,
+ * and when it is too narrow the rows become cards. Above that the table is always fitted to its
+ * box and its cells wrap, so no screen size produces a sideways scroll.
+ *
+ * Two widths, because one could not suit both a two-column breakdown and an eight-column queue.
+ * Ordinary tables become cards below 720px. Tables marked `stack-wide` (seven columns and up)
+ * become cards below 860px: fitted into 720–860px they wrapped every date onto two lines.
+ *
+ * Cells opt in with `data-label="Column"`. Roles change a cell's shape:
+ *   data-cell="primary"  the row's title (an employee, a holiday) — first, larger, unlabelled
+ *   data-cell="actions"  the row's buttons — last, right-aligned, set apart
+ *   data-cell="block"    long text (a description) — full width, unlabelled
+ *   data-cell="select"   a row checkbox — pinned to the card's corner
+ * A row marked data-row="group" (a date heading in a grouped list) stays a single line, and a
+ * cell spanning columns (an expanded detail row, an empty state) is drawn as a plain block.
+ *
+ * A cell that should not appear as a card line must use the literal `hidden` class (with, say,
+ * `md:table-cell` to bring it back). The rules below skip `.hidden`; a variant such as
+ * `max-md:hidden` would lose to them, because unlayered beats layered.
+ */
+:where(*):has(> .stack-table) {
+  container-type: inline-size;
+}
+.stack-table {
+  min-width: 0;
+}
+
+/*
+ * The card layout, for any table under 860px. Every selector past `.stack-table` is wrapped in
+ * `:where()` so they all weigh the same — order decides between them, as written — and so the
+ * restore block below, which is one class heavier, reliably undoes them for ordinary tables.
+ */
+@container (max-width: 859.98px) {
+  .stack-table,
+  .stack-table :where(tbody, tfoot) {
+    display: block;
+    width: 100%;
+  }
+  /* Kept for assistive technology, not drawn. */
+  .stack-table :where(thead) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* A column of cells, so the title can be moved to the top with `order` — the identifying column
+     is not always the first one (attendance leads with the date, the catalogue with the code). */
+  .stack-table :where(tr) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 1rem;
+  }
+  .stack-table :where(tr[data-row='group']) {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.6rem;
+  }
+  .stack-table :where(td:not(.hidden)) {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    min-width: 0;
+    max-width: none;
+    padding: 0.2rem 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+  /* `hidden md:table-cell` means "not a card line": at a tablet width the breakpoint has brought
+     the cell back, but the table is still narrow enough to be stacked. */
+  .stack-table :where(td.hidden) {
+    display: none;
+  }
+  .stack-table :where(td[data-label])::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    /* The label would otherwise inherit its cell's face, so "FROM" came out monospaced beside a
+       proportional "TYPE" whenever the value was a date. */
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--muted-foreground);
+  }
+  .stack-table :where(td[data-cell='primary']:not(.hidden)) {
+    order: -1;
+    display: block;
+    padding-bottom: 0.4rem;
+    font-size: 0.875rem;
+    text-align: left;
+  }
+  .stack-table :where(td[data-cell='block']:not(.hidden), td[colspan]:not(.hidden)) {
+    display: block;
+    text-align: left;
+  }
+  .stack-table :where(tr[data-row='group'] td[colspan]:not(.hidden)) {
+    flex: 1;
+    padding: 0;
+  }
+  .stack-table :where(tr[data-row='group'] td[colspan]:last-child) {
+    text-align: right;
+  }
+  .stack-table :where(td[data-cell='actions']:not(.hidden)) {
+    order: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px dashed var(--border);
+  }
+  .stack-table :where(tr:not([data-row='group']) td[data-cell='select']:not(.hidden)) {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    width: auto;
+    padding: 0;
+  }
+  .stack-table :where(tr:has(> td[data-cell='select']) td[data-cell='primary']) {
+    padding-right: 2rem;
+  }
+}
+
+/*
+ * An ordinary table stays a table down to 720px. `revert-layer` hands every property back to the
+ * layer beneath — Tailwind's utilities, then the browser's own table layout — so this undoes the
+ * card rules above wholesale instead of restating each one. `min-width: 0` is set again after it:
+ * reverting would otherwise restore the `min-w-[…px]` the tables carry.
+ */
+@container (min-width: 720px) {
+  .stack-table:not(.stack-wide),
+  .stack-table:not(.stack-wide) :where(thead, tbody, tfoot, tr, td, th) {
+    all: revert-layer;
+  }
+  .stack-table:not(.stack-wide) {
+    min-width: 0;
+  }
+  .stack-table:not(.stack-wide) :where(td)::before {
+    content: none;
+  }
+}
+
+/* The breadcrumb bar is hidden below `md` (see `context-bar.tsx`), so the sticky toolbars that sit
+   beneath it take its place instead of leaving a 41px gap at the top of every screen. */
+@media (max-width: 767.98px) {
+  :root {
+    --ems-context-bar-height: 0px;
+  }
+}

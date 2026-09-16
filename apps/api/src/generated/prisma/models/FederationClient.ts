@@ -38,8 +38,10 @@ export type FederationClientMinAggregateOutputType = {
   id: string | null
   name: string | null
   clientId: string | null
+  environment: $Enums.FederationEnvironment | null
   homeOrganizationId: string | null
   status: $Enums.FederationClientStatus | null
+  tenantProvisioningEnabled: boolean | null
   tokenVersion: number | null
   expiresAt: Date | null
   mtlsRequired: boolean | null
@@ -54,8 +56,10 @@ export type FederationClientMaxAggregateOutputType = {
   id: string | null
   name: string | null
   clientId: string | null
+  environment: $Enums.FederationEnvironment | null
   homeOrganizationId: string | null
   status: $Enums.FederationClientStatus | null
+  tenantProvisioningEnabled: boolean | null
   tokenVersion: number | null
   expiresAt: Date | null
   mtlsRequired: boolean | null
@@ -70,8 +74,10 @@ export type FederationClientCountAggregateOutputType = {
   id: number
   name: number
   clientId: number
+  environment: number
   homeOrganizationId: number
   status: number
+  tenantProvisioningEnabled: number
   tokenVersion: number
   expiresAt: number
   mtlsRequired: number
@@ -97,8 +103,10 @@ export type FederationClientMinAggregateInputType = {
   id?: true
   name?: true
   clientId?: true
+  environment?: true
   homeOrganizationId?: true
   status?: true
+  tenantProvisioningEnabled?: true
   tokenVersion?: true
   expiresAt?: true
   mtlsRequired?: true
@@ -113,8 +121,10 @@ export type FederationClientMaxAggregateInputType = {
   id?: true
   name?: true
   clientId?: true
+  environment?: true
   homeOrganizationId?: true
   status?: true
+  tenantProvisioningEnabled?: true
   tokenVersion?: true
   expiresAt?: true
   mtlsRequired?: true
@@ -129,8 +139,10 @@ export type FederationClientCountAggregateInputType = {
   id?: true
   name?: true
   clientId?: true
+  environment?: true
   homeOrganizationId?: true
   status?: true
+  tenantProvisioningEnabled?: true
   tokenVersion?: true
   expiresAt?: true
   mtlsRequired?: true
@@ -233,8 +245,10 @@ export type FederationClientGroupByOutputType = {
   id: string
   name: string
   clientId: string
+  environment: $Enums.FederationEnvironment
   homeOrganizationId: string | null
   status: $Enums.FederationClientStatus
+  tenantProvisioningEnabled: boolean
   tokenVersion: number
   expiresAt: Date | null
   mtlsRequired: boolean
@@ -273,8 +287,10 @@ export type FederationClientWhereInput = {
   id?: Prisma.UuidFilter<"FederationClient"> | string
   name?: Prisma.StringFilter<"FederationClient"> | string
   clientId?: Prisma.StringFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolFilter<"FederationClient"> | boolean
@@ -298,14 +314,20 @@ export type FederationClientWhereInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionListRelationFilter
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionListRelationFilter
   payrollAdjustments?: Prisma.PayrollAdjustmentListRelationFilter
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsListRelationFilter
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsListRelationFilter
+  branchGeofenceSettingsOwned?: Prisma.BranchListRelationFilter
+  branchBiometricSettingsOwned?: Prisma.BranchListRelationFilter
 }
 
 export type FederationClientOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -329,6 +351,10 @@ export type FederationClientOrderByWithRelationInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionOrderByRelationAggregateInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionOrderByRelationAggregateInput
   payrollAdjustments?: Prisma.PayrollAdjustmentOrderByRelationAggregateInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsOrderByRelationAggregateInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsOrderByRelationAggregateInput
+  branchGeofenceSettingsOwned?: Prisma.BranchOrderByRelationAggregateInput
+  branchBiometricSettingsOwned?: Prisma.BranchOrderByRelationAggregateInput
 }
 
 export type FederationClientWhereUniqueInput = Prisma.AtLeast<{
@@ -338,8 +364,10 @@ export type FederationClientWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.FederationClientWhereInput[]
   NOT?: Prisma.FederationClientWhereInput | Prisma.FederationClientWhereInput[]
   name?: Prisma.StringFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolFilter<"FederationClient"> | boolean
@@ -363,14 +391,20 @@ export type FederationClientWhereUniqueInput = Prisma.AtLeast<{
   attendanceCorrections?: Prisma.AttendanceCorrectionListRelationFilter
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionListRelationFilter
   payrollAdjustments?: Prisma.PayrollAdjustmentListRelationFilter
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsListRelationFilter
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsListRelationFilter
+  branchGeofenceSettingsOwned?: Prisma.BranchListRelationFilter
+  branchBiometricSettingsOwned?: Prisma.BranchListRelationFilter
 }, "id" | "clientId">
 
 export type FederationClientOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -394,8 +428,10 @@ export type FederationClientScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"FederationClient"> | string
   name?: Prisma.StringWithAggregatesFilter<"FederationClient"> | string
   clientId?: Prisma.StringWithAggregatesFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentWithAggregatesFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableWithAggregatesFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusWithAggregatesFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolWithAggregatesFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntWithAggregatesFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolWithAggregatesFilter<"FederationClient"> | boolean
@@ -411,7 +447,9 @@ export type FederationClientCreateInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -434,14 +472,20 @@ export type FederationClientCreateInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -463,13 +507,19 @@ export type FederationClientUncheckedCreateInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -492,14 +542,20 @@ export type FederationClientUpdateInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -521,14 +577,20 @@ export type FederationClientUncheckedUpdateInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateManyInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -544,7 +606,9 @@ export type FederationClientUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -559,8 +623,10 @@ export type FederationClientUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -586,8 +652,10 @@ export type FederationClientCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -607,8 +675,10 @@ export type FederationClientMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -623,8 +693,10 @@ export type FederationClientMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
+  environment?: Prisma.SortOrder
   homeOrganizationId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tenantProvisioningEnabled?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   mtlsRequired?: Prisma.SortOrder
@@ -725,6 +797,10 @@ export type FederationClientUpdateOneWithoutAuditLogsNestedInput = {
 
 export type FederationClientCreateallowedCertificateFingerprintsInput = {
   set: string[]
+}
+
+export type EnumFederationEnvironmentFieldUpdateOperationsInput = {
+  set?: $Enums.FederationEnvironment
 }
 
 export type EnumFederationClientStatusFieldUpdateOperationsInput = {
@@ -914,6 +990,70 @@ export type FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInpu
   deleteMany?: Prisma.FederationClientScalarWhereInput | Prisma.FederationClientScalarWhereInput[]
 }
 
+export type FederationClientCreateNestedOneWithoutOrganizationGeofenceSettingsOwnedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationGeofenceSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutOrganizationGeofenceSettingsOwnedInput
+  connect?: Prisma.FederationClientWhereUniqueInput
+}
+
+export type FederationClientCreateNestedOneWithoutOrganizationBiometricSettingsOwnedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationBiometricSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutOrganizationBiometricSettingsOwnedInput
+  connect?: Prisma.FederationClientWhereUniqueInput
+}
+
+export type FederationClientUpdateOneWithoutOrganizationGeofenceSettingsOwnedNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationGeofenceSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutOrganizationGeofenceSettingsOwnedInput
+  upsert?: Prisma.FederationClientUpsertWithoutOrganizationGeofenceSettingsOwnedInput
+  disconnect?: Prisma.FederationClientWhereInput | boolean
+  delete?: Prisma.FederationClientWhereInput | boolean
+  connect?: Prisma.FederationClientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FederationClientUpdateToOneWithWhereWithoutOrganizationGeofenceSettingsOwnedInput, Prisma.FederationClientUpdateWithoutOrganizationGeofenceSettingsOwnedInput>, Prisma.FederationClientUncheckedUpdateWithoutOrganizationGeofenceSettingsOwnedInput>
+}
+
+export type FederationClientUpdateOneWithoutOrganizationBiometricSettingsOwnedNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationBiometricSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutOrganizationBiometricSettingsOwnedInput
+  upsert?: Prisma.FederationClientUpsertWithoutOrganizationBiometricSettingsOwnedInput
+  disconnect?: Prisma.FederationClientWhereInput | boolean
+  delete?: Prisma.FederationClientWhereInput | boolean
+  connect?: Prisma.FederationClientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FederationClientUpdateToOneWithWhereWithoutOrganizationBiometricSettingsOwnedInput, Prisma.FederationClientUpdateWithoutOrganizationBiometricSettingsOwnedInput>, Prisma.FederationClientUncheckedUpdateWithoutOrganizationBiometricSettingsOwnedInput>
+}
+
+export type FederationClientCreateNestedOneWithoutBranchGeofenceSettingsOwnedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchGeofenceSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutBranchGeofenceSettingsOwnedInput
+  connect?: Prisma.FederationClientWhereUniqueInput
+}
+
+export type FederationClientCreateNestedOneWithoutBranchBiometricSettingsOwnedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchBiometricSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutBranchBiometricSettingsOwnedInput
+  connect?: Prisma.FederationClientWhereUniqueInput
+}
+
+export type FederationClientUpdateOneWithoutBranchGeofenceSettingsOwnedNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchGeofenceSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutBranchGeofenceSettingsOwnedInput
+  upsert?: Prisma.FederationClientUpsertWithoutBranchGeofenceSettingsOwnedInput
+  disconnect?: Prisma.FederationClientWhereInput | boolean
+  delete?: Prisma.FederationClientWhereInput | boolean
+  connect?: Prisma.FederationClientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FederationClientUpdateToOneWithWhereWithoutBranchGeofenceSettingsOwnedInput, Prisma.FederationClientUpdateWithoutBranchGeofenceSettingsOwnedInput>, Prisma.FederationClientUncheckedUpdateWithoutBranchGeofenceSettingsOwnedInput>
+}
+
+export type FederationClientUpdateOneWithoutBranchBiometricSettingsOwnedNestedInput = {
+  create?: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchBiometricSettingsOwnedInput>
+  connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutBranchBiometricSettingsOwnedInput
+  upsert?: Prisma.FederationClientUpsertWithoutBranchBiometricSettingsOwnedInput
+  disconnect?: Prisma.FederationClientWhereInput | boolean
+  delete?: Prisma.FederationClientWhereInput | boolean
+  connect?: Prisma.FederationClientWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FederationClientUpdateToOneWithWhereWithoutBranchBiometricSettingsOwnedInput, Prisma.FederationClientUpdateWithoutBranchBiometricSettingsOwnedInput>, Prisma.FederationClientUncheckedUpdateWithoutBranchBiometricSettingsOwnedInput>
+}
+
 export type FederationClientCreateNestedOneWithoutFieldOwnershipsInput = {
   create?: Prisma.XOR<Prisma.FederationClientCreateWithoutFieldOwnershipsInput, Prisma.FederationClientUncheckedCreateWithoutFieldOwnershipsInput>
   connectOrCreate?: Prisma.FederationClientCreateOrConnectWithoutFieldOwnershipsInput
@@ -934,7 +1074,9 @@ export type FederationClientCreateWithoutIdempotencyRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -956,14 +1098,20 @@ export type FederationClientCreateWithoutIdempotencyRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutIdempotencyRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -984,6 +1132,10 @@ export type FederationClientUncheckedCreateWithoutIdempotencyRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutIdempotencyRecordsInput = {
@@ -1006,7 +1158,9 @@ export type FederationClientUpdateWithoutIdempotencyRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1028,14 +1182,20 @@ export type FederationClientUpdateWithoutIdempotencyRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutIdempotencyRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1056,13 +1216,19 @@ export type FederationClientUncheckedUpdateWithoutIdempotencyRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutRequestRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1084,14 +1250,20 @@ export type FederationClientCreateWithoutRequestRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutRequestRecordsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1112,6 +1284,10 @@ export type FederationClientUncheckedCreateWithoutRequestRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutRequestRecordsInput = {
@@ -1134,7 +1310,9 @@ export type FederationClientUpdateWithoutRequestRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1156,14 +1334,20 @@ export type FederationClientUpdateWithoutRequestRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutRequestRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1184,13 +1368,19 @@ export type FederationClientUncheckedUpdateWithoutRequestRecordsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutWebhookSigningKeysInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1212,14 +1402,20 @@ export type FederationClientCreateWithoutWebhookSigningKeysInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutWebhookSigningKeysInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1240,6 +1436,10 @@ export type FederationClientUncheckedCreateWithoutWebhookSigningKeysInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutWebhookSigningKeysInput = {
@@ -1262,7 +1462,9 @@ export type FederationClientUpdateWithoutWebhookSigningKeysInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1284,14 +1486,20 @@ export type FederationClientUpdateWithoutWebhookSigningKeysInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutWebhookSigningKeysInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1312,13 +1520,19 @@ export type FederationClientUncheckedUpdateWithoutWebhookSigningKeysInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutWebhookSubscriptionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1340,14 +1554,20 @@ export type FederationClientCreateWithoutWebhookSubscriptionsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutWebhookSubscriptionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1368,6 +1588,10 @@ export type FederationClientUncheckedCreateWithoutWebhookSubscriptionsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutWebhookSubscriptionsInput = {
@@ -1390,7 +1614,9 @@ export type FederationClientUpdateWithoutWebhookSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1412,14 +1638,20 @@ export type FederationClientUpdateWithoutWebhookSubscriptionsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1440,13 +1672,19 @@ export type FederationClientUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutAuditLogsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1468,14 +1706,20 @@ export type FederationClientCreateWithoutAuditLogsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutAuditLogsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1496,6 +1740,10 @@ export type FederationClientUncheckedCreateWithoutAuditLogsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutAuditLogsInput = {
@@ -1518,7 +1766,9 @@ export type FederationClientUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1540,14 +1790,20 @@ export type FederationClientUpdateWithoutAuditLogsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1568,13 +1824,19 @@ export type FederationClientUncheckedUpdateWithoutAuditLogsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutCredentialsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1596,14 +1858,20 @@ export type FederationClientCreateWithoutCredentialsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutCredentialsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1624,6 +1892,10 @@ export type FederationClientUncheckedCreateWithoutCredentialsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutCredentialsInput = {
@@ -1646,7 +1918,9 @@ export type FederationClientUpdateWithoutCredentialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1668,14 +1942,20 @@ export type FederationClientUpdateWithoutCredentialsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutCredentialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1696,13 +1976,19 @@ export type FederationClientUncheckedUpdateWithoutCredentialsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutGrantsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1724,14 +2010,20 @@ export type FederationClientCreateWithoutGrantsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutGrantsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1752,6 +2044,10 @@ export type FederationClientUncheckedCreateWithoutGrantsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutGrantsInput = {
@@ -1774,7 +2070,9 @@ export type FederationClientUpdateWithoutGrantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1796,14 +2094,20 @@ export type FederationClientUpdateWithoutGrantsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutGrantsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1824,13 +2128,19 @@ export type FederationClientUncheckedUpdateWithoutGrantsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutExternalMappingsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1852,14 +2162,20 @@ export type FederationClientCreateWithoutExternalMappingsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutExternalMappingsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1880,6 +2196,10 @@ export type FederationClientUncheckedCreateWithoutExternalMappingsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutExternalMappingsInput = {
@@ -1902,7 +2222,9 @@ export type FederationClientUpdateWithoutExternalMappingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1924,14 +2246,20 @@ export type FederationClientUpdateWithoutExternalMappingsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutExternalMappingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1952,13 +2280,19 @@ export type FederationClientUncheckedUpdateWithoutExternalMappingsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutCreatedByInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -1980,14 +2314,20 @@ export type FederationClientCreateWithoutCreatedByInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutCreatedByInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2008,6 +2348,10 @@ export type FederationClientUncheckedCreateWithoutCreatedByInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutCreatedByInput = {
@@ -2043,8 +2387,10 @@ export type FederationClientScalarWhereInput = {
   id?: Prisma.UuidFilter<"FederationClient"> | string
   name?: Prisma.StringFilter<"FederationClient"> | string
   clientId?: Prisma.StringFilter<"FederationClient"> | string
+  environment?: Prisma.EnumFederationEnvironmentFilter<"FederationClient"> | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.UuidNullableFilter<"FederationClient"> | string | null
   status?: Prisma.EnumFederationClientStatusFilter<"FederationClient"> | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFilter<"FederationClient"> | boolean
   tokenVersion?: Prisma.IntFilter<"FederationClient"> | number
   expiresAt?: Prisma.DateTimeNullableFilter<"FederationClient"> | Date | string | null
   mtlsRequired?: Prisma.BoolFilter<"FederationClient"> | boolean
@@ -2060,7 +2406,9 @@ export type FederationClientCreateWithoutAttendanceCorrectionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2082,14 +2430,20 @@ export type FederationClientCreateWithoutAttendanceCorrectionsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutAttendanceCorrectionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2110,6 +2464,10 @@ export type FederationClientUncheckedCreateWithoutAttendanceCorrectionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutAttendanceCorrectionsInput = {
@@ -2132,7 +2490,9 @@ export type FederationClientUpdateWithoutAttendanceCorrectionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2154,14 +2514,20 @@ export type FederationClientUpdateWithoutAttendanceCorrectionsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2182,13 +2548,19 @@ export type FederationClientUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutLeaveBalanceTransactionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2210,14 +2582,20 @@ export type FederationClientCreateWithoutLeaveBalanceTransactionsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorClientInput
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutLeaveBalanceTransactionsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2238,6 +2616,10 @@ export type FederationClientUncheckedCreateWithoutLeaveBalanceTransactionsInput 
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorClientInput
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutLeaveBalanceTransactionsInput = {
@@ -2260,7 +2642,9 @@ export type FederationClientUpdateWithoutLeaveBalanceTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2282,14 +2666,20 @@ export type FederationClientUpdateWithoutLeaveBalanceTransactionsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorClientNestedInput
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutLeaveBalanceTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2310,13 +2700,19 @@ export type FederationClientUncheckedUpdateWithoutLeaveBalanceTransactionsInput 
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorClientNestedInput
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutPayrollAdjustmentsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2338,14 +2734,20 @@ export type FederationClientCreateWithoutPayrollAdjustmentsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorClientInput
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutPayrollAdjustmentsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2366,6 +2768,10 @@ export type FederationClientUncheckedCreateWithoutPayrollAdjustmentsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorClientInput
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutPayrollAdjustmentsInput = {
@@ -2388,7 +2794,9 @@ export type FederationClientUpdateWithoutPayrollAdjustmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2410,14 +2818,20 @@ export type FederationClientUpdateWithoutPayrollAdjustmentsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorClientNestedInput
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2438,13 +2852,19 @@ export type FederationClientUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorClientNestedInput
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateWithoutHomeOrganizationInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2466,13 +2886,19 @@ export type FederationClientCreateWithoutHomeOrganizationInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutHomeOrganizationInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2494,6 +2920,10 @@ export type FederationClientUncheckedCreateWithoutHomeOrganizationInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutHomeOrganizationInput = {
@@ -2522,11 +2952,621 @@ export type FederationClientUpdateManyWithWhereWithoutHomeOrganizationInput = {
   data: Prisma.XOR<Prisma.FederationClientUpdateManyMutationInput, Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationInput>
 }
 
+export type FederationClientCreateWithoutOrganizationGeofenceSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  homeOrganization?: Prisma.OrganizationCreateNestedOneWithoutHomeFederationClientsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedFederationClientsInput
+  credentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
+}
+
+export type FederationClientUncheckedCreateWithoutOrganizationGeofenceSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  homeOrganizationId?: string | null
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+}
+
+export type FederationClientCreateOrConnectWithoutOrganizationGeofenceSettingsOwnedInput = {
+  where: Prisma.FederationClientWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationGeofenceSettingsOwnedInput>
+}
+
+export type FederationClientCreateWithoutOrganizationBiometricSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  homeOrganization?: Prisma.OrganizationCreateNestedOneWithoutHomeFederationClientsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedFederationClientsInput
+  credentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
+}
+
+export type FederationClientUncheckedCreateWithoutOrganizationBiometricSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  homeOrganizationId?: string | null
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+}
+
+export type FederationClientCreateOrConnectWithoutOrganizationBiometricSettingsOwnedInput = {
+  where: Prisma.FederationClientWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationBiometricSettingsOwnedInput>
+}
+
+export type FederationClientUpsertWithoutOrganizationGeofenceSettingsOwnedInput = {
+  update: Prisma.XOR<Prisma.FederationClientUpdateWithoutOrganizationGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutOrganizationGeofenceSettingsOwnedInput>
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationGeofenceSettingsOwnedInput>
+  where?: Prisma.FederationClientWhereInput
+}
+
+export type FederationClientUpdateToOneWithWhereWithoutOrganizationGeofenceSettingsOwnedInput = {
+  where?: Prisma.FederationClientWhereInput
+  data: Prisma.XOR<Prisma.FederationClientUpdateWithoutOrganizationGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutOrganizationGeofenceSettingsOwnedInput>
+}
+
+export type FederationClientUpdateWithoutOrganizationGeofenceSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeOrganization?: Prisma.OrganizationUpdateOneWithoutHomeFederationClientsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedFederationClientsNestedInput
+  credentials?: Prisma.FederationClientCredentialUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
+}
+
+export type FederationClientUncheckedUpdateWithoutOrganizationGeofenceSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+}
+
+export type FederationClientUpsertWithoutOrganizationBiometricSettingsOwnedInput = {
+  update: Prisma.XOR<Prisma.FederationClientUpdateWithoutOrganizationBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutOrganizationBiometricSettingsOwnedInput>
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutOrganizationBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutOrganizationBiometricSettingsOwnedInput>
+  where?: Prisma.FederationClientWhereInput
+}
+
+export type FederationClientUpdateToOneWithWhereWithoutOrganizationBiometricSettingsOwnedInput = {
+  where?: Prisma.FederationClientWhereInput
+  data: Prisma.XOR<Prisma.FederationClientUpdateWithoutOrganizationBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutOrganizationBiometricSettingsOwnedInput>
+}
+
+export type FederationClientUpdateWithoutOrganizationBiometricSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeOrganization?: Prisma.OrganizationUpdateOneWithoutHomeFederationClientsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedFederationClientsNestedInput
+  credentials?: Prisma.FederationClientCredentialUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
+}
+
+export type FederationClientUncheckedUpdateWithoutOrganizationBiometricSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+}
+
+export type FederationClientCreateWithoutBranchGeofenceSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  homeOrganization?: Prisma.OrganizationCreateNestedOneWithoutHomeFederationClientsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedFederationClientsInput
+  credentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
+}
+
+export type FederationClientUncheckedCreateWithoutBranchGeofenceSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  homeOrganizationId?: string | null
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+}
+
+export type FederationClientCreateOrConnectWithoutBranchGeofenceSettingsOwnedInput = {
+  where: Prisma.FederationClientWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchGeofenceSettingsOwnedInput>
+}
+
+export type FederationClientCreateWithoutBranchBiometricSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  homeOrganization?: Prisma.OrganizationCreateNestedOneWithoutHomeFederationClientsInput
+  createdBy?: Prisma.UserCreateNestedOneWithoutCreatedFederationClientsInput
+  credentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+}
+
+export type FederationClientUncheckedCreateWithoutBranchBiometricSettingsOwnedInput = {
+  id?: string
+  name: string
+  clientId: string
+  environment?: $Enums.FederationEnvironment
+  homeOrganizationId?: string | null
+  status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
+  tokenVersion?: number
+  expiresAt?: Date | string | null
+  mtlsRequired?: boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientCreateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  revokedAt?: Date | string | null
+  revocationReason?: string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutClientInput
+  grants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutClientInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOwnerClientInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutClientInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutClientInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutClientInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutClientInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutClientInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorClientInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+}
+
+export type FederationClientCreateOrConnectWithoutBranchBiometricSettingsOwnedInput = {
+  where: Prisma.FederationClientWhereUniqueInput
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchBiometricSettingsOwnedInput>
+}
+
+export type FederationClientUpsertWithoutBranchGeofenceSettingsOwnedInput = {
+  update: Prisma.XOR<Prisma.FederationClientUpdateWithoutBranchGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutBranchGeofenceSettingsOwnedInput>
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchGeofenceSettingsOwnedInput>
+  where?: Prisma.FederationClientWhereInput
+}
+
+export type FederationClientUpdateToOneWithWhereWithoutBranchGeofenceSettingsOwnedInput = {
+  where?: Prisma.FederationClientWhereInput
+  data: Prisma.XOR<Prisma.FederationClientUpdateWithoutBranchGeofenceSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutBranchGeofenceSettingsOwnedInput>
+}
+
+export type FederationClientUpdateWithoutBranchGeofenceSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeOrganization?: Prisma.OrganizationUpdateOneWithoutHomeFederationClientsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedFederationClientsNestedInput
+  credentials?: Prisma.FederationClientCredentialUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
+}
+
+export type FederationClientUncheckedUpdateWithoutBranchGeofenceSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+}
+
+export type FederationClientUpsertWithoutBranchBiometricSettingsOwnedInput = {
+  update: Prisma.XOR<Prisma.FederationClientUpdateWithoutBranchBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutBranchBiometricSettingsOwnedInput>
+  create: Prisma.XOR<Prisma.FederationClientCreateWithoutBranchBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedCreateWithoutBranchBiometricSettingsOwnedInput>
+  where?: Prisma.FederationClientWhereInput
+}
+
+export type FederationClientUpdateToOneWithWhereWithoutBranchBiometricSettingsOwnedInput = {
+  where?: Prisma.FederationClientWhereInput
+  data: Prisma.XOR<Prisma.FederationClientUpdateWithoutBranchBiometricSettingsOwnedInput, Prisma.FederationClientUncheckedUpdateWithoutBranchBiometricSettingsOwnedInput>
+}
+
+export type FederationClientUpdateWithoutBranchBiometricSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeOrganization?: Prisma.OrganizationUpdateOneWithoutHomeFederationClientsNestedInput
+  createdBy?: Prisma.UserUpdateOneWithoutCreatedFederationClientsNestedInput
+  credentials?: Prisma.FederationClientCredentialUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+}
+
+export type FederationClientUncheckedUpdateWithoutBranchBiometricSettingsOwnedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
+  homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  allowedCertificateFingerprints?: Prisma.FederationClientUpdateallowedCertificateFingerprintsInput | string[]
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revocationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  credentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutClientNestedInput
+  grants?: Prisma.FederationGrantUncheckedUpdateManyWithoutClientNestedInput
+  fieldOwnerships?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOwnerClientNestedInput
+  externalMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutClientNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutClientNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutClientNestedInput
+  webhookSigningKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutClientNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutClientNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorClientNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+}
+
 export type FederationClientCreateWithoutFieldOwnershipsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2548,14 +3588,20 @@ export type FederationClientCreateWithoutFieldOwnershipsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientUncheckedCreateWithoutFieldOwnershipsInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2576,6 +3622,10 @@ export type FederationClientUncheckedCreateWithoutFieldOwnershipsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByClientInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByClientInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByClientInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutGeofenceOwnerClientInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedCreateNestedManyWithoutBiometricOwnerClientInput
 }
 
 export type FederationClientCreateOrConnectWithoutFieldOwnershipsInput = {
@@ -2598,7 +3648,9 @@ export type FederationClientUpdateWithoutFieldOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2620,14 +3672,20 @@ export type FederationClientUpdateWithoutFieldOwnershipsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutFieldOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2648,14 +3706,20 @@ export type FederationClientUncheckedUpdateWithoutFieldOwnershipsInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientCreateManyCreatedByInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   homeOrganizationId?: string | null
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2670,7 +3734,9 @@ export type FederationClientUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2692,14 +3758,20 @@ export type FederationClientUpdateWithoutCreatedByInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2720,14 +3792,20 @@ export type FederationClientUncheckedUpdateWithoutCreatedByInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   homeOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2742,7 +3820,9 @@ export type FederationClientCreateManyHomeOrganizationInput = {
   id?: string
   name: string
   clientId: string
+  environment?: $Enums.FederationEnvironment
   status?: $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: number
   expiresAt?: Date | string | null
   mtlsRequired?: boolean
@@ -2758,7 +3838,9 @@ export type FederationClientUpdateWithoutHomeOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2780,13 +3862,19 @@ export type FederationClientUpdateWithoutHomeOrganizationInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateWithoutHomeOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2808,13 +3896,19 @@ export type FederationClientUncheckedUpdateWithoutHomeOrganizationInput = {
   attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByClientNestedInput
   leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByClientNestedInput
   payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByClientNestedInput
+  organizationGeofenceSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  organizationBiometricSettingsOwned?: Prisma.OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
+  branchGeofenceSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutGeofenceOwnerClientNestedInput
+  branchBiometricSettingsOwned?: Prisma.BranchUncheckedUpdateManyWithoutBiometricOwnerClientNestedInput
 }
 
 export type FederationClientUncheckedUpdateManyWithoutHomeOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
+  environment?: Prisma.EnumFederationEnvironmentFieldUpdateOperationsInput | $Enums.FederationEnvironment
   status?: Prisma.EnumFederationClientStatusFieldUpdateOperationsInput | $Enums.FederationClientStatus
+  tenantProvisioningEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mtlsRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2844,6 +3938,10 @@ export type FederationClientCountOutputType = {
   attendanceCorrections: number
   leaveBalanceTransactions: number
   payrollAdjustments: number
+  organizationGeofenceSettingsOwned: number
+  organizationBiometricSettingsOwned: number
+  branchGeofenceSettingsOwned: number
+  branchBiometricSettingsOwned: number
 }
 
 export type FederationClientCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2859,6 +3957,10 @@ export type FederationClientCountOutputTypeSelect<ExtArgs extends runtime.Types.
   attendanceCorrections?: boolean | FederationClientCountOutputTypeCountAttendanceCorrectionsArgs
   leaveBalanceTransactions?: boolean | FederationClientCountOutputTypeCountLeaveBalanceTransactionsArgs
   payrollAdjustments?: boolean | FederationClientCountOutputTypeCountPayrollAdjustmentsArgs
+  organizationGeofenceSettingsOwned?: boolean | FederationClientCountOutputTypeCountOrganizationGeofenceSettingsOwnedArgs
+  organizationBiometricSettingsOwned?: boolean | FederationClientCountOutputTypeCountOrganizationBiometricSettingsOwnedArgs
+  branchGeofenceSettingsOwned?: boolean | FederationClientCountOutputTypeCountBranchGeofenceSettingsOwnedArgs
+  branchBiometricSettingsOwned?: boolean | FederationClientCountOutputTypeCountBranchBiometricSettingsOwnedArgs
 }
 
 /**
@@ -2955,13 +4057,43 @@ export type FederationClientCountOutputTypeCountPayrollAdjustmentsArgs<ExtArgs e
   where?: Prisma.PayrollAdjustmentWhereInput
 }
 
+/**
+ * FederationClientCountOutputType without action
+ */
+export type FederationClientCountOutputTypeCountOrganizationGeofenceSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationSettingsWhereInput
+}
+
+/**
+ * FederationClientCountOutputType without action
+ */
+export type FederationClientCountOutputTypeCountOrganizationBiometricSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationSettingsWhereInput
+}
+
+/**
+ * FederationClientCountOutputType without action
+ */
+export type FederationClientCountOutputTypeCountBranchGeofenceSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BranchWhereInput
+}
+
+/**
+ * FederationClientCountOutputType without action
+ */
+export type FederationClientCountOutputTypeCountBranchBiometricSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BranchWhereInput
+}
+
 
 export type FederationClientSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -2985,6 +4117,10 @@ export type FederationClientSelect<ExtArgs extends runtime.Types.Extensions.Inte
   attendanceCorrections?: boolean | Prisma.FederationClient$attendanceCorrectionsArgs<ExtArgs>
   leaveBalanceTransactions?: boolean | Prisma.FederationClient$leaveBalanceTransactionsArgs<ExtArgs>
   payrollAdjustments?: boolean | Prisma.FederationClient$payrollAdjustmentsArgs<ExtArgs>
+  organizationGeofenceSettingsOwned?: boolean | Prisma.FederationClient$organizationGeofenceSettingsOwnedArgs<ExtArgs>
+  organizationBiometricSettingsOwned?: boolean | Prisma.FederationClient$organizationBiometricSettingsOwnedArgs<ExtArgs>
+  branchGeofenceSettingsOwned?: boolean | Prisma.FederationClient$branchGeofenceSettingsOwnedArgs<ExtArgs>
+  branchBiometricSettingsOwned?: boolean | Prisma.FederationClient$branchBiometricSettingsOwnedArgs<ExtArgs>
   _count?: boolean | Prisma.FederationClientCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["federationClient"]>
 
@@ -2992,8 +4128,10 @@ export type FederationClientSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -3011,8 +4149,10 @@ export type FederationClientSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -3030,8 +4170,10 @@ export type FederationClientSelectScalar = {
   id?: boolean
   name?: boolean
   clientId?: boolean
+  environment?: boolean
   homeOrganizationId?: boolean
   status?: boolean
+  tenantProvisioningEnabled?: boolean
   tokenVersion?: boolean
   expiresAt?: boolean
   mtlsRequired?: boolean
@@ -3043,7 +4185,7 @@ export type FederationClientSelectScalar = {
   revocationReason?: boolean
 }
 
-export type FederationClientOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "clientId" | "homeOrganizationId" | "status" | "tokenVersion" | "expiresAt" | "mtlsRequired" | "allowedCertificateFingerprints" | "createdByUserId" | "createdAt" | "updatedAt" | "revokedAt" | "revocationReason", ExtArgs["result"]["federationClient"]>
+export type FederationClientOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "clientId" | "environment" | "homeOrganizationId" | "status" | "tenantProvisioningEnabled" | "tokenVersion" | "expiresAt" | "mtlsRequired" | "allowedCertificateFingerprints" | "createdByUserId" | "createdAt" | "updatedAt" | "revokedAt" | "revocationReason", ExtArgs["result"]["federationClient"]>
 export type FederationClientInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   homeOrganization?: boolean | Prisma.FederationClient$homeOrganizationArgs<ExtArgs>
   createdBy?: boolean | Prisma.FederationClient$createdByArgs<ExtArgs>
@@ -3059,6 +4201,10 @@ export type FederationClientInclude<ExtArgs extends runtime.Types.Extensions.Int
   attendanceCorrections?: boolean | Prisma.FederationClient$attendanceCorrectionsArgs<ExtArgs>
   leaveBalanceTransactions?: boolean | Prisma.FederationClient$leaveBalanceTransactionsArgs<ExtArgs>
   payrollAdjustments?: boolean | Prisma.FederationClient$payrollAdjustmentsArgs<ExtArgs>
+  organizationGeofenceSettingsOwned?: boolean | Prisma.FederationClient$organizationGeofenceSettingsOwnedArgs<ExtArgs>
+  organizationBiometricSettingsOwned?: boolean | Prisma.FederationClient$organizationBiometricSettingsOwnedArgs<ExtArgs>
+  branchGeofenceSettingsOwned?: boolean | Prisma.FederationClient$branchGeofenceSettingsOwnedArgs<ExtArgs>
+  branchBiometricSettingsOwned?: boolean | Prisma.FederationClient$branchBiometricSettingsOwnedArgs<ExtArgs>
   _count?: boolean | Prisma.FederationClientCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FederationClientIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3087,13 +4233,19 @@ export type $FederationClientPayload<ExtArgs extends runtime.Types.Extensions.In
     attendanceCorrections: Prisma.$AttendanceCorrectionPayload<ExtArgs>[]
     leaveBalanceTransactions: Prisma.$LeaveBalanceTransactionPayload<ExtArgs>[]
     payrollAdjustments: Prisma.$PayrollAdjustmentPayload<ExtArgs>[]
+    organizationGeofenceSettingsOwned: Prisma.$OrganizationSettingsPayload<ExtArgs>[]
+    organizationBiometricSettingsOwned: Prisma.$OrganizationSettingsPayload<ExtArgs>[]
+    branchGeofenceSettingsOwned: Prisma.$BranchPayload<ExtArgs>[]
+    branchBiometricSettingsOwned: Prisma.$BranchPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     clientId: string
+    environment: $Enums.FederationEnvironment
     homeOrganizationId: string | null
     status: $Enums.FederationClientStatus
+    tenantProvisioningEnabled: boolean
     tokenVersion: number
     expiresAt: Date | null
     mtlsRequired: boolean
@@ -3511,6 +4663,10 @@ export interface Prisma__FederationClientClient<T, Null = never, ExtArgs extends
   attendanceCorrections<T extends Prisma.FederationClient$attendanceCorrectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClient$attendanceCorrectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceCorrectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leaveBalanceTransactions<T extends Prisma.FederationClient$leaveBalanceTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClient$leaveBalanceTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveBalanceTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payrollAdjustments<T extends Prisma.FederationClient$payrollAdjustmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClient$payrollAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizationGeofenceSettingsOwned<T extends Prisma.FederationClient$organizationGeofenceSettingsOwnedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClient$organizationGeofenceSettingsOwnedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizationBiometricSettingsOwned<T extends Prisma.FederationClient$organizationBiometricSettingsOwnedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClient$organizationBiometricSettingsOwnedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  branchGeofenceSettingsOwned<T extends Prisma.FederationClient$branchGeofenceSettingsOwnedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClient$branchGeofenceSettingsOwnedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  branchBiometricSettingsOwned<T extends Prisma.FederationClient$branchBiometricSettingsOwnedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FederationClient$branchBiometricSettingsOwnedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3543,8 +4699,10 @@ export interface FederationClientFieldRefs {
   readonly id: Prisma.FieldRef<"FederationClient", 'String'>
   readonly name: Prisma.FieldRef<"FederationClient", 'String'>
   readonly clientId: Prisma.FieldRef<"FederationClient", 'String'>
+  readonly environment: Prisma.FieldRef<"FederationClient", 'FederationEnvironment'>
   readonly homeOrganizationId: Prisma.FieldRef<"FederationClient", 'String'>
   readonly status: Prisma.FieldRef<"FederationClient", 'FederationClientStatus'>
+  readonly tenantProvisioningEnabled: Prisma.FieldRef<"FederationClient", 'Boolean'>
   readonly tokenVersion: Prisma.FieldRef<"FederationClient", 'Int'>
   readonly expiresAt: Prisma.FieldRef<"FederationClient", 'DateTime'>
   readonly mtlsRequired: Prisma.FieldRef<"FederationClient", 'Boolean'>
@@ -4278,6 +5436,102 @@ export type FederationClient$payrollAdjustmentsArgs<ExtArgs extends runtime.Type
   take?: number
   skip?: number
   distinct?: Prisma.PayrollAdjustmentScalarFieldEnum | Prisma.PayrollAdjustmentScalarFieldEnum[]
+}
+
+/**
+ * FederationClient.organizationGeofenceSettingsOwned
+ */
+export type FederationClient$organizationGeofenceSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrganizationSettings
+   */
+  select?: Prisma.OrganizationSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrganizationSettings
+   */
+  omit?: Prisma.OrganizationSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationSettingsInclude<ExtArgs> | null
+  where?: Prisma.OrganizationSettingsWhereInput
+  orderBy?: Prisma.OrganizationSettingsOrderByWithRelationInput | Prisma.OrganizationSettingsOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationSettingsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationSettingsScalarFieldEnum | Prisma.OrganizationSettingsScalarFieldEnum[]
+}
+
+/**
+ * FederationClient.organizationBiometricSettingsOwned
+ */
+export type FederationClient$organizationBiometricSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrganizationSettings
+   */
+  select?: Prisma.OrganizationSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrganizationSettings
+   */
+  omit?: Prisma.OrganizationSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationSettingsInclude<ExtArgs> | null
+  where?: Prisma.OrganizationSettingsWhereInput
+  orderBy?: Prisma.OrganizationSettingsOrderByWithRelationInput | Prisma.OrganizationSettingsOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationSettingsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationSettingsScalarFieldEnum | Prisma.OrganizationSettingsScalarFieldEnum[]
+}
+
+/**
+ * FederationClient.branchGeofenceSettingsOwned
+ */
+export type FederationClient$branchGeofenceSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Branch
+   */
+  select?: Prisma.BranchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Branch
+   */
+  omit?: Prisma.BranchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BranchInclude<ExtArgs> | null
+  where?: Prisma.BranchWhereInput
+  orderBy?: Prisma.BranchOrderByWithRelationInput | Prisma.BranchOrderByWithRelationInput[]
+  cursor?: Prisma.BranchWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BranchScalarFieldEnum | Prisma.BranchScalarFieldEnum[]
+}
+
+/**
+ * FederationClient.branchBiometricSettingsOwned
+ */
+export type FederationClient$branchBiometricSettingsOwnedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Branch
+   */
+  select?: Prisma.BranchSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Branch
+   */
+  omit?: Prisma.BranchOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BranchInclude<ExtArgs> | null
+  where?: Prisma.BranchWhereInput
+  orderBy?: Prisma.BranchOrderByWithRelationInput | Prisma.BranchOrderByWithRelationInput[]
+  cursor?: Prisma.BranchWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BranchScalarFieldEnum | Prisma.BranchScalarFieldEnum[]
 }
 
 /**

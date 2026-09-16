@@ -2,8 +2,10 @@ model FederationClient {
   id                             String                 @id @default(uuid()) @db.Uuid
   name                           String
   clientId                       String                 @unique @map("client_id")
+  environment                    FederationEnvironment  @default(SANDBOX)
   homeOrganizationId             String?                @map("home_organization_id") @db.Uuid
   status                         FederationClientStatus @default(ACTIVE)
+  tenantProvisioningEnabled      Boolean                @default(true) @map("tenant_provisioning_enabled")
   tokenVersion                   Int                    @default(0) @map("token_version")
   expiresAt                      DateTime?              @map("expires_at") @db.Timestamptz(6)
   mtlsRequired                   Boolean                @default(false) @map("mtls_required")
@@ -14,20 +16,24 @@ model FederationClient {
   revokedAt                      DateTime?              @map("revoked_at") @db.Timestamptz(6)
   revocationReason               String?                @map("revocation_reason")
 
-  homeOrganization         Organization?                 @relation("FederationClientHomeOrganization", fields: [homeOrganizationId], references: [id], onDelete: SetNull)
-  createdBy                User?                         @relation("FederationClientCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
-  credentials              FederationClientCredential[]
-  grants                   FederationGrant[]
-  fieldOwnerships          EmployeeFieldOwnership[]
-  externalMappings         ExternalIdMapping[]
-  idempotencyRecords       FederationIdempotencyRecord[]
-  requestRecords           FederationRequestRecord[]
-  webhookSigningKeys       WebhookSigningKey[]
-  webhookSubscriptions     WebhookSubscription[]
-  auditLogs                AuditLog[]
-  attendanceCorrections    AttendanceCorrection[]
-  leaveBalanceTransactions LeaveBalanceTransaction[]
-  payrollAdjustments       PayrollAdjustment[]
+  homeOrganization                   Organization?                 @relation("FederationClientHomeOrganization", fields: [homeOrganizationId], references: [id], onDelete: SetNull)
+  createdBy                          User?                         @relation("FederationClientCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  credentials                        FederationClientCredential[]
+  grants                             FederationGrant[]
+  fieldOwnerships                    EmployeeFieldOwnership[]
+  externalMappings                   ExternalIdMapping[]
+  idempotencyRecords                 FederationIdempotencyRecord[]
+  requestRecords                     FederationRequestRecord[]
+  webhookSigningKeys                 WebhookSigningKey[]
+  webhookSubscriptions               WebhookSubscription[]
+  auditLogs                          AuditLog[]
+  attendanceCorrections              AttendanceCorrection[]
+  leaveBalanceTransactions           LeaveBalanceTransaction[]
+  payrollAdjustments                 PayrollAdjustment[]
+  organizationGeofenceSettingsOwned  OrganizationSettings[]        @relation("OrganizationGeofenceOwner")
+  organizationBiometricSettingsOwned OrganizationSettings[]        @relation("OrganizationBiometricOwner")
+  branchGeofenceSettingsOwned        Branch[]                      @relation("BranchGeofenceOwner")
+  branchBiometricSettingsOwned       Branch[]                      @relation("BranchBiometricOwner")
 
   @@index([status, expiresAt])
   @@map("federation_clients")

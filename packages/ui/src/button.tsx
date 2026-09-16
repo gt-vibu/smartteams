@@ -1,24 +1,108 @@
+import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { ButtonHTMLAttributes } from 'react';
 import { cn } from './cn';
 
+/** Every variant except `link`, which sits inside running text; see `compoundVariants`. */
+const DRAWN_BIGGER_ON_TOUCH = [
+  'default',
+  'primary',
+  'destructive',
+  'outline',
+  'secondary',
+  'ghost',
+  'success',
+  'quiet',
+] as const;
+
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.68_0.14_46)] disabled:pointer-events-none disabled:opacity-50',
+  [
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-xs font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 cursor-pointer',
+    // On a touchscreen the tappable area reaches 4px past every edge, so the 32px default is a
+    // 40px target for a thumb. It is a hit area, not a size: raising the height instead would
+    // override callers that deliberately set `h-auto` — an inline link-button inside a sentence —
+    // because tailwind-merge keeps a variant class alongside the plain one it would replace.
+    "relative pointer-coarse:after:absolute pointer-coarse:after:-inset-1 pointer-coarse:after:content-['']",
+  ],
   {
     variants: {
+      // Every variant reads from the token layer. These were hardcoded slate, which meant the
+      // primary action on every screen in both apps was near-black regardless of the brand —
+      // and stayed near-black when the brand changed.
       variant: {
-        primary:
-          'bg-[oklch(0.68_0.14_46)] text-[oklch(0.2_0.03_165)] hover:bg-[oklch(0.73_0.14_46)]',
-        quiet: 'bg-transparent text-[oklch(0.32_0.03_165)] hover:bg-[oklch(0.93_0.025_165)]',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
+        primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs',
+        outline: 'border border-border bg-card text-foreground hover:bg-muted/60 shadow-2xs',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'bg-transparent text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+        link: 'bg-transparent text-primary underline-offset-4 hover:underline p-0 h-auto',
+        // Distinct from `primary` on purpose: with a green brand, a success button that simply
+        // reused the brand colour would say nothing the default button does not already say.
+        success: 'bg-success text-white hover:bg-success/90 shadow-xs',
+        quiet: 'bg-transparent text-foreground hover:bg-muted/60',
+      },
+      size: {
+        default: 'h-8 px-3 py-1.5',
+        sm: 'h-7 rounded-md px-2.5 text-[11px]',
+        lg: 'h-9 rounded-md px-4 text-xs',
+        icon: 'h-8 w-8 p-0',
       },
     },
-    defaultVariants: { variant: 'primary' },
+    // On a touchscreen the dense desktop sizes are also *drawn* bigger, not only hit-tested
+    // bigger: a 32px button is tappable with the hit area above but reads as too small to aim
+    // at. Minimums, not heights — a caller's own `h-7` survives tailwind-merge untouched and the
+    // button grows only where it is smaller than a thumb needs. `link` is excluded because it
+    // sits inside running text, where extra height would push the line apart.
+    compoundVariants: [
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'default',
+        class: 'pointer-coarse:min-h-10',
+      },
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'sm',
+        class: 'pointer-coarse:min-h-9',
+      },
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'lg',
+        class: 'pointer-coarse:min-h-11',
+      },
+      {
+        variant: [...DRAWN_BIGGER_ON_TOUCH],
+        size: 'icon',
+        class: 'pointer-coarse:min-h-10 pointer-coarse:min-w-10',
+      },
+    ],
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
   },
 );
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
-
-export function Button({ className, variant, ...props }: ButtonProps) {
-  return <button className={cn(buttonVariants({ variant, className }))} {...props} />;
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ asChild = false, children, className, variant, size, ...props }, ref) => {
+    if (asChild && React.isValidElement<{ className?: string }>(children)) {
+      return React.cloneElement(children, {
+        ...props,
+        className: cn(buttonVariants({ variant, size }), className, children.props.className),
+      });
+    }
+
+    return (
+      <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+        {children}
+      </button>
+    );
+  },
+);
+Button.displayName = 'Button';
+
+export { Button, buttonVariants };

@@ -1,5 +1,5 @@
-import { WelcomePage } from '@smarteam/ui';
+import { AdminConsole } from '../components/admin-console';
 
 export default function Page() {
-  return <WelcomePage audience="platform" />;
+  return <AdminConsole />;
 }
