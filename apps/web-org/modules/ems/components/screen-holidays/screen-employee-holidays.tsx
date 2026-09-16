@@ -215,11 +215,11 @@ export function ScreenEmployeeHolidays() {
 
           {/* Compact Filter Bar */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <div className="flex items-center gap-2">
+            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
               <Select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
-                className="w-36 text-xs h-8"
+                className="h-8 min-w-0 flex-1 text-xs sm:w-36 sm:flex-none"
               >
                 <option value="ALL">All Types</option>
                 <option value="PUBLIC">Public Holidays</option>
@@ -228,7 +228,7 @@ export function ScreenEmployeeHolidays() {
               <Select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-                className="w-36 text-xs h-8"
+                className="h-8 min-w-0 flex-1 text-xs sm:w-36 sm:flex-none"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="REQUIRED">Required</option>

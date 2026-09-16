@@ -41,7 +41,7 @@ export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState })
           One row per released payslip. Tax identifiers and tax regime are not held by the backend.
         </p>
         <Input
-          className="w-52"
+          className="w-full min-w-0 sm:w-52"
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search employee number"
           value={search}

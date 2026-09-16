@@ -114,13 +114,18 @@ export function ScreenTimesheetsAdmin() {
           <span className="border-b-2 border-foreground pb-1 text-xs font-bold text-foreground">
             Time logs and timesheets
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full items-center gap-2 sm:w-auto">
             {admin.canManagePeriods && (
-              <Button onClick={() => setOpeningPeriod(true)} size="sm" type="button">
+              <Button
+                className="shrink-0"
+                onClick={() => setOpeningPeriod(true)}
+                size="sm"
+                type="button"
+              >
                 Open a period
               </Button>
             )}
-            <div className="w-48">
+            <div className="w-full min-w-0 sm:w-48">
               <Select onChange={(e) => setSelectedStatus(e.target.value)} value={selectedStatus}>
                 <option value="ALL">All statuses</option>
                 <option value="SUBMITTED">Submitted (pending review)</option>

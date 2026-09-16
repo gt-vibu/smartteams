@@ -103,28 +103,34 @@ export function LeavePolicyPanel({
         )}
 
         {admin.types.map((type) => (
-          <div className="flex flex-wrap items-center gap-3 px-4 py-3" key={type.id}>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-foreground">
-                {type.name}
-                <span className="ml-2 font-mono text-[10px] text-muted-foreground">
-                  {type.code}
-                </span>
-              </p>
-              <p className="text-[11px] text-muted-foreground">
-                {type.paid ? 'Paid' : 'Unpaid'} · {type.accrualType}
-                {type.annualAllowance !== null && type.annualAllowance !== undefined
-                  ? ` · ${type.annualAllowance} days a year`
-                  : ''}
-              </p>
+          <div
+            className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3"
+            key={type.id}
+          >
+            <div className="flex min-w-0 flex-1 items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-foreground">
+                  {type.name}
+                  <span className="ml-2 font-mono text-[10px] text-muted-foreground">
+                    {type.code}
+                  </span>
+                </p>
+                {/* The badge already says paid or unpaid; repeating it here left the line long
+                    enough to wrap a word at a time beside the assignment control. */}
+                <p className="text-[11px] text-muted-foreground">
+                  {type.accrualType}
+                  {type.annualAllowance !== null && type.annualAllowance !== undefined
+                    ? ` · ${type.annualAllowance} days a year`
+                    : ''}
+                </p>
+              </div>
+              <Badge className="shrink-0" variant={type.paid ? 'secondary' : 'outline'}>
+                {type.paid ? 'Paid' : 'Unpaid'}
+              </Badge>
             </div>
 
-            <Badge variant={type.paid ? 'secondary' : 'outline'}>
-              {type.paid ? 'Paid' : 'Unpaid'}
-            </Badge>
-
             {admin.canWriteTypes && branches.length > 0 && (
-              <div className="flex items-center gap-2">
+              <div className="flex w-full items-center gap-2 sm:w-auto">
                 <SelectMenu
                   disabled={admin.saving}
                   onValueChange={(value) =>
@@ -132,7 +138,10 @@ export function LeavePolicyPanel({
                   }
                   value={assignBranch[type.code] ?? ''}
                 >
-                  <SelectTrigger aria-label={`Branch for ${type.name}`} className="w-44">
+                  <SelectTrigger
+                    aria-label={`Branch for ${type.name}`}
+                    className="w-full min-w-0 sm:w-44"
+                  >
                     <SelectValue placeholder="Assign to branch" />
                   </SelectTrigger>
                   <SelectContent>
@@ -144,6 +153,7 @@ export function LeavePolicyPanel({
                   </SelectContent>
                 </SelectMenu>
                 <Button
+                  className="shrink-0"
                   disabled={admin.saving || !assignBranch[type.code]}
                   onClick={() => void admin.assignType(type.code, assignBranch[type.code]!)}
                   size="sm"

@@ -82,20 +82,20 @@ export function ScreenAttendanceAdmin() {
         */}
         {tab === 'records' && (
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-medium text-muted-foreground">From</span>
+            <div className="flex w-full items-center gap-1.5 sm:w-auto">
+              <span className="shrink-0 text-[11px] font-medium text-muted-foreground">From</span>
               <DatePicker
-                className="w-36"
+                className="w-full min-w-0 sm:w-36"
                 max={to || undefined}
                 onChange={setFrom}
                 placeholder="Start date"
                 value={from}
               />
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-medium text-muted-foreground">To</span>
+            <div className="flex w-full items-center gap-1.5 sm:w-auto">
+              <span className="shrink-0 text-[11px] font-medium text-muted-foreground">To</span>
               <DatePicker
-                className="w-36"
+                className="w-full min-w-0 sm:w-36"
                 min={from || undefined}
                 onChange={setTo}
                 placeholder="End date"
@@ -103,7 +103,7 @@ export function ScreenAttendanceAdmin() {
               />
             </div>
             <Input
-              className="w-44"
+              className="w-full min-w-0 sm:w-44"
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search employee"
               value={search}

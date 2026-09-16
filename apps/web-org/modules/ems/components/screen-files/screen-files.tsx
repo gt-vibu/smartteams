@@ -86,7 +86,7 @@ export function ScreenFiles() {
       {files.canWrite && (
         <section className="space-y-3 rounded-lg border border-border bg-card p-4">
           <div className="flex flex-wrap items-end gap-3">
-            <div className="w-56">
+            <div className="w-full min-w-0 sm:w-56">
               <Label className="mb-1 block">Purpose</Label>
               <SelectMenu
                 onValueChange={(value) => setPurpose(value as FilePurpose)}

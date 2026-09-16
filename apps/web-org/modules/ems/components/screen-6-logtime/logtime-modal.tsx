@@ -353,7 +353,7 @@ export function LogTimeModal({
                   value={billable ? 'BILLABLE' : 'NON_BILLABLE'}
                   onValueChange={(val) => setBillable(val === 'BILLABLE')}
                   disabled={saving}
-                  className="w-44 text-xs"
+                  className="w-full min-w-0 text-xs sm:w-44"
                 >
                   <option value="BILLABLE">Billable</option>
                   <option value="NON_BILLABLE">Non-Billable</option>

@@ -227,7 +227,7 @@ function Reporting({ roots }: { roots: ReportingNode[] }) {
         the top level rather than being left out.
       </p>
       <div className="overflow-x-auto rounded-xl border border-border bg-card p-4">
-        <ul className="min-w-[380px] space-y-2">
+        <ul className="w-full space-y-2 sm:min-w-[380px]">
           {roots.slice(0, PREVIEW_LIMIT).map((node) => (
             <TreeNode depth={0} key={node.employee.id} node={node} />
           ))}

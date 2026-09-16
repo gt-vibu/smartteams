@@ -133,11 +133,11 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
         {/* Optional Filter Controls Bar */}
         {isFilterActive && (
           <div className="bg-card border border-border rounded-[6px] p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex w-full items-center gap-2 sm:w-auto">
+              <span className="shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-400">
                 Filter Status:
               </span>
-              <div className="w-40">
+              <div className="w-full min-w-0 sm:w-40">
                 <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                   <option value="ALL">All Statuses</option>
                   <option value="present">Present</option>
@@ -149,13 +149,13 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center gap-2 sm:w-auto">
               <Input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search table..."
-                className="w-48"
+                className="w-full min-w-0 sm:w-48"
               />
               {(statusFilter !== 'ALL' || searchQuery) && (
                 <Button
