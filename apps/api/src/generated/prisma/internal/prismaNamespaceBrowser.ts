@@ -1295,6 +1295,8 @@ export const OrganizationSettingsScalarFieldEnum = {
   biometricVerificationMode: 'biometricVerificationMode',
   biometricOwnerSource: 'biometricOwnerSource',
   biometricOwnerClientId: 'biometricOwnerClientId',
+  autoCheckOutMode: 'autoCheckOutMode',
+  autoCheckOutAt: 'autoCheckOutAt',
   metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

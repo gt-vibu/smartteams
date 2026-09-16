@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@smarteam/ui';
 import { useAttendancePreferences } from '../../hooks/use-attendance-preferences';
+import { AutoCheckOutSection } from './auto-check-out-section';
 
 const GEOFENCE_MODES = [
   { value: 'DISABLED', label: 'Disabled' },
@@ -158,6 +159,8 @@ export function AttendancePolicyPanel() {
                 </SelectMenu>
               </div>
             </div>
+
+            <AutoCheckOutSection policy={policy} />
 
             {!policy.canWrite && (
               <p className="text-[11px] text-muted-foreground">

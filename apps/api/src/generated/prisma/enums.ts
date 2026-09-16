@@ -293,6 +293,14 @@ export const AttendancePunchSource = {
 export type AttendancePunchSource = (typeof AttendancePunchSource)[keyof typeof AttendancePunchSource]
 
 
+export const AutoCheckOutMode = {
+  DISABLED: 'DISABLED',
+  REVIEW_REQUIRED: 'REVIEW_REQUIRED'
+} as const
+
+export type AutoCheckOutMode = (typeof AutoCheckOutMode)[keyof typeof AutoCheckOutMode]
+
+
 export const ApprovalStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',

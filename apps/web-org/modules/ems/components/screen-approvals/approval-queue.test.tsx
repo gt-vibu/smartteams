@@ -63,7 +63,7 @@ describe('ApprovalQueue', () => {
     render(<ApprovalQueue inbox={state} />);
     await approveWith('Cover arranged');
 
-    expect(state.decide).toHaveBeenCalledWith(leave, 'APPROVED', 'Cover arranged');
+    expect(state.decide).toHaveBeenCalledWith(leave, 'APPROVED', 'Cover arranged', undefined);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 

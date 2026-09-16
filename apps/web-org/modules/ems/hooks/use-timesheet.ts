@@ -7,6 +7,7 @@ import { timesheetRepository, type ManualEntryInput } from '../repositories/time
 import { workforceRepository } from '../repositories/workforce.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { useDataChanged } from '../lib/data-events';
 import {
   latestApproved,
   summarize,
@@ -53,6 +54,9 @@ export function useTimesheet() {
     await resource.refetch();
     await jobTypesResource.refetch();
   });
+
+  // An approved attendance correction changes the hours a period was derived from.
+  useDataChanged(['timesheets'], resource.refetch);
 
   const timesheets = useMemo(() => resource.data ?? [], [resource.data]);
   const jobTypes = useMemo(() => jobTypesResource.data ?? [], [jobTypesResource.data]);

@@ -1255,6 +1255,13 @@ export type EnumBiometricVerificationModeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel> | $Enums.BiometricVerificationMode
 }
 
+export type EnumAutoCheckOutModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.AutoCheckOutMode | Prisma.EnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  in?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAutoCheckOutModeFilter<$PrismaModel> | $Enums.AutoCheckOutMode
+}
+
 export type EnumGeofenceModeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GeofenceMode | Prisma.EnumGeofenceModeFieldRefInput<$PrismaModel>
   in?: $Enums.GeofenceMode[] | Prisma.ListEnumGeofenceModeFieldRefInput<$PrismaModel>
@@ -1283,6 +1290,16 @@ export type EnumBiometricVerificationModeWithAggregatesFilter<$PrismaModel = nev
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
+}
+
+export type EnumAutoCheckOutModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AutoCheckOutMode | Prisma.EnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  in?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAutoCheckOutModeWithAggregatesFilter<$PrismaModel> | $Enums.AutoCheckOutMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAutoCheckOutModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAutoCheckOutModeFilter<$PrismaModel>
 }
 
 export type EnumApprovalDomainFilter<$PrismaModel = never> = {
@@ -2719,6 +2736,13 @@ export type NestedEnumBiometricVerificationModeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel> | $Enums.BiometricVerificationMode
 }
 
+export type NestedEnumAutoCheckOutModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.AutoCheckOutMode | Prisma.EnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  in?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAutoCheckOutModeFilter<$PrismaModel> | $Enums.AutoCheckOutMode
+}
+
 export type NestedEnumGeofenceModeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GeofenceMode | Prisma.EnumGeofenceModeFieldRefInput<$PrismaModel>
   in?: $Enums.GeofenceMode[] | Prisma.ListEnumGeofenceModeFieldRefInput<$PrismaModel>
@@ -2747,6 +2771,16 @@ export type NestedEnumBiometricVerificationModeWithAggregatesFilter<$PrismaModel
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumBiometricVerificationModeFilter<$PrismaModel>
+}
+
+export type NestedEnumAutoCheckOutModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.AutoCheckOutMode | Prisma.EnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  in?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.AutoCheckOutMode[] | Prisma.ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumAutoCheckOutModeWithAggregatesFilter<$PrismaModel> | $Enums.AutoCheckOutMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumAutoCheckOutModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumAutoCheckOutModeFilter<$PrismaModel>
 }
 
 export type NestedEnumApprovalDomainFilter<$PrismaModel = never> = {

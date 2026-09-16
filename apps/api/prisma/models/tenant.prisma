@@ -105,6 +105,8 @@ model OrganizationSettings {
   biometricVerificationMode BiometricVerificationMode @default(DISABLED) @map("biometric_verification_mode")
   biometricOwnerSource      OwnerSource               @default(NATIVE) @map("biometric_owner_source")
   biometricOwnerClientId    String?                   @map("biometric_owner_client_id") @db.Uuid
+  autoCheckOutMode          AutoCheckOutMode          @default(DISABLED) @map("auto_check_out_mode")
+  autoCheckOutAt            DateTime                  @default(dbgenerated("'23:59:00'::time without time zone")) @map("auto_check_out_at") @db.Time(6)
   metadata                  Json                      @default("{}")
   createdAt                 DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                 DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)

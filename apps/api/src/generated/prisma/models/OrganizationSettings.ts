@@ -55,6 +55,8 @@ export type OrganizationSettingsMinAggregateOutputType = {
   biometricVerificationMode: $Enums.BiometricVerificationMode | null
   biometricOwnerSource: $Enums.OwnerSource | null
   biometricOwnerClientId: string | null
+  autoCheckOutMode: $Enums.AutoCheckOutMode | null
+  autoCheckOutAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -72,6 +74,8 @@ export type OrganizationSettingsMaxAggregateOutputType = {
   biometricVerificationMode: $Enums.BiometricVerificationMode | null
   biometricOwnerSource: $Enums.OwnerSource | null
   biometricOwnerClientId: string | null
+  autoCheckOutMode: $Enums.AutoCheckOutMode | null
+  autoCheckOutAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -90,6 +94,8 @@ export type OrganizationSettingsCountAggregateOutputType = {
   biometricVerificationMode: number
   biometricOwnerSource: number
   biometricOwnerClientId: number
+  autoCheckOutMode: number
+  autoCheckOutAt: number
   metadata: number
   createdAt: number
   updatedAt: number
@@ -126,6 +132,8 @@ export type OrganizationSettingsMinAggregateInputType = {
   biometricVerificationMode?: true
   biometricOwnerSource?: true
   biometricOwnerClientId?: true
+  autoCheckOutMode?: true
+  autoCheckOutAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -143,6 +151,8 @@ export type OrganizationSettingsMaxAggregateInputType = {
   biometricVerificationMode?: true
   biometricOwnerSource?: true
   biometricOwnerClientId?: true
+  autoCheckOutMode?: true
+  autoCheckOutAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -161,6 +171,8 @@ export type OrganizationSettingsCountAggregateInputType = {
   biometricVerificationMode?: true
   biometricOwnerSource?: true
   biometricOwnerClientId?: true
+  autoCheckOutMode?: true
+  autoCheckOutAt?: true
   metadata?: true
   createdAt?: true
   updatedAt?: true
@@ -267,6 +279,8 @@ export type OrganizationSettingsGroupByOutputType = {
   biometricVerificationMode: $Enums.BiometricVerificationMode
   biometricOwnerSource: $Enums.OwnerSource
   biometricOwnerClientId: string | null
+  autoCheckOutMode: $Enums.AutoCheckOutMode
+  autoCheckOutAt: Date
   metadata: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
@@ -309,6 +323,8 @@ export type OrganizationSettingsWhereInput = {
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
@@ -331,6 +347,8 @@ export type OrganizationSettingsOrderByWithRelationInput = {
   biometricVerificationMode?: Prisma.SortOrder
   biometricOwnerSource?: Prisma.SortOrder
   biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoCheckOutMode?: Prisma.SortOrder
+  autoCheckOutAt?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -356,6 +374,8 @@ export type OrganizationSettingsWhereUniqueInput = Prisma.AtLeast<{
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
@@ -378,6 +398,8 @@ export type OrganizationSettingsOrderByWithAggregationInput = {
   biometricVerificationMode?: Prisma.SortOrder
   biometricOwnerSource?: Prisma.SortOrder
   biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoCheckOutMode?: Prisma.SortOrder
+  autoCheckOutAt?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -405,6 +427,8 @@ export type OrganizationSettingsScalarWhereWithAggregatesInput = {
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"OrganizationSettings"> | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"OrganizationSettings"> | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
   metadata?: Prisma.JsonWithAggregatesFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
@@ -421,6 +445,8 @@ export type OrganizationSettingsCreateInput = {
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -443,6 +469,8 @@ export type OrganizationSettingsUncheckedCreateInput = {
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
   biometricOwnerClientId?: string | null
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -459,6 +487,8 @@ export type OrganizationSettingsUpdateInput = {
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -481,6 +511,8 @@ export type OrganizationSettingsUncheckedUpdateInput = {
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -500,6 +532,8 @@ export type OrganizationSettingsCreateManyInput = {
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
   biometricOwnerClientId?: string | null
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -516,6 +550,8 @@ export type OrganizationSettingsUpdateManyMutationInput = {
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -535,6 +571,8 @@ export type OrganizationSettingsUncheckedUpdateManyInput = {
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -569,6 +607,8 @@ export type OrganizationSettingsCountOrderByAggregateInput = {
   biometricVerificationMode?: Prisma.SortOrder
   biometricOwnerSource?: Prisma.SortOrder
   biometricOwnerClientId?: Prisma.SortOrder
+  autoCheckOutMode?: Prisma.SortOrder
+  autoCheckOutAt?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -595,6 +635,8 @@ export type OrganizationSettingsMaxOrderByAggregateInput = {
   biometricVerificationMode?: Prisma.SortOrder
   biometricOwnerSource?: Prisma.SortOrder
   biometricOwnerClientId?: Prisma.SortOrder
+  autoCheckOutMode?: Prisma.SortOrder
+  autoCheckOutAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -612,6 +654,8 @@ export type OrganizationSettingsMinOrderByAggregateInput = {
   biometricVerificationMode?: Prisma.SortOrder
   biometricOwnerSource?: Prisma.SortOrder
   biometricOwnerClientId?: Prisma.SortOrder
+  autoCheckOutMode?: Prisma.SortOrder
+  autoCheckOutAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -761,6 +805,10 @@ export type EnumBiometricVerificationModeFieldUpdateOperationsInput = {
   set?: $Enums.BiometricVerificationMode
 }
 
+export type EnumAutoCheckOutModeFieldUpdateOperationsInput = {
+  set?: $Enums.AutoCheckOutMode
+}
+
 export type OrganizationSettingsCreateWithoutGeofenceOwnerClientInput = {
   workWeekDays?: Prisma.OrganizationSettingsCreateworkWeekDaysInput | number[]
   standardDayMinutes?: number
@@ -772,6 +820,8 @@ export type OrganizationSettingsCreateWithoutGeofenceOwnerClientInput = {
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -792,6 +842,8 @@ export type OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput =
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
   biometricOwnerClientId?: string | null
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -818,6 +870,8 @@ export type OrganizationSettingsCreateWithoutBiometricOwnerClientInput = {
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -838,6 +892,8 @@ export type OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput 
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -886,6 +942,8 @@ export type OrganizationSettingsScalarWhereInput = {
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
@@ -918,6 +976,8 @@ export type OrganizationSettingsCreateWithoutOrganizationInput = {
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -938,6 +998,8 @@ export type OrganizationSettingsUncheckedCreateWithoutOrganizationInput = {
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
   biometricOwnerClientId?: string | null
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -970,6 +1032,8 @@ export type OrganizationSettingsUpdateWithoutOrganizationInput = {
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -990,6 +1054,8 @@ export type OrganizationSettingsUncheckedUpdateWithoutOrganizationInput = {
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1008,6 +1074,8 @@ export type OrganizationSettingsCreateManyGeofenceOwnerClientInput = {
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
   biometricOwnerClientId?: string | null
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1026,6 +1094,8 @@ export type OrganizationSettingsCreateManyBiometricOwnerClientInput = {
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
+  autoCheckOutMode?: $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1042,6 +1112,8 @@ export type OrganizationSettingsUpdateWithoutGeofenceOwnerClientInput = {
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1062,6 +1134,8 @@ export type OrganizationSettingsUncheckedUpdateWithoutGeofenceOwnerClientInput =
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1080,6 +1154,8 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientInp
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1096,6 +1172,8 @@ export type OrganizationSettingsUpdateWithoutBiometricOwnerClientInput = {
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1116,6 +1194,8 @@ export type OrganizationSettingsUncheckedUpdateWithoutBiometricOwnerClientInput 
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1134,6 +1214,8 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientIn
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
+  autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
+  autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1155,6 +1237,8 @@ export type OrganizationSettingsSelect<ExtArgs extends runtime.Types.Extensions.
   biometricVerificationMode?: boolean
   biometricOwnerSource?: boolean
   biometricOwnerClientId?: boolean
+  autoCheckOutMode?: boolean
+  autoCheckOutAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1177,6 +1261,8 @@ export type OrganizationSettingsSelectCreateManyAndReturn<ExtArgs extends runtim
   biometricVerificationMode?: boolean
   biometricOwnerSource?: boolean
   biometricOwnerClientId?: boolean
+  autoCheckOutMode?: boolean
+  autoCheckOutAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1199,6 +1285,8 @@ export type OrganizationSettingsSelectUpdateManyAndReturn<ExtArgs extends runtim
   biometricVerificationMode?: boolean
   biometricOwnerSource?: boolean
   biometricOwnerClientId?: boolean
+  autoCheckOutMode?: boolean
+  autoCheckOutAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1221,12 +1309,14 @@ export type OrganizationSettingsSelectScalar = {
   biometricVerificationMode?: boolean
   biometricOwnerSource?: boolean
   biometricOwnerClientId?: boolean
+  autoCheckOutMode?: boolean
+  autoCheckOutAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "optionalHolidayAllowance" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
+export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "optionalHolidayAllowance" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "autoCheckOutMode" | "autoCheckOutAt" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
 export type OrganizationSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
@@ -1264,6 +1354,8 @@ export type $OrganizationSettingsPayload<ExtArgs extends runtime.Types.Extension
     biometricVerificationMode: $Enums.BiometricVerificationMode
     biometricOwnerSource: $Enums.OwnerSource
     biometricOwnerClientId: string | null
+    autoCheckOutMode: $Enums.AutoCheckOutMode
+    autoCheckOutAt: Date
     metadata: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
@@ -1706,6 +1798,8 @@ export interface OrganizationSettingsFieldRefs {
   readonly biometricVerificationMode: Prisma.FieldRef<"OrganizationSettings", 'BiometricVerificationMode'>
   readonly biometricOwnerSource: Prisma.FieldRef<"OrganizationSettings", 'OwnerSource'>
   readonly biometricOwnerClientId: Prisma.FieldRef<"OrganizationSettings", 'String'>
+  readonly autoCheckOutMode: Prisma.FieldRef<"OrganizationSettings", 'AutoCheckOutMode'>
+  readonly autoCheckOutAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>
   readonly metadata: Prisma.FieldRef<"OrganizationSettings", 'Json'>
   readonly createdAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>

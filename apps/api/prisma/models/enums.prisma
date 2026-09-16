@@ -192,6 +192,12 @@ enum AttendancePunchSource {
   IMPORT
 }
 
+/** Whether a day with no check-out is closed automatically, and how. */
+enum AutoCheckOutMode {
+  DISABLED
+  REVIEW_REQUIRED
+}
+
 enum ApprovalStatus {
   PENDING
   APPROVED

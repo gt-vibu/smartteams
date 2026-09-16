@@ -38,6 +38,8 @@ export function useAttendancePreferences(branchId?: string) {
       geofenceMode?: string;
       biometricVerificationMode?: string;
       attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
+      autoCheckOutMode?: 'DISABLED' | 'REVIEW_REQUIRED';
+      autoCheckOutAt?: string;
     }) => {
       if (!organizationId) return false;
       setSaving(true);
@@ -60,8 +62,27 @@ export function useAttendancePreferences(branchId?: string) {
     [organizationId, branchId, resource],
   );
 
+  /**
+   * Closes today's open days now rather than waiting for the sweep. Each becomes a correction for
+   * the organization's attendance approvers; nothing is approved here.
+   */
+  const runAutoCheckOut = useCallback(async () => {
+    if (!organizationId) return null;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      return await attendanceRepository.runAutoCheckOut(organizationId);
+    } catch (caught) {
+      setSaveError(caught instanceof Error ? caught.message : 'The days could not be closed.');
+      return null;
+    } finally {
+      setSaving(false);
+    }
+  }, [organizationId]);
+
   return {
     preferences: resource.data,
+    runAutoCheckOut,
     loading: resource.loading,
     error: resource.error,
     forbidden: resource.forbidden,

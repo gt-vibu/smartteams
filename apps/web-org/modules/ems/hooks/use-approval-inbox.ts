@@ -39,6 +39,10 @@ export type ApprovalInboxItem = {
   detail: string;
   submittedAt: string | null;
   holidayReview?: HolidayReviewInboxItem;
+  /** The check-out this correction asks the approver to accept, if it asks for one. */
+  proposedCheckOut?: string;
+  /** Whether the end-of-day close raised it rather than the employee. */
+  autoClosed?: boolean;
 };
 
 export function useApprovalInbox() {
@@ -103,24 +107,36 @@ export function useApprovalInbox() {
         employeeId?: string;
         reason?: string | null;
         requestedAt?: string;
-        afterSnapshot?: { missingCheckOut?: { occurredAt?: string } } | null;
+        afterSnapshot?: {
+          missingCheckOut?: { occurredAt?: string; autoClosed?: boolean };
+        } | null;
       };
       // The approver has to see the time they are being asked to accept, not only the reason.
       const requestedCheckOut = correction.afterSnapshot?.missingCheckOut?.occurredAt;
+      const autoClosed = Boolean(correction.afterSnapshot?.missingCheckOut?.autoClosed);
+      const when = requestedCheckOut
+        ? new Date(requestedCheckOut).toLocaleString(undefined, {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        : '';
       return {
         id: correction.id,
         domain: 'ATTENDANCE_CORRECTION' as const,
         employeeId: correction.employeeId ?? '',
-        title: requestedCheckOut ? 'Missing check-out' : 'Attendance correction',
+        title: autoClosed
+          ? 'Day closed with no check-out'
+          : requestedCheckOut
+            ? 'Missing check-out'
+            : 'Attendance correction',
         detail: requestedCheckOut
-          ? `Check-out at ${new Date(requestedCheckOut).toLocaleString(undefined, {
-              day: 'numeric',
-              month: 'short',
-              hour: '2-digit',
-              minute: '2-digit',
-            })} · ${correction.reason ?? ''}`
+          ? `${autoClosed ? 'Proposed check-out' : 'Check-out'} at ${when} · ${correction.reason ?? ''}`
           : (correction.reason ?? '--'),
         submittedAt: correction.requestedAt ?? null,
+        ...(requestedCheckOut ? { proposedCheckOut: requestedCheckOut } : {}),
+        autoClosed,
       };
     });
     const holidayItems = (holidayReviews.data ?? []).map((review) => ({
@@ -159,15 +175,35 @@ export function useApprovalInbox() {
     [organizationId, run],
   );
 
+  /**
+   * Records a decision. `checkOutAt` is the approver's own time for a day that was closed
+   * automatically, or whose requested time they are correcting; the server re-checks it.
+   */
   const decide = useCallback(
-    (item: ApprovalInboxItem, status: 'APPROVED' | 'REJECTED', comment: string) =>
-      run(
+    async (
+      item: ApprovalInboxItem,
+      status: 'APPROVED' | 'REJECTED',
+      comment: string,
+      checkOutAt?: string,
+    ) => {
+      const ok = await run(
         () =>
           item.domain === 'LEAVE'
             ? leaveRepository.decide(organizationId!, item.id, status, comment)
-            : attendanceRepository.decideCorrection(organizationId!, item.id, status, comment),
+            : attendanceRepository.decideCorrection(
+                organizationId!,
+                item.id,
+                status,
+                comment,
+                checkOutAt,
+              ),
         'The decision could not be recorded.',
-      ),
+      );
+      // An approved correction changes the day, its timesheet and what payroll owes for it.
+      if (ok && item.domain === 'ATTENDANCE_CORRECTION')
+        emitDataChanged('attendance', 'timesheets', 'payroll', 'approvals');
+      return ok;
+    },
     [organizationId, run],
   );
 

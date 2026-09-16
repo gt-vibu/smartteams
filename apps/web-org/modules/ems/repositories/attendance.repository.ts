@@ -93,15 +93,20 @@ export const attendanceRepository = {
     );
   },
 
+  /**
+   * Decides a correction. `checkOutAt` approves a different time than the one asked for — the real
+   * time an employee left, where the automatic close proposed the end of the day.
+   */
   async decideCorrection(
     organizationId: string,
     correctionId: string,
     status: 'APPROVED' | 'REJECTED',
     comment: string,
+    checkOutAt?: string,
   ): Promise<unknown> {
     return apiRequest(
       `${orgPath(organizationId, '/attendance')}/${encodeURIComponent(correctionId)}/decision`,
-      { method: 'POST', body: { status, comment } },
+      { method: 'POST', body: { status, comment, ...(checkOutAt ? { checkOutAt } : {}) } },
     );
   },
 
@@ -154,11 +159,34 @@ export const attendanceRepository = {
       geofenceMode?: string;
       biometricVerificationMode?: string;
       branchId?: string;
+      attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
+      autoCheckOutMode?: 'DISABLED' | 'REVIEW_REQUIRED';
+      autoCheckOutAt?: string;
     },
   ): Promise<unknown> {
     return apiRequest(`${orgPath(organizationId, '/attendance')}/preferences`, {
       method: 'POST',
       body: input,
     });
+  },
+
+  /** Closes today's days with no check-out now, sending each to the attendance approvers. */
+  async runAutoCheckOut(organizationId: string): Promise<{
+    closed: number;
+    skippedNightShift: number;
+    skippedAlreadyPending: number;
+    failed: number;
+  }> {
+    const payload = await apiRequest(
+      `${orgPath(organizationId, '/attendance')}/auto-check-out/run`,
+      { method: 'POST', body: {} },
+    );
+    const outcome = payload as Partial<Record<string, number>>;
+    return {
+      closed: outcome.closed ?? 0,
+      skippedNightShift: outcome.skippedNightShift ?? 0,
+      skippedAlreadyPending: outcome.skippedAlreadyPending ?? 0,
+      failed: outcome.failed ?? 0,
+    };
   },
 };

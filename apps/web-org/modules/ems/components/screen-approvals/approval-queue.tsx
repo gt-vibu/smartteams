@@ -1,7 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge, Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
+import {
+  Badge,
+  Button,
+  DatePicker,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Input,
+  Label,
+  Textarea,
+} from '@smarteam/ui';
 import type { ApprovalInboxItem, ApprovalInboxState } from '../../hooks/use-approval-inbox';
 import { HolidayReviewDialog } from './holiday-review-dialog';
 
@@ -20,13 +30,38 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
   } | null>(null);
   const [comment, setComment] = useState('');
   const [reviewing, setReviewing] = useState<ApprovalInboxItem | null>(null);
+  // The approver's own check-out time, where they are not accepting the one proposed.
+  const [checkOutDate, setCheckOutDate] = useState('');
+  const [checkOutTime, setCheckOutTime] = useState('');
+
+  const proposed =
+    deciding?.status === 'APPROVED' && deciding.item.proposedCheckOut
+      ? new Date(deciding.item.proposedCheckOut)
+      : null;
+  const replacement =
+    checkOutDate && checkOutTime ? new Date(`${checkOutDate}T${checkOutTime}:00`) : null;
+  const replacementInvalid = replacement !== null && Number.isNaN(replacement.getTime());
+
+  const openDecision = (item: ApprovalInboxItem, status: 'APPROVED' | 'REJECTED') => {
+    inbox.dismissError();
+    setDeciding({ item, status });
+    setCheckOutDate('');
+    setCheckOutTime('');
+  };
 
   const confirm = async () => {
-    if (!deciding) return;
-    const ok = await inbox.decide(deciding.item, deciding.status, comment.trim());
+    if (!deciding || replacementInvalid) return;
+    const ok = await inbox.decide(
+      deciding.item,
+      deciding.status,
+      comment.trim(),
+      replacement && deciding.status === 'APPROVED' ? replacement.toISOString() : undefined,
+    );
     // A refused or failed decision keeps the dialog open with the error beside it.
     if (ok) {
       setComment('');
+      setCheckOutDate('');
+      setCheckOutTime('');
       setDeciding(null);
     }
   };
@@ -111,7 +146,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
                   <>
                     <Button
                       disabled={inbox.saving}
-                      onClick={() => setDeciding({ item, status: 'REJECTED' })}
+                      onClick={() => openDecision(item, 'REJECTED')}
                       size="sm"
                       type="button"
                       variant="outline"
@@ -120,7 +155,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
                     </Button>
                     <Button
                       disabled={inbox.saving}
-                      onClick={() => setDeciding({ item, status: 'APPROVED' })}
+                      onClick={() => openDecision(item, 'APPROVED')}
                       size="sm"
                       type="button"
                     >
@@ -146,6 +181,55 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
             The comment is recorded against the decision and shown to the requester.
           </p>
           <div className="mt-4 space-y-3">
+            {proposed && (
+              <div className="rounded-md border border-border bg-muted/30 px-3 py-2.5">
+                <p className="text-[11px] text-foreground">
+                  {deciding?.item.autoClosed
+                    ? 'This day was closed automatically because no check-out was recorded.'
+                    : 'This request adds the day’s check-out.'}{' '}
+                  Approving records{' '}
+                  <span className="font-mono font-semibold">
+                    {proposed.toLocaleString(undefined, {
+                      day: 'numeric',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>{' '}
+                  as the check-out. Enter the real time instead if you know it.
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="mb-1 block text-[11px]" htmlFor="decision-check-out-date">
+                      Date
+                    </Label>
+                    <DatePicker
+                      disabled={inbox.saving}
+                      id="decision-check-out-date"
+                      onChange={setCheckOutDate}
+                      value={checkOutDate}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-1 block text-[11px]" htmlFor="decision-check-out-time">
+                      Time
+                    </Label>
+                    <Input
+                      disabled={inbox.saving}
+                      id="decision-check-out-time"
+                      onChange={(event) => setCheckOutTime(event.target.value)}
+                      type="time"
+                      value={checkOutTime}
+                    />
+                  </div>
+                </div>
+                {(checkOutDate || checkOutTime) && !replacement && (
+                  <p className="mt-1.5 text-[11px] text-muted-foreground">
+                    Enter both a date and a time to replace the proposed check-out.
+                  </p>
+                )}
+              </div>
+            )}
             <Label className="block" htmlFor="decision-comment">
               Comment
             </Label>

@@ -14,7 +14,8 @@ import type { Prisma } from '../../generated/prisma/client';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { assertMayActForEmployee } from '../employees/employee-scope';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
-import { assertApprover, assertResolvableApprovers } from '../approvals/approval-authorization';
+import { assertApprover } from '../approvals/approval-authorization';
+import { createAttendanceCorrection } from './attendance-correction-create';
 import { markPayrollStale } from '../payroll/payroll-staleness';
 import {
   attendanceTotals,
@@ -27,13 +28,6 @@ import {
   MISSING_CHECK_OUT_KEY,
   type PunchLike,
 } from './attendance-missing-checkout';
-
-/** The fields of an attendance record a correction is routed and snapshotted from. */
-type CorrectableRecord = {
-  id: string;
-  branchId: string | null;
-  employee: { userId: string | null; manager: { userId: string | null } | null };
-};
 
 /** The employee's first punch after this day's open check-in, on any day. */
 async function nextPunchAfterOpenCheckIn(
@@ -93,8 +87,9 @@ export class AttendanceCorrectionsService {
       // request. Without this an employee holding `attendance.corrections.write` — which every
       // seeded employee holds — could raise a correction against a colleague's day.
       await assertMayActForEmployee(tx, context, record.employeeId, 'attendance.read.all');
-      return this.createCorrection(
+      return createAttendanceCorrection(
         tx,
+        this.audit,
         context,
         record,
         input.reason,
@@ -146,18 +141,29 @@ export class AttendanceCorrectionsService {
       });
       if (pending.some((correction) => missingCheckOutFrom(correction.afterSnapshot)))
         throw new ConflictError('A missing check-out for this day is already awaiting a decision');
-      return this.createCorrection(tx, context, record, input.reason, {
+      return createAttendanceCorrection(tx, this.audit, context, record, input.reason, {
         ...(jsonSnapshot(record) as Record<string, unknown>),
         [MISSING_CHECK_OUT_KEY]: { occurredAt: checkOut.toISOString() },
       });
     });
   }
 
+  /**
+   * Decides a correction.
+   *
+   * `checkOutAt` lets the approver accept a proposed check-out at a different time — the day an
+   * automatic close proposed midnight for and the employee actually left at 18:07. It is native
+   * only: a federation client never sends it, and a correction a federation client raised does not
+   * accept it, so that path decides exactly as it always has. The replacement is re-checked
+   * against the day's punches like any other, and the correction records the time that was
+   * actually applied.
+   */
   async decideCorrection(
     context: DomainContext,
     correctionId: string,
     status: 'APPROVED' | 'REJECTED',
     comment: string,
+    checkOutAt?: string,
   ) {
     requirePermission(context, 'attendance.corrections.decide');
     requireReason(
@@ -204,6 +210,11 @@ export class AttendanceCorrectionsService {
         correction.attendanceRecord.branchId ?? context.branchId,
         correction.attendanceRecord.employee.userId,
       );
+      const replacedSnapshot = checkOutAt
+        ? replaceMissingCheckOut(correction, checkOutAt)
+        : undefined;
+      if (replacedSnapshot) correction.afterSnapshot = replacedSnapshot as Prisma.JsonValue;
+
       const stepNumber = pendingStep.stepNumber;
       const hasMoreSteps = Boolean(
         correction.approvalPolicy?.steps.some((step) => step.stepNumber > stepNumber),
@@ -213,6 +224,7 @@ export class AttendanceCorrectionsService {
         where: { id: correction.id },
         data: {
           status: finalStatus,
+          ...(replacedSnapshot ? { afterSnapshot: jsonSnapshot(replacedSnapshot) } : {}),
           approvals: {
             create: {
               organizationId: context.organizationId,
@@ -295,73 +307,6 @@ export class AttendanceCorrectionsService {
   }
 
   /**
-   * Routes a correction through the organization's approval policy and records it.
-   *
-   * Shared by the general correction and the missing-check-out one, so both resolve the same
-   * policy and approvers and write the same audit event.
-   */
-  private async createCorrection(
-    tx: Prisma.TransactionClient,
-    context: DomainContext,
-    record: CorrectableRecord,
-    reason: string,
-    afterSnapshot: unknown,
-  ) {
-    const activePolicies = await tx.approvalPolicy.findMany({
-      where: {
-        organizationId: context.organizationId,
-        domain: 'ATTENDANCE_CORRECTION',
-        isActive: true,
-      },
-      include: { steps: { orderBy: { stepNumber: 'asc' } } },
-      orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
-    });
-    const policy =
-      activePolicies.find((candidate) => candidate.isDefault) ??
-      (activePolicies.length === 1 ? activePolicies[0] : undefined);
-    if (!policy)
-      throw new ConflictError(
-        'Configure a default attendance correction approval policy before submitting corrections',
-      );
-    const correctionBranchId = record.branchId ?? context.branchId;
-    if (!correctionBranchId)
-      throw new ConflictError('An outlet is required to resolve attendance approvers');
-    await assertResolvableApprovers(
-      tx,
-      context.organizationId,
-      correctionBranchId,
-      record.employee.manager?.userId,
-      record.employee.userId,
-      policy.steps,
-    );
-    const correction = await tx.attendanceCorrection.create({
-      data: {
-        organizationId: context.organizationId,
-        attendanceRecordId: record.id,
-        approvalPolicyId: policy.id,
-        reason,
-        beforeSnapshot: jsonSnapshot(record),
-        afterSnapshot: jsonSnapshot(afterSnapshot),
-        status: 'PENDING',
-        requestedByUserId: context.actor.userId,
-        requestedByClientId: context.actor.clientId,
-      },
-    });
-    await this.audit.record(
-      context,
-      {
-        entityType: 'ATTENDANCE_CORRECTION',
-        entityId: correction.id,
-        action: 'ATTENDANCE_CORRECTION_REQUESTED',
-        afterState: jsonSnapshot(correction),
-        reason,
-      },
-      tx,
-    );
-    return correction;
-  }
-
-  /**
    * Adds the check-out a missing-check-out correction asks for, on its final approval.
    *
    * Returns the day's punches including the new one, or undefined when this is not such a
@@ -421,4 +366,28 @@ export class AttendanceCorrectionsService {
     });
     return [...punches, { punchType: AttendancePunchType.OUT, occurredAt: checkOut }];
   }
+}
+
+/**
+ * The correction's snapshot with the approver's check-out time in place of the proposed one.
+ *
+ * Only for a correction that adds a check-out, and only for one raised inside the application:
+ * a federation client's correction is decided exactly as before.
+ */
+function replaceMissingCheckOut(
+  correction: { requestedByClientId: string | null; afterSnapshot: unknown },
+  checkOutAt: string,
+): Record<string, unknown> {
+  if (correction.requestedByClientId)
+    throw new ConflictError('This correction cannot have its check-out time replaced');
+  const proposed = missingCheckOutFrom(correction.afterSnapshot);
+  if (!proposed) throw new ConflictError('This correction does not add a check-out');
+  const replacement = new Date(checkOutAt);
+  if (Number.isNaN(replacement.getTime())) throw new ConflictError('The check-out time is invalid');
+  const snapshot = correction.afterSnapshot as Record<string, unknown>;
+  const existing = snapshot[MISSING_CHECK_OUT_KEY] as Record<string, unknown>;
+  return {
+    ...snapshot,
+    [MISSING_CHECK_OUT_KEY]: { ...existing, occurredAt: replacement.toISOString() },
+  };
 }

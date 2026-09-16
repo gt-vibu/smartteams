@@ -8341,6 +8341,8 @@ export const OrganizationSettingsScalarFieldEnum = {
   biometricVerificationMode: 'biometricVerificationMode',
   biometricOwnerSource: 'biometricOwnerSource',
   biometricOwnerClientId: 'biometricOwnerClientId',
+  autoCheckOutMode: 'autoCheckOutMode',
+  autoCheckOutAt: 'autoCheckOutAt',
   metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -9607,6 +9609,20 @@ export type EnumBiometricVerificationModeFieldRefInput<$PrismaModel> = FieldRefI
  * Reference to a field of type 'BiometricVerificationMode[]'
  */
 export type ListEnumBiometricVerificationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BiometricVerificationMode[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AutoCheckOutMode'
+ */
+export type EnumAutoCheckOutModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AutoCheckOutMode'>
+    
+
+
+/**
+ * Reference to a field of type 'AutoCheckOutMode[]'
+ */
+export type ListEnumAutoCheckOutModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AutoCheckOutMode[]'>
     
 
 

@@ -10,6 +10,7 @@ import { AttendanceCorrectionsService } from './attendance-corrections.service';
 import { AttendanceHolidayReviewService } from './attendance-holiday-review.service';
 import { AttendancePreferencesService } from './attendance-preferences.service';
 import { AttendancePunchService, type PunchInput } from './attendance-punch.service';
+import { AttendanceAutoCheckOutService } from './attendance-auto-checkout.service';
 
 export type { PunchInput };
 
@@ -37,17 +38,25 @@ export class AttendanceService {
   private readonly punches: AttendancePunchService;
   private readonly holidayReviews: AttendanceHolidayReviewService;
 
+  private readonly autoCheckOut: AttendanceAutoCheckOutService;
+
   constructor(
     database: TenantDatabaseService,
     audit: AuditService,
     outbox: OutboxService,
     locations: AttendanceLocationService,
   ) {
+    this.autoCheckOut = new AttendanceAutoCheckOutService(database, audit);
     this.corrections = new AttendanceCorrectionsService(database, audit);
     this.correctionLists = new AttendanceCorrectionListsService(database);
     this.preferences = new AttendancePreferencesService(database, audit, locations);
     this.punches = new AttendancePunchService(database, audit, outbox, locations);
     this.holidayReviews = new AttendanceHolidayReviewService(database, audit, outbox);
+  }
+
+  /** Closes today's forgotten check-outs now; the scheduled sweep does the same unprompted. */
+  runAutoCheckOut(context: DomainContext) {
+    return this.autoCheckOut.runNow(context);
   }
 
   // --- punching and reading records ----------------------------------------------------------

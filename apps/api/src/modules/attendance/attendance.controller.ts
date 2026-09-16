@@ -192,8 +192,28 @@ export class AttendanceController {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.comment)
       .then((context) =>
-        this.attendance.decideCorrection(context, correctionId, body.status, body.comment),
+        this.attendance.decideCorrection(
+          context,
+          correctionId,
+          body.status,
+          body.comment,
+          body.checkOutAt,
+        ),
       );
+  }
+  /**
+   * Closes today's forgotten check-outs now, instead of waiting for the next sweep.
+   *
+   * Same result as the scheduled pass: each open day becomes a correction for the organization's
+   * attendance approvers to decide. Nothing is approved here.
+   */
+  @Post('auto-check-out/run') runAutoCheckOut(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.runAutoCheckOut(context));
   }
   @Post('preferences') preferences(
     @Param('organizationId') organizationId: string,

@@ -90,6 +90,15 @@ export class AttendanceDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
   @IsString() @MinLength(2) @MaxLength(500) comment!: string;
   @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
+  /**
+   * Approve with a different check-out time than the one requested — the real time the employee
+   * left, where an automatic close proposed the end of the day. Native only; the same instant
+   * rules as the request itself.
+   */
+  @IsOptional()
+  @IsISO8601({ strict: true })
+  @Matches(/(Z|[+-]\d{2}:\d{2})$/, { message: 'checkOutAt must include a time zone offset' })
+  checkOutAt?: string;
 }
 
 /** The date range of the optional-holiday conflicts to list. */
@@ -128,6 +137,14 @@ export class AttendancePreferencesDto {
   @IsOptional() @IsEnum(['DISABLED', 'OPTIONAL', 'REQUIRED']) biometricVerificationMode?:
     'DISABLED' | 'OPTIONAL' | 'REQUIRED';
   @IsOptional() @IsEnum(['SINGLE', 'MULTIPLE']) attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
+  /** Whether a day nobody checked out of is closed for review, and at what local time. */
+  @IsOptional() @IsEnum(['DISABLED', 'REVIEW_REQUIRED']) autoCheckOutMode?:
+    'DISABLED' | 'REVIEW_REQUIRED';
+  @IsOptional()
+  @Matches(/^([01]\d|2[0-3]):[0-5]\d$/, {
+    message: 'autoCheckOutAt must be HH:MM',
+  })
+  autoCheckOutAt?: string;
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional()
   @IsArray()

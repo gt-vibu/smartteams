@@ -108,6 +108,9 @@ export const attendancePreferencesSchema = z.object({
   attendanceSessionMode: z.enum(['SINGLE', 'MULTIPLE']).optional().default('SINGLE'),
   geofenceOwnerSource: z.string(),
   biometricOwnerSource: z.string(),
+  /** Whether a day with no check-out is closed for review, and the local time it closes at. */
+  autoCheckOutMode: z.enum(['DISABLED', 'REVIEW_REQUIRED']).nullable().optional(),
+  autoCheckOutAt: z.string().nullable().optional(),
 });
 
 export type AttendancePunch = z.infer<typeof attendancePunchSchema>;

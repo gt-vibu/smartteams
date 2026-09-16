@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AttendanceLocationService } from './attendance-location.service';
-import { GeofenceMode, BiometricVerificationMode } from '../../generated/prisma/enums';
+import {
+  AutoCheckOutMode,
+  GeofenceMode,
+  BiometricVerificationMode,
+} from '../../generated/prisma/enums';
 import { Prisma } from '../../generated/prisma/client';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
@@ -31,6 +35,9 @@ export class AttendancePreferencesService {
       biometricVerificationMode?: BiometricVerificationMode;
       attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
       workLocations?: WorkLocationInput[];
+      /** Organization-wide, so these are refused with a branch. */
+      autoCheckOutMode?: AutoCheckOutMode;
+      autoCheckOutAt?: string;
     },
   ) {
     requirePermission(context, 'attendance.preferences.write');
@@ -38,9 +45,16 @@ export class AttendancePreferencesService {
       input.geofenceMode === undefined &&
       input.biometricVerificationMode === undefined &&
       input.workLocations === undefined &&
-      input.attendanceSessionMode === undefined
+      input.attendanceSessionMode === undefined &&
+      input.autoCheckOutMode === undefined &&
+      input.autoCheckOutAt === undefined
     )
       throw new ConflictError('At least one attendance preference must be supplied');
+    if (
+      input.branchId &&
+      (input.autoCheckOutMode !== undefined || input.autoCheckOutAt !== undefined)
+    )
+      throw new ConflictError('Automatic check-out is set for the organization, not a branch');
     return this.database.run(context, async (tx) => {
       if (input.branchId) {
         const branch = await tx.branch.findFirst({
@@ -119,6 +133,8 @@ export class AttendancePreferencesService {
         data: {
           geofenceMode: input.geofenceMode,
           biometricVerificationMode: input.biometricVerificationMode,
+          autoCheckOutMode: input.autoCheckOutMode,
+          ...(input.autoCheckOutAt ? { autoCheckOutAt: timeOnly(input.autoCheckOutAt) } : {}),
           metadata: updatedMeta as Prisma.InputJsonValue,
         },
       });
@@ -164,6 +180,8 @@ export class AttendancePreferencesService {
           geofenceOwnerSource: true,
           biometricOwnerSource: true,
           metadata: true,
+          autoCheckOutMode: true,
+          autoCheckOutAt: true,
         },
       });
       return toPreferencesDto(settings);
@@ -176,4 +194,12 @@ export class AttendancePreferencesService {
    * (or the tenant wildcard) may read other employees, and federation grants keep the read breadth
    * their scope already carries.
    */
+}
+
+/** `23:59` as the time-only value Postgres stores, which Prisma reads back as a 1970 instant. */
+function timeOnly(value: string) {
+  const match = /^(\d{2}):(\d{2})$/.exec(value);
+  if (!match || Number(match[1]) > 23 || Number(match[2]) > 59)
+    throw new ConflictError('The automatic check-out time must be HH:MM');
+  return new Date(Date.UTC(1970, 0, 1, Number(match[1]), Number(match[2]), 0));
 }

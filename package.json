@@ -29,6 +29,7 @@
     "verify:auth": "node scripts/verify-auth.mjs",
     "verify:employees": "node scripts/verify-employees.mjs",
     "verify:teams": "node scripts/verify-teams-projects.mjs",
+    "verify:auto-checkout": "node scripts/verify-auto-checkout.mjs",
     "verify:attendance": "node scripts/verify-attendance.mjs",
     "verify:leave": "node scripts/verify-leave.mjs",
     "verify:payroll": "node scripts/verify-payroll.mjs",
