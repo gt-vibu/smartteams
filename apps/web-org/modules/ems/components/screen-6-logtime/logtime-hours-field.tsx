@@ -33,15 +33,13 @@ export function normalizeTimeInput(raw: string): string {
 
   // Handle decimal hours (e.g. 8.5 -> 08:30, 2.25 -> 02:15)
   if (clean.includes('.')) {
-    try {
-      const val = parseFloat(clean);
-      if (!Number.isNaN(val) && val <= 24.0) {
-        const h = Math.floor(val);
-        const m = Math.round((val - h) * 60);
-        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-      }
-    } catch {
-      // Fall through to standard parsing
+    const val = parseFloat(clean);
+    if (!Number.isNaN(val) && val <= 24.0) {
+      // Rounded as whole minutes first, so 8.999 is 09:00 rather than 08:60.
+      const total = Math.round(val * 60);
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
     }
   }
 
@@ -167,23 +165,23 @@ export function LogTimeHoursField({
     onTotalHoursChange(`${digits.slice(0, 2)}:${digits.slice(2, 4)}`);
   };
 
+  // The interval only counts. It depends on nothing but whether the timer runs, so a parent that
+  // passes a new callback each render does not restart it every second.
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isTimerRunning) {
-      interval = setInterval(() => {
-        setTimerSeconds((prev) => {
-          const next = prev + 1;
-          const hrs = Math.floor(next / 3600);
-          const mins = Math.floor((next % 3600) / 60);
-          onTotalHoursChange(`${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`);
-          return next;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isTimerRunning, onTotalHoursChange]);
+    if (!isTimerRunning) return;
+    const interval = setInterval(() => setTimerSeconds((prev) => prev + 1), 1000);
+    return () => clearInterval(interval);
+  }, [isTimerRunning]);
+
+  // The form's total follows the count, outside the state updater: updaters must stay pure, and
+  // React may call them twice.
+  useEffect(() => {
+    if (mode !== 'TIMER' || timerSeconds === 0) return;
+    const hrs = Math.floor(timerSeconds / 3600);
+    const mins = Math.floor((timerSeconds % 3600) / 60);
+    onTotalHoursChange(`${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`);
+    // Only a new count should write the total; the callback's identity is not a change.
+  }, [timerSeconds, mode]);
 
   const formatTimer = (sec: number) => {
     const h = Math.floor(sec / 3600);

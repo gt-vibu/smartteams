@@ -91,7 +91,7 @@ export function PayrollStructurePanel({
   const totalEarnings = salaryBreakdown.earnings.reduce((sum, item) => sum + item.amount, 0);
 
   const handleDownloadPdf = () => {
-    downloadSalaryStructurePdf({ profile, employee, orgName });
+    void downloadSalaryStructurePdf({ profile, employee, orgName });
   };
 
   const handleCsv = () => {

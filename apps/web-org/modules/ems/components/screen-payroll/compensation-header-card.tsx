@@ -31,7 +31,7 @@ export function CompensationHeaderCard({
   const { salaryBreakdown, compensation } = profile;
 
   const handleDownloadPdf = () => {
-    downloadSalaryStructurePdf({ profile, employee, orgName });
+    void downloadSalaryStructurePdf({ profile, employee, orgName });
   };
 
   const handleCsv = () => {

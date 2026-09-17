@@ -1,4 +1,3 @@
-import { jsPDF } from 'jspdf';
 import type { Employee, SalaryProfile } from '@smarteam/contracts';
 
 export interface SalaryStructureExportOptions {
@@ -17,21 +16,29 @@ const formatPdfMoney = (amount: number) => {
   })}`;
 };
 
+/** Printed wherever a value was never recorded, instead of a plausible-looking invented one. */
+const NOT_RECORDED = 'Not recorded';
+
 /**
  * Directly downloads the official Compensation & Salary Structure Annexure as a PDF file,
  * without any print preview or popup windows.
+ *
+ * jsPDF is loaded on first use, so the payroll screen does not carry a PDF library for people
+ * who never download one. Anything the record does not hold prints as "Not recorded": this is an
+ * official document, and a made-up company, branch or employee number on it would be a false one.
  */
-export function downloadSalaryStructurePdf(options: SalaryStructureExportOptions) {
-  const { orgName, organizationName, branchName = 'Corporate HQ', employee, profile } = options;
-  const resolvedOrgName = orgName || organizationName || 'SmarTeam Technologies';
+export async function downloadSalaryStructurePdf(options: SalaryStructureExportOptions) {
+  const { jsPDF } = await import('jspdf');
+  const { orgName, organizationName, branchName, employee, profile } = options;
+  const resolvedOrgName = orgName || organizationName || NOT_RECORDED;
   const { salaryBreakdown, compensation, employeePolicy } = profile;
 
   const employeeName = employee ? `${employee.firstName} ${employee.lastName}`.trim() : 'Employee';
-  const employeeId = employee?.employeeNumber || 'EMP';
+  const employeeId = employee?.employeeNumber || NOT_RECORDED;
   const email = employee?.workEmail || '—';
   const designation = employee?.employmentType
     ? employee.employmentType.replace(/_/g, ' ')
-    : 'Full Time Employee';
+    : NOT_RECORDED;
   const effectiveDate = compensation?.effectiveFrom
     ? compensation.effectiveFrom.slice(0, 10)
     : new Date().toISOString().slice(0, 10);
@@ -63,7 +70,7 @@ export function downloadSalaryStructurePdf(options: SalaryStructureExportOptions
   doc.text('COMPENSATION & SALARY STRUCTURE ANNEXURE', 40, y + 14);
   doc.text(`Date: ${generationDate}`, 555, y, { align: 'right' });
   doc.text(
-    `Branch: ${branchName} · Jurisdiction: ${employeePolicy?.statutoryJurisdiction || 'India'}`,
+    `Branch: ${branchName || NOT_RECORDED} · Jurisdiction: ${employeePolicy?.statutoryJurisdiction || NOT_RECORDED}`,
     555,
     y + 12,
     { align: 'right' },
@@ -262,14 +269,14 @@ export function downloadSalaryStructurePdf(options: SalaryStructureExportOptions
   doc.setFontSize(7);
   doc.setTextColor(148, 163, 184);
   doc.text(
-    `This is an official system-generated compensation schedule issued by ${resolvedOrgName}. Confidential · SmarTeam HRMS`,
+    `This is an official system-generated compensation schedule issued by ${resolvedOrgName}. Confidential · Smarteam`,
     40,
     y + 10,
   );
 
   // Direct download
   const safeEmployeeName = employeeName.replace(/\s+/g, '_');
-  doc.save(`Salary_Structure_${employeeId}_${safeEmployeeName}.pdf`);
+  doc.save(`Salary_Structure_${employee?.employeeNumber || 'employee'}_${safeEmployeeName}.pdf`);
 }
 
 /** Legacy alias for backwards compatibility */
@@ -283,7 +290,7 @@ export function downloadSalaryStructureCsv(options: SalaryStructureExportOptions
   const { salaryBreakdown } = profile;
 
   const employeeName = employee ? `${employee.firstName} ${employee.lastName}`.trim() : 'Employee';
-  const employeeId = employee?.employeeNumber || 'EMP';
+  const employeeId = employee?.employeeNumber || 'employee';
 
   const rows: string[][] = [
     ['Category', 'Component Code', 'Component Name', 'Monthly Amount (INR)', 'Annual Amount (INR)'],

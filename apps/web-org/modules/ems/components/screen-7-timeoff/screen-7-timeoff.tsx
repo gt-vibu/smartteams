@@ -66,14 +66,14 @@ export function Screen7TimeOff() {
 
         {/* Filter tabs: single instance rendered in its own dedicated division on mobile */}
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:py-2.5">
-          <div className="overflow-x-auto pb-2 sm:pb-0">
-            <SegmentedTabs
-              aria-label="Filter leave requests by status"
-              items={tabs}
-              onValueChange={setStatus}
-              value={status}
-            />
-          </div>
+          {/* SegmentedTabs scrolls on its own; a second scroller around it clips the underline. */}
+          <SegmentedTabs
+            aria-label="Filter leave requests by status"
+            className="pb-2 sm:pb-1"
+            items={tabs}
+            onValueChange={setStatus}
+            value={status}
+          />
           <div className="hidden sm:flex shrink-0 items-center gap-2">
             <Button
               disabled={!leave.canWrite || leave.hasNoEmployeeRecord}
