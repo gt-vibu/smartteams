@@ -122,4 +122,13 @@ describe('AuthCookieService reading and clearing', () => {
       '/v1/auth',
     );
   });
+
+  it('also clears legacy host-only cookies after a domain is configured', () => {
+    const { service, response, cleared } = setup({ SESSION_COOKIE_DOMAIN: 'blizbooks.com' });
+    service.clear(response);
+
+    expect(cleared).toHaveLength(6);
+    expect(cleared.filter((cookie) => cookie.options.domain === 'blizbooks.com')).toHaveLength(3);
+    expect(cleared.filter((cookie) => cookie.options.domain === undefined)).toHaveLength(3);
+  });
 });

@@ -6,13 +6,16 @@ import { CsrfMiddleware } from './csrf.middleware';
 const CSRF_COOKIE = 'smarteam_session_csrf';
 const TOKEN = 'a-csrf-token-value';
 
-function setup(options: { method?: string; cookie?: string; header?: string; auth?: string } = {}) {
+function setup(
+  options: { method?: string; path?: string; cookie?: string; header?: string; auth?: string } = {},
+) {
   const headers: Record<string, string> = {};
   if (options.cookie !== undefined) headers.cookie = options.cookie;
   if (options.auth) headers.authorization = options.auth;
 
   const request = {
     method: options.method ?? 'POST',
+    path: options.path ?? '/v1/auth/login',
     headers,
     get: (name: string) => (name === 'x-csrf-token' ? options.header : undefined),
   } as unknown as Request;
@@ -71,6 +74,15 @@ describe('CsrfMiddleware', () => {
 
   it('allows unauthenticated mutations such as login, which carry no session cookie', () => {
     const { middleware, request, response, next } = setup({ cookie: 'other=value' });
+    middleware.use(request, response, next);
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('allows logout through with a stale CSRF cookie so the session can be cleared', () => {
+    const { middleware, request, response, next } = setup({
+      path: '/v1/auth/logout',
+      cookie: `${CSRF_COOKIE}=${TOKEN}`,
+    });
     middleware.use(request, response, next);
     expect(next).toHaveBeenCalled();
   });
