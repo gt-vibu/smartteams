@@ -1,0 +1,4 @@
+# Prettier reads the ignore file from the directory it runs in; running it here must not
+# reformat the generated Prisma client (it did, rewriting ~98 files in one commit).
+src/generated
+dist

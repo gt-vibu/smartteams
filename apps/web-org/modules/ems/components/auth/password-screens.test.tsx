@@ -57,27 +57,19 @@ describe('the invitation link', () => {
     expect(screen.getByDisplayValue('ada@acme.test')).toBeInTheDocument();
   });
 
-  it('opens the sign-in screen with email and temporary password pre-filled, clears the hash, and allows sign in', async () => {
-    const onLogin = vi.fn().mockResolvedValue({ status: 'AUTHENTICATED' });
+  it('never takes an email or password from the link', async () => {
+    repository.previewSetup.mockResolvedValue({ email: 'ada@acme.test', displayName: 'Ada' });
     window.history.replaceState(
       null,
       '',
-      `/#setup=${TOKEN}&email=ada%40acme.test&temp=ST!tempPass123`,
+      `/#setup=${TOKEN}&email=eve%40evil.test&temp=ST!leaked9aA`,
     );
-
-    render(<SignedOutScreens onLogin={onLogin} />);
+    render(<SignedOutScreens onLogin={vi.fn()} />);
+    // The address shown is the one the token belongs to, read from the server.
+    expect(await screen.findByDisplayValue('ada@acme.test')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue('eve@evil.test')).not.toBeInTheDocument();
+    expect(screen.queryByDisplayValue('ST!leaked9aA')).not.toBeInTheDocument();
     expect(window.location.hash).toBe('');
-    expect(
-      screen.getByText(
-        'Your temporary password is pre-filled. Sign in to choose your permanent password.',
-      ),
-    ).toBeInTheDocument();
-    expect(screen.getByDisplayValue('ada@acme.test')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('ST!tempPass123')).toBeInTheDocument();
-
-    const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Sign In' }));
-    expect(onLogin).toHaveBeenCalledWith('ada@acme.test', 'ST!tempPass123', undefined);
   });
 
   it('says plainly when a link is spent', async () => {

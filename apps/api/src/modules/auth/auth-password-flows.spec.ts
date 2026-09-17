@@ -173,7 +173,7 @@ describe('invitation link', () => {
     const message = (sent.send.mock.calls[0] as [{ text: string }])[0];
     // The link is in the fragment and carries the token, never the password.
     expect(message.text).toContain(`https://app.acme.test/#setup=${'x'.repeat(43)}`);
-    expect(message.text).not.toMatch(/#setup=ST!/);
+    expect(message.text).not.toMatch(/[&?](temp|email)=/);
   });
 
   it('refuses a link that was already used', async () => {

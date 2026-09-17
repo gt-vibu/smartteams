@@ -22,29 +22,19 @@ export function takeSignInPassword(): string | undefined {
   return value;
 }
 
-type InvitationParams = {
-  setupToken?: string;
-  email?: string;
-  tempPassword?: string;
-};
-
-/** Reads and removes the invitation parameters from the address bar, so they are not left in history. */
-function takeInvitationParams(): InvitationParams | null {
+/**
+ * Reads the invitation token from the address bar and removes it, so it is not left in history.
+ *
+ * Only the one-time token travels in the link — never the email or the temporary password. The
+ * token expires and works once; a password in a link keeps working until it is changed, and email
+ * security scanners routinely record the links they inspect.
+ */
+function takeSetupToken(): string | null {
   if (typeof window === 'undefined') return null;
-  const hash = window.location.hash;
-  if (!hash || hash.length <= 1) return null;
-
-  const raw = hash.startsWith('#') ? hash.slice(1) : hash;
-  const params = new URLSearchParams(raw);
-
-  const setupToken = params.get('setup') ?? undefined;
-  const email = params.get('email') ?? undefined;
-  const tempPassword = params.get('temp') ?? undefined;
-
-  if (!setupToken && !email && !tempPassword) return null;
-
+  const token = new URLSearchParams(window.location.hash.replace(/^#/, '')).get('setup');
+  if (!token || !/^[A-Za-z0-9_-]{32,128}$/.test(token)) return null;
   window.history.replaceState(null, '', window.location.pathname + window.location.search);
-  return { setupToken, email, tempPassword };
+  return token;
 }
 
 /**
@@ -59,30 +49,18 @@ export function SignedOutScreens({
   const [view, setView] = useState<View>('login');
   const [setupToken, setSetupToken] = useState<string | null>(null);
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
-    const params = takeInvitationParams();
-    if (!params) return;
-
-    if (params.email) setEmail(params.email);
-    if (params.tempPassword) {
-      setPassword(params.tempPassword);
-      setNotice(
-        'Your temporary password is pre-filled. Sign in to choose your permanent password.',
-      );
-      setView('login');
-    } else if (params.setupToken) {
-      setSetupToken(params.setupToken);
-      setView('setup');
-    }
+    const token = takeSetupToken();
+    if (!token) return;
+    setSetupToken(token);
+    setView('setup');
   }, []);
 
   const backToSignIn = (message = '', address = email) => {
     setNotice(message);
     setEmail(address);
-    setPassword('');
     setView('login');
   };
 
@@ -108,15 +86,13 @@ export function SignedOutScreens({
 
   return (
     <LoginScreen
-      // Remounted with a new address or password, so the form starts from it rather than a stale value.
-      key={`${email}|${password}|${notice}`}
+      // Remounted with a new address, so the form starts from it rather than a stale value.
+      key={`${email}|${notice}`}
       initialEmail={email}
-      initialPassword={password}
       notice={notice}
       onActivate={() => setView('activate')}
       onForgotPassword={(address) => {
         setEmail(address);
-        setPassword('');
         setNotice('');
         setView('forgot');
       }}

@@ -18,8 +18,6 @@ interface LoginScreenProps {
   onForgotPassword: (email: string) => void;
   /** An address to start from — the one a password was just set or reset for. */
   initialEmail?: string;
-  /** A temporary password from an invitation link to start from. */
-  initialPassword?: string;
   /** A confirmation to show above the form, such as "Your password was changed". */
   notice?: string;
 }
@@ -36,11 +34,10 @@ export function LoginScreen({
   onLogin,
   onForgotPassword,
   initialEmail = '',
-  initialPassword = '',
   notice,
 }: LoginScreenProps) {
   const [email, setEmail] = useState(initialEmail);
-  const [password, setPassword] = useState(initialPassword);
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);

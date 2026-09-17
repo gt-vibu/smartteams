@@ -76,7 +76,8 @@ export class PasswordInvitationService {
       displayName: input.displayName,
       organizationName: input.organizationName,
       temporaryPassword: input.temporaryPassword,
-      setupUrl: `${base.replace(/\/+$/, '')}/#setup=${token}&email=${encodeURIComponent(input.email)}&temp=${encodeURIComponent(input.temporaryPassword)}`,
+      // Only the one-time token: never the address or the temporary password.
+      setupUrl: `${base.replace(/\/+$/, '')}/#setup=${token}`,
       expiresInHours: SETUP_LINK_TTL_HOURS,
     });
     return {
