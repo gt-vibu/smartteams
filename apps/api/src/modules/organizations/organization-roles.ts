@@ -159,14 +159,56 @@ export async function seedLeaveDefaults(
     });
   }
 
-  // Routed to the administrator role rather than to a person: the tenant's first administrator
-  // may later be replaced, and a policy pointing at a departed user approves nothing.
+  await createAdminApprovalPolicy(tx, organizationId, 'LEAVE', approverRoleId);
+}
+
+/**
+ * The default approvers for everything else an employee submits: timesheets, and attendance
+ * corrections — which also carry missed check-outs, check-ins on an optional holiday and days the
+ * automatic close sent for review.
+ *
+ * A tenant created without these could not submit a timesheet or correct a day at all: each is
+ * refused until an approval policy exists, and nothing in the product said so. Like leave, they
+ * go to the administrator until the organization chooses someone else on the Approvals screen,
+ * where these are ordinary policies to edit or replace.
+ */
+export async function seedApprovalDefaults(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  approverRoleId: string,
+): Promise<void> {
+  await createAdminApprovalPolicy(tx, organizationId, 'TIMESHEET', approverRoleId);
+  await createAdminApprovalPolicy(tx, organizationId, 'ATTENDANCE_CORRECTION', approverRoleId);
+}
+
+const DEFAULT_POLICIES = {
+  LEAVE: { code: 'LEAVE_DEFAULT', name: 'Leave approval' },
+  TIMESHEET: { code: 'TIMESHEET_DEFAULT', name: 'Timesheet approval' },
+  ATTENDANCE_CORRECTION: {
+    code: 'ATTENDANCE_CORRECTION_DEFAULT',
+    name: 'Attendance correction approval',
+  },
+} as const;
+
+/**
+ * A single-step policy approved by whoever holds the administrator role.
+ *
+ * Routed to the role rather than to a person: the tenant's first administrator may later be
+ * replaced, and a policy pointing at a departed user approves nothing. An administrator's own
+ * request goes to another administrator; the role step never lets anyone approve themselves.
+ */
+async function createAdminApprovalPolicy(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  domain: keyof typeof DEFAULT_POLICIES,
+  approverRoleId: string,
+) {
   const policy = await tx.approvalPolicy.create({
     data: {
       organizationId,
-      domain: 'LEAVE',
-      code: 'LEAVE_DEFAULT',
-      name: 'Leave approval',
+      domain,
+      code: DEFAULT_POLICIES[domain].code,
+      name: DEFAULT_POLICIES[domain].name,
       isDefault: true,
       isActive: true,
     },

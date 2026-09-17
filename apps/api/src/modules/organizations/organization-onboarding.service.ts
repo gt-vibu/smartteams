@@ -5,7 +5,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { PasswordService } from '../auth/auth.passwords';
 import type { AuditContext } from '../audit/audit.service';
-import { seedLeaveDefaults, seedStandardRoles } from './organization-roles';
+import { seedApprovalDefaults, seedLeaveDefaults, seedStandardRoles } from './organization-roles';
 import { branchDto, toDto } from './organization-shared';
 
 /**
@@ -225,6 +225,7 @@ export class OrganizationOnboardingService {
       // Leave types, their branch assignments and a default approval policy — without these a
       // new tenant's Leave screen is a dead end no matter which path created the tenant.
       await seedLeaveDefaults(tx, organization.id, branch.id, role.id);
+      await seedApprovalDefaults(tx, organization.id, role.id);
 
       // 8. Record audit log
       await this.audit.record(
