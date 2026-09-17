@@ -7,6 +7,7 @@ import { useAccessControl } from '../../hooks/use-access-control';
 import { Unavailable } from './org-profile-panel';
 import { AccessAddMemberDialog } from './access-add-member-dialog';
 import { AccessCreateRoleDialog } from './access-create-role-dialog';
+import { AccessEditRoleDialog } from './access-edit-role-dialog';
 import { AccessManageDrawer } from './access-manage-drawer';
 import { AccessSelfEnrollDialog } from './access-self-enroll-dialog';
 import { useSession } from '../../hooks/auth-context';
@@ -25,6 +26,8 @@ export function OrgAccessPanel() {
   const [managing, setManaging] = useState<OrganizationMember | null>(null);
   const [addingMember, setAddingMember] = useState(false);
   const [creatingRole, setCreatingRole] = useState(false);
+  // Held by id, so a reloaded role list shows the dialog the role as the server now has it.
+  const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
   const [enrollingSelf, setEnrollingSelf] = useState(false);
   const { persona } = useSession();
 
@@ -136,7 +139,14 @@ export function OrgAccessPanel() {
           onManage={setManaging}
         />
       ) : (
-        <RolesTable canRead={access.canReadRoles} roles={access.roles} />
+        <RolesTable
+          canManage={access.canManageAccess}
+          canRead={access.canReadRoles}
+          onEdit={(role) => {
+            setEditingRoleId(role.id);
+          }}
+          roles={access.roles}
+        />
       )}
 
       <AccessManageDrawer
@@ -163,6 +173,14 @@ export function OrgAccessPanel() {
         isOpen={enrollingSelf}
         onClose={() => setEnrollingSelf(false)}
         onEnroll={access.enrollSelfAsEmployee}
+        saveError={access.saveError}
+        saving={access.saving}
+      />
+      <AccessEditRoleDialog
+        onClose={() => setEditingRoleId(null)}
+        onSave={access.updateRolePermissions}
+        ownPermissions={access.ownPermissions}
+        role={access.roles.find((role) => role.id === editingRoleId) ?? null}
         saveError={access.saveError}
         saving={access.saving}
       />
@@ -262,7 +280,17 @@ function PeopleTable({
   );
 }
 
-function RolesTable({ canRead, roles }: { canRead: boolean; roles: RoleWithPermissions[] }) {
+function RolesTable({
+  canRead,
+  canManage,
+  onEdit,
+  roles,
+}: {
+  canRead: boolean;
+  canManage: boolean;
+  onEdit: (role: RoleWithPermissions) => void;
+  roles: RoleWithPermissions[];
+}) {
   if (!canRead)
     return <Unavailable detail="You do not have permission to view roles." title="Not available" />;
   if (roles.length === 0)
@@ -287,9 +315,20 @@ function RolesTable({ canRead, roles }: { canRead: boolean; roles: RoleWithPermi
           {role.description && (
             <p className="mt-1 text-[11px] text-muted-foreground">{role.description}</p>
           )}
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            {role.permissions.length} permission{role.permissions.length === 1 ? '' : 's'}
-          </p>
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[11px] text-muted-foreground">
+              {role.code === 'ORG_ADMIN'
+                ? 'Full access to everything'
+                : `${role.permissions.length} permission${role.permissions.length === 1 ? '' : 's'}`}
+            </p>
+            {/* The administrator role holds everything and is the way back from any mistake, so
+                it is never edited; the API refuses it too. */}
+            {canManage && role.code !== 'ORG_ADMIN' && (
+              <Button onClick={() => onEdit(role)} size="sm" type="button" variant="outline">
+                Edit permissions
+              </Button>
+            )}
+          </div>
         </section>
       ))}
     </div>

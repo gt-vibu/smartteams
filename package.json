@@ -47,6 +47,7 @@
     "verify:ownership-and-approvals": "node scripts/verify-ownership-and-approvals.mjs",
     "verify:missing-checkout": "node scripts/verify-missing-checkout.mjs",
     "verify:holiday-checkin": "node scripts/verify-holiday-checkin.mjs",
+    "verify:role-permissions": "node scripts/verify-role-permissions.mjs",
     "verify:shift-assignment": "node scripts/verify-shift-assignment.mjs",
     "perf:payroll": "node scripts/perf-payroll.mjs",
     "db:backup": "node scripts/backup-database.mjs",

@@ -56,6 +56,19 @@ export function useAccessControl() {
     [organizationId, run],
   );
 
+  /**
+   * Changes what a role may do. The signed-in user's own session is re-read afterwards: if they
+   * hold the role, what the app shows them follows the change without signing out.
+   */
+  const updateRolePermissions = useCallback(
+    (roleId: string, input: { permissionKeys: string[]; reason: string }) =>
+      run(async () => {
+        await accessControlRepository.updateRolePermissions(organizationId!, roleId, input);
+        await refreshSession();
+      }, 'The role could not be updated.'),
+    [organizationId, refreshSession, run],
+  );
+
   const assignRole = useCallback(
     (userId: string, roleId: string) =>
       run(
@@ -122,6 +135,9 @@ export function useAccessControl() {
     saving,
     saveError,
     createRole,
+    updateRolePermissions,
+    /** The signed-in user's own permissions: what they may grant or take away. */
+    ownPermissions: permissions,
     assignRole,
     revokeRole,
     addMember,

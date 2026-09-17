@@ -131,6 +131,10 @@ export function AccessManageDrawer({
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
               Effective permissions
             </h3>
+            <p className="mb-2 text-[11px] text-muted-foreground">
+              What these roles allow together. To change what a role allows, use Edit permissions on
+              the Roles tab.
+            </p>
             {effectivePermissions.size === 0 ? (
               <p className="text-[11px] text-muted-foreground">No roles selected.</p>
             ) : (
