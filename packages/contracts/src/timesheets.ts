@@ -69,6 +69,24 @@ function parseList<T>(schema: z.ZodType<T>, payload: unknown): T[] | null {
 export const parseTimesheetList = (payload: unknown) => parseList(timesheetSchema, payload);
 export const parseJobTypeList = (payload: unknown) => parseList(jobTypeSchema, payload);
 
+/**
+ * What adding a time entry answers: the entry, and the sheet it landed on.
+ *
+ * The server has always replied `{ timesheet, entry }`, with the sheet as its stored row rather than
+ * the list shape — so reading the reply as a bare timesheet failed every time, and Log Time said
+ * "the response was not valid" about an entry it had in fact saved. Only the sheet's id is read.
+ */
+export const timesheetEntryResultSchema = z.object({
+  timesheet: z.object({ id: z.string().uuid() }).passthrough(),
+  entry: timesheetEntrySchema,
+});
+export type TimesheetEntryResult = z.infer<typeof timesheetEntryResultSchema>;
+
+export function parseTimesheetEntryResult(payload: unknown): TimesheetEntryResult | null {
+  const result = timesheetEntryResultSchema.safeParse(payload);
+  return result.success ? result.data : null;
+}
+
 export function parseTimesheet(payload: unknown): Timesheet | null {
   const result = timesheetSchema.safeParse(payload);
   return result.success ? result.data : null;

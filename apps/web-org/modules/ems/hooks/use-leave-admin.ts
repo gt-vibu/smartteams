@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   hasPermission,
   type Employee,
@@ -29,6 +29,14 @@ type Loaded = {
  * The queue and inbox come from service methods that were already written and reachable over
  * federation, but had no native HTTP route until this module was reconciled.
  */
+/** The keys each leave admin control waits on; shared by the hook and the panels. */
+export const leaveAdminBusyKey = {
+  assign: (code: string) => `assign:${code}`,
+  createType: 'create-type',
+  decide: (requestId: string) => `decide:${requestId}`,
+  adjust: (employeeId: string, leaveTypeId: string) => `adjust:${employeeId}:${leaveTypeId}`,
+} as const;
+
 export function useLeaveAdmin() {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
@@ -62,31 +70,59 @@ export function useLeaveAdmin() {
 
   const { saving, saveError, run } = useMutationRunner(resource.refetch);
 
+  /**
+   * Which actions are in flight, by key.
+   *
+   * One shared `saving` flag disabled every control on the screen — assigning one leave type greyed
+   * out every other type, every balance and every request while the lists reloaded, which read as
+   * the whole page refreshing. Each control now waits only on its own action.
+   */
+  const [pending, setPending] = useState<ReadonlySet<string>>(() => new Set());
+  const track = useCallback(async (key: string, operation: () => Promise<boolean>) => {
+    setPending((current) => new Set(current).add(key));
+    try {
+      return await operation();
+    } finally {
+      setPending((current) => {
+        const next = new Set(current);
+        next.delete(key);
+        return next;
+      });
+    }
+  }, []);
+  const isBusy = useCallback((key: string) => pending.has(key), [pending]);
+
   const decide = useCallback(
     (requestId: string, status: 'APPROVED' | 'REJECTED', comment: string) =>
-      run(
-        () => leaveRepository.decide(organizationId!, requestId, status, comment),
-        'The decision could not be recorded.',
+      track(leaveAdminBusyKey.decide(requestId), () =>
+        run(
+          () => leaveRepository.decide(organizationId!, requestId, status, comment),
+          'The decision could not be recorded.',
+        ),
       ),
-    [organizationId, run],
+    [organizationId, run, track],
   );
 
   const createType = useCallback(
     (input: LeaveTypeInput) =>
-      run(
-        () => leaveRepository.createType(organizationId!, input),
-        'The leave type could not be saved.',
+      track(leaveAdminBusyKey.createType, () =>
+        run(
+          () => leaveRepository.createType(organizationId!, input),
+          'The leave type could not be saved.',
+        ),
       ),
-    [organizationId, run],
+    [organizationId, run, track],
   );
 
   const assignType = useCallback(
     (code: string, branchId: string) =>
-      run(
-        () => leaveRepository.assignTypeToBranch(organizationId!, code, branchId),
-        'The leave type could not be assigned.',
+      track(leaveAdminBusyKey.assign(code), () =>
+        run(
+          () => leaveRepository.assignTypeToBranch(organizationId!, code, branchId),
+          'The leave type could not be assigned.',
+        ),
       ),
-    [organizationId, run],
+    [organizationId, run, track],
   );
 
   const adjustBalance = useCallback(
@@ -98,11 +134,13 @@ export function useLeaveAdmin() {
       periodStart: string;
       periodEnd: string;
     }) =>
-      run(
-        () => leaveRepository.adjustBalance(organizationId!, input),
-        'The balance could not be adjusted.',
+      track(leaveAdminBusyKey.adjust(input.employeeId, input.leaveTypeId), () =>
+        run(
+          () => leaveRepository.adjustBalance(organizationId!, input),
+          'The balance could not be adjusted.',
+        ),
       ),
-    [organizationId, run],
+    [organizationId, run, track],
   );
 
   return {
@@ -117,6 +155,7 @@ export function useLeaveAdmin() {
     forbidden: resource.forbidden,
     refetch: resource.refetch,
     saving,
+    isBusy,
     saveError,
     decide,
     createType,

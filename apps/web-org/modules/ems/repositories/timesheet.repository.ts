@@ -1,11 +1,12 @@
 import {
   parseJobTypeList,
   parseProject,
-  parseTimesheet,
+  parseTimesheetEntryResult,
   parseTimesheetList,
   type JobType,
   type Project,
   type Timesheet,
+  type TimesheetEntryResult,
 } from '@smarteam/contracts';
 import { apiRequest } from '../lib/api-client';
 import { expectShape, orgPath, queryString } from './api-helpers';
@@ -114,13 +115,13 @@ export const timesheetRepository = {
     organizationId: string,
     timesheetId: string | undefined,
     input: ManualEntryInput,
-  ): Promise<Timesheet> {
+  ): Promise<TimesheetEntryResult> {
     const url = timesheetId
       ? `${base(organizationId)}/${encodeURIComponent(timesheetId)}/entries`
       : `${base(organizationId)}/entries`;
 
     return expectShape(
-      parseTimesheet(
+      parseTimesheetEntryResult(
         await apiRequest(url, {
           method: 'POST',
           body: { ...input, timesheetId },

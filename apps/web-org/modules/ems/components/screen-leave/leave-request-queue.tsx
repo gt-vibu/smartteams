@@ -8,7 +8,7 @@ import {
   type Employee,
   type LeaveRequest,
 } from '@smarteam/contracts';
-import type { LeaveAdminState } from '../../hooks/use-leave-admin';
+import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 
 function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
   if (status === 'REJECTED') return 'destructive';
@@ -144,13 +144,13 @@ export function LeaveRequestQueue({
                         <Input
                           aria-label="Decision comment"
                           className="max-w-sm"
-                          disabled={admin.saving}
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onChange={(event) => setComment(event.target.value)}
                           placeholder="Comment (recorded in the audit trail)"
                           value={comment}
                         />
                         <Button
-                          disabled={admin.saving}
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onClick={() => void decide(request.id, 'APPROVED')}
                           size="sm"
                           type="button"
@@ -158,7 +158,7 @@ export function LeaveRequestQueue({
                           Approve
                         </Button>
                         <Button
-                          disabled={admin.saving}
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onClick={() => void decide(request.id, 'REJECTED')}
                           size="sm"
                           type="button"
@@ -167,7 +167,7 @@ export function LeaveRequestQueue({
                           Reject
                         </Button>
                         <Button
-                          disabled={admin.saving}
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onClick={() => setActiveId(null)}
                           size="sm"
                           type="button"

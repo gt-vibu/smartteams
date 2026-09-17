@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { Button, Input } from '@smarteam/ui';
 import { dateKey, employeeDisplayName, entitlementOf, type Employee } from '@smarteam/contracts';
-import type { LeaveAdminState } from '../../hooks/use-leave-admin';
+import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 
 /**
  * Every employee's balances, with the manual adjustment the API supports.
@@ -162,7 +162,9 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                             <Input
                               aria-label="Days to adjust"
                               className="w-24"
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onChange={(event) => setAmount(event.target.value)}
                               type="number"
                               value={amount}
@@ -170,21 +172,31 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                             <Input
                               aria-label="Adjustment reason"
                               className="max-w-sm"
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onChange={(event) => setReason(event.target.value)}
                               placeholder="Reason (recorded on the ledger)"
                               value={reason}
                             />
                             <Button
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onClick={() => void submit(balance.id)}
                               size="sm"
                               type="button"
                             >
-                              {admin.saving ? 'Saving...' : 'Apply'}
+                              {admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )
+                                ? 'Saving...'
+                                : 'Apply'}
                             </Button>
                             <Button
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onClick={() => setActiveId(null)}
                               size="sm"
                               type="button"

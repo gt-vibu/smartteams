@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@smarteam/ui';
 import type { Branch } from '@smarteam/contracts';
-import type { LeaveAdminState } from '../../hooks/use-leave-admin';
+import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 import type { LeaveTypeInput } from '../../repositories/leave.repository';
 
 const ACCRUAL_TYPES: LeaveTypeInput['accrualType'][] = [
@@ -132,7 +132,7 @@ export function LeavePolicyPanel({
             {admin.canWriteTypes && branches.length > 0 && (
               <div className="flex w-full items-center gap-2 sm:w-auto">
                 <SelectMenu
-                  disabled={admin.saving}
+                  disabled={admin.isBusy(leaveAdminBusyKey.assign(type.code))}
                   onValueChange={(value) =>
                     setAssignBranch((prev) => ({ ...prev, [type.code]: value }))
                   }
@@ -154,13 +154,15 @@ export function LeavePolicyPanel({
                 </SelectMenu>
                 <Button
                   className="shrink-0"
-                  disabled={admin.saving || !assignBranch[type.code]}
+                  disabled={
+                    admin.isBusy(leaveAdminBusyKey.assign(type.code)) || !assignBranch[type.code]
+                  }
                   onClick={() => void admin.assignType(type.code, assignBranch[type.code]!)}
                   size="sm"
                   type="button"
                   variant="outline"
                 >
-                  Assign
+                  {admin.isBusy(leaveAdminBusyKey.assign(type.code)) ? 'Assigning…' : 'Assign'}
                 </Button>
               </div>
             )}
@@ -190,7 +192,7 @@ export function LeavePolicyPanel({
                   Code
                 </Label>
                 <Input
-                  disabled={admin.saving}
+                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
                   id="type-code"
                   onChange={(event) => setForm({ ...form, code: event.target.value })}
                   placeholder="CL"
@@ -202,7 +204,7 @@ export function LeavePolicyPanel({
                   Name
                 </Label>
                 <Input
-                  disabled={admin.saving}
+                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
                   id="type-name"
                   onChange={(event) => setForm({ ...form, name: event.target.value })}
                   placeholder="Casual Leave"
@@ -217,7 +219,7 @@ export function LeavePolicyPanel({
                   Accrual
                 </Label>
                 <SelectMenu
-                  disabled={admin.saving}
+                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
                   onValueChange={(value) =>
                     setForm({ ...form, accrualType: value as LeaveTypeInput['accrualType'] })
                   }
@@ -240,7 +242,7 @@ export function LeavePolicyPanel({
                   Annual allowance
                 </Label>
                 <Input
-                  disabled={admin.saving}
+                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
                   id="type-allowance"
                   min={0}
                   onChange={(event) =>
@@ -256,7 +258,7 @@ export function LeavePolicyPanel({
               <label className="flex items-center gap-2 text-xs text-foreground">
                 <Checkbox
                   checked={form.paid}
-                  disabled={admin.saving}
+                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
                   onCheckedChange={(checked) => setForm({ ...form, paid: checked === true })}
                 />
                 Paid leave
@@ -264,7 +266,7 @@ export function LeavePolicyPanel({
               <label className="flex items-center gap-2 text-xs text-foreground">
                 <Checkbox
                   checked={form.requiresAttachment}
-                  disabled={admin.saving}
+                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
                   onCheckedChange={(checked) =>
                     setForm({ ...form, requiresAttachment: checked === true })
                   }
@@ -284,15 +286,19 @@ export function LeavePolicyPanel({
             </p>
             <div className="flex items-center gap-2">
               <Button
-                disabled={admin.saving}
+                disabled={admin.isBusy(leaveAdminBusyKey.createType)}
                 onClick={() => setIsCreateOpen(false)}
                 type="button"
                 variant="outline"
               >
                 Cancel
               </Button>
-              <Button disabled={admin.saving} onClick={() => void submit()} type="button">
-                {admin.saving ? 'Saving...' : 'Create type'}
+              <Button
+                disabled={admin.isBusy(leaveAdminBusyKey.createType)}
+                onClick={() => void submit()}
+                type="button"
+              >
+                {admin.isBusy(leaveAdminBusyKey.createType) ? 'Saving...' : 'Create type'}
               </Button>
             </div>
           </div>
