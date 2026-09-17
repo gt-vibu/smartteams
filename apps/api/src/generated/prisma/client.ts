@@ -22,7 +22,7 @@ export * as $Enums from './enums'
 export * from "./enums"
 /**
  * ## Prisma Client
- *
+ * 
  * Type-safe database client for TypeScript
  * @example
  * ```
@@ -145,6 +145,23 @@ export type User = Prisma.UserModel
  */
 export type UserInvitation = Prisma.UserInvitationModel
 /**
+ * Model EmployeeAccessCode
+ * *
+ *  * A one-time code that lets an employee activate their own Smarteam login.
+ *  *
+ *  * Distinct from `UserInvitation`, which is addressed to an email and delivered by email. This is
+ *  * addressed to an *employee record*: an administrator hands the code over out of band, and the
+ *  * employee chooses their own email and password when they redeem it. That is why there is no
+ *  * email column here — at the time the code is issued, nobody has decided what it will be.
+ *  *
+ *  * The code is a bootstrap credential, never a permanent one. Only its digest is stored, it is
+ *  * single-use (`activatedAt`), short-lived (`expiresAt`), revocable (`revokedAt`), and it is
+ *  * pinned to exactly one organization and one employee. It carries no authority of its own: the
+ *  * roles it results in are the ones recorded in `roleIds`, which the issuing administrator had to
+ *  * already hold themselves.
+ */
+export type EmployeeAccessCode = Prisma.EmployeeAccessCodeModel
+/**
  * Model PasswordResetToken
  * 
  */
@@ -204,6 +221,11 @@ export type AttendanceApproval = Prisma.AttendanceApprovalModel
  * 
  */
 export type Holiday = Prisma.HolidayModel
+/**
+ * Model EmployeeHolidaySelection
+ * 
+ */
+export type EmployeeHolidaySelection = Prisma.EmployeeHolidaySelectionModel
 /**
  * Model LeaveType
  * 
@@ -270,6 +292,12 @@ export type TimesheetEntry = Prisma.TimesheetEntryModel
  */
 export type TimesheetApproval = Prisma.TimesheetApprovalModel
 /**
+ * Model AttendanceHolidayReview
+ * A check-in on a granted optional holiday, explained by the employee and decided by a manager.
+ * At most one PENDING review per attendance record (a partial unique index in the migration).
+ */
+export type AttendanceHolidayReview = Prisma.AttendanceHolidayReviewModel
+/**
  * Model PayrollRun
  * 
  */
@@ -281,7 +309,7 @@ export type PayrollRun = Prisma.PayrollRunModel
 export type PayrollPolicy = Prisma.PayrollPolicyModel
 /**
  * Model PayrollPolicyComponent
- *
+ * 
  */
 export type PayrollPolicyComponent = Prisma.PayrollPolicyComponentModel
 /**
@@ -419,6 +447,16 @@ export type EmployeeBankAccount = Prisma.EmployeeBankAccountModel
  * 
  */
 export type EmployeeReference = Prisma.EmployeeReferenceModel
+/**
+ * Model EmployeeHolidayPolicy
+ * *
+ *  * Per-employee optional holiday policy override.
+ *  *
+ *  * When present, `allowanceOverride` takes precedence over `OrganizationSettings.optionalHolidayAllowance`.
+ *  * When `restrictedHolidayIds` is non-empty, only those holiday IDs are available in the employee's
+ *  * optional pool; otherwise the full org/branch pool applies.
+ */
+export type EmployeeHolidayPolicy = Prisma.EmployeeHolidayPolicyModel
 /**
  * Model EmployeeEmergencyContact
  * 

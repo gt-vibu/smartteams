@@ -42,6 +42,8 @@ model Employee {
   projectMemberships       ProjectMember[]
   attendanceRecords        AttendanceRecord[]
   attendancePunches        AttendancePunch[]
+  holidaySelections        EmployeeHolidaySelection[]
+  attendanceHolidayReviews AttendanceHolidayReview[]
   leaveBalances            LeaveBalance[]
   leaveRequests            LeaveRequest[]
   shifts                   EmployeeShiftAssignment[]
@@ -62,10 +64,13 @@ model Employee {
   personalProfile          EmployeePersonalProfile?
   bankAccounts             EmployeeBankAccount[]
   references               EmployeeReference[]
+  accessCodes              EmployeeAccessCode[]
+  holidayPolicy            EmployeeHolidayPolicy?
 
   @@unique([organizationId, employeeNumber])
   @@unique([organizationId, externalId])
   @@index([organizationId, status])
+  @@index([organizationId, managerEmployeeId])
   @@index([organizationId, lastName, firstName])
   @@map("employees")
 }
@@ -83,7 +88,6 @@ model EmployeePersonalProfile {
   permanentAddress       String?  @map("permanent_address")
   createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt              DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
@@ -92,18 +96,18 @@ model EmployeePersonalProfile {
 }
 
 model EmployeeBankAccount {
-  id                    String    @id @default(uuid()) @db.Uuid
-  organizationId        String    @map("organization_id") @db.Uuid
-  employeeId            String    @map("employee_id") @db.Uuid
-  bankName              String?   @map("bank_name")
-  accountNumberEncrypted String?  @map("account_number_encrypted")
-  ifscCode              String?   @map("ifsc_code")
-  accountHolderName     String?   @map("account_holder_name")
-  isPrimary             Boolean   @default(true) @map("is_primary")
-  effectiveFrom         DateTime  @map("effective_from") @db.Date
-  effectiveTo           DateTime? @map("effective_to") @db.Date
-  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id                     String    @id @default(uuid()) @db.Uuid
+  organizationId         String    @map("organization_id") @db.Uuid
+  employeeId             String    @map("employee_id") @db.Uuid
+  bankName               String?   @map("bank_name")
+  accountNumberEncrypted String?   @map("account_number_encrypted")
+  ifscCode               String?   @map("ifsc_code")
+  accountHolderName      String?   @map("account_holder_name")
+  isPrimary              Boolean   @default(true) @map("is_primary")
+  effectiveFrom          DateTime  @map("effective_from") @db.Date
+  effectiveTo            DateTime? @map("effective_to") @db.Date
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
@@ -129,6 +133,29 @@ model EmployeeReference {
 
   @@index([organizationId, employeeId, sortOrder])
   @@map("employee_references")
+}
+
+/**
+ * Per-employee optional holiday policy override.
+ *
+ * When present, `allowanceOverride` takes precedence over `OrganizationSettings.optionalHolidayAllowance`.
+ * When `restrictedHolidayIds` is non-empty, only those holiday IDs are available in the employee's
+ * optional pool; otherwise the full org/branch pool applies.
+ */
+model EmployeeHolidayPolicy {
+  id                   String   @id @default(uuid()) @db.Uuid
+  organizationId       String   @map("organization_id") @db.Uuid
+  employeeId           String   @unique @map("employee_id") @db.Uuid
+  allowanceOverride    Int?     @map("allowance_override") @db.SmallInt
+  restrictedHolidayIds String[] @default([]) @map("restricted_holiday_ids") @db.Uuid
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId])
+  @@map("employee_holiday_policies")
 }
 
 model EmployeeEmergencyContact {

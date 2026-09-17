@@ -1,11 +1,14 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
   IsEnum,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -51,6 +54,18 @@ export class LeaveAdjustmentDto {
   @IsString() @MinLength(5) reason!: string;
   @IsDateString() periodStart!: string;
   @IsDateString() periodEnd!: string;
+}
+
+/** Filters for the leave request list. Mirrors what the federation surface already accepts. */
+export class LeaveRequestQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsString() @MaxLength(256) cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+}
+
+/** Selects whose balances to read; omitted means every employee the caller may see. */
+export class LeaveBalanceQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
 }
 
 export class LeavePolicyAssignmentDto {

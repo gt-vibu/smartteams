@@ -1,42 +1,90 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
+  AccessCodeIssueDto,
   BranchAssignmentDto,
   CompensationDto,
   CreateEmployeeDto,
   EmergencyContactDto,
   EmployeeDeactivationDto,
-  EmploymentRecordDto,
-  ManagerAssignmentDto,
-  UpdateEmployeeDto,
   EmployeePersonalProfileDto,
   EmployeeBankAccountDto,
   EmployeeReferenceDto,
   EmployeeReferencesDto,
+  EmploymentRecordDto,
+  ManagerAssignmentDto,
+  EmployeeListQueryDto,
+  UserLinkDto,
+  UpdateEmployeeDto,
 } from './employees.dto';
 import { ConflictError } from '../../common/errors/domain-error';
 import { EmployeesService } from './employees.service';
+import { EmployeeDetailService } from './employee-detail.service';
 import { EmployeeRecordsService } from './employee-records.service';
+import { EmployeeAccessCodeService } from './employee-access-code.service';
 
 @Controller('v1/organizations/:organizationId/employees')
 @UseGuards(NativeJwtGuard)
 export class EmployeesController {
   constructor(
     private readonly employees: EmployeesService,
-    private readonly contexts: DomainContextFactory,
+    private readonly employeeDetail: EmployeeDetailService,
+    private readonly accessCodes: EmployeeAccessCodeService,
     private readonly records: EmployeeRecordsService,
+    private readonly contexts: DomainContextFactory,
   ) {}
 
   @Get()
   list(
     @Param('organizationId') organizationId: string,
+    @Query() query: EmployeeListQueryDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.employees.list(context));
+      .then((context) => this.employees.list(context, query));
+  }
+  /**
+   * The native employee read model: employment dates, job title, department, the reporting line
+   * and direct reports. Separate from `GET :employeeId` because that returns the shared DTO the
+   * federation contract depends on, which must not be widened.
+   */
+  /**
+   * The directory projection. Declared before `:employeeId` so the literal path is not captured
+   * as an employee id.
+   */
+  @Get('directory') directory(
+    @Param('organizationId') organizationId: string,
+    @Query() query: EmployeeListQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.employeeDetail.directory(context, query));
+  }
+
+  @Get(':employeeId/detail') detail(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.employeeDetail.detail(context, employeeId));
   }
   @Get(':employeeId') get(
     @Param('organizationId') organizationId: string,
@@ -117,6 +165,7 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.getPersonalProfile(context, employeeId));
   }
+
   @Put(':employeeId/personal-profile') updatePersonalProfile(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -127,6 +176,7 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.upsertPersonalProfile(context, employeeId, body));
   }
+
   @Get(':employeeId/bank-accounts') bankAccounts(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -136,6 +186,7 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.listBankAccounts(context, employeeId));
   }
+
   @Post(':employeeId/bank-accounts') addBankAccount(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -146,6 +197,7 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.addBankAccount(context, employeeId, body));
   }
+
   @Put(':employeeId/bank-accounts/primary') replacePrimaryBankAccount(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -156,6 +208,7 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.replacePrimaryBankAccount(context, employeeId, body));
   }
+
   @Get(':employeeId/references') references(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -165,6 +218,7 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.listReferences(context, employeeId));
   }
+
   @Post(':employeeId/references') addReference(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -175,6 +229,7 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.records.addReference(context, employeeId, body));
   }
+
   @Put(':employeeId/references') replaceReferences(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -184,6 +239,16 @@ export class EmployeesController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.records.replaceReferences(context, employeeId, body.references));
+  }
+
+  @Get(':employeeId/employment-records') employmentRecords(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.employees.listEmploymentRecords(context, employeeId));
   }
   @Post(':employeeId/employment-records') employment(
     @Param('organizationId') organizationId: string,
@@ -205,6 +270,60 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.employees.addCompensation(context, employeeId, body));
   }
+  @Post(':employeeId/user') linkUser(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: UserLinkDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.employees.linkUser(context, employeeId, body.userId));
+  }
+  /**
+   * Whether this employee can sign in yet, and if not, how far along giving them access is.
+   *
+   * An employee record and a login are separate things here, so this gap is a state to show
+   * rather than an error to hide.
+   */
+  @Get(':employeeId/access-code') accessCodeStatus(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.accessCodes.status(context, employeeId));
+  }
+
+  /**
+   * Issues a one-time code the employee uses to activate their own login.
+   *
+   * The plaintext code is in this response and nowhere else, so a caller that loses it has to
+   * issue a new one — which withdraws the old.
+   */
+  @Post(':employeeId/access-code') issueAccessCode(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: AccessCodeIssueDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.accessCodes.issue(context, employeeId, body.roleIds ?? []));
+  }
+
+  /** Withdraws an outstanding code, for one shared with the wrong person. */
+  @Delete(':employeeId/access-code') revokeAccessCode(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.accessCodes.revoke(context, employeeId));
+  }
+
   @Put(':employeeId/manager') manager(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,

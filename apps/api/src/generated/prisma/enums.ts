@@ -293,6 +293,23 @@ export const AttendancePunchSource = {
 export type AttendancePunchSource = (typeof AttendancePunchSource)[keyof typeof AttendancePunchSource]
 
 
+export const PasswordTokenPurpose = {
+  RESET_LINK: 'RESET_LINK',
+  SETUP_LINK: 'SETUP_LINK',
+  RESET_CODE: 'RESET_CODE'
+} as const
+
+export type PasswordTokenPurpose = (typeof PasswordTokenPurpose)[keyof typeof PasswordTokenPurpose]
+
+
+export const AutoCheckOutMode = {
+  DISABLED: 'DISABLED',
+  REVIEW_REQUIRED: 'REVIEW_REQUIRED'
+} as const
+
+export type AutoCheckOutMode = (typeof AutoCheckOutMode)[keyof typeof AutoCheckOutMode]
+
+
 export const ApprovalStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -301,6 +318,24 @@ export const ApprovalStatus = {
 } as const
 
 export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
+
+
+export const HolidayReviewOutcome = {
+  KEEP_HOLIDAY: 'KEEP_HOLIDAY',
+  CONVERT_TO_WORKING_DAY: 'CONVERT_TO_WORKING_DAY'
+} as const
+
+export type HolidayReviewOutcome = (typeof HolidayReviewOutcome)[keyof typeof HolidayReviewOutcome]
+
+
+export const SelectionStatus = {
+  CONFIRMED: 'CONFIRMED',
+  PENDING: 'PENDING',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SelectionStatus = (typeof SelectionStatus)[keyof typeof SelectionStatus]
 
 
 export const LeaveAccrualType = {

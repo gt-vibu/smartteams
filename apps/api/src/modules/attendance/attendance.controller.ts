@@ -1,12 +1,28 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   AttendanceCorrectionDto,
+  MissingCheckOutCorrectionDto,
+  AttendanceCorrectionQueryDto,
   AttendanceDecisionDto,
   AttendancePreferencesDto,
+  AttendancePreferencesQueryDto,
   AttendanceQueryDto,
+  HolidayConflictQueryDto,
+  HolidayReviewDecisionDto,
+  HolidayReviewRequestDto,
   PunchDto,
 } from './attendance.dto';
 import { AttendanceService } from './attendance.service';
@@ -37,6 +53,95 @@ export class AttendanceController {
       .native(request.user.userId, organizationId)
       .then((context) => this.attendance.list(context, query));
   }
+  /**
+   * Correction requests.
+   *
+   * `AttendanceService.listCorrectionRequests` has existed since the module was written and is
+   * reachable over the federation surface, but the native controller never exposed it — so the
+   * app could raise a correction and never list one. Same for the two routes below. No service
+   * or federation code changes; these are the missing HTTP entry points.
+   */
+  @Get('corrections') corrections(
+    @Param('organizationId') organizationId: string,
+    @Query() query: AttendanceCorrectionQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.attendance.listCorrectionRequests(context, {
+        ...(query.employeeId ? { employeeId: query.employeeId } : {}),
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.limit ? { limit: query.limit } : {}),
+      }),
+    );
+  }
+
+  /** Corrections awaiting the signed-in user's decision. */
+  @Get('corrections/inbox') correctionInbox(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) =>
+        this.attendance.listPendingCorrectionApprovals(context, request.user.userId),
+      );
+  }
+
+  /**
+   * Check-ins on a granted optional holiday, and their review. Native only; see
+   * `attendance-holiday-review.service.ts`.
+   */
+  @Get('holiday-conflicts') holidayConflicts(
+    @Param('organizationId') organizationId: string,
+    @Query() query: HolidayConflictQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.attendance.listHolidayConflicts(context, {
+        ...(query.employeeId ? { employeeId: query.employeeId } : {}),
+        from: query.from,
+        to: query.to,
+      }),
+    );
+  }
+  @Get('holiday-conflicts/inbox') holidayReviewInbox(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.listHolidayReviewInbox(context));
+  }
+  @Post('holiday-conflicts/:reviewId/decision') decideHolidayReview(
+    @Param('organizationId') organizationId: string,
+    @Param('reviewId', ParseUUIDPipe) reviewId: string,
+    @Body() body: HolidayReviewDecisionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.decideHolidayReview(context, reviewId, body));
+  }
+  @Post(':attendanceId/holiday-conflict') requestHolidayReview(
+    @Param('organizationId') organizationId: string,
+    @Param('attendanceId', ParseUUIDPipe) attendanceId: string,
+    @Body() body: HolidayReviewRequestDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.requestHolidayReview(context, attendanceId, body));
+  }
+  @Get('preferences') readPreferences(
+    @Param('organizationId') organizationId: string,
+    @Query() query: AttendancePreferencesQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.getPreferences(context, query.branchId));
+  }
+
   @Post('check-ins') checkIn(
     @Param('organizationId') organizationId: string,
     @Body() body: PunchDto,
@@ -44,7 +149,7 @@ export class AttendanceController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.attendance.punch(context, 'IN', { ...body, source: 'NATIVE' }));
+      .then((context) => this.attendance.punchNative(context, 'IN', { ...body, source: 'NATIVE' }));
   }
   @Post('check-outs') checkOut(
     @Param('organizationId') organizationId: string,
@@ -53,7 +158,9 @@ export class AttendanceController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.attendance.punch(context, 'OUT', { ...body, source: 'NATIVE' }));
+      .then((context) =>
+        this.attendance.punchNative(context, 'OUT', { ...body, source: 'NATIVE' }),
+      );
   }
   @Post(':attendanceId/corrections') correction(
     @Param('organizationId') organizationId: string,
@@ -65,6 +172,17 @@ export class AttendanceController {
       .native(request.user.userId, organizationId, undefined, body.reason)
       .then((context) => this.attendance.requestCorrection(context, attendanceId, body));
   }
+  /** Native only: supply the check-out a day never had. Federation has no equivalent route. */
+  @Post(':attendanceId/corrections/missing-check-out') missingCheckOut(
+    @Param('organizationId') organizationId: string,
+    @Param('attendanceId') attendanceId: string,
+    @Body() body: MissingCheckOutCorrectionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.attendance.requestMissingCheckOut(context, attendanceId, body));
+  }
   @Post(':correctionId/decision') decision(
     @Param('organizationId') organizationId: string,
     @Param('correctionId') correctionId: string,
@@ -74,8 +192,28 @@ export class AttendanceController {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.comment)
       .then((context) =>
-        this.attendance.decideCorrection(context, correctionId, body.status, body.comment),
+        this.attendance.decideCorrection(
+          context,
+          correctionId,
+          body.status,
+          body.comment,
+          body.checkOutAt,
+        ),
       );
+  }
+  /**
+   * Closes today's forgotten check-outs now, instead of waiting for the next sweep.
+   *
+   * Same result as the scheduled pass: each open day becomes a correction for the organization's
+   * attendance approvers to decide. Nothing is approved here.
+   */
+  @Post('auto-check-out/run') runAutoCheckOut(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.runAutoCheckOut(context));
   }
   @Post('preferences') preferences(
     @Param('organizationId') organizationId: string,

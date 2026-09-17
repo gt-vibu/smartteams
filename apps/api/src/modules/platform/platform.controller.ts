@@ -3,15 +3,19 @@ import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
+  EndProjectMemberDto,
+  EndTeamMemberDto,
   ProjectDeactivationDto,
   ProjectDto,
   ProjectMemberDto,
+  UpdateProjectMemberDto,
   TeamDeactivationDto,
   TeamDto,
   TeamMemberDto,
   UpdateProjectDto,
   UpdateTeamDto,
 } from './platform.dto';
+import { MembershipService } from './membership.service';
 import { TeamsProjectsService } from './teams-projects.service';
 
 @Controller('v1/organizations/:organizationId')
@@ -19,6 +23,7 @@ import { TeamsProjectsService } from './teams-projects.service';
 export class PlatformController {
   constructor(
     private readonly teamsProjects: TeamsProjectsService,
+    private readonly membership: MembershipService,
     private readonly contexts: DomainContextFactory,
   ) {}
   @Get('teams') teams(
@@ -66,7 +71,18 @@ export class PlatformController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.teamsProjects.addTeamMember(context, teamId, body));
+      .then((context) => this.membership.addTeamMember(context, teamId, body));
+  }
+  @Post('teams/:teamId/members/:memberId/end') endTeamMember(
+    @Param('organizationId') organizationId: string,
+    @Param('teamId') teamId: string,
+    @Param('memberId') memberId: string,
+    @Body() body: EndTeamMemberDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.membership.endTeamMembership(context, teamId, memberId, body));
   }
   @Get('projects') projects(
     @Param('organizationId') organizationId: string,
@@ -113,6 +129,28 @@ export class PlatformController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.teamsProjects.addProjectMember(context, projectId, body));
+      .then((context) => this.membership.addProjectMember(context, projectId, body));
+  }
+  @Patch('projects/:projectId/members/:memberId') updateProjectMember(
+    @Param('organizationId') organizationId: string,
+    @Param('projectId') projectId: string,
+    @Param('memberId') memberId: string,
+    @Body() body: UpdateProjectMemberDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.membership.updateProjectMember(context, projectId, memberId, body));
+  }
+  @Post('projects/:projectId/members/:memberId/end') endProjectMember(
+    @Param('organizationId') organizationId: string,
+    @Param('projectId') projectId: string,
+    @Param('memberId') memberId: string,
+    @Body() body: EndProjectMemberDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.membership.endProjectMembership(context, projectId, memberId, body));
   }
 }

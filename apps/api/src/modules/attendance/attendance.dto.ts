@@ -6,6 +6,8 @@ import {
   IsEnum,
   IsNumber,
   IsInt,
+  IsISO8601,
+  Matches,
   MaxLength,
   IsOptional,
   IsObject,
@@ -17,6 +19,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { AttendanceDayStatus } from '../../generated/prisma/enums';
+import {
+  ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
+  ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+} from '@smarteam/contracts';
 export class PunchDto {
   @IsUUID() employeeId!: string;
   @IsDateString() occurredAt!: string;
@@ -41,8 +47,26 @@ export class AttendanceQueryDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
 }
 
+/** Filters for the correction request list. Mirrors what the federation surface already accepts. */
+export class AttendanceCorrectionQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsEnum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']) status?:
+    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
+}
+
+/** Selects which branch's attendance policy to read. */
+export class AttendancePreferencesQueryDto {
+  @IsOptional() @IsUUID() branchId?: string;
+}
+
 export class AttendanceCorrectionDto {
-  @IsString() @MinLength(10) @MaxLength(500) reason!: string;
+  // The same constants the drawer disables its submit button on, so the form cannot accept a
+  // reason this DTO will reject.
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
   @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;
 }
 
@@ -51,10 +75,58 @@ export class AttendanceDateCorrectionDto extends AttendanceCorrectionDto {
   @IsDateString() workDate!: string;
 }
 
+/**
+ * The native app's request to add a day's missing check-out. Its own DTO and route, so the general
+ * correction — which federation also uses — accepts exactly what it did before.
+ */
+export class MissingCheckOutCorrectionDto {
+  // An instant, with its offset: a bare local time would be read in the server's zone, which is
+  // not the employee's, and would move the check-out by hours near midnight.
+  @IsISO8601({ strict: true })
+  @Matches(/(Z|[+-]\d{2}:\d{2})$/, { message: 'checkOutAt must include a time zone offset' })
+  checkOutAt!: string;
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
+}
+
 export class AttendanceDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
   @IsString() @MinLength(2) @MaxLength(500) comment!: string;
   @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
+  /**
+   * Approve with a different check-out time than the one requested — the real time the employee
+   * left, where an automatic close proposed the end of the day. Native only; the same instant
+   * rules as the request itself.
+   */
+  @IsOptional()
+  @IsISO8601({ strict: true })
+  @Matches(/(Z|[+-]\d{2}:\d{2})$/, { message: 'checkOutAt must include a time zone offset' })
+  checkOutAt?: string;
+}
+
+/** The date range of the optional-holiday conflicts to list. */
+export class HolidayConflictQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsDateString() from!: string;
+  @IsDateString() to!: string;
+}
+
+/** The employee's explanation of a check-in on their optional holiday. */
+export class HolidayReviewRequestDto {
+  @IsString()
+  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
+  reason!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+}
+
+/** A manager's decision on it, always with the reason for it. */
+export class HolidayReviewDecisionDto {
+  @IsEnum(['KEEP_HOLIDAY', 'CONVERT_TO_WORKING_DAY']) outcome!:
+    'KEEP_HOLIDAY' | 'CONVERT_TO_WORKING_DAY';
+  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
 }
 
 export class WorkLocationDto {
@@ -69,6 +141,15 @@ export class AttendancePreferencesDto {
     'DISABLED' | 'FLAG_ONLY' | 'REQUIRED';
   @IsOptional() @IsEnum(['DISABLED', 'OPTIONAL', 'REQUIRED']) biometricVerificationMode?:
     'DISABLED' | 'OPTIONAL' | 'REQUIRED';
+  @IsOptional() @IsEnum(['SINGLE', 'MULTIPLE']) attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
+  /** Whether a day nobody checked out of is closed for review, and at what local time. */
+  @IsOptional() @IsEnum(['DISABLED', 'REVIEW_REQUIRED']) autoCheckOutMode?:
+    'DISABLED' | 'REVIEW_REQUIRED';
+  @IsOptional()
+  @Matches(/^([01]\d|2[0-3]):[0-5]\d$/, {
+    message: 'autoCheckOutAt must be HH:MM',
+  })
+  autoCheckOutAt?: string;
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional()
   @IsArray()

@@ -72,6 +72,7 @@ export const ModelName = {
   FileObjectVersion: 'FileObjectVersion',
   User: 'User',
   UserInvitation: 'UserInvitation',
+  EmployeeAccessCode: 'EmployeeAccessCode',
   PasswordResetToken: 'PasswordResetToken',
   UserOrganization: 'UserOrganization',
   AuthSession: 'AuthSession',
@@ -84,6 +85,7 @@ export const ModelName = {
   AttendanceCorrection: 'AttendanceCorrection',
   AttendanceApproval: 'AttendanceApproval',
   Holiday: 'Holiday',
+  EmployeeHolidaySelection: 'EmployeeHolidaySelection',
   LeaveType: 'LeaveType',
   LeavePolicyAssignment: 'LeavePolicyAssignment',
   LeaveBalance: 'LeaveBalance',
@@ -97,6 +99,7 @@ export const ModelName = {
   Timesheet: 'Timesheet',
   TimesheetEntry: 'TimesheetEntry',
   TimesheetApproval: 'TimesheetApproval',
+  AttendanceHolidayReview: 'AttendanceHolidayReview',
   PayrollRun: 'PayrollRun',
   PayrollPolicy: 'PayrollPolicy',
   PayrollPolicyComponent: 'PayrollPolicyComponent',
@@ -127,6 +130,7 @@ export const ModelName = {
   EmployeePersonalProfile: 'EmployeePersonalProfile',
   EmployeeBankAccount: 'EmployeeBankAccount',
   EmployeeReference: 'EmployeeReference',
+  EmployeeHolidayPolicy: 'EmployeeHolidayPolicy',
   EmployeeEmergencyContact: 'EmployeeEmergencyContact',
   EmployeeBranchAssignment: 'EmployeeBranchAssignment',
   EmployeeFieldOwnership: 'EmployeeFieldOwnership',
@@ -502,6 +506,7 @@ export const UserScalarFieldEnum = {
   externalOrganizationId: 'externalOrganizationId',
   isActive: 'isActive',
   tokenVersion: 'tokenVersion',
+  passwordChangeRequired: 'passwordChangeRequired',
   lastLoginAt: 'lastLoginAt',
   deactivatedAt: 'deactivatedAt',
   createdAt: 'createdAt',
@@ -527,6 +532,23 @@ export const UserInvitationScalarFieldEnum = {
 export type UserInvitationScalarFieldEnum = (typeof UserInvitationScalarFieldEnum)[keyof typeof UserInvitationScalarFieldEnum]
 
 
+export const EmployeeAccessCodeScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  codeHash: 'codeHash',
+  roleIds: 'roleIds',
+  createdByUserId: 'createdByUserId',
+  activatedByUserId: 'activatedByUserId',
+  expiresAt: 'expiresAt',
+  activatedAt: 'activatedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EmployeeAccessCodeScalarFieldEnum = (typeof EmployeeAccessCodeScalarFieldEnum)[keyof typeof EmployeeAccessCodeScalarFieldEnum]
+
+
 export const PasswordResetTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -534,6 +556,8 @@ export const PasswordResetTokenScalarFieldEnum = {
   expiresAt: 'expiresAt',
   usedAt: 'usedAt',
   revokedAt: 'revokedAt',
+  purpose: 'purpose',
+  attempts: 'attempts',
   createdAt: 'createdAt'
 } as const
 
@@ -712,6 +736,22 @@ export const HolidayScalarFieldEnum = {
 } as const
 
 export type HolidayScalarFieldEnum = (typeof HolidayScalarFieldEnum)[keyof typeof HolidayScalarFieldEnum]
+
+
+export const EmployeeHolidaySelectionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  holidayId: 'holidayId',
+  year: 'year',
+  status: 'status',
+  selectedAt: 'selectedAt',
+  cancelledAt: 'cancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeHolidaySelectionScalarFieldEnum = (typeof EmployeeHolidaySelectionScalarFieldEnum)[keyof typeof EmployeeHolidaySelectionScalarFieldEnum]
 
 
 export const LeaveTypeScalarFieldEnum = {
@@ -939,6 +979,28 @@ export const TimesheetApprovalScalarFieldEnum = {
 export type TimesheetApprovalScalarFieldEnum = (typeof TimesheetApprovalScalarFieldEnum)[keyof typeof TimesheetApprovalScalarFieldEnum]
 
 
+export const AttendanceHolidayReviewScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  attendanceRecordId: 'attendanceRecordId',
+  holidayId: 'holidayId',
+  selectionId: 'selectionId',
+  status: 'status',
+  outcome: 'outcome',
+  reason: 'reason',
+  comment: 'comment',
+  requestedByUserId: 'requestedByUserId',
+  decidedByUserId: 'decidedByUserId',
+  decisionComment: 'decisionComment',
+  decidedAt: 'decidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AttendanceHolidayReviewScalarFieldEnum = (typeof AttendanceHolidayReviewScalarFieldEnum)[keyof typeof AttendanceHolidayReviewScalarFieldEnum]
+
+
 export const PayrollRunScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -952,6 +1014,7 @@ export const PayrollRunScalarFieldEnum = {
   inputSnapshotHash: 'inputSnapshotHash',
   calculationHash: 'calculationHash',
   calculatedAt: 'calculatedAt',
+  calculationStaleAt: 'calculationStaleAt',
   approvedAt: 'approvedAt',
   releasedAt: 'releasedAt',
   lockedAt: 'lockedAt',
@@ -1249,12 +1312,15 @@ export const OrganizationSettingsScalarFieldEnum = {
   payrollFrequency: 'payrollFrequency',
   payrollDayOfMonth: 'payrollDayOfMonth',
   leaveYearStartMonth: 'leaveYearStartMonth',
+  optionalHolidayAllowance: 'optionalHolidayAllowance',
   geofenceMode: 'geofenceMode',
   geofenceOwnerSource: 'geofenceOwnerSource',
   geofenceOwnerClientId: 'geofenceOwnerClientId',
   biometricVerificationMode: 'biometricVerificationMode',
   biometricOwnerSource: 'biometricOwnerSource',
   biometricOwnerClientId: 'biometricOwnerClientId',
+  autoCheckOutMode: 'autoCheckOutMode',
+  autoCheckOutAt: 'autoCheckOutAt',
   metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1487,6 +1553,19 @@ export const EmployeeReferenceScalarFieldEnum = {
 } as const
 
 export type EmployeeReferenceScalarFieldEnum = (typeof EmployeeReferenceScalarFieldEnum)[keyof typeof EmployeeReferenceScalarFieldEnum]
+
+
+export const EmployeeHolidayPolicyScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  allowanceOverride: 'allowanceOverride',
+  restrictedHolidayIds: 'restrictedHolidayIds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmployeeHolidayPolicyScalarFieldEnum = (typeof EmployeeHolidayPolicyScalarFieldEnum)[keyof typeof EmployeeHolidayPolicyScalarFieldEnum]
 
 
 export const EmployeeEmergencyContactScalarFieldEnum = {

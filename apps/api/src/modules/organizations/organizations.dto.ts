@@ -1,4 +1,14 @@
-import { IsEnum, IsOptional, IsString, IsUUID, Length, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, IsUUID, Length, MinLength } from 'class-validator';
+
+export class OnboardOrganizationDto {
+  @IsString() @MinLength(2) name!: string;
+  @IsString() @MinLength(2) slug!: string;
+  @IsString() @MinLength(2) timezone!: string;
+  @IsString() @Length(3, 3) currencyCode!: string;
+  @IsEmail() adminEmail!: string;
+  @IsString() @MinLength(2) adminDisplayName!: string;
+  @IsOptional() @IsString() reason?: string;
+}
 
 export class CreateOrganizationDto {
   @IsString() @MinLength(2) name!: string;

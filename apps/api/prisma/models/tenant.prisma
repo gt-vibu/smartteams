@@ -27,6 +27,7 @@ model Organization {
   users                     UserOrganization[]
   sessions                  AuthSession[]
   invitations               UserInvitation[]
+  employeeAccessCodes       EmployeeAccessCode[]
   approvalPolicies          ApprovalPolicy[]
   approvalPolicySteps       ApprovalPolicyStep[]
   roles                     Role[]
@@ -55,6 +56,9 @@ model Organization {
   attendanceCorrections     AttendanceCorrection[]
   attendanceApprovals       AttendanceApproval[]
   holidays                  Holiday[]
+  holidaySelections         EmployeeHolidaySelection[]
+  attendanceHolidayReviews  AttendanceHolidayReview[]
+  employeeHolidayPolicies   EmployeeHolidayPolicy[]
   leaveTypes                LeaveType[]
   leavePolicyAssignments    LeavePolicyAssignment[]
   leaveBalances             LeaveBalance[]
@@ -98,12 +102,15 @@ model OrganizationSettings {
   payrollFrequency          PayFrequency              @default(MONTHLY) @map("payroll_frequency")
   payrollDayOfMonth         Int?                      @map("payroll_day_of_month") @db.SmallInt
   leaveYearStartMonth       Int                       @default(1) @map("leave_year_start_month") @db.SmallInt
+  optionalHolidayAllowance  Int                       @default(0) @map("optional_holiday_allowance") @db.SmallInt
   geofenceMode              GeofenceMode              @default(DISABLED) @map("geofence_mode")
   geofenceOwnerSource       OwnerSource               @default(NATIVE) @map("geofence_owner_source")
   geofenceOwnerClientId     String?                   @map("geofence_owner_client_id") @db.Uuid
   biometricVerificationMode BiometricVerificationMode @default(DISABLED) @map("biometric_verification_mode")
   biometricOwnerSource      OwnerSource               @default(NATIVE) @map("biometric_owner_source")
   biometricOwnerClientId    String?                   @map("biometric_owner_client_id") @db.Uuid
+  autoCheckOutMode          AutoCheckOutMode          @default(DISABLED) @map("auto_check_out_mode")
+  autoCheckOutAt            DateTime                  @default(dbgenerated("'23:59:00'::time without time zone")) @map("auto_check_out_at") @db.Time(6)
   metadata                  Json                      @default("{}")
   createdAt                 DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                 DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)

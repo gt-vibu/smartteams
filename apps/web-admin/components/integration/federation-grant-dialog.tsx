@@ -5,14 +5,12 @@ import { Alert, AlertDescription, AlertTitle, Badge, Button, Icon, Select } from
 import {
   listFederationClientGrants,
   updateFederationClientGrant,
-  type AdminSession,
   type FederationClient,
   type FederationGrant,
   type FederationGrantAccess,
 } from '../../lib/api-client';
 
 type GrantDialogProps = {
-  session: AdminSession;
   client: FederationClient | null;
   onClose: () => void;
   onSaved: () => Promise<void>;
@@ -23,7 +21,7 @@ type ScopeGroup = {
   scopes: string[];
 };
 
-export function FederationGrantDialog({ session, client, onClose, onSaved }: GrantDialogProps) {
+export function FederationGrantDialog({ client, onClose, onSaved }: GrantDialogProps) {
   const [access, setAccess] = useState<FederationGrantAccess | null>(null);
   const [organizationId, setOrganizationId] = useState('');
   const [branchId, setBranchId] = useState('');
@@ -42,7 +40,7 @@ export function FederationGrantDialog({ session, client, onClose, onSaved }: Gra
     setAccess(null);
     setError(null);
     setLoading(true);
-    void listFederationClientGrants(session, client.id)
+    void listFederationClientGrants(client.id)
       .then((result) => {
         setAccess(result);
         const firstGrant = result.grants.find(({ effect }) => effect === 'ALLOW');
@@ -54,7 +52,7 @@ export function FederationGrantDialog({ session, client, onClose, onSaved }: Gra
       })
       .catch((caught: unknown) => setError(readableError(caught)))
       .finally(() => setLoading(false));
-  }, [client, session]);
+  }, [client]);
 
   useEffect(() => {
     if (!client) return;
@@ -107,7 +105,7 @@ export function FederationGrantDialog({ session, client, onClose, onSaved }: Gra
     setBusy(true);
     setError(null);
     try {
-      await updateFederationClientGrant(session, client.id, {
+      await updateFederationClientGrant(client.id, {
         organizationId,
         ...(branchId ? { branchId } : {}),
         scopeCodes,
@@ -209,7 +207,7 @@ export function FederationGrantDialog({ session, client, onClose, onSaved }: Gra
                             {grant.branchName ?? 'All outlets'}
                           </span>
                         </span>
-                        <Badge variant={grant.effect === 'ALLOW' ? 'success' : 'danger'}>
+                        <Badge variant={grant.effect === 'ALLOW' ? 'success' : 'destructive'}>
                           {grant.effect}
                         </Badge>
                       </span>

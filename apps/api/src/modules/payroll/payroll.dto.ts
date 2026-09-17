@@ -55,8 +55,13 @@ export class PayrollAdjustmentDto {
   @IsOptional() @IsString() externalId?: string;
 }
 export class PayrollActionDto {
-  @IsEnum(['CALCULATED', 'APPROVED', 'RELEASED', 'LOCKED']) target!: PayrollRunStatus;
+  // CORRECTED is deliberately absent: correcting creates a replacement run, so it has its own
+  // route rather than pretending to be a status move.
+  @IsEnum(['CALCULATED', 'APPROVED', 'RELEASED', 'LOCKED', 'VOIDED']) target!: PayrollRunStatus;
   @IsString() @MinLength(3) comment!: string;
+}
+export class PayrollCorrectionDto {
+  @IsString() @MinLength(10) reason!: string;
 }
 export class PayrollCalendarDto {
   @IsOptional() @IsDateString() periodStart?: string;
@@ -68,6 +73,13 @@ export class PayrollCalendarDto {
 }
 export class PayrollPayslipQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
+}
+
+/** One page of advances or payments on the native routes. */
+export class PayrollListQueryDto {
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsString() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(1) @Max(500) limit?: number;
 }
 
 export class PayrollLedgerQueryDto {

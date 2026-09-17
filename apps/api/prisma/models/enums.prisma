@@ -192,9 +192,35 @@ enum AttendancePunchSource {
   IMPORT
 }
 
+/** What a one-time password token is for. */
+enum PasswordTokenPurpose {
+  RESET_LINK
+  SETUP_LINK
+  RESET_CODE
+}
+
+/** Whether a day with no check-out is closed automatically, and how. */
+enum AutoCheckOutMode {
+  DISABLED
+  REVIEW_REQUIRED
+}
+
 enum ApprovalStatus {
   PENDING
   APPROVED
+  REJECTED
+  CANCELLED
+}
+
+/// How a check-in on a granted optional holiday was resolved.
+enum HolidayReviewOutcome {
+  KEEP_HOLIDAY
+  CONVERT_TO_WORKING_DAY
+}
+
+enum SelectionStatus {
+  CONFIRMED
+  PENDING
   REJECTED
   CANCELLED
 }

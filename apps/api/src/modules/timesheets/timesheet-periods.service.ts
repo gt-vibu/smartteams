@@ -1,0 +1,299 @@
+import { Injectable } from '@nestjs/common';
+import {
+  TimesheetEntrySource,
+  TimesheetPeriodType,
+  TimesheetStatus,
+} from '../../generated/prisma/enums';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
+import { ConflictError } from '../../common/errors/domain-error';
+import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { markPayrollStale } from '../payroll/payroll-staleness';
+import { actingForOthersError, canActForAllEmployees } from '../employees/employee-scope';
+
+import { dateOnly, decodeEntry } from './timesheet-shared';
+
+/**
+ * Periods belong to the whole organization, so managing them is an act on everyone's timesheet.
+ *
+ * Both operations used to need only `timesheets.write`, the permission every employee holds to log
+ * their own time. Any employee could therefore change the organization's period type or re-derive
+ * a period — which returns every sheet in it to draft and withdraws approvals already given, and
+ * with them the payroll calculated from those approvals. The breadth marker is the module's
+ * existing `timesheets.read.all`, the same split every other self-scoped timesheet write uses.
+ */
+function requirePeriodManagement(context: DomainContext) {
+  requirePermission(context, 'timesheets.write');
+  if (!canActForAllEmployees(context, 'timesheets.read.all')) throw actingForOthersError();
+}
+
+@Injectable()
+export class TimesheetPeriodsService {
+  constructor(
+    private readonly database: TenantDatabaseService,
+    private readonly audit: AuditService,
+  ) {}
+
+  async list(context: DomainContext, filters: { employeeId?: string; periodId?: string }) {
+    requirePermission(context, 'timesheets.read');
+    return this.database.run(context, async (tx) => {
+      let employeeId = filters.employeeId;
+      if (!(context.permissions.has('*') || context.permissions.has('timesheets.read.all'))) {
+        const employee = await tx.employee.findFirst({
+          where: { organizationId: context.organizationId, userId: context.actor.userId },
+          select: { id: true },
+        });
+        if (!employee) return [];
+        if (employeeId && employeeId !== employee.id)
+          throw new ConflictError('Employees may only read their own timesheets');
+        employeeId = employee.id;
+      }
+      const timesheets = await tx.timesheet.findMany({
+        // Bounded: a period across a large tenant is otherwise one unbounded response.
+        take: 500,
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          timesheetPeriodId: filters.periodId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        include: { entries: { orderBy: { workDate: 'asc' } }, period: true },
+        orderBy: [{ period: { periodStart: 'desc' } }, { employeeId: 'asc' }],
+      });
+      return timesheets.map((timesheet) => ({
+        id: timesheet.id,
+        employeeId: timesheet.employeeId,
+        periodId: timesheet.timesheetPeriodId,
+        period: timesheet.period,
+        status: timesheet.status,
+        totalMinutes: timesheet.totalMinutes,
+        regularMinutes: timesheet.regularMinutes,
+        overtimeMinutes: timesheet.overtimeMinutes,
+        version: timesheet.version,
+        entries: timesheet.entries.map(decodeEntry),
+      }));
+    });
+  }
+
+  async createPeriod(
+    context: DomainContext,
+    input: { periodType: TimesheetPeriodType; periodStart: string; periodEnd: string },
+  ) {
+    requirePeriodManagement(context);
+    return this.database.run(context, async (tx) => {
+      const period = await tx.timesheetPeriod.upsert({
+        where: {
+          organizationId_periodStart_periodEnd: {
+            organizationId: context.organizationId,
+            periodStart: dateOnly(input.periodStart),
+            periodEnd: dateOnly(input.periodEnd),
+          },
+        },
+        create: {
+          organizationId: context.organizationId,
+          periodType: input.periodType,
+          periodStart: dateOnly(input.periodStart),
+          periodEnd: dateOnly(input.periodEnd),
+          status: TimesheetStatus.DRAFT,
+        },
+        update: { periodType: input.periodType },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'TIMESHEET_PERIOD',
+          entityId: period.id,
+          action: 'TIMESHEET_PERIOD_CREATED',
+          afterState: jsonSnapshot(period),
+        },
+        tx,
+      );
+      return period;
+    });
+  }
+
+  async derive(context: DomainContext, periodId: string) {
+    requirePeriodManagement(context);
+    return this.database.run(context, async (tx) => {
+      const period = await tx.timesheetPeriod.findFirst({
+        where: { id: periodId, organizationId: context.organizationId },
+      });
+      if (!period || period.status !== TimesheetStatus.DRAFT)
+        throw new ConflictError('Timesheet period is unavailable for derivation');
+      const employees = await tx.employee.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: 'ACTIVE',
+          ...(context.branchId
+            ? {
+                OR: [
+                  { primaryBranchId: context.branchId },
+                  { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
+                ],
+              }
+            : {}),
+        },
+        select: { id: true, primaryBranchId: true },
+      });
+      const records = await tx.attendanceRecord.findMany({
+        where: {
+          organizationId: context.organizationId,
+          workDate: { gte: period.periodStart, lte: period.periodEnd },
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        select: {
+          id: true,
+          employeeId: true,
+          branchId: true,
+          workDate: true,
+          workedMinutes: true,
+          overtimeMinutes: true,
+        },
+      });
+      /*
+       * Set-based, not per-employee.
+       *
+       * This loop previously ran an upsert, a delete, one insert per attendance record and an
+       * update for every employee — around twenty-three round trips each, all sequential, all
+       * inside one open transaction. At ten thousand employees that is a couple of hundred
+       * thousand queries holding locks for the duration, which does not finish. It also grouped
+       * records with `.filter()` inside the loop, making the grouping itself quadratic.
+       *
+       * The work below is the same work in a fixed number of statements, whatever the headcount.
+       */
+      const recordsByEmployee = new Map<string, typeof records>();
+      for (const record of records) {
+        const bucket = recordsByEmployee.get(record.employeeId);
+        if (bucket) bucket.push(record);
+        else recordsByEmployee.set(record.employeeId, [record]);
+      }
+
+      const existing = await tx.timesheet.findMany({
+        where: { organizationId: context.organizationId, timesheetPeriodId: period.id },
+        select: { id: true, employeeId: true },
+      });
+      const existingByEmployee = new Map(existing.map((sheet) => [sheet.employeeId, sheet.id]));
+
+      const missing = employees.filter((employee) => !existingByEmployee.has(employee.id));
+      if (missing.length > 0)
+        await tx.timesheet.createMany({
+          data: missing.map((employee) => ({
+            organizationId: context.organizationId,
+            timesheetPeriodId: period.id,
+            employeeId: employee.id,
+            branchId: context.branchId ?? employee.primaryBranchId,
+            status: TimesheetStatus.DRAFT,
+            sourceAccessMode: context.accessMode,
+          })),
+        });
+
+      // Re-read so newly created sheets carry their ids. Derivation resets every sheet in the
+      // period to draft, exactly as the per-employee upsert did.
+      const sheets = await tx.timesheet.findMany({
+        where: {
+          organizationId: context.organizationId,
+          timesheetPeriodId: period.id,
+          employeeId: { in: employees.map((employee) => employee.id) },
+        },
+        select: { id: true, employeeId: true },
+      });
+      const sheetIds = sheets.map((sheet) => sheet.id);
+
+      await tx.timesheet.updateMany({
+        where: { id: { in: sheetIds } },
+        data: {
+          status: TimesheetStatus.DRAFT,
+          // The previous cycle's timestamps describe a decision about entries that are about to be
+          // rebuilt, so they do not survive the reset either.
+          submittedAt: null,
+          approvedAt: null,
+          version: { increment: 1 },
+        },
+      });
+
+      // Resetting a sheet to draft opens a new approval cycle, and `TimesheetApproval` holds the
+      // current cycle rather than a history — one row per approver, enforced by
+      // `@@unique([timesheetId, approverUserId])`, which leaves no room for a second round. Without
+      // clearing it the original approver collides with their own previous row and can never
+      // approve the rebuilt sheet, so the period sticks at SUBMITTED and payroll can never be
+      // recalculated for it. The durable record is the audit event each decision writes, which is
+      // untouched by this.
+      await tx.timesheetApproval.deleteMany({
+        where: { organizationId: context.organizationId, timesheetId: { in: sheetIds } },
+      });
+
+      // Attendance-derived entries are rebuilt wholesale; manual entries are left alone.
+      await tx.timesheetEntry.deleteMany({
+        where: { timesheetId: { in: sheetIds }, source: TimesheetEntrySource.ATTENDANCE },
+      });
+
+      const entries = sheets.flatMap((sheet) =>
+        (recordsByEmployee.get(sheet.employeeId) ?? []).map((record) => ({
+          organizationId: context.organizationId,
+          timesheetId: sheet.id,
+          attendanceRecordId: record.id,
+          workDate: record.workDate,
+          minutes: record.workedMinutes,
+          regularMinutes: record.workedMinutes - record.overtimeMinutes,
+          overtimeMinutes: record.overtimeMinutes,
+          source: TimesheetEntrySource.ATTENDANCE,
+        })),
+      );
+      if (entries.length > 0) await tx.timesheetEntry.createMany({ data: entries });
+
+      // Totals are summed from the sheet's own entries rather than from attendance records.
+      // Re-deriving used to recompute them from attendance alone, which silently dropped every
+      // manual entry's minutes from the totals while leaving the entry rows in place — the sheet
+      // then disagreed with itself, and payroll reads the totals.
+      const survivingEntries = await tx.timesheetEntry.findMany({
+        where: { timesheetId: { in: sheetIds } },
+        select: { timesheetId: true, minutes: true, overtimeMinutes: true },
+      });
+      const entriesBySheet = new Map<string, Array<{ minutes: number; overtimeMinutes: number }>>();
+      for (const entry of survivingEntries) {
+        const bucket = entriesBySheet.get(entry.timesheetId);
+        if (bucket) bucket.push(entry);
+        else entriesBySheet.set(entry.timesheetId, [entry]);
+      }
+
+      // Grouping by the resulting figures keeps this to a handful of statements — most employees
+      // in a period share a total.
+      const byTotals = new Map<string, string[]>();
+      for (const sheet of sheets) {
+        const own = entriesBySheet.get(sheet.id) ?? [];
+        const totalMinutes = own.reduce((sum, entry) => sum + entry.minutes, 0);
+        const overtimeMinutes = own.reduce((sum, entry) => sum + entry.overtimeMinutes, 0);
+        const key = `${totalMinutes}:${overtimeMinutes}`;
+        const bucket = byTotals.get(key);
+        if (bucket) bucket.push(sheet.id);
+        else byTotals.set(key, [sheet.id]);
+      }
+      for (const [key, ids] of byTotals) {
+        const [totalMinutes = 0, overtimeMinutes = 0] = key.split(':').map(Number);
+        await tx.timesheet.updateMany({
+          where: { id: { in: ids } },
+          data: { totalMinutes, regularMinutes: totalMinutes - overtimeMinutes, overtimeMinutes },
+        });
+      }
+
+      // Deriving resets every sheet in the period to draft and rebuilds its attendance entries, so
+      // a run calculated from the previous figures is now derived from minutes that have been
+      // rewritten and approval that has been withdrawn. One flat statement over the period, in
+      // keeping with the rest of this method.
+      await markPayrollStale(tx, context.organizationId, period.periodStart, period.periodEnd);
+
+      const results = await tx.timesheet.findMany({ where: { id: { in: sheetIds } } });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'TIMESHEET_PERIOD',
+          entityId: period.id,
+          action: 'TIMESHEETS_DERIVED',
+          afterState: jsonSnapshot({ count: results.length }),
+        },
+        tx,
+      );
+      return results;
+    });
+  }
+}

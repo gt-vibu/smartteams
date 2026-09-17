@@ -13,9 +13,18 @@ export type TenantTransaction = Omit<
 export class TenantDatabaseService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Bounds for a tenant transaction.
+   *
+   * Prisma's interactive default is a five second ceiling, which suits the request-shaped work
+   * that makes up nearly every caller. Calculating a whole tenant's payroll is the exception: it
+   * is one deliberate long transaction, and it needs to say so rather than inherit a limit that
+   * was chosen for something else.
+   */
   async run<T>(
     context: DomainContext,
     callback: (tx: Prisma.TransactionClient) => Promise<T>,
+    options?: { timeout?: number; maxWait?: number },
   ): Promise<T> {
     if (!context.organizationId) {
       throw new ForbiddenDomainError('A tenant organization is required');
@@ -28,7 +37,7 @@ export class TenantDatabaseService {
       await tx.$executeRaw`SELECT set_config('app.access_mode', ${context.accessMode}, true)`;
       await tx.$executeRaw`SELECT set_config('app.platform_bypass', 'false', true)`;
       return callback(tx);
-    });
+    }, options);
   }
 
   async runPlatform<T>(

@@ -19,6 +19,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BullModule.registerQueue({ name: 'webhook-delivery' }),
     BullModule.registerQueue({ name: 'outbox-dispatch' }),
     BullModule.registerQueue({ name: 'file-lifecycle' }),
+    BullModule.registerQueue({ name: 'attendance-auto-check-out' }),
+    BullModule.registerQueue({ name: 'mail-delivery' }),
   ],
   exports: [BullModule],
 })

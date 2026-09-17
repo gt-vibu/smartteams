@@ -1,5 +1,6 @@
 import { AttendancePunchType } from '../../generated/prisma/enums';
 import { attendanceTotals, correctionPunchUpdates, hasOpenPunch } from './attendance.service';
+import { toPreferencesDto } from './attendance-shared';
 
 const at = (minutes: number) => new Date(Date.UTC(2026, 0, 1, 9, minutes));
 
@@ -43,5 +44,35 @@ describe('attendance calculations', () => {
       { id: 'in', occurredAt: new Date(Date.UTC(2026, 0, 1, 6, 0)) },
       { id: 'out', occurredAt: new Date(Date.UTC(2026, 0, 1, 17, 0)) },
     ]);
+  });
+});
+
+describe('attendance session mode preferences', () => {
+  it('defaults attendanceSessionMode to SINGLE when metadata is empty or absent', () => {
+    const dto = toPreferencesDto({
+      id: 'pref-1',
+      organizationId: 'org-1',
+      geofenceMode: null,
+      biometricVerificationMode: null,
+      geofenceOwnerSource: 'NATIVE',
+      biometricOwnerSource: 'NATIVE',
+      metadata: {},
+    });
+
+    expect(dto.attendanceSessionMode).toBe('SINGLE');
+  });
+
+  it('preserves MULTIPLE attendanceSessionMode when configured in metadata', () => {
+    const dto = toPreferencesDto({
+      id: 'pref-2',
+      organizationId: 'org-1',
+      geofenceMode: null,
+      biometricVerificationMode: null,
+      geofenceOwnerSource: 'NATIVE',
+      biometricOwnerSource: 'NATIVE',
+      metadata: { attendanceSessionMode: 'MULTIPLE' },
+    });
+
+    expect(dto.attendanceSessionMode).toBe('MULTIPLE');
   });
 });

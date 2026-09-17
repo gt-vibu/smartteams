@@ -47,6 +47,7 @@ export type PayrollRunMinAggregateOutputType = {
   inputSnapshotHash: string | null
   calculationHash: string | null
   calculatedAt: Date | null
+  calculationStaleAt: Date | null
   approvedAt: Date | null
   releasedAt: Date | null
   lockedAt: Date | null
@@ -70,6 +71,7 @@ export type PayrollRunMaxAggregateOutputType = {
   inputSnapshotHash: string | null
   calculationHash: string | null
   calculatedAt: Date | null
+  calculationStaleAt: Date | null
   approvedAt: Date | null
   releasedAt: Date | null
   lockedAt: Date | null
@@ -93,6 +95,7 @@ export type PayrollRunCountAggregateOutputType = {
   inputSnapshotHash: number
   calculationHash: number
   calculatedAt: number
+  calculationStaleAt: number
   approvedAt: number
   releasedAt: number
   lockedAt: number
@@ -126,6 +129,7 @@ export type PayrollRunMinAggregateInputType = {
   inputSnapshotHash?: true
   calculationHash?: true
   calculatedAt?: true
+  calculationStaleAt?: true
   approvedAt?: true
   releasedAt?: true
   lockedAt?: true
@@ -149,6 +153,7 @@ export type PayrollRunMaxAggregateInputType = {
   inputSnapshotHash?: true
   calculationHash?: true
   calculatedAt?: true
+  calculationStaleAt?: true
   approvedAt?: true
   releasedAt?: true
   lockedAt?: true
@@ -172,6 +177,7 @@ export type PayrollRunCountAggregateInputType = {
   inputSnapshotHash?: true
   calculationHash?: true
   calculatedAt?: true
+  calculationStaleAt?: true
   approvedAt?: true
   releasedAt?: true
   lockedAt?: true
@@ -282,6 +288,7 @@ export type PayrollRunGroupByOutputType = {
   inputSnapshotHash: string
   calculationHash: string | null
   calculatedAt: Date | null
+  calculationStaleAt: Date | null
   approvedAt: Date | null
   releasedAt: Date | null
   lockedAt: Date | null
@@ -328,6 +335,7 @@ export type PayrollRunWhereInput = {
   inputSnapshotHash?: Prisma.StringFilter<"PayrollRun"> | string
   calculationHash?: Prisma.StringNullableFilter<"PayrollRun"> | string | null
   calculatedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
+  calculationStaleAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   releasedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   lockedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
@@ -362,6 +370,7 @@ export type PayrollRunOrderByWithRelationInput = {
   inputSnapshotHash?: Prisma.SortOrder
   calculationHash?: Prisma.SortOrderInput | Prisma.SortOrder
   calculatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  calculationStaleAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   releasedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -385,7 +394,7 @@ export type PayrollRunOrderByWithRelationInput = {
 
 export type PayrollRunWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  organizationId_periodStart_periodEnd?: Prisma.PayrollRunOrganizationIdPeriodStartPeriodEndCompoundUniqueInput
+  organizationId_periodStart_periodEnd_correctionOfRunId?: Prisma.PayrollRunOrganizationIdPeriodStartPeriodEndCorrectionOfRunIdCompoundUniqueInput
   AND?: Prisma.PayrollRunWhereInput | Prisma.PayrollRunWhereInput[]
   OR?: Prisma.PayrollRunWhereInput[]
   NOT?: Prisma.PayrollRunWhereInput | Prisma.PayrollRunWhereInput[]
@@ -400,6 +409,7 @@ export type PayrollRunWhereUniqueInput = Prisma.AtLeast<{
   inputSnapshotHash?: Prisma.StringFilter<"PayrollRun"> | string
   calculationHash?: Prisma.StringNullableFilter<"PayrollRun"> | string | null
   calculatedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
+  calculationStaleAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   releasedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   lockedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
@@ -419,7 +429,7 @@ export type PayrollRunWhereUniqueInput = Prisma.AtLeast<{
   payslips?: Prisma.PayslipListRelationFilter
   payments?: Prisma.PayrollPaymentListRelationFilter
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryListRelationFilter
-}, "id" | "organizationId_periodStart_periodEnd">
+}, "id" | "organizationId_periodStart_periodEnd_correctionOfRunId">
 
 export type PayrollRunOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -434,6 +444,7 @@ export type PayrollRunOrderByWithAggregationInput = {
   inputSnapshotHash?: Prisma.SortOrder
   calculationHash?: Prisma.SortOrderInput | Prisma.SortOrder
   calculatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  calculationStaleAt?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   releasedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -465,6 +476,7 @@ export type PayrollRunScalarWhereWithAggregatesInput = {
   inputSnapshotHash?: Prisma.StringWithAggregatesFilter<"PayrollRun"> | string
   calculationHash?: Prisma.StringNullableWithAggregatesFilter<"PayrollRun"> | string | null
   calculatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PayrollRun"> | Date | string | null
+  calculationStaleAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PayrollRun"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PayrollRun"> | Date | string | null
   releasedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PayrollRun"> | Date | string | null
   lockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PayrollRun"> | Date | string | null
@@ -486,6 +498,7 @@ export type PayrollRunCreateInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -518,6 +531,7 @@ export type PayrollRunUncheckedCreateInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -546,6 +560,7 @@ export type PayrollRunUpdateInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -578,6 +593,7 @@ export type PayrollRunUncheckedUpdateInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -608,6 +624,7 @@ export type PayrollRunCreateManyInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -629,6 +646,7 @@ export type PayrollRunUpdateManyMutationInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -650,6 +668,7 @@ export type PayrollRunUncheckedUpdateManyInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -675,10 +694,11 @@ export type PayrollRunNullableScalarRelationFilter = {
   isNot?: Prisma.PayrollRunWhereInput | null
 }
 
-export type PayrollRunOrganizationIdPeriodStartPeriodEndCompoundUniqueInput = {
+export type PayrollRunOrganizationIdPeriodStartPeriodEndCorrectionOfRunIdCompoundUniqueInput = {
   organizationId: string
   periodStart: Date | string
   periodEnd: Date | string
+  correctionOfRunId: string
 }
 
 export type PayrollRunCountOrderByAggregateInput = {
@@ -694,6 +714,7 @@ export type PayrollRunCountOrderByAggregateInput = {
   inputSnapshotHash?: Prisma.SortOrder
   calculationHash?: Prisma.SortOrder
   calculatedAt?: Prisma.SortOrder
+  calculationStaleAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   releasedAt?: Prisma.SortOrder
   lockedAt?: Prisma.SortOrder
@@ -721,6 +742,7 @@ export type PayrollRunMaxOrderByAggregateInput = {
   inputSnapshotHash?: Prisma.SortOrder
   calculationHash?: Prisma.SortOrder
   calculatedAt?: Prisma.SortOrder
+  calculationStaleAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   releasedAt?: Prisma.SortOrder
   lockedAt?: Prisma.SortOrder
@@ -744,6 +766,7 @@ export type PayrollRunMinOrderByAggregateInput = {
   inputSnapshotHash?: Prisma.SortOrder
   calculationHash?: Prisma.SortOrder
   calculatedAt?: Prisma.SortOrder
+  calculationStaleAt?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   releasedAt?: Prisma.SortOrder
   lockedAt?: Prisma.SortOrder
@@ -1050,6 +1073,7 @@ export type PayrollRunCreateWithoutCreatedByInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1081,6 +1105,7 @@ export type PayrollRunUncheckedCreateWithoutCreatedByInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1139,6 +1164,7 @@ export type PayrollRunScalarWhereInput = {
   inputSnapshotHash?: Prisma.StringFilter<"PayrollRun"> | string
   calculationHash?: Prisma.StringNullableFilter<"PayrollRun"> | string | null
   calculatedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
+  calculationStaleAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   releasedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
   lockedAt?: Prisma.DateTimeNullableFilter<"PayrollRun"> | Date | string | null
@@ -1160,6 +1186,7 @@ export type PayrollRunCreateWithoutCorrectionsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1191,6 +1218,7 @@ export type PayrollRunUncheckedCreateWithoutCorrectionsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1223,6 +1251,7 @@ export type PayrollRunCreateWithoutCorrectionOfInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1254,6 +1283,7 @@ export type PayrollRunUncheckedCreateWithoutCorrectionOfInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1302,6 +1332,7 @@ export type PayrollRunUpdateWithoutCorrectionsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1333,6 +1364,7 @@ export type PayrollRunUncheckedUpdateWithoutCorrectionsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1376,6 +1408,7 @@ export type PayrollRunCreateWithoutLineItemsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1407,6 +1440,7 @@ export type PayrollRunUncheckedCreateWithoutLineItemsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1450,6 +1484,7 @@ export type PayrollRunUpdateWithoutLineItemsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1481,6 +1516,7 @@ export type PayrollRunUncheckedUpdateWithoutLineItemsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1508,6 +1544,7 @@ export type PayrollRunCreateWithoutAdvanceRecoveriesInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1539,6 +1576,7 @@ export type PayrollRunUncheckedCreateWithoutAdvanceRecoveriesInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1582,6 +1620,7 @@ export type PayrollRunUpdateWithoutAdvanceRecoveriesInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1613,6 +1652,7 @@ export type PayrollRunUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1640,6 +1680,7 @@ export type PayrollRunCreateWithoutPaymentsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1671,6 +1712,7 @@ export type PayrollRunUncheckedCreateWithoutPaymentsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1714,6 +1756,7 @@ export type PayrollRunUpdateWithoutPaymentsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1745,6 +1788,7 @@ export type PayrollRunUncheckedUpdateWithoutPaymentsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1772,6 +1816,7 @@ export type PayrollRunCreateWithoutAdjustmentsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1803,6 +1848,7 @@ export type PayrollRunUncheckedCreateWithoutAdjustmentsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1846,6 +1892,7 @@ export type PayrollRunUpdateWithoutAdjustmentsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1877,6 +1924,7 @@ export type PayrollRunUncheckedUpdateWithoutAdjustmentsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1904,6 +1952,7 @@ export type PayrollRunCreateWithoutApprovalsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1935,6 +1984,7 @@ export type PayrollRunUncheckedCreateWithoutApprovalsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -1978,6 +2028,7 @@ export type PayrollRunUpdateWithoutApprovalsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2009,6 +2060,7 @@ export type PayrollRunUncheckedUpdateWithoutApprovalsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2036,6 +2088,7 @@ export type PayrollRunCreateWithoutPayslipsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2067,6 +2120,7 @@ export type PayrollRunUncheckedCreateWithoutPayslipsInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2110,6 +2164,7 @@ export type PayrollRunUpdateWithoutPayslipsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2141,6 +2196,7 @@ export type PayrollRunUncheckedUpdateWithoutPayslipsInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2168,6 +2224,7 @@ export type PayrollRunCreateWithoutOrganizationInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2198,6 +2255,7 @@ export type PayrollRunUncheckedCreateWithoutOrganizationInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2252,6 +2310,7 @@ export type PayrollRunCreateWithoutApprovalPolicyInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2282,6 +2341,7 @@ export type PayrollRunUncheckedCreateWithoutApprovalPolicyInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2338,6 +2398,7 @@ export type PayrollRunCreateManyCreatedByInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2358,6 +2419,7 @@ export type PayrollRunUpdateWithoutCreatedByInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2389,6 +2451,7 @@ export type PayrollRunUncheckedUpdateWithoutCreatedByInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2418,6 +2481,7 @@ export type PayrollRunUncheckedUpdateManyWithoutCreatedByInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2440,6 +2504,7 @@ export type PayrollRunCreateManyCorrectionOfInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2460,6 +2525,7 @@ export type PayrollRunUpdateWithoutCorrectionOfInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2491,6 +2557,7 @@ export type PayrollRunUncheckedUpdateWithoutCorrectionOfInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2520,6 +2587,7 @@ export type PayrollRunUncheckedUpdateManyWithoutCorrectionOfInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2541,6 +2609,7 @@ export type PayrollRunCreateManyOrganizationInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2562,6 +2631,7 @@ export type PayrollRunUpdateWithoutOrganizationInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2592,6 +2662,7 @@ export type PayrollRunUncheckedUpdateWithoutOrganizationInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2621,6 +2692,7 @@ export type PayrollRunUncheckedUpdateManyWithoutOrganizationInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2643,6 +2715,7 @@ export type PayrollRunCreateManyApprovalPolicyInput = {
   inputSnapshotHash: string
   calculationHash?: string | null
   calculatedAt?: Date | string | null
+  calculationStaleAt?: Date | string | null
   approvedAt?: Date | string | null
   releasedAt?: Date | string | null
   lockedAt?: Date | string | null
@@ -2664,6 +2737,7 @@ export type PayrollRunUpdateWithoutApprovalPolicyInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2694,6 +2768,7 @@ export type PayrollRunUncheckedUpdateWithoutApprovalPolicyInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2723,6 +2798,7 @@ export type PayrollRunUncheckedUpdateManyWithoutApprovalPolicyInput = {
   inputSnapshotHash?: Prisma.StringFieldUpdateOperationsInput | string
   calculationHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   calculatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  calculationStaleAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   releasedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2831,6 +2907,7 @@ export type PayrollRunSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   inputSnapshotHash?: boolean
   calculationHash?: boolean
   calculatedAt?: boolean
+  calculationStaleAt?: boolean
   approvedAt?: boolean
   releasedAt?: boolean
   lockedAt?: boolean
@@ -2866,6 +2943,7 @@ export type PayrollRunSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   inputSnapshotHash?: boolean
   calculationHash?: boolean
   calculatedAt?: boolean
+  calculationStaleAt?: boolean
   approvedAt?: boolean
   releasedAt?: boolean
   lockedAt?: boolean
@@ -2893,6 +2971,7 @@ export type PayrollRunSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   inputSnapshotHash?: boolean
   calculationHash?: boolean
   calculatedAt?: boolean
+  calculationStaleAt?: boolean
   approvedAt?: boolean
   releasedAt?: boolean
   lockedAt?: boolean
@@ -2920,6 +2999,7 @@ export type PayrollRunSelectScalar = {
   inputSnapshotHash?: boolean
   calculationHash?: boolean
   calculatedAt?: boolean
+  calculationStaleAt?: boolean
   approvedAt?: boolean
   releasedAt?: boolean
   lockedAt?: boolean
@@ -2930,7 +3010,7 @@ export type PayrollRunSelectScalar = {
   version?: boolean
 }
 
-export type PayrollRunOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "periodStart" | "periodEnd" | "payFrequency" | "currencyCode" | "approvalPolicyId" | "status" | "calculationVersion" | "inputSnapshotHash" | "calculationHash" | "calculatedAt" | "approvedAt" | "releasedAt" | "lockedAt" | "correctionOfRunId" | "createdByUserId" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["payrollRun"]>
+export type PayrollRunOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "periodStart" | "periodEnd" | "payFrequency" | "currencyCode" | "approvalPolicyId" | "status" | "calculationVersion" | "inputSnapshotHash" | "calculationHash" | "calculatedAt" | "calculationStaleAt" | "approvedAt" | "releasedAt" | "lockedAt" | "correctionOfRunId" | "createdByUserId" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["payrollRun"]>
 export type PayrollRunInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   approvalPolicy?: boolean | Prisma.PayrollRun$approvalPolicyArgs<ExtArgs>
@@ -2986,6 +3066,11 @@ export type $PayrollRunPayload<ExtArgs extends runtime.Types.Extensions.Internal
     inputSnapshotHash: string
     calculationHash: string | null
     calculatedAt: Date | null
+    /**
+     * Set when an input changes after a run was calculated. A stale run cannot be approved or
+     * released; it has to be calculated again so the change reaches the money.
+     */
+    calculationStaleAt: Date | null
     approvedAt: Date | null
     releasedAt: Date | null
     lockedAt: Date | null
@@ -3440,6 +3525,7 @@ export interface PayrollRunFieldRefs {
   readonly inputSnapshotHash: Prisma.FieldRef<"PayrollRun", 'String'>
   readonly calculationHash: Prisma.FieldRef<"PayrollRun", 'String'>
   readonly calculatedAt: Prisma.FieldRef<"PayrollRun", 'DateTime'>
+  readonly calculationStaleAt: Prisma.FieldRef<"PayrollRun", 'DateTime'>
   readonly approvedAt: Prisma.FieldRef<"PayrollRun", 'DateTime'>
   readonly releasedAt: Prisma.FieldRef<"PayrollRun", 'DateTime'>
   readonly lockedAt: Prisma.FieldRef<"PayrollRun", 'DateTime'>

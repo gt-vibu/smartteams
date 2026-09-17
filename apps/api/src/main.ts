@@ -6,12 +6,16 @@ import { Logger } from 'nestjs-pino';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { ProblemDetailsFilter } from './common/http/problem-details.filter';
+import { PrismaExceptionFilter } from './common/http/prisma-exception.filter';
+import { installProcessDiagnostics } from './common/runtime/process-diagnostics';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
   const config = app.get(ConfigService);
   app.useLogger(app.get(Logger));
-  app.useGlobalFilters(app.get(ProblemDetailsFilter));
+  // Order matters: Nest tries the last-registered filter first, so the Prisma-specific one must
+  // come after the catch-all to be consulted before it.
+  app.useGlobalFilters(app.get(ProblemDetailsFilter), app.get(PrismaExceptionFilter));
   app.enableShutdownHooks();
   const expressApplication = app.getHttpAdapter().getInstance() as {
     set(name: string, value: unknown): void;
@@ -47,4 +51,6 @@ async function bootstrap() {
   await app.listen(port, host);
 }
 
+// First, so that a failure anywhere in bootstrap is reported too.
+installProcessDiagnostics();
 void bootstrap();

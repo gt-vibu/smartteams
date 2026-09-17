@@ -1,4 +1,13 @@
-import { IsDateString, IsNumber, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
+import {
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+  MinLength,
+} from 'class-validator';
 import { IsEnum } from 'class-validator';
 import { ProjectStatus } from '../../generated/prisma/enums';
 export class TeamDto {
@@ -18,7 +27,7 @@ export class UpdateTeamDto {
   @IsOptional() @IsUUID() teamLeadEmployeeId?: string;
 }
 export class TeamDeactivationDto {
-  @IsString() @Min(2) reason!: string;
+  @IsString() @MinLength(2) reason!: string;
 }
 export class ProjectDto {
   @IsString() code!: string;
@@ -45,5 +54,21 @@ export class UpdateProjectDto {
   @IsOptional() @IsEnum(ProjectStatus) status?: ProjectStatus;
 }
 export class ProjectDeactivationDto {
-  @IsString() @Min(2) reason!: string;
+  @IsString() @MinLength(2) reason!: string;
+}
+
+/** Soft-closes a team membership by setting `leftAt`. */
+export class EndTeamMemberDto {
+  @IsDateString() leftAt!: string;
+}
+
+/** Soft-closes a project allocation by setting `endsOn`. */
+export class EndProjectMemberDto {
+  @IsDateString() endsOn!: string;
+}
+
+/** The two fields of a project assignment that may change without rewriting history. */
+export class UpdateProjectMemberDto {
+  @IsOptional() @IsString() projectRole?: string;
+  @IsOptional() @IsNumber() @Min(0) @Max(100) allocationPercentage?: number;
 }

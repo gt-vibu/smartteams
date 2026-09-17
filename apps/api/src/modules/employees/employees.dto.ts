@@ -1,6 +1,6 @@
 import {
-  IsBoolean,
   IsArray,
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsNumber,
@@ -9,6 +9,8 @@ import {
   IsUUID,
   Matches,
   MaxLength,
+  Max,
+  Min,
   MinLength,
   ValidateNested,
 } from 'class-validator';
@@ -135,4 +137,29 @@ export class EmployeeReferencesDto {
   @ValidateNested({ each: true })
   @Type(() => EmployeeReferenceDto)
   references!: EmployeeReferenceDto[];
+}
+
+/** Links an existing organization member's account to an employee record. */
+export class UserLinkDto {
+  @IsUUID() userId!: string;
+}
+
+/**
+ * Paging for the employee directory. The service caps `limit` regardless of what arrives here,
+ * so a large value is clamped rather than refused.
+ */
+export class EmployeeListQueryDto {
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(1) @Max(200) limit?: number;
+  @IsOptional() @IsUUID() cursor?: string;
+}
+
+/**
+ * Issuing an employee access code.
+ *
+ * `roleIds` are the roles the employee holds once they activate. Empty is the normal case and
+ * means the baseline employee role only; anything listed is checked against the issuer's own
+ * permissions before the code is created.
+ */
+export class AccessCodeIssueDto {
+  @IsOptional() @IsArray() @IsUUID('4', { each: true }) roleIds?: string[];
 }

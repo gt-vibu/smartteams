@@ -27,7 +27,7 @@ const EXTENSIONS_BY_MIME: Record<string, string> = {
 };
 
 function extensionFromName(originalName: string) {
-  const extension = originalName
+  const extension = (originalName || '')
     .split('.')
     .pop()
     ?.toLowerCase()

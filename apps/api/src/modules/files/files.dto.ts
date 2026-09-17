@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsIn,
@@ -10,7 +11,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { EMPLOYEE_DOCUMENT_TYPES, type EmployeeDocumentType } from './file.constants';
-
 export class FileUploadDto {
   @IsEnum([
     'PROFILE_IMAGE',
@@ -30,6 +30,22 @@ export class FileUploadDto {
   @IsOptional() @IsUUID() employeeId?: string;
   @IsOptional() @IsUUID() leaveRequestId?: string;
   @IsOptional() @IsIn(EMPLOYEE_DOCUMENT_TYPES) documentType?: EmployeeDocumentType;
+}
+export class FileQueryDto {
+  @IsOptional()
+  @IsEnum([
+    'PROFILE_IMAGE',
+    'RESUME',
+    'EMPLOYEE_DOCUMENT',
+    'LEAVE_ATTACHMENT',
+    'PAYSLIP',
+    'PAYROLL_EXPORT',
+    'IMPORT',
+    'OTHER',
+  ])
+  purpose?: FilePurpose;
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @Type(() => Number) @IsNumber() @Min(1) limit?: number;
 }
 export class FileDeleteDto {
   @IsString() @MinLength(3) reason!: string;

@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
@@ -6,6 +16,7 @@ import {
   PayComponentAssignmentDto,
   PayComponentDto,
   PayrollActionDto,
+  PayrollCorrectionDto,
   PayrollAdjustmentDto,
   PayrollPayslipQueryDto,
   PayrollRunDto,
@@ -74,7 +85,7 @@ export class PayrollController {
   }
   @Post('runs/:runId/calculate') calculate(
     @Param('organizationId') organizationId: string,
-    @Param('runId') runId: string,
+    @Param('runId', ParseUUIDPipe) runId: string,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -83,7 +94,7 @@ export class PayrollController {
   }
   @Post('runs/:runId/adjustments') adjustment(
     @Param('organizationId') organizationId: string,
-    @Param('runId') runId: string,
+    @Param('runId', ParseUUIDPipe) runId: string,
     @Body() body: Omit<PayrollAdjustmentDto, 'payrollRunId'>,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
@@ -99,12 +110,28 @@ export class PayrollController {
   }
   @Post('runs/:runId/action') action(
     @Param('organizationId') organizationId: string,
-    @Param('runId') runId: string,
+    @Param('runId', ParseUUIDPipe) runId: string,
     @Body() body: PayrollActionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.comment)
       .then((context) => this.payroll.advance(context, runId, body.target, body.comment));
+  }
+
+  /**
+   * Supersedes a released run with a correction. Its own route rather than an `action` target,
+   * because it creates a second run and returns both — the superseded original and the
+   * replacement draft.
+   */
+  @Post('runs/:runId/correct') correct(
+    @Param('organizationId') organizationId: string,
+    @Param('runId', ParseUUIDPipe) runId: string,
+    @Body() body: PayrollCorrectionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.payroll.correct(context, runId, body.reason));
   }
 }

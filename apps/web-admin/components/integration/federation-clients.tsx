@@ -1,39 +1,51 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, AlertDescription, AlertTitle, Badge, Button, Icon } from '@smarteam/ui';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Badge,
+  Button,
+  Icon,
+  StandardDataTable,
+} from '@smarteam/ui';
+import type { ColumnDef } from '@smarteam/ui';
+
 import {
   deleteFederationClient,
   listFederationClients,
   rotateFederationClientSecret,
   setFederationClientEnabled,
-  type AdminSession,
   type FederationClient,
   type FederationClientSecret,
 } from '../../lib/api-client';
-import { FederationClientDialog, FederationSecretDialog } from './federation-client-dialogs';
+import { FederationClientDialog } from './federation-client-dialogs';
+import { ActionButton } from './action-button';
+import { formatDateTime, readableError } from '../../lib/format';
+import { FederationSecretDialog } from './federation-secret-dialog';
 import { FederationGrantDialog } from './federation-grant-dialog';
 
-export function FederationClients({ session }: { session: AdminSession }) {
+export function FederationClients() {
   const [clients, setClients] = useState<FederationClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [action, setAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<FederationClient | null>(null);
-  const [accessClient, setAccessClient] = useState<FederationClient | null>(null);
   const [oneTimeSecret, setOneTimeSecret] = useState<FederationClientSecret | null>(null);
+  const [accessClient, setAccessClient] = useState<FederationClient | null>(null);
 
   const load = useCallback(async () => {
     try {
-      setClients(await listFederationClients(session));
+      setClients(await listFederationClients());
       setError(null);
     } catch (caught) {
-      setError(readableError(caught));
+      setError(readableError(caught, 'The federation client action could not be completed.'));
     } finally {
       setLoading(false);
     }
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     void load();
@@ -46,7 +58,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
       await operation();
       await load();
     } catch (caught) {
-      setError(readableError(caught));
+      setError(readableError(caught, 'The federation client action could not be completed.'));
     } finally {
       setAction(null);
     }
@@ -60,7 +72,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
     )
       return;
     await runAction(`rotate:${client.id}`, async () => {
-      setOneTimeSecret(await rotateFederationClientSecret(session, client.id));
+      setOneTimeSecret(await rotateFederationClientSecret(client.id));
     });
   }
 
@@ -68,7 +80,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
     const verb = client.isActive ? 'Disable' : 'Enable';
     if (!window.confirm(`${verb} ${client.name}?`)) return;
     await runAction(`toggle:${client.id}`, async () => {
-      await setFederationClientEnabled(session, client.id, !client.isActive);
+      await setFederationClientEnabled(client.id, !client.isActive);
     });
   }
 
@@ -81,7 +93,7 @@ export function FederationClients({ session }: { session: AdminSession }) {
       !window.confirm(`Delete ${client.name}? Its credentials and tenant grants will be revoked.`)
     )
       return;
-    await runAction(`delete:${client.id}`, () => deleteFederationClient(session, client.id));
+    await runAction(`delete:${client.id}`, () => deleteFederationClient(client.id));
   }
 
   return (
@@ -112,51 +124,137 @@ export function FederationClients({ session }: { session: AdminSession }) {
           </Alert>
         )}
 
-        <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full min-w-[1040px] border-collapse text-left text-sm">
-            <thead className="bg-muted/70 text-xs font-semibold uppercase tracking-[0.045em] text-muted-foreground">
-              <tr>
-                <th className="px-5 py-4">Name</th>
-                <th className="px-5 py-4">Client ID</th>
-                <th className="px-5 py-4">Environment</th>
-                <th className="px-5 py-4">Status</th>
-                <th className="px-5 py-4">Transport</th>
-                <th className="px-5 py-4">Created at</th>
-                <th className="px-5 py-4">Last used</th>
-                <th className="px-5 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {clients.map((client) => (
-                <ClientRow
-                  action={action}
-                  client={client}
-                  key={client.id}
-                  onDelete={() => void remove(client)}
-                  onEdit={() => setEditingClient(client)}
-                  onAccess={() => setAccessClient(client)}
-                  onRotate={() => void rotate(client)}
-                  onToggle={() => void toggle(client)}
-                />
-              ))}
-              {!loading && clients.length === 0 && (
-                <tr>
-                  <td className="px-6 py-14 text-center text-muted-foreground" colSpan={8}>
-                    No federation clients yet. Create the BlizBooks connection to begin.
-                  </td>
-                </tr>
-              )}
-              {loading && (
-                <tr>
-                  <td className="px-6 py-14 text-center text-muted-foreground" colSpan={8}>
-                    <span className="inline-flex items-center gap-2">
-                      <Icon className="size-4 animate-spin" name="refresh" /> Loading clients…
-                    </span>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        <div className="mt-8">
+          {(() => {
+            const columns: ColumnDef<FederationClient>[] = [
+              {
+                id: 'name',
+                header: 'Name',
+                accessorKey: 'name',
+                sortable: true,
+                pinned: 'left',
+                cell: (c) => <span className="font-semibold text-slate-900">{c.name}</span>,
+              },
+              {
+                id: 'clientId',
+                header: 'Client ID',
+                accessorKey: 'clientId',
+                sortable: true,
+                cell: (c) => <span className="font-mono text-xs text-slate-700">{c.clientId}</span>,
+              },
+              {
+                id: 'environment',
+                header: 'Environment',
+                accessorKey: 'environment',
+                sortable: true,
+                filterable: true,
+                cell: (c) => <span className="text-slate-700">{c.environment}</span>,
+              },
+              {
+                id: 'status',
+                header: 'Status',
+                accessorKey: 'status',
+                sortable: true,
+                filterable: true,
+                cell: (c) => (
+                  <Badge variant={c.isActive ? 'success' : 'secondary'}>{c.status}</Badge>
+                ),
+              },
+              {
+                id: 'transport',
+                header: 'Transport',
+                sortable: false,
+                cell: (c) => (
+                  <span className="inline-flex items-center gap-2 text-sm text-emerald-700">
+                    <Icon className="size-4 text-emerald-600" name="shield" />
+                    {c.mtlsRequired
+                      ? `mTLS · ${c.allowedCertificateFingerprints.length} cert`
+                      : 'OAuth-only UAT'}
+                  </span>
+                ),
+              },
+              {
+                id: 'createdAt',
+                header: 'Created at',
+                accessorKey: 'createdAt',
+                sortable: true,
+                cell: (c) => (
+                  <span className="text-xs text-slate-500">{formatDateTime(c.createdAt)}</span>
+                ),
+              },
+              {
+                id: 'lastUsedAt',
+                header: 'Last used',
+                accessorKey: 'lastUsedAt',
+                sortable: true,
+                cell: (c) => (
+                  <span className="text-xs text-slate-500">
+                    {c.lastUsedAt ? formatDateTime(c.lastUsedAt) : 'Not tracked'}
+                  </span>
+                ),
+              },
+              {
+                id: 'actions',
+                header: 'Actions',
+                align: 'right',
+                pinned: 'right',
+                sortable: false,
+                cell: (c) => {
+                  const busy = action?.endsWith(c.id) ?? false;
+                  return (
+                    <div className="flex justify-end gap-2">
+                      <ActionButton
+                        disabled={busy}
+                        icon="edit"
+                        label="Update certificates"
+                        onClick={() => setEditingClient(c)}
+                      />
+                      <ActionButton
+                        disabled={busy}
+                        icon="shield"
+                        label="Manage grant access"
+                        onClick={() => setAccessClient(c)}
+                      />
+                      <ActionButton
+                        disabled={busy}
+                        icon="refresh"
+                        label="Rotate secret"
+                        onClick={() => void rotate(c)}
+                      />
+                      <ActionButton
+                        disabled={busy}
+                        icon="power"
+                        label={c.isActive ? 'Disable client' : 'Enable client'}
+                        onClick={() => void toggle(c)}
+                      />
+                      <ActionButton
+                        danger
+                        disabled={busy}
+                        icon="trash"
+                        label="Delete client"
+                        onClick={() => void remove(c)}
+                      />
+                    </div>
+                  );
+                },
+              },
+            ];
+
+            return (
+              <StandardDataTable
+                data={clients}
+                columns={columns}
+                keyExtractor={(c) => c.id}
+                searchPlaceholder="Search client name, ID, environment..."
+                emptyMessage={
+                  loading
+                    ? 'Loading clients...'
+                    : 'No federation clients found. Create the BlizBooks connection to begin.'
+                }
+                initialRowsPerPage={10}
+              />
+            );
+          })()}
         </div>
       </section>
 
@@ -171,126 +269,13 @@ export function FederationClients({ session }: { session: AdminSession }) {
           await load();
         }}
         open={createOpen || editingClient !== null}
-        session={session}
       />
       <FederationSecretDialog onClose={() => setOneTimeSecret(null)} secret={oneTimeSecret} />
       <FederationGrantDialog
         client={accessClient}
         onClose={() => setAccessClient(null)}
         onSaved={load}
-        session={session}
       />
     </>
   );
-}
-
-function ClientRow({
-  client,
-  action,
-  onEdit,
-  onAccess,
-  onRotate,
-  onToggle,
-  onDelete,
-}: {
-  client: FederationClient;
-  action: string | null;
-  onEdit: () => void;
-  onAccess: () => void;
-  onRotate: () => void;
-  onToggle: () => void;
-  onDelete: () => void;
-}) {
-  const busy = action?.endsWith(client.id) ?? false;
-  return (
-    <tr className="transition-colors hover:bg-muted/30">
-      <td className="px-5 py-5 font-semibold">{client.name}</td>
-      <td className="px-5 py-5 font-mono text-xs">{client.clientId}</td>
-      <td className="px-5 py-5">{client.environment}</td>
-      <td className="px-5 py-5">
-        <Badge variant={client.isActive ? 'success' : 'secondary'}>{client.status}</Badge>
-      </td>
-      <td className="px-5 py-5">
-        <span className="inline-flex items-center gap-2 text-sm text-success-foreground">
-          <Icon className="size-4 text-success" name="shield" />
-          {client.mtlsRequired
-            ? `mTLS · ${client.allowedCertificateFingerprints.length} cert`
-            : 'OAuth-only UAT'}
-        </span>
-      </td>
-      <td className="px-5 py-5 text-xs text-muted-foreground">{formatDate(client.createdAt)}</td>
-      <td className="px-5 py-5 text-xs text-muted-foreground">
-        {client.lastUsedAt ? formatDate(client.lastUsedAt) : 'Not tracked'}
-      </td>
-      <td className="px-5 py-5">
-        <div className="flex justify-end gap-2">
-          <ActionButton disabled={busy} icon="edit" label="Update certificates" onClick={onEdit} />
-          <ActionButton
-            disabled={busy}
-            icon="shield"
-            label="Manage grant access"
-            onClick={onAccess}
-          />
-          <ActionButton disabled={busy} icon="refresh" label="Rotate secret" onClick={onRotate} />
-          <ActionButton
-            disabled={busy}
-            icon="power"
-            label={client.isActive ? 'Disable client' : 'Enable client'}
-            onClick={onToggle}
-          />
-          <ActionButton
-            danger
-            disabled={busy}
-            icon="trash"
-            label="Delete client"
-            onClick={onDelete}
-          />
-        </div>
-      </td>
-    </tr>
-  );
-}
-
-function ActionButton({
-  icon,
-  label,
-  danger,
-  disabled,
-  onClick,
-}: {
-  icon: 'edit' | 'refresh' | 'power' | 'shield' | 'trash';
-  label: string;
-  danger?: boolean;
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      aria-label={label}
-      className={`grid size-10 place-items-center rounded-lg border border-border transition-colors disabled:cursor-wait disabled:opacity-45 ${
-        danger
-          ? 'text-destructive hover:border-destructive/30 hover:bg-destructive/5'
-          : 'hover:bg-muted'
-      }`}
-      disabled={disabled}
-      onClick={onClick}
-      title={label}
-      type="button"
-    >
-      <Icon className="size-4" name={icon} />
-    </button>
-  );
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(new Date(value));
-}
-
-function readableError(error: unknown) {
-  return error instanceof Error && error.message
-    ? error.message
-    : 'The federation client action could not be completed.';
 }

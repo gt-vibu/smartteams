@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PlatformController } from './platform.controller';
+import { MembershipService } from './membership.service';
 import { TeamsProjectsService } from './teams-projects.service';
 import { PlatformService } from './platform.service';
 import { PlatformAuthGuard } from './platform-auth.guard';
@@ -8,9 +9,10 @@ import { FederationGrantAdminService } from './federation-grant-admin.service';
 
 @Module({
   controllers: [PlatformController, PlatformAdminController],
-  exports: [TeamsProjectsService, PlatformService],
+  exports: [TeamsProjectsService, MembershipService, PlatformService],
   providers: [
     TeamsProjectsService,
+    MembershipService,
     PlatformService,
     PlatformAuthGuard,
     FederationGrantAdminService,

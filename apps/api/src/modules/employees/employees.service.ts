@@ -1,776 +1,95 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client';
-import {
-  EmployeeStatus,
-  EmploymentType,
-  IdentityType,
-  OwnerSource,
-} from '../../generated/prisma/enums';
-import {
-  requirePermission,
-  requireReason,
-  type DomainContext,
-} from '../../common/context/domain-context';
-import {
-  ConflictError,
-  ForbiddenDomainError,
-  NotFoundError,
-  StaleWriteError,
-} from '../../common/errors/domain-error';
+import { EmployeeStatus, EmploymentType } from '../../generated/prisma/enums';
+import { type DomainContext } from '../../common/context/domain-context';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
-import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { AuditService } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
-import { AuthService } from '../auth/auth.service';
-import { createHash } from 'node:crypto';
+import { AuthSessionService } from '../auth/auth.session.service';
 import { EmployeeRecordsService } from './employee-records.service';
-import { toEmployeeDto } from './employee-mappers';
+import { EmployeeFederationAccessService } from './employee-federation-access.service';
+import { EmployeeFederationSyncService } from './employee-federation-sync.service';
+import { EmployeeNativeService } from './employee-native.service';
 
-const externallyOwnedFields = new Set([
-  'employeeNumber',
-  'firstName',
-  'middleName',
-  'lastName',
-  'preferredName',
-  'workEmail',
-  'personalEmail',
-  'phone',
-  'status',
-  'employmentType',
-  'dateOfJoining',
-  'dateOfLeaving',
-  'managerEmployeeId',
-  'primaryBranchId',
-]);
-
+/**
+ * The employees module's entry point.
+ *
+ * Was 877 lines holding the native write paths, the federated sync, access revocation and a set
+ * of thin forwards to `EmployeeRecordsService`. Those are now three services, sharing free
+ * functions in `employee-shared` rather than each other.
+ *
+ * The constructor still takes the same five dependencies, so Nest and every direct construction
+ * keep working, and each method below forwards with identical arguments.
+ */
 @Injectable()
 export class EmployeesService {
+  private readonly federationAccess: EmployeeFederationAccessService;
+  private readonly federationSync: EmployeeFederationSyncService;
+  private readonly native: EmployeeNativeService;
+
   constructor(
-    private readonly database: TenantDatabaseService,
-    private readonly audit: AuditService,
-    private readonly outbox: OutboxService,
-    private readonly auth: AuthService,
+    database: TenantDatabaseService,
+    audit: AuditService,
+    outbox: OutboxService,
+    sessions: AuthSessionService,
     private readonly records: EmployeeRecordsService,
-  ) {}
-
-  async createNative(
-    context: DomainContext,
-    input: {
-      employeeNumber: string;
-      firstName: string;
-      middleName?: string | null;
-      lastName: string;
-      preferredName?: string | null;
-      workEmail?: string | null;
-      personalEmail?: string | null;
-      phone?: string | null;
-      employmentType: EmploymentType;
-      dateOfJoining?: string | null;
-      primaryBranchId?: string;
-    },
   ) {
-    requirePermission(context, 'employees.write');
-    return this.database.run(context, async (tx) => {
-      if (
-        input.primaryBranchId &&
-        !(await tx.branch.findFirst({
-          where: { id: input.primaryBranchId, organizationId: context.organizationId },
-        }))
-      )
-        throw new NotFoundError('Branch');
-      const employee = await tx.employee.create({
-        data: {
-          organizationId: context.organizationId,
-          employeeNumber: input.employeeNumber,
-          firstName: input.firstName,
-          middleName: input.middleName,
-          lastName: input.lastName,
-          preferredName: input.preferredName,
-          workEmail: input.workEmail,
-          personalEmail: input.personalEmail,
-          phone: input.phone,
-          identitySource: IdentityType.NATIVE,
-          employmentType: input.employmentType,
-          dateOfJoining: input.dateOfJoining ? new Date(input.dateOfJoining) : undefined,
-          primaryBranchId: input.primaryBranchId,
-        },
-      });
-      await this.setOwnership(
-        tx,
-        context,
-        employee.id,
-        Object.keys(employee).filter((field) => externallyOwnedFields.has(field)),
-        OwnerSource.NATIVE,
-      );
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE',
-          entityId: employee.id,
-          action: 'EMPLOYEE_CREATED',
-          afterState: jsonSnapshot(employee),
-        },
-        tx,
-      );
-      await this.outbox.append(
-        context,
-        {
-          aggregateType: 'Employee',
-          aggregateId: employee.id,
-          aggregateVersion: employee.version,
-          eventType: 'employee.created',
-          payload: jsonSnapshot(toEmployeeDto(employee)),
-        },
-        tx,
-      );
-      return toEmployeeDto(employee);
-    });
+    this.federationAccess = new EmployeeFederationAccessService(database, audit, sessions);
+    this.federationSync = new EmployeeFederationSyncService(database, audit, outbox, sessions);
+    this.native = new EmployeeNativeService(database, audit, outbox, sessions);
   }
 
-  async syncFederated(
-    context: DomainContext,
-    externalId: string,
-    clientId: string,
-    input: {
-      employeeNumber: string;
-      firstName: string;
-      middleName?: string | null;
-      lastName: string;
-      preferredName?: string | null;
-      workEmail?: string | null;
-      personalEmail?: string | null;
-      phone?: string | null;
-      status?: EmployeeStatus;
-      employmentType?: EmploymentType;
-      dateOfJoining?: string | null;
-      dateOfLeaving?: string | null;
-      managerEmployeeId?: string;
-      primaryBranchId?: string;
-      externalVersion?: string;
-    },
+  // --- employees this tenant owns --------------------------------------------------------------
+
+  createNative(...args: Parameters<EmployeeNativeService['createNative']>) {
+    return this.native.createNative(...args);
+  }
+
+  get(context: DomainContext, employeeId: string) {
+    return this.native.get(context, employeeId);
+  }
+
+  list(...args: Parameters<EmployeeNativeService['list']>) {
+    return this.native.list(...args);
+  }
+
+  updateNative(...args: Parameters<EmployeeNativeService['updateNative']>) {
+    return this.native.updateNative(...args);
+  }
+
+  assignBranch(...args: Parameters<EmployeeNativeService['assignBranch']>) {
+    return this.native.assignBranch(...args);
+  }
+
+  deactivate(...args: Parameters<EmployeeNativeService['deactivate']>) {
+    return this.native.deactivate(...args);
+  }
+
+  // --- employees a partner masters -------------------------------------------------------------
+
+  syncFederated(...args: Parameters<EmployeeFederationSyncService['syncFederated']>) {
+    return this.federationSync.syncFederated(...args);
+  }
+
+  assignFederatedBranch(
+    ...args: Parameters<EmployeeFederationSyncService['assignFederatedBranch']>
   ) {
-    requirePermission(context, 'employees.write');
-    return this.database.run(context, async (tx) => {
-      const existing = await tx.employee.findFirst({
-        where: {
-          organizationId: context.organizationId,
-          externalId,
-          ...(context.branchId
-            ? {
-                OR: [
-                  { primaryBranchId: context.branchId },
-                  { branchAssignments: { some: { branchId: context.branchId, endsOn: null } } },
-                ],
-              }
-            : {}),
-        },
-      });
-      // Federation callers identify branches by the external id BlizBooks
-      // provisioned; native callers use the internal id. Accept either, but
-      // persist the resolved internal id for the foreign key.
-      let primaryBranchId = input.primaryBranchId;
-      if (primaryBranchId) {
-        const branch = await tx.branch.findFirst({
-          where: {
-            organizationId: context.organizationId,
-            OR: [{ id: primaryBranchId }, { externalId: primaryBranchId }],
-          },
-        });
-        if (!branch) throw new NotFoundError('Branch');
-        primaryBranchId = branch.id;
-      }
-      let managerEmployeeId = input.managerEmployeeId;
-      if (managerEmployeeId) {
-        const manager = await tx.employee.findFirst({
-          where: {
-            organizationId: context.organizationId,
-            OR: [{ id: managerEmployeeId }, { externalId: managerEmployeeId }],
-            status: EmployeeStatus.ACTIVE,
-          },
-          select: { id: true },
-        });
-        if (!manager || manager.id === existing?.id) throw new ConflictError('Manager is invalid');
-        managerEmployeeId = manager.id;
-      }
-      const workEmail = input.workEmail?.trim().toLowerCase() || null;
-      const phone = input.phone?.trim() || null;
-      const contactConditions: Prisma.EmployeeWhereInput[] = [
-        { employeeNumber: input.employeeNumber },
-        ...(workEmail ? [{ workEmail }] : []),
-        ...(phone ? [{ phone }] : []),
-      ];
-      if (contactConditions.length) {
-        const conflictingEmployee = await tx.employee.findFirst({
-          where: {
-            organizationId: context.organizationId,
-            ...(existing ? { id: { not: existing.id } } : {}),
-            OR: contactConditions,
-          },
-          select: { id: true },
-        });
-        if (conflictingEmployee) {
-          throw new ConflictError('Employee number, email, or phone is already in use');
-        }
-      }
-      const data = {
-        employeeNumber: input.employeeNumber,
-        firstName: input.firstName,
-        middleName: input.middleName,
-        lastName: input.lastName,
-        preferredName: input.preferredName,
-        workEmail,
-        personalEmail: input.personalEmail?.trim().toLowerCase() || null,
-        phone,
-        status: input.status ?? EmployeeStatus.ACTIVE,
-        employmentType: input.employmentType ?? EmploymentType.FULL_TIME,
-        dateOfJoining:
-          input.dateOfJoining === null
-            ? null
-            : input.dateOfJoining
-              ? new Date(input.dateOfJoining)
-              : undefined,
-        dateOfLeaving:
-          input.dateOfLeaving === null
-            ? null
-            : input.dateOfLeaving
-              ? new Date(input.dateOfLeaving)
-              : undefined,
-        managerEmployeeId,
-        primaryBranchId,
-        deactivatedAt: input.status && input.status !== EmployeeStatus.ACTIVE ? new Date() : null,
-        identitySource: IdentityType.FEDERATED,
-        externalId,
-      };
-      const shadowUser = existing?.userId
-        ? { id: existing.userId }
-        : ((await tx.user.findFirst({
-            where: {
-              externalIdentityProvider: `federation:${clientId}`,
-              externalOrganizationId: context.organizationId,
-              externalIdentityId: externalId,
-            },
-            select: { id: true },
-          })) ??
-          (await tx.user.create({
-            data: {
-              email: federatedEmail(clientId, externalId),
-              emailNormalized: federatedEmail(clientId, externalId),
-              displayName: `${input.firstName} ${input.lastName}`.trim(),
-              identityType: IdentityType.FEDERATED,
-              externalIdentityProvider: `federation:${clientId}`,
-              externalOrganizationId: context.organizationId,
-              externalIdentityId: externalId,
-            },
-          })));
-      let employee;
-      try {
-        employee = existing
-          ? await tx.employee.update({
-              where: { id: existing.id },
-              data: { ...data, userId: shadowUser.id, version: { increment: 1 } },
-            })
-          : await tx.employee.create({
-              data: { organizationId: context.organizationId, userId: shadowUser.id, ...data },
-            });
-      } catch (error) {
-        if (isUniqueEmployeeIdentityError(error)) {
-          throw new ConflictError('Employee number, email, or phone is already in use');
-        }
-        throw error;
-      }
-      await tx.userOrganization.upsert({
-        where: {
-          userId_organizationId: { userId: shadowUser.id, organizationId: context.organizationId },
-        },
-        create: {
-          userId: shadowUser.id,
-          organizationId: context.organizationId,
-          status: 'ACTIVE',
-          source: 'BLIZBOOKS',
-          externalId,
-        },
-        update: { status: 'ACTIVE', removedAt: null, externalId },
-      });
-      if (employee.status !== EmployeeStatus.ACTIVE)
-        await this.auth.revokeAllSessions(employee.userId!, 'FEDERATED_EMPLOYEE_INACTIVE', tx);
-      await this.setOwnership(
-        tx,
-        context,
-        employee.id,
-        [...externallyOwnedFields],
-        OwnerSource.FEDERATED,
-        clientId,
-        input.externalVersion,
-      );
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE',
-          entityId: employee.id,
-          action: existing ? 'EMPLOYEE_SYNCED' : 'EMPLOYEE_PROVISIONED',
-          beforeState: existing ? jsonSnapshot(existing) : undefined,
-          afterState: jsonSnapshot(employee),
-        },
-        tx,
-      );
-      await this.outbox.append(
-        context,
-        {
-          aggregateType: 'Employee',
-          aggregateId: employee.id,
-          aggregateVersion: employee.version,
-          eventType: 'employee.changed',
-          payload: jsonSnapshot(toEmployeeDto(employee)),
-        },
-        tx,
-      );
-      return toEmployeeDto(employee);
-    });
+    return this.federationSync.assignFederatedBranch(...args);
   }
 
-  async get(context: DomainContext, employeeId: string) {
-    requirePermission(context, 'employees.read');
-    return this.database.run(context, async (tx) => {
-      const employee = await tx.employee.findFirst({
-        where: { id: employeeId, organizationId: context.organizationId },
-        include: { fieldOwnership: true, branchAssignments: true },
-      });
-      if (!employee) throw new NotFoundError('Employee');
-      return {
-        ...toEmployeeDto(employee),
-        ownedFields: employee.fieldOwnership.map((ownership) => ({
-          fieldName: ownership.fieldName,
-          ownerSource: ownership.ownerSource,
-          ownerClientId: ownership.ownerClientId,
-        })),
-      };
-    });
+  syncAccess(...args: Parameters<EmployeeFederationAccessService['syncAccess']>) {
+    return this.federationAccess.syncAccess(...args);
   }
 
-  async list(context: DomainContext) {
-    requirePermission(context, 'employees.read');
-    return this.database.run(context, async (tx) => {
-      const employees = await tx.employee.findMany({
-        where: { organizationId: context.organizationId },
-        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }],
-      });
-      return employees.map((employee) => toEmployeeDto(employee));
-    });
-  }
-
-  async updateNative(
-    context: DomainContext,
-    employeeId: string,
-    version: number,
-    input: {
-      firstName?: string;
-      middleName?: string;
-      lastName?: string;
-      preferredName?: string;
-      workEmail?: string;
-      personalEmail?: string;
-      phone?: string;
-      status?: EmployeeStatus;
-      primaryBranchId?: string;
-    },
+  revokeFederatedSessions(
+    ...args: Parameters<EmployeeFederationAccessService['revokeFederatedSessions']>
   ) {
-    requirePermission(context, 'employees.write');
-    const blockedFields = Object.keys(input).filter((field) => externallyOwnedFields.has(field));
-    return this.database.run(context, async (tx) => {
-      const employee = await tx.employee.findFirst({
-        where: { id: employeeId, organizationId: context.organizationId },
-        include: { fieldOwnership: true },
-      });
-      if (!employee) throw new NotFoundError('Employee');
-      if (
-        input.primaryBranchId &&
-        !(await tx.branch.findFirst({
-          where: { id: input.primaryBranchId, organizationId: context.organizationId },
-        }))
-      )
-        throw new NotFoundError('Branch');
-      const blocked = employee.fieldOwnership.filter(
-        (ownership) =>
-          blockedFields.includes(ownership.fieldName) &&
-          ownership.ownerSource === OwnerSource.FEDERATED,
-      );
-      if (blocked.length)
-        throw new ForbiddenDomainError(
-          `Federated ownership prevents editing: ${blocked.map((field) => field.fieldName).join(', ')}`,
-        );
-      const result = await tx.employee.updateMany({
-        where: { id: employeeId, organizationId: context.organizationId, version },
-        data: { ...input, version: { increment: 1 } },
-      });
-      if (result.count !== 1) throw new StaleWriteError();
-      const updated = await tx.employee.findUniqueOrThrow({ where: { id: employeeId } });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE',
-          entityId: employeeId,
-          action: 'EMPLOYEE_UPDATED',
-          beforeState: jsonSnapshot(employee),
-          afterState: jsonSnapshot(updated),
-        },
-        tx,
-      );
-      return toEmployeeDto(updated);
-    });
+    return this.federationAccess.revokeFederatedSessions(...args);
   }
 
-  async assignBranch(
-    context: DomainContext,
-    employeeId: string,
-    input: { branchId: string; startsOn: string; endsOn?: string; isPrimary?: boolean },
-  ) {
-    requirePermission(context, 'employees.write');
-    return this.database.run(context, async (tx) => {
-      const employee = await tx.employee.findFirst({
-        where: { id: employeeId, organizationId: context.organizationId },
-      });
-      if (!employee) throw new NotFoundError('Employee');
-      const branch = await tx.branch.findFirst({
-        where: { id: input.branchId, organizationId: context.organizationId },
-      });
-      if (!branch) throw new NotFoundError('Branch');
-      if (input.endsOn && new Date(input.endsOn) <= new Date(input.startsOn))
-        throw new ConflictError('Branch assignment end must be after its start');
-      const startsOn = new Date(input.startsOn);
-      const open = await tx.employeeBranchAssignment.findFirst({
-        where: {
-          organizationId: context.organizationId,
-          employeeId,
-          branchId: input.branchId,
-          endsOn: null,
-        },
-        orderBy: { startsOn: 'desc' },
-      });
-      let assignment;
-      if (open) {
-        // Same-day reassignment would overlap the open row under
-        // employee_branch_assignments_no_overlap, so extend it in place.
-        assignment = await tx.employeeBranchAssignment.update({
-          where: { id: open.id },
-          data: {
-            startsOn: open.startsOn < startsOn ? open.startsOn : startsOn,
-            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
-            isPrimary: input.isPrimary ?? open.isPrimary,
-          },
-        });
-      } else {
-        await this.endOpenPrimaryAssignments(
-          tx,
-          context.organizationId,
-          employeeId,
-          startsOn,
-          input.isPrimary,
-        );
-        assignment = await tx.employeeBranchAssignment.create({
-          data: {
-            organizationId: context.organizationId,
-            employeeId,
-            branchId: input.branchId,
-            startsOn,
-            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
-            isPrimary: input.isPrimary ?? false,
-            sourceAccessMode: context.accessMode,
-          },
-        });
-      }
-      if (input.isPrimary)
-        await tx.employee.update({
-          where: { id: employeeId },
-          data: { primaryBranchId: input.branchId, version: { increment: 1 } },
-        });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE_BRANCH_ASSIGNMENT',
-          entityId: assignment.id,
-          action: 'EMPLOYEE_BRANCH_ASSIGNED',
-          afterState: jsonSnapshot(assignment),
-        },
-        tx,
-      );
-      return assignment;
-    });
-  }
+  // --- employment records, contacts and compensation ---------------------------------------------
 
-  async assignFederatedBranch(
-    context: DomainContext,
-    externalEmployeeId: string,
-    externalBranchId: string,
-    input: { startsOn: string; endsOn?: string; isPrimary?: boolean },
-  ) {
-    requirePermission(context, 'employees.branches.write');
-    return this.database.run(context, async (tx) => {
-      const employee = await tx.employee.findFirst({
-        where: { organizationId: context.organizationId, externalId: externalEmployeeId },
-      });
-      const branch = await tx.branch.findFirst({
-        where: { organizationId: context.organizationId, externalId: externalBranchId },
-      });
-      if (!employee) throw new NotFoundError('Employee');
-      if (!branch) throw new NotFoundError('Branch');
-      const startsOn = new Date(input.startsOn);
-      // Federation sync repeats the same assignment. employee_branch_assignments_
-      // no_overlap treats a row as covering its inclusive start date, so
-      // close-and-recreate on the same day violates the exclusion constraint.
-      // Reuse the open assignment for this branch instead.
-      const open = await tx.employeeBranchAssignment.findFirst({
-        where: {
-          organizationId: context.organizationId,
-          employeeId: employee.id,
-          branchId: branch.id,
-          endsOn: null,
-        },
-        orderBy: { startsOn: 'desc' },
-      });
-      let assignment;
-      if (open) {
-        assignment = await tx.employeeBranchAssignment.update({
-          where: { id: open.id },
-          data: {
-            startsOn: open.startsOn < startsOn ? open.startsOn : startsOn,
-            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
-            isPrimary: input.isPrimary ?? open.isPrimary,
-          },
-        });
-      } else {
-        await this.endOpenPrimaryAssignments(
-          tx,
-          context.organizationId,
-          employee.id,
-          startsOn,
-          input.isPrimary,
-        );
-        assignment = await tx.employeeBranchAssignment.create({
-          data: {
-            organizationId: context.organizationId,
-            employeeId: employee.id,
-            branchId: branch.id,
-            startsOn,
-            endsOn: input.endsOn ? new Date(input.endsOn) : undefined,
-            isPrimary: input.isPrimary ?? false,
-            sourceAccessMode: context.accessMode,
-          },
-        });
-      }
-      if (input.isPrimary)
-        await tx.employee.update({
-          where: { id: employee.id },
-          data: { primaryBranchId: branch.id, version: { increment: 1 } },
-        });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE_BRANCH_ASSIGNMENT',
-          entityId: assignment.id,
-          action: 'EMPLOYEE_BRANCH_ASSIGNED',
-          afterState: jsonSnapshot(assignment),
-        },
-        tx,
-      );
-      return assignment;
-    });
-  }
-
-  /**
-   * Close currently open primary assignments so a replacement can take over.
-   * A daterange row covers its end date inclusively, so the boundary is the
-   * day before the replacement starts; a same-day primary on another branch
-   * cannot move before its own start and instead ends on its start date.
-   */
-  private async endOpenPrimaryAssignments(
-    tx: Prisma.TransactionClient,
-    organizationId: string,
-    employeeId: string,
-    replacementStartsOn: Date,
-    close: boolean | undefined,
-  ) {
-    if (!close) return;
-    const boundary = new Date(replacementStartsOn);
-    boundary.setUTCDate(boundary.getUTCDate() - 1);
-    const openPrimary = await tx.employeeBranchAssignment.findMany({
-      where: {
-        organizationId,
-        employeeId,
-        isPrimary: true,
-        endsOn: null,
-      },
-    });
-    for (const assignment of openPrimary) {
-      await tx.employeeBranchAssignment.update({
-        where: { id: assignment.id },
-        data: {
-          endsOn: assignment.startsOn >= boundary ? assignment.startsOn : boundary,
-          isPrimary: false,
-        },
-      });
-    }
-  }
-
-  async syncAccess(context: DomainContext, externalEmployeeId: string, permissionKeys: string[]) {
-    requirePermission(context, 'employees.access.write');
-    return this.database.run(context, async (tx) => {
-      const employee = await tx.employee.findFirst({
-        where: { organizationId: context.organizationId, externalId: externalEmployeeId },
-        include: { user: true },
-      });
-      if (!employee?.userId) throw new NotFoundError('Federated employee user');
-      const mappedGrant = context.actor.clientId
-        ? await tx.federationGrant.findFirst({
-            where: {
-              clientId: context.actor.clientId,
-              organizationId: context.organizationId,
-              effect: 'ALLOW',
-              status: 'ACTIVE',
-              startsAt: { lte: new Date() },
-              OR: [{ endsAt: null }, { endsAt: { gt: new Date() } }],
-              AND: [
-                {
-                  OR: [
-                    { branchId: null },
-                    ...(context.branchId ? [{ branchId: context.branchId }] : []),
-                  ],
-                },
-              ],
-              roleMappings: { some: {} },
-            },
-            include: { roleMappings: { orderBy: { priority: 'asc' } } },
-            orderBy: { createdAt: 'asc' },
-          })
-        : null;
-      const role = mappedGrant?.roleMappings[0]?.roleId
-        ? await tx.role.findUniqueOrThrow({ where: { id: mappedGrant.roleMappings[0].roleId } })
-        : await tx.role.upsert({
-            where: {
-              organizationId_code: {
-                organizationId: context.organizationId,
-                code: `FEDERATED_${employee.id}`,
-              },
-            },
-            create: {
-              organizationId: context.organizationId,
-              code: `FEDERATED_${employee.id}`,
-              name: `Federated access ${employee.employeeNumber}`,
-              scope: 'ORGANIZATION',
-              isSystem: false,
-              permissions: {
-                create: permissionKeys.map((key) => ({
-                  permission: {
-                    connectOrCreate: { where: { key }, create: { key, description: key } },
-                  },
-                })),
-              },
-            },
-            update: {
-              permissions: {
-                deleteMany: {},
-                create: permissionKeys.map((key) => ({
-                  permission: {
-                    connectOrCreate: { where: { key }, create: { key, description: key } },
-                  },
-                })),
-              },
-            },
-          });
-      const existingAssignment = await tx.userRole.findFirst({
-        where: {
-          userId: employee.userId,
-          organizationId: context.organizationId,
-          roleId: role.id,
-          branchId: context.branchId,
-        },
-      });
-      const assignment = existingAssignment
-        ? await tx.userRole.update({
-            where: { id: existingAssignment.id },
-            data: {
-              assignmentSource: context.accessMode,
-              sourceFederationGrantId: mappedGrant?.id,
-              endsAt: null,
-            },
-          })
-        : await tx.userRole.create({
-            data: {
-              userId: employee.userId,
-              organizationId: context.organizationId,
-              roleId: role.id,
-              branchId: context.branchId,
-              assignmentSource: context.accessMode,
-              sourceFederationGrantId: mappedGrant?.id,
-            },
-          });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'USER_ROLE',
-          entityId: assignment.id,
-          action: 'FEDERATED_EMPLOYEE_ACCESS_SYNCED',
-          afterState: jsonSnapshot({ employeeId: employee.id, permissionKeys }),
-        },
-        tx,
-      );
-      return { employeeId: employee.id, permissionKeys };
-    });
-  }
-
-  async revokeFederatedSessions(
-    context: DomainContext,
-    externalEmployeeId: string,
-    reason: string,
-  ) {
-    requirePermission(context, 'employees.sessions.revoke');
-    requireReason({ ...context, reason }, 'Session revocation requires a reason');
-    return this.database.run(context, async (tx) => {
-      const employee = await tx.employee.findFirst({
-        where: { organizationId: context.organizationId, externalId: externalEmployeeId },
-      });
-      if (!employee?.userId) throw new NotFoundError('Federated employee user');
-      await this.auth.revokeAllSessions(employee.userId, reason, tx);
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE',
-          entityId: employee.id,
-          action: 'EMPLOYEE_SESSIONS_REVOKED',
-          reason,
-        },
-        tx,
-      );
-      return { employeeId: employee.id, revoked: true };
-    });
-  }
-
-  async deactivate(context: DomainContext, employeeId: string, reason: string) {
-    requirePermission(context, 'employees.write');
-    if (!reason.trim()) throw new ConflictError('Employee deactivation requires a reason');
-    return this.database.run(context, async (tx) => {
-      const employee = await tx.employee.findFirst({
-        where: { id: employeeId, organizationId: context.organizationId },
-      });
-      if (!employee) throw new NotFoundError('Employee');
-      const updated = await tx.employee.update({
-        where: { id: employeeId },
-        data: { status: 'INACTIVE', deactivatedAt: new Date(), version: { increment: 1 } },
-      });
-      if (employee.userId)
-        await this.auth.revokeAllSessions(employee.userId, 'EMPLOYEE_DEACTIVATED', tx);
-      await this.audit.record(
-        context,
-        {
-          entityType: 'EMPLOYEE',
-          entityId: employeeId,
-          action: 'EMPLOYEE_DEACTIVATED',
-          beforeState: jsonSnapshot(employee),
-          afterState: jsonSnapshot(updated),
-          reason,
-        },
-        tx,
-      );
-      return toEmployeeDto(updated);
-    });
+  async listEmploymentRecords(context: DomainContext, employeeId: string) {
+    return this.records.listEmploymentRecords(context, employeeId);
   }
 
   async listEmergencyContacts(context: DomainContext, employeeId: string) {
@@ -824,61 +143,11 @@ export class EmployeesService {
     return this.records.addCompensation(context, employeeId, input);
   }
 
+  async linkUser(context: DomainContext, employeeId: string, userId: string) {
+    return this.records.linkUser(context, employeeId, userId);
+  }
+
   async assignManager(context: DomainContext, employeeId: string, managerEmployeeId: string) {
     return this.records.assignManager(context, employeeId, managerEmployeeId);
   }
-
-  private async setOwnership(
-    tx: Parameters<Parameters<TenantDatabaseService['run']>[1]>[0],
-    context: DomainContext,
-    employeeId: string,
-    fields: string[],
-    ownerSource: OwnerSource,
-    ownerClientId?: string,
-    externalVersion?: string,
-  ) {
-    for (const fieldName of fields) {
-      await tx.employeeFieldOwnership.upsert({
-        where: { employeeId_fieldName: { employeeId, fieldName } },
-        create: {
-          employeeId,
-          organizationId: context.organizationId,
-          fieldName,
-          ownerSource,
-          ownerClientId,
-          lastExternalVersion: externalVersion,
-        },
-        update: { ownerSource, ownerClientId, lastExternalVersion: externalVersion },
-      });
-    }
-  }
-}
-
-function federatedEmail(clientId: string, externalId: string) {
-  const suffix = createHash('sha256')
-    .update(`${clientId}:${externalId}`)
-    .digest('hex')
-    .slice(0, 24);
-  return `federated-${suffix}@invalid.smarteam.local`;
-}
-
-function isUniqueEmployeeIdentityError(error: unknown) {
-  if (!(error instanceof Prisma.PrismaClientKnownRequestError) || error.code !== 'P2002') {
-    return false;
-  }
-  const target = error.meta?.target;
-  return Array.isArray(target)
-    ? target.some(
-        (field) =>
-          field === 'employee_number' ||
-          field === 'employeeNumber' ||
-          field === 'work_email' ||
-          field === 'phone' ||
-          field === 'workEmail',
-      )
-    : target === 'employee_number' ||
-        target === 'employeeNumber' ||
-        target === 'work_email' ||
-        target === 'phone' ||
-        target === 'workEmail';
 }
