@@ -13,6 +13,10 @@ import { AuthSessionService } from './auth.session.service';
 import { AuthTokenService } from './auth.tokens';
 import { NativeJwtGuard } from './jwt.guard';
 import { AuthRateLimitInterceptor } from './auth-rate-limit.interceptor';
+import { AuthPasswordController } from './auth-password.controller';
+import { PasswordChangeService } from './auth.password-change.service';
+import { PasswordInvitationService } from './auth.password-invitation.service';
+import { PasswordResetCodeService } from './auth.password-reset-code.service';
 
 const providers = [
   AuthService,
@@ -26,17 +30,21 @@ const providers = [
   PasswordService,
   NativeJwtGuard,
   AuthRateLimitInterceptor,
+  PasswordInvitationService,
+  PasswordResetCodeService,
+  PasswordChangeService,
 ];
 
 @Global()
 @Module({
-  controllers: [AuthController],
+  controllers: [AuthController, AuthPasswordController],
   exports: [
     AuthService,
     AuthSessionService,
     AuthCookieService,
     AuthTokenService,
     PasswordService,
+    PasswordInvitationService,
     NativeJwtGuard,
     JwtModule,
   ],

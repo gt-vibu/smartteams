@@ -47,6 +47,8 @@ export type OnboardingResult = {
   failure: { step: OnboardingStep; message: string } | null;
   /** Returned once, for the administrator to pass on. Never stored. */
   temporaryPassword: string | null;
+  /** The login's invitation email — address, temporary password, set-password link — was queued. */
+  invitationEmailed: boolean;
   /** The address the new login signs in with. Needed alongside the password to be any use. */
   accountEmail: string | null;
 };
@@ -73,10 +75,18 @@ export function useEmployeeOnboarding() {
       const completed: OnboardingStep[] = [];
       let employee: Employee | null = null;
       let temporaryPassword: string | null = null;
+      let invitationEmailed = false;
       let accountEmail: string | null = null;
 
       const finish = (failure: OnboardingResult['failure']): OnboardingResult => {
-        const value = { employee, completed, failure, temporaryPassword, accountEmail };
+        const value = {
+          employee,
+          completed,
+          failure,
+          temporaryPassword,
+          invitationEmailed,
+          accountEmail,
+        };
         setResult(value);
         setBusy(false);
         return value;
@@ -155,11 +165,16 @@ export function useEmployeeOnboarding() {
               roleIds: [input.account.roleId],
               reason: `Onboarding ${input.firstName.trim()} ${input.lastName.trim()}`,
             },
-          })) as { userId?: string; temporaryPassword?: string | null };
+          })) as {
+            userId?: string;
+            temporaryPassword?: string | null;
+            invitation?: { queued?: boolean } | null;
+          };
           if (typeof created.userId !== 'string')
             throw new Error('The account was created but no user id came back.');
           userId = created.userId;
           temporaryPassword = created.temporaryPassword ?? null;
+          invitationEmailed = created.invitation?.queued === true;
           accountEmail = input.account.email.trim();
           completed.push('account');
         } catch (caught) {

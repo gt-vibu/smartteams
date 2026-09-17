@@ -42,6 +42,7 @@ export class AuthIdentityService {
           identityType: true,
           isActive: true,
           lastLoginAt: true,
+          passwordChangeRequired: true,
           memberships: {
             where: { status: 'ACTIVE' },
             select: {
@@ -115,6 +116,7 @@ export class AuthIdentityService {
         identityType: record.identityType,
         isActive: record.isActive,
         lastLoginAt: record.lastLoginAt?.toISOString() ?? null,
+        passwordChangeRequired: record.passwordChangeRequired,
       },
       session: {
         id: session.id,

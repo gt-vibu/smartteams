@@ -49,14 +49,32 @@ export function Screen7TimeOff() {
   return (
     <div className="flex w-full flex-col">
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6">
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-          <SegmentedTabs
-            aria-label="Filter leave requests by status"
-            items={tabs}
-            onValueChange={setStatus}
-            value={status}
-          />
-          <div className="flex shrink-0 items-center gap-2 pb-2 sm:pb-0">
+        {/* Mobile View: Top action bar with page label on left and Apply button on top right */}
+        <div className="flex items-center justify-between pt-2.5 pb-1 sm:hidden">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Leave Requests
+          </span>
+          <Button
+            disabled={!leave.canWrite || leave.hasNoEmployeeRecord}
+            onClick={() => setIsApplyOpen(true)}
+            size="sm"
+            type="button"
+          >
+            Apply for leave
+          </Button>
+        </div>
+
+        {/* Filter tabs: single instance rendered in its own dedicated division on mobile */}
+        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:py-2.5">
+          <div className="overflow-x-auto pb-2 sm:pb-0">
+            <SegmentedTabs
+              aria-label="Filter leave requests by status"
+              items={tabs}
+              onValueChange={setStatus}
+              value={status}
+            />
+          </div>
+          <div className="hidden sm:flex shrink-0 items-center gap-2">
             <Button
               disabled={!leave.canWrite || leave.hasNoEmployeeRecord}
               onClick={() => setIsApplyOpen(true)}

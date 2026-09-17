@@ -33,6 +33,7 @@
     "verify:auto-checkout": "node scripts/verify-auto-checkout.mjs",
     "verify:attendance": "node scripts/verify-attendance.mjs",
     "verify:leave": "node scripts/verify-leave.mjs",
+    "verify:password-flows": "node scripts/verify-password-flows.mjs",
     "verify:payroll": "node scripts/verify-payroll.mjs",
     "verify:organization": "node scripts/verify-organization.mjs",
     "verify:files": "node scripts/verify-files.mjs",

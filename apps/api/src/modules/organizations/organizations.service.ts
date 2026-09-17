@@ -9,6 +9,7 @@ import {
 } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { PasswordInvitationService } from '../auth/auth.password-invitation.service';
 import { PasswordService } from '../auth/auth.passwords';
 import { OutboxService } from '../federation/outbox.service';
 import { FEDERATION_CAPABILITY_CATALOG } from '../federation/federation-capability.catalog';
@@ -37,8 +38,8 @@ export {
  * federated bodies still call `this.toDto(...)` exactly as they always did, and those wrappers
  * forward to the shared functions the new services use.
  *
- * The constructor still takes the same four dependencies, so Nest and any direct construction
- * keep working.
+ * The constructor takes the dependencies its parts need, so Nest and direct construction in tests
+ * build the same service.
  */
 @Injectable()
 export class OrganizationsService {
@@ -51,10 +52,11 @@ export class OrganizationsService {
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
     passwords: PasswordService,
+    invitations: PasswordInvitationService,
   ) {
     this.branches = new OrganizationBranchesService(database, audit, outbox);
     this.lifecycle = new OrganizationLifecycleService(database, audit, outbox);
-    this.onboarding = new OrganizationOnboardingService(database, audit, passwords);
+    this.onboarding = new OrganizationOnboardingService(database, audit, passwords, invitations);
   }
 
   // --- platform onboarding -----------------------------------------------------------------

@@ -3,11 +3,8 @@
 import React from 'react';
 import { formatMoney, type Employee, type SalaryProfile } from '@smarteam/contracts';
 import { Button } from '@smarteam/ui';
-import { FileSpreadsheet, Printer } from 'lucide-react';
-import {
-  downloadSalaryStructureCsv,
-  openSalaryStructurePrintView,
-} from './salary-structure-export';
+import { Download, FileSpreadsheet } from 'lucide-react';
+import { downloadSalaryStructureCsv, downloadSalaryStructurePdf } from './salary-structure-export';
 
 /**
  * The employee's salary structure, exactly as the backend derives it.
@@ -93,8 +90,8 @@ export function PayrollStructurePanel({
   const { salaryBreakdown } = profile;
   const totalEarnings = salaryBreakdown.earnings.reduce((sum, item) => sum + item.amount, 0);
 
-  const handlePrint = () => {
-    openSalaryStructurePrintView({ profile, employee, orgName });
+  const handleDownloadPdf = () => {
+    downloadSalaryStructurePdf({ profile, employee, orgName });
   };
 
   const handleCsv = () => {
@@ -112,11 +109,11 @@ export function PayrollStructurePanel({
           <Button
             size="sm"
             variant="outline"
-            className="h-7 text-xs font-medium gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-2xs"
-            onClick={handlePrint}
-            title="Download official Salary Annexure as PDF / Printable format"
+            className="h-7 text-xs font-medium gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-2xs cursor-pointer"
+            onClick={handleDownloadPdf}
+            title="Download official Salary Annexure as PDF"
           >
-            <Printer className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5" />
             <span>Download Annexure (PDF)</span>
           </Button>
           <Button

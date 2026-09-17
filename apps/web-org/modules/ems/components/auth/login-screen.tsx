@@ -14,6 +14,14 @@ interface LoginScreenProps {
   onLogin: (email: string, password: string, organizationId?: string) => Promise<LoginAttempt>;
   /** Sends a new employee to the access-code flow, where they have no credentials to type yet. */
   onActivate: () => void;
+  /** Opens "forgot password" with whatever address is already typed. */
+  onForgotPassword: (email: string) => void;
+  /** An address to start from — the one a password was just set or reset for. */
+  initialEmail?: string;
+  /** A temporary password from an invitation link to start from. */
+  initialPassword?: string;
+  /** A confirmation to show above the form, such as "Your password was changed". */
+  notice?: string;
 }
 
 /**
@@ -23,9 +31,16 @@ interface LoginScreenProps {
  * previously rendered committed fixture passwords as click-to-fill buttons has been removed:
  * it published working sign-ins for accounts holding the tenant wildcard.
  */
-export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export function LoginScreen({
+  onActivate,
+  onLogin,
+  onForgotPassword,
+  initialEmail = '',
+  initialPassword = '',
+  notice,
+}: LoginScreenProps) {
+  const [email, setEmail] = useState(initialEmail);
+  const [password, setPassword] = useState(initialPassword);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -96,6 +111,14 @@ export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
           <div className="h-px bg-border mx-6" />
 
           <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+            {notice && (
+              <p
+                className="rounded-lg border border-success/30 bg-success/10 px-3 py-2.5 text-xs font-medium text-success-foreground"
+                role="status"
+              >
+                {notice}
+              </p>
+            )}
             {/* Email */}
             <div>
               <label className="block text-[11px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
@@ -117,9 +140,19 @@ export function LoginScreen({ onActivate, onLogin }: LoginScreenProps) {
 
             {/* Password */}
             <div>
-              <label className="block text-[11px] font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
-                Password
-              </label>
+              <div className="mb-1.5 flex items-center justify-between gap-2">
+                <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  Password
+                </label>
+                <Button
+                  className="h-auto px-1 py-0 text-[11px] font-semibold text-primary hover:opacity-80"
+                  onClick={() => onForgotPassword(email.trim())}
+                  type="button"
+                  variant="ghost"
+                >
+                  Forgot password?
+                </Button>
+              </div>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}

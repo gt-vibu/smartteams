@@ -19,7 +19,7 @@ import type { ManualEntryInput } from '../../repositories/timesheet.repository';
 import type { JobType, Project } from '@smarteam/contracts';
 import { QuickAddJobDialog } from './quick-add-job-dialog';
 import { QuickAddProjectDialog } from './quick-add-project-dialog';
-import { LogTimeHoursField, type HoursMode } from './logtime-hours-field';
+import { LogTimeHoursField, normalizeTimeInput, type HoursMode } from './logtime-hours-field';
 
 interface LogTimeModalProps {
   isOpen: boolean;
@@ -58,10 +58,8 @@ export function LogTimeModal({
   const [workDate, setWorkDate] = useState(initialDate);
   const [description, setDescription] = useState('');
   const [hoursMode, setHoursMode] = useState<HoursMode>('TOTAL');
-  // Hours start empty. They were pre-filled as 08:00 (and 09:00–17:00), so saving without looking
-  // recorded a full day whatever was worked — and logged time feeds timesheets, approvals and pay.
-  // A form that records effort should ask for it, not assume it.
-  const [totalHours, setTotalHours] = useState('');
+  // Hours default to 00:00. The user types numbers to adjust, and 00:00 is validated on save.
+  const [totalHours, setTotalHours] = useState('00:00');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [billable, setBillable] = useState<boolean>(true);
@@ -91,7 +89,7 @@ export function LogTimeModal({
     setWorkDate(new Date().toISOString().slice(0, 10));
     setDescription('');
     setHoursMode('TOTAL');
-    setTotalHours('');
+    setTotalHours('00:00');
     setStartTime('');
     setEndTime('');
     setBillable(true);
@@ -122,14 +120,15 @@ export function LogTimeModal({
     }
 
     let minutes = 0;
-    if (hoursMode === 'TOTAL') {
-      if (!totalHours.trim()) {
-        setError('Enter the hours you worked (e.g. 2:30, 3h or 45m).');
+    if (hoursMode === 'TOTAL' || hoursMode === 'TIMER') {
+      const normalized = normalizeTimeInput(totalHours);
+      if (!totalHours.trim() || normalized === '00:00') {
+        setError('Enter the hours you worked (e.g. 08:00 or 2:30).');
         return;
       }
-      const parsed = parseDuration(totalHours);
+      const parsed = parseDuration(normalized);
       if (parsed === null || parsed < 1) {
-        setError('Enter a valid duration (e.g. 2:30, 3h or 45m).');
+        setError('Enter a valid duration (e.g. 08:00 or 2:30).');
         return;
       }
       minutes = parsed;
@@ -179,7 +178,7 @@ export function LogTimeModal({
           }
         }}
       >
-        <DialogContent className="flex flex-col max-h-[82vh] sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
+        <DialogContent className="flex flex-col max-h-[85dvh] sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
           {/* Header */}
           <DialogHeader className="shrink-0 flex flex-row items-center justify-between border-b border-border/80 px-6 py-3 bg-muted/20">
             <DialogTitle className="text-base font-semibold text-foreground tracking-tight">
@@ -369,8 +368,8 @@ export function LogTimeModal({
             )}
           </div>
 
-          {/* Bottom Actions - Aligned bottom-left matching Zoho People reference */}
-          <div className="shrink-0 flex items-center justify-start gap-2.5 border-t border-border/80 bg-muted/30 px-5 sm:px-8 py-3">
+          {/* Bottom Actions - Aligned bottom-left with safe-area padding so it never submerges on mobile */}
+          <div className="shrink-0 flex items-center justify-start gap-2.5 border-t border-border/80 bg-muted/30 px-5 sm:px-8 py-3 pb-[max(1.25rem,calc(0.75rem+env(safe-area-inset-bottom)))]">
             <Button
               disabled={saving}
               onClick={() => void handleSubmit()}

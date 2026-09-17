@@ -10,6 +10,7 @@ model User {
   externalOrganizationId   String?      @map("external_organization_id")
   isActive                 Boolean      @default(true) @map("is_active")
   tokenVersion             Int          @default(0) @map("token_version")
+  passwordChangeRequired   Boolean      @default(false) @map("password_change_required")
   lastLoginAt              DateTime?    @map("last_login_at") @db.Timestamptz(6)
   deactivatedAt            DateTime?    @map("deactivated_at") @db.Timestamptz(6)
   createdAt                DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -125,11 +126,14 @@ model PasswordResetToken {
   expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
   usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
   revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  purpose   PasswordTokenPurpose @default(RESET_LINK)
+  attempts  Int       @default(0)
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, expiresAt])
+  @@index([userId, purpose])
   @@map("password_reset_tokens")
 }
 

@@ -143,7 +143,7 @@ export function ScreenEmployeeHolidays() {
               {employeeHolidays.year}.
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <Button
               size="sm"
               variant="outline"

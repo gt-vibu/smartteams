@@ -29,6 +29,8 @@ export const authenticatedUserSchema = z.object({
   identityType: z.enum(['NATIVE', 'FEDERATED']),
   isActive: z.boolean(),
   lastLoginAt: z.string().datetime().nullable(),
+  /** Signed in with a password someone else issued: the app asks for their own before anything. */
+  passwordChangeRequired: z.boolean().optional(),
 });
 
 export const organizationMembershipSchema = z.object({

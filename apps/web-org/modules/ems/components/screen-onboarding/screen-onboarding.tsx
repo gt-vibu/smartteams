@@ -92,6 +92,7 @@ export function ScreenOnboarding() {
               : 'The employee'
           }
           onClose={onboarding.reset}
+          emailed={onboarding.result.invitationEmailed}
           password={onboarding.result.temporaryPassword}
         />
       )}

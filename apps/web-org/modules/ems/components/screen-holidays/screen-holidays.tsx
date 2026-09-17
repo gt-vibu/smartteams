@@ -121,7 +121,7 @@ export function ScreenHolidays() {
           title="Holiday calendar"
           tone="success"
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <Input
             aria-label="Year"
             className="w-24"

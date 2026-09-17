@@ -79,6 +79,7 @@ export class PersonaRepository {
         avatarInitials: initialsOf(session.user.displayName),
         identityType: session.user.identityType,
         isActive: session.user.isActive,
+        passwordChangeRequired: session.user.passwordChangeRequired,
       },
     };
   }

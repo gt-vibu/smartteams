@@ -15,6 +15,7 @@ const base: OnboardingResult = {
   completed: [],
   failure: null,
   temporaryPassword: null,
+  invitationEmailed: false,
   accountEmail: null,
 };
 

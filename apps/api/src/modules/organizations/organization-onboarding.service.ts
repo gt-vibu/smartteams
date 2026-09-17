@@ -4,6 +4,7 @@ import { ConflictError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { PasswordService } from '../auth/auth.passwords';
+import { PasswordInvitationService } from '../auth/auth.password-invitation.service';
 import type { AuditContext } from '../audit/audit.service';
 import { seedApprovalDefaults, seedLeaveDefaults, seedStandardRoles } from './organization-roles';
 import { branchDto, toDto } from './organization-shared';
@@ -21,6 +22,7 @@ export class OrganizationOnboardingService {
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
     private readonly passwords: PasswordService,
+    private readonly invitations: PasswordInvitationService,
   ) {}
 
   async listPlatform(userId: string) {
@@ -244,7 +246,18 @@ export class OrganizationOnboardingService {
         tx,
       );
 
+      // The administrator's email: their address, this temporary password and a link to choose
+      // their own. Recorded here, sent once the organization is committed.
+      const invitation = await this.invitations.prepare(tx, {
+        userId: user.id,
+        email: user.email,
+        displayName: user.displayName,
+        organizationName: organization.name,
+        temporaryPassword,
+      });
+
       return {
+        invitation,
         organization: toDto(organization),
         adminUser: {
           id: user.id,
@@ -255,9 +268,12 @@ export class OrganizationOnboardingService {
       };
     });
 
+    const { invitation, ...created } = result;
     return {
-      ...result,
+      ...created,
+      // Still returned, as the fallback for when the email does not arrive.
       temporaryPassword,
+      invitation: await sendInvitation(invitation, created.adminUser.email),
     };
   }
 
@@ -312,5 +328,27 @@ export class OrganizationOnboardingService {
       return created;
     });
     return toDto(organization);
+  }
+}
+
+/**
+ * Sends a prepared invitation, reporting rather than throwing when the queue is unreachable: the
+ * account already exists by then, and the temporary password in the response is the way forward.
+ */
+export async function sendInvitation(
+  invitation: { deliver: () => Promise<void>; developmentSetupToken?: string },
+  email: string,
+) {
+  try {
+    await invitation.deliver();
+    return {
+      emailedTo: email,
+      queued: true,
+      ...(invitation.developmentSetupToken
+        ? { developmentSetupToken: invitation.developmentSetupToken }
+        : {}),
+    };
+  } catch {
+    return { emailedTo: email, queued: false };
   }
 }

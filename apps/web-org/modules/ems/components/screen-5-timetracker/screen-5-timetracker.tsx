@@ -199,7 +199,7 @@ export function Screen5TimeTracker() {
               </p>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-lg border border-border bg-card">
+            <div className="overflow-hidden rounded-lg border border-border bg-card mb-10 sm:mb-0">
               {groups.map((group) => (
                 <div
                   className="border-b border-border transition-colors last:border-0 hover:bg-muted/30"

@@ -63,6 +63,7 @@ function setupMembers(
   roles: Array<{ id: string; permissions: ReturnType<typeof rolePermissions> }>,
 ) {
   const tx = {
+    organization: { findUniqueOrThrow: jest.fn().mockResolvedValue({ name: 'Acme' }) },
     role: {
       findMany: jest.fn().mockResolvedValue(roles.map((r) => ({ ...r, organizationId: ORG }))),
     },
@@ -84,7 +85,9 @@ function setupMembers(
   const rbac = new RbacService(database as never);
   return {
     tx,
-    service: new MembersService(database as never, audit, passwords as never, rbac),
+    service: new MembersService(database as never, audit, passwords as never, rbac, {
+      prepare: jest.fn().mockResolvedValue({ deliver: jest.fn().mockResolvedValue(undefined) }),
+    } as never),
   };
 }
 

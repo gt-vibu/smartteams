@@ -10,6 +10,8 @@ export interface User {
   avatarInitials: string;
   identityType: 'NATIVE' | 'FEDERATED';
   isActive: boolean;
+  /** Signed in with a password someone else issued; they choose their own before anything else. */
+  passwordChangeRequired?: boolean;
 }
 
 export interface Role {

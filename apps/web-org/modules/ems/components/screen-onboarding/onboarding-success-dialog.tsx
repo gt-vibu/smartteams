@@ -15,11 +15,14 @@ import { Button, Dialog, DialogContent, DialogTitle } from '@smarteam/ui';
  * time is where people make mistakes.
  */
 export function OnboardingSuccessDialog({
+  emailed = false,
   email,
   name,
   onClose,
   password,
 }: {
+  /** The invitation email was sent, so these details are only the fallback. */
+  emailed?: boolean;
   email: string | null;
   name: string;
   onClose: () => void;
@@ -54,10 +57,20 @@ export function OnboardingSuccessDialog({
         <div className="space-y-4 p-5">
           {password ? (
             <>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                Send these to {name}. They sign in at this address with this password, and it keeps
-                working until they change it.
-              </p>
+              {emailed ? (
+                <p
+                  className="rounded-md border border-success/30 bg-success/10 p-3 text-xs leading-relaxed text-success-foreground"
+                  role="status"
+                >
+                  An invitation was emailed to {name} with these details and a link to choose their
+                  own password. Share them yourself only if the email does not arrive.
+                </p>
+              ) : (
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  The invitation email could not be sent. Send these to {name}; they will be asked
+                  to choose their own password when they first sign in.
+                </p>
+              )}
 
               <dl className="overflow-hidden rounded-lg border border-border">
                 <div className="flex items-baseline gap-3 border-b border-border bg-muted/40 px-3.5 py-2.5">
