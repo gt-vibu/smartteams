@@ -16,6 +16,7 @@ export * from './alert-dialog';
 export * from './date-picker';
 export * from './calendar';
 export * from './use-anchored-panel';
+export { useBackToClose } from './use-back-to-close';
 export * from './icons';
 export * from './popover';
 export * from './progress';

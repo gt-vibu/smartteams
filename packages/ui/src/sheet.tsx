@@ -3,13 +3,14 @@
 import * as React from 'react';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { cn } from './cn';
+import { withBackToClose } from './use-back-to-close';
 
 /**
  * Side panel, built on Radix Dialog exactly as shadcn does. This replaces a hand-rolled
  * implementation whose focus trap was maintained locally; Radix now handles focus, escape,
  * scroll locking and portalling.
  */
-const Sheet = SheetPrimitive.Root;
+const Sheet = withBackToClose(SheetPrimitive.Root);
 const SheetTrigger = SheetPrimitive.Trigger;
 const SheetClose = SheetPrimitive.Close;
 const SheetPortal = SheetPrimitive.Portal;
