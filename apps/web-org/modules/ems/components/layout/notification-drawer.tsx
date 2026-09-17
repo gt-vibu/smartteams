@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Sheet,
@@ -59,13 +59,20 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
 interface NotificationDrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Tells the app bar how many are unread, so its dot goes when the last one is read. */
+  onUnreadCountChange?: (count: number) => void;
 }
 
-export function NotificationDrawer({ isOpen, onClose }: NotificationDrawerProps) {
+export function NotificationDrawer({
+  isOpen,
+  onClose,
+  onUnreadCountChange,
+}: NotificationDrawerProps) {
   const { persona } = useAuth();
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const [filter, setFilter] = useState<'ALL' | 'UNREAD'>('ALL');
   const unreadCount = notifications.filter((notification) => !notification.isRead).length;
+  useEffect(() => onUnreadCountChange?.(unreadCount), [onUnreadCountChange, unreadCount]);
   const filtered = notifications.filter((notification) => filter === 'ALL' || !notification.isRead);
 
   const markAllRead = () =>

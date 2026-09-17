@@ -17,6 +17,15 @@ import { useCallback, useEffect, useState } from 'react';
  * falls back to the default rather than rendering an empty screen — the query string is user
  * input, and a screen must not trust it to name one of its own views.
  */
+/**
+ * Starts a newly chosen tab at its top. The page scrolls inside one canvas shared by every tab, so
+ * without this a tab opened from the bottom of a long one opened at the bottom too.
+ */
+export function scrollCanvasToTop(): void {
+  if (typeof document === 'undefined') return;
+  document.getElementById('ems-main-canvas')?.scrollTo({ top: 0, behavior: 'instant' });
+}
+
 export function useScreenTab<T extends string>(
   /** The query parameter to use. `tab` for a screen's primary tabs. */
   key: string,
@@ -53,6 +62,7 @@ export function useScreenTab<T extends string>(
   const setTab = useCallback(
     (next: T) => {
       setTabState(next);
+      scrollCanvasToTop();
       if (typeof window === 'undefined') return;
       const params = new URLSearchParams(window.location.search);
       // Every other parameter is preserved: the space and module live here too, and rebuilding

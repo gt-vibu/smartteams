@@ -154,7 +154,7 @@ export function CommandPalette({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-popover border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[55dvh] sm:max-h-[80vh] animate-in zoom-in-95 duration-100"
+        className="w-full max-w-xl bg-popover border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[min(55svh,28rem)] min-h-[16rem] sm:min-h-0 sm:max-h-[80vh] animate-in zoom-in-95 duration-100"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         role="dialog"
@@ -191,7 +191,7 @@ export function CommandPalette({
                 ? 'Search actions, policies, payroll, staff, or projects (⌘K)...'
                 : 'Search actions, timesheets, leaves, staff, or projects (⌘K)...'
             }
-            className="w-full bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-xs text-foreground placeholder:text-muted-foreground h-7"
+            className="w-full bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-base sm:text-xs text-foreground placeholder:text-muted-foreground h-9 sm:h-7"
           />
           {query && (
             <Button

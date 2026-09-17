@@ -31,6 +31,7 @@ export function EmsLayout({
 }: EmsLayoutProps) {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
 
   // Global event listeners
@@ -60,6 +61,7 @@ export function EmsLayout({
         activeSpace={activeSpace}
         onSelectSpace={onSelectSpace}
         onOpenSearch={() => setIsCommandPaletteOpen(true)}
+        hasUnreadNotifications={unreadNotifications > 0}
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
       />
 
@@ -138,6 +140,7 @@ export function EmsLayout({
       <NotificationDrawer
         isOpen={isNotificationDrawerOpen}
         onClose={() => setIsNotificationDrawerOpen(false)}
+        onUnreadCountChange={setUnreadNotifications}
       />
 
       {/* 6. Entity Detail Drawer */}
