@@ -3,6 +3,7 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from './cn';
+import { withBackToClose } from './use-back-to-close';
 
 /**
  * Radix now owns the behaviour the hand-rolled version approximated: focus trap and restore,
@@ -12,7 +13,7 @@ import { cn } from './cn';
  * The exported surface is unchanged, so existing call sites keep working. Trigger, Close,
  * Portal and Overlay are additionally exported for new code.
  */
-const Dialog = DialogPrimitive.Root;
+const Dialog = withBackToClose(DialogPrimitive.Root);
 const DialogTrigger = DialogPrimitive.Trigger;
 const DialogPortal = DialogPrimitive.Portal;
 const DialogClose = DialogPrimitive.Close;

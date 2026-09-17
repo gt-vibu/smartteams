@@ -9,6 +9,7 @@ import { CommandPalette } from './command-palette';
 import { HolidayCheckInPrompt } from '../common/holiday-check-in-prompt';
 import { NotificationDrawer } from './notification-drawer';
 import { EntityDetailDrawer } from '../common/entity-detail-drawer';
+import { useBackToClose } from '@smarteam/ui';
 
 interface EmsLayoutProps {
   children: React.ReactNode;
@@ -31,7 +32,11 @@ export function EmsLayout({
 }: EmsLayoutProps) {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+
+  // Back closes the palette rather than the page behind it. Drawers and dialogs do this themselves.
+  useBackToClose(isCommandPaletteOpen, () => setIsCommandPaletteOpen(false));
 
   // Global event listeners
   useEffect(() => {
@@ -60,6 +65,7 @@ export function EmsLayout({
         activeSpace={activeSpace}
         onSelectSpace={onSelectSpace}
         onOpenSearch={() => setIsCommandPaletteOpen(true)}
+        hasUnreadNotifications={unreadNotifications > 0}
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
       />
 
@@ -138,6 +144,7 @@ export function EmsLayout({
       <NotificationDrawer
         isOpen={isNotificationDrawerOpen}
         onClose={() => setIsNotificationDrawerOpen(false)}
+        onUnreadCountChange={setUnreadNotifications}
       />
 
       {/* 6. Entity Detail Drawer */}

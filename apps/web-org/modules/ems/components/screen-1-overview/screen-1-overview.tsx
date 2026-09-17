@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { useScreenTab } from '../../hooks/use-screen-tab';
+import { scrollCanvasToTop, useScreenTab } from '../../hooks/use-screen-tab';
 import { useMediaQuery, WIDE_LAYOUT_QUERY } from '../../hooks/use-media-query';
 import { HeroBanner } from './hero-banner';
 import { EmployeeProfilePanel } from './employee-profile-panel';
@@ -73,6 +73,7 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
       const query = params.toString();
       window.history.pushState(null, '', query ? `?${query}` : window.location.pathname);
       window.dispatchEvent(new PopStateEvent('popstate'));
+      scrollCanvasToTop();
     },
     [subFallback],
   );
