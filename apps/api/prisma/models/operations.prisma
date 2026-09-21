@@ -9,6 +9,9 @@ model AttendanceRecord {
   scheduledMinutes Int?                @map("scheduled_minutes")
   workedMinutes    Int                 @default(0) @map("worked_minutes")
   overtimeMinutes  Int                 @default(0) @map("overtime_minutes")
+  /// What kind of day the overtime was worked on: WORKING_DAY, WEEKLY_OFF or HOLIDAY. Payroll
+  /// pays weekly-off and holiday overtime at their own rates. Null before shifts were counted.
+  overtimeDayType  String?             @map("overtime_day_type")
   sourceAccessMode AccessMode          @map("source_access_mode")
   externalId       String?             @map("external_id")
   correctionNote   String?             @map("correction_note")

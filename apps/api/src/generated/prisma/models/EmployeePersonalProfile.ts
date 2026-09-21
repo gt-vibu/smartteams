@@ -32,6 +32,7 @@ export type EmployeePersonalProfileMinAggregateOutputType = {
   motherName: string | null
   spouseName: string | null
   aadhaarNumberEncrypted: string | null
+  aadhaarNumberHash: string | null
   panNumberEncrypted: string | null
   presentAddress: string | null
   permanentAddress: string | null
@@ -47,6 +48,7 @@ export type EmployeePersonalProfileMaxAggregateOutputType = {
   motherName: string | null
   spouseName: string | null
   aadhaarNumberEncrypted: string | null
+  aadhaarNumberHash: string | null
   panNumberEncrypted: string | null
   presentAddress: string | null
   permanentAddress: string | null
@@ -62,6 +64,7 @@ export type EmployeePersonalProfileCountAggregateOutputType = {
   motherName: number
   spouseName: number
   aadhaarNumberEncrypted: number
+  aadhaarNumberHash: number
   panNumberEncrypted: number
   presentAddress: number
   permanentAddress: number
@@ -79,6 +82,7 @@ export type EmployeePersonalProfileMinAggregateInputType = {
   motherName?: true
   spouseName?: true
   aadhaarNumberEncrypted?: true
+  aadhaarNumberHash?: true
   panNumberEncrypted?: true
   presentAddress?: true
   permanentAddress?: true
@@ -94,6 +98,7 @@ export type EmployeePersonalProfileMaxAggregateInputType = {
   motherName?: true
   spouseName?: true
   aadhaarNumberEncrypted?: true
+  aadhaarNumberHash?: true
   panNumberEncrypted?: true
   presentAddress?: true
   permanentAddress?: true
@@ -109,6 +114,7 @@ export type EmployeePersonalProfileCountAggregateInputType = {
   motherName?: true
   spouseName?: true
   aadhaarNumberEncrypted?: true
+  aadhaarNumberHash?: true
   panNumberEncrypted?: true
   presentAddress?: true
   permanentAddress?: true
@@ -197,6 +203,7 @@ export type EmployeePersonalProfileGroupByOutputType = {
   motherName: string | null
   spouseName: string | null
   aadhaarNumberEncrypted: string | null
+  aadhaarNumberHash: string | null
   panNumberEncrypted: string | null
   presentAddress: string | null
   permanentAddress: string | null
@@ -233,6 +240,7 @@ export type EmployeePersonalProfileWhereInput = {
   motherName?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   spouseName?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   aadhaarNumberEncrypted?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
+  aadhaarNumberHash?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   panNumberEncrypted?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   presentAddress?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   permanentAddress?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
@@ -250,6 +258,7 @@ export type EmployeePersonalProfileOrderByWithRelationInput = {
   motherName?: Prisma.SortOrderInput | Prisma.SortOrder
   spouseName?: Prisma.SortOrderInput | Prisma.SortOrder
   aadhaarNumberEncrypted?: Prisma.SortOrderInput | Prisma.SortOrder
+  aadhaarNumberHash?: Prisma.SortOrderInput | Prisma.SortOrder
   panNumberEncrypted?: Prisma.SortOrderInput | Prisma.SortOrder
   presentAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   permanentAddress?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -262,6 +271,7 @@ export type EmployeePersonalProfileOrderByWithRelationInput = {
 export type EmployeePersonalProfileWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   employeeId?: string
+  organizationId_aadhaarNumberHash?: Prisma.EmployeePersonalProfileOrganizationIdAadhaarNumberHashCompoundUniqueInput
   AND?: Prisma.EmployeePersonalProfileWhereInput | Prisma.EmployeePersonalProfileWhereInput[]
   OR?: Prisma.EmployeePersonalProfileWhereInput[]
   NOT?: Prisma.EmployeePersonalProfileWhereInput | Prisma.EmployeePersonalProfileWhereInput[]
@@ -270,6 +280,7 @@ export type EmployeePersonalProfileWhereUniqueInput = Prisma.AtLeast<{
   motherName?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   spouseName?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   aadhaarNumberEncrypted?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
+  aadhaarNumberHash?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   panNumberEncrypted?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   presentAddress?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   permanentAddress?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
@@ -277,7 +288,7 @@ export type EmployeePersonalProfileWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"EmployeePersonalProfile"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
-}, "id" | "employeeId">
+}, "id" | "employeeId" | "organizationId_aadhaarNumberHash">
 
 export type EmployeePersonalProfileOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -287,6 +298,7 @@ export type EmployeePersonalProfileOrderByWithAggregationInput = {
   motherName?: Prisma.SortOrderInput | Prisma.SortOrder
   spouseName?: Prisma.SortOrderInput | Prisma.SortOrder
   aadhaarNumberEncrypted?: Prisma.SortOrderInput | Prisma.SortOrder
+  aadhaarNumberHash?: Prisma.SortOrderInput | Prisma.SortOrder
   panNumberEncrypted?: Prisma.SortOrderInput | Prisma.SortOrder
   presentAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   permanentAddress?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -308,6 +320,7 @@ export type EmployeePersonalProfileScalarWhereWithAggregatesInput = {
   motherName?: Prisma.StringNullableWithAggregatesFilter<"EmployeePersonalProfile"> | string | null
   spouseName?: Prisma.StringNullableWithAggregatesFilter<"EmployeePersonalProfile"> | string | null
   aadhaarNumberEncrypted?: Prisma.StringNullableWithAggregatesFilter<"EmployeePersonalProfile"> | string | null
+  aadhaarNumberHash?: Prisma.StringNullableWithAggregatesFilter<"EmployeePersonalProfile"> | string | null
   panNumberEncrypted?: Prisma.StringNullableWithAggregatesFilter<"EmployeePersonalProfile"> | string | null
   presentAddress?: Prisma.StringNullableWithAggregatesFilter<"EmployeePersonalProfile"> | string | null
   permanentAddress?: Prisma.StringNullableWithAggregatesFilter<"EmployeePersonalProfile"> | string | null
@@ -321,6 +334,7 @@ export type EmployeePersonalProfileCreateInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -338,6 +352,7 @@ export type EmployeePersonalProfileUncheckedCreateInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -351,6 +366,7 @@ export type EmployeePersonalProfileUpdateInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -368,6 +384,7 @@ export type EmployeePersonalProfileUncheckedUpdateInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -383,6 +400,7 @@ export type EmployeePersonalProfileCreateManyInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -396,6 +414,7 @@ export type EmployeePersonalProfileUpdateManyMutationInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -411,6 +430,7 @@ export type EmployeePersonalProfileUncheckedUpdateManyInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -433,6 +453,11 @@ export type EmployeePersonalProfileNullableScalarRelationFilter = {
   isNot?: Prisma.EmployeePersonalProfileWhereInput | null
 }
 
+export type EmployeePersonalProfileOrganizationIdAadhaarNumberHashCompoundUniqueInput = {
+  organizationId: string
+  aadhaarNumberHash: string
+}
+
 export type EmployeePersonalProfileCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
@@ -441,6 +466,7 @@ export type EmployeePersonalProfileCountOrderByAggregateInput = {
   motherName?: Prisma.SortOrder
   spouseName?: Prisma.SortOrder
   aadhaarNumberEncrypted?: Prisma.SortOrder
+  aadhaarNumberHash?: Prisma.SortOrder
   panNumberEncrypted?: Prisma.SortOrder
   presentAddress?: Prisma.SortOrder
   permanentAddress?: Prisma.SortOrder
@@ -456,6 +482,7 @@ export type EmployeePersonalProfileMaxOrderByAggregateInput = {
   motherName?: Prisma.SortOrder
   spouseName?: Prisma.SortOrder
   aadhaarNumberEncrypted?: Prisma.SortOrder
+  aadhaarNumberHash?: Prisma.SortOrder
   panNumberEncrypted?: Prisma.SortOrder
   presentAddress?: Prisma.SortOrder
   permanentAddress?: Prisma.SortOrder
@@ -471,6 +498,7 @@ export type EmployeePersonalProfileMinOrderByAggregateInput = {
   motherName?: Prisma.SortOrder
   spouseName?: Prisma.SortOrder
   aadhaarNumberEncrypted?: Prisma.SortOrder
+  aadhaarNumberHash?: Prisma.SortOrder
   panNumberEncrypted?: Prisma.SortOrder
   presentAddress?: Prisma.SortOrder
   permanentAddress?: Prisma.SortOrder
@@ -558,6 +586,7 @@ export type EmployeePersonalProfileCreateWithoutOrganizationInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -573,6 +602,7 @@ export type EmployeePersonalProfileUncheckedCreateWithoutOrganizationInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -617,6 +647,7 @@ export type EmployeePersonalProfileScalarWhereInput = {
   motherName?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   spouseName?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   aadhaarNumberEncrypted?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
+  aadhaarNumberHash?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   panNumberEncrypted?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   presentAddress?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
   permanentAddress?: Prisma.StringNullableFilter<"EmployeePersonalProfile"> | string | null
@@ -630,6 +661,7 @@ export type EmployeePersonalProfileCreateWithoutEmployeeInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -645,6 +677,7 @@ export type EmployeePersonalProfileUncheckedCreateWithoutEmployeeInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -674,6 +707,7 @@ export type EmployeePersonalProfileUpdateWithoutEmployeeInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -689,6 +723,7 @@ export type EmployeePersonalProfileUncheckedUpdateWithoutEmployeeInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -703,6 +738,7 @@ export type EmployeePersonalProfileCreateManyOrganizationInput = {
   motherName?: string | null
   spouseName?: string | null
   aadhaarNumberEncrypted?: string | null
+  aadhaarNumberHash?: string | null
   panNumberEncrypted?: string | null
   presentAddress?: string | null
   permanentAddress?: string | null
@@ -716,6 +752,7 @@ export type EmployeePersonalProfileUpdateWithoutOrganizationInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -731,6 +768,7 @@ export type EmployeePersonalProfileUncheckedUpdateWithoutOrganizationInput = {
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -745,6 +783,7 @@ export type EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationInput =
   motherName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spouseName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aadhaarNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aadhaarNumberHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   panNumberEncrypted?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   presentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   permanentAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -762,6 +801,7 @@ export type EmployeePersonalProfileSelect<ExtArgs extends runtime.Types.Extensio
   motherName?: boolean
   spouseName?: boolean
   aadhaarNumberEncrypted?: boolean
+  aadhaarNumberHash?: boolean
   panNumberEncrypted?: boolean
   presentAddress?: boolean
   permanentAddress?: boolean
@@ -779,6 +819,7 @@ export type EmployeePersonalProfileSelectCreateManyAndReturn<ExtArgs extends run
   motherName?: boolean
   spouseName?: boolean
   aadhaarNumberEncrypted?: boolean
+  aadhaarNumberHash?: boolean
   panNumberEncrypted?: boolean
   presentAddress?: boolean
   permanentAddress?: boolean
@@ -796,6 +837,7 @@ export type EmployeePersonalProfileSelectUpdateManyAndReturn<ExtArgs extends run
   motherName?: boolean
   spouseName?: boolean
   aadhaarNumberEncrypted?: boolean
+  aadhaarNumberHash?: boolean
   panNumberEncrypted?: boolean
   presentAddress?: boolean
   permanentAddress?: boolean
@@ -813,6 +855,7 @@ export type EmployeePersonalProfileSelectScalar = {
   motherName?: boolean
   spouseName?: boolean
   aadhaarNumberEncrypted?: boolean
+  aadhaarNumberHash?: boolean
   panNumberEncrypted?: boolean
   presentAddress?: boolean
   permanentAddress?: boolean
@@ -820,7 +863,7 @@ export type EmployeePersonalProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type EmployeePersonalProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "fatherName" | "motherName" | "spouseName" | "aadhaarNumberEncrypted" | "panNumberEncrypted" | "presentAddress" | "permanentAddress" | "createdAt" | "updatedAt", ExtArgs["result"]["employeePersonalProfile"]>
+export type EmployeePersonalProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "fatherName" | "motherName" | "spouseName" | "aadhaarNumberEncrypted" | "aadhaarNumberHash" | "panNumberEncrypted" | "presentAddress" | "permanentAddress" | "createdAt" | "updatedAt", ExtArgs["result"]["employeePersonalProfile"]>
 export type EmployeePersonalProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
@@ -848,6 +891,10 @@ export type $EmployeePersonalProfilePayload<ExtArgs extends runtime.Types.Extens
     motherName: string | null
     spouseName: string | null
     aadhaarNumberEncrypted: string | null
+    /**
+     * Keyed fingerprint of the Aadhaar number, so one number cannot be on two employees.
+     */
+    aadhaarNumberHash: string | null
     panNumberEncrypted: string | null
     presentAddress: string | null
     permanentAddress: string | null
@@ -1285,6 +1332,7 @@ export interface EmployeePersonalProfileFieldRefs {
   readonly motherName: Prisma.FieldRef<"EmployeePersonalProfile", 'String'>
   readonly spouseName: Prisma.FieldRef<"EmployeePersonalProfile", 'String'>
   readonly aadhaarNumberEncrypted: Prisma.FieldRef<"EmployeePersonalProfile", 'String'>
+  readonly aadhaarNumberHash: Prisma.FieldRef<"EmployeePersonalProfile", 'String'>
   readonly panNumberEncrypted: Prisma.FieldRef<"EmployeePersonalProfile", 'String'>
   readonly presentAddress: Prisma.FieldRef<"EmployeePersonalProfile", 'String'>
   readonly permanentAddress: Prisma.FieldRef<"EmployeePersonalProfile", 'String'>

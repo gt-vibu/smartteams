@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, DatePicker, Input, Label, Textarea } from '@smarteam/ui';
+import { Button, DatePicker, Label, Textarea, TimePicker } from '@smarteam/ui';
 import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
 import { localDateKey } from '../../hooks/use-attendance';
 
@@ -94,13 +94,12 @@ export function MissingCheckOutForm({
           <Label htmlFor="missing-check-out-time" className="mb-1 block text-[11px]">
             Actual check-out <span className="text-destructive">*</span>
           </Label>
-          <Input
+          <TimePicker
             id="missing-check-out-time"
-            type="time"
             value={time}
-            onChange={(event) => setTime(event.target.value)}
+            onChange={setTime}
             disabled={saving}
-            className="h-9 font-mono text-xs"
+            placeholder="Select time"
           />
         </div>
       </div>

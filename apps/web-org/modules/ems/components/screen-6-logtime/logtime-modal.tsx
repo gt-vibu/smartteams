@@ -120,7 +120,7 @@ export function LogTimeModal({
     }
 
     let minutes = 0;
-    if (hoursMode === 'TOTAL' || hoursMode === 'TIMER') {
+    if (hoursMode === 'TOTAL') {
       const normalized = normalizeTimeInput(totalHours);
       if (!totalHours.trim() || normalized === '00:00') {
         setError('Enter the hours you worked (e.g. 08:00 or 2:30).');

@@ -1,4 +1,4 @@
-import { entriesByDate, formatWorkMinutes, type Timesheet } from '@smarteam/contracts';
+import { entriesByDate, entryNotes, formatWorkMinutes, type Timesheet } from '@smarteam/contracts';
 
 /**
  * Presentation shapes derived from timesheets the API returned.
@@ -69,7 +69,8 @@ export function toDayGroups(timesheet: Timesheet | null): TimesheetDayGroup[] {
       id: entry.id,
       minutes: entry.minutes,
       label: formatWorkMinutes(entry.minutes),
-      description: entry.description ?? null,
+      // Never the stored blob an entry's project and job type are encoded into.
+      description: entryNotes(entry) || null,
       projectId: entry.projectId ?? null,
       projectName: entry.projectName ?? null,
       jobName: entry.jobName ?? null,

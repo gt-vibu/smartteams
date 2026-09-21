@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { employmentTypeLabel } from '@smarteam/contracts';
 import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
 
@@ -43,7 +44,13 @@ export function OverviewProfileTab() {
             <div className="bg-muted/40 p-3 rounded border border-border/70">
               <span className="text-muted-foreground font-medium block">Job Title</span>
               <span className="font-semibold text-foreground mt-0.5 block">
-                {employee.jobTitle}
+                {employee.jobTitle || 'Not recorded'}
+              </span>
+            </div>
+            <div className="bg-muted/40 p-3 rounded border border-border/70">
+              <span className="text-muted-foreground font-medium block">Employment type</span>
+              <span className="font-semibold text-foreground mt-0.5 block">
+                {employmentTypeLabel(employee.employmentType)}
               </span>
             </div>
             <div className="bg-muted/40 p-3 rounded border border-border/70">
@@ -67,7 +74,7 @@ export function OverviewProfileTab() {
             <div className="bg-muted/40 p-3 rounded border border-border/70">
               <span className="text-muted-foreground font-medium block">Work Location</span>
               <span className="font-semibold text-foreground mt-0.5 block">
-                {employee.location || 'Bangalore, India'}
+                {employee.location || 'Location not recorded'}
               </span>
             </div>
             <div className="bg-muted/40 p-3 rounded border border-border/70">
@@ -96,7 +103,8 @@ export function OverviewProfileTab() {
                     {employee.manager.lastName}
                   </div>
                   <div className="text-[11px] text-muted-foreground font-medium">
-                    Reporting Manager · {employee.manager.jobTitle || 'Engineering Manager'}
+                    Reporting Manager
+                    {employee.manager.jobTitle ? ` · ${employee.manager.jobTitle}` : ''}
                   </div>
                 </div>
               </div>
@@ -132,7 +140,8 @@ export function OverviewProfileTab() {
                       {member.firstName} {member.lastName}
                     </div>
                     <div className="text-[10px] text-muted-foreground">
-                      {member.employeeNumber} · {member.jobTitle || 'Engineer'}
+                      {member.employeeNumber}
+                      {member.jobTitle ? ` · ${member.jobTitle}` : ''}
                     </div>
                   </div>
                 </div>

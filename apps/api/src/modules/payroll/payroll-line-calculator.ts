@@ -8,6 +8,7 @@ import { PayComponentType } from '../../generated/prisma/enums';
 import { ConflictError } from '../../common/errors/domain-error';
 import { jsonSnapshot } from '../audit/audit.service';
 import { calculateComponent } from './payroll-calculation';
+import { NO_OVERTIME_DAYS, overtimePay, type OvertimeDayMinutes } from './payroll-overtime-split';
 import {
   allocateAdvanceRecovery,
   calculateSalaryStructure,
@@ -81,6 +82,10 @@ export type PayrollLineInput = {
     };
   }>;
   timesheet: { regularMinutes: number; overtimeMinutes: number } | null;
+  /** How much of that overtime attendance classified as a weekly off or a holiday. */
+  overtimeDays?: OvertimeDayMinutes;
+  /** Company overtime rates; a null rate pays the employee's own multiplier. */
+  overtimeRates?: { weeklyOff: number | null; holiday: number | null };
   leave: { paidDays: number; unpaidDays: number };
   attendance: { absentDays: number; halfDays: number };
   unemployedDays: number;
@@ -135,10 +140,13 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
   const regular = proratedStructure.base;
   const overtime =
     item.compensation && item.timesheet
-      ? monthlyStructure.gross
-          .div(standardDayMinutes * item.policy.payrollDayBasis)
-          .mul(item.timesheet.overtimeMinutes)
-          .mul(item.compensation.overtimeMultiplier)
+      ? overtimePay({
+          minutePay: monthlyStructure.gross.div(standardDayMinutes * item.policy.payrollDayBasis),
+          overtimeMinutes: item.timesheet.overtimeMinutes,
+          employeeMultiplier: item.compensation.overtimeMultiplier,
+          days: item.overtimeDays ?? NO_OVERTIME_DAYS,
+          rates: item.overtimeRates ?? { weeklyOff: null, holiday: null },
+        })
       : new Prisma.Decimal(0);
   const calculatedComponents = item.components
     .slice()

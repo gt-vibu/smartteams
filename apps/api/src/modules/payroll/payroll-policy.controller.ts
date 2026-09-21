@@ -19,6 +19,7 @@ import {
   PayrollPaymentDto,
   PayrollPolicyDto,
   PayrollPreviewDto,
+  SalaryProfilePreviewDto,
   SalaryAdvanceDecisionDto,
   SalaryAdvanceDto,
   SalaryProfileDto,
@@ -127,6 +128,18 @@ export class PayrollPolicyController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.payroll.saveSalaryProfile(context, body));
+  }
+
+  /** The salary profile worked out for a salary not yet saved. Reads only; writes nothing. */
+  @Post('profile/preview') previewProfile(
+    @Param('organizationId') organizationId: string,
+    @Body() body: SalaryProfilePreviewDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    const { employeeId, ...whatIf } = body;
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.payroll.getSalaryProfile(context, employeeId, whatIf));
   }
 
   @Post('preview') preview(

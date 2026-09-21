@@ -60,6 +60,8 @@ function setup(
       findFirst,
       findMany: jest.fn().mockResolvedValue(options.reports ?? []),
     },
+    // No department records: the older free-text department is what these cases read.
+    department: { findMany: () => Promise.resolve([]), findFirst: () => Promise.resolve(null) },
     employeeEmploymentRecord: {
       findFirst: jest.fn().mockResolvedValue(options.employment ?? null),
     },

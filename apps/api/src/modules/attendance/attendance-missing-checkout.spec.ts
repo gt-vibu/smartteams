@@ -151,6 +151,10 @@ function setup(
       findFirst: jest.fn().mockResolvedValue(null),
       findMany: jest.fn().mockResolvedValue([]),
     },
+    // No shift and no holiday, so overtime is measured against the standard day.
+    employeeShiftAssignment: { findFirst: jest.fn().mockResolvedValue(null) },
+    holiday: { findFirst: jest.fn().mockResolvedValue(null) },
+    employeeHolidaySelection: { findFirst: jest.fn().mockResolvedValue(null) },
     organizationSettings: {
       findUniqueOrThrow: jest.fn().mockResolvedValue({ standardDayMinutes: 480 }),
     },

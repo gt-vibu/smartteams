@@ -108,6 +108,12 @@ export type ExternalIdMapping = Prisma.ExternalIdMappingModel
  */
 export type FileObject = Prisma.FileObjectModel
 /**
+ * Model FileShare
+ * An explicit grant of one file to a user, a role or a team. Revoked, never deleted, so the
+ * audit trail keeps who could see what and when.
+ */
+export type FileShare = Prisma.FileShareModel
+/**
  * Model FileObjectVersion
  * 
  */
@@ -505,3 +511,10 @@ export type Project = Prisma.ProjectModel
  * 
  */
 export type ProjectMember = Prisma.ProjectMemberModel
+/**
+ * Model Department
+ * A department the organization defines. Employees belong to one; one of them may head it.
+ * `employeeNumberPrefix` gives new joiners numbers in a series (TE1, TE2, ...);
+ * `nextEmployeeNumber` is the counter behind it, advanced atomically as numbers are handed out.
+ */
+export type Department = Prisma.DepartmentModel

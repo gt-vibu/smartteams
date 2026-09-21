@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Button, Input, Label } from '@smarteam/ui';
-import { HelpCircle, Play, Pause, RotateCcw } from 'lucide-react';
+import React from 'react';
+import { Input, Label, TimePicker } from '@smarteam/ui';
+import { HelpCircle } from 'lucide-react';
 
-export type HoursMode = 'TOTAL' | 'START_END' | 'TIMER';
+/** How hours are entered. A timer was offered too; it is not part of logging time, so it went. */
+export type HoursMode = 'TOTAL' | 'START_END';
 
 interface LogTimeHoursFieldProps {
   mode: HoursMode;
@@ -90,7 +91,7 @@ export function normalizeTimeInput(raw: string): string {
 }
 
 /**
- * The Hours row of Log Time: Total hours (with 00:00 format), Start and end time, or Timer.
+ * The Hours row of Log Time: total hours (HH:MM) or a start and end time.
  * Matches Zoho People styling reference with radio choices and duration input.
  */
 export function LogTimeHoursField({
@@ -104,9 +105,6 @@ export function LogTimeHoursField({
   onEndTimeChange,
   disabled,
 }: LogTimeHoursFieldProps) {
-  const [timerSeconds, setTimerSeconds] = useState(0);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-
   const handleHoursChange = (raw: string) => {
     let clean = raw.replace(/[^0-9:.]/g, '');
     if (!clean || ['00:00', '0', '00', '00:'].includes(clean)) {
@@ -165,37 +163,6 @@ export function LogTimeHoursField({
     onTotalHoursChange(`${digits.slice(0, 2)}:${digits.slice(2, 4)}`);
   };
 
-  // The interval only counts. It depends on nothing but whether the timer runs, so a parent that
-  // passes a new callback each render does not restart it every second.
-  useEffect(() => {
-    if (!isTimerRunning) return;
-    const interval = setInterval(() => setTimerSeconds((prev) => prev + 1), 1000);
-    return () => clearInterval(interval);
-  }, [isTimerRunning]);
-
-  // The form's total follows the count, outside the state updater: updaters must stay pure, and
-  // React may call them twice.
-  useEffect(() => {
-    if (mode !== 'TIMER' || timerSeconds === 0) return;
-    const hrs = Math.floor(timerSeconds / 3600);
-    const mins = Math.floor((timerSeconds % 3600) / 60);
-    onTotalHoursChange(`${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`);
-    // Only a new count should write the total; the callback's identity is not a change.
-  }, [timerSeconds, mode]);
-
-  const formatTimer = (sec: number) => {
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  };
-
-  const handleResetTimer = () => {
-    setIsTimerRunning(false);
-    setTimerSeconds(0);
-    onTotalHoursChange('00:00');
-  };
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-start">
       <Label className="text-foreground/80 font-medium pt-1 sm:col-span-1 text-xs">
@@ -223,16 +190,6 @@ export function LogTimeHoursField({
             />
             <span>Start and end time</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer text-xs font-normal text-foreground">
-            <input
-              type="radio"
-              name="hours-mode"
-              checked={mode === 'TIMER'}
-              onChange={() => onModeChange('TIMER')}
-              className="text-primary focus:ring-primary h-3.5 w-3.5"
-            />
-            <span>Timer</span>
-          </label>
         </div>
 
         {mode === 'TOTAL' && (
@@ -257,72 +214,30 @@ export function LogTimeHoursField({
           </div>
         )}
 
-        {mode === 'TIMER' && (
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <div className="flex items-center rounded border border-border bg-muted/20 px-3 py-1 font-mono text-xs font-semibold tabular-nums text-foreground">
-              <span>{formatTimer(timerSeconds)}</span>
-            </div>
-            <Button
-              type="button"
-              size="sm"
-              variant={isTimerRunning ? 'destructive' : 'default'}
-              onClick={() => setIsTimerRunning(!isTimerRunning)}
-              disabled={disabled}
-              className="h-8 text-xs gap-1.5 cursor-pointer"
-            >
-              {isTimerRunning ? (
-                <Pause className="h-3.5 w-3.5" />
-              ) : (
-                <Play className="h-3.5 w-3.5" />
-              )}
-              <span>{isTimerRunning ? 'Pause' : 'Start'}</span>
-            </Button>
-            {timerSeconds > 0 && (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={handleResetTimer}
-                disabled={disabled}
-                className="h-8 text-xs gap-1 cursor-pointer"
-                title="Reset timer"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                <span>Reset</span>
-              </Button>
-            )}
-            <span title="Timer tracks duration and logs elapsed time in HH:MM format">
-              <HelpCircle className="h-4 w-4 text-amber-500/90 shrink-0 cursor-help" />
-            </span>
-          </div>
-        )}
-
         {mode === 'START_END' && (
           <div className="grid grid-cols-2 gap-3 max-w-xs">
             <div>
               <Label htmlFor="start-time" className="text-[11px] text-muted-foreground mb-1 block">
                 Start time
               </Label>
-              <Input
+              <TimePicker
                 id="start-time"
-                type="time"
                 value={startTime}
-                onChange={(e) => onStartTimeChange(e.target.value)}
+                onChange={onStartTimeChange}
                 disabled={disabled}
-                className="font-mono text-xs h-8"
+                placeholder="Start"
               />
             </div>
             <div>
               <Label htmlFor="end-time" className="text-[11px] text-muted-foreground mb-1 block">
                 End time
               </Label>
-              <Input
+              <TimePicker
                 id="end-time"
-                type="time"
                 value={endTime}
-                onChange={(e) => onEndTimeChange(e.target.value)}
+                onChange={onEndTimeChange}
                 disabled={disabled}
-                className="font-mono text-xs h-8"
+                placeholder="End"
               />
             </div>
           </div>

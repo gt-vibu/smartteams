@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { EMPLOYMENT_TYPE_OPTIONS } from '@smarteam/contracts';
 import { Button, Dialog, DialogContent, DialogTitle, Input, Label, Select } from '@smarteam/ui';
 
 /**
@@ -107,10 +108,11 @@ export function AccessSelfEnrollDialog({
               onChange={(event) => setEmploymentType(event.target.value)}
               value={employmentType}
             >
-              <option value="FULL_TIME">Full time</option>
-              <option value="PART_TIME">Part time</option>
-              <option value="CONTRACT">Contract</option>
-              <option value="INTERN">Intern</option>
+              {EMPLOYMENT_TYPE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </Select>
           </div>
         </div>

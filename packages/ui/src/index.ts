@@ -14,6 +14,7 @@ export * from './tooltip';
 export * from './sheet';
 export * from './alert-dialog';
 export * from './date-picker';
+export * from './time-picker';
 export * from './calendar';
 export * from './use-anchored-panel';
 export { useBackToClose } from './use-back-to-close';

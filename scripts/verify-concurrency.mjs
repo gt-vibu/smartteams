@@ -24,6 +24,7 @@ const { Client } = require('pg');
 
 import { setupCall } from './lib/setup-call.mjs';
 import { weekdaysAgo } from './lib/dates.mjs';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const BASE = process.env.CONCURRENCY_API_URL ?? 'http://localhost:4000';
 const DB = resolveDatabaseUrl();
@@ -183,6 +184,7 @@ async function tenant(tag) {
     firstName: 'Sam',
     lastName: 'Race',
     workEmail: email,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-01-01',
   });

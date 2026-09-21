@@ -402,6 +402,24 @@ enum FilePurpose {
   OTHER
 }
 
+/// PERSONAL: the employee's own private file. Nobody else, whatever their role, unless the
+/// employee shares it. EMPLOYEE: about one employee (offer letter, KYC); that employee and HR.
+/// TEAM: one team's members. ORGANIZATION: everyone who can read files. INTERNAL: system files
+/// such as payroll exports and imports, for file administrators only.
+enum FileAccessScope {
+  PERSONAL
+  EMPLOYEE
+  TEAM
+  ORGANIZATION
+  INTERNAL
+}
+
+enum FileShareGrantee {
+  USER
+  ROLE
+  TEAM
+}
+
 enum FileStatus {
   PENDING_UPLOAD
   AVAILABLE

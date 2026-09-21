@@ -86,7 +86,13 @@ export class StorageService {
           : {}),
         ServerSideEncryption: 'AES256',
       }),
-      { expiresIn: input.expiresIn ?? 600 },
+      {
+        expiresIn: input.expiresIn ?? 600,
+        // The checksum has to stay a *signed header*. Left alone, the presigner moves it into the
+        // URL's query, the uploader still sends it as a header, and S3 refuses the whole upload:
+        // "There were headers present in the request which were not signed".
+        unhoistableHeaders: new Set(['x-amz-checksum-sha256']),
+      },
     );
     return { url, headers };
   }

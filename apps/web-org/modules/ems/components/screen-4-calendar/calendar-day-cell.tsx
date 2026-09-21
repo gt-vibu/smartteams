@@ -33,11 +33,15 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
     ? `${conflict.holidayName}: ${conflict.label}`
     : day.dayStatus === 'PRESENT'
       ? `Present${day.hoursLabel ? `, ${day.hoursLabel}` : ''}`
-      : day.dayStatus === 'HOLIDAY'
-        ? (day.holidayName ?? 'Holiday')
-        : isWeekend
-          ? 'Weekend'
-          : '';
+      : day.dayStatus === 'LEAVE'
+        ? `On leave: ${day.leaveName ?? 'Leave'}`
+        : day.dayStatus === 'ABSENT'
+          ? 'Absent'
+          : day.dayStatus === 'HOLIDAY'
+            ? (day.holidayName ?? 'Holiday')
+            : isWeekend
+              ? 'Weekend'
+              : '';
   const dot = conflict
     ? conflict.tone === 'attention'
       ? 'bg-amber-500'
@@ -46,11 +50,15 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
         : 'bg-emerald-500'
     : day.dayStatus === 'PRESENT'
       ? 'bg-emerald-500'
-      : day.dayStatus === 'HOLIDAY'
-        ? 'bg-cyan-500'
-        : isWeekend
-          ? 'bg-amber-400'
-          : '';
+      : day.dayStatus === 'LEAVE'
+        ? 'bg-violet-500'
+        : day.dayStatus === 'ABSENT'
+          ? 'bg-rose-500'
+          : day.dayStatus === 'HOLIDAY'
+            ? 'bg-cyan-500'
+            : isWeekend
+              ? 'bg-amber-400'
+              : '';
 
   return (
     <button
@@ -102,6 +110,20 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
           <div className="flex items-center gap-1 rounded border border-emerald-200/80 bg-emerald-50 p-0.5 px-1 text-[9.5px] font-semibold text-emerald-800 shadow-2xs">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
             <span className="truncate">Present {day.hoursLabel ? `· ${day.hoursLabel}` : ''}</span>
+          </div>
+        )}
+
+        {day.dayStatus === 'LEAVE' && (
+          <div className="flex items-center gap-1 rounded border border-violet-200/80 bg-violet-50 p-0.5 px-1 text-[9.5px] font-semibold text-violet-900 shadow-2xs dark:border-violet-500/40 dark:bg-violet-500/10 dark:text-violet-200">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500" />
+            <span className="truncate">{day.leaveName ?? 'Leave'}</span>
+          </div>
+        )}
+
+        {day.dayStatus === 'ABSENT' && (
+          <div className="flex items-center gap-1 rounded border border-rose-200/80 bg-rose-50 p-0.5 px-1 text-[9.5px] font-semibold text-rose-800 shadow-2xs dark:border-rose-500/40 dark:bg-rose-500/10 dark:text-rose-200">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500" />
+            <span className="truncate">Absent</span>
           </div>
         )}
 

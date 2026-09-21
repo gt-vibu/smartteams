@@ -1,28 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Badge, Progress } from '@smarteam/ui';
+import { Badge } from '@smarteam/ui';
 import type { ProjectView } from '../../services/team-directory';
 
-/**
- * Project roster presentation.
- *
- * Team capacity reflects average allocation across assigned active members.
- * For example, 7 full-time members allocated at 100% capacity each displays 100% average capacity.
- */
-export function averageAllocation(view: ProjectView): number {
-  if (view.activeMembers.length === 0) return 0;
-  const sum = view.activeMembers.reduce((acc, m) => acc + (m.allocationPercentage ?? 100), 0);
-  return Math.round(sum / view.activeMembers.length);
-}
-
-/** Legacy alias returning bounded capacity percentage */
-export function totalAllocation(view: ProjectView): number {
-  return averageAllocation(view);
-}
+/** Project roster presentation: who is on each project, without any percentage. */
 
 export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () => void }) {
-  const avg = averageAllocation(view);
   const count = view.activeMembers.length;
 
   return (
@@ -45,15 +29,9 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
         <p className="line-clamp-2 text-xs text-muted-foreground">{view.project.description}</p>
       )}
 
-      <div className="space-y-1.5 border-t border-border pt-3">
-        <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-          <span>
-            {count} {count === 1 ? 'member' : 'members'} allocated
-          </span>
-          <span className="font-mono font-bold text-foreground">{avg}%</span>
-        </div>
-        <Progress aria-label={`Team average allocation ${avg}%`} value={avg} />
-      </div>
+      <p className="border-t border-border pt-3 text-[11px] text-muted-foreground">
+        {count} {count === 1 ? 'member' : 'members'}
+      </p>
     </button>
   );
 }
@@ -74,7 +52,7 @@ export function ProjectTable({
             <th className="px-4 py-2.5 font-bold">Code</th>
             <th className="px-4 py-2.5 font-bold">Branch</th>
             <th className="px-4 py-2.5 font-bold">Status</th>
-            <th className="px-4 py-2.5 font-bold">Allocated</th>
+            <th className="px-4 py-2.5 font-bold">Members</th>
           </tr>
         </thead>
         <tbody>

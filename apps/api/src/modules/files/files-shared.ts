@@ -34,7 +34,21 @@ export const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> 
     ],
   },
   IMPORT: { maxBytes: 50_000_000, types: ['text/csv', 'application/json', 'application/zip'] },
-  OTHER: { maxBytes: 25_000_000, types: ['application/octet-stream'] },
+  // Company and team documents: handbooks, policies, SOPs and their forms.
+  OTHER: {
+    maxBytes: 25_000_000,
+    types: [
+      'application/octet-stream',
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'text/plain',
+      'text/csv',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+  },
 };
 
 /**
@@ -49,7 +63,16 @@ export const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> 
  * contract already accepts a string here.
  */
 export function toFileDto<T extends { byteSize: bigint }>(file: T) {
-  return { ...file, byteSize: file.byteSize.toString() };
+  // The access columns are answered by the documents routes. Left off here so the responses the
+  // existing routes (and federation partners) receive keep exactly the shape they always had.
+  const rest: Record<string, unknown> = { ...file };
+  delete rest.accessScope;
+  delete rest.teamId;
+  delete rest.allowDownload;
+  return {
+    ...(rest as Omit<T, 'accessScope' | 'teamId' | 'allowDownload'>),
+    byteSize: file.byteSize.toString(),
+  };
 }
 
 export function requireFilePermission(context: DomainContext, operation: 'read' | 'write') {

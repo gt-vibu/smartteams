@@ -111,12 +111,26 @@ export class EmployeeContactsService {
         where: { userId, organizationId: context.organizationId },
         select: { id: true },
       });
-      if (taken) throw new ConflictError('That user account is already linked to another employee');
+      if (taken)
+        throw new ConflictError(
+          'This login already belongs to another employee in this organization. Use a different work email, or open that employee instead.',
+        );
 
-      const updated = await tx.employee.update({
-        where: { id: employee.id },
-        data: { userId, version: { increment: 1 } },
-      });
+      const updated = await tx.employee
+        .update({
+          where: { id: employee.id },
+          data: { userId, version: { increment: 1 } },
+        })
+        // Two requests linking the same login at once both pass the check above; the
+        // (organization, user) index refuses the second. The same person may be an employee of
+        // other organizations too: only one employee per login within this one.
+        .catch((caught: unknown) => {
+          if ((caught as { code?: string } | null)?.code === 'P2002')
+            throw new ConflictError(
+              'This login already belongs to another employee in this organization. Use a different work email, or open that employee instead.',
+            );
+          throw caught;
+        });
       await this.audit.record(
         context,
         {
@@ -147,6 +161,20 @@ export class EmployeeContactsService {
         }))
       )
         throw new ConflictError('Manager must be another active employee in this organization');
+      // Walk up from the new manager: reaching this employee means they would end up managing
+      // their own manager, and the reporting line would go round in a circle.
+      let cursor: string | null = managerEmployeeId;
+      for (let depth = 0; cursor && depth < 500; depth++) {
+        if (cursor === employeeId)
+          throw new ConflictError(
+            'That would create a reporting loop: this employee is already above the chosen manager.',
+          );
+        const next: { managerEmployeeId: string | null } | null = await tx.employee.findFirst({
+          where: { id: cursor, organizationId: context.organizationId },
+          select: { managerEmployeeId: true },
+        });
+        cursor = next?.managerEmployeeId ?? null;
+      }
       const updated = await tx.employee.update({
         where: { id: employeeId },
         data: { managerEmployeeId, version: { increment: 1 } },

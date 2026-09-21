@@ -1,6 +1,7 @@
 import {
   parsePayComponent,
   parsePayComponentList,
+  parseOvertimeRates,
   parsePayrollPolicy,
   parsePayrollRun,
   parsePayrollRunList,
@@ -9,6 +10,7 @@ import {
   parseSalaryProfile,
   parseStatutoryRuleList,
   type PayComponentDefinition,
+  type OvertimeRates,
   type PayrollPolicy,
   type PayrollRun,
   type PayrollRunStatus,
@@ -83,6 +85,28 @@ export const payrollRepository = {
    * The employee's salary structure with the backend's own breakdown: earnings, deductions
    * (statutory included, each with its eligibility and basis) and employer contributions.
    */
+  /** The profile worked out for a salary that is being typed. The server saves nothing. */
+  async previewSalaryProfile(
+    organizationId: string,
+    input: {
+      employeeId: string;
+      grossSalary: number;
+      pfEnabled: boolean;
+      esiEnabled: boolean;
+      ptEnabled: boolean;
+    },
+  ): Promise<SalaryProfile> {
+    return expectShape(
+      parseSalaryProfile(
+        await apiRequest(`${base(organizationId)}/profile/preview`, {
+          method: 'POST',
+          body: input,
+        }),
+      ),
+      'salary profile',
+    );
+  },
+
   async getSalaryProfile(organizationId: string, employeeId?: string): Promise<SalaryProfile> {
     return expectShape(
       parseSalaryProfile(
@@ -278,6 +302,25 @@ export const payrollRepository = {
         }),
       ),
       'payroll policy',
+    );
+  },
+
+  /** What overtime pays, as multiples of the hourly rate. */
+  async getOvertimeRates(organizationId: string): Promise<OvertimeRates> {
+    return expectShape(
+      parseOvertimeRates(
+        await apiRequest(`${base(organizationId)}/overtime-rates`, { method: 'GET' }),
+      ),
+      'overtime rates',
+    );
+  },
+
+  async saveOvertimeRates(organizationId: string, input: OvertimeRates): Promise<OvertimeRates> {
+    return expectShape(
+      parseOvertimeRates(
+        await apiRequest(`${base(organizationId)}/overtime-rates`, { method: 'PUT', body: input }),
+      ),
+      'overtime rates',
     );
   },
 

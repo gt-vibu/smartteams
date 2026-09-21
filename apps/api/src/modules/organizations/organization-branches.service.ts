@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { assertBranchCanClose, organizationToday } from '../employees/employee-branch-rules';
 import {
   requirePermission,
   requireReason,
@@ -50,15 +51,23 @@ export class OrganizationBranchesService {
 
   async createBranch(
     context: DomainContext,
-    input: { name: string; code: string; externalId?: string; address?: Record<string, unknown> },
+    input: {
+      name: string;
+      code: string;
+      externalId?: string;
+      address?: Record<string, unknown>;
+      timezone?: string;
+    },
   ) {
     requirePermission(context, 'branches.write');
+    const timezone = checkedTimezone(input.timezone);
     return runScoped(this.database, context, async (tx) => {
       const branch = await tx.branch.create({
         data: {
           organizationId: context.organizationId,
           name: input.name.trim(),
           code: input.code.trim().toUpperCase(),
+          ...(timezone !== undefined ? { timezone } : {}),
           externalId: input.externalId,
           source: 'NATIVE',
           address: input.address === undefined ? undefined : jsonSnapshot(input.address),
@@ -78,12 +87,58 @@ export class OrganizationBranchesService {
     });
   }
 
+  /**
+   * One branch as its settings page needs it: the branch, its work locations (the places a
+   * geofenced check-in must come from) and how many current employees are based there.
+   */
+  async branchOverview(context: DomainContext, branchId: string) {
+    requirePermission(context, 'branches.read');
+    return this.database.run(context, async (tx) => {
+      const branch = await tx.branch.findFirst({
+        where: { id: branchId, organizationId: context.organizationId },
+      });
+      if (!branch) throw new NotFoundError('Branch');
+      const [workLocations, employees] = await Promise.all([
+        tx.workLocation.findMany({
+          where: { organizationId: context.organizationId, branchId, isActive: true },
+          orderBy: { name: 'asc' },
+        }),
+        tx.employee.count({
+          where: {
+            organizationId: context.organizationId,
+            primaryBranchId: branchId,
+            status: 'ACTIVE',
+          },
+        }),
+      ]);
+      return {
+        ...branchDto(branch),
+        geofenceMode: branch.geofenceMode,
+        biometricVerificationMode: branch.biometricVerificationMode,
+        employeeCount: employees,
+        workLocations: workLocations.map((location) => ({
+          id: location.id,
+          name: location.name,
+          latitude: Number(location.latitude),
+          longitude: Number(location.longitude),
+          radiusMeters: Number(location.radiusMeters),
+        })),
+      };
+    });
+  }
+
   async updateBranch(
     context: DomainContext,
     branchId: string,
-    input: { name?: string; code?: string; address?: Record<string, unknown> },
+    input: {
+      name?: string;
+      code?: string;
+      address?: Record<string, unknown>;
+      timezone?: string;
+    },
   ) {
     requirePermission(context, 'branches.write');
+    const timezone = checkedTimezone(input.timezone);
     return this.database.run(context, async (tx) => {
       const before = await tx.branch.findFirst({
         where: { id: branchId, organizationId: context.organizationId },
@@ -95,6 +150,7 @@ export class OrganizationBranchesService {
           name: input.name?.trim(),
           code: input.code?.trim().toUpperCase(),
           address: input.address === undefined ? undefined : jsonSnapshot(input.address),
+          ...(timezone !== undefined ? { timezone } : {}),
         },
       });
       await this.audit.record(
@@ -132,14 +188,31 @@ export class OrganizationBranchesService {
       });
       if (!before) throw new NotFoundError('Branch');
       if (before.status === 'DEACTIVATED') throw new ConflictError('Branch is already deactivated');
+      const today = await organizationToday(tx, context.organizationId);
+      if (context.accessMode === 'NATIVE')
+        await assertBranchCanClose(tx, context.organizationId, before, today);
       const updated = await tx.branch.update({
         where: { id: before.id },
         data: { status: 'DEACTIVATED' },
       });
-      await tx.employeeBranchAssignment.updateMany({
-        where: { organizationId: context.organizationId, branchId: before.id, endsOn: null },
-        data: { endsOn: new Date() },
-      });
+      // Memberships that have begun end today. Nothing upcoming is left to end: in the app that
+      // was refused above, and a membership may not end before it starts. Federation keeps the
+      // behaviour its partners were built against.
+      if (context.accessMode === 'NATIVE')
+        await tx.employeeBranchAssignment.updateMany({
+          where: {
+            organizationId: context.organizationId,
+            branchId: before.id,
+            startsOn: { lte: today },
+            OR: [{ endsOn: null }, { endsOn: { gt: today } }],
+          },
+          data: { endsOn: today },
+        });
+      else
+        await tx.employeeBranchAssignment.updateMany({
+          where: { organizationId: context.organizationId, branchId: before.id, endsOn: null },
+          data: { endsOn: new Date() },
+        });
       await this.audit.record(
         context,
         {
@@ -166,4 +239,17 @@ export class OrganizationBranchesService {
       return branchDto(updated);
     });
   }
+}
+
+/** A real IANA timezone, null to clear it, or undefined when not being changed. */
+function checkedTimezone(value: string | undefined): string | null | undefined {
+  if (value === undefined) return undefined;
+  const zone = value.trim();
+  if (!zone) return null;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: zone });
+  } catch {
+    throw new ConflictError(`${zone} is not a timezone. Use a name like Asia/Kolkata.`);
+  }
+  return zone;
 }

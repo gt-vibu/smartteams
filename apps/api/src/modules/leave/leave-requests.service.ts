@@ -198,6 +198,31 @@ export class LeaveRequestsService {
       ]);
       if (!employee) throw new NotFoundError('Active employee');
       if (!type) throw new NotFoundError('Leave type');
+      // One day cannot be taken off twice: a request touching a day already asked for or
+      // granted is refused, whichever type it was. Native requests only; what federation
+      // partners may send is a frozen contract.
+      // Held until the transaction ends, so two requests sent at once are checked one after the
+      // other rather than both passing the lookup below.
+      if (input.source === 'NATIVE')
+        await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`leave:${employee.id}`}, 0))`;
+      const clash =
+        input.source === 'NATIVE' &&
+        (await tx.leaveRequest.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            employeeId: employee.id,
+            status: { in: ['PENDING', 'APPROVED'] },
+            startDate: { lte: end },
+            endDate: { gte: start },
+          },
+          select: { startDate: true, endDate: true, status: true },
+        }));
+      if (clash)
+        throw new ConflictError(
+          `Leave from ${clash.startDate.toISOString().slice(0, 10)} to ` +
+            `${clash.endDate.toISOString().slice(0, 10)} is already ${clash.status.toLowerCase()} ` +
+            'and covers some of these days.',
+        );
       const branchId = context.branchId ?? input.branchId ?? employee.primaryBranchId;
       if (!branchId) throw new ConflictError('An employee branch is required for leave requests');
       if (

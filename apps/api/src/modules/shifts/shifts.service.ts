@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
-import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import {
+  TenantDatabaseService,
+  type TenantTransaction,
+} from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 
 type ShiftInput = {
-  code: string;
+  /** Federation sends one; the app leaves it out and it is made from the name. */
+  code?: string;
   name: string;
   branchId?: string;
   daysOfWeek: number[];
@@ -43,7 +47,7 @@ export class ShiftsService {
         data: {
           organizationId: context.organizationId,
           branchId,
-          code: input.code.trim().toUpperCase(),
+          code: await shiftCode(tx, context.organizationId, input),
           name: input.name.trim(),
           daysOfWeek: input.daysOfWeek,
           startsAt: timeOnly(input.startsAt),
@@ -232,6 +236,18 @@ export class ShiftsService {
         }))
       )
         throw new NotFoundError('Branch');
+      // Moving someone to another shift: the shift they are on when the new one starts ends the
+      // day before. Native only; federation assignments keep refusing any overlap.
+      if (context.accessMode === 'NATIVE')
+        await tx.employeeShiftAssignment.updateMany({
+          where: {
+            organizationId: context.organizationId,
+            employeeId,
+            startsOn: { lt: start },
+            OR: [{ endsOn: null }, { endsOn: { gte: start } }],
+          },
+          data: { endsOn: new Date(start.getTime() - 86_400_000) },
+        });
       const overlap = await tx.employeeShiftAssignment.findFirst({
         where: {
           organizationId: context.organizationId,
@@ -351,4 +367,30 @@ function formatTime(value: Date) {
   return [value.getUTCHours(), value.getUTCMinutes(), value.getUTCSeconds()]
     .map((part) => String(part).padStart(2, '0'))
     .join(':');
+}
+
+/**
+ * The shift's code: the one supplied (federation always sends one), or one made from the name —
+ * "Night Shift" becomes NIGHT-SHIFT, and a second of that name NIGHT-SHIFT-2. The app's form asks
+ * only for a name, because nobody types a code for a shift.
+ */
+async function shiftCode(
+  tx: TenantTransaction,
+  organizationId: string,
+  input: { code?: string; name: string },
+) {
+  if (input.code?.trim()) return input.code.trim().toUpperCase();
+  const base =
+    input.name
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 16) || 'SHIFT';
+  for (let attempt = 1; attempt < 100; attempt++) {
+    const code = attempt === 1 ? base : `${base}-${attempt}`;
+    if (!(await tx.shift.findFirst({ where: { organizationId, code }, select: { id: true } })))
+      return code;
+  }
+  throw new ConflictError('A shift code could not be generated; give the shift another name.');
 }

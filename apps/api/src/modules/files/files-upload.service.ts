@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FilePurpose, FileStatus } from '../../generated/prisma/enums';
+import { FileAccessScope, FilePurpose, FileStatus } from '../../generated/prisma/enums';
 import type { DomainContext } from '../../common/context/domain-context';
 import {
   ConflictError,
@@ -51,8 +51,15 @@ export class FilesUploadService {
       leaveRequestId?: string;
       documentType?: EmployeeDocumentType;
     },
+    /**
+     * Who the file is for. Callers that do not say (federation) get what they always had: the
+     * employee's file, or an internal one when there is no employee. The documents service
+     * checks the caller may publish to the scope before passing it.
+     */
+    access?: { scope: FileAccessScope; teamId?: string; allowDownload?: boolean },
   ) {
     requireFilePermission(context, 'write');
+    const sharedScope = access?.scope === 'ORGANIZATION' || access?.scope === 'TEAM';
     // `files.write` is a self-service permission. It used to accept any employee id and any
     // purpose, so an employee could attach documents to a colleague's record or leave request, and
     // file payroll documents under anyone's name.
@@ -101,9 +108,19 @@ export class FilesUploadService {
     const file = await this.database.run(context, async (tx) => {
       // A self-service upload is always the caller's own, whether or not it named them: a file
       // with no employee is readable only with breadth, so the uploader could not see it again.
-      const employeeId = breadth
-        ? input.employeeId
-        : await resolveActingEmployeeId(tx, context, input.employeeId, FILES_BREADTH);
+      // A company or team document is about nobody, so it is never filed against the uploader.
+      const employeeId = sharedScope
+        ? undefined
+        : breadth
+          ? input.employeeId
+          : await resolveActingEmployeeId(tx, context, input.employeeId, FILES_BREADTH);
+      if (access?.teamId) {
+        const team = await tx.team.findFirst({
+          where: { id: access.teamId, organizationId: context.organizationId },
+          select: { id: true },
+        });
+        if (!team) throw new NotFoundError('Team');
+      }
       const employee = employeeId
         ? await tx.employee.findFirst({
             where: { id: employeeId, organizationId: context.organizationId },
@@ -133,6 +150,13 @@ export class FilesUploadService {
           contentType: input.contentType,
           byteSize: BigInt(input.byteSize),
           checksumSha256: input.checksumSha256,
+          accessScope:
+            access?.scope ??
+            (employeeId || leaveRequest?.employeeId
+              ? FileAccessScope.EMPLOYEE
+              : FileAccessScope.INTERNAL),
+          teamId: access?.scope === 'TEAM' ? access.teamId : undefined,
+          allowDownload: access?.allowDownload ?? true,
           metadata: input.documentType
             ? { documentType: input.documentType, displayName }
             : { displayName },

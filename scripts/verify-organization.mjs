@@ -200,9 +200,12 @@ async function main() {
     200,
   );
 
+  // Departments are real records now, managed from the Departments tab.
+  r = await org('GET', '/departments');
+  check('departments are listed for the organization', r.status, 200);
+
   console.log('\nentities the workspace no longer claims');
   for (const [label, path] of [
-    ['departments', '/departments'],
     ['announcements', '/announcements'],
     ['milestones', '/milestones'],
     ['org chart', '/org-chart'],

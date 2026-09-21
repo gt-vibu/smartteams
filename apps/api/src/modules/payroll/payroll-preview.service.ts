@@ -3,6 +3,8 @@ import { Prisma } from '../../generated/prisma/client';
 import { SalarySlipMode } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
+import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { calculateSalaryStructure } from './payroll-salary-structure';
 import {
@@ -13,6 +15,8 @@ import {
   unemployedDays,
 } from './payroll-calculation';
 import { computePayrollLine } from './payroll-line-calculator';
+import { sumOvertimeByDayType } from './payroll-overtime-split';
+import { readOvertimeRates } from './payroll-overtime-rates';
 import { TimesheetStatus } from '../../generated/prisma/enums';
 import { dateOnly, type PreviewInput } from './payroll-policy.types';
 import { employeeScope, findPolicy, resolveEmployeeId } from './payroll-policy-access';
@@ -136,7 +140,12 @@ export class PayrollPreviewService {
             employeeId,
             workDate: { gte: periodStart, lte: measuredEnd },
           },
-          select: { dayStatus: true },
+          select: {
+            dayStatus: true,
+            workDate: true,
+            overtimeMinutes: true,
+            overtimeDayType: true,
+          },
         }),
         tx.leaveRequest.findMany({
           where: {
@@ -154,7 +163,26 @@ export class PayrollPreviewService {
           },
         }),
       ]);
-      const attendance = summarizeAttendance(attendanceRecords);
+      // Absences are counted up to yesterday: today can still be checked into.
+      const absenceEnd = new Date(Math.min(measuredEnd.getTime(), today.getTime() - 86_400_000));
+      const attendance = summarizeAttendance(
+        attendanceRecords,
+        !unmarkedDaysAreAbsent(settings.metadata)
+          ? undefined
+          : {
+              periodStart,
+              periodEnd: absenceEnd,
+              workWeekDays: settings.workWeekDays,
+              holidays,
+              branchId: employee.primaryBranchId,
+              leaves: approvedLeaves,
+              employeeSelectedDates: employeeHolidaySelections.map((selection) =>
+                selection.holiday.holidayDate.toISOString().slice(0, 10),
+              ),
+              dateOfJoining: employee.dateOfJoining,
+              dateOfLeaving: employee.dateOfLeaving,
+            },
+      );
       const leave = summarizeLeave(approvedLeaves, periodStart, measuredEnd);
       // Preview measures the period only as far as today. That is the ONE deliberate difference
       // from a released run, and it is the reason a mid-month preview is smaller than the final
@@ -228,9 +256,11 @@ export class PayrollPreviewService {
         compensation,
         employeePolicy: employeePolicy ?? null,
         policy: enginePolicy,
-        statutoryRules: rules,
+        statutoryRules: withNationalStatutoryRules(rules),
         components,
         timesheet: sumTimesheets(approvedTimesheets),
+        overtimeDays: sumOvertimeByDayType(attendanceRecords),
+        overtimeRates: readOvertimeRates(settings.metadata),
         leave,
         attendance,
         unemployedDays: notEmployedDays,

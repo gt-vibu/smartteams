@@ -1,8 +1,44 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Label } from '@smarteam/ui';
+import {
+  Button,
+  Input,
+  Label,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
+} from '@smarteam/ui';
+
+/** The currencies offered. Display only for now: amounts are not converted. */
+const CURRENCIES = [
+  { code: 'INR', label: 'INR — Indian Rupee' },
+  { code: 'USD', label: 'USD — US Dollar' },
+  { code: 'EUR', label: 'EUR — Euro' },
+  { code: 'GBP', label: 'GBP — British Pound' },
+  { code: 'AED', label: 'AED — UAE Dirham' },
+  { code: 'SGD', label: 'SGD — Singapore Dollar' },
+  { code: 'AUD', label: 'AUD — Australian Dollar' },
+  { code: 'CAD', label: 'CAD — Canadian Dollar' },
+  { code: 'JPY', label: 'JPY — Japanese Yen' },
+  { code: 'SAR', label: 'SAR — Saudi Riyal' },
+];
+
+/** The saved value stays selectable even when it is not one of the listed ones. */
+function withCurrent<T extends { label: string }>(
+  options: T[],
+  key: (option: T) => string,
+  current: string,
+  make: (value: string) => T,
+) {
+  return options.some((option) => key(option) === current) || !current
+    ? options
+    : [make(current), ...options];
+}
 import type { Organization } from '@smarteam/contracts';
+import { TimezoneSelect } from '../common/timezone-select';
 import type { OrganizationState } from '../../hooks/use-organization';
 
 /**
@@ -108,26 +144,47 @@ function ProfileForm({
             <Label className="mb-1 block" htmlFor="org-currency">
               Currency
             </Label>
-            <Input
+            <SelectMenu
               disabled={state.saving || !state.can.updateOrganization}
-              id="org-currency"
-              maxLength={3}
-              onChange={(event) => setCurrencyCode(event.target.value)}
+              onValueChange={setCurrencyCode}
               value={currencyCode}
-            />
+            >
+              <SelectTrigger id="org-currency">
+                <SelectValue placeholder="Choose a currency" />
+              </SelectTrigger>
+              <SelectContent>
+                {withCurrent(
+                  CURRENCIES,
+                  (c) => c.code,
+                  currencyCode,
+                  (code) => ({
+                    code,
+                    label: code,
+                  }),
+                ).map((currency) => (
+                  <SelectItem key={currency.code} value={currency.code}>
+                    {currency.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </SelectMenu>
           </div>
         </div>
         <div>
           <Label className="mb-1 block" htmlFor="org-timezone">
             Timezone
           </Label>
-          <Input
-            className="sm:max-w-xs"
-            disabled={state.saving || !state.can.updateOrganization}
-            id="org-timezone"
-            onChange={(event) => setTimezone(event.target.value)}
-            value={timezone}
-          />
+          <div className="sm:max-w-xs">
+            <TimezoneSelect
+              disabled={state.saving || !state.can.updateOrganization}
+              id="org-timezone"
+              onChange={setTimezone}
+              value={timezone}
+            />
+          </div>
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Attendance days, automatic check-out and payroll dates follow this timezone.
+          </p>
         </div>
 
         {state.saveError && (

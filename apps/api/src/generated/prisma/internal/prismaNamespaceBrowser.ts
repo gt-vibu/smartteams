@@ -69,6 +69,7 @@ export const ModelName = {
   OrganizationFederationCapability: 'OrganizationFederationCapability',
   ExternalIdMapping: 'ExternalIdMapping',
   FileObject: 'FileObject',
+  FileShare: 'FileShare',
   FileObjectVersion: 'FileObjectVersion',
   User: 'User',
   UserInvitation: 'UserInvitation',
@@ -144,7 +145,8 @@ export const ModelName = {
   Team: 'Team',
   TeamMember: 'TeamMember',
   Project: 'Project',
-  ProjectMember: 'ProjectMember'
+  ProjectMember: 'ProjectMember',
+  Department: 'Department'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -472,12 +474,33 @@ export const FileObjectScalarFieldEnum = {
   kmsKeyId: 'kmsKeyId',
   currentVersionId: 'currentVersionId',
   metadata: 'metadata',
+  accessScope: 'accessScope',
+  teamId: 'teamId',
+  allowDownload: 'allowDownload',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
 } as const
 
 export type FileObjectScalarFieldEnum = (typeof FileObjectScalarFieldEnum)[keyof typeof FileObjectScalarFieldEnum]
+
+
+export const FileShareScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  fileObjectId: 'fileObjectId',
+  granteeType: 'granteeType',
+  granteeUserId: 'granteeUserId',
+  granteeRoleId: 'granteeRoleId',
+  granteeTeamId: 'granteeTeamId',
+  canDownload: 'canDownload',
+  expiresAt: 'expiresAt',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  revokedAt: 'revokedAt'
+} as const
+
+export type FileShareScalarFieldEnum = (typeof FileShareScalarFieldEnum)[keyof typeof FileShareScalarFieldEnum]
 
 
 export const FileObjectVersionScalarFieldEnum = {
@@ -652,6 +675,7 @@ export const AttendanceRecordScalarFieldEnum = {
   scheduledMinutes: 'scheduledMinutes',
   workedMinutes: 'workedMinutes',
   overtimeMinutes: 'overtimeMinutes',
+  overtimeDayType: 'overtimeDayType',
   sourceAccessMode: 'sourceAccessMode',
   externalId: 'externalId',
   correctionNote: 'correctionNote',
@@ -1492,6 +1516,7 @@ export const EmployeeScalarFieldEnum = {
   managerEmployeeId: 'managerEmployeeId',
   geofenceMode: 'geofenceMode',
   primaryBranchId: 'primaryBranchId',
+  departmentId: 'departmentId',
   ownedFields: 'ownedFields',
   metadata: 'metadata',
   createdAt: 'createdAt',
@@ -1511,6 +1536,7 @@ export const EmployeePersonalProfileScalarFieldEnum = {
   motherName: 'motherName',
   spouseName: 'spouseName',
   aadhaarNumberEncrypted: 'aadhaarNumberEncrypted',
+  aadhaarNumberHash: 'aadhaarNumberHash',
   panNumberEncrypted: 'panNumberEncrypted',
   presentAddress: 'presentAddress',
   permanentAddress: 'permanentAddress',
@@ -1770,6 +1796,7 @@ export const TeamMemberScalarFieldEnum = {
   organizationId: 'organizationId',
   teamId: 'teamId',
   employeeId: 'employeeId',
+  teamRole: 'teamRole',
   joinedAt: 'joinedAt',
   leftAt: 'leftAt',
   createdAt: 'createdAt',
@@ -1810,6 +1837,20 @@ export const ProjectMemberScalarFieldEnum = {
 } as const
 
 export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
+
+
+export const DepartmentScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  name: 'name',
+  employeeNumberPrefix: 'employeeNumberPrefix',
+  nextEmployeeNumber: 'nextEmployeeNumber',
+  headEmployeeId: 'headEmployeeId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DepartmentScalarFieldEnum = (typeof DepartmentScalarFieldEnum)[keyof typeof DepartmentScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -10,6 +10,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'http://localhost:4000';
@@ -115,6 +116,7 @@ async function main() {
       firstName: 'Asha',
       lastName: 'Rao',
       workEmail: `asha@${slug}.test`,
+      aadhaarNumber: testAadhaar(),
       employmentType: 'FULL_TIME',
       dateOfJoining: '2024-03-15',
     },
@@ -126,6 +128,12 @@ async function main() {
   r = await call(A, 'GET', `/v1/organizations/${orgId}/branches`);
   check('GET branches', r.status, 200);
   const branchId = Array.isArray(r.payload) ? r.payload[0]?.id : undefined;
+
+  console.log('\na branch is required');
+  r = await call(A, 'POST', `/v1/organizations/${orgId}/teams`, { name: 'Branchless' }, AH);
+  check('a team without a branch is refused', r.status, 409);
+  r = await call(A, 'POST', `/v1/organizations/${orgId}/projects`, { name: 'Branchless' }, AH);
+  check('a project without a branch is refused', r.status, 409);
 
   console.log('\nteam lifecycle');
   r = await call(
@@ -232,7 +240,6 @@ async function main() {
     {
       employeeId,
       projectRole: 'Lead',
-      allocationPercentage: 60,
       startsOn: '2026-01-01',
     },
     AH,
@@ -252,9 +259,9 @@ async function main() {
     'Lead',
   );
   check(
-    'project list carries the allocation',
-    Number((r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage),
-    60,
+    'project list carries no percentage',
+    (r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage,
+    undefined,
   );
 
   r = await call(

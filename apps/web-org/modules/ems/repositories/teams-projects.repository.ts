@@ -21,7 +21,8 @@ export type CreateTeamInput = {
 };
 
 export type CreateProjectInput = {
-  code: string;
+  /** Left out to have one generated (PRJ-001 …). */
+  code?: string;
   name: string;
   description?: string;
   branchId?: string;

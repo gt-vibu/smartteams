@@ -15,10 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
+  TimePicker,
 } from '@smarteam/ui';
 import type { Shift } from '@smarteam/contracts';
 import type { ShiftsState } from '../../hooks/use-shifts';
 import { useEmployees } from '../../hooks/use-workforce';
+import { activeByName } from '../../lib/pickable';
 
 const WEEKDAYS = [
   { value: 1, label: 'Mon' },
@@ -42,7 +44,6 @@ export function ShiftDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [daysOfWeek, setDaysOfWeek] = useState<number[]>([1, 2, 3, 4, 5]);
   const [startsAt, setStartsAt] = useState('09:00');
@@ -51,7 +52,6 @@ export function ShiftDialog({
 
   useEffect(() => {
     if (!open) return;
-    setCode(shift?.code ?? '');
     setName(shift?.name ?? '');
     setDaysOfWeek(shift?.daysOfWeek ?? [1, 2, 3, 4, 5]);
     setStartsAt(shift ? shift.startsAt.slice(0, 5) : '09:00');
@@ -61,11 +61,10 @@ export function ShiftDialog({
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!code.trim() || !name.trim() || daysOfWeek.length === 0) return;
+    if (!name.trim() || daysOfWeek.length === 0) return;
     // A shift ending before it starts runs past midnight; the backend needs that stated.
     const crossesMidnight = endsAt <= startsAt;
     const input = {
-      code: code.trim(),
       name: name.trim(),
       daysOfWeek: [...daysOfWeek].sort((a, b) => a - b),
       startsAt,
@@ -82,18 +81,7 @@ export function ShiftDialog({
       <DialogContent className="sm:max-w-md">
         <DialogTitle>{shift ? 'Edit shift' : 'New shift'}</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <Label className="mb-1 block" htmlFor="shift-code">
-                Code
-              </Label>
-              <Input
-                disabled={shifts.saving}
-                id="shift-code"
-                onChange={(event) => setCode(event.target.value)}
-                value={code}
-              />
-            </div>
+          <div className="grid gap-3">
             <div>
               <Label className="mb-1 block" htmlFor="shift-name">
                 Name
@@ -139,24 +127,24 @@ export function ShiftDialog({
               <Label className="mb-1 block" htmlFor="shift-start">
                 Starts
               </Label>
-              <Input
+              <TimePicker
                 disabled={shifts.saving}
                 id="shift-start"
-                onChange={(event) => setStartsAt(event.target.value)}
-                type="time"
+                onChange={setStartsAt}
                 value={startsAt}
+                placeholder="Select start"
               />
             </div>
             <div>
               <Label className="mb-1 block" htmlFor="shift-end">
                 Ends
               </Label>
-              <Input
+              <TimePicker
                 disabled={shifts.saving}
                 id="shift-end"
-                onChange={(event) => setEndsAt(event.target.value)}
-                type="time"
+                onChange={setEndsAt}
                 value={endsAt}
+                placeholder="Select end"
               />
             </div>
             <div>
@@ -253,7 +241,7 @@ export function AssignShiftDialog({
                 <SelectValue placeholder="Choose an employee" />
               </SelectTrigger>
               <SelectContent>
-                {(employees.data ?? []).map((employee) => (
+                {activeByName(employees.data ?? []).map((employee) => (
                   <SelectItem key={employee.id} value={employee.id}>
                     {employee.firstName} {employee.lastName} · {employee.employeeNumber}
                   </SelectItem>

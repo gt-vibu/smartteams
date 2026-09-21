@@ -106,6 +106,7 @@ export function useEmployee() {
         lastName: data.employee.lastName,
         workEmail: data.employee.workEmail,
         jobTitle: data.jobTitle,
+        employmentType: data.employee.employmentType,
         department: data.department,
         avatarUrl: null,
         joinedDate: data.joiningDate ?? undefined,

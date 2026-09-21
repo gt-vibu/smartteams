@@ -111,6 +111,7 @@ function employees(options?: Parameters<typeof database>[0]) {
       { publish: jest.fn() } as never,
       { revokeAllForUser: jest.fn() } as never,
       records,
+      { get: () => 'k'.repeat(32) } as never,
     ),
     records,
   };

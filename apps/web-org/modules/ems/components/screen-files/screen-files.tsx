@@ -1,62 +1,63 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Label,
-  SelectContent,
-  SelectItem,
-  SelectMenu,
-  SelectTrigger,
-  SelectValue,
-  Textarea,
-} from '@smarteam/ui';
-import { formatFileSize, type FilePurpose } from '@smarteam/contracts';
-import { FolderOpen } from 'lucide-react';
+import React, { useState } from 'react';
+import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
+import type { DocumentSection, StoredDocument } from '@smarteam/contracts';
+import { FolderOpen, Upload } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
-import { useFiles } from '../../hooks/use-files';
 import { PageShell } from '../layout/page-shell';
+import { useAuth } from '../../hooks/use-auth';
+import { useDocuments } from '../../hooks/use-documents';
+import { DocumentTable } from './document-table';
+import { DocumentUploadDialog } from './document-upload-dialog';
+import { DocumentShareDialog } from './document-share-dialog';
 
 /**
- * Files.
+ * Documents, by who they are for.
  *
- * Replaces a document library built on `files.json` — categories, security classifications and a
- * searchable list of company handbooks and Form 16s, none of which existed on the server. Every
- * "download" was a `#` link.
- *
- * The list is the API's answer to "what may this caller see", not a client-side filter: a normal
- * employee gets their own files, an organization-wide permission gets the tenant's.
+ * The employee workspace shows your files, what was shared with you, the company's documents and
+ * your teams'. The admin workspace shows the company's, employees' and teams' documents. Switching
+ * workspace changes only these sections: the server decides every list and every action from the
+ * signed-in person, whichever workspace they are looking at.
  */
-
-const PURPOSES: Array<{ value: FilePurpose; label: string }> = [
-  { value: 'EMPLOYEE_DOCUMENT', label: 'Employee document' },
-  { value: 'RESUME', label: 'Resume' },
-  { value: 'PROFILE_IMAGE', label: 'Profile image' },
-  { value: 'OTHER', label: 'Other' },
-];
+const SECTIONS: Record<
+  'EMPLOYEE' | 'ADMIN',
+  Array<{ id: DocumentSection; label: string; empty: string }>
+> = {
+  EMPLOYEE: [
+    {
+      id: 'mine',
+      label: 'My files',
+      empty: 'Your private files and documents about you appear here.',
+    },
+    { id: 'shared', label: 'Shared with me', empty: 'Nothing has been shared with you yet.' },
+    { id: 'organization', label: 'Company', empty: 'No company documents have been published.' },
+    { id: 'team', label: 'My teams', empty: 'Your teams have no documents yet.' },
+  ],
+  ADMIN: [
+    { id: 'organization', label: 'Company', empty: 'No company documents have been published.' },
+    { id: 'employees', label: 'Employee files', empty: 'No employee documents yet.' },
+    { id: 'team', label: 'Team files', empty: 'No team documents yet.' },
+  ],
+};
 
 export function ScreenFiles() {
-  const files = useFiles();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [purpose, setPurpose] = useState<FilePurpose>('EMPLOYEE_DOCUMENT');
-  const [deleting, setDeleting] = useState<string | null>(null);
+  const { workspaceContext } = useAuth();
+  const workspace = workspaceContext === 'ADMIN' ? 'ADMIN' : 'EMPLOYEE';
+  const sections = SECTIONS[workspace];
+  const [sectionId, setSectionId] = useState<DocumentSection>(sections[0]!.id);
+  const section = sections.find((entry) => entry.id === sectionId) ?? sections[0]!;
+  const documents = useDocuments(section.id);
+  const [uploading, setUploading] = useState(false);
+  const [sharing, setSharing] = useState<StoredDocument | null>(null);
+  const [deleting, setDeleting] = useState<StoredDocument | null>(null);
   const [reason, setReason] = useState('');
-
-  const pick = () => inputRef.current?.click();
-
-  const onPicked = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (file) await files.upload(file, purpose);
-  };
+  const canUpload =
+    workspace === 'EMPLOYEE' ? documents.can.write : documents.can.publish || documents.can.readAll;
 
   const confirmDelete = async () => {
     if (!deleting || reason.trim().length < 3) return;
-    const ok = await files.remove(deleting, reason.trim());
-    if (ok) {
+    if (await documents.remove(deleting.id, reason.trim())) {
       setReason('');
       setDeleting(null);
     }
@@ -65,210 +66,133 @@ export function ScreenFiles() {
   return (
     <PageShell>
       <ScreenHeader
-        description="Upload a document to secure storage, then download or remove it."
+        actions={
+          canUpload && (
+            <Button className="gap-1.5" onClick={() => setUploading(true)} size="sm" type="button">
+              <Upload className="h-3.5 w-3.5" />
+              Upload
+            </Button>
+          )
+        }
+        description="Every document says who it is for and why you can see it."
         icon={FolderOpen}
-        title="Files"
+        title="Documents"
         tone="neutral"
       />
 
-      {!files.canWrite && !files.canRead && (
-        <div
-          className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+      {!documents.can.read ? (
+        <p
+          className="rounded-lg border border-border bg-card p-8 text-center text-xs text-muted-foreground"
           role="status"
         >
-          <p className="text-sm font-bold text-foreground">Not available</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            You do not have permission to work with files.
-          </p>
-        </div>
-      )}
-
-      {files.canWrite && (
-        <section className="space-y-3 rounded-lg border border-border bg-card p-4">
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="w-full min-w-0 sm:w-56">
-              <Label className="mb-1 block">Purpose</Label>
-              <SelectMenu
-                onValueChange={(value) => setPurpose(value as FilePurpose)}
-                value={purpose}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PURPOSES.map((entry) => (
-                    <SelectItem key={entry.value} value={entry.value}>
-                      {entry.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
-            </div>
-            <Button disabled={files.busy} onClick={pick} size="sm" type="button">
-              {files.busy ? 'Working...' : 'Choose a file'}
-            </Button>
-            <input className="hidden" onChange={onPicked} ref={inputRef} type="file" />
-          </div>
-          <p className="text-[11px] text-muted-foreground">
-            The API decides which types and sizes each purpose allows, and verifies the stored
-            file&apos;s size and checksum before accepting it.
-          </p>
-        </section>
-      )}
-
-      {files.error && (
-        <p
-          className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
-          role="alert"
-        >
-          {files.error}
+          You do not have permission to view documents.
         </p>
-      )}
-
-      <section className="space-y-2">
-        <h2 className="text-xs font-bold text-foreground">Stored documents</h2>
-
-        {files.listForbidden && (
-          <div className="rounded-lg border border-border bg-card p-8 text-center" role="status">
-            <p className="text-xs text-muted-foreground">
-              You do not have permission to view stored files.
-            </p>
+      ) : (
+        <>
+          <div className="flex gap-1 overflow-x-auto border-b border-border" role="tablist">
+            {sections.map((entry) => (
+              <button
+                aria-selected={entry.id === section.id}
+                className={`shrink-0 border-b-2 px-3 py-2 text-xs font-semibold transition-colors ${
+                  entry.id === section.id
+                    ? 'border-primary text-foreground'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+                key={entry.id}
+                onClick={() => setSectionId(entry.id)}
+                role="tab"
+                type="button"
+              >
+                {entry.label}
+              </button>
+            ))}
           </div>
-        )}
 
-        {!files.listForbidden && files.listLoading && (
-          <p className="py-8 text-center text-xs text-muted-foreground" role="status">
-            Loading files...
-          </p>
-        )}
-
-        {!files.listForbidden && !files.listLoading && files.listError && (
-          <div className="rounded-lg border border-border bg-card p-8 text-center" role="alert">
-            <p className="text-sm font-bold text-foreground">Could not load files</p>
-            <p className="mt-1 text-xs text-muted-foreground">{files.listError}</p>
-            <Button
-              className="mt-3"
-              onClick={() => void files.refetch()}
-              size="sm"
-              type="button"
-              variant="outline"
+          {documents.error && !uploading && !sharing && (
+            <p
+              className="rounded-md border border-destructive/30 bg-destructive/10 p-2.5 text-xs text-destructive"
+              role="alert"
             >
-              Try again
-            </Button>
-          </div>
-        )}
-
-        {!files.listForbidden &&
-          !files.listLoading &&
-          !files.listError &&
-          files.files.length === 0 && (
-            <div className="rounded-lg border border-border bg-card p-8 text-center">
-              <p className="text-xs text-muted-foreground">No documents are stored for you yet.</p>
-            </div>
+              {documents.error}
+            </p>
           )}
 
-        {files.files.length > 0 && (
-          <div className="overflow-x-auto rounded-xl border border-border bg-card">
-            <table className="stack-table w-full min-w-[720px] text-left text-xs">
-              <thead className="border-b border-border bg-table-header">
-                <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  <th className="px-4 py-2.5 font-bold">File</th>
-                  <th className="px-4 py-2.5 font-bold">Purpose</th>
-                  <th className="px-4 py-2.5 font-bold">Size</th>
-                  <th className="px-4 py-2.5 font-bold">Added</th>
-                  <th className="px-4 py-2.5 text-right font-bold">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {files.files.map((file) => (
-                  <tr
-                    className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
-                    key={file.id}
-                  >
-                    <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
-                      {file.originalName}
-                    </td>
-                    <td data-label="Purpose" className="px-4 py-2.5 text-muted-foreground">
-                      {file.purpose.replace(/_/g, ' ').toLowerCase()}
-                    </td>
-                    <td data-label="Size" className="px-4 py-2.5 font-mono text-muted-foreground">
-                      {formatFileSize(file.byteSize)}
-                    </td>
-                    <td data-label="Added" className="px-4 py-2.5 font-mono text-muted-foreground">
-                      {file.createdAt.slice(0, 10)}
-                    </td>
-                    <td data-cell="actions" className="px-4 py-2.5 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          disabled={files.busy}
-                          onClick={() => void files.download(file.id)}
-                          size="sm"
-                          type="button"
-                          variant="outline"
-                        >
-                          Download
-                        </Button>
-                        {files.canWrite && (
-                          <Button
-                            disabled={files.busy}
-                            onClick={() => setDeleting(file.id)}
-                            size="sm"
-                            type="button"
-                            variant="ghost"
-                          >
-                            Delete
-                          </Button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        <p className="text-[11px] text-muted-foreground">
-          The API decides which files you can see: your own unless you hold the organization-wide
-          permission. Payslip documents remain reachable from the payslip they belong to.
-        </p>
-      </section>
-
-      <Dialog onOpenChange={(open) => !open && setDeleting(null)} open={deleting !== null}>
-        <DialogContent className="sm:max-w-md">
-          <DialogTitle>Delete this file</DialogTitle>
-          <p className="mt-1 text-xs text-muted-foreground">
-            The reason is recorded in the audit trail. The file is purged after the retention
-            period.
-          </p>
-          <div className="mt-4 space-y-3">
-            <Label className="block" htmlFor="file-delete-reason">
-              Reason
-            </Label>
-            <Textarea
-              disabled={files.busy}
-              id="file-delete-reason"
-              onChange={(event) => setReason(event.target.value)}
-              value={reason}
-            />
-            <div className="flex justify-end gap-2">
+          {documents.loading ? (
+            <p className="py-8 text-center text-xs text-muted-foreground" role="status">
+              Loading documents…
+            </p>
+          ) : documents.listError ? (
+            <div className="rounded-lg border border-border bg-card p-8 text-center" role="alert">
+              <p className="text-sm font-bold text-foreground">Could not load documents</p>
+              <p className="mt-1 text-xs text-muted-foreground">{documents.listError}</p>
               <Button
-                disabled={files.busy}
-                onClick={() => setDeleting(null)}
+                className="mt-3"
+                onClick={() => void documents.refetch()}
+                size="sm"
                 type="button"
                 variant="outline"
               >
-                Cancel
-              </Button>
-              <Button
-                disabled={files.busy || reason.trim().length < 3}
-                onClick={() => void confirmDelete()}
-                type="button"
-                variant="destructive"
-              >
-                {files.busy ? 'Deleting...' : 'Delete'}
+                Try again
               </Button>
             </div>
+          ) : documents.documents.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-border bg-card/60 p-8 text-center text-xs text-muted-foreground">
+              {section.empty}
+            </p>
+          ) : (
+            <DocumentTable
+              busy={documents.busy}
+              documents={documents.documents}
+              onDelete={setDeleting}
+              onDownload={(document) => void documents.download(document.id)}
+              onShare={setSharing}
+              onView={(document) => void documents.view(document.id)}
+            />
+          )}
+        </>
+      )}
+
+      <DocumentUploadDialog
+        adminWorkspace={workspace === 'ADMIN'}
+        documents={documents}
+        onOpenChange={setUploading}
+        open={uploading}
+      />
+      <DocumentShareDialog
+        document={sharing}
+        documents={documents}
+        onClose={() => setSharing(null)}
+      />
+
+      <Dialog onOpenChange={(open) => !open && setDeleting(null)} open={deleting !== null}>
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>Delete “{deleting?.name}”?</DialogTitle>
+          <p className="mt-1 text-xs text-muted-foreground">
+            It stops being available at once and is removed from storage after the retention period.
+          </p>
+          <div className="mt-4">
+            <Label className="mb-1 block" htmlFor="delete-reason">
+              Reason
+            </Label>
+            <Textarea
+              id="delete-reason"
+              onChange={(event) => setReason(event.target.value)}
+              rows={2}
+              value={reason}
+            />
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button onClick={() => setDeleting(null)} type="button" variant="outline">
+              Cancel
+            </Button>
+            <Button
+              disabled={reason.trim().length < 3 || documents.busy}
+              onClick={() => void confirmDelete()}
+              type="button"
+              variant="destructive"
+            >
+              Delete
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

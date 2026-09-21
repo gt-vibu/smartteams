@@ -49,7 +49,7 @@ describe('canAccessModule', () => {
    * Caught by opening that exact URL as a member holding payroll permissions only.
    */
   it('an admin-space viewer with only payroll access cannot open the other admin modules', () => {
-    const permissions = ['organizations.read', 'payroll.payslips.read', 'payroll.preview.read'];
+    const permissions = ['organizations.read', 'payroll.runs.read', 'payroll.preview.read'];
     expect(canAccessModule('payroll', 'ADMIN', permissions, false)).toBe(true);
     expect(canAccessModule('home', 'ADMIN', permissions, false)).toBe(true);
     expect(canAccessModule('attendance', 'ADMIN', permissions, false)).toBe(false);
@@ -57,6 +57,23 @@ describe('canAccessModule', () => {
     expect(canAccessModule('timesheet', 'ADMIN', permissions, false)).toBe(false);
     expect(canAccessModule('onboarding', 'ADMIN', permissions, false)).toBe(false);
     expect(canAccessModule('files', 'ADMIN', permissions, false)).toBe(false);
+  });
+
+  /**
+   * Every employee may read their own payslip and salary. Those keys opened the organization's
+   * Payroll screen, where each tab then answered "Access Restricted".
+   */
+  it('self-service payroll keys do not open organization payroll', () => {
+    const permissions = [
+      'organizations.read',
+      'rbac.read',
+      'payroll.payslips.read',
+      'payroll.employee-profile.read',
+      'payroll.preview.read',
+    ];
+    expect(canAccessModule('payroll', 'ADMIN', permissions, false)).toBe(false);
+    // …while the same person still has their own payroll in the employee workspace.
+    expect(canAccessModule('payroll', 'EMPLOYEE', permissions, false)).toBe(true);
   });
 
   it('an HR-shaped permission set opens the people modules it genuinely covers', () => {

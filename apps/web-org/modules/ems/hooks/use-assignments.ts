@@ -18,9 +18,9 @@ function today(): string {
 }
 
 export type AssignmentChange =
-  | { kind: 'ADD_TEAM'; teamId: string }
+  | { kind: 'ADD_TEAM'; teamId: string; teamRole?: string }
   | { kind: 'END_TEAM'; teamId: string; memberId: string }
-  | { kind: 'ADD_PROJECT'; projectId: string; allocationPercentage: number }
+  | { kind: 'ADD_PROJECT'; projectId: string; projectRole?: string }
   | { kind: 'END_PROJECT'; projectId: string; memberId: string };
 
 /**
@@ -84,6 +84,7 @@ export function useAssignments(employeeId: string | null) {
               await membershipRepository.addTeamMember(organizationId, change.teamId, {
                 employeeId,
                 joinedAt: today(),
+                ...(change.teamRole ? { teamRole: change.teamRole } : {}),
               });
               break;
             case 'END_TEAM':
@@ -97,8 +98,8 @@ export function useAssignments(employeeId: string | null) {
             case 'ADD_PROJECT':
               await membershipRepository.addProjectMember(organizationId, change.projectId, {
                 employeeId,
-                allocationPercentage: change.allocationPercentage,
                 startsOn: today(),
+                ...(change.projectRole ? { projectRole: change.projectRole } : {}),
               });
               break;
             case 'END_PROJECT':

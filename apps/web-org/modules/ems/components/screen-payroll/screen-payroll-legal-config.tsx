@@ -11,6 +11,7 @@ import {
 import { useSession } from '../../hooks/auth-context';
 import { payrollRepository } from '../../repositories/payroll.repository';
 import { useAsyncResource } from '../../hooks/use-async-resource';
+import { OvertimeRatesCard } from './overtime-rates-card';
 
 /**
  * The statutory rules and payroll policy the backend actually applies.
@@ -219,6 +220,7 @@ export function ScreenPayrollLegalConfig() {
   return (
     <div className="space-y-5">
       <PolicySummary policy={policyResource.data} />
+      <OvertimeRatesCard />
       <RulesTable rules={rulesResource.data ?? []} />
       <p className="text-[11px] leading-relaxed text-muted-foreground">
         Company registration identifiers (PAN, TAN, EPF, ESI and professional-tax codes), tax regime

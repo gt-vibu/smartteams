@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export type EmsSpace = 'My Space' | 'Team' | 'Organization';
 
 export type EmsModule =
   | 'home'
   | 'onboarding'
+  | 'employees'
   | 'attendance'
   | 'timesheet'
   | 'time-off'
@@ -30,6 +31,7 @@ export interface EmsNavState {
 const VALID_MODULES: EmsModule[] = [
   'home',
   'onboarding',
+  'employees',
   'attendance',
   'timesheet',
   'time-off',
@@ -118,26 +120,29 @@ function buildUrl(state: EmsNavState): string {
 
 export function useEmsNavigation() {
   const [navState, setNavState] = useState<EmsNavState>(() => parseUrlParams());
+  const current = useRef(navState);
+  useEffect(() => {
+    current.current = navState;
+  }, [navState]);
 
-  // Push new state to history stack
+  // Push new state to history stack. The URL is written outside the state updater: Next.js
+  // updates its router when history changes, and doing that from inside an updater (which runs
+  // during render) is "Cannot update a component (`Router`) while rendering a different one".
   const pushNavState = useCallback((nextState: Partial<EmsNavState>) => {
-    setNavState((current) => {
-      const merged: EmsNavState = { ...current, ...nextState };
-      const newUrl = buildUrl(merged);
-      if (
-        typeof window !== 'undefined' &&
-        window.location.search !== newUrl.replace(/^[^?]*/, '')
-      ) {
-        window.history.pushState(merged, '', newUrl);
-      }
-      return merged;
-    });
+    const merged: EmsNavState = { ...current.current, ...nextState };
+    current.current = merged;
+    const newUrl = buildUrl(merged);
+    if (typeof window !== 'undefined' && window.location.search !== newUrl.replace(/^[^?]*/, '')) {
+      window.history.pushState(merged, '', newUrl);
+    }
+    setNavState(merged);
   }, []);
 
   // Listen to browser Back / Forward events
   useEffect(() => {
     const handlePopState = () => {
       const restoredState = parseUrlParams();
+      current.current = restoredState;
       setNavState(restoredState);
     };
 

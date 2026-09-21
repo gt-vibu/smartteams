@@ -145,6 +145,40 @@ export function firstPunch(
   return (type === 'IN' ? matching[0] : matching[matching.length - 1]) ?? null;
 }
 
+/** The viewer's own calendar date, which is the date a punch is filed under. */
+function todayKeyAt(now: number): string {
+  const date = new Date(now);
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${`${date.getDate()}`.padStart(2, '0')}`;
+}
+
+/**
+ * Minutes worked so far today, counting a session that is still open.
+ *
+ * The server totals a session when it closes, so a record read while someone is checked in says
+ * 0 until they check out. This adds the open session (last IN with no OUT after it) up to `now`.
+ *
+ * Only for a day that is still running. A forgotten check-out leaves an open IN on a past day
+ * for ever, and counting it to `now` billed a single September day as 36 hours worked. Such a day
+ * is missing a check-out, not in progress: it counts only its closed pairs until a correction
+ * supplies the check-out.
+ */
+export function liveWorkedMinutes(
+  record: Pick<AttendanceRecord, 'punches' | 'workedMinutes'> & { workDate?: string },
+  now: number = Date.now(),
+): number {
+  const day = record.workDate?.slice(0, 10);
+  if (day && day !== todayKeyAt(now)) return record.workedMinutes;
+  const punches = [...(record.punches ?? [])].sort((a, b) =>
+    a.occurredAt.localeCompare(b.occurredAt),
+  );
+  const last = punches[punches.length - 1];
+  if (!last || last.punchType !== 'IN') return record.workedMinutes;
+  const started = new Date(last.occurredAt).getTime();
+  if (Number.isNaN(started) || started > now) return record.workedMinutes;
+  return record.workedMinutes + Math.floor((now - started) / 60_000);
+}
+
 /**
  * Whether the employee is currently checked in.
  *

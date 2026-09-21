@@ -11,6 +11,9 @@ import { PayrollEmployeePayPanel } from './payroll-employee-pay-panel';
 import { ScreenPayrollLegalConfig } from './screen-payroll-legal-config';
 import { ScreenCompensation } from './screen-compensation';
 import { PageShell } from '../layout/page-shell';
+import { hasPermission } from '@smarteam/contracts';
+import { useSession } from '../../hooks/auth-context';
+import { permittedTabs } from '../../lib/permitted-tabs';
 
 type Tab = 'RUNS' | 'COMPENSATION' | 'STATUTORY' | 'EMPLOYEE_PAY';
 
@@ -31,12 +34,27 @@ export function ScreenPayrollAdmin() {
     'RUNS',
   );
 
-  const tabs: Array<{ id: Tab; label: string }> = [
-    { id: 'RUNS', label: `Payroll runs${admin.runs.length ? ` (${admin.runs.length})` : ''}` },
-    { id: 'EMPLOYEE_PAY', label: 'Employee pay' },
-    { id: 'COMPENSATION', label: 'Compensation' },
-    { id: 'STATUTORY', label: 'Statutory rules' },
-  ];
+  const { persona } = useSession();
+  const permissions = persona?.permissions ?? [];
+  const may = (permission: string) => hasPermission(permissions, permission);
+  // Each tab is offered only to someone its API would answer.
+  const { tabs, active } = permittedTabs<Tab, { id: Tab; label: string; allowed: boolean }>(
+    [
+      {
+        id: 'RUNS',
+        label: `Payroll runs${admin.runs.length ? ` (${admin.runs.length})` : ''}`,
+        allowed: may('payroll.runs.read'),
+      },
+      { id: 'EMPLOYEE_PAY', label: 'Employee pay', allowed: may('payroll.payslips.read.all') },
+      {
+        id: 'COMPENSATION',
+        label: 'Compensation',
+        allowed: may('payroll.employee-profile.read.all') || may('payroll.components.read'),
+      },
+      { id: 'STATUTORY', label: 'Statutory rules', allowed: may('payroll.policy.read') },
+    ],
+    tab,
+  );
 
   return (
     <PageShell>
@@ -50,7 +68,7 @@ export function ScreenPayrollAdmin() {
         {tabs.map((entry) => (
           <Button
             className={`rounded-none pb-1 text-xs font-semibold ${
-              tab === entry.id
+              active === entry.id
                 ? 'border-b-2 border-foreground font-bold text-foreground'
                 : 'text-muted-foreground'
             }`}
@@ -65,10 +83,10 @@ export function ScreenPayrollAdmin() {
         ))}
       </div>
 
-      {tab === 'RUNS' && <PayrollRunsPanel admin={admin} />}
-      {tab === 'EMPLOYEE_PAY' && <PayrollEmployeePayPanel admin={admin} />}
-      {tab === 'STATUTORY' && <ScreenPayrollLegalConfig />}
-      {tab === 'COMPENSATION' && <ScreenCompensation />}
+      {active === 'RUNS' && <PayrollRunsPanel admin={admin} />}
+      {active === 'EMPLOYEE_PAY' && <PayrollEmployeePayPanel admin={admin} />}
+      {active === 'STATUTORY' && <ScreenPayrollLegalConfig />}
+      {active === 'COMPENSATION' && <ScreenCompensation />}
     </PageShell>
   );
 }

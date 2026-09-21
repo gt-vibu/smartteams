@@ -13,16 +13,20 @@ import { OrgProfilePanel } from './org-profile-panel';
 import { OrgBranchesPanel } from './org-branches-panel';
 import { OrgShortcuts } from './org-shortcuts';
 import { OrgIdentityRail } from './org-identity-rail';
+import { OrgDepartmentsPanel } from './org-departments-panel';
+import { OrgListsPanel } from './org-lists-panel';
 import { OrgPeoplePanel } from './org-people-panel';
 import { OrgAccessPanel } from './org-access-panel';
 import { useAuth } from '../../hooks/use-auth';
 import { hasPermission } from '@smarteam/contracts';
+import { permittedTabs } from '../../lib/permitted-tabs';
 import { PageBleed, PageShell } from '../layout/page-shell';
 
 const TABS = [
   'overview',
   'people',
   'departments',
+  'lists',
   'reporting',
   'branches',
   'access',
@@ -53,33 +57,51 @@ export function OrganizationWorkspace({
   const directory = useEmployeeDirectory();
   const holidays = useHolidays();
   const { persona } = useAuth();
-  const [tab, setTab] = useScreenTab<Tab>('orgSection', TABS, 'overview');
+  const [requestedTab, setTab] = useScreenTab<Tab>('orgSection', TABS, 'overview');
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
-  // On a phone the organization's card and cover belong to Overview alone. Below `lg` they used
-  // to stack above every tab, so People or Branches opened on a screen of someone else's subject.
-  const showIdentity = isWide || tab === 'overview';
-
   // Absent rather than disabled for a caller who can read neither members nor roles — an
   // organization with nothing behind the tab is not worth a click that only reports "forbidden".
   const canSeeAccess =
     hasPermission(persona.permissions, 'members.read') ||
     hasPermission(persona.permissions, 'rbac.read');
 
-  const tabs: Array<{ id: Tab; label: string }> = [
-    { id: 'overview', label: 'Overview' },
-    {
-      id: 'people',
-      label: `People${directory.entries.length ? ` (${directory.entries.length})` : ''}`,
-    },
-    { id: 'departments', label: 'Departments' },
-    { id: 'reporting', label: 'Reporting' },
-    {
-      id: 'branches',
-      label: `Branches${organization.branches.length ? ` (${organization.branches.length})` : ''}`,
-    },
-    ...(canSeeAccess ? [{ id: 'access' as const, label: 'Access' }] : []),
-    { id: 'profile', label: 'Profile' },
-  ];
+  const may = (permission: string) => hasPermission(persona.permissions, permission);
+  // Each tab is offered only to someone its API would answer; a remembered tab that has since
+  // become unavailable falls back to Overview rather than opening onto a refusal.
+  const { tabs, active } = permittedTabs<Tab, { id: Tab; label: string; allowed: boolean }>(
+    [
+      { id: 'overview', label: 'Overview', allowed: true },
+      {
+        id: 'people',
+        label: `People${directory.entries.length ? ` (${directory.entries.length})` : ''}`,
+        allowed: may('employees.read.all'),
+      },
+      {
+        id: 'departments',
+        label: 'Departments',
+        allowed: may('employees.read.all') || may('employees.write'),
+      },
+      // The lists are managed by whoever may write what they feed.
+      {
+        id: 'lists',
+        label: 'Lists',
+        allowed: may('employees.write') || may('projects.write') || may('teams.write'),
+      },
+      { id: 'reporting', label: 'Reporting', allowed: may('employees.read.all') },
+      {
+        id: 'branches',
+        label: `Branches${organization.branches.length ? ` (${organization.branches.length})` : ''}`,
+        allowed: may('branches.read'),
+      },
+      { id: 'access', label: 'Access', allowed: canSeeAccess },
+      { id: 'profile', label: 'Profile', allowed: true },
+    ],
+    requestedTab,
+  );
+  const tab = active ?? 'overview';
+  // On a phone the organization's card and cover belong to Overview alone. Below `lg` they used
+  // to stack above every tab, so People or Branches opened on a screen of someone else's subject.
+  const showIdentity = isWide || tab === 'overview';
 
   return (
     <PageShell gap="none">
@@ -166,13 +188,8 @@ export function OrganizationWorkspace({
               view="directory"
             />
           )}
-          {tab === 'departments' && (
-            <OrgPeoplePanel
-              directory={directory}
-              onNavigateModule={onNavigateModule}
-              view="departments"
-            />
-          )}
+          {tab === 'departments' && <OrgDepartmentsPanel />}
+          {tab === 'lists' && <OrgListsPanel />}
           {tab === 'reporting' && (
             <OrgPeoplePanel
               directory={directory}

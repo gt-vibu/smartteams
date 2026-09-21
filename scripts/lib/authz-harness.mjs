@@ -7,6 +7,7 @@
  * clock, and lives only in the database the API under test points at.
  */
 import { setupCall as setup } from './setup-call.mjs';
+import { testAadhaar } from './aadhaar.mjs';
 
 const TENANT_TIMEZONE = 'Asia/Kolkata';
 export const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
@@ -122,6 +123,10 @@ export async function tenant(tag, { defaultPolicies = true } = {}) {
       method === 'GET' ? undefined : csrf,
     );
 
+  /** The same, with extra request headers (an `if-match-version`, say). */
+  const orgRaw = (method, path, body, headers) =>
+    call(admin, method, '/v1/organizations/' + orgId + path, body, { ...csrf, ...headers });
+
   const roles = rows((await setup('role listing', () => org('GET', '/roles'))).payload);
   const branches = rows((await setup('branch listing', () => org('GET', '/branches'))).payload);
   const employeeRole = roles.find((role) => role.code === 'EMPLOYEE');
@@ -172,6 +177,7 @@ export async function tenant(tag, { defaultPolicies = true } = {}) {
         firstName,
         lastName: 'Case',
         workEmail: email,
+        aadhaarNumber: testAadhaar(),
         employmentType: 'FULL_TIME',
         dateOfJoining: '2026-01-01',
       }),
@@ -218,7 +224,18 @@ export async function tenant(tag, { defaultPolicies = true } = {}) {
   // between midnight and 05:30 in Kolkata the UTC date is still yesterday and every "today" check
   // looked in the wrong day.
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: TENANT_TIMEZONE }).format(new Date());
-  return { org, orgId, branchId, roles, a, b, today, monthStart: today.slice(0, 8) + '01' };
+  return {
+    org,
+    orgRaw,
+    cookies: admin,
+    orgId,
+    branchId,
+    roles,
+    a,
+    b,
+    today,
+    monthStart: today.slice(0, 8) + '01',
+  };
 }
 
 /** Prints the tally and fails the process when anything failed. */

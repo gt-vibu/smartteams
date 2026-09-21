@@ -11,6 +11,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'http://localhost:4000';
@@ -136,6 +137,7 @@ async function main() {
       firstName: 'Asha',
       lastName: 'Rao',
       workEmail: `asha@${slug}.test`,
+      aadhaarNumber: testAadhaar(),
       employmentType: 'FULL_TIME',
       dateOfJoining: '2024-03-15',
     },
@@ -204,7 +206,16 @@ async function main() {
   check('phone persisted (survives a fresh read)', r.payload?.phone, '+91 90000 11111');
 
   console.log('\nmembership add + end (new endpoint)');
-  r = await call(A, 'POST', `/v1/organizations/${orgId}/teams`, { name: 'Platform' }, AH);
+  // A team and a project each belong to a branch when created from the app.
+  const branchRows = (await call(A, 'GET', `/v1/organizations/${orgId}/branches`)).payload;
+  const teamBranchId = (branchRows?.items ?? branchRows)[0]?.id;
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/teams`,
+    { name: 'Platform', branchId: teamBranchId },
+    AH,
+  );
   check('create team', r.status, 201);
   const teamId = r.payload?.id;
   r = await call(
@@ -300,6 +311,7 @@ async function main() {
     {
       code: 'VERIFY-1',
       name: 'Verification Project',
+      branchId: teamBranchId,
     },
     AH,
   );
@@ -311,7 +323,6 @@ async function main() {
     `/v1/organizations/${orgId}/projects/${projectId}/members`,
     {
       employeeId,
-      allocationPercentage: 60,
       startsOn: '2026-01-01',
     },
     AH,
@@ -321,11 +332,11 @@ async function main() {
 
   r = await call(A, 'GET', `/v1/organizations/${orgId}/projects`);
   check('project list includes members', (r.payload?.items ?? r.payload)?.[0]?.members?.length, 1);
-  // Prisma serialises Decimal as a string; the contract coerces it, so compare numerically.
+  // Project membership carries no percentage.
   check(
-    'allocation persisted',
-    Number((r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage),
-    60,
+    'no allocation percentage is returned',
+    (r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage,
+    undefined,
   );
 
   r = await call(

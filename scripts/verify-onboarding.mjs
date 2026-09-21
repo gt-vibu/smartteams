@@ -12,6 +12,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = 'http://localhost:4000';
@@ -141,6 +142,7 @@ async function main() {
     firstName: 'Kavita',
     lastName: 'Joshi',
     workEmail: `kavita@${a.slug}.test`,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2024-01-15',
     primaryBranchId: branchId,
@@ -156,6 +158,7 @@ async function main() {
     workEmail: `nikhil@${a.slug}.test`,
     personalEmail: `nikhil.personal@${a.slug}.test`,
     phone: '+91 90000 12345',
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-08-03',
     primaryBranchId: branchId,
@@ -254,6 +257,7 @@ async function main() {
       employeeNumber: 'EMP-999',
       firstName: 'Not',
       lastName: 'Allowed',
+      aadhaarNumber: testAadhaar(),
       employmentType: 'FULL_TIME',
     },
     NH,
@@ -273,6 +277,7 @@ async function main() {
     employeeNumber: 'B-001',
     firstName: 'Other',
     lastName: 'Tenant',
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-01-01',
   });
@@ -288,6 +293,7 @@ async function main() {
     employeeNumber: 'EMP-100',
     firstName: 'Duplicate',
     lastName: 'Number',
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-08-03',
   });

@@ -1,4 +1,13 @@
-import { IsEmail, IsEnum, IsOptional, IsString, IsUUID, Length, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsTimeZone,
+  IsUUID,
+  Length,
+  MinLength,
+} from 'class-validator';
 
 export class OnboardOrganizationDto {
   @IsString() @MinLength(2) name!: string;
@@ -22,7 +31,8 @@ export class CreateOrganizationDto {
 
 export class UpdateOrganizationDto {
   @IsOptional() @IsString() @MinLength(2) name?: string;
-  @IsOptional() @IsString() timezone?: string;
+  /** A real IANA zone: attendance days and automatic check-out are worked out in it. */
+  @IsOptional() @IsTimeZone() timezone?: string;
   @IsOptional() @IsString() @Length(3, 3) currencyCode?: string;
 }
 
@@ -42,6 +52,13 @@ export class UpdateBranchDto {
   @IsOptional() @IsString() @MinLength(2) name?: string;
   @IsOptional() @IsString() @MinLength(1) code?: string;
   @IsOptional() address?: Record<string, unknown>;
+  /** IANA name, e.g. Asia/Kolkata. Empty clears it, and the branch follows the organization. */
+  @IsOptional() @IsString() timezone?: string;
+}
+
+/** A branch created in the app. Federation provisions branches through its own, frozen DTO. */
+export class NativeBranchDto extends BranchDto {
+  @IsOptional() @IsString() timezone?: string;
 }
 
 export class BranchDeactivationDto {

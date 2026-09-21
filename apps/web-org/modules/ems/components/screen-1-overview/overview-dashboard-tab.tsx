@@ -5,6 +5,7 @@ import { useTimesheet } from '../../hooks/use-timesheet';
 import { useLeave } from '../../hooks/use-leave';
 import { useAuth } from '../../hooks/use-auth';
 import { useMyShift } from '../../hooks/use-my-shift';
+import { ProjectHoursCard } from './project-hours-card';
 
 interface OverviewDashboardTabProps {
   onNavigateModule?: (module: string, subView?: 'timeline' | 'table' | 'calendar') => void;
@@ -15,14 +16,23 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
   const isAdmin = hasPermission('*') || persona.badge.includes('Admin');
   const { days: records } = useAttendance();
   const { summary } = useTimesheet();
-  const { balances } = useLeave();
+  const { balances, types } = useLeave();
   const myShift = useMyShift();
 
   const presentCount = records.filter((r) => r.dayStatus === 'PRESENT').length;
   const totalDays = records.length;
-  const attendanceRate = totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : 100;
+  // No days recorded is shown as no rate, never as a perfect 100%.
+  const attendanceRate = totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : null;
 
   const totalLeaveAvailable = balances.reduce((sum, b) => sum + b.availableAmount, 0);
+  // The leave types this person actually has balances in, not a fixed list.
+  const leaveTypeNames = [
+    ...new Set(
+      balances
+        .map((balance) => types.find((type) => type.id === balance.leaveTypeId)?.name)
+        .filter((name): name is string => Boolean(name)),
+    ),
+  ];
 
   return (
     <div className="space-y-4">
@@ -32,12 +42,16 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
           <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
             <span>Attendance Rate</span>
             <span className="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold">
-              This Month
+              Last 30 days
             </span>
           </div>
-          <div className="text-xl font-bold text-foreground mt-2">{attendanceRate}%</div>
+          <div className="text-xl font-bold text-foreground mt-2">
+            {attendanceRate === null ? '—' : `${attendanceRate}%`}
+          </div>
           <p className="text-[11px] text-muted-foreground mt-1">
-            {presentCount} of {totalDays} work days recorded
+            {totalDays === 0
+              ? 'No attendance recorded yet'
+              : `Present ${presentCount} of ${totalDays} recorded days`}
           </p>
         </div>
 
@@ -65,7 +79,9 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
           </div>
           <div className="text-xl font-bold text-foreground mt-2">{totalLeaveAvailable} Days</div>
           <p className="text-[11px] text-muted-foreground mt-1">
-            Across Casual, Sick, and Earned Leaves
+            {leaveTypeNames.length
+              ? `Across ${leaveTypeNames.join(', ')}`
+              : 'No leave balances yet'}
           </p>
         </div>
 
@@ -92,41 +108,7 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
 
       {/* 2. Project Allocation & Quick Jump Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Project Hours Distribution */}
-        <div className="lg:col-span-7 bg-card rounded-[6px] border border-border p-5 shadow-xs space-y-4">
-          <h4 className="text-xs font-bold text-foreground">Project Hours Distribution</h4>
-          <div className="space-y-3 text-xs">
-            <div>
-              <div className="flex justify-between font-medium text-foreground mb-1">
-                <span>Luxasia 2026 (Client Project)</span>
-                <span className="font-mono font-semibold">24.5 Hrs (65%)</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: '65%' }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between font-medium text-foreground mb-1">
-                <span>Internal Architecture & Automation</span>
-                <span className="font-mono font-semibold">9.0 Hrs (25%)</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '25%' }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between font-medium text-foreground mb-1">
-                <span>Learning & Knowledge Sharing</span>
-                <span className="font-mono font-semibold">3.5 Hrs (10%)</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-amber-500 h-2 rounded-full" style={{ width: '10%' }} />
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProjectHoursCard />
 
         {/* Quick Navigate Actions */}
         <div className="lg:col-span-5 bg-card rounded-[6px] border border-border p-5 shadow-xs space-y-3">

@@ -6,16 +6,32 @@ import * as React from 'react';
 const openOverlays: symbol[] = [];
 /** An entry left by an overlay that closed a moment ago, reused if one reopens straight away. */
 let pendingRelease: ReturnType<typeof setTimeout> | null = null;
-/** Pop events created while removing a closed overlay's history entry must not close one below it. */
-const ignoredPopStates = new WeakSet<Event>();
+/**
+ * Set while a closed overlay steps back over its own history entry, so the pop that step causes
+ * does not close the overlay below it. A flag raised before `back()` rather than a marker added to
+ * the event: browsers do not reliably run a marking listener ahead of the overlays' own, and the
+ * overlay underneath then closed along with the one on top.
+ */
+let releasing = false;
+let releaseTimer: ReturnType<typeof setTimeout> | null = null;
 
 function releaseHistoryEntry(): void {
-  const markAsInternal = (event: PopStateEvent) => ignoredPopStates.add(event);
-  window.addEventListener('popstate', markAsInternal, { capture: true, once: true });
+  releasing = true;
+  const done = () => {
+    // After every listener has seen this pop.
+    setTimeout(() => {
+      releasing = false;
+    }, 0);
+    if (releaseTimer) clearTimeout(releaseTimer);
+  };
+  window.addEventListener('popstate', done, { once: true });
+  // `back()` is a no-op at the start of a history stack, so no pop may arrive: never leave the
+  // flag up for a later, real Back.
+  releaseTimer = setTimeout(() => {
+    window.removeEventListener('popstate', done);
+    releasing = false;
+  }, 1_000);
   window.history.back();
-  // `back()` is a no-op at the start of a history stack. Do not let a later real Back inherit
-  // this marker when no popstate arrives for the programmatic release.
-  setTimeout(() => window.removeEventListener('popstate', markAsInternal, true), 1_000);
 }
 
 /**
@@ -51,8 +67,8 @@ export function useBackToClose(isOpen: boolean, onClose: () => void): void {
       );
     }
     let closedByBack = false;
-    const onPopState = (event: PopStateEvent) => {
-      if (ignoredPopStates.has(event)) return;
+    const onPopState = () => {
+      if (releasing) return;
       if (openOverlays[openOverlays.length - 1] !== id) return;
       closedByBack = true;
       closeRef.current();

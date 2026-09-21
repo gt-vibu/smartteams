@@ -68,10 +68,10 @@ export function useTimesheet() {
   const addEntry = useCallback(
     (input: ManualEntryInput, timesheetId?: string) =>
       run(
-        () => timesheetRepository.addEntry(organizationId!, timesheetId || current?.id, input),
+        () => timesheetRepository.addEntry(organizationId!, timesheetId, input),
         'The time entry could not be saved.',
       ),
-    [organizationId, current?.id, run],
+    [organizationId, run],
   );
 
   /*

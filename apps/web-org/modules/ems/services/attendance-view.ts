@@ -1,6 +1,7 @@
 import {
   firstPunch,
   formatMinutes,
+  liveWorkedMinutes,
   workDateKey,
   type AttendanceCorrection,
   type AttendanceRecord,
@@ -81,6 +82,10 @@ export function toAttendanceDayView(
     todayKey: string;
     correction?: AttendanceCorrection | undefined;
     holidayConflict?: HolidayConflictView | undefined;
+    /** Counts an open session up to this moment, so the hours move while someone is working. */
+    now?: number;
+    /** ISO weekdays that are working days (1 Monday … 7 Sunday); the rest are weekly offs. */
+    workWeekDays?: readonly number[];
   } = {
     todayKey: '',
   },
@@ -90,6 +95,7 @@ export function toAttendanceDayView(
   const weekday = date.getDay();
   const checkIn = firstPunch(record, 'IN');
   const checkOut = firstPunch(record, 'OUT');
+  const worked = liveWorkedMinutes(record, options.now);
 
   return {
     id: record.id,
@@ -98,11 +104,12 @@ export function toAttendanceDayView(
     dayOfWeek: DAY_NAMES[weekday] ?? '',
     dayNumber: date.getDate(),
     isToday: key === options.todayKey,
-    isWeekend: weekday === 0 || weekday === 6,
+    // The company's weekly offs, not a fixed Saturday and Sunday.
+    isWeekend: !(options.workWeekDays ?? [1, 2, 3, 4, 5]).includes(weekday === 0 ? 7 : weekday),
     firstInTime: clockTime(checkIn?.occurredAt),
     lastOutTime: clockTime(checkOut?.occurredAt),
-    workedMinutes: record.workedMinutes,
-    workedLabel: formatMinutes(record.workedMinutes),
+    workedMinutes: worked,
+    workedLabel: formatMinutes(worked),
     overtimeLabel: formatMinutes(record.overtimeMinutes),
     dayStatus: record.dayStatus,
     shiftName: null,
@@ -124,6 +131,8 @@ export function toAttendanceDayViews(
   todayKey: string,
   corrections: readonly AttendanceCorrection[] = [],
   holidayConflicts: ReadonlyMap<string, HolidayConflictView> = new Map(),
+  now: number = Date.now(),
+  workWeekDays: readonly number[] = [1, 2, 3, 4, 5],
 ): AttendanceDayView[] {
   // Most recent correction per attendance record, so a row can show that one is pending.
   const byRecord = new Map<string, AttendanceCorrection>();
@@ -137,6 +146,8 @@ export function toAttendanceDayViews(
         todayKey,
         correction: byRecord.get(record.id),
         holidayConflict: holidayConflicts.get(record.id),
+        now,
+        workWeekDays,
       }),
     )
     .sort((a, b) => b.workDate.localeCompare(a.workDate));

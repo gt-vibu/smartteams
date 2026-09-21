@@ -6,9 +6,11 @@ import { PlatformService } from './platform.service';
 import { PlatformAuthGuard } from './platform-auth.guard';
 import { PlatformAdminController } from './platform-admin.controller';
 import { FederationGrantAdminService } from './federation-grant-admin.service';
+import { PicklistsController } from './picklists.controller';
+import { PicklistsService } from './picklists.service';
 
 @Module({
-  controllers: [PlatformController, PlatformAdminController],
+  controllers: [PlatformController, PlatformAdminController, PicklistsController],
   exports: [TeamsProjectsService, MembershipService, PlatformService],
   providers: [
     TeamsProjectsService,
@@ -16,6 +18,7 @@ import { FederationGrantAdminService } from './federation-grant-admin.service';
     PlatformService,
     PlatformAuthGuard,
     FederationGrantAdminService,
+    PicklistsService,
   ],
 })
 export class PlatformModule {}

@@ -11,6 +11,9 @@ import { LeaveRequestQueue } from './leave-request-queue';
 import { LeavePolicyPanel } from './leave-policy-panel';
 import { LeaveBalancesPanel } from './leave-balances-panel';
 import { PageShell } from '../layout/page-shell';
+import { hasPermission } from '@smarteam/contracts';
+import { useSession } from '../../hooks/auth-context';
+import { permittedTabs } from '../../lib/permitted-tabs';
 
 type Tab = 'requests' | 'balances' | 'types';
 
@@ -25,11 +28,14 @@ export function ScreenLeaveAdmin() {
   // Branches come from the team directory, which already loads them; leave assignment needs the
   // branch list and there is no reason to fetch it twice.
   const directory = useTeamDirectory();
-  const [tab, setTab] = useScreenTab<Tab>(
+  const [requestedTab, setTab] = useScreenTab<Tab>(
     'leaveTab',
     ['requests', 'balances', 'types'],
     'requests',
   );
+  const { persona } = useSession();
+  const permissions = persona?.permissions ?? [];
+  const may = (permission: string) => hasPermission(permissions, permission);
   const [status, setStatus] = useState('PENDING');
 
   const counts = useMemo(() => {
@@ -39,6 +45,22 @@ export function ScreenLeaveAdmin() {
     }
     return map;
   }, [admin.requests]);
+
+  // Each tab is offered only to someone its API would answer.
+  const { tabs, active } = permittedTabs(
+    [
+      {
+        id: 'requests' as Tab,
+        label: 'Requests',
+        count: counts.get('PENDING') ?? 0,
+        allowed: may('leave.requests.read.all'),
+      },
+      { id: 'balances' as Tab, label: 'Balances', allowed: may('leave.balances.read.all') },
+      { id: 'types' as Tab, label: 'Leave types', allowed: may('leave.types.read') },
+    ],
+    requestedTab,
+  );
+  const tab = active;
 
   const statusTabs = [
     { id: 'PENDING', label: 'Pending', tone: 'var(--warning, oklch(0.75 0.15 75))' },
@@ -67,13 +89,9 @@ export function ScreenLeaveAdmin() {
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border">
         <SegmentedTabs
           aria-label="Leave administration sections"
-          items={[
-            { id: 'requests', label: 'Requests', count: counts.get('PENDING') ?? 0 },
-            { id: 'balances', label: 'Balances' },
-            { id: 'types', label: 'Leave types' },
-          ]}
+          items={tabs}
           onValueChange={(value) => setTab(value as Tab)}
-          value={tab}
+          value={tab ?? ''}
         />
         <span className="pb-2 text-[11px] text-muted-foreground">
           {admin.inbox.length} awaiting your decision

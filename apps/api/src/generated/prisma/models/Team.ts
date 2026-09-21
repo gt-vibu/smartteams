@@ -218,6 +218,7 @@ export type TeamWhereInput = {
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   teamLead?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.EmployeeWhereInput> | null
   members?: Prisma.TeamMemberListRelationFilter
+  files?: Prisma.FileObjectListRelationFilter
 }
 
 export type TeamOrderByWithRelationInput = {
@@ -234,6 +235,7 @@ export type TeamOrderByWithRelationInput = {
   branch?: Prisma.BranchOrderByWithRelationInput
   teamLead?: Prisma.EmployeeOrderByWithRelationInput
   members?: Prisma.TeamMemberOrderByRelationAggregateInput
+  files?: Prisma.FileObjectOrderByRelationAggregateInput
 }
 
 export type TeamWhereUniqueInput = Prisma.AtLeast<{
@@ -254,6 +256,7 @@ export type TeamWhereUniqueInput = Prisma.AtLeast<{
   branch?: Prisma.XOR<Prisma.BranchNullableScalarRelationFilter, Prisma.BranchWhereInput> | null
   teamLead?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.EmployeeWhereInput> | null
   members?: Prisma.TeamMemberListRelationFilter
+  files?: Prisma.FileObjectListRelationFilter
 }, "id" | "organizationId_name">
 
 export type TeamOrderByWithAggregationInput = {
@@ -297,6 +300,7 @@ export type TeamCreateInput = {
   branch?: Prisma.BranchCreateNestedOneWithoutTeamsInput
   teamLead?: Prisma.EmployeeCreateNestedOneWithoutTeamLeadOfInput
   members?: Prisma.TeamMemberCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutTeamInput
 }
 
 export type TeamUncheckedCreateInput = {
@@ -310,6 +314,7 @@ export type TeamUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutTeamInput
 }
 
 export type TeamUpdateInput = {
@@ -323,6 +328,7 @@ export type TeamUpdateInput = {
   branch?: Prisma.BranchUpdateOneWithoutTeamsNestedInput
   teamLead?: Prisma.EmployeeUpdateOneWithoutTeamLeadOfNestedInput
   members?: Prisma.TeamMemberUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateInput = {
@@ -336,6 +342,7 @@ export type TeamUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamCreateManyInput = {
@@ -369,6 +376,11 @@ export type TeamUncheckedUpdateManyInput = {
   status?: Prisma.EnumTeamStatusFieldUpdateOperationsInput | $Enums.TeamStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type TeamNullableScalarRelationFilter = {
+  is?: Prisma.TeamWhereInput | null
+  isNot?: Prisma.TeamWhereInput | null
 }
 
 export type TeamListRelationFilter = {
@@ -425,6 +437,22 @@ export type TeamMinOrderByAggregateInput = {
 export type TeamScalarRelationFilter = {
   is?: Prisma.TeamWhereInput
   isNot?: Prisma.TeamWhereInput
+}
+
+export type TeamCreateNestedOneWithoutFilesInput = {
+  create?: Prisma.XOR<Prisma.TeamCreateWithoutFilesInput, Prisma.TeamUncheckedCreateWithoutFilesInput>
+  connectOrCreate?: Prisma.TeamCreateOrConnectWithoutFilesInput
+  connect?: Prisma.TeamWhereUniqueInput
+}
+
+export type TeamUpdateOneWithoutFilesNestedInput = {
+  create?: Prisma.XOR<Prisma.TeamCreateWithoutFilesInput, Prisma.TeamUncheckedCreateWithoutFilesInput>
+  connectOrCreate?: Prisma.TeamCreateOrConnectWithoutFilesInput
+  upsert?: Prisma.TeamUpsertWithoutFilesInput
+  disconnect?: Prisma.TeamWhereInput | boolean
+  delete?: Prisma.TeamWhereInput | boolean
+  connect?: Prisma.TeamWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TeamUpdateToOneWithWhereWithoutFilesInput, Prisma.TeamUpdateWithoutFilesInput>, Prisma.TeamUncheckedUpdateWithoutFilesInput>
 }
 
 export type TeamCreateNestedManyWithoutOrganizationInput = {
@@ -571,6 +599,74 @@ export type TeamUpdateOneRequiredWithoutMembersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TeamUpdateToOneWithWhereWithoutMembersInput, Prisma.TeamUpdateWithoutMembersInput>, Prisma.TeamUncheckedUpdateWithoutMembersInput>
 }
 
+export type TeamCreateWithoutFilesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.TeamStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutTeamsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutTeamsInput
+  teamLead?: Prisma.EmployeeCreateNestedOneWithoutTeamLeadOfInput
+  members?: Prisma.TeamMemberCreateNestedManyWithoutTeamInput
+}
+
+export type TeamUncheckedCreateWithoutFilesInput = {
+  id?: string
+  organizationId: string
+  branchId?: string | null
+  name: string
+  description?: string | null
+  teamLeadEmployeeId?: string | null
+  status?: $Enums.TeamStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  members?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutTeamInput
+}
+
+export type TeamCreateOrConnectWithoutFilesInput = {
+  where: Prisma.TeamWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeamCreateWithoutFilesInput, Prisma.TeamUncheckedCreateWithoutFilesInput>
+}
+
+export type TeamUpsertWithoutFilesInput = {
+  update: Prisma.XOR<Prisma.TeamUpdateWithoutFilesInput, Prisma.TeamUncheckedUpdateWithoutFilesInput>
+  create: Prisma.XOR<Prisma.TeamCreateWithoutFilesInput, Prisma.TeamUncheckedCreateWithoutFilesInput>
+  where?: Prisma.TeamWhereInput
+}
+
+export type TeamUpdateToOneWithWhereWithoutFilesInput = {
+  where?: Prisma.TeamWhereInput
+  data: Prisma.XOR<Prisma.TeamUpdateWithoutFilesInput, Prisma.TeamUncheckedUpdateWithoutFilesInput>
+}
+
+export type TeamUpdateWithoutFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTeamStatusFieldUpdateOperationsInput | $Enums.TeamStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutTeamsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutTeamsNestedInput
+  teamLead?: Prisma.EmployeeUpdateOneWithoutTeamLeadOfNestedInput
+  members?: Prisma.TeamMemberUpdateManyWithoutTeamNestedInput
+}
+
+export type TeamUncheckedUpdateWithoutFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  teamLeadEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumTeamStatusFieldUpdateOperationsInput | $Enums.TeamStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
+}
+
 export type TeamCreateWithoutOrganizationInput = {
   id?: string
   name: string
@@ -581,6 +677,7 @@ export type TeamCreateWithoutOrganizationInput = {
   branch?: Prisma.BranchCreateNestedOneWithoutTeamsInput
   teamLead?: Prisma.EmployeeCreateNestedOneWithoutTeamLeadOfInput
   members?: Prisma.TeamMemberCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutOrganizationInput = {
@@ -593,6 +690,7 @@ export type TeamUncheckedCreateWithoutOrganizationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutOrganizationInput = {
@@ -646,6 +744,7 @@ export type TeamCreateWithoutBranchInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutTeamsInput
   teamLead?: Prisma.EmployeeCreateNestedOneWithoutTeamLeadOfInput
   members?: Prisma.TeamMemberCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutBranchInput = {
@@ -658,6 +757,7 @@ export type TeamUncheckedCreateWithoutBranchInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutBranchInput = {
@@ -696,6 +796,7 @@ export type TeamCreateWithoutTeamLeadInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutTeamsInput
   branch?: Prisma.BranchCreateNestedOneWithoutTeamsInput
   members?: Prisma.TeamMemberCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutTeamLeadInput = {
@@ -708,6 +809,7 @@ export type TeamUncheckedCreateWithoutTeamLeadInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutTeamInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutTeamLeadInput = {
@@ -746,6 +848,7 @@ export type TeamCreateWithoutMembersInput = {
   organization: Prisma.OrganizationCreateNestedOneWithoutTeamsInput
   branch?: Prisma.BranchCreateNestedOneWithoutTeamsInput
   teamLead?: Prisma.EmployeeCreateNestedOneWithoutTeamLeadOfInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutTeamInput
 }
 
 export type TeamUncheckedCreateWithoutMembersInput = {
@@ -758,6 +861,7 @@ export type TeamUncheckedCreateWithoutMembersInput = {
   status?: $Enums.TeamStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutTeamInput
 }
 
 export type TeamCreateOrConnectWithoutMembersInput = {
@@ -786,6 +890,7 @@ export type TeamUpdateWithoutMembersInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTeamsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutTeamsNestedInput
   teamLead?: Prisma.EmployeeUpdateOneWithoutTeamLeadOfNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutMembersInput = {
@@ -798,6 +903,7 @@ export type TeamUncheckedUpdateWithoutMembersInput = {
   status?: Prisma.EnumTeamStatusFieldUpdateOperationsInput | $Enums.TeamStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamCreateManyOrganizationInput = {
@@ -821,6 +927,7 @@ export type TeamUpdateWithoutOrganizationInput = {
   branch?: Prisma.BranchUpdateOneWithoutTeamsNestedInput
   teamLead?: Prisma.EmployeeUpdateOneWithoutTeamLeadOfNestedInput
   members?: Prisma.TeamMemberUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutOrganizationInput = {
@@ -833,6 +940,7 @@ export type TeamUncheckedUpdateWithoutOrganizationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateManyWithoutOrganizationInput = {
@@ -867,6 +975,7 @@ export type TeamUpdateWithoutBranchInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTeamsNestedInput
   teamLead?: Prisma.EmployeeUpdateOneWithoutTeamLeadOfNestedInput
   members?: Prisma.TeamMemberUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutBranchInput = {
@@ -879,6 +988,7 @@ export type TeamUncheckedUpdateWithoutBranchInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateManyWithoutBranchInput = {
@@ -913,6 +1023,7 @@ export type TeamUpdateWithoutTeamLeadInput = {
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutTeamsNestedInput
   branch?: Prisma.BranchUpdateOneWithoutTeamsNestedInput
   members?: Prisma.TeamMemberUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateWithoutTeamLeadInput = {
@@ -925,6 +1036,7 @@ export type TeamUncheckedUpdateWithoutTeamLeadInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.TeamMemberUncheckedUpdateManyWithoutTeamNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamUncheckedUpdateManyWithoutTeamLeadInput = {
@@ -945,10 +1057,12 @@ export type TeamUncheckedUpdateManyWithoutTeamLeadInput = {
 
 export type TeamCountOutputType = {
   members: number
+  files: number
 }
 
 export type TeamCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | TeamCountOutputTypeCountMembersArgs
+  files?: boolean | TeamCountOutputTypeCountFilesArgs
 }
 
 /**
@@ -968,6 +1082,13 @@ export type TeamCountOutputTypeCountMembersArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.TeamMemberWhereInput
 }
 
+/**
+ * TeamCountOutputType without action
+ */
+export type TeamCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileObjectWhereInput
+}
+
 
 export type TeamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -983,6 +1104,7 @@ export type TeamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   branch?: boolean | Prisma.Team$branchArgs<ExtArgs>
   teamLead?: boolean | Prisma.Team$teamLeadArgs<ExtArgs>
   members?: boolean | Prisma.Team$membersArgs<ExtArgs>
+  files?: boolean | Prisma.Team$filesArgs<ExtArgs>
   _count?: boolean | Prisma.TeamCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["team"]>
 
@@ -1034,6 +1156,7 @@ export type TeamInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   branch?: boolean | Prisma.Team$branchArgs<ExtArgs>
   teamLead?: boolean | Prisma.Team$teamLeadArgs<ExtArgs>
   members?: boolean | Prisma.Team$membersArgs<ExtArgs>
+  files?: boolean | Prisma.Team$filesArgs<ExtArgs>
   _count?: boolean | Prisma.TeamCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TeamIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1054,6 +1177,7 @@ export type $TeamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     branch: Prisma.$BranchPayload<ExtArgs> | null
     teamLead: Prisma.$EmployeePayload<ExtArgs> | null
     members: Prisma.$TeamMemberPayload<ExtArgs>[]
+    files: Prisma.$FileObjectPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1463,6 +1587,7 @@ export interface Prisma__TeamClient<T, Null = never, ExtArgs extends runtime.Typ
   branch<T extends Prisma.Team$branchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$branchArgs<ExtArgs>>): Prisma.Prisma__BranchClient<runtime.Types.Result.GetResult<Prisma.$BranchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   teamLead<T extends Prisma.Team$teamLeadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$teamLeadArgs<ExtArgs>>): Prisma.Prisma__EmployeeClient<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   members<T extends Prisma.Team$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  files<T extends Prisma.Team$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Team$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileObjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1961,6 +2086,30 @@ export type Team$membersArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.TeamMemberScalarFieldEnum | Prisma.TeamMemberScalarFieldEnum[]
+}
+
+/**
+ * Team.files
+ */
+export type Team$filesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileObject
+   */
+  select?: Prisma.FileObjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileObject
+   */
+  omit?: Prisma.FileObjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileObjectInclude<ExtArgs> | null
+  where?: Prisma.FileObjectWhereInput
+  orderBy?: Prisma.FileObjectOrderByWithRelationInput | Prisma.FileObjectOrderByWithRelationInput[]
+  cursor?: Prisma.FileObjectWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileObjectScalarFieldEnum | Prisma.FileObjectScalarFieldEnum[]
 }
 
 /**

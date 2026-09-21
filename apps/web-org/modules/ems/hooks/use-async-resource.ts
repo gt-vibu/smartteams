@@ -41,23 +41,31 @@ export function useAsyncResource<T>(
   const loadRef = useRef(load);
   loadRef.current = load;
 
-  const hasLoaded = useRef(false);
+  // Each request is numbered; only the latest may write. Without this, choosing employee B while
+  // A's request was still in flight could end with A's answer on B's screen — a salary shown
+  // against the wrong person.
+  const latest = useRef(0);
 
   const run = useCallback(async (isRefresh: boolean) => {
+    const request = ++latest.current;
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
     setError(null);
     setForbidden(false);
     try {
-      setData(await loadRef.current());
-      hasLoaded.current = true;
+      const result = await loadRef.current();
+      if (request !== latest.current) return;
+      setData(result);
     } catch (caught) {
+      if (request !== latest.current) return;
       setData(null);
       setForbidden(caught instanceof ApiError && caught.status === 403);
       setError(caught instanceof Error ? caught.message : 'Something went wrong.');
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (request === latest.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   }, []);
 
@@ -68,7 +76,11 @@ export function useAsyncResource<T>(
       setLoading(false);
       return;
     }
-    void run(hasLoaded.current);
+    // A change of what is being loaded (another employee, another filter) clears the old answer
+    // and shows loading, so nothing is ever displayed against the wrong subject. A plain refetch
+    // keeps the current data on screen while it refreshes.
+    setData(null);
+    void run(false);
   }, [enabled, run, ...deps]);
 
   const refetch = useCallback(() => run(true), [run]);

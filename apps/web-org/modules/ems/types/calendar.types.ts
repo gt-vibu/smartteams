@@ -1,6 +1,7 @@
 import type { HolidayConflictView } from '../services/holiday-conflict-view';
 
-export type CalendarDayStatus = 'PRESENT' | 'ABSENT' | 'HOLIDAY' | 'WEEKEND' | 'UPCOMING' | 'EMPTY';
+export type CalendarDayStatus =
+  'PRESENT' | 'ABSENT' | 'LEAVE' | 'HOLIDAY' | 'WEEKEND' | 'UPCOMING' | 'EMPTY';
 
 export interface CalendarDayItem {
   date: string; // "2026-08-01"
@@ -19,6 +20,8 @@ export interface CalendarDayItem {
   openCheckInAt?: string;
   hoursLabel?: string; // "08:15 Hrs"
   holidayName?: string;
+  /** The approved leave covering this day, by leave type name. */
+  leaveName?: string;
   isRestrictedHoliday?: boolean;
   /** A check-in on the employee's approved optional holiday, shown by its review state. */
   holidayConflict?: HolidayConflictView;

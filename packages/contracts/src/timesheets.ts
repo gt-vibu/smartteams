@@ -34,6 +34,27 @@ export const timesheetEntrySchema = z.object({
   endTime: z.string().nullable().optional(),
 });
 
+/**
+ * The note an employee actually typed on an entry.
+ *
+ * Entries store their project, job type and work item encoded into `description` as JSON, which
+ * the API unpacks. If an entry ever reaches a screen still encoded, this keeps that machinery off
+ * the page: an approver sees the note or nothing, never a blob of stored fields.
+ */
+export function entryNotes(entry: { description?: string | null }): string {
+  const text = (entry.description ?? '').trim();
+  if (text.startsWith('{') && text.endsWith('}')) {
+    try {
+      const parsed: unknown = JSON.parse(text);
+      const notes = (parsed as { notes?: unknown }).notes;
+      return typeof notes === 'string' ? notes.trim() : '';
+    } catch {
+      return '';
+    }
+  }
+  return text;
+}
+
 export const timesheetSchema = z.object({
   id: z.string().uuid(),
   employeeId: z.string().uuid(),

@@ -5,6 +5,22 @@ import { Button } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 import { useMyTeams } from '../../hooks/use-teams';
 
+/** The breadcrumb name of each admin module; a module missing here showed as "Files Vault". */
+const ORGANIZATION_MODULE_LABELS: Record<string, string> = {
+  employees: 'Employees',
+  onboarding: 'Onboarding',
+  'time-off': 'Leave Operations',
+  attendance: 'Attendance',
+  timesheet: 'Time Logs',
+  teams: 'Teams & Squads',
+  projects: 'Projects',
+  payroll: 'Payroll',
+  shifts: 'Shifts',
+  holidays: 'Holidays',
+  approvals: 'Approvals',
+  files: 'Files Vault',
+};
+
 interface ContextBarProps {
   activeSpace: string;
   activeModule: string;
@@ -103,23 +119,7 @@ export function ContextBar({
             <span className="text-muted-foreground/50">/</span>
             <span className="text-foreground font-semibold truncate">
               {activeModule && activeModule !== 'home'
-                ? activeModule === 'onboarding'
-                  ? 'Onboarding'
-                  : activeModule === 'time-off'
-                    ? 'Leave Operations'
-                    : activeModule === 'attendance'
-                      ? 'Attendance'
-                      : activeModule === 'timesheet'
-                        ? 'Time Logs'
-                        : activeModule === 'teams'
-                          ? 'Teams & Squads'
-                          : activeModule === 'projects'
-                            ? 'Projects'
-                            : activeModule === 'payroll'
-                              ? 'Payroll'
-                              : activeModule === 'approvals'
-                                ? 'Approvals'
-                                : 'Files Vault'
+                ? (ORGANIZATION_MODULE_LABELS[activeModule] ?? activeModule)
                 : orgActiveTab || 'Overview'}
             </span>
           </>

@@ -3,7 +3,11 @@
 import React from 'react';
 import { ArrowRight, Building2, Users } from 'lucide-react';
 import { Button } from '@smarteam/ui';
-import { employeeDisplayName, type EmployeeDirectoryEntry } from '@smarteam/contracts';
+import {
+  employeeDisplayName,
+  type EmployeeDirectoryEntry,
+  employmentTypeLabel,
+} from '@smarteam/contracts';
 import { PersonAvatar } from '../common/person-avatar';
 import type {
   DepartmentGroup,
@@ -95,6 +99,7 @@ function DirectoryTable({
               <th className="px-4 py-2.5 font-bold">Name</th>
               <th className="px-4 py-2.5 font-bold">Number</th>
               <th className="px-4 py-2.5 font-bold">Department</th>
+              <th className="px-4 py-2.5 font-bold">Type</th>
               <th className="px-4 py-2.5 font-bold">Joined</th>
               <th className="px-4 py-2.5 font-bold">Status</th>
             </tr>
@@ -129,6 +134,9 @@ function DirectoryTable({
                 <td data-label="Department" className="px-4 py-2.5 text-muted-foreground">
                   {entry.department ?? '--'}
                 </td>
+                <td data-label="Type" className="px-4 py-2.5 text-muted-foreground">
+                  {employmentTypeLabel(entry.employmentType)}
+                </td>
                 <td
                   data-label="Joined"
                   className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
@@ -151,7 +159,7 @@ function DirectoryTable({
         </span>
         <Button
           className="h-auto gap-1 px-2 py-1 text-[11px]"
-          onClick={() => onNavigateModule?.('onboarding')}
+          onClick={() => onNavigateModule?.('employees')}
           size="sm"
           type="button"
           variant="ghost"

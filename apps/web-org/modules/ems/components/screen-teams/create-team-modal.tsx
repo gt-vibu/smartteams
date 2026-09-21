@@ -17,12 +17,15 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
+import { activeByName } from '../../lib/pickable';
 
 interface CreateTeamModalProps {
   isOpen: boolean;
   onClose: () => void;
   employees: readonly Employee[];
   branches: readonly Branch[];
+  /** Names already taken, so a second team of one name is questioned before it is created. */
+  existingNames: readonly string[];
   saving: boolean;
   saveError: string | null;
   onCreate: (
@@ -32,6 +35,8 @@ interface CreateTeamModalProps {
 }
 
 const NONE = 'none';
+
+const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
 /**
  * Creates a team from the organization's real employees and branches.
@@ -45,6 +50,7 @@ export function CreateTeamModal({
   onClose,
   employees,
   branches,
+  existingNames,
   saving,
   saveError,
   onCreate,
@@ -52,20 +58,18 @@ export function CreateTeamModal({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [branchId, setBranchId] = useState(NONE);
+  const [nameClash, setNameClash] = useState(false);
   const [teamLeadEmployeeId, setTeamLeadEmployeeId] = useState(NONE);
   const [memberIds, setMemberIds] = useState<string[]>([]);
   const [error, setError] = useState('');
 
-  const sorted = useMemo(
-    () =>
-      [...employees].sort((a, b) => employeeDisplayName(a).localeCompare(employeeDisplayName(b))),
-    [employees],
-  );
+  const sorted = useMemo(() => activeByName(employees), [employees]);
 
   const reset = () => {
     setName('');
     setDescription('');
     setBranchId(NONE);
+    setNameClash(false);
     setTeamLeadEmployeeId(NONE);
     setMemberIds([]);
     setError('');
@@ -76,12 +80,22 @@ export function CreateTeamModal({
       setError('A team name is required.');
       return;
     }
+    if (branchId === NONE) {
+      setError('Choose the branch this team belongs to.');
+      return;
+    }
+    // Questioned once rather than refused: two teams may legitimately share a name.
+    if (!nameClash && existingNames.some((existing) => same(existing, name))) {
+      setNameClash(true);
+      setError('');
+      return;
+    }
     setError('');
     const created = await onCreate(
       {
         name: name.trim(),
         ...(description.trim() ? { description: description.trim() } : {}),
-        ...(branchId !== NONE ? { branchId } : {}),
+        branchId,
         ...(teamLeadEmployeeId !== NONE ? { teamLeadEmployeeId } : {}),
       },
       memberIds,
@@ -142,10 +156,9 @@ export function CreateTeamModal({
               </Label>
               <SelectMenu disabled={saving} onValueChange={setBranchId} value={branchId}>
                 <SelectTrigger id="team-branch">
-                  <SelectValue placeholder="No branch" />
+                  <SelectValue placeholder="Choose a branch" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={NONE}>No branch</SelectItem>
                   {branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id}>
                       {branch.name}
@@ -224,6 +237,41 @@ export function CreateTeamModal({
             )}
           </div>
         </div>
+
+        {nameClash && (
+          <div
+            className="mx-5 mb-4 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs"
+            role="alert"
+          >
+            <p className="font-semibold text-foreground">
+              A team called &ldquo;{name.trim()}&rdquo; already exists.
+            </p>
+            <p className="mt-0.5 text-muted-foreground">
+              Give this one a different name, or create it anyway.
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button
+                onClick={() => {
+                  setNameClash(false);
+                  document.getElementById('team-name')?.focus();
+                }}
+                size="sm"
+                type="button"
+              >
+                Rename
+              </Button>
+              <Button
+                disabled={saving}
+                onClick={() => void handleSubmit()}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                Create anyway
+              </Button>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
           <p className="text-[11px] font-semibold text-destructive" role="alert">

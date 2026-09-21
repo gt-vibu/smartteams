@@ -31,6 +31,7 @@ import {
   MISSING_CHECK_OUT_KEY,
   type PunchLike,
 } from './attendance-missing-checkout';
+import { expectedDayOn } from './attendance-shift-day';
 
 /** The employee's first punch after this day's open check-in, on any day. */
 async function nextPunchAfterOpenCheckIn(
@@ -340,7 +341,21 @@ export class AttendanceCorrectionsService {
           where: { organizationId: context.organizationId },
           select: { standardDayMinutes: true },
         });
-        const totals = attendanceTotals(correctedPunches, settings.standardDayMinutes);
+        const expected =
+          context.accessMode === 'NATIVE'
+            ? await expectedDayOn(
+                tx,
+                context.organizationId,
+                correction.attendanceRecord.employeeId,
+                correction.attendanceRecord.branchId,
+                correction.attendanceRecord.workDate,
+                settings.standardDayMinutes,
+              )
+            : null;
+        const totals = attendanceTotals(
+          correctedPunches,
+          expected?.minutes ?? settings.standardDayMinutes,
+        );
         const correctedDayStatus = dayStatusFromSnapshot(correction.afterSnapshot);
         correctedRecord = await tx.attendanceRecord.update({
           where: { id: correction.attendanceRecordId },
@@ -348,6 +363,7 @@ export class AttendanceCorrectionsService {
             status: AttendanceStatus.CORRECTED,
             correctionNote: correction.reason,
             workedMinutes: totals.workedMinutes,
+            ...(expected ? { overtimeDayType: expected.dayType } : {}),
             overtimeMinutes: totals.overtimeMinutes,
             ...(correctedDayStatus ? { dayStatus: correctedDayStatus } : {}),
             version: { increment: 1 },

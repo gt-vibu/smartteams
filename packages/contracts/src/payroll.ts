@@ -255,6 +255,23 @@ export function parsePayComponent(payload: unknown): PayComponentDefinition | nu
 
 export const parseStatutoryRuleList = (payload: unknown) => parseList(statutoryRuleSchema, payload);
 
+/**
+ * What overtime pays, as multiples of the ordinary hourly rate. `standard` is the default for a
+ * new salary; `weeklyOff` and `holiday` are null until the company decides those days pay more.
+ */
+export const overtimeRatesSchema = z.object({
+  standard: z.number(),
+  weeklyOff: z.number().nullable(),
+  holiday: z.number().nullable(),
+});
+
+export type OvertimeRates = z.infer<typeof overtimeRatesSchema>;
+
+export function parseOvertimeRates(payload: unknown): OvertimeRates | null {
+  const result = overtimeRatesSchema.safeParse(payload);
+  return result.success ? result.data : null;
+}
+
 export function parsePayrollPolicy(payload: unknown): PayrollPolicy | null {
   const result = payrollPolicySchema.safeParse(payload);
   return result.success ? result.data : null;
