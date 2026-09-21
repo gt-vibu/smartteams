@@ -3,6 +3,13 @@ import { EmployeeBranchTransferProcessor } from './employee-branch-transfer.proc
 
 const day = (value: string) => calendarDate(value);
 
+type UpdateManyInput = {
+  where?: Record<string, unknown>;
+  data?: { primaryBranchId?: string; version?: { increment: number } };
+};
+
+type UpdateMany = (input: UpdateManyInput) => Promise<{ count: number }>;
+
 describe('branch membership dates', () => {
   it('reads today in the organization’s own timezone', () => {
     // 20:00 UTC on the 30th is already the 1st in Kolkata.
@@ -31,6 +38,8 @@ describe('branch membership dates', () => {
 
 describe('the scheduled transfer sweep', () => {
   function setup(primaryBranchId: string) {
+    const updateMany = jest.fn() as jest.MockedFunction<UpdateMany>;
+    updateMany.mockResolvedValue({ count: 1 });
     const tx = {
       employeeBranchAssignment: {
         findMany: jest
@@ -40,7 +49,7 @@ describe('the scheduled transfer sweep', () => {
           ]),
         findFirst: jest.fn().mockResolvedValue({ branchId: 'new' }),
       },
-      employee: { updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
+      employee: { updateMany },
     };
     const database = {
       runSystem: jest.fn().mockResolvedValue([{ id: 'org-1', timezone: 'Asia/Kolkata' }]),
@@ -55,9 +64,7 @@ describe('the scheduled transfer sweep', () => {
   it('moves the primary branch on the day a scheduled transfer begins', async () => {
     const { tx, processor } = setup('old');
     expect(await processor.syncAll(new Date('2026-10-01T06:00:00.000Z'))).toBe(1);
-    expect(tx.employee.updateMany).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.objectContaining({ primaryBranchId: 'new' }) }),
-    );
+    expect(tx.employee.updateMany.mock.calls[0]?.[0]?.data?.primaryBranchId).toBe('new');
   });
 
   it('leaves an employee who is already on the right branch alone', async () => {

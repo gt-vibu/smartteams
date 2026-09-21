@@ -87,7 +87,11 @@ async function runNorthwindAudit() {
   assert('Admin login succeeds with 201', r.status === 201);
   const adminCsrf = r.payload?.csrfToken;
   const adminHeaders = { 'x-csrf-token': adminCsrf };
-  const adminOrg = (m, p, b, extra) => call(adminJar, m, `/v1/organizations/${orgId}${p}`, b, { ...(m === 'GET' ? {} : adminHeaders), ...(extra ?? {}) });
+  const adminOrg = (m, p, b, extra) =>
+    call(adminJar, m, `/v1/organizations/${orgId}${p}`, b, {
+      ...(m === 'GET' ? {} : adminHeaders),
+      ...(extra ?? {}),
+    });
 
   // Read employees list as Admin
   r = await adminOrg('GET', '/employees');
@@ -115,7 +119,11 @@ async function runNorthwindAudit() {
     employmentType: 'FULL_TIME',
     aadhaarNumber: '999911112222',
   });
-  assert('Duplicate work email with casing/spaces is blocked with 409', r.status === 409, r.payload?.detail);
+  assert(
+    'Duplicate work email with casing/spaces is blocked with 409',
+    r.status === 409,
+    r.payload?.detail,
+  );
 
   if (asha) {
     r = await adminOrg('POST', '/employees', {
@@ -137,24 +145,38 @@ async function runNorthwindAudit() {
     const originalPhone = currentAsha.payload?.phone || '+91 90000 00000';
     const newPhone = '+91 98888 77777';
 
-    r = await adminOrg('PATCH', `/employees/${asha.id}`, {
-      phone: newPhone,
-      firstName: asha.firstName,
-      lastName: asha.lastName,
-    }, { 'if-match-version': String(v) });
-    assert('Admin can edit employee profile (200 OK)', r.status === 200, `Version ${v} -> Status ${r.status}`);
+    r = await adminOrg(
+      'PATCH',
+      `/employees/${asha.id}`,
+      {
+        phone: newPhone,
+        firstName: asha.firstName,
+        lastName: asha.lastName,
+      },
+      { 'if-match-version': String(v) },
+    );
+    assert(
+      'Admin can edit employee profile (200 OK)',
+      r.status === 200,
+      `Version ${v} -> Status ${r.status}`,
+    );
 
     // Read back fresh
     r = await adminOrg('GET', `/employees/${asha.id}`);
     assert('Employee edit persists upon refetch', r.payload?.phone === newPhone);
 
     // Restore
-    const updatedVersion = r.payload?.version ?? (v + 1);
-    await adminOrg('PATCH', `/employees/${asha.id}`, {
-      phone: originalPhone,
-      firstName: asha.firstName,
-      lastName: asha.lastName,
-    }, { 'if-match-version': String(updatedVersion) });
+    const updatedVersion = r.payload?.version ?? v + 1;
+    await adminOrg(
+      'PATCH',
+      `/employees/${asha.id}`,
+      {
+        phone: originalPhone,
+        firstName: asha.firstName,
+        lastName: asha.lastName,
+      },
+      { 'if-match-version': String(updatedVersion) },
+    );
   }
 
   // Projects CRUD & Membership (Admin)
@@ -171,7 +193,11 @@ async function runNorthwindAudit() {
       projectRole: 'Backend Engineer',
       startsOn: '2026-01-05',
     });
-    assert('Assigning same employee twice to same project is blocked with 409', r.status === 409, r.payload?.detail);
+    assert(
+      'Assigning same employee twice to same project is blocked with 409',
+      r.status === 409,
+      r.payload?.detail,
+    );
   }
 
   // 2. EMPLOYEE FLOW
@@ -184,7 +210,11 @@ async function runNorthwindAudit() {
   assert('Employee login succeeds with 201', r.status === 201);
   const empCsrf = r.payload?.csrfToken;
   const empHeaders = { 'x-csrf-token': empCsrf };
-  const empOrg = (m, p, b, extra) => call(empJar, m, `/v1/organizations/${orgId}${p}`, b, { ...(m === 'GET' ? {} : empHeaders), ...(extra ?? {}) });
+  const empOrg = (m, p, b, extra) =>
+    call(empJar, m, `/v1/organizations/${orgId}${p}`, b, {
+      ...(m === 'GET' ? {} : empHeaders),
+      ...(extra ?? {}),
+    });
 
   // Employee reading own profile vs colleague profile
   console.log('\n--- Phase 6: Employee Data Privacy & RBAC ---');
@@ -194,9 +224,18 @@ async function runNorthwindAudit() {
   }
   if (kavita) {
     r = await empOrg('GET', `/employees/${kavita.id}`);
-    assert('Employee CANNOT read colleague profile (blocked)', r.status === 403 || r.status === 409, `Status ${r.status}`);
+    assert(
+      'Employee CANNOT read colleague profile (blocked)',
+      r.status === 403 || r.status === 409,
+      `Status ${r.status}`,
+    );
 
-    r = await empOrg('PATCH', `/employees/${kavita.id}`, { phone: '+91 99999 99999' }, { 'if-match-version': '1' });
+    r = await empOrg(
+      'PATCH',
+      `/employees/${kavita.id}`,
+      { phone: '+91 99999 99999' },
+      { 'if-match-version': '1' },
+    );
     assert('Employee CANNOT edit colleague profile (403 Forbidden)', r.status === 403);
   }
 
@@ -207,7 +246,10 @@ async function runNorthwindAudit() {
   const empProjects = r.payload?.items ?? r.payload ?? [];
   console.log(`    Projects visible to employee: ${empProjects.length}`);
   if (nwProject) {
-    assert('Employee sees project they are assigned to', empProjects.some((p) => p.id === nwProject.id));
+    assert(
+      'Employee sees project they are assigned to',
+      empProjects.some((p) => p.id === nwProject.id),
+    );
   }
 
   // Employee cannot create a project

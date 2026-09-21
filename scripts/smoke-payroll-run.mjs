@@ -148,7 +148,13 @@ async function main() {
   console.log(`[STEP 2] Admin Authenticated (Sarah Connor)`);
 
   const org = (method, path, body) =>
-    call(adminJar, method, `/v1/organizations/${orgId}${path}`, body, method === 'GET' ? undefined : adminHeaders);
+    call(
+      adminJar,
+      method,
+      `/v1/organizations/${orgId}${path}`,
+      body,
+      method === 'GET' ? undefined : adminHeaders,
+    );
 
   // 3. Get Default Branch & Create Employee
   r = await org('GET', '/branches');
@@ -222,7 +228,9 @@ async function main() {
     ptEnabled: true,
   });
   if (!r.ok) throw new Error(`Set salary profile failed: ${JSON.stringify(r.payload)}`);
-  console.log(`[STEP 5] Salary Profile Assigned -> Gross ₹60,000 (Base: ₹30,000, HRA: ₹12,000, Special: ₹18,000)`);
+  console.log(
+    `[STEP 5] Salary Profile Assigned -> Gross ₹60,000 (Base: ₹30,000, HRA: ₹12,000, Special: ₹18,000)`,
+  );
 
   // 6. Setup Timesheet Approval Policy & Period
   r = await org('GET', '/roles');
@@ -329,15 +337,27 @@ async function main() {
     console.log(`  Pay Period:         ${period.start} to ${period.end}`);
     console.log(`  Base Salary:        INR ${componentOf('BASE').toLocaleString('en-IN')}`);
     console.log(`  HRA:                INR ${componentOf('HRA').toLocaleString('en-IN')}`);
-    console.log(`  Other Allowance:    INR ${componentOf('OTHER_ALLOWANCE').toLocaleString('en-IN')}`);
+    console.log(
+      `  Other Allowance:    INR ${componentOf('OTHER_ALLOWANCE').toLocaleString('en-IN')}`,
+    );
     console.log(`  Bonus Added:        INR 5,000`);
     console.log(`  -------------------------------------------------------------`);
-    console.log(`  GROSS EARNINGS:     INR ${Number(payslip?.totals?.grossAmount ?? 65000).toLocaleString('en-IN')}`);
-    console.log(`  EPF Deduction:      INR ${componentOf('EPF').toLocaleString('en-IN')} (12% of ₹15,000 wage ceiling)`);
-    console.log(`  PT Deduction:       INR ${componentOf('PT').toLocaleString('en-IN')} (Karnataka State PT)`);
-    console.log(`  TOTAL DEDUCTIONS:   INR ${Number(payslip?.totals?.totalDeductions ?? 2000).toLocaleString('en-IN')}`);
+    console.log(
+      `  GROSS EARNINGS:     INR ${Number(payslip?.totals?.grossAmount ?? 65000).toLocaleString('en-IN')}`,
+    );
+    console.log(
+      `  EPF Deduction:      INR ${componentOf('EPF').toLocaleString('en-IN')} (12% of ₹15,000 wage ceiling)`,
+    );
+    console.log(
+      `  PT Deduction:       INR ${componentOf('PT').toLocaleString('en-IN')} (Karnataka State PT)`,
+    );
+    console.log(
+      `  TOTAL DEDUCTIONS:   INR ${Number(payslip?.totals?.totalDeductions ?? 2000).toLocaleString('en-IN')}`,
+    );
     console.log(`  -------------------------------------------------------------`);
-    console.log(`  NET TAKE-HOME PAY:  INR ${Number(payslip?.totals?.netAmount ?? 63000).toLocaleString('en-IN')}`);
+    console.log(
+      `  NET TAKE-HOME PAY:  INR ${Number(payslip?.totals?.netAmount ?? 63000).toLocaleString('en-IN')}`,
+    );
     console.log(`  Payslip ID:         ${payslip.id}`);
   }
   console.log('='.repeat(70));

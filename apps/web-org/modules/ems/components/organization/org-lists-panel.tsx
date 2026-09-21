@@ -21,7 +21,10 @@ export function OrgListsPanel() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-0.5" role="tablist">
+        <div
+          className="flex items-center gap-1 rounded-lg border border-border bg-muted/30 p-0.5"
+          role="tablist"
+        >
           {KINDS.map((id) => (
             <Button
               aria-selected={kind === id}

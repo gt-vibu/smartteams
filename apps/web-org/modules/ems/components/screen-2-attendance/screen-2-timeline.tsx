@@ -61,17 +61,20 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
               ? 'weekend'
               : r.dayStatus === 'HOLIDAY'
                 ? 'holiday'
-                : 'absent',
+                : 'empty',
         dayStatus: r.dayStatus,
         isWeekend: r.isWeekend,
         holidayName: r.holidayName,
-        holidayConflict: r.holidayConflict,
+        holidayConflict: r.holidayConflict ?? undefined,
         record: r.record,
         openCheckInAt,
         shift: 'General Shift',
         punches: dayPunches.map((p) => ({
           type: p.punchType as 'IN' | 'OUT',
-          time: new Date(p.occurredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          time: new Date(p.occurredAt).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
           source: p.source || 'NATIVE',
         })),
       };

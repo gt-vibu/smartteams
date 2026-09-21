@@ -54,4 +54,3 @@ async function bootstrap() {
 // First, so that a failure anywhere in bootstrap is reported too.
 installProcessDiagnostics();
 void bootstrap();
-

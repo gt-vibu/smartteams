@@ -114,8 +114,8 @@ export function SalaryBreakdownCard({
           role="status"
         >
           PF and ESI use the national rates. Professional Tax is not calculated until the
-          company&apos;s state is set under &ldquo;Basic, HRA &amp; state&rdquo;, because its
-          slabs differ by state.
+          company&apos;s state is set under &ldquo;Basic, HRA &amp; state&rdquo;, because its slabs
+          differ by state.
         </p>
       )}
 
