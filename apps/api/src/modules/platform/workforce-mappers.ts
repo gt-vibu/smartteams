@@ -14,8 +14,33 @@ import type { Prisma } from '../../generated/prisma/client';
  * accident.
  */
 
-type TeamRow = Prisma.TeamGetPayload<{ include: { members: true } }>;
-type ProjectRow = Prisma.ProjectGetPayload<{ include: { members: true } }>;
+/** Every member carries a small summary of the person, so lists can name them. */
+type WithEmployeeInclude = {
+  members: {
+    include: {
+      employee: { select: { id: true; firstName: true; lastName: true; employeeNumber: true } };
+    };
+  };
+};
+
+type TeamRow = Prisma.TeamGetPayload<{ include: WithEmployeeInclude }>;
+type ProjectRow = Prisma.ProjectGetPayload<{ include: WithEmployeeInclude }>;
+
+type WithEmployee = {
+  employee?: { id: string; firstName: string; lastName: string; employeeNumber: string } | null;
+};
+
+/** The person behind a membership row: their name and number, and nothing else about them. */
+function summaryOf(member: WithEmployee) {
+  return member.employee
+    ? {
+        id: member.employee.id,
+        firstName: member.employee.firstName,
+        lastName: member.employee.lastName,
+        employeeNumber: member.employee.employeeNumber,
+      }
+    : null;
+}
 
 export function toTeamDto(team: TeamRow) {
   return {
@@ -36,6 +61,8 @@ export function toTeamMemberDto(member: TeamRow['members'][number]) {
     id: member.id,
     teamId: member.teamId,
     employeeId: member.employeeId,
+    teamRole: member.teamRole,
+    employee: summaryOf(member),
     joinedAt: dateOnly(member.joinedAt),
     leftAt: member.leftAt ? dateOnly(member.leftAt) : null,
   };
@@ -63,10 +90,7 @@ export function toProjectMemberDto(member: ProjectRow['members'][number]) {
     projectId: member.projectId,
     employeeId: member.employeeId,
     projectRole: member.projectRole,
-    // A Decimal serialises as a string; keeping it one is deliberate, matching how every other
-    // numeric of consequence crosses this boundary.
-    allocationPercentage:
-      member.allocationPercentage === null ? null : member.allocationPercentage.toString(),
+    employee: summaryOf(member),
     startsOn: dateOnly(member.startsOn),
     endsOn: member.endsOn ? dateOnly(member.endsOn) : null,
   };

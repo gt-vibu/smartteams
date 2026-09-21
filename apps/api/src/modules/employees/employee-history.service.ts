@@ -10,6 +10,7 @@ import { dateOnly } from './employee-mappers';
 import { assertMayReadEmployee } from './employee-access';
 
 import { assertEmployee, dateBefore } from './employee-records-shared';
+import { ensureEntry } from '../platform/picklist-catalog';
 
 /**
  * Employment history and compensation.
@@ -53,6 +54,24 @@ export class EmployeeHistoryService {
     requirePermission(context, 'employees.write');
     return this.database.run(context, async (tx) => {
       await assertEmployee(tx, context.organizationId, employeeId);
+      // Someone who has left is kept as history; no new job, pay or reporting changes (native
+      // only: the federation contract is frozen).
+      if (context.accessMode === 'NATIVE') {
+        const current = await tx.employee.findFirst({
+          where: { id: employeeId, organizationId: context.organizationId },
+          select: { status: true, firstName: true, lastName: true },
+        });
+        if (current && current.status !== 'ACTIVE')
+          throw new ConflictError(
+            `${current.firstName} ${current.lastName} has left the company, so this cannot be changed.`,
+          );
+      }
+      // Titles come from the organization's Job Titles list; a new one typed in the app is added
+      // to it, and an archived one is refused. Federation sends its own titles unchanged.
+      const jobTitle =
+        context.accessMode === 'NATIVE'
+          ? await ensureEntry(tx, context, 'job-titles', input.jobTitle)
+          : input.jobTitle?.trim();
       const effectiveFrom = dateOnly(input.effectiveFrom);
       const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : undefined;
       if (effectiveTo && effectiveTo < effectiveFrom)
@@ -80,16 +99,18 @@ export class EmployeeHistoryService {
           OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
         },
       });
+      // A change to the current record rolls it forward: same day, it is corrected in place; a later
+      // day closes it and starts a new one. Only federation could do this, so an administrator
+      // could never change an onboarded employee's job title or manager from the website.
       if (overlap) {
         if (
-          context.accessMode === 'FEDERATION' &&
           overlap.effectiveFrom.getTime() === effectiveFrom.getTime() &&
           overlap.effectiveTo === null
         ) {
           const record = await tx.employeeEmploymentRecord.update({
             where: { id: overlap.id },
             data: {
-              jobTitle: input.jobTitle?.trim(),
+              jobTitle,
               department: input.department?.trim(),
               managerEmployeeId: input.managerEmployeeId,
               employmentType: input.employmentType,
@@ -117,11 +138,7 @@ export class EmployeeHistoryService {
           );
           return record;
         }
-        if (
-          context.accessMode === 'FEDERATION' &&
-          overlap.effectiveTo === null &&
-          effectiveFrom > overlap.effectiveFrom
-        ) {
+        if (overlap.effectiveTo === null && effectiveFrom > overlap.effectiveFrom) {
           await tx.employeeEmploymentRecord.update({
             where: { id: overlap.id },
             data: { effectiveTo: dateBefore(effectiveFrom) },
@@ -134,7 +151,7 @@ export class EmployeeHistoryService {
         data: {
           organizationId: context.organizationId,
           employeeId,
-          jobTitle: input.jobTitle?.trim(),
+          jobTitle,
           department: input.department?.trim(),
           managerEmployeeId: input.managerEmployeeId,
           employmentType: input.employmentType,

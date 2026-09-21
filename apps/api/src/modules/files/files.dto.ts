@@ -1,5 +1,7 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
+  IsDateString,
   IsEnum,
   IsIn,
   IsNumber,
@@ -51,3 +53,26 @@ export class FileDeleteDto {
   @IsString() @MinLength(3) reason!: string;
 }
 import type { FilePurpose } from '../../generated/prisma/enums';
+
+export class DocumentQueryDto {
+  @IsOptional()
+  @IsIn(['all', 'mine', 'shared', 'organization', 'team', 'employees', 'internal'])
+  section?: 'all' | 'mine' | 'shared' | 'organization' | 'team' | 'employees' | 'internal';
+  @IsOptional() @IsUUID() employeeId?: string;
+}
+
+export class DocumentUploadDto extends FileUploadDto {
+  @IsIn(['PERSONAL', 'EMPLOYEE', 'TEAM', 'ORGANIZATION'])
+  scope!: 'PERSONAL' | 'EMPLOYEE' | 'TEAM' | 'ORGANIZATION';
+  @IsOptional() @IsUUID() teamId?: string;
+  @IsOptional() @IsBoolean() allowDownload?: boolean;
+}
+
+export class FileShareDto {
+  @IsIn(['USER', 'ROLE', 'TEAM']) granteeType!: 'USER' | 'ROLE' | 'TEAM';
+  /** The user, role or team. For a person the website sends `granteeEmployeeId` instead. */
+  @IsOptional() @IsUUID() granteeId?: string;
+  @IsOptional() @IsUUID() granteeEmployeeId?: string;
+  @IsOptional() @IsBoolean() canDownload?: boolean;
+  @IsOptional() @IsDateString() expiresAt?: string;
+}

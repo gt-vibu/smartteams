@@ -584,6 +584,26 @@ export const FilePurpose = {
 export type FilePurpose = (typeof FilePurpose)[keyof typeof FilePurpose]
 
 
+export const FileAccessScope = {
+  PERSONAL: 'PERSONAL',
+  EMPLOYEE: 'EMPLOYEE',
+  TEAM: 'TEAM',
+  ORGANIZATION: 'ORGANIZATION',
+  INTERNAL: 'INTERNAL'
+} as const
+
+export type FileAccessScope = (typeof FileAccessScope)[keyof typeof FileAccessScope]
+
+
+export const FileShareGrantee = {
+  USER: 'USER',
+  ROLE: 'ROLE',
+  TEAM: 'TEAM'
+} as const
+
+export type FileShareGrantee = (typeof FileShareGrantee)[keyof typeof FileShareGrantee]
+
+
 export const FileStatus = {
   PENDING_UPLOAD: 'PENDING_UPLOAD',
   AVAILABLE: 'AVAILABLE',

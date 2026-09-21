@@ -21,10 +21,9 @@ import {
   TimesheetEntrySource,
   PayrollRoundingMode,
   SalarySlipMode,
-  SelectionStatus,
 } from '../../src/generated/prisma/enums';
 import { Pool } from 'pg';
-import { PERMISSIONS, EMPLOYEE_PERMISSIONS, EMPLOYEES, HOLIDAYS } from './company-data';
+import { PERMISSIONS, EMPLOYEE_PERMISSIONS, EMPLOYEES } from './company-data';
 
 loadEnv({ path: resolve(__dirname, '../../../../.env') });
 loadEnv({ path: resolve(__dirname, '../../../.env') });
@@ -536,48 +535,8 @@ async function main() {
       }
     }
 
-    // 8. Holidays (Mandatory & Optional)
-    for (const h of HOLIDAYS) {
-      const hDate = new Date(h.date);
-      const createdH = await prisma.holiday.upsert({
-        where: {
-          organizationId_branchId_holidayDate: {
-            organizationId: orgId,
-            branchId: branch.id,
-            holidayDate: hDate,
-          },
-        },
-        create: {
-          organizationId: orgId,
-          branchId: branch.id,
-          holidayDate: hDate,
-          name: h.name,
-          isOptional: h.isOptional,
-          isActive: true,
-          sourceAccessMode: AccessMode.NATIVE,
-        },
-        update: { name: h.name, isOptional: h.isOptional },
-      });
-
-      if (h.isOptional) {
-        for (const empNo of ['EMP-001', 'EMP-002', 'EMP-003']) {
-          const e = empMap[empNo];
-          if (e) {
-            await prisma.employeeHolidaySelection.upsert({
-              where: { employeeId_holidayId: { employeeId: e.id, holidayId: createdH.id } },
-              create: {
-                organizationId: orgId,
-                employeeId: e.id,
-                holidayId: createdH.id,
-                year: 2026,
-                status: SelectionStatus.CONFIRMED,
-              },
-              update: { status: SelectionStatus.CONFIRMED },
-            });
-          }
-        }
-      }
-    }
+    // 8. Holidays are not seeded. The calendar is the company's own: an administrator adds each
+    //    one, and nothing appears on an employee's calendar that no administrator granted.
 
     // 9. Attendance Check-ins (Today: 2026-09-08)
     const today = new Date('2026-09-08');

@@ -49,6 +49,7 @@ export type ProblemDetails = z.infer<typeof problemDetailsSchema>;
 
 export * from './auth';
 export * from './workforce';
+export * from './branch-memberships';
 export * from './attendance';
 export * from './attendance-holiday-conflicts';
 export * from './leave';
@@ -58,5 +59,8 @@ export * from './approvals';
 export * from './shifts';
 export * from './organization';
 export * from './files';
+export * from './documents';
+export * from './departments';
+export * from './aadhaar';
 export * from './holidays';
 export * from './rbac';

@@ -23,12 +23,16 @@ interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   branches: readonly Branch[];
+  /** Names already taken, so a second "beta" is questioned before it is created. */
+  existingNames: readonly string[];
   saving: boolean;
   saveError: string | null;
   onCreate: (input: CreateProjectInput) => Promise<boolean>;
 }
 
 const NONE = 'none';
+
+const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
 /**
  * Creates a project.
@@ -41,6 +45,7 @@ export function CreateProjectModal({
   isOpen,
   onClose,
   branches,
+  existingNames,
   saving,
   saveError,
   onCreate,
@@ -49,6 +54,8 @@ export function CreateProjectModal({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [branchId, setBranchId] = useState(NONE);
+  // Set once the administrator has been shown the name clash and chosen to go ahead anyway.
+  const [nameClash, setNameClash] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [error, setError] = useState('');
@@ -58,26 +65,38 @@ export function CreateProjectModal({
     setName('');
     setDescription('');
     setBranchId(NONE);
+    setNameClash(false);
     setStartDate('');
     setEndDate('');
     setError('');
   };
 
   const handleSubmit = async () => {
-    if (!code.trim() || !name.trim()) {
-      setError('A project code and name are both required.');
+    if (!name.trim()) {
+      setError('A project name is required.');
+      return;
+    }
+    if (branchId === NONE) {
+      setError('Choose the branch this project belongs to.');
       return;
     }
     if (startDate && endDate && endDate < startDate) {
       setError('The end date cannot precede the start date.');
       return;
     }
+    // Duplicate names are allowed — two "Migration" projects in different years are ordinary —
+    // but they are almost always a mistake, so they are questioned once rather than refused.
+    if (!nameClash && existingNames.some((existing) => same(existing, name))) {
+      setNameClash(true);
+      setError('');
+      return;
+    }
     setError('');
     const created = await onCreate({
-      code: code.trim(),
+      ...(code.trim() ? { code: code.trim() } : {}),
       name: name.trim(),
       ...(description.trim() ? { description: description.trim() } : {}),
-      ...(branchId !== NONE ? { branchId } : {}),
+      branchId,
       ...(startDate ? { startDate } : {}),
       ...(endDate ? { endDate } : {}),
     });
@@ -106,13 +125,13 @@ export function CreateProjectModal({
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <Label className="mb-1 block" htmlFor="project-code">
-                Code
+                Code (optional)
               </Label>
               <Input
                 disabled={saving}
                 id="project-code"
                 onChange={(event) => setCode(event.target.value)}
-                placeholder="LUX-2026"
+                placeholder="Generated automatically"
                 value={code}
               />
             </div>
@@ -150,10 +169,9 @@ export function CreateProjectModal({
               </Label>
               <SelectMenu disabled={saving} onValueChange={setBranchId} value={branchId}>
                 <SelectTrigger id="project-branch">
-                  <SelectValue placeholder="No branch" />
+                  <SelectValue placeholder="Choose a branch" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={NONE}>No branch</SelectItem>
                   {branches.map((branch) => (
                     <SelectItem key={branch.id} value={branch.id}>
                       {branch.name}
@@ -187,6 +205,41 @@ export function CreateProjectModal({
               />
             </div>
           </div>
+
+          {nameClash && (
+            <div
+              className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs"
+              role="alert"
+            >
+              <p className="font-semibold text-foreground">
+                A project called &ldquo;{name.trim()}&rdquo; already exists.
+              </p>
+              <p className="mt-0.5 text-muted-foreground">
+                Give this one a different name, or create it anyway and tell them apart by code.
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    setNameClash(false);
+                    document.getElementById('project-name')?.focus();
+                  }}
+                  size="sm"
+                  type="button"
+                >
+                  Rename
+                </Button>
+                <Button
+                  disabled={saving}
+                  onClick={() => void handleSubmit()}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                >
+                  Create anyway
+                </Button>
+              </div>
+            </div>
+          )}
 
           <p className="text-[11px] text-muted-foreground">
             Allocate people from the project once it exists.

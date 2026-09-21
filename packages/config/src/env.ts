@@ -73,6 +73,8 @@ export const serverEnvSchema = z
     FEDERATION_WEBHOOK_SIGNING_PUBLIC_KEY_PEM: z.string().optional().or(z.literal('')),
     FEDERATION_WEBHOOK_RETRY_WINDOW_SECONDS: positiveInt.default(259_200),
     FEDERATION_IDEMPOTENCY_ENCRYPTION_KEY: z.string().min(32).optional().or(z.literal('')),
+    /** Encrypts employee Aadhaar and PAN numbers. Set a random 32+ character value. */
+    INTEGRATION_CREDENTIALS_ENCRYPTION_KEY: z.string().min(32).optional().or(z.literal('')),
     FEDERATION_RATE_LIMIT_PER_MINUTE: positiveInt.default(600),
     FEDERATION_TOKEN_RATE_LIMIT_PER_MINUTE: positiveInt.default(60),
     FEDERATION_WEBHOOK_ALLOWED_HOSTS: z.string().default('invalid-blizbooks.invalid'),

@@ -83,6 +83,34 @@ export function useCompensation() {
     [employeeId, organizationId, run],
   );
 
+  /** Adds a component to the catalogue and assigns it to this employee in one step. */
+  const createAndAssignComponent = useCallback(
+    (
+      component: {
+        code: string;
+        name: string;
+        componentType: 'EARNING' | 'DEDUCTION';
+        calculationType: 'FIXED' | 'PERCENTAGE_OF_BASE';
+        isTaxable: boolean;
+      },
+      assignment: {
+        amount?: number;
+        percentage?: number;
+        effectiveFrom: string;
+        effectiveTo?: string;
+      },
+    ) =>
+      run(async () => {
+        const created = await payrollRepository.createComponent(organizationId!, component);
+        await payrollRepository.assignComponent(organizationId!, {
+          ...assignment,
+          payComponentId: created.id,
+          employeeId: employeeId!,
+        });
+      }, 'The component could not be added.'),
+    [employeeId, organizationId, run],
+  );
+
   const saveSalary = useCallback(
     (input: {
       grossSalary: number;
@@ -167,10 +195,13 @@ export function useCompensation() {
     dismissError: () => setSaveError(null),
     createComponent,
     assignComponent,
+    createAndAssignComponent,
     saveSalary,
     savePolicy,
     refetch: refetchAll,
     can: {
+      readProfiles: canReadProfile,
+      readComponents: canReadComponents,
       createComponent: canWriteComponents,
       assign: canWriteComponents,
       saveSalary: canWriteProfile,

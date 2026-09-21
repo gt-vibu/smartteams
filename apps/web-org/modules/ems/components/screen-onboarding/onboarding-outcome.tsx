@@ -19,6 +19,7 @@ const STEP_LABELS: Record<OnboardingStep, string> = {
   employee: 'Employee record created',
   employment: 'Job title, department and reporting line recorded',
   manager: 'Manager assigned',
+  shift: 'Shift assigned from the joining date',
   account: 'Login created with the Employee role',
   link: 'Login linked to the employee record',
 };
@@ -34,6 +35,7 @@ const STEP_FAILURES: Record<OnboardingStep, string> = {
   employee: 'The employee record could not be created.',
   employment: 'The job title, department and reporting line could not be recorded.',
   manager: 'The manager could not be assigned.',
+  shift: 'The shift could not be assigned.',
   account: 'The login could not be created.',
   link: 'The login could not be linked to the employee record.',
 };

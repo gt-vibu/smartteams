@@ -7,12 +7,6 @@ export interface EmployeeSeedData {
   gross: number;
 }
 
-export interface HolidaySeedData {
-  date: string;
-  name: string;
-  isOptional: boolean;
-}
-
 export const PERMISSIONS: string[] = [
   'organizations.read',
   'organizations.update',
@@ -84,6 +78,8 @@ export const PERMISSIONS: string[] = [
   'projects.write',
   'files.read',
   'files.read.all',
+  'files.organization.manage',
+  'files.share',
   'files.write',
   'shifts.read',
   'shifts.write',
@@ -192,13 +188,4 @@ export const EMPLOYEES: EmployeeSeedData[] = [
     role: 'EMPLOYEE',
     gross: 85000,
   },
-];
-
-export const HOLIDAYS: HolidaySeedData[] = [
-  { date: '2026-10-02', name: 'Mahatma Gandhi Jayanti', isOptional: false },
-  { date: '2026-11-01', name: 'Kannada Rajyotsava', isOptional: false },
-  { date: '2026-11-08', name: 'Diwali (Deepavali)', isOptional: false },
-  { date: '2026-09-14', name: 'Ganesh Chaturthi (Optional)', isOptional: true },
-  { date: '2026-09-24', name: 'Onam (Optional)', isOptional: true },
-  { date: '2026-11-24', name: 'Guru Nanak Jayanti (Optional)', isOptional: true },
 ];

@@ -159,6 +159,14 @@ export class SalaryProfileDto {
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 
+export class SalaryProfilePreviewDto {
+  @IsUUID() employeeId!: string;
+  @IsNumber() @Min(0) @Max(100_000_000) grossSalary!: number;
+  @IsOptional() @IsBoolean() pfEnabled?: boolean;
+  @IsOptional() @IsBoolean() esiEnabled?: boolean;
+  @IsOptional() @IsBoolean() ptEnabled?: boolean;
+}
+
 export class PayrollPreviewDto {
   @IsUUID() employeeId!: string;
   @IsNumber() @Min(0) @IsOptional() payableDays?: number;

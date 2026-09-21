@@ -23,7 +23,9 @@ import {
 } from '../../generated/prisma/enums';
 
 export class CreateEmployeeDto {
-  @IsString() @MinLength(1) employeeNumber!: string;
+  /** Optional when `departmentId` names a department with a number series: it is taken from it. */
+  @IsOptional() @IsString() @MinLength(1) employeeNumber?: string;
+  @IsOptional() @IsUUID() departmentId?: string;
   @IsString() @MinLength(1) firstName!: string;
   @IsOptional() @IsString() middleName?: string;
   @IsString() @MinLength(1) lastName!: string;
@@ -34,6 +36,12 @@ export class CreateEmployeeDto {
   @IsEnum(EmploymentType) employmentType!: EmploymentType;
   @IsOptional() @IsDateString() dateOfJoining?: string;
   @IsOptional() @IsUUID() primaryBranchId?: string;
+  /** Required. Spaces are allowed as printed on the card; the check digit is verified. */
+  @IsString()
+  @Matches(/^[\d\s-]{12,16}$/, { message: 'Enter a 12-digit Aadhaar number' })
+  aadhaarNumber!: string;
+  /** Set when onboarding will create a login next, so a taken address is refused up front. */
+  @IsOptional() @IsBoolean() createLogin?: boolean;
 }
 
 export class FederatedEmployeeDto {
@@ -60,6 +68,8 @@ export class UpdateEmployeeDto {
   @IsOptional() @IsString() phone?: string;
   @IsOptional() @IsEnum(EmployeeStatus) status?: EmployeeStatus;
   @IsOptional() @IsUUID() primaryBranchId?: string;
+  @IsOptional() @IsEnum(EmploymentType) employmentType?: EmploymentType;
+  @IsOptional() @IsDateString() dateOfJoining?: string;
 }
 
 export class BranchAssignmentDto {

@@ -5,12 +5,11 @@ import type { Employee } from '@smarteam/contracts';
 import type { CompensationState } from '../../hooks/use-compensation';
 import { CompensationHeaderCard } from './compensation-header-card';
 import { CompensationSalaryForm } from './compensation-salary-form';
-import { EarningsBreakdownCard } from './earnings-breakdown-card';
-import { StatutoryApplicabilityCard } from './statutory-applicability-card';
-import { CompensationSummaryCard } from './compensation-summary-card';
+import { SalaryBreakdownCard } from './salary-breakdown-card';
 import { AssignComponentDialog } from './assign-component-dialog';
 import { ConfigureSalaryPolicyDialog } from './configure-salary-policy-dialog';
 import { UserCheck } from 'lucide-react';
+import { useSalaryPreview } from '../../hooks/use-salary-preview';
 
 interface EmployeeCompensationPanelProps {
   compensation: CompensationState;
@@ -35,6 +34,25 @@ export function EmployeeCompensationPanel({
   const [pfEnabled, setPfEnabled] = useState<boolean>(true);
   const [ptEnabled, setPtEnabled] = useState<boolean>(true);
   const [esiEnabled, setEsiEnabled] = useState<boolean>(true);
+
+  const [grossInput, setGrossInput] = useState('');
+  const savedGross = Number(
+    profile?.compensation?.grossSalary ?? profile?.compensation?.baseAmount ?? 0,
+  );
+  const typedGross = Number(grossInput);
+  const changed =
+    Boolean(profile) &&
+    grossInput !== '' &&
+    Number.isFinite(typedGross) &&
+    typedGross >= 0 &&
+    (typedGross !== savedGross ||
+      pfEnabled !== (policy?.pfEnabled ?? pfEnabled) ||
+      ptEnabled !== (policy?.ptEnabled ?? ptEnabled) ||
+      esiEnabled !== (policy?.esiEnabled ?? esiEnabled));
+  const { preview, updating } = useSalaryPreview(
+    compensation.employeeId,
+    changed ? { grossSalary: typedGross, pfEnabled, esiEnabled, ptEnabled } : null,
+  );
 
   useEffect(() => {
     if (policy) {
@@ -98,47 +116,43 @@ export function EmployeeCompensationPanel({
     );
   }
 
+  // The typed salary's figures while it differs from what is saved, the saved ones otherwise.
+  const shown = (changed && preview) || profile;
+
   return (
     <div className="w-full min-w-0 space-y-3.5">
       {/* 1. Header with Employee Context & 4 Headline Metric Cards */}
-      <CompensationHeaderCard employee={employee} profile={profile} />
+      <CompensationHeaderCard employee={employee} profile={shown} />
+      {changed && (
+        <p
+          className="rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
+          role="status"
+        >
+          {updating
+            ? 'Updating the preview…'
+            : 'Preview of the figures below. Nothing is saved until you press Save Compensation.'}
+        </p>
+      )}
 
-      {/* 2. Main 2-Column Responsive Workspace Grid */}
-      <div className="grid grid-cols-1 gap-3.5 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_380px] items-start">
-        {/* Left Column: Primary Configuration, Earnings Table, Deductions Table */}
-        <div className="min-w-0 space-y-3.5">
-          <CompensationSalaryForm
-            compensation={compensation}
-            profile={profile}
-            pfEnabled={pfEnabled}
-            ptEnabled={ptEnabled}
-            esiEnabled={esiEnabled}
-          />
-
-          <EarningsBreakdownCard
-            canAssign={compensation.can.assign}
-            canConfigurePolicy={compensation.can.savePolicy}
-            onAssignComponent={() => setAssigning(true)}
-            onConfigurePolicy={() => setConfiguringPolicy(true)}
-            profile={profile}
-          />
-
-          <StatutoryApplicabilityCard profile={profile} />
-        </div>
-
-        {/* Right Column: Policy & Toggles, CTC Distribution Donut, Compensation Summary */}
-        <div className="min-w-0 space-y-3.5">
-          <CompensationSummaryCard
-            compensation={compensation}
-            profile={profile}
-            pfEnabled={pfEnabled}
-            ptEnabled={ptEnabled}
-            esiEnabled={esiEnabled}
-            onTogglePf={() => setPfEnabled(!pfEnabled)}
-            onTogglePt={() => setPtEnabled(!ptEnabled)}
-            onToggleEsi={() => setEsiEnabled(!esiEnabled)}
-          />
-        </div>
+      <div className="grid grid-cols-1 items-start gap-3.5 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <CompensationSalaryForm
+          compensation={compensation}
+          esiEnabled={esiEnabled}
+          onGrossChange={setGrossInput}
+          onToggleEsi={() => setEsiEnabled(!esiEnabled)}
+          onTogglePf={() => setPfEnabled(!pfEnabled)}
+          onTogglePt={() => setPtEnabled(!ptEnabled)}
+          pfEnabled={pfEnabled}
+          profile={profile}
+          ptEnabled={ptEnabled}
+        />
+        <SalaryBreakdownCard
+          canAssign={compensation.can.assign}
+          canConfigurePolicy={compensation.can.savePolicy}
+          onAssignComponent={() => setAssigning(true)}
+          onConfigurePolicy={() => setConfiguringPolicy(true)}
+          profile={shown}
+        />
       </div>
 
       {/* Assign Component Modal */}

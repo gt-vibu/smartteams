@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback } from 'react';
+import { useAuth } from '../../hooks/use-auth';
 import { scrollCanvasToTop, useScreenTab } from '../../hooks/use-screen-tab';
 import { useMediaQuery, WIDE_LAYOUT_QUERY } from '../../hooks/use-media-query';
 import { HeroBanner } from './hero-banner';
@@ -54,7 +55,19 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   // Two independent levels, each its own history entry: moving through the sub-tabs and then
   // pressing Back returns to the previous sub-tab rather than leaving the screen.
   const [activeTopTab, setActiveTopTab] = useScreenTab(TOP_TAB_KEY, TOP_TABS, 'Overview');
-  const [activeSubTab, setActiveSubTab] = useScreenTab(SUB_TAB_KEY, SUB_TABS, subFallback);
+  const [requestedSubTab, setActiveSubTab] = useScreenTab(SUB_TAB_KEY, SUB_TABS, subFallback);
+  // A link or a remembered tab can name a preview this person may not read; it opens on the
+  // default instead of on a refusal. Approvals is guarded the same way by its own tab.
+  const { canAccessModule } = useAuth();
+  const previewModule: Partial<Record<(typeof SUB_TABS)[number], string>> = {
+    Leave: 'time-off',
+    Attendance: 'attendance',
+    'Time Logs': 'timesheet',
+    Timesheets: 'timesheet',
+  };
+  const requiredModule = previewModule[requestedSubTab];
+  const activeSubTab =
+    requiredModule && !canAccessModule(requiredModule) ? subFallback : requestedSubTab;
 
   /**
    * The phone strip mixes the two levels — Dashboard is a top tab, Activities a sub-tab — so one

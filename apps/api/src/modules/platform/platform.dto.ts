@@ -1,13 +1,4 @@
-import {
-  IsDateString,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Max,
-  Min,
-  MinLength,
-} from 'class-validator';
+import { IsDateString, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
 import { IsEnum } from 'class-validator';
 import { ProjectStatus } from '../../generated/prisma/enums';
 export class TeamDto {
@@ -18,7 +9,12 @@ export class TeamDto {
 }
 export class TeamMemberDto {
   @IsUUID() employeeId!: string;
+  @IsOptional() @IsString() @MaxLength(80) teamRole?: string;
   @IsDateString() joinedAt!: string;
+}
+/** A current member's role in the team; empty clears it. */
+export class UpdateTeamMemberDto {
+  @IsOptional() @IsString() @MaxLength(80) teamRole?: string;
 }
 export class UpdateTeamDto {
   @IsOptional() @IsString() name?: string;
@@ -30,7 +26,8 @@ export class TeamDeactivationDto {
   @IsString() @MinLength(2) reason!: string;
 }
 export class ProjectDto {
-  @IsString() code!: string;
+  /** Left out to have one generated (PRJ-001 …). */
+  @IsOptional() @IsString() code?: string;
   @IsString() name!: string;
   @IsOptional() @IsString() description?: string;
   @IsOptional() @IsUUID() branchId?: string;
@@ -40,7 +37,6 @@ export class ProjectDto {
 export class ProjectMemberDto {
   @IsUUID() employeeId!: string;
   @IsOptional() @IsString() projectRole?: string;
-  @IsOptional() @IsNumber() @Min(0) @Max(100) allocationPercentage?: number;
   @IsDateString() startsOn!: string;
   @IsOptional() @IsDateString() endsOn?: string;
 }
@@ -67,8 +63,7 @@ export class EndProjectMemberDto {
   @IsDateString() endsOn!: string;
 }
 
-/** The two fields of a project assignment that may change without rewriting history. */
+/** What may change on a project assignment without rewriting history: the role. */
 export class UpdateProjectMemberDto {
   @IsOptional() @IsString() projectRole?: string;
-  @IsOptional() @IsNumber() @Min(0) @Max(100) allocationPercentage?: number;
 }

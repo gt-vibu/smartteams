@@ -7,6 +7,9 @@ import { CalendarDetailDrawer } from './calendar-detail-drawer';
 import { localDateKey, useAttendance } from '../../hooks/use-attendance';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
+import { useLeave } from '../../hooks/use-leave';
+import { useWorkWeek } from '../../hooks/use-work-week';
+import { approvedLeaveByDate } from '../../services/leave-calendar';
 import { toCalendarStatus } from '../../services/attendance-view';
 import type { CalendarDayItem } from '../../types/calendar.types';
 import { PageShell } from '../layout/page-shell';
@@ -35,6 +38,13 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
   } = useAttendance(30, monthWindow);
   const holidays = useHolidays();
   const employeeHolidays = useEmployeeHolidays();
+  const leave = useLeave();
+  const { isWeeklyOff } = useWorkWeek();
+  // Approved leave by day, so a granted leave shows on the calendar rather than a blank day.
+  const leaveByDate = useMemo(
+    () => approvedLeaveByDate(leave.requests, leave.types),
+    [leave.requests, leave.types],
+  );
 
   // Map of effective holidays for this employee (mandatory + confirmed selected optional)
   const effectiveHolidayMap = useMemo(() => {
@@ -87,24 +97,32 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
 
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      const dayOfWeekNum = new Date(year, month, d).getDay();
-      const isWeekend = dayOfWeekNum === 0 || dayOfWeekNum === 6;
+      // The company's weekly offs, not a fixed Saturday and Sunday.
+      const isWeekend = isWeeklyOff(new Date(year, month, d));
       const isToday = dateStr === demoToday;
       const holidayInfo = effectiveHolidayMap.get(dateStr);
+      const leaveName = leaveByDate.get(dateStr);
 
       // Find the attendance record the server returned for this date.
       const record = records.find((r) => r.workDate === dateStr);
       const dayPunches = record?.record.punches ?? [];
 
-      const dayStatus: CalendarDayItem['dayStatus'] = record
-        ? toCalendarStatus(record.dayStatus)
-        : holidayInfo
-          ? 'HOLIDAY'
-          : isWeekend
-            ? 'WEEKEND'
-            : demoToday && dateStr > demoToday
-              ? 'UPCOMING'
-              : 'EMPTY';
+      // Worked beats everything; then approved leave, then a holiday, then the weekend.
+      const worked = record ? toCalendarStatus(record.dayStatus) : null;
+      const dayStatus: CalendarDayItem['dayStatus'] =
+        worked && worked !== 'ABSENT'
+          ? worked
+          : leaveName
+            ? 'LEAVE'
+            : worked
+              ? worked
+              : holidayInfo
+                ? 'HOLIDAY'
+                : isWeekend
+                  ? 'WEEKEND'
+                  : demoToday && dateStr > demoToday
+                    ? 'UPCOMING'
+                    : 'EMPTY';
 
       days.push({
         date: dateStr,
@@ -118,6 +136,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
             ? String(dayPunches.at(-1)?.occurredAt)
             : undefined,
         holidayName: holidayInfo?.name,
+        leaveName,
         isRestrictedHoliday: holidayInfo?.isOptional,
         ...(record?.holidayConflict ? { holidayConflict: record.holidayConflict } : {}),
         hoursLabel: record && record.workedMinutes > 0 ? record.workedLabel : undefined,
@@ -151,7 +170,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     }
 
     return days;
-  }, [records, viewDate, effectiveHolidayMap]);
+  }, [records, viewDate, effectiveHolidayMap, leaveByDate, isWeeklyOff]);
 
   const handleToday = () => {
     const today = records.find((record) => record.isToday)?.workDate;

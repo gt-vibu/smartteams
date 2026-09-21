@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge, Progress } from '@smarteam/ui';
+import { Badge } from '@smarteam/ui';
 import type { EmployeeDetail } from '@smarteam/contracts';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
 
@@ -67,9 +67,9 @@ export function EmployeeProjectsSection({ memberships }: { memberships: ProjectM
 
   return (
     <div className="border-t border-border pt-3">
-      <SectionHeading count={active.length} title="Projects &amp; Allocation" />
+      <SectionHeading count={active.length} title="Projects" />
       {active.length === 0 && ended.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No project allocations.</p>
+        <p className="text-xs text-muted-foreground">Not on any project.</p>
       ) : (
         <div className="space-y-2.5">
           {active.map((m) => (
@@ -81,16 +81,7 @@ export function EmployeeProjectsSection({ memberships }: { memberships: ProjectM
                 <span className="truncate text-xs font-semibold text-foreground">
                   {m.project.name}
                 </span>
-                <span className="font-mono text-xs font-bold text-primary">
-                  {m.allocationPercentage === null ? '—' : `${m.allocationPercentage}%`}
-                </span>
               </div>
-              {m.allocationPercentage !== null && (
-                <Progress
-                  aria-label={`Allocation ${m.allocationPercentage}%`}
-                  value={m.allocationPercentage}
-                />
-              )}
             </div>
           ))}
           {ended.map((m) => (

@@ -184,6 +184,13 @@ export const PERMISSION_CATALOGUE: PermissionCatalogueEntry[] = [
   { key: 'files.read', label: 'View own files', module: 'Files' },
   { key: 'files.read.all', label: 'View everyone’s files', module: 'Files' },
   { key: 'files.write', label: 'Upload and delete files', module: 'Files' },
+  {
+    key: 'files.organization.manage',
+    label: 'Publish company and team documents',
+    module: 'Files',
+  },
+  { key: 'files.share', label: 'Share documents with people, roles and teams', module: 'Files' },
+  { key: 'files.reports.read', label: 'View direct reports’ documents', module: 'Files' },
 
   // --- Shifts ---------------------------------------------------------------------------------
   { key: 'shifts.read', label: 'View shifts', module: 'Shifts' },

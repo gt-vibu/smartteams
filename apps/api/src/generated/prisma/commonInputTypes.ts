@@ -638,6 +638,13 @@ export type BigIntFilter<$PrismaModel = never> = {
   not?: Prisma.NestedBigIntFilter<$PrismaModel> | bigint | number
 }
 
+export type EnumFileAccessScopeFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileAccessScope | Prisma.EnumFileAccessScopeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileAccessScopeFilter<$PrismaModel> | $Enums.FileAccessScope
+}
+
 export type EnumFilePurposeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.FilePurpose | Prisma.EnumFilePurposeFieldRefInput<$PrismaModel>
   in?: $Enums.FilePurpose[] | Prisma.ListEnumFilePurposeFieldRefInput<$PrismaModel>
@@ -672,6 +679,33 @@ export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedBigIntFilter<$PrismaModel>
   _min?: Prisma.NestedBigIntFilter<$PrismaModel>
   _max?: Prisma.NestedBigIntFilter<$PrismaModel>
+}
+
+export type EnumFileAccessScopeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileAccessScope | Prisma.EnumFileAccessScopeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileAccessScopeWithAggregatesFilter<$PrismaModel> | $Enums.FileAccessScope
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFileAccessScopeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFileAccessScopeFilter<$PrismaModel>
+}
+
+export type EnumFileShareGranteeFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileShareGrantee | Prisma.EnumFileShareGranteeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileShareGranteeFilter<$PrismaModel> | $Enums.FileShareGrantee
+}
+
+export type EnumFileShareGranteeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileShareGrantee | Prisma.EnumFileShareGranteeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileShareGranteeWithAggregatesFilter<$PrismaModel> | $Enums.FileShareGrantee
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFileShareGranteeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFileShareGranteeFilter<$PrismaModel>
 }
 
 export type EnumIdentityTypeFilter<$PrismaModel = never> = {
@@ -2136,6 +2170,13 @@ export type NestedBigIntFilter<$PrismaModel = never> = {
   not?: Prisma.NestedBigIntFilter<$PrismaModel> | bigint | number
 }
 
+export type NestedEnumFileAccessScopeFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileAccessScope | Prisma.EnumFileAccessScopeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileAccessScopeFilter<$PrismaModel> | $Enums.FileAccessScope
+}
+
 export type NestedEnumFilePurposeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.FilePurpose | Prisma.EnumFilePurposeFieldRefInput<$PrismaModel>
   in?: $Enums.FilePurpose[] | Prisma.ListEnumFilePurposeFieldRefInput<$PrismaModel>
@@ -2170,6 +2211,33 @@ export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedBigIntFilter<$PrismaModel>
   _min?: Prisma.NestedBigIntFilter<$PrismaModel>
   _max?: Prisma.NestedBigIntFilter<$PrismaModel>
+}
+
+export type NestedEnumFileAccessScopeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileAccessScope | Prisma.EnumFileAccessScopeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileAccessScope[] | Prisma.ListEnumFileAccessScopeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileAccessScopeWithAggregatesFilter<$PrismaModel> | $Enums.FileAccessScope
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFileAccessScopeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFileAccessScopeFilter<$PrismaModel>
+}
+
+export type NestedEnumFileShareGranteeFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileShareGrantee | Prisma.EnumFileShareGranteeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileShareGranteeFilter<$PrismaModel> | $Enums.FileShareGrantee
+}
+
+export type NestedEnumFileShareGranteeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FileShareGrantee | Prisma.EnumFileShareGranteeFieldRefInput<$PrismaModel>
+  in?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FileShareGrantee[] | Prisma.ListEnumFileShareGranteeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFileShareGranteeWithAggregatesFilter<$PrismaModel> | $Enums.FileShareGrantee
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFileShareGranteeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFileShareGranteeFilter<$PrismaModel>
 }
 
 export type NestedEnumIdentityTypeFilter<$PrismaModel = never> = {

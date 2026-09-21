@@ -21,7 +21,6 @@ type Loaded = { projects: Project[]; employees: Employee[]; branches: Branch[] }
 export type AddProjectMemberInput = {
   employeeId: string;
   projectRole?: string;
-  allocationPercentage?: number;
 };
 
 /**
@@ -40,6 +39,8 @@ export function useProjectDirectory() {
   const canRead = hasPermission(permissions, 'projects.read');
   const canWrite = hasPermission(permissions, 'projects.write');
   const canReadEmployees = hasPermission(permissions, 'employees.read');
+  // Without this the API answers with the caller's own rows only, so there is no "all" view.
+  const canReadAll = hasPermission(permissions, 'projects.read.all');
 
   const resource = useAsyncResource<Loaded>(
     async () => {
@@ -82,14 +83,21 @@ export function useProjectDirectory() {
           await membershipRepository.addProjectMember(organizationId!, project.id, {
             employeeId: member.employeeId,
             ...(member.projectRole ? { projectRole: member.projectRole } : {}),
-            ...(member.allocationPercentage !== undefined
-              ? { allocationPercentage: member.allocationPercentage }
-              : {}),
             startsOn: input.startDate ?? today(),
           });
         }
         return project;
       }, 'The project could not be created.'),
+    [organizationId, run],
+  );
+
+  /** Renames a project, moves it to another branch, or changes its dates. */
+  const updateProject = useCallback(
+    (projectId: string, input: Partial<CreateProjectInput>) =>
+      run(
+        () => teamsProjectsRepository.updateProject(organizationId!, projectId, input),
+        'The project could not be saved.',
+      ),
     [organizationId, run],
   );
 
@@ -100,12 +108,24 @@ export function useProjectDirectory() {
           membershipRepository.addProjectMember(organizationId!, projectId, {
             employeeId: member.employeeId,
             ...(member.projectRole ? { projectRole: member.projectRole } : {}),
-            ...(member.allocationPercentage !== undefined
-              ? { allocationPercentage: member.allocationPercentage }
-              : {}),
             startsOn: today(),
           }),
-        'The allocation could not be saved.',
+        'The member could not be added.',
+      ),
+    [organizationId, run],
+  );
+
+  const changeRole = useCallback(
+    (projectId: string, memberId: string, projectRole: string) =>
+      run(
+        () =>
+          membershipRepository.updateProjectMember(
+            organizationId!,
+            projectId,
+            memberId,
+            projectRole,
+          ),
+        'The role could not be changed.',
       ),
     [organizationId, run],
   );
@@ -115,7 +135,7 @@ export function useProjectDirectory() {
     (projectId: string, memberId: string) =>
       run(
         () => membershipRepository.endProjectMember(organizationId!, projectId, memberId, today()),
-        'The allocation could not be ended.',
+        'The member could not be removed.',
       ),
     [organizationId, run],
   );
@@ -142,10 +162,13 @@ export function useProjectDirectory() {
     saving,
     saveError,
     createProject,
+    updateProject,
     addMember,
+    changeRole,
     endMember,
     archiveProject,
     canRead,
+    canReadAll,
     canWrite,
   };
 }

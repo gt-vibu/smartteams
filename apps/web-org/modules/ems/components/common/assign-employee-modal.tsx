@@ -4,10 +4,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 import type { AssignmentsState } from '../../hooks/use-assignments';
 import {
-  DEFAULT_ALLOCATION,
   buildChanges,
-  draftedAllocation,
   type ProjectDraftMap,
+  type RoleDraft,
   type TeamDraft,
 } from '../../services/assignment-changes';
 import { ProjectPicker, TeamPicker } from './assignment-pickers';
@@ -18,6 +17,47 @@ interface AssignEmployeeModalProps {
   employeeName: string;
   /** Owned by the drawer so both surfaces read and refresh the same membership state. */
   assignments: AssignmentsState;
+}
+
+/**
+ * What the employee is on right now, before any of the lists below.
+ *
+ * The dialog is a tick-list of every team and project in the company, so the ones they already
+ * belong to were only findable by scrolling for a ticked box. This states them plainly; the
+ * lists below are for joining and leaving.
+ */
+function CurrentAssignments({ teams, projects }: { teams: string[]; projects: string[] }) {
+  const groups: Array<[string, string[], string]> = [
+    ['Teams', teams, 'Not on any team yet.'],
+    ['Projects', projects, 'Not on any project yet.'],
+  ];
+
+  return (
+    <div className="grid grid-cols-1 gap-4 border-b border-border bg-muted/30 px-5 py-3 sm:grid-cols-2">
+      {groups.map(([label, names, empty]) => (
+        <div key={label}>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Current {label.toLowerCase()}
+            {names.length > 0 && ` · ${names.length}`}
+          </p>
+          {names.length === 0 ? (
+            <p className="mt-1 text-[11px] text-muted-foreground">{empty}</p>
+          ) : (
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {names.map((name) => (
+                <span
+                  className="rounded-full border border-border bg-card px-2 py-0.5 text-[11px] font-semibold text-foreground"
+                  key={name}
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function matches(name: string, query: string) {
@@ -41,6 +81,8 @@ export function AssignEmployeeModal({
 
   const [teamDraft, setTeamDraft] = useState<TeamDraft>({});
   const [projectDraft, setProjectDraft] = useState<ProjectDraftMap>({});
+  const [roles, setRoles] = useState<RoleDraft>({});
+  const setRole = (key: string, role: string) => setRoles((prev) => ({ ...prev, [key]: role }));
   const [query, setQuery] = useState('');
 
   // Re-seed the draft from server state each time the dialog opens or the data reloads, so a
@@ -50,23 +92,16 @@ export function AssignEmployeeModal({
     setTeamDraft(Object.fromEntries(teamMemberships.map((m) => [m.team.id, m.state === 'ACTIVE'])));
     setProjectDraft(
       Object.fromEntries(
-        projectMemberships.map((m) => [
-          m.project.id,
-          {
-            selected: m.state === 'ACTIVE',
-            allocation: m.allocationPercentage ?? DEFAULT_ALLOCATION,
-          },
-        ]),
+        projectMemberships.map((m) => [m.project.id, { selected: m.state === 'ACTIVE' }]),
       ),
     );
   }, [isOpen, teamMemberships, projectMemberships]);
 
   const changes = useMemo(
-    () => buildChanges(teamMemberships, projectMemberships, teamDraft, projectDraft),
-    [teamMemberships, projectMemberships, teamDraft, projectDraft],
+    () => buildChanges(teamMemberships, projectMemberships, teamDraft, projectDraft, roles),
+    [teamMemberships, projectMemberships, teamDraft, projectDraft, roles],
   );
 
-  const totalAllocation = draftedAllocation(projectMemberships, projectDraft);
   const visibleTeams = teamMemberships.filter((m) => matches(m.team.name, query));
   const visibleProjects = projectMemberships.filter((m) => matches(m.project.name, query));
 
@@ -82,6 +117,13 @@ export function AssignEmployeeModal({
         <DialogTitle className="border-b border-border px-5 py-4 text-sm font-bold">
           Manage assignments &mdash; {employeeName}
         </DialogTitle>
+
+        <CurrentAssignments
+          projects={projectMemberships
+            .filter((m) => m.state === 'ACTIVE')
+            .map((m) => m.project.name)}
+          teams={teamMemberships.filter((m) => m.state === 'ACTIVE').map((m) => m.team.name)}
+        />
 
         <div className="border-b border-border px-5 py-3">
           <Label className="sr-only" htmlFor="assignment-search">
@@ -121,6 +163,8 @@ export function AssignEmployeeModal({
                 disabled={assignments.saving}
                 draft={teamDraft}
                 memberships={visibleTeams}
+                onRole={setRole}
+                roles={roles}
                 onToggle={(teamId, checked) =>
                   setTeamDraft((prev) => ({ ...prev, [teamId]: checked }))
                 }
@@ -130,22 +174,14 @@ export function AssignEmployeeModal({
                 disabled={assignments.saving}
                 draft={projectDraft}
                 memberships={visibleProjects}
-                onAllocate={(projectId, allocation) =>
-                  setProjectDraft((prev) => ({
-                    ...prev,
-                    [projectId]: { selected: true, allocation },
-                  }))
-                }
+                onRole={setRole}
+                roles={roles}
                 onToggle={(projectId, checked) =>
                   setProjectDraft((prev) => ({
                     ...prev,
-                    [projectId]: {
-                      allocation: prev[projectId]?.allocation ?? DEFAULT_ALLOCATION,
-                      selected: checked,
-                    },
+                    [projectId]: { selected: checked },
                   }))
                 }
-                totalAllocation={totalAllocation}
               />
             </>
           )}

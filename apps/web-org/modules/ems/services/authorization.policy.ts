@@ -92,6 +92,15 @@ const PAYROLL_MODULE_PERMISSIONS = [
   'payroll.ledger.read',
 ];
 
+/** One per tab of the organization payroll screen; any of them makes the screen worth opening. */
+const ADMIN_PAYROLL_PERMISSIONS = [
+  'payroll.runs.read',
+  'payroll.payslips.read.all',
+  'payroll.employee-profile.read.all',
+  'payroll.components.read',
+  'payroll.policy.read',
+];
+
 function canOpenPayroll(permissions: readonly string[]): boolean {
   return canAny(permissions, PAYROLL_MODULE_PERMISSIONS);
 }
@@ -112,6 +121,7 @@ function canOpenPayroll(permissions: readonly string[]): boolean {
 const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
   home: ['organizations.read'],
   onboarding: ['employees.write'],
+  employees: ['employees.read.all'],
   attendance: ['attendance.read.all'],
   'time-off': ['leave.requests.read.all'],
   timesheet: ['timesheets.read.all'],
@@ -168,7 +178,10 @@ function canOpenAdminModule(moduleName: string, permissions: readonly string[]):
   // out of a new screen by an omission here would be a bug, not a safeguard — they can grant
   // themselves any named permission anyway.
   if (can(permissions, '*')) return true;
-  if (moduleName === 'payroll') return canOpenPayroll(permissions);
+  // Organization payroll needs something organization-wide. The self-service keys every
+  // employee holds (their own payslip, their own salary) opened it before, onto tabs that each
+  // then refused.
+  if (moduleName === 'payroll') return canAny(permissions, ADMIN_PAYROLL_PERMISSIONS);
   const required = ADMIN_MODULE_PERMISSIONS[moduleName];
   // Anyone short of the wildcard needs the module to say what it requires. An unlisted module
   // stays shut rather than inheriting the old blanket `true`.

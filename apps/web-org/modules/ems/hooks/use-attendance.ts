@@ -18,6 +18,8 @@ import { toAttendanceDayViews, type AttendanceDayView } from '../services/attend
 import { holidayConflictsRepository } from '../repositories/holiday-conflicts.repository';
 import { holidayConflictsByRecord } from '../services/holiday-conflict-view';
 import { announceHolidayCheckIn, emitDataChanged, useDataChanged } from '../lib/data-events';
+import { useMinuteClock } from './use-minute-clock';
+import { useWorkWeek } from './use-work-week';
 
 /** Local calendar date as `YYYY-MM-DD`; attendance is recorded in the employee's own day. */
 export function localDateKey(date: Date = new Date()): string {
@@ -105,6 +107,8 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const sessionMode = preferencesResource.data?.attendanceSessionMode ?? 'SINGLE';
 
   const todayKey = localDateKey();
+  const now = useMinuteClock();
+  const { workWeekDays } = useWorkWeek();
   const todayRecord = useMemo(
     () => records.find((record) => workDateKey(record) === todayKey) ?? null,
     [records, todayKey],
@@ -254,8 +258,8 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
 
   // Presentation shape the screens render, derived from the same records.
   const days: AttendanceDayView[] = useMemo(
-    () => toAttendanceDayViews(records, todayKey, [], holidayConflicts),
-    [records, todayKey, holidayConflicts],
+    () => toAttendanceDayViews(records, todayKey, [], holidayConflicts, now, workWeekDays),
+    [records, todayKey, holidayConflicts, now, workWeekDays],
   );
 
   return {

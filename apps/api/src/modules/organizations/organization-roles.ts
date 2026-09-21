@@ -68,6 +68,8 @@ export const HR_ADMIN_PERMISSIONS = [
   'leave.types.write',
   'timesheets.read.all',
   'files.read.all',
+  'files.organization.manage',
+  'files.share',
   'branches.read',
   'shifts.write',
   'members.read',

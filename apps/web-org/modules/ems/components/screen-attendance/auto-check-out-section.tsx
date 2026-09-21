@@ -4,13 +4,13 @@ import React, { useEffect, useState } from 'react';
 import {
   Badge,
   Button,
-  Input,
   Label,
   SelectContent,
   SelectItem,
   SelectMenu,
   SelectTrigger,
   SelectValue,
+  TimePicker,
 } from '@smarteam/ui';
 import type { useAttendancePreferences } from '../../hooks/use-attendance-preferences';
 
@@ -85,16 +85,19 @@ export function AutoCheckOutSection({ policy }: { policy: Policy }) {
           </SelectContent>
         </SelectMenu>
         <div>
-          <Input
+          <TimePicker
             aria-label="Closing time"
             disabled={!policy.canWrite || policy.saving || mode === 'DISABLED'}
             id="auto-check-out-at"
             onBlur={() => {
               if (time && time !== savedAt) void policy.save({ autoCheckOutAt: time });
             }}
-            onChange={(event) => setTime(event.target.value)}
-            type="time"
+            onChange={(val) => {
+              setTime(val);
+              if (val && val !== savedAt) void policy.save({ autoCheckOutAt: val });
+            }}
             value={time}
+            placeholder="23:59"
           />
           <p className="mt-1 text-[10px] text-muted-foreground">Your organization&rsquo;s time</p>
         </div>

@@ -14,6 +14,7 @@ import {
 import type { Branch } from '@smarteam/contracts';
 import type { OrganizationState } from '../../hooks/use-organization';
 import { Unavailable } from './org-profile-panel';
+import { BranchSettingsDrawer } from './branch-settings-drawer';
 
 /**
  * Branches.
@@ -27,6 +28,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
   const [editing, setEditing] = useState<Branch | null>(null);
   const [creating, setCreating] = useState(false);
   const [retiring, setRetiring] = useState<Branch | null>(null);
+  const [settings, setSettings] = useState<Branch | null>(null);
 
   if (state.branchesForbidden) {
     return <Unavailable detail="You do not have permission to view branches." />;
@@ -98,8 +100,20 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                     </Badge>
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">
-                    {state.can.writeBranches && branch.status !== 'DEACTIVATED' && (
+                    {branch.status !== 'DEACTIVATED' && (
                       <div className="flex justify-end gap-2">
+                        <Button
+                          onClick={() => setSettings(branch)}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          Settings
+                        </Button>
+                      </div>
+                    )}
+                    {state.can.writeBranches && branch.status !== 'DEACTIVATED' && (
+                      <div className="mt-1.5 flex justify-end gap-2">
                         <Button
                           onClick={() => setEditing(branch)}
                           size="sm"
@@ -126,8 +140,16 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
         </div>
       )}
 
+      {settings && (
+        <BranchSettingsDrawer
+          branch={settings}
+          onClose={() => setSettings(null)}
+          onSaved={() => void state.refetch()}
+        />
+      )}
+
       <p className="text-[11px] text-muted-foreground">
-        The API does not report how many employees a branch holds, so no headcount is shown.
+        Open a branch's Settings to see how many current employees are based there.
       </p>
 
       <BranchDialog

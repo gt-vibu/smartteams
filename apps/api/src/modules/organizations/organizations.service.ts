@@ -87,6 +87,10 @@ export class OrganizationsService {
     return this.branches.createBranch(...args);
   }
 
+  branchOverview(...args: Parameters<OrganizationBranchesService['branchOverview']>) {
+    return this.branches.branchOverview(...args);
+  }
+
   updateBranch(...args: Parameters<OrganizationBranchesService['updateBranch']>) {
     return this.branches.updateBranch(...args);
   }

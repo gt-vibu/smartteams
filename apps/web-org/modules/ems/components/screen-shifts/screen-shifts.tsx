@@ -126,9 +126,6 @@ export function ScreenShifts() {
                   >
                     <td data-cell="primary" className="px-4 py-2.5">
                       <span className="block font-semibold text-foreground">{shift.name}</span>
-                      <span className="font-mono text-[10px] text-muted-foreground">
-                        {shift.code}
-                      </span>
                     </td>
                     <td data-label="Days" className="px-4 py-2.5 text-muted-foreground">
                       {formatWeekdays(shift.daysOfWeek)}

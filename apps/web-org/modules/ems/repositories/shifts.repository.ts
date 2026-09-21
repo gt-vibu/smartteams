@@ -24,7 +24,8 @@ import { expectShape, orgPath, queryString } from './api-helpers';
 const base = (organizationId: string) => orgPath(organizationId, '/shifts');
 
 export type ShiftInput = {
-  code: string;
+  /** Left out by the app: the server makes one from the name. */
+  code?: string;
   name: string;
   branchId?: string;
   daysOfWeek: number[];
@@ -104,7 +105,13 @@ export const shiftsRepository = {
   /** Who is on a shift: current and upcoming, or every assignment with `includeEnded`. */
   async assignments(
     organizationId: string,
-    filters: { shiftId?: string; includeEnded?: boolean; cursor?: string; limit?: number },
+    filters: {
+      shiftId?: string;
+      employeeId?: string;
+      includeEnded?: boolean;
+      cursor?: string;
+      limit?: number;
+    },
   ): Promise<{ items: ShiftAssignment[]; nextCursor: string | null }> {
     return expectShape(
       parseShiftAssignmentPage(

@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contracts = createRequire(import.meta.url)(resolve(ROOT, 'packages/contracts/dist/index.js'));
@@ -196,6 +197,7 @@ async function main() {
     firstName: 'Asha',
     lastName: 'Rao',
     workEmail: `asha@${a.slug}.test`,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2024-03-15',
     primaryBranchId: branchId,

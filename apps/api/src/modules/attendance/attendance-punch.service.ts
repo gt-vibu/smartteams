@@ -8,6 +8,7 @@ import {
   BiometricVerificationMode,
 } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
+import { branchForPunch } from './attendance-branch';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
@@ -25,6 +26,7 @@ import {
   toRecordDto,
   workDateInTimeZone,
 } from './attendance-shared';
+import { expectedDayOn } from './attendance-shift-day';
 
 export type PunchInput = {
   employeeId: string;
@@ -107,7 +109,7 @@ export class AttendancePunchService {
         },
       });
       if (!employee || employee.status !== 'ACTIVE') throw new NotFoundError('Active employee');
-      const branchId =
+      let branchId =
         input.branchId ?? employee.primaryBranchId ?? employee.branchAssignments[0]?.branchId;
       const settings = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
@@ -121,9 +123,21 @@ export class AttendancePunchService {
       // previous one.
       const now = new Date();
       const occurredAt = actsForOthers ? new Date(input.occurredAt) : now;
+      // An administrator records a punch that happened, never one that has not yet. A few
+      // minutes of clock drift are allowed. Native only: the federation contract is frozen.
+      if (context.accessMode === 'NATIVE' && occurredAt.getTime() > now.getTime() + 5 * 60_000)
+        throw new ConflictError('A punch cannot be recorded for a time that has not happened yet.');
       const workDate = actsForOthers
         ? new Date(input.workDate)
         : new Date(workDateInTimeZone(now, organization.timezone));
+      if (context.accessMode === 'NATIVE')
+        branchId = await branchForPunch(
+          tx,
+          context.organizationId,
+          employee,
+          workDate,
+          input.branchId,
+        );
       const branch = branchId
         ? await tx.branch.findFirst({
             where: { id: branchId, organizationId: context.organizationId },
@@ -197,6 +211,15 @@ export class AttendancePunchService {
         orderBy: { occurredAt: 'asc' },
         select: { punchType: true, occurredAt: true },
       });
+      // A day's punches are a sequence: each one happens after the last. Without this, a check-out
+      // timestamped before its own check-in was accepted, and the day kept an unpaired punch that
+      // the totals then ignored — worked minutes and overtime silently disagreed with the record.
+      // Federation keeps its existing contract; partners send what their own devices recorded.
+      const latest = existingPunches.at(-1)?.occurredAt;
+      if (context.accessMode === 'NATIVE' && latest && occurredAt <= latest)
+        throw new ConflictError(
+          `A punch must come after the last one recorded for this day (${latest.toISOString()}).`,
+        );
       const hasOpenInterval = hasOpenPunch(existingPunches);
       if (type === AttendancePunchType.IN && hasOpenInterval)
         throw new ConflictError('An open attendance interval already exists');
@@ -237,13 +260,27 @@ export class AttendancePunchService {
         orderBy: { occurredAt: 'asc' },
         select: { punchType: true, occurredAt: true },
       });
-      const totals = attendanceTotals(allPunches, settings.standardDayMinutes);
+      // Overtime is measured against the employee's shift that day (native; federation punches
+      // keep the organization's standard day, as their contract describes).
+      const expected =
+        context.accessMode === 'NATIVE'
+          ? await expectedDayOn(
+              tx,
+              context.organizationId,
+              employeeId,
+              record.branchId ?? branchId,
+              workDate,
+              settings.standardDayMinutes,
+            )
+          : null;
+      const totals = attendanceTotals(allPunches, expected?.minutes ?? settings.standardDayMinutes);
       const updatedRecord = await tx.attendanceRecord.update({
         where: { id: record.id },
         data: {
           status: totals.completed ? AttendanceStatus.COMPLETED : AttendanceStatus.OPEN,
           workedMinutes: totals.workedMinutes,
           overtimeMinutes: totals.overtimeMinutes,
+          ...(expected ? { overtimeDayType: expected.dayType } : {}),
           version: { increment: 1 },
         },
       });

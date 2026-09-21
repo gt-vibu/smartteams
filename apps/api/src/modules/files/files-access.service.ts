@@ -60,6 +60,16 @@ export class FilesAccessService {
           deletedAt: null,
           ...(employeeId ? { employeeId } : {}),
           ...(filters.purpose ? { purpose: filters.purpose } : {}),
+          // Someone's "only me" file is private even from administrators, name included. The
+          // documents routes already apply this; this older list did not.
+          ...(context.accessMode === AccessMode.NATIVE
+            ? {
+                NOT: {
+                  accessScope: 'PERSONAL' as const,
+                  uploadedByUserId: { not: context.actor.userId ?? '' },
+                },
+              }
+            : {}),
         },
         select: {
           id: true,

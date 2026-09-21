@@ -24,6 +24,7 @@ export class BreakRuleDto {
   @IsNumber() @Min(1) sequence!: number;
 }
 export class ShiftDto {
+  /** Federation supplies its own; the app generates one from the name. */
   @IsString() code!: string;
   @IsString() name!: string;
   @IsOptional() @IsUUID() branchId?: string;
@@ -41,6 +42,27 @@ export class ShiftDto {
   @Type(() => BreakRuleDto)
   breakRules?: BreakRuleDto[];
 }
+
+/** A shift created in the app: a name is enough, and the code is generated from it. */
+export class NativeShiftDto {
+  @IsOptional() @IsString() code?: string;
+  @IsString() name!: string;
+  @IsOptional() @IsUUID() branchId?: string;
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @Min(1, { each: true })
+  @Max(7, { each: true })
+  daysOfWeek!: number[];
+  @IsString() startsAt!: string;
+  @IsString() endsAt!: string;
+  @IsBoolean() crossesMidnight!: boolean;
+  @IsNumber() @Min(0) breakMinutes!: number;
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => BreakRuleDto)
+  breakRules?: BreakRuleDto[];
+}
+
 export class UpdateShiftDto {
   @IsOptional() @IsString() code?: string;
   @IsOptional() @IsString() name?: string;

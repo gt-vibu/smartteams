@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { permittedTabs } from '../../lib/permitted-tabs';
+import { hasPermission } from '@smarteam/contracts';
+import { useSession } from '../../hooks/auth-context';
 import { Clock3 } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
 import { useScreenTab } from '../../hooks/use-screen-tab';
@@ -10,7 +13,10 @@ import { toAttendanceDayViews } from '../../services/attendance-view';
 import { localDateKey } from '../../hooks/use-attendance';
 import { AttendanceCorrectionsPanel } from './attendance-corrections-panel';
 import { AttendancePolicyPanel } from './attendance-policy-panel';
+import { WorkWeekPanel } from './work-week-panel';
 import { PageShell } from '../layout/page-shell';
+import { useMinuteClock } from '../../hooks/use-minute-clock';
+import { useWorkWeek } from '../../hooks/use-work-week';
 
 type Tab = 'records' | 'corrections' | 'policy';
 
@@ -24,19 +30,46 @@ export function ScreenAttendanceAdmin() {
   const defaults = useMemo(() => currentMonthRange(), []);
   const [from, setFrom] = useState(defaults.from);
   const [to, setTo] = useState(defaults.to);
-  const [tab, setTab] = useScreenTab<Tab>(
+  const [requestedTab, setTab] = useScreenTab<Tab>(
     'attendanceTab',
     ['records', 'corrections', 'policy'],
     'records',
   );
+  const { persona } = useSession();
+  const permissions = persona?.permissions ?? [];
+  const may = (permission: string) => hasPermission(permissions, permission);
+  // Each tab is offered only to someone its API would answer.
+  const { tabs, active } = permittedTabs<Tab, { id: Tab; label: string; allowed: boolean }>(
+    [
+      { id: 'records', label: 'Records', allowed: may('attendance.read.all') },
+      { id: 'corrections', label: 'Corrections', allowed: may('attendance.corrections.decide') },
+      {
+        id: 'policy',
+        label: 'Policy',
+        allowed: may('attendance.preferences.read') || may('organizations.update'),
+      },
+    ],
+    requestedTab,
+  );
+  const tab = active;
   const [search, setSearch] = useState('');
 
   const admin = useAttendanceAdmin(from, to);
   const todayKey = localDateKey();
+  const now = useMinuteClock();
+  const { workWeekDays } = useWorkWeek();
 
   const rows = useMemo(
-    () => toAttendanceDayViews(admin.records, todayKey, admin.corrections),
-    [admin.records, admin.corrections, todayKey],
+    () =>
+      toAttendanceDayViews(
+        admin.records,
+        todayKey,
+        admin.corrections,
+        new Map(),
+        now,
+        workWeekDays,
+      ),
+    [admin.records, admin.corrections, todayKey, now, workWeekDays],
   );
 
   const query = search.trim().toLowerCase();
@@ -57,20 +90,20 @@ export function ScreenAttendanceAdmin() {
       />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex items-center gap-4">
-          {(['records', 'corrections', 'policy'] as const).map((value) => (
+          {tabs.map(({ id, label }) => (
             <Button
               className={`rounded-none pb-1 text-xs font-semibold ${
-                tab === value
+                tab === id
                   ? 'border-b-2 border-foreground font-bold text-foreground'
                   : 'text-muted-foreground'
               }`}
-              key={value}
-              onClick={() => setTab(value)}
+              key={id}
+              onClick={() => setTab(id)}
               size="sm"
               type="button"
               variant="ghost"
             >
-              {value === 'records' ? 'Records' : value === 'corrections' ? 'Corrections' : 'Policy'}
+              {label}
             </Button>
           ))}
         </div>
@@ -112,7 +145,12 @@ export function ScreenAttendanceAdmin() {
         )}
       </div>
 
-      {tab === 'policy' && <AttendancePolicyPanel />}
+      {tab === 'policy' && (
+        <div className="space-y-3">
+          <WorkWeekPanel />
+          <AttendancePolicyPanel />
+        </div>
+      )}
       {tab === 'corrections' && <AttendanceCorrectionsPanel admin={admin} />}
 
       {tab === 'records' && (

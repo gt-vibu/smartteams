@@ -10,7 +10,7 @@ export interface EmployeeProfile {
   avatarUrl?: string | null;
   joinedDate?: string;
   phone?: string;
-  employmentType?: 'FULL_TIME' | 'PART_TIME' | 'CONTRACTOR' | 'INTERN';
+  employmentType?: string;
   status?: 'ACTIVE' | 'INACTIVE' | 'TERMINATED';
   manager?: {
     id: string;

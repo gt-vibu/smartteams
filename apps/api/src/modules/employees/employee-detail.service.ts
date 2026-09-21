@@ -43,6 +43,7 @@ export class EmployeeDetailService {
           dateOfJoining: true,
           dateOfLeaving: true,
           primaryBranchId: true,
+          departmentId: true,
           managerEmployeeId: true,
           userId: true,
           version: true,
@@ -94,7 +95,19 @@ export class EmployeeDetailService {
         dateOfLeaving: employee.dateOfLeaving,
         primaryBranchId: employee.primaryBranchId,
         jobTitle: employment?.jobTitle ?? null,
-        department: employment?.department ?? null,
+        // The department record when the employee has one; the older free text otherwise.
+        department:
+          (employee.departmentId
+            ? (
+                await tx.department.findFirst({
+                  where: { id: employee.departmentId, organizationId: context.organizationId },
+                  select: { name: true },
+                })
+              )?.name
+            : null) ??
+          employment?.department ??
+          null,
+        departmentId: employee.departmentId,
         /** Whether a login is attached to this employee. The user id itself is not exposed. */
         hasUserAccount: employee.userId !== null,
         managerEmployeeId: employee.managerEmployeeId,
@@ -143,6 +156,7 @@ export class EmployeeDetailService {
           employmentType: true,
           dateOfJoining: true,
           primaryBranchId: true,
+          departmentId: true,
           managerEmployeeId: true,
           userId: true,
         },
@@ -165,6 +179,14 @@ export class EmployeeDetailService {
         select: { employeeId: true, jobTitle: true, department: true },
       });
       const current = new Map(records.map((record) => [record.employeeId, record]));
+      const departments = new Map(
+        (
+          await tx.department.findMany({
+            where: { organizationId: context.organizationId },
+            select: { id: true, name: true },
+          })
+        ).map((department) => [department.id, department.name]),
+      );
 
       return {
         items: page.map((employee) => ({
@@ -183,7 +205,11 @@ export class EmployeeDetailService {
           primaryBranchId: employee.primaryBranchId,
           managerEmployeeId: employee.managerEmployeeId,
           jobTitle: current.get(employee.id)?.jobTitle ?? null,
-          department: current.get(employee.id)?.department ?? null,
+          department:
+            (employee.departmentId ? departments.get(employee.departmentId) : undefined) ??
+            current.get(employee.id)?.department ??
+            null,
+          departmentId: employee.departmentId,
           /** Whether a login is attached. The user id itself is never exposed. */
           hasUserAccount: employee.userId !== null,
         })),

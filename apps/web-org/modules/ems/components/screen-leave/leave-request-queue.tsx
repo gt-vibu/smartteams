@@ -9,6 +9,7 @@ import {
   type LeaveRequest,
 } from '@smarteam/contracts';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
+import { LeaveRequestDialog } from './leave-request-dialog';
 
 function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
   if (status === 'REJECTED') return 'destructive';
@@ -33,6 +34,7 @@ export function LeaveRequestQueue({
   requests: LeaveRequest[];
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<LeaveRequest | null>(null);
   const [comment, setComment] = useState('');
   const [error, setError] = useState('');
 
@@ -87,7 +89,19 @@ export function LeaveRequestQueue({
             const mine = inboxIds.has(request.id);
             return (
               <React.Fragment key={request.id}>
-                <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
+                <tr
+                  className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none"
+                  onClick={() => setViewing(request)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setViewing(request);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  title="Open the request"
+                >
                   <td data-cell="primary" className="px-4 py-2.5">
                     <span className="block font-semibold text-foreground">
                       {employee ? employeeDisplayName(employee) : 'Not in the directory'}
@@ -121,7 +135,8 @@ export function LeaveRequestQueue({
                     {request.status === 'PENDING' && admin.canDecide && activeId !== request.id && (
                       <Button
                         disabled={!mine}
-                        onClick={() => {
+                        onClick={(event) => {
+                          event.stopPropagation();
                           setActiveId(request.id);
                           setComment('');
                           setError('');
@@ -138,7 +153,10 @@ export function LeaveRequestQueue({
                 </tr>
 
                 {activeId === request.id && (
-                  <tr className="border-b border-border bg-muted/30">
+                  <tr
+                    className="border-b border-border bg-muted/30"
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     <td className="px-4 py-3" colSpan={7}>
                       <div className="flex flex-wrap items-center gap-2">
                         <Input
@@ -189,6 +207,14 @@ export function LeaveRequestQueue({
           })}
         </tbody>
       </table>
+      {viewing && (
+        <LeaveRequestDialog
+          admin={admin}
+          employee={employeesById.get(viewing.employeeId)}
+          onClose={() => setViewing(null)}
+          request={viewing}
+        />
+      )}
     </div>
   );
 }

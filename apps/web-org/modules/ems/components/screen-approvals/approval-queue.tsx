@@ -11,6 +11,7 @@ import {
   Input,
   Label,
   Textarea,
+  TimePicker,
 } from '@smarteam/ui';
 import type { ApprovalInboxItem, ApprovalInboxState } from '../../hooks/use-approval-inbox';
 import { HolidayReviewDialog } from './holiday-review-dialog';
@@ -214,12 +215,12 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
                     <Label className="mb-1 block text-[11px]" htmlFor="decision-check-out-time">
                       Time
                     </Label>
-                    <Input
+                    <TimePicker
                       disabled={inbox.saving}
                       id="decision-check-out-time"
-                      onChange={(event) => setCheckOutTime(event.target.value)}
-                      type="time"
+                      onChange={setCheckOutTime}
                       value={checkOutTime}
+                      placeholder="Select time"
                     />
                   </div>
                 </div>

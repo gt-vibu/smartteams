@@ -62,7 +62,7 @@ describe('command palette permission mapping', () => {
   });
 
   it('still offers the payroll commands that viewer can genuinely reach', () => {
-    const permissions = ['organizations.read', 'payroll.payslips.read', 'payroll.preview.read'];
+    const permissions = ['organizations.read', 'payroll.runs.read', 'payroll.preview.read'];
     const ids = visibleIds('ADMIN', permissions);
     expect(ids).toContain('act-admin-payroll');
   });

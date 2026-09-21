@@ -3,6 +3,7 @@ import { Prisma } from '../../generated/prisma/client';
 import { PayComponentType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from './payroll-staleness';
@@ -41,12 +42,43 @@ export class PayrollSalaryProfileService {
       throw new ConflictError('Overtime multiplier must be finite and non-negative');
     return this.database.run(context, async (tx) => {
       await requireEmployee(tx, context, input.employeeId, true);
+      // Someone who has left is kept as history; no new job, pay or reporting changes (native
+      // only: the federation contract is frozen).
+      if (context.accessMode === 'NATIVE') {
+        const current = await tx.employee.findFirst({
+          where: { id: input.employeeId, organizationId: context.organizationId },
+          select: { status: true, firstName: true, lastName: true },
+        });
+        if (current && current.status !== 'ACTIVE')
+          throw new ConflictError(
+            `${current.firstName} ${current.lastName} has left the company, so this cannot be changed.`,
+          );
+      }
       const organization = await tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
         select: { currencyCode: true },
       });
       const effectiveFrom = dateOnly(input.effectiveFrom);
-      const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
+      let effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
+      const dayBefore = (date: Date) => new Date(date.getTime() - 86_400_000);
+      const scope = { organizationId: context.organizationId, employeeId: input.employeeId };
+      // A salary revision: the salary running when the new one starts ends the day before it,
+      // and a new open-ended salary stops the day before a revision already booked after it.
+      await tx.employeeCompensation.updateMany({
+        where: {
+          ...scope,
+          effectiveFrom: { lt: effectiveFrom },
+          OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
+        },
+        data: { effectiveTo: dayBefore(effectiveFrom) },
+      });
+      if (!effectiveTo) {
+        const next = await tx.employeeCompensation.findFirst({
+          where: { ...scope, effectiveFrom: { gt: effectiveFrom } },
+          orderBy: { effectiveFrom: 'asc' },
+        });
+        if (next) effectiveTo = dayBefore(next.effectiveFrom);
+      }
       const existingCompensation = await tx.employeeCompensation.findFirst({
         where: {
           organizationId: context.organizationId,
@@ -118,7 +150,16 @@ export class PayrollSalaryProfileService {
     });
   }
 
-  async getSalaryProfile(context: DomainContext, requestedEmployeeId?: string) {
+  /**
+   * The employee's salary profile. With `whatIf`, the figures are worked out for that salary and
+   * those statutory switches instead of the saved ones, and nothing is written: it is the live
+   * preview the screen shows while a salary is being typed, from the same calculation payroll uses.
+   */
+  async getSalaryProfile(
+    context: DomainContext,
+    requestedEmployeeId?: string,
+    whatIf?: SalaryProfileWhatIf,
+  ) {
     requirePermission(context, 'payroll.employee-profile.read');
     return this.database.run(context, async (tx) => {
       const employeeId = await resolveEmployeeId(
@@ -128,7 +169,13 @@ export class PayrollSalaryProfileService {
         false,
         'payroll.employee-profile.read.all',
       );
-      const effectiveDate = dateOnly(new Date().toISOString());
+      // "Today" where the organization is. In UTC, a salary saved from India early in the morning
+      // to start that day was still in the future, so the screen went on showing no salary.
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      const effectiveDate = dateOnly(localDateIn(organization.timezone));
       const employee = await tx.employee.findFirst({
         where: {
           id: employeeId,
@@ -165,9 +212,19 @@ export class PayrollSalaryProfileService {
       if (!employee) throw new NotFoundError('Employee');
       const policy =
         (await findPolicy(tx, context.organizationId, new Date())) ?? DEFAULT_PAYROLL_POLICY;
-      const compensation = employee.compensations[0] ?? null;
+      const compensation =
+        employee.compensations[0] ??
+        // Nothing in force yet: show the salary saved to start later, rather than none at all.
+        // Payroll runs price each period from its own dates, so this changes only the screen.
+        (await tx.employeeCompensation.findFirst({
+          where: { employeeId: employee.id, effectiveFrom: { gt: effectiveDate } },
+          orderBy: { effectiveFrom: 'asc' },
+        }));
       const employeePolicy = employee.payrollPolicies[0] ?? null;
-      const gross = compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0);
+      const gross =
+        whatIf?.grossSalary !== undefined
+          ? new Prisma.Decimal(whatIf.grossSalary)
+          : (compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0));
       const structure = calculateSalaryStructure(gross, policy);
       const statutoryJurisdiction =
         employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
@@ -183,11 +240,11 @@ export class PayrollSalaryProfileService {
           })
         : [];
       const enabled = {
-        pf: employeePolicy?.pfEnabled ?? policy.pfDefault,
-        esi: employeePolicy?.esiEnabled ?? policy.esiDefault,
-        pt: employeePolicy?.ptEnabled ?? policy.ptDefault,
+        pf: whatIf?.pfEnabled ?? employeePolicy?.pfEnabled ?? policy.pfDefault,
+        esi: whatIf?.esiEnabled ?? employeePolicy?.esiEnabled ?? policy.esiDefault,
+        pt: whatIf?.ptEnabled ?? employeePolicy?.ptEnabled ?? policy.ptDefault,
       };
-      const statutory = rules
+      const statutory = withNationalStatutoryRules(rules)
         .filter(
           (rule) =>
             (enabled.pf && ['PF', 'EPF'].includes(rule.schemeCode.toUpperCase())) ||
@@ -309,5 +366,21 @@ export class PayrollSalaryProfileService {
         components: employee.payComponents,
       };
     });
+  }
+}
+
+export type SalaryProfileWhatIf = {
+  grossSalary?: number;
+  pfEnabled?: boolean;
+  esiEnabled?: boolean;
+  ptEnabled?: boolean;
+};
+
+/** The calendar date now in `timeZone` (YYYY-MM-DD), falling back to UTC for an unknown zone. */
+function localDateIn(timeZone: string | null | undefined): string {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: timeZone || 'UTC' }).format(new Date());
+  } catch {
+    return new Date().toISOString().slice(0, 10);
   }
 }

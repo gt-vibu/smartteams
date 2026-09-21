@@ -79,7 +79,7 @@ export function ScreenOnboarding() {
         panel below the fold it was possible to close the form and lose it. A failure is the
         opposite: it needs to stay put while the administrator works out what to fix.
       */}
-      {onboarding.result?.failure && (
+      {onboarding.result?.failure && !(open && !onboarding.result.employee) && (
         <OnboardingOutcome onDismiss={onboarding.reset} result={onboarding.result} />
       )}
 
@@ -107,8 +107,19 @@ export function ScreenOnboarding() {
         busy={onboarding.busy}
         canCreateAccount={onboarding.canCreateAccount}
         employeeRoleId={employeeRoleId}
+        roles={roles.roles.map((role) => ({ id: role.id, name: role.name }))}
         employees={employees.data ?? []}
-        onOpenChange={setOpen}
+        // Nothing was saved, so the reason belongs in the form, where it can be corrected at once.
+        error={
+          onboarding.result?.failure && !onboarding.result.employee
+            ? onboarding.result.failure.message
+            : null
+        }
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (!next && onboarding.result?.failure && !onboarding.result.employee)
+            onboarding.reset();
+        }}
         onSubmit={(input) => void submit(input)}
         open={open}
       />

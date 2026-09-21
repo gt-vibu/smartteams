@@ -27,7 +27,10 @@ export function ScreenProjects() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const source = scope === 'mine' ? directory.myProjects : directory.projects;
+  // Without the organization-wide permission the API sends only their own, and the "all"
+  // view would be the same list under a misleading name.
+  const source =
+    scope === 'mine' || !directory.canReadAll ? directory.myProjects : directory.projects;
   const query = search.trim().toLowerCase();
   const filtered = source.filter((view) => {
     if (!query) return true;
@@ -48,7 +51,7 @@ export function ScreenProjects() {
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-6">
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:gap-3">
           <div className="flex items-center gap-4">
-            {(['all', 'mine'] as const).map((value) => (
+            {(directory.canReadAll ? (['all', 'mine'] as const) : ([] as const)).map((value) => (
               <Button
                 className={`rounded-none pb-1 text-xs font-semibold ${
                   scope === value
@@ -64,6 +67,9 @@ export function ScreenProjects() {
                 {value === 'all' ? 'All projects' : 'My projects'}
               </Button>
             ))}
+            {!directory.canReadAll && (
+              <span className="pb-1 text-xs font-bold text-foreground">My projects</span>
+            )}
           </div>
 
           <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
@@ -187,6 +193,7 @@ export function ScreenProjects() {
 
       <CreateProjectModal
         branches={directory.branches}
+        existingNames={directory.projects.map((view) => view.project.name)}
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onCreate={(input) => directory.createProject(input, [])}

@@ -19,7 +19,7 @@ import {
   ShiftAssignmentListQueryDto,
   ShiftAssignmentDto,
   ShiftDeactivationDto,
-  ShiftDto,
+  NativeShiftDto,
   UpdateShiftDto,
 } from './shifts.dto';
 import { ShiftAssignmentsService } from './shift-assignments.service';
@@ -79,7 +79,7 @@ export class ShiftsController {
   }
   @Post() create(
     @Param('organizationId') organizationId: string,
-    @Body() body: ShiftDto,
+    @Body() body: NativeShiftDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

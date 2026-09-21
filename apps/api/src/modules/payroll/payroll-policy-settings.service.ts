@@ -196,11 +196,28 @@ export class PayrollPolicySettingsService {
         input.payrollPolicyId,
       );
       const effectiveFrom = dateOnly(input.effectiveFrom);
-      const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
-      if (effectiveTo && effectiveTo < effectiveFrom)
-        throw new ConflictError('Compensation period end must not precede its start');
+      let effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
       if (effectiveTo && effectiveTo < effectiveFrom)
         throw new ConflictError('Employee policy end must not precede its start');
+      // A revision: the settings running when the new ones start end the day before them, and
+      // new open-ended settings stop the day before a revision already booked after them.
+      const dayBefore = (date: Date) => new Date(date.getTime() - 86_400_000);
+      const scope = { organizationId: context.organizationId, employeeId: input.employeeId };
+      await tx.employeePayrollPolicy.updateMany({
+        where: {
+          ...scope,
+          effectiveFrom: { lt: effectiveFrom },
+          OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
+        },
+        data: { effectiveTo: dayBefore(effectiveFrom) },
+      });
+      if (!effectiveTo) {
+        const next = await tx.employeePayrollPolicy.findFirst({
+          where: { ...scope, effectiveFrom: { gt: effectiveFrom } },
+          orderBy: { effectiveFrom: 'asc' },
+        });
+        if (next) effectiveTo = dayBefore(next.effectiveFrom);
+      }
       const existing = await tx.employeePayrollPolicy.findUnique({
         where: {
           organizationId_employeeId_effectiveFrom: {

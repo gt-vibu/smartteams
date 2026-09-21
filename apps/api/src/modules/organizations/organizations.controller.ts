@@ -5,10 +5,10 @@ import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { PlatformAuthGuard } from '../platform/platform-auth.guard';
 import {
   BranchDeactivationDto,
-  BranchDto,
   CreateOrganizationDto,
   OnboardOrganizationDto,
   SourceChangeDto,
+  NativeBranchDto,
   UpdateBranchDto,
   UpdateOrganizationDto,
 } from './organizations.dto';
@@ -43,7 +43,7 @@ export class OrganizationsController {
   @Post(':organizationId/branches')
   async createBranch(
     @Param('organizationId') organizationId: string,
-    @Body() body: BranchDto,
+    @Body() body: NativeBranchDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.organizations.createBranch(
@@ -59,6 +59,18 @@ export class OrganizationsController {
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.organizations.getBranch(
+      await this.contexts.native(request.user.userId, organizationId),
+      branchId,
+    );
+  }
+
+  @Get(':organizationId/branches/:branchId/overview')
+  async branchOverview(
+    @Param('organizationId') organizationId: string,
+    @Param('branchId') branchId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.organizations.branchOverview(
       await this.contexts.native(request.user.userId, organizationId),
       branchId,
     );

@@ -8,6 +8,8 @@ import {
 } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
+import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
+import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { MetricsService } from '../../common/metrics/metrics.service';
@@ -22,6 +24,8 @@ import {
 } from './payroll-calculation';
 import { endOfDay } from './payroll-shared';
 import { buildPayrollLineRows } from './payroll-line-calculator';
+import { sumOvertimeByDayType } from './payroll-overtime-split';
+import { readOvertimeRates } from './payroll-overtime-rates';
 import { chunked, groupBy } from './payroll-bulk';
 import { findPolicy } from './payroll-policy-access';
 
@@ -96,6 +100,13 @@ export class PayrollCalculationService {
             organizationId: context.organizationId,
             period: { periodStart: { lte: run.periodEnd }, periodEnd: { gte: run.periodStart } },
             status: { not: TimesheetStatus.APPROVED },
+            // An empty draft holds no work to approve, and cannot be submitted: the API refuses an
+            // empty timesheet. Deriving a period creates one for everyone with nothing logged, so
+            // counting it let a single idle employee block the whole company's payroll with no
+            // way to clear it. Federation keeps the stricter count it was built against.
+            ...(context.accessMode === 'NATIVE'
+              ? { NOT: { status: TimesheetStatus.DRAFT, totalMinutes: 0 } }
+              : {}),
           },
         });
         if (unapproved > 0) throw new ConflictError('Payroll can consume only approved timesheets');
@@ -189,7 +200,13 @@ export class PayrollCalculationService {
               organizationId: context.organizationId,
               workDate: { gte: run.periodStart, lte: run.periodEnd },
             },
-            select: { employeeId: true, workDate: true, dayStatus: true },
+            select: {
+              employeeId: true,
+              workDate: true,
+              dayStatus: true,
+              overtimeMinutes: true,
+              overtimeDayType: true,
+            },
           }),
         ]);
         const timesheets = await tx.timesheet.findMany({
@@ -297,19 +314,42 @@ export class PayrollCalculationService {
               compensation: employee.compensations[0] ?? null,
               employeePolicy,
               policy: selectedPolicy,
-              statutoryRules: statutoryRules.filter(
-                (rule) =>
-                  !selectedPolicy.statutoryJurisdiction ||
-                  rule.jurisdiction === selectedPolicy.statutoryJurisdiction,
+              statutoryRules: withNationalStatutoryRules(
+                statutoryRules.filter(
+                  (rule) =>
+                    !selectedPolicy.statutoryJurisdiction ||
+                    rule.jurisdiction === selectedPolicy.statutoryJurisdiction,
+                ),
               ),
               components,
               timesheet: sumTimesheets(timesheetsByEmployee.get(employee.id) ?? empty),
+              overtimeDays: sumOvertimeByDayType(attendanceByEmployee.get(employee.id) ?? empty),
+              overtimeRates: readOvertimeRates(settings.metadata),
               leave: summarizeLeave(
                 leavesByEmployee.get(employee.id) ?? empty,
                 run.periodStart,
                 run.periodEnd,
               ),
-              attendance: summarizeAttendance(attendanceByEmployee.get(employee.id) ?? empty),
+              // With the working-day calendar, so a working day with no attendance at all is an
+              // absence. Without it only days explicitly marked ABSENT were, and someone who never
+              // checked in was paid in full.
+              attendance: summarizeAttendance(
+                attendanceByEmployee.get(employee.id) ?? empty,
+                // The company can turn this off; then only days marked ABSENT cost pay.
+                !unmarkedDaysAreAbsent(settings.metadata)
+                  ? undefined
+                  : {
+                      periodStart: run.periodStart,
+                      periodEnd: run.periodEnd,
+                      workWeekDays: settings.workWeekDays,
+                      holidays,
+                      branchId: employee.primaryBranchId,
+                      leaves: leavesByEmployee.get(employee.id) ?? empty,
+                      employeeSelectedDates: holidayDatesByEmployee.get(employee.id),
+                      dateOfJoining: employee.dateOfJoining,
+                      dateOfLeaving: employee.dateOfLeaving,
+                    },
+              ),
               // Days in the period before joining or after leaving. Priced exactly like unpaid leave.
               unemployedDays: unemployedDays(
                 run.periodStart,

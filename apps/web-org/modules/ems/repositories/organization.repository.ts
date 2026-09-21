@@ -31,6 +31,22 @@ export type BranchInput = {
   code: string;
   externalId?: string;
   address?: Record<string, unknown>;
+  /** IANA name; empty clears it and the branch follows the organization. */
+  timezone?: string;
+};
+
+/** One branch as its settings panel shows it. */
+export type BranchOverview = Branch & {
+  geofenceMode: string | null;
+  biometricVerificationMode: string | null;
+  employeeCount: number;
+  workLocations: Array<{
+    id: string;
+    name: string;
+    latitude: number;
+    longitude: number;
+    radiusMeters: number;
+  }>;
 };
 
 /** `workforce.ts` publishes the list parser; a single-row parse is derived from the same schema. */
@@ -62,6 +78,13 @@ export const organizationRepository = {
       parseBranchList(await apiRequest(orgPath(organizationId, '/branches'), { method: 'GET' })),
       'branch list',
     );
+  },
+
+  async getBranchOverview(organizationId: string, branchId: string): Promise<BranchOverview> {
+    return (await apiRequest(
+      orgPath(organizationId, `/branches/${encodeURIComponent(branchId)}/overview`),
+      { method: 'GET' },
+    )) as BranchOverview;
   },
 
   async createBranch(organizationId: string, input: BranchInput): Promise<Branch> {

@@ -22,6 +22,7 @@ import { ScreenPayrollAdmin } from './components/screen-payroll/screen-payroll-a
 import { ScreenShifts } from './components/screen-shifts/screen-shifts';
 import { ScreenHolidays } from './components/screen-holidays/screen-holidays';
 import { ScreenEmployeeHolidays } from './components/screen-holidays/screen-employee-holidays';
+import { ScreenEmployees } from './components/screen-employees/screen-employees';
 import { RequiredPasswordChangeScreen } from './components/auth/required-password-change-screen';
 import { SignedOutScreens, takeSignInPassword } from './components/auth/signed-out-screens';
 import { useEmsNavigation } from './hooks/use-ems-navigation';
@@ -113,6 +114,7 @@ function EmsWorkspaceInner() {
           )}
 
           {effectiveModule === 'onboarding' && <ScreenOnboarding />}
+          {effectiveModule === 'employees' && <ScreenEmployees />}
 
           {effectiveModule === 'time-off' && <ScreenLeaveAdmin />}
 

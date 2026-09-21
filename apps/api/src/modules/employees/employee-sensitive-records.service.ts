@@ -1,3 +1,4 @@
+import { saveAadhaar } from './employee-identity-rules';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Prisma } from '../../generated/prisma/client';
@@ -54,10 +55,19 @@ export class EmployeeSensitiveRecordsService {
       presentAddress?: string | null;
       permanentAddress?: string | null;
     },
+    /**
+     * The website's own edits also validate the Aadhaar number and refuse one already recorded for
+     * another employee. Federation calls without this and keeps the behaviour it has always had.
+     */
+    options: { enforceIdentityRules?: boolean } = {},
   ) {
     requirePermission(context, 'employees.personal_details.write');
     return this.database.run(context, async (tx) => {
       await this.assertEmployee(tx, context.organizationId, employeeId);
+      if (options.enforceIdentityRules && input.aadhaarNumber?.trim()) {
+        await saveAadhaar(tx, this.config, context.organizationId, employeeId, input.aadhaarNumber);
+        input = { ...input, aadhaarNumber: undefined };
+      }
       const profile = await tx.employeePersonalProfile.upsert({
         where: { employeeId },
         create: {

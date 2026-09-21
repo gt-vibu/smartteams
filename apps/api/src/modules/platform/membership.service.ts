@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '../../generated/prisma/client';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { dateOnly } from '../employees/employee-mappers';
+import { ensureEntry } from './picklist-catalog';
 
 /**
  * Team and project membership lifecycle.
@@ -48,7 +48,7 @@ export class MembershipService {
   async addTeamMember(
     context: DomainContext,
     teamId: string,
-    input: { employeeId: string; joinedAt: string },
+    input: { employeeId: string; joinedAt: string; teamRole?: string },
   ) {
     requirePermission(context, 'teams.write');
     return this.database.run(context, async (tx) => {
@@ -60,12 +60,16 @@ export class MembershipService {
       ]);
       if (!team) throw new NotFoundError('Team');
       if (!employee) throw new NotFoundError('Employee');
+      if (team.status === 'ARCHIVED') throw new ConflictError('This team is archived.');
+      assertCanBeAssigned(employee);
+      const teamRole = await ensureEntry(tx, context, 'team-roles', input.teamRole);
       const member = await tx.teamMember
         .create({
           data: {
             organizationId: context.organizationId,
             teamId,
             employeeId: input.employeeId,
+            teamRole,
             joinedAt: dateOnly(input.joinedAt),
           },
         })
@@ -76,6 +80,40 @@ export class MembershipService {
           entityType: 'TEAM_MEMBER',
           entityId: member.id,
           action: 'TEAM_MEMBER_ADDED',
+          afterState: jsonSnapshot(member),
+        },
+        tx,
+      );
+      return member;
+    });
+  }
+
+  /** Changes a current member's role in the team; an ended membership stays as it was. */
+  async updateTeamMember(
+    context: DomainContext,
+    teamId: string,
+    memberId: string,
+    input: { teamRole?: string | null },
+  ) {
+    requirePermission(context, 'teams.write');
+    return this.database.run(context, async (tx) => {
+      const before = await tx.teamMember.findFirst({
+        where: { id: memberId, teamId, organizationId: context.organizationId },
+      });
+      if (!before) throw new NotFoundError('Team membership');
+      if (before.leftAt && before.leftAt < new Date())
+        throw new ConflictError('An ended team membership cannot be changed');
+      const member = await tx.teamMember.update({
+        where: { id: before.id },
+        data: { teamRole: await ensureEntry(tx, context, 'team-roles', input.teamRole) },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'TEAM_MEMBER',
+          entityId: member.id,
+          action: 'TEAM_MEMBER_UPDATED',
+          beforeState: jsonSnapshot(before),
           afterState: jsonSnapshot(member),
         },
         tx,
@@ -130,7 +168,6 @@ export class MembershipService {
     input: {
       employeeId: string;
       projectRole?: string;
-      allocationPercentage?: number;
       startsOn: string;
       endsOn?: string;
     },
@@ -145,11 +182,8 @@ export class MembershipService {
       ]);
       if (!project) throw new NotFoundError('Project');
       if (!employee) throw new NotFoundError('Employee');
-      if (
-        input.allocationPercentage !== undefined &&
-        (input.allocationPercentage < 0 || input.allocationPercentage > 100)
-      )
-        throw new ConflictError('Allocation percentage must be between 0 and 100');
+      if (project.status === 'ARCHIVED') throw new ConflictError('This project is archived.');
+      assertCanBeAssigned(employee);
       const start = dateOnly(input.startsOn);
       const end = input.endsOn ? dateOnly(input.endsOn) : undefined;
       if (end && end < start)
@@ -163,21 +197,29 @@ export class MembershipService {
           OR: [{ endsOn: null }, { endsOn: { gte: start } }],
         },
       });
-      if (overlap) throw new ConflictError('Project assignments must not overlap');
-      const member = await tx.projectMember.create({
-        data: {
-          organizationId: context.organizationId,
-          projectId,
-          employeeId: input.employeeId,
-          projectRole: input.projectRole,
-          allocationPercentage:
-            input.allocationPercentage === undefined
-              ? undefined
-              : new Prisma.Decimal(input.allocationPercentage),
-          startsOn: start,
-          endsOn: end,
-        },
-      });
+      if (overlap)
+        throw new ConflictError(
+          `${employee.firstName} ${employee.lastName} is already on ${project.name}.`,
+        );
+      const member = await tx.projectMember
+        .create({
+          data: {
+            organizationId: context.organizationId,
+            projectId,
+            employeeId: input.employeeId,
+            projectRole: await ensureEntry(tx, context, 'project-roles', input.projectRole),
+            startsOn: start,
+            endsOn: end,
+          },
+        })
+        // Two requests at once both pass the check above; the database index then refuses one.
+        .catch((caught: unknown) => {
+          if ((caught as { code?: string } | null)?.code === 'P2002')
+            throw new ConflictError(
+              `${employee.firstName} ${employee.lastName} is already on ${project.name}.`,
+            );
+          throw caught;
+        });
       await this.audit.record(
         context,
         {
@@ -204,14 +246,9 @@ export class MembershipService {
     context: DomainContext,
     projectId: string,
     memberId: string,
-    input: { projectRole?: string; allocationPercentage?: number },
+    input: { projectRole?: string },
   ) {
     requirePermission(context, 'projects.write');
-    if (
-      input.allocationPercentage !== undefined &&
-      (input.allocationPercentage < 0 || input.allocationPercentage > 100)
-    )
-      throw new ConflictError('Allocation percentage must be between 0 and 100');
     return this.database.run(context, async (tx) => {
       const before = await tx.projectMember.findFirst({
         where: { id: memberId, projectId, organizationId: context.organizationId },
@@ -222,9 +259,8 @@ export class MembershipService {
       const member = await tx.projectMember.update({
         where: { id: before.id },
         data: {
-          ...(input.projectRole !== undefined ? { projectRole: input.projectRole.trim() } : {}),
-          ...(input.allocationPercentage !== undefined
-            ? { allocationPercentage: new Prisma.Decimal(input.allocationPercentage) }
+          ...(input.projectRole !== undefined
+            ? { projectRole: await ensureEntry(tx, context, 'project-roles', input.projectRole) }
             : {}),
         },
       });
@@ -276,4 +312,12 @@ export class MembershipService {
       return updated;
     });
   }
+}
+
+/** Someone who has left is not put on new work; their past memberships stay as history. */
+function assertCanBeAssigned(employee: { status: string; firstName: string; lastName: string }) {
+  if (employee.status !== 'ACTIVE')
+    throw new ConflictError(
+      `${employee.firstName} ${employee.lastName} is no longer active, so they cannot be assigned.`,
+    );
 }

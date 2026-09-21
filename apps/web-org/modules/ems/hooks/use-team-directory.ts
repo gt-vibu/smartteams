@@ -41,6 +41,8 @@ export function useTeamDirectory() {
   const canRead = hasPermission(permissions, 'teams.read');
   const canWrite = hasPermission(permissions, 'teams.write');
   const canReadEmployees = hasPermission(permissions, 'employees.read');
+  // Without this the API answers with the caller's own rows only, so there is no "all" view.
+  const canReadAll = hasPermission(permissions, 'teams.read.all');
 
   const resource = useAsyncResource<Loaded>(
     async () => {
@@ -82,15 +84,35 @@ export function useTeamDirectory() {
     [organizationId, run],
   );
 
+  /** Renames a team, moves it to another branch, or changes its lead. */
+  const updateTeam = useCallback(
+    (teamId: string, input: Partial<CreateTeamInput>) =>
+      run(
+        () => teamsProjectsRepository.updateTeam(organizationId!, teamId, input),
+        'The team could not be saved.',
+      ),
+    [organizationId, run],
+  );
+
   const addMember = useCallback(
-    (teamId: string, memberEmployeeId: string) =>
+    (teamId: string, memberEmployeeId: string, teamRole?: string) =>
       run(
         () =>
           membershipRepository.addTeamMember(organizationId!, teamId, {
             employeeId: memberEmployeeId,
             joinedAt: today(),
+            ...(teamRole ? { teamRole } : {}),
           }),
         'The member could not be added.',
+      ),
+    [organizationId, run],
+  );
+
+  const changeRole = useCallback(
+    (teamId: string, memberId: string, teamRole: string) =>
+      run(
+        () => membershipRepository.updateTeamMember(organizationId!, teamId, memberId, teamRole),
+        'The role could not be changed.',
       ),
     [organizationId, run],
   );
@@ -127,10 +149,13 @@ export function useTeamDirectory() {
     saving,
     saveError,
     createTeam,
+    updateTeam,
     addMember,
+    changeRole,
     endMember,
     archiveTeam,
     canRead,
+    canReadAll,
     canWrite,
   };
 }

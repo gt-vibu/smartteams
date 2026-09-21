@@ -25,9 +25,11 @@ const input = {
   firstName: 'Nikhil',
   lastName: 'Menon',
   employmentType: 'FULL_TIME' as const,
+  // A valid test number (passes the Verhoeff check).
+  aadhaarNumber: '234123412346',
 };
 
-function setup(existing: { firstName: string; lastName: string } | null) {
+function setup(existing: { firstName: string; lastName: string; employeeNumber: string } | null) {
   const tx = {
     employee: {
       findFirst: jest.fn().mockResolvedValue(existing),
@@ -37,6 +39,17 @@ function setup(existing: { firstName: string; lastName: string } | null) {
     },
     branch: { findFirst: jest.fn().mockResolvedValue({ id: 'branch-1' }) },
     employeeFieldOwnership: { upsert: jest.fn().mockResolvedValue({}) },
+    employeePersonalProfile: {
+      findFirst: jest.fn().mockResolvedValue(null),
+      upsert: jest.fn().mockResolvedValue({}),
+    },
+    // The Aadhaar check takes an advisory lock; the hire writes the primary branch's history.
+    $queryRaw: jest.fn().mockResolvedValue([]),
+    organization: { findUnique: jest.fn().mockResolvedValue({ timezone: 'Asia/Kolkata' }) },
+    employeeBranchAssignment: {
+      findMany: jest.fn().mockResolvedValue([]),
+      create: jest.fn().mockResolvedValue({}),
+    },
   };
   const database = {
     run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),
@@ -51,15 +64,20 @@ function setup(existing: { firstName: string; lastName: string } | null) {
       audit,
       outbox as never,
       sessions as never,
+      { get: () => 'k'.repeat(32) } as never,
     ),
   };
 }
 
 describe('a duplicate employee number', () => {
   it('names the number and who already holds it', async () => {
-    const { tx, service } = setup({ firstName: 'Rohan', lastName: 'Das' });
+    const { tx, service } = setup({
+      firstName: 'Rohan',
+      lastName: 'Das',
+      employeeNumber: 'EMP-105',
+    });
     await expect(service.createNative(context, input)).rejects.toThrow(
-      'Employee number EMP-105 already belongs to Rohan Das. Use a different number.',
+      'Employee ID EMP-105 already belongs to Rohan Das.',
     );
     expect(tx.employee.create).not.toHaveBeenCalled();
   });

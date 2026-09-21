@@ -149,9 +149,14 @@ export function summarizeAttendance(
     periodStart: Date;
     periodEnd: Date;
     workWeekDays: number[];
-    holidays: Array<{ holidayDate: Date; branchId: string | null }>;
+    holidays: Array<{ holidayDate: Date; branchId: string | null; isOptional?: boolean }>;
     branchId: string | null;
     leaves: Array<{ startDate: Date; endDate: Date }>;
+    /** Optional holidays this employee chose; the rest of the optional list are working days. */
+    employeeSelectedDates?: readonly string[];
+    /** Days outside employment are priced as unemployed days, so they are not also absences. */
+    dateOfJoining?: Date | null;
+    dateOfLeaving?: Date | null;
   },
 ) {
   const summary = records.reduce(
@@ -171,9 +176,16 @@ export function summarizeAttendance(
   );
   const holidayDates = new Set(
     options.holidays
-      .filter((holiday) => holiday.branchId === null || holiday.branchId === options.branchId)
+      .filter(
+        (holiday) =>
+          (holiday.branchId === null || holiday.branchId === options.branchId) &&
+          !holiday.isOptional,
+      )
       .map((holiday) => holiday.holidayDate.toISOString().slice(0, 10)),
   );
+  for (const date of options.employeeSelectedDates ?? []) holidayDates.add(date);
+  const joined = options.dateOfJoining?.toISOString().slice(0, 10);
+  const left = options.dateOfLeaving?.toISOString().slice(0, 10);
   const leaveDates = new Set<string>();
   for (const leave of options.leaves) {
     const start = new Date(Math.max(leave.startDate.getTime(), options.periodStart.getTime()));
@@ -198,7 +210,9 @@ export function summarizeAttendance(
       options.workWeekDays.includes(weekday) &&
       !holidayDates.has(dateKey) &&
       !recordedDates.has(dateKey) &&
-      !leaveDates.has(dateKey)
+      !leaveDates.has(dateKey) &&
+      (!joined || dateKey >= joined) &&
+      (!left || dateKey <= left)
     )
       summary.absentDays += 1;
   }

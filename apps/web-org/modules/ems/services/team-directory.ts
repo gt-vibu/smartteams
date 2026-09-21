@@ -28,6 +28,8 @@ export type MemberView = {
   initials: string;
   since: string;
   until: string | null;
+  /** The member's role: the team role on a team, the project role on a project. */
+  role: string | null;
 };
 
 export type TeamView = {
@@ -40,7 +42,6 @@ export type TeamView = {
 
 export type ProjectMemberView = MemberView & {
   projectRole: string | null;
-  allocationPercentage: number | null;
 };
 
 export type ProjectView = {
@@ -80,7 +81,9 @@ function memberView(
   until: string | null,
   employees: Map<string, Employee>,
 ): MemberView {
-  const employee = employees.get(member.employeeId);
+  // The directory when the viewer may read it, otherwise the summary the membership carries:
+  // an employee may only read their own record, and a team list of "?" named nobody.
+  const employee = employees.get(member.employeeId) ?? member.employee ?? undefined;
   const displayName = employee ? employeeDisplayName(employee) : MISSING.displayName;
   return {
     memberId: member.id,
@@ -90,7 +93,27 @@ function memberView(
     initials: employee ? initialsOf(displayName) : '?',
     since,
     until,
+    role:
+      ('teamRole' in member ? member.teamRole : null) ??
+      ('projectRole' in member ? member.projectRole : null) ??
+      null,
   };
+}
+
+/**
+ * Current until its last day has passed: an end date later than today is still current.
+ *
+ * Today is the viewer's own date, which is the date the server ends a membership on. Read from
+ * `toISOString()` it was UTC's, so after 18:30 in Kolkata a membership ended earlier the same day
+ * still counted as current: the person stayed in Members with "until <yesterday>" beside their
+ * name and an End membership button that the server then refused as already ended.
+ */
+function current(until: string | null | undefined) {
+  if (!until) return true;
+  const now = new Date();
+  const month = `${now.getMonth() + 1}`.padStart(2, '0');
+  const today = `${now.getFullYear()}-${month}-${`${now.getDate()}`.padStart(2, '0')}`;
+  return until.slice(0, 10) >= today;
 }
 
 export function toTeamView(
@@ -112,10 +135,10 @@ export function toTeamView(
         }
       : null,
     activeMembers: members
-      .filter((member) => !member.leftAt)
-      .map((member) => memberView(member, member.joinedAt, null, employees)),
+      .filter((member) => current(member.leftAt))
+      .map((member) => memberView(member, member.joinedAt, member.leftAt ?? null, employees)),
     pastMembers: members
-      .filter((member) => member.leftAt)
+      .filter((member) => !current(member.leftAt))
       .map((member) => memberView(member, member.joinedAt, member.leftAt ?? null, employees)),
   };
 }
@@ -127,7 +150,6 @@ function projectMemberView(
   return {
     ...memberView(member, member.startsOn, member.endsOn ?? null, employees),
     projectRole: member.projectRole ?? null,
-    allocationPercentage: member.allocationPercentage ?? null,
   };
 }
 
@@ -141,10 +163,10 @@ export function toProjectView(
     project,
     branchName: branchNameOf(branches, project.branchId),
     activeMembers: members
-      .filter((member) => !member.endsOn)
+      .filter((member) => current(member.endsOn))
       .map((member) => projectMemberView(member, employees)),
     pastMembers: members
-      .filter((member) => member.endsOn)
+      .filter((member) => !current(member.endsOn))
       .map((member) => projectMemberView(member, employees)),
   };
 }

@@ -16,7 +16,6 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   AccessCodeIssueDto,
-  BranchAssignmentDto,
   CompensationDto,
   CreateEmployeeDto,
   EmergencyContactDto,
@@ -117,16 +116,6 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.employees.updateNative(context, employeeId, version, body));
   }
-  @Post(':employeeId/branches') assignBranch(
-    @Param('organizationId') organizationId: string,
-    @Param('employeeId') employeeId: string,
-    @Body() body: BranchAssignmentDto,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.employees.assignBranch(context, employeeId, body));
-  }
   @Post(':employeeId/deactivate') deactivate(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -172,9 +161,11 @@ export class EmployeesController {
     @Body() body: EmployeePersonalProfileDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.records.upsertPersonalProfile(context, employeeId, body));
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.records.upsertPersonalProfile(context, employeeId, body, {
+        enforceIdentityRules: true,
+      }),
+    );
   }
 
   @Get(':employeeId/bank-accounts') bankAccounts(

@@ -24,7 +24,6 @@ export type ProjectMembership = {
   project: Project;
   state: MembershipState;
   memberId: string | null;
-  allocationPercentage: number | null;
   endedOn: string | null;
 };
 
@@ -76,7 +75,6 @@ export function projectMembershipsFor(
         project,
         state: 'ACTIVE',
         memberId: active.id,
-        allocationPercentage: active.allocationPercentage ?? null,
         endedOn: null,
       };
     }
@@ -87,7 +85,6 @@ export function projectMembershipsFor(
         project,
         state: 'ENDED',
         memberId: null,
-        allocationPercentage: null,
         endedOn: ended.endsOn ?? null,
       };
     }
@@ -96,15 +93,7 @@ export function projectMembershipsFor(
       project,
       state: 'NOT_A_MEMBER',
       memberId: null,
-      allocationPercentage: null,
       endedOn: null,
     };
   });
-}
-
-/** Total allocation across active project assignments; the API caps each at 100. */
-export function totalActiveAllocation(memberships: readonly ProjectMembership[]): number {
-  return memberships
-    .filter((membership) => membership.state === 'ACTIVE')
-    .reduce((sum, membership) => sum + (membership.allocationPercentage ?? 0), 0);
 }

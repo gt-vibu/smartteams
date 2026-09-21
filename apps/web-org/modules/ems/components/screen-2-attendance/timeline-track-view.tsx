@@ -12,6 +12,7 @@ const CONFLICT_TRACK = {
 
 interface TimelineTrackViewProps {
   days: TimelineDayRecord[];
+  onSelectDay?: (dayId: string) => void;
 }
 
 const HOURS_SCALE = [
@@ -35,7 +36,7 @@ const HOURS_SCALE = [
  * check-in and check-out stamps move off the track below `sm`: at phone width a short shift puts
  * the two dots about 30px apart, and their labels landed on top of each other.
  */
-export function TimelineTrackView({ days }: TimelineTrackViewProps) {
+export function TimelineTrackView({ days, onSelectDay }: TimelineTrackViewProps) {
   return (
     <div className="relative w-full overflow-hidden rounded-lg border border-slate-200/90 bg-white shadow-xs dark:border-slate-800 dark:bg-card">
       {/* Header: on a phone the ruler drops beneath "Day / Total" and spans the full width, exactly
@@ -65,14 +66,20 @@ export function TimelineTrackView({ days }: TimelineTrackViewProps) {
         <div className="pointer-events-none absolute bottom-0 top-0 z-10 hidden w-px border-r border-dashed border-sky-400 sm:block sm:left-[calc(16.666%+43.5%)]" />
 
         {days.map((day) => (
-          <TimelineRow key={day.id} day={day} />
+          <TimelineRow key={day.id} day={day} onSelect={onSelectDay} />
         ))}
       </div>
     </div>
   );
 }
 
-function TimelineRow({ day }: { day: TimelineDayRecord }) {
+function TimelineRow({
+  day,
+  onSelect,
+}: {
+  day: TimelineDayRecord;
+  onSelect?: (dayId: string) => void;
+}) {
   const durationStr = formatMinutesToDuration(day.workedMinutes);
   const inProgress = day.inProgressMinutes !== undefined;
   // `formatMinutesToDuration` returns '' below a minute, which would read as nothing at all in the
@@ -89,9 +96,10 @@ function TimelineRow({ day }: { day: TimelineDayRecord }) {
 
   return (
     <div
+      onClick={() => onSelect?.(day.id)}
       className={`grid grid-cols-2 items-center gap-y-2.5 px-4 py-3 transition-colors sm:grid-cols-12 sm:py-3.5 ${
-        day.isToday ? 'bg-sky-50/20' : 'hover:bg-muted/40'
-      }`}
+        onSelect ? 'cursor-pointer' : ''
+      } ${day.isToday ? 'bg-sky-50/20' : 'hover:bg-muted/40'}`}
     >
       <div className="flex min-w-0 flex-col items-start gap-0.5 sm:col-span-2">
         {day.isToday ? (
@@ -132,8 +140,17 @@ function TimelineRow({ day }: { day: TimelineDayRecord }) {
           </div>
         )}
         {day.checkOutMissing && (
-          <div className="mt-0.5 text-[10px] font-medium text-muted-foreground">
-            Request a correction with your check-out time
+          <div className="mt-1 flex flex-col items-end gap-1">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect?.(day.id);
+              }}
+              className="inline-flex h-6 items-center rounded-md border border-destructive/30 bg-destructive/10 px-2 text-[10px] font-bold text-destructive hover:bg-destructive/20 focus:outline-hidden cursor-pointer"
+            >
+              Request a correction
+            </button>
           </div>
         )}
         {day.holidayConflict && (

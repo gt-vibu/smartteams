@@ -272,17 +272,16 @@ export function Screen5TimeTracker() {
       <LogTimeModal
         isOpen={isLogOpen}
         onClose={() => setIsLogOpen(false)}
-        onSubmit={(input) => timesheet.addEntry(input, selected?.id)}
+        // Filed by its date: the server finds or opens the period that holds it, so time can be
+        // logged for any day worked without an administrator opening a period first.
+        onSubmit={(input) => timesheet.addEntry(input)}
         projects={timesheet.projects}
         jobTypes={timesheet.jobTypes}
         // Each quick-add is offered only to someone the API will let use it: job types need
         // `timesheets.write`, projects the Projects module's `projects.write`.
         onCreateJobType={timesheet.canWrite ? timesheet.createJobType : undefined}
         onCreateProject={timesheet.canCreateProject ? timesheet.quickCreateProject : undefined}
-        periodStart={
-          selected?.period?.periodStart ? selected.period.periodStart.slice(0, 10) : undefined
-        }
-        periodEnd={selected?.period?.periodEnd ? selected.period.periodEnd.slice(0, 10) : undefined}
+        periodEnd={new Intl.DateTimeFormat('en-CA').format(new Date())}
         saveError={timesheet.saveError}
         saving={timesheet.saving}
       />

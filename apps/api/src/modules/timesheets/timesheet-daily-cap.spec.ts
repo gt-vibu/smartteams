@@ -32,6 +32,8 @@ function setup(alreadyLogged: number | null) {
       update: jest.fn().mockResolvedValue({ id: SHEET }),
     },
     employee: { findFirst: jest.fn().mockResolvedValue({ id: SELF }) },
+    // No period row: the date checks that need one are exercised by verify:workday-audit.
+    timesheetPeriod: { findFirst: jest.fn().mockResolvedValue(null) },
     timesheetEntry: {
       aggregate: jest.fn().mockResolvedValue({ _sum: { minutes: alreadyLogged } }),
       create: jest.fn((args: { data: Record<string, unknown> }) =>

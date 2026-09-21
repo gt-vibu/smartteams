@@ -5,6 +5,8 @@ import { Badge, Button, Icon, Sheet, SheetContent, SheetTitle } from '@smarteam/
 import { useEmployeeDetail } from '../../hooks/use-employee-detail';
 import { useAssignments } from '../../hooks/use-assignments';
 import { AssignEmployeeModal } from './assign-employee-modal';
+import { EditEmployeeDialog } from './edit-employee-dialog';
+import { employmentTypeLabel } from '@smarteam/contracts';
 import { EmployeeStatutorySection } from './employee-statutory-section';
 import { AccountAccessPanel } from '../screen-onboarding/account-access-panel';
 import {
@@ -29,6 +31,7 @@ interface EntityDetailDrawerProps {
  */
 export function EntityDetailDrawer({ isOpen, onClose, employeeId }: EntityDetailDrawerProps) {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const detail = useEmployeeDetail(employeeId);
   const assignments = useAssignments(employeeId);
 
@@ -105,18 +108,31 @@ export function EntityDetailDrawer({ isOpen, onClose, employeeId }: EntityDetail
                 </div>
               </div>
 
-              {canManageAssignments && (
-                <div className="border-b border-border px-5 py-3">
-                  <Button
-                    className="w-full"
-                    onClick={() => setIsAssignModalOpen(true)}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    <Icon className="size-4" name="edit" />
-                    Manage assignments
-                  </Button>
+              {(canManageAssignments || (detail.canWrite && detail.data.detail)) && (
+                <div className="flex gap-2 border-b border-border px-5 py-3">
+                  {detail.canWrite && detail.data.detail && (
+                    <Button
+                      className="flex-1"
+                      onClick={() => setIsEditOpen(true)}
+                      size="sm"
+                      type="button"
+                    >
+                      <Icon className="size-4" name="edit" />
+                      Edit employee
+                    </Button>
+                  )}
+                  {canManageAssignments && (
+                    <Button
+                      className="flex-1"
+                      onClick={() => setIsAssignModalOpen(true)}
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      <Icon className="size-4" name="edit" />
+                      Manage assignments
+                    </Button>
+                  )}
                 </div>
               )}
 
@@ -137,7 +153,7 @@ export function EntityDetailDrawer({ isOpen, onClose, employeeId }: EntityDetail
                   <div className="flex justify-between gap-3">
                     <span className="text-muted-foreground">Employment type</span>
                     <span className="font-semibold text-foreground">
-                      {detail.data.employee.employmentType}
+                      {employmentTypeLabel(detail.data.employee.employmentType)}
                     </span>
                   </div>
                 </div>
@@ -165,6 +181,15 @@ export function EntityDetailDrawer({ isOpen, onClose, employeeId }: EntityDetail
           employeeName={detail.data.displayName}
           isOpen={isAssignModalOpen}
           onClose={() => setIsAssignModalOpen(false)}
+        />
+      )}
+      {detail.data?.detail && (
+        <EditEmployeeDialog
+          detail={detail.data.detail}
+          employee={detail.data.employee}
+          onOpenChange={setIsEditOpen}
+          onSaved={() => void detail.refetch()}
+          open={isEditOpen}
         />
       )}
     </>

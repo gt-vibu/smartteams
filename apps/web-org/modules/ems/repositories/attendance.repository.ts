@@ -29,6 +29,8 @@ export type PunchInput = {
   accuracyMeters?: number;
 };
 
+export type WorkWeek = { workWeekDays: number[]; unmarkedDaysAreAbsent: boolean };
+
 export const attendanceRepository = {
   async list(
     organizationId: string,
@@ -162,11 +164,42 @@ export const attendanceRepository = {
       attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
       autoCheckOutMode?: 'DISABLED' | 'REVIEW_REQUIRED';
       autoCheckOutAt?: string;
+      /** The complete set for the branch (or organization); the server replaces what was there. */
+      workLocations?: Array<{
+        name: string;
+        latitude: number;
+        longitude: number;
+        radiusMeters: number;
+      }>;
     },
   ): Promise<unknown> {
     return apiRequest(`${orgPath(organizationId, '/attendance')}/preferences`, {
       method: 'POST',
       body: input,
+    });
+  },
+
+  /**
+   * The organization's working days, as ISO weekday numbers (1 Monday … 7 Sunday), and whether a
+   * working day with no attendance counts as an absence.
+   */
+  async getWorkWeek(organizationId: string): Promise<WorkWeek> {
+    const payload = (await apiRequest(`${orgPath(organizationId, '/attendance')}/work-week`, {
+      method: 'GET',
+    })) as { workWeekDays?: unknown; unmarkedDaysAreAbsent?: unknown } | null;
+    const days = Array.isArray(payload?.workWeekDays) ? payload.workWeekDays : [];
+    return {
+      workWeekDays: days.filter(
+        (day): day is number => Number.isInteger(day) && day >= 1 && day <= 7,
+      ),
+      unmarkedDaysAreAbsent: payload?.unmarkedDaysAreAbsent !== false,
+    };
+  },
+
+  async saveWorkWeek(organizationId: string, week: WorkWeek): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/attendance')}/work-week`, {
+      method: 'PUT',
+      body: week,
     });
   },
 

@@ -65,6 +65,8 @@ function setup(
         return Promise.resolve(rows);
       }),
     },
+    // No department records: the older free-text department is what these cases read.
+    department: { findMany: () => Promise.resolve([]), findFirst: () => Promise.resolve(null) },
     employeeEmploymentRecord: {
       findMany: jest.fn(() => Promise.resolve(options.records ?? [])),
     },

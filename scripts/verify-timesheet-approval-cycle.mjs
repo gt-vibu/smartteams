@@ -19,6 +19,7 @@ import { createRequire } from 'node:module';
 import { resolveDatabaseUrl } from './lib/database-url.mjs';
 
 import { setupCall } from './lib/setup-call.mjs';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const BASE = 'http://localhost:4000';
 // `pg` is a dependency of the API workspace, not of the repo root, so resolve it from there.
@@ -168,6 +169,7 @@ async function tenant(tag) {
     firstName: 'Sam',
     lastName: 'Cycle',
     workEmail: email,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-01-01',
   });
@@ -259,6 +261,7 @@ async function addApprover(t, tag, label) {
     firstName: label,
     lastName: 'Approver',
     workEmail: email,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-01-01',
   });

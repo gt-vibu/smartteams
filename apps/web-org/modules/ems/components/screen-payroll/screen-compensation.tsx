@@ -10,6 +10,7 @@ import { useEmployees } from '../../hooks/use-workforce';
 import { ComponentCatalogPanel } from './component-catalog-panel';
 import { EmployeeCompensationPanel } from './employee-compensation-panel';
 import { RoleSalaryAllotmentDialog } from './role-salary-allotment-dialog';
+import { permittedTabs } from '../../lib/permitted-tabs';
 
 type Tab = 'employees' | 'catalog';
 
@@ -25,7 +26,31 @@ type Tab = 'employees' | 'catalog';
 export function ScreenCompensation() {
   const compensation = useCompensation();
   const employees = useEmployees();
-  const [tab, setTab] = useScreenTab<Tab>('compensationTab', ['employees', 'catalog'], 'employees');
+  const [requestedTab, setTab] = useScreenTab<Tab>(
+    'compensationTab',
+    ['employees', 'catalog'],
+    'employees',
+  );
+  // Someone who cannot read other people's salaries is not offered the employee list at all.
+  const { tabs: offered, active } = permittedTabs<
+    Tab,
+    { id: Tab; label: string; allowed: boolean }
+  >(
+    [
+      {
+        id: 'employees',
+        label: 'Employee compensation',
+        allowed: compensation.can.readProfiles,
+      },
+      {
+        id: 'catalog',
+        label: 'Component catalogue',
+        allowed: compensation.can.readComponents,
+      },
+    ],
+    requestedTab,
+  );
+  const tab = active;
   const [search, setSearch] = useState('');
   const [allottingRole, setAllottingRole] = useState(false);
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
@@ -73,12 +98,7 @@ export function ScreenCompensation() {
       {/* Top Navigation & Actions Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-2">
         <div className="flex items-center gap-2 sm:gap-4">
-          {(
-            [
-              { id: 'employees', label: 'Employee compensation' },
-              { id: 'catalog', label: 'Component catalogue' },
-            ] as Array<{ id: Tab; label: string }>
-          ).map((entry) => (
+          {offered.map((entry) => (
             <Button
               className={`rounded-none pb-1.5 text-xs font-semibold transition-all ${
                 tab === entry.id
@@ -221,7 +241,13 @@ export function ScreenCompensation() {
                   All employees
                 </button>
               )}
-              <EmployeeCompensationPanel compensation={compensation} employee={selectedEmployee} />
+              {/* Keyed by employee: everything typed for one person is discarded when another is chosen,
+                  so an amount entered for one employee can never be shown or saved for the next. */}
+              <EmployeeCompensationPanel
+                compensation={compensation}
+                employee={selectedEmployee}
+                key={compensation.employeeId ?? 'none'}
+              />
             </section>
           )}
         </div>

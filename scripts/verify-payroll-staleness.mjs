@@ -16,6 +16,7 @@
  */
 import { setupCall } from './lib/setup-call.mjs';
 import { weekdaysAgo } from './lib/dates.mjs';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const BASE = 'http://localhost:4000';
 let pass = 0,
@@ -139,6 +140,7 @@ async function tenant(tag) {
     firstName: 'Sam',
     lastName: 'Case',
     workEmail: email,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-01-01',
   });
@@ -293,31 +295,60 @@ await scenario('2. POST /payroll/statutory-rules — statutory rule', async (t) 
     : 'skip',
 );
 
-await scenario('3. PUT /payroll/employee-policy — employee payroll policy', async (t) => {
-  // The salary profile already wrote an open-ended employee policy; close it before adding one
-  // that starts inside the run's period, or the overlap guard refuses.
-  await t.org('PUT', '/payroll/employee-policy', {
-    employeeId: t.employeeId,
-    effectiveFrom: '2026-01-01',
-    effectiveTo: daysAgo(2),
-    payrollEnabled: true,
-    salarySlipMode: 'ENABLED',
-    pfEnabled: false,
-    esiEnabled: false,
-    ptEnabled: false,
-  });
-  const r = await t.org('PUT', '/payroll/employee-policy', {
-    employeeId: t.employeeId,
-    effectiveFrom: daysAgo(1),
-    payrollEnabled: true,
-    salarySlipMode: 'ENABLED',
-    pfEnabled: true,
-    esiEnabled: false,
-    ptEnabled: false,
-  });
-  if (!good(r)) console.log('    (employee-policy: ' + detail(r) + ')');
-  return good(r) ? 'ok' : 'skip';
-});
+await scenario(
+  '3. PUT /payroll/employee-policy — employee payroll policy',
+  async (t) => {
+    // Payroll now runs under a named policy, which an enabled employee policy must name.
+    const policies = await t.org('GET', '/payroll/policies');
+    const list = Array.isArray(policies.payload)
+      ? policies.payload
+      : (policies.payload?.items ?? []);
+    const payrollPolicyId = list[0]?.id;
+    // The salary profile already wrote an open-ended employee policy; close it before adding one
+    // that starts inside the run's period, or the overlap guard refuses.
+    await t.org('PUT', '/payroll/employee-policy', {
+      employeeId: t.employeeId,
+      effectiveFrom: '2026-01-01',
+      effectiveTo: daysAgo(2),
+      payrollEnabled: true,
+      payrollPolicyId,
+      salarySlipMode: 'ENABLED',
+      pfEnabled: false,
+      esiEnabled: false,
+      ptEnabled: false,
+    });
+    const r = await t.org('PUT', '/payroll/employee-policy', {
+      employeeId: t.employeeId,
+      effectiveFrom: daysAgo(1),
+      payrollEnabled: true,
+      payrollPolicyId,
+      salarySlipMode: 'ENABLED',
+      pfEnabled: true,
+      esiEnabled: false,
+      ptEnabled: false,
+    });
+    if (!good(r)) console.log('    (employee-policy: ' + detail(r) + ')');
+    return good(r) ? 'ok' : 'skip';
+  },
+  {
+    // A named payroll policy to enrol the employee in, saved before the run is calculated so the
+    // only change the run sees afterwards is the employee policy itself.
+    setup: (t) =>
+      t.org('PUT', '/payroll/policy', {
+        effectiveFrom: '2026-01-01',
+        payrollDayBasis: 30,
+        basePercentage: 50,
+        baseMinimum: 15000,
+        hraPercentage: 40,
+        roundingMode: 'HALF_UP',
+        salarySlipDefault: true,
+        payrollEnabledDefault: true,
+        pfDefault: false,
+        esiDefault: false,
+        ptDefault: false,
+      }),
+  },
+);
 
 await scenario('4. POST /payroll/components/assignments — pay component', async (t) => {
   const c = await t.org('POST', '/payroll/components', {
