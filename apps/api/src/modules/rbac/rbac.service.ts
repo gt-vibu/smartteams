@@ -70,6 +70,9 @@ export class RbacService {
               organizationId,
               delegateUserId: userId,
               revokedAt: null,
+              // Only once the person covering has accepted (an administrator's handover is accepted when made).
+              acceptedAt: { not: null },
+              declinedAt: null,
               startsOn: { lte: day },
               endsOn: { gte: day },
             },
@@ -130,6 +133,44 @@ export class RbacService {
       if (permission) own.add(permission);
     }
     return own;
+  }
+
+  /**
+   * Whether someone decides approvals as themselves rather than through a role: they have people
+   * reporting to them, are named on an approval step, or are covering (or asked to cover) for a
+   * colleague. Their own workspace offers Approvals only then; HR and administrators reach the
+   * organization's approvals from their admin workspace.
+   */
+  async approvesInOwnRight(userId: string, organizationId: string) {
+    const day = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`);
+    return this.database.run(
+      {
+        organizationId,
+        accessMode: 'NATIVE',
+        actor: { type: 'USER', userId },
+        correlationId: crypto.randomUUID(),
+        requestId: crypto.randomUUID(),
+        permissions: new Set(),
+      },
+      async (tx) => {
+        const [reports, named, cover] = await Promise.all([
+          tx.employee.count({
+            where: { organizationId, status: 'ACTIVE', manager: { is: { userId } } },
+          }),
+          tx.approvalPolicyStep.count({ where: { organizationId, approverUserId: userId } }),
+          tx.approvalDelegation.count({
+            where: {
+              organizationId,
+              delegateUserId: userId,
+              revokedAt: null,
+              declinedAt: null,
+              endsOn: { gte: day },
+            },
+          }),
+        ]);
+        return reports + named + cover > 0;
+      },
+    );
   }
 
   /**

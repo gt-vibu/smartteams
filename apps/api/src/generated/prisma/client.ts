@@ -41,8 +41,9 @@ export { Prisma }
 
 /**
  * Model ApprovalDelegation
- * Someone away hands their approvals to a colleague for a span of days. While it runs, the
- * delegate may decide whatever the delegator could; the delegator keeps that right too.
+ * Someone away hands their approvals to a colleague for a span of days. Once the colleague accepts
+ * (or at once, when an administrator sets it up), the delegate may decide whatever the delegator
+ * could while it runs; the delegator keeps that right too.
  */
 export type ApprovalDelegation = Prisma.ApprovalDelegationModel
 /**

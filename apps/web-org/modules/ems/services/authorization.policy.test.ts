@@ -137,3 +137,16 @@ describe('canAdministerOrganization', () => {
     expect(canAdministerOrganization([])).toBe(false);
   });
 });
+
+describe('Approvals in the employee workspace', () => {
+  const hr = ['leave.requests.decide', 'timesheets.decide', 'approval-policies.read'];
+  it('is hidden for someone who approves only through an HR role', () => {
+    expect(canAccessModule('approvals', 'EMPLOYEE', hr, false, false)).toBe(false);
+  });
+  it('shows for someone who approves as themselves: a manager, a named approver, or cover', () => {
+    expect(canAccessModule('approvals', 'EMPLOYEE', [], false, true)).toBe(true);
+  });
+  it('stays in the admin workspace for HR', () => {
+    expect(canAccessModule('approvals', 'ADMIN', hr, false, false)).toBe(true);
+  });
+});

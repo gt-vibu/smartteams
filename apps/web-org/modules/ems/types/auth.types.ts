@@ -53,6 +53,8 @@ export interface Persona {
   assignedTeamIds: string[];
   assignedProjectIds: string[];
   directReportEmployeeIds: string[];
+  /** Decides approvals as themselves: has reports, is named on a step, or covers someone. */
+  approvesInOwnRight?: boolean;
   managerEmployeeId: string | null;
   managerName: string | null;
   scenarioTitle?: string;

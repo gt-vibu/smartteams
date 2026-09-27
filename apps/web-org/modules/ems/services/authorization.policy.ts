@@ -224,6 +224,8 @@ export function canAccessModule(
   workspaceContext: WorkspaceContext,
   permissions: readonly string[],
   isAssignedToAnyTeam: boolean,
+  /** Decides approvals as themselves (a manager, a named approver, covering someone). */
+  approvesInOwnRight = false,
 ): boolean {
   if (workspaceContext === 'ADMIN') {
     return canOpenAdminModule(moduleName, permissions);
@@ -243,8 +245,9 @@ export function canAccessModule(
     case 'payroll':
       return canOpenPayroll(permissions);
     case 'approvals':
-      // Wildcard alone is not enough here, for the reason given on `canApprove`.
-      return decidesApprovals(permissions);
+      // In their own workspace, only someone who approves as themselves. An HR or administrator
+      // role reaches the organization's approvals from the admin workspace instead.
+      return approvesInOwnRight;
     case 'teams':
       return isAssignedToAnyTeam;
     case 'onboarding':

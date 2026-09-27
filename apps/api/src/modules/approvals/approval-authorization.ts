@@ -125,6 +125,9 @@ export async function delegatorsOf(
       organizationId,
       delegateUserId: userId,
       revokedAt: null,
+      // Only once the person covering has accepted (an administrator's handover is accepted when made).
+      acceptedAt: { not: null },
+      declinedAt: null,
       startsOn: { lte: day },
       endsOn: { gte: day },
       delegate: { isActive: true },
@@ -147,6 +150,9 @@ export async function delegatesOf(
       organizationId,
       delegatorUserId: { in: [...userIds] },
       revokedAt: null,
+      // Only once the person covering has accepted (an administrator's handover is accepted when made).
+      acceptedAt: { not: null },
+      declinedAt: null,
       startsOn: { lte: day },
       endsOn: { gte: day },
       delegate: { isActive: true },

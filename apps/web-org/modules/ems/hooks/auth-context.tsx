@@ -218,7 +218,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAssignedToAnyTeam,
       canAccessSpace: (space) => visibleSpaces.some((entry) => entry.id === space),
       canAccessModule: (moduleName) =>
-        evaluateModuleAccess(moduleName, workspaceContext, permissions, isAssignedToAnyTeam),
+        evaluateModuleAccess(
+          moduleName,
+          workspaceContext,
+          permissions,
+          isAssignedToAnyTeam,
+          persona?.approvesInOwnRight ?? false,
+        ),
     };
     // `persona` carries the server's permission set, so it is the only input the permission
     // helpers below depend on.

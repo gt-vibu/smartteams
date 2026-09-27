@@ -8114,7 +8114,10 @@ export const ApprovalDelegationScalarFieldEnum = {
   endsOn: 'endsOn',
   reason: 'reason',
   createdAt: 'createdAt',
-  revokedAt: 'revokedAt'
+  revokedAt: 'revokedAt',
+  acceptedAt: 'acceptedAt',
+  declinedAt: 'declinedAt',
+  createdByUserId: 'createdByUserId'
 } as const
 
 export type ApprovalDelegationScalarFieldEnum = (typeof ApprovalDelegationScalarFieldEnum)[keyof typeof ApprovalDelegationScalarFieldEnum]

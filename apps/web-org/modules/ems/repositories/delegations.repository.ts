@@ -8,7 +8,10 @@ export type Delegation = {
   reason: string | null;
   delegator: { userId: string; name: string };
   delegate: { userId: string; name: string };
-  status: 'ACTIVE' | 'UPCOMING' | 'ENDED';
+  /** Set up by an administrator; took effect without the colleague accepting. */
+  setByAdministrator?: boolean;
+  /** PENDING waits for the colleague to accept; DECLINED is their answer. */
+  status: 'PENDING' | 'DECLINED' | 'ACTIVE' | 'UPCOMING' | 'ENDED';
 };
 
 export type DelegationCandidate = {
@@ -28,6 +31,9 @@ export const delegationsRepository = {
     return (await apiRequest(base(organizationId), { method: 'GET' })) as {
       given: Delegation[];
       received: Delegation[];
+      /** Everyone's, for an administrator. */
+      all?: Delegation[];
+      canSetForOthers?: boolean;
     };
   },
   async candidates(organizationId: string) {
@@ -37,9 +43,23 @@ export const delegationsRepository = {
   },
   async create(
     organizationId: string,
-    input: { delegateEmployeeId: string; startsOn: string; endsOn: string; reason?: string },
+    input: {
+      delegateEmployeeId: string;
+      /** Administrators only: the person away. */
+      delegatorEmployeeId?: string;
+      startsOn: string;
+      endsOn: string;
+      reason?: string;
+    },
   ) {
     return (await apiRequest(base(organizationId), { method: 'POST', body: input })) as Delegation;
+  },
+  /** The colleague asked to cover answers. */
+  async respond(organizationId: string, delegationId: string, accept: boolean) {
+    await apiRequest(
+      `${base(organizationId)}/${encodeURIComponent(delegationId)}/${accept ? 'accept' : 'decline'}`,
+      { method: 'POST' },
+    );
   },
   async revoke(organizationId: string, delegationId: string) {
     await apiRequest(`${base(organizationId)}/${encodeURIComponent(delegationId)}/revoke`, {

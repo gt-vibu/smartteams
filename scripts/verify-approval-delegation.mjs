@@ -62,7 +62,31 @@ const handed = await t.org('POST', '/approval-delegations', {
   reason: 'Annual leave',
 });
 ok('the administrator hands their approvals to Bea', good(handed), status(handed));
-ok('it is active today', handed.payload?.status === 'ACTIVE', handed.payload?.status);
+// Their own handover is a request: nothing moves until Bea accepts it.
+ok('it waits for Bea to accept', handed.payload?.status === 'PENDING', handed.payload?.status);
+const early = await t.b.as('POST', '/timesheets/' + first + '/decision', {
+  status: 'APPROVED',
+  comment: 'Too early',
+});
+ok('until she accepts, Bea still cannot decide', refused(early), status(early));
+const adaAnswers = await t.a.as(
+  'POST',
+  '/approval-delegations/' + handed.payload?.id + '/accept',
+  {},
+);
+ok('only the person asked can answer', refused(adaAnswers), status(adaAnswers));
+const accepted = await t.b.as(
+  'POST',
+  '/approval-delegations/' + handed.payload?.id + '/accept',
+  {},
+);
+ok(
+  'Bea accepts, and it is active today',
+  good(accepted) && accepted.payload?.status === 'ACTIVE',
+  status(accepted) + ' ' + accepted.payload?.status,
+);
+const again = await t.b.as('POST', '/approval-delegations/' + handed.payload?.id + '/decline', {});
+ok('an answered request cannot be answered again', again.status === 409, status(again));
 const twice = await t.org('POST', '/approval-delegations', {
   delegateEmployeeId: t.b.id,
   startsOn: today,
@@ -73,8 +97,8 @@ const beaList = await t.b.as('GET', '/approval-delegations');
 ok('Bea sees what she is covering', beaList.payload?.received?.length === 1);
 const beaFeed = rows((await t.b.as('GET', '/notifications')).payload?.items ?? []);
 ok(
-  'and is told',
-  beaFeed.some((item) => item.kind === 'APPROVALS_DELEGATED'),
+  'and was asked',
+  beaFeed.some((item) => item.kind === 'APPROVALS_COVER_REQUESTED'),
   beaFeed.map((item) => item.kind).join(', '),
 );
 
@@ -106,5 +130,60 @@ const own = await t.org('POST', `/timesheets/${second}/decision`, {
   comment: 'Back from leave',
 });
 ok('the administrator still can', good(own), status(own));
+
+console.log('\ndeclining, and cover set by an administrator');
+{
+  // Ada asks Bea to cover; Bea declines, so nothing is handed over.
+  const asked = await t.a.as('POST', '/approval-delegations', {
+    delegateEmployeeId: t.b.id,
+    startsOn: inAWeek,
+    endsOn: inAWeek,
+  });
+  const declined = await t.b.as(
+    'POST',
+    '/approval-delegations/' + asked.payload?.id + '/decline',
+    {},
+  );
+  ok(
+    'Bea can decline a request',
+    good(asked) && good(declined) && declined.payload?.status === 'DECLINED',
+    status(asked) + ' / ' + status(declined),
+  );
+  const adaFeed = rows((await t.a.as('GET', '/notifications')).payload?.items ?? []);
+  ok(
+    'and Ada is told',
+    adaFeed.some((item) => item.kind === 'APPROVALS_COVER_DECLINED'),
+    adaFeed.map((item) => item.kind).join(', '),
+  );
+
+  // An employee cannot arrange someone else's cover.
+  const forOther = await t.a.as('POST', '/approval-delegations', {
+    delegatorEmployeeId: t.b.id,
+    delegateEmployeeId: t.a.id,
+    startsOn: inAWeek,
+    endsOn: inAWeek,
+  });
+  ok("an employee cannot set up someone else's cover", refused(forOther), status(forOther));
+
+  // The administrator arranges Bea's cover by Ada: it stands without Ada accepting.
+  const set = await t.org('POST', '/approval-delegations', {
+    delegatorEmployeeId: t.b.id,
+    delegateEmployeeId: t.a.id,
+    startsOn: inAWeek,
+    endsOn: inAWeek,
+  });
+  ok(
+    "an administrator's cover takes effect without asking",
+    good(set) &&
+      ['UPCOMING', 'ACTIVE'].includes(set.payload?.status) &&
+      set.payload?.setByAdministrator === true,
+    status(set) + ' ' + set.payload?.status,
+  );
+  const all = await t.org('GET', '/approval-delegations');
+  ok(
+    "the administrator sees everyone's cover",
+    (all.payload?.all ?? []).some((item) => item.id === set.payload?.id),
+  );
+}
 
 finish();

@@ -14,8 +14,9 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model ApprovalDelegation
- * Someone away hands their approvals to a colleague for a span of days. While it runs, the
- * delegate may decide whatever the delegator could; the delegator keeps that right too.
+ * Someone away hands their approvals to a colleague for a span of days. Once the colleague accepts
+ * (or at once, when an administrator sets it up), the delegate may decide whatever the delegator
+ * could while it runs; the delegator keeps that right too.
  */
 export type ApprovalDelegationModel = runtime.Types.Result.DefaultSelection<Prisma.$ApprovalDelegationPayload>
 
@@ -35,6 +36,9 @@ export type ApprovalDelegationMinAggregateOutputType = {
   reason: string | null
   createdAt: Date | null
   revokedAt: Date | null
+  acceptedAt: Date | null
+  declinedAt: Date | null
+  createdByUserId: string | null
 }
 
 export type ApprovalDelegationMaxAggregateOutputType = {
@@ -47,6 +51,9 @@ export type ApprovalDelegationMaxAggregateOutputType = {
   reason: string | null
   createdAt: Date | null
   revokedAt: Date | null
+  acceptedAt: Date | null
+  declinedAt: Date | null
+  createdByUserId: string | null
 }
 
 export type ApprovalDelegationCountAggregateOutputType = {
@@ -59,6 +66,9 @@ export type ApprovalDelegationCountAggregateOutputType = {
   reason: number
   createdAt: number
   revokedAt: number
+  acceptedAt: number
+  declinedAt: number
+  createdByUserId: number
   _all: number
 }
 
@@ -73,6 +83,9 @@ export type ApprovalDelegationMinAggregateInputType = {
   reason?: true
   createdAt?: true
   revokedAt?: true
+  acceptedAt?: true
+  declinedAt?: true
+  createdByUserId?: true
 }
 
 export type ApprovalDelegationMaxAggregateInputType = {
@@ -85,6 +98,9 @@ export type ApprovalDelegationMaxAggregateInputType = {
   reason?: true
   createdAt?: true
   revokedAt?: true
+  acceptedAt?: true
+  declinedAt?: true
+  createdByUserId?: true
 }
 
 export type ApprovalDelegationCountAggregateInputType = {
@@ -97,6 +113,9 @@ export type ApprovalDelegationCountAggregateInputType = {
   reason?: true
   createdAt?: true
   revokedAt?: true
+  acceptedAt?: true
+  declinedAt?: true
+  createdByUserId?: true
   _all?: true
 }
 
@@ -182,6 +201,9 @@ export type ApprovalDelegationGroupByOutputType = {
   reason: string | null
   createdAt: Date
   revokedAt: Date | null
+  acceptedAt: Date | null
+  declinedAt: Date | null
+  createdByUserId: string | null
   _count: ApprovalDelegationCountAggregateOutputType | null
   _min: ApprovalDelegationMinAggregateOutputType | null
   _max: ApprovalDelegationMaxAggregateOutputType | null
@@ -215,6 +237,9 @@ export type ApprovalDelegationWhereInput = {
   reason?: Prisma.StringNullableFilter<"ApprovalDelegation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ApprovalDelegation"> | Date | string
   revokedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  declinedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableFilter<"ApprovalDelegation"> | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   delegator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   delegate?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -230,6 +255,9 @@ export type ApprovalDelegationOrderByWithRelationInput = {
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  declinedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   delegator?: Prisma.UserOrderByWithRelationInput
   delegate?: Prisma.UserOrderByWithRelationInput
@@ -248,6 +276,9 @@ export type ApprovalDelegationWhereUniqueInput = Prisma.AtLeast<{
   reason?: Prisma.StringNullableFilter<"ApprovalDelegation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ApprovalDelegation"> | Date | string
   revokedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  declinedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableFilter<"ApprovalDelegation"> | string | null
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   delegator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   delegate?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -263,6 +294,9 @@ export type ApprovalDelegationOrderByWithAggregationInput = {
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  declinedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ApprovalDelegationCountOrderByAggregateInput
   _max?: Prisma.ApprovalDelegationMaxOrderByAggregateInput
   _min?: Prisma.ApprovalDelegationMinOrderByAggregateInput
@@ -281,6 +315,9 @@ export type ApprovalDelegationScalarWhereWithAggregatesInput = {
   reason?: Prisma.StringNullableWithAggregatesFilter<"ApprovalDelegation"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ApprovalDelegation"> | Date | string
   revokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApprovalDelegation"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApprovalDelegation"> | Date | string | null
+  declinedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ApprovalDelegation"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableWithAggregatesFilter<"ApprovalDelegation"> | string | null
 }
 
 export type ApprovalDelegationCreateInput = {
@@ -290,6 +327,9 @@ export type ApprovalDelegationCreateInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutApprovalDelegationsInput
   delegator: Prisma.UserCreateNestedOneWithoutDelegationsGivenInput
   delegate: Prisma.UserCreateNestedOneWithoutDelegationsReceivedInput
@@ -305,6 +345,9 @@ export type ApprovalDelegationUncheckedCreateInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationUpdateInput = {
@@ -314,6 +357,9 @@ export type ApprovalDelegationUpdateInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutApprovalDelegationsNestedInput
   delegator?: Prisma.UserUpdateOneRequiredWithoutDelegationsGivenNestedInput
   delegate?: Prisma.UserUpdateOneRequiredWithoutDelegationsReceivedNestedInput
@@ -329,6 +375,9 @@ export type ApprovalDelegationUncheckedUpdateInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationCreateManyInput = {
@@ -341,6 +390,9 @@ export type ApprovalDelegationCreateManyInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationUpdateManyMutationInput = {
@@ -350,6 +402,9 @@ export type ApprovalDelegationUpdateManyMutationInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationUncheckedUpdateManyInput = {
@@ -362,6 +417,9 @@ export type ApprovalDelegationUncheckedUpdateManyInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationCountOrderByAggregateInput = {
@@ -374,6 +432,9 @@ export type ApprovalDelegationCountOrderByAggregateInput = {
   reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
+  declinedAt?: Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrder
 }
 
 export type ApprovalDelegationMaxOrderByAggregateInput = {
@@ -386,6 +447,9 @@ export type ApprovalDelegationMaxOrderByAggregateInput = {
   reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
+  declinedAt?: Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrder
 }
 
 export type ApprovalDelegationMinOrderByAggregateInput = {
@@ -398,6 +462,9 @@ export type ApprovalDelegationMinOrderByAggregateInput = {
   reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   revokedAt?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
+  declinedAt?: Prisma.SortOrder
+  createdByUserId?: Prisma.SortOrder
 }
 
 export type ApprovalDelegationListRelationFilter = {
@@ -559,6 +626,9 @@ export type ApprovalDelegationCreateWithoutDelegatorInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutApprovalDelegationsInput
   delegate: Prisma.UserCreateNestedOneWithoutDelegationsReceivedInput
 }
@@ -572,6 +642,9 @@ export type ApprovalDelegationUncheckedCreateWithoutDelegatorInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationCreateOrConnectWithoutDelegatorInput = {
@@ -591,6 +664,9 @@ export type ApprovalDelegationCreateWithoutDelegateInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
   organization: Prisma.OrganizationCreateNestedOneWithoutApprovalDelegationsInput
   delegator: Prisma.UserCreateNestedOneWithoutDelegationsGivenInput
 }
@@ -604,6 +680,9 @@ export type ApprovalDelegationUncheckedCreateWithoutDelegateInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationCreateOrConnectWithoutDelegateInput = {
@@ -645,6 +724,9 @@ export type ApprovalDelegationScalarWhereInput = {
   reason?: Prisma.StringNullableFilter<"ApprovalDelegation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ApprovalDelegation"> | Date | string
   revokedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  declinedAt?: Prisma.DateTimeNullableFilter<"ApprovalDelegation"> | Date | string | null
+  createdByUserId?: Prisma.UuidNullableFilter<"ApprovalDelegation"> | string | null
 }
 
 export type ApprovalDelegationUpsertWithWhereUniqueWithoutDelegateInput = {
@@ -670,6 +752,9 @@ export type ApprovalDelegationCreateWithoutOrganizationInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
   delegator: Prisma.UserCreateNestedOneWithoutDelegationsGivenInput
   delegate: Prisma.UserCreateNestedOneWithoutDelegationsReceivedInput
 }
@@ -683,6 +768,9 @@ export type ApprovalDelegationUncheckedCreateWithoutOrganizationInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationCreateOrConnectWithoutOrganizationInput = {
@@ -720,6 +808,9 @@ export type ApprovalDelegationCreateManyDelegatorInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationCreateManyDelegateInput = {
@@ -731,6 +822,9 @@ export type ApprovalDelegationCreateManyDelegateInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationUpdateWithoutDelegatorInput = {
@@ -740,6 +834,9 @@ export type ApprovalDelegationUpdateWithoutDelegatorInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutApprovalDelegationsNestedInput
   delegate?: Prisma.UserUpdateOneRequiredWithoutDelegationsReceivedNestedInput
 }
@@ -753,6 +850,9 @@ export type ApprovalDelegationUncheckedUpdateWithoutDelegatorInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationUncheckedUpdateManyWithoutDelegatorInput = {
@@ -764,6 +864,9 @@ export type ApprovalDelegationUncheckedUpdateManyWithoutDelegatorInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationUpdateWithoutDelegateInput = {
@@ -773,6 +876,9 @@ export type ApprovalDelegationUpdateWithoutDelegateInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutApprovalDelegationsNestedInput
   delegator?: Prisma.UserUpdateOneRequiredWithoutDelegationsGivenNestedInput
 }
@@ -786,6 +892,9 @@ export type ApprovalDelegationUncheckedUpdateWithoutDelegateInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationUncheckedUpdateManyWithoutDelegateInput = {
@@ -797,6 +906,9 @@ export type ApprovalDelegationUncheckedUpdateManyWithoutDelegateInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationCreateManyOrganizationInput = {
@@ -808,6 +920,9 @@ export type ApprovalDelegationCreateManyOrganizationInput = {
   reason?: string | null
   createdAt?: Date | string
   revokedAt?: Date | string | null
+  acceptedAt?: Date | string | null
+  declinedAt?: Date | string | null
+  createdByUserId?: string | null
 }
 
 export type ApprovalDelegationUpdateWithoutOrganizationInput = {
@@ -817,6 +932,9 @@ export type ApprovalDelegationUpdateWithoutOrganizationInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   delegator?: Prisma.UserUpdateOneRequiredWithoutDelegationsGivenNestedInput
   delegate?: Prisma.UserUpdateOneRequiredWithoutDelegationsReceivedNestedInput
 }
@@ -830,6 +948,9 @@ export type ApprovalDelegationUncheckedUpdateWithoutOrganizationInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ApprovalDelegationUncheckedUpdateManyWithoutOrganizationInput = {
@@ -841,6 +962,9 @@ export type ApprovalDelegationUncheckedUpdateManyWithoutOrganizationInput = {
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -855,6 +979,9 @@ export type ApprovalDelegationSelect<ExtArgs extends runtime.Types.Extensions.In
   reason?: boolean
   createdAt?: boolean
   revokedAt?: boolean
+  acceptedAt?: boolean
+  declinedAt?: boolean
+  createdByUserId?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   delegator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   delegate?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -870,6 +997,9 @@ export type ApprovalDelegationSelectCreateManyAndReturn<ExtArgs extends runtime.
   reason?: boolean
   createdAt?: boolean
   revokedAt?: boolean
+  acceptedAt?: boolean
+  declinedAt?: boolean
+  createdByUserId?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   delegator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   delegate?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -885,6 +1015,9 @@ export type ApprovalDelegationSelectUpdateManyAndReturn<ExtArgs extends runtime.
   reason?: boolean
   createdAt?: boolean
   revokedAt?: boolean
+  acceptedAt?: boolean
+  declinedAt?: boolean
+  createdByUserId?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   delegator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   delegate?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -900,9 +1033,12 @@ export type ApprovalDelegationSelectScalar = {
   reason?: boolean
   createdAt?: boolean
   revokedAt?: boolean
+  acceptedAt?: boolean
+  declinedAt?: boolean
+  createdByUserId?: boolean
 }
 
-export type ApprovalDelegationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "delegatorUserId" | "delegateUserId" | "startsOn" | "endsOn" | "reason" | "createdAt" | "revokedAt", ExtArgs["result"]["approvalDelegation"]>
+export type ApprovalDelegationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "delegatorUserId" | "delegateUserId" | "startsOn" | "endsOn" | "reason" | "createdAt" | "revokedAt" | "acceptedAt" | "declinedAt" | "createdByUserId", ExtArgs["result"]["approvalDelegation"]>
 export type ApprovalDelegationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   delegator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -939,6 +1075,15 @@ export type $ApprovalDelegationPayload<ExtArgs extends runtime.Types.Extensions.
     reason: string | null
     createdAt: Date
     revokedAt: Date | null
+    /**
+     * Null until the person covering accepts. An administrator's handover is accepted when made.
+     */
+    acceptedAt: Date | null
+    declinedAt: Date | null
+    /**
+     * Who set it up: the person away, or an administrator on their behalf.
+     */
+    createdByUserId: string | null
   }, ExtArgs["result"]["approvalDelegation"]>
   composites: {}
 }
@@ -1374,6 +1519,9 @@ export interface ApprovalDelegationFieldRefs {
   readonly reason: Prisma.FieldRef<"ApprovalDelegation", 'String'>
   readonly createdAt: Prisma.FieldRef<"ApprovalDelegation", 'DateTime'>
   readonly revokedAt: Prisma.FieldRef<"ApprovalDelegation", 'DateTime'>
+  readonly acceptedAt: Prisma.FieldRef<"ApprovalDelegation", 'DateTime'>
+  readonly declinedAt: Prisma.FieldRef<"ApprovalDelegation", 'DateTime'>
+  readonly createdByUserId: Prisma.FieldRef<"ApprovalDelegation", 'String'>
 }
     
 

@@ -1,27 +1,26 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge, Button, DatePicker, Input, Label } from '@smarteam/ui';
-import { formatDateRange } from '@smarteam/contracts';
+import { Button, DatePicker, Input, Label } from '@smarteam/ui';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import { emitDataChanged } from '../../lib/data-events';
 import { EmployeeCombobox } from '../common/employee-combobox';
-import { delegationsRepository, type Delegation } from '../../repositories/delegations.repository';
+import { delegationsRepository } from '../../repositories/delegations.repository';
+import { DelegationList } from './delegation-list';
 import { localDateKey } from '../../lib/local-date';
 
 const todayKey = () => localDateKey();
 
-const TONE = { ACTIVE: 'success', UPCOMING: 'sky', ENDED: 'secondary' } as const;
-const LABEL = { ACTIVE: 'Covering now', UPCOMING: 'Upcoming', ENDED: 'Ended' } as const;
-
 /**
  * Handing approvals to a colleague while away.
  *
- * The person covering can decide what the delegator could, for the chosen days, and is told when
- * something is waiting. The delegator keeps deciding too, and can end the handover early.
+ * In their own workspace, someone asks a colleague to cover; the colleague accepts or declines,
+ * and nothing is handed over until they accept. In the admin workspace an administrator sets cover
+ * up for anyone, which takes effect at once. The person covering decides what the person away
+ * could, for the chosen days; the person away keeps deciding too, and can end it early.
  */
-export function DelegationPanel() {
+export function DelegationPanel({ admin = false }: { admin?: boolean }) {
   const { session } = useSession();
   const organizationId = session?.organizationId ?? null;
   const enabled = Boolean(organizationId);
@@ -38,6 +37,7 @@ export function DelegationPanel() {
     { enabled },
   );
   const [delegateId, setDelegateId] = useState('');
+  const [awayId, setAwayId] = useState('');
   const [startsOn, setStartsOn] = useState(todayKey);
   const [endsOn, setEndsOn] = useState('');
   const [reason, setReason] = useState('');
@@ -61,12 +61,16 @@ export function DelegationPanel() {
   };
 
   const submit = async () => {
-    if (!delegateId) return setError('Choose who will cover your approvals.');
+    if (admin && !awayId) return setError('Choose who is away.');
+    if (!delegateId) return setError('Choose who will cover the approvals.');
+    if (admin && awayId === delegateId)
+      return setError('Choose someone other than the person who is away.');
     if (!endsOn) return setError('Choose the last day you are away.');
     if (endsOn < startsOn) return setError('The last day cannot be before the first.');
     const saved = await run(() =>
       delegationsRepository.create(organizationId!, {
         delegateEmployeeId: delegateId,
+        ...(admin ? { delegatorEmployeeId: awayId } : {}),
         startsOn,
         endsOn,
         ...(reason.trim() ? { reason: reason.trim() } : {}),
@@ -74,24 +78,50 @@ export function DelegationPanel() {
     );
     if (saved) {
       setDelegateId('');
+      setAwayId('');
       setEndsOn('');
       setReason('');
     }
   };
 
   const given = list.data?.given ?? [];
-  const received = (list.data?.received ?? []).filter((item) => item.status !== 'ENDED');
+  const received = list.data?.received ?? [];
+  const asked = received.filter((item) => item.status === 'PENDING');
+  const covering = received.filter((item) => ['ACTIVE', 'UPCOMING'].includes(item.status));
+  const everyone = list.data?.all ?? [];
+  const answer = (item: { id: string }, accept: boolean) =>
+    void run(() => delegationsRepository.respond(organizationId!, item.id, accept));
+  const end = (item: { id: string }) =>
+    void run(() => delegationsRepository.revoke(organizationId!, item.id));
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <section className="space-y-3 rounded-lg border border-border bg-card p-4">
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Going away?</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            {admin ? 'Set up cover' : 'Going away?'}
+          </h3>
           <p className="text-xs text-muted-foreground">
-            Hand your approvals to a colleague for the days you are out. You can still decide them
-            yourself, and end the handover early.
+            {admin
+              ? "Hand someone's approvals to a colleague for the days they are out. It takes effect straight away."
+              : 'Ask a colleague to cover your approvals while you are out. It starts once they accept; you can still decide them yourself.'}
           </p>
         </div>
+        {admin && (
+          <div>
+            <Label className="mb-1 block" htmlFor="delegate-away">
+              Who is away
+            </Label>
+            <EmployeeCombobox
+              disabled={busy || people.loading}
+              employees={people.data ?? []}
+              id="delegate-away"
+              onChange={setAwayId}
+              placeholder={people.loading ? 'Loading people…' : 'Choose a person'}
+              value={awayId}
+            />
+          </div>
+        )}
         <div>
           <Label className="mb-1 block" htmlFor="delegate">
             Who covers
@@ -151,86 +181,46 @@ export function DelegationPanel() {
         )}
         <div className="flex justify-end">
           <Button disabled={busy} onClick={() => void submit()} type="button">
-            {busy ? 'Saving…' : 'Hand over approvals'}
+            {busy ? 'Saving…' : admin ? 'Set up cover' : 'Ask for cover'}
           </Button>
         </div>
       </section>
 
       <section className="space-y-3">
-        {received.length > 0 && (
-          <List
-            items={received}
-            title="You are covering"
-            who={(item) => `For ${item.delegator.name}`}
+        {admin ? (
+          <DelegationList
+            busy={busy}
+            empty="Nobody's approvals are covered."
+            items={everyone}
+            onEnd={end}
+            title="Cover in place"
+            who={(item) => `${item.delegator.name} → ${item.delegate.name}`}
           />
+        ) : (
+          <>
+            <DelegationList
+              busy={busy}
+              items={asked}
+              onAnswer={answer}
+              title="Asked to cover"
+              who={(item) => `For ${item.delegator.name}`}
+            />
+            <DelegationList
+              items={covering}
+              title="You are covering"
+              who={(item) => `For ${item.delegator.name}`}
+            />
+            <DelegationList
+              busy={busy}
+              empty="You have not handed over your approvals."
+              items={given}
+              onEnd={end}
+              title="Your handovers"
+              who={(item) => `To ${item.delegate.name}`}
+            />
+          </>
         )}
-        <List
-          empty="You have not handed over your approvals."
-          items={given}
-          onEnd={(item) => void run(() => delegationsRepository.revoke(organizationId!, item.id))}
-          busy={busy}
-          title="Your handovers"
-          who={(item) => `To ${item.delegate.name}`}
-        />
       </section>
-    </div>
-  );
-}
-
-function List({
-  title,
-  items,
-  who,
-  empty,
-  onEnd,
-  busy,
-}: {
-  title: string;
-  items: Delegation[];
-  who: (item: Delegation) => string;
-  empty?: string;
-  onEnd?: (item: Delegation) => void;
-  busy?: boolean;
-}) {
-  return (
-    <div className="rounded-lg border border-border bg-card">
-      <p className="border-b border-border px-4 py-2.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </p>
-      {items.length === 0 ? (
-        <p className="px-4 py-4 text-xs text-muted-foreground">{empty}</p>
-      ) : (
-        <ul className="divide-y divide-border">
-          {items.map((item) => (
-            <li
-              className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5"
-              key={item.id}
-            >
-              <span className="min-w-0">
-                <span className="block text-xs font-semibold text-foreground">{who(item)}</span>
-                <span className="text-[11px] text-muted-foreground">
-                  {formatDateRange(item.startsOn, item.endsOn)}
-                  {item.reason ? ` · ${item.reason}` : ''}
-                </span>
-              </span>
-              <span className="flex items-center gap-2">
-                <Badge variant={TONE[item.status]}>{LABEL[item.status]}</Badge>
-                {onEnd && item.status !== 'ENDED' && (
-                  <Button
-                    disabled={busy}
-                    onClick={() => onEnd(item)}
-                    size="sm"
-                    type="button"
-                    variant="ghost"
-                  >
-                    End
-                  </Button>
-                )}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }

@@ -9,26 +9,24 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { describeDays, notify } from '../notifications/notify';
 import { today } from './approval-authorization';
-
-const dateOnly = (value: string) => new Date(`${value.slice(0, 10)}T00:00:00.000Z`);
-const DAY_MS = 86_400_000;
-
-type Row = {
-  id: string;
-  startsOn: Date;
-  endsOn: Date;
-  reason: string | null;
-  revokedAt: Date | null;
-  delegator: { id: string; displayName: string };
-  delegate: { id: string; displayName: string };
-};
+import {
+  DAY_MS,
+  DELEGATION_INCLUDE,
+  activeLogin,
+  administersCover,
+  delegationSpan,
+  delegationStatus,
+  signedInUser,
+  toDelegationDto,
+} from './approval-delegation-view';
 
 /**
  * Handing one's approvals to a colleague while away.
  *
- * Anyone may hand over their own approvals — only what they could approve themselves passes, so a
- * person with none hands over nothing. The delegator keeps deciding too; the delegate never
- * decides their delegator's own requests. Ending one early is a revocation, kept on record.
+ * Anyone may ask a colleague to cover their approvals; the colleague accepts or declines, and
+ * nothing is handed over until they accept. An administrator may set cover up for anyone, which
+ * takes effect without asking. Only what the person away could approve passes; they keep deciding
+ * too, and the one covering never decides their own requests. Ending one early is kept on record.
  */
 @Injectable()
 export class ApprovalDelegationsService {
@@ -37,26 +35,29 @@ export class ApprovalDelegationsService {
     private readonly audit: AuditService,
   ) {}
 
-  /** Spans the caller gave and received that have not ended more than a month ago. */
+  /**
+   * Handovers the caller gave and was asked to cover, not ended more than a month ago. An
+   * administrator also sees everyone's, to set cover up or end it.
+   */
   list(context: DomainContext) {
-    const userId = self(context);
+    const userId = signedInUser(context);
     const since = new Date(today().getTime() - 30 * DAY_MS);
+    const everyone = administersCover(context);
     return this.database.run(context, async (tx) => {
       const rows = await tx.approvalDelegation.findMany({
         where: {
           organizationId: context.organizationId,
-          OR: [{ delegatorUserId: userId }, { delegateUserId: userId }],
+          ...(everyone ? {} : { OR: [{ delegatorUserId: userId }, { delegateUserId: userId }] }),
           endsOn: { gte: since },
         },
         orderBy: { startsOn: 'desc' },
-        include: {
-          delegator: { select: { id: true, displayName: true } },
-          delegate: { select: { id: true, displayName: true } },
-        },
+        include: DELEGATION_INCLUDE,
       });
       return {
-        given: rows.filter((row) => row.delegator.id === userId).map(toDto),
-        received: rows.filter((row) => row.delegate.id === userId).map(toDto),
+        given: rows.filter((row) => row.delegator.id === userId).map(toDelegationDto),
+        received: rows.filter((row) => row.delegate.id === userId).map(toDelegationDto),
+        ...(everyone ? { all: rows.map(toDelegationDto) } : {}),
+        canSetForOthers: everyone,
       };
     });
   }
@@ -66,14 +67,15 @@ export class ApprovalDelegationsService {
    * ID only — enough to choose someone, nothing more about them.
    */
   candidates(context: DomainContext) {
-    const userId = self(context);
+    const userId = signedInUser(context);
     return this.database.run(context, (tx) =>
       tx.employee.findMany({
         where: {
           organizationId: context.organizationId,
           status: 'ACTIVE',
           user: { is: { isActive: true } },
-          NOT: { userId },
+          // An administrator chooses the person away as well, so they may be anyone.
+          ...(administersCover(context) ? {} : { NOT: { userId } }),
         },
         orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
         select: {
@@ -88,139 +90,167 @@ export class ApprovalDelegationsService {
     );
   }
 
+  /**
+   * Asks a colleague to cover, or — for an administrator naming the person away — sets cover up
+   * outright. `delegatorEmployeeId` is only for administrators; everyone else hands over their own.
+   */
   create(
     context: DomainContext,
-    input: { delegateEmployeeId: string; startsOn: string; endsOn: string; reason?: string },
+    input: {
+      delegateEmployeeId: string;
+      delegatorEmployeeId?: string;
+      startsOn: string;
+      endsOn: string;
+      reason?: string;
+    },
   ) {
-    const userId = self(context);
-    const startsOn = dateOnly(input.startsOn);
-    const endsOn = dateOnly(input.endsOn);
-    if (Number.isNaN(startsOn.getTime()) || Number.isNaN(endsOn.getTime()))
-      throw new ConflictError('Enter the first and last day of the handover.');
-    if (endsOn < startsOn) throw new ConflictError('The last day cannot be before the first.');
-    if (endsOn < today()) throw new ConflictError('A handover cannot end in the past.');
-    if (endsOn.getTime() - startsOn.getTime() > 366 * DAY_MS)
-      throw new ConflictError('Hand over approvals for a year at most.');
+    const userId = signedInUser(context);
+    const { startsOn, endsOn } = delegationSpan(input);
     return this.database.run(context, async (tx) => {
-      const delegate = await tx.employee.findFirst({
-        where: {
-          id: input.delegateEmployeeId,
-          organizationId: context.organizationId,
-          status: 'ACTIVE',
-        },
-        select: {
-          firstName: true,
-          lastName: true,
-          user: { select: { id: true, isActive: true } },
-        },
-      });
-      if (!delegate) throw new NotFoundError('Employee');
-      if (!delegate.user?.isActive)
-        throw new ConflictError(
-          `${delegate.firstName} ${delegate.lastName} has no active login, so cannot approve.`,
-        );
-      if (delegate.user.id === userId)
-        throw new ConflictError('Choose someone other than yourself.');
+      const delegator = input.delegatorEmployeeId
+        ? await activeLogin(tx, context.organizationId, input.delegatorEmployeeId)
+        : { userId, name: null };
+      const onBehalf = delegator.userId !== userId;
+      if (onBehalf && !administersCover(context))
+        throw new ForbiddenDomainError('Only an administrator can set up cover for someone else.');
+      const delegate = await activeLogin(tx, context.organizationId, input.delegateEmployeeId);
+      if (delegate.userId === delegator.userId)
+        throw new ConflictError('Choose someone other than the person who is away.');
       const overlap = await tx.approvalDelegation.findFirst({
         where: {
           organizationId: context.organizationId,
-          delegatorUserId: userId,
+          delegatorUserId: delegator.userId,
           revokedAt: null,
+          declinedAt: null,
           startsOn: { lte: endsOn },
           endsOn: { gte: startsOn },
         },
         select: { id: true },
       });
       if (overlap)
-        throw new ConflictError('You already hand over your approvals for some of those days.');
+        throw new ConflictError(
+          onBehalf
+            ? `${delegator.name} already has cover for some of those days.`
+            : 'You already hand over your approvals for some of those days.',
+        );
       const created = await tx.approvalDelegation.create({
         data: {
           organizationId: context.organizationId,
-          delegatorUserId: userId,
-          delegateUserId: delegate.user.id,
+          delegatorUserId: delegator.userId,
+          delegateUserId: delegate.userId,
           startsOn,
           endsOn,
           reason: input.reason?.trim() || null,
+          createdByUserId: userId,
+          // An administrator's arrangement stands; a colleague's request waits for an answer.
+          acceptedAt: onBehalf ? new Date() : null,
         },
-        include: {
-          delegator: { select: { id: true, displayName: true } },
-          delegate: { select: { id: true, displayName: true } },
-        },
+        include: DELEGATION_INCLUDE,
       });
+      const days = describeDays(startsOn, endsOn);
       await notify(tx, context, {
-        recipients: [delegate.user.id],
-        kind: 'APPROVALS_DELEGATED',
-        title: 'You are covering approvals',
-        body: `${created.delegator.displayName} handed you their approvals for ${describeDays(startsOn, endsOn)}.`,
+        recipients: [delegate.userId],
+        kind: onBehalf ? 'APPROVALS_DELEGATED' : 'APPROVALS_COVER_REQUESTED',
+        title: onBehalf ? 'You are covering approvals' : 'Can you cover approvals?',
+        body: onBehalf
+          ? `You cover ${created.delegator.displayName}'s approvals for ${days}.`
+          : `${created.delegator.displayName} asks you to cover their approvals for ${days}. Accept or decline in Approvals.`,
         module: 'approvals',
         entityType: 'APPROVAL_DELEGATION',
         entityId: created.id,
       });
-      await this.audit.record(
-        context,
-        {
+      if (onBehalf)
+        await notify(tx, context, {
+          recipients: [delegator.userId],
+          kind: 'APPROVALS_DELEGATED',
+          title: 'Your approvals are covered',
+          body: `${created.delegate.displayName} covers your approvals for ${days}.`,
+          module: 'approvals',
           entityType: 'APPROVAL_DELEGATION',
           entityId: created.id,
-          action: 'APPROVALS_DELEGATED',
-          afterState: jsonSnapshot(created),
-        },
-        tx,
-      );
-      return toDto(created);
+        });
+      await this.record(context, tx, created.id, 'APPROVALS_DELEGATED', null, created);
+      return toDelegationDto(created);
     });
   }
 
+  /** The colleague asked to cover says yes or no. Only they can, and only while it is pending. */
+  respond(context: DomainContext, delegationId: string, accept: boolean) {
+    const userId = signedInUser(context);
+    return this.database.run(context, async (tx) => {
+      const found = await tx.approvalDelegation.findFirst({
+        where: { id: delegationId, organizationId: context.organizationId },
+        include: DELEGATION_INCLUDE,
+      });
+      if (!found) throw new NotFoundError('Handover');
+      if (found.delegateUserId !== userId)
+        throw new ForbiddenDomainError('Only the person asked to cover can answer.');
+      if (delegationStatus(found) !== 'PENDING')
+        throw new ConflictError('This request has already been answered or has ended.');
+      const updated = await tx.approvalDelegation.update({
+        where: { id: found.id },
+        data: accept ? { acceptedAt: new Date() } : { declinedAt: new Date() },
+        include: DELEGATION_INCLUDE,
+      });
+      await notify(tx, context, {
+        recipients: [found.delegatorUserId],
+        kind: accept ? 'APPROVALS_COVER_ACCEPTED' : 'APPROVALS_COVER_DECLINED',
+        title: accept ? 'Cover accepted' : 'Cover declined',
+        body: `${found.delegate.displayName} ${accept ? 'will cover' : 'cannot cover'} your approvals for ${describeDays(found.startsOn, found.endsOn)}.`,
+        module: 'approvals',
+        entityType: 'APPROVAL_DELEGATION',
+        entityId: found.id,
+      });
+      await this.record(
+        context,
+        tx,
+        found.id,
+        accept ? 'APPROVAL_DELEGATION_ACCEPTED' : 'APPROVAL_DELEGATION_DECLINED',
+        found,
+        updated,
+      );
+      return toDelegationDto(updated);
+    });
+  }
+
+  /** Ends a handover early: the person away, or an administrator. */
   revoke(context: DomainContext, delegationId: string) {
-    const userId = self(context);
+    const userId = signedInUser(context);
     return this.database.run(context, async (tx) => {
       const found = await tx.approvalDelegation.findFirst({
         where: { id: delegationId, organizationId: context.organizationId },
       });
       if (!found) throw new NotFoundError('Handover');
-      if (found.delegatorUserId !== userId)
+      if (found.delegatorUserId !== userId && !administersCover(context))
         throw new ForbiddenDomainError('Only the person who handed over approvals can end it.');
       if (found.revokedAt) throw new ConflictError('This handover has already ended.');
       const updated = await tx.approvalDelegation.update({
         where: { id: found.id },
         data: { revokedAt: new Date() },
       });
-      await this.audit.record(
-        context,
-        {
-          entityType: 'APPROVAL_DELEGATION',
-          entityId: found.id,
-          action: 'APPROVAL_DELEGATION_REVOKED',
-          beforeState: jsonSnapshot(found),
-          afterState: jsonSnapshot(updated),
-        },
-        tx,
-      );
+      await this.record(context, tx, found.id, 'APPROVAL_DELEGATION_REVOKED', found, updated);
       return { id: found.id, revoked: true };
     });
   }
-}
 
-function toDto(row: Row) {
-  const day = today();
-  return {
-    id: row.id,
-    startsOn: row.startsOn.toISOString().slice(0, 10),
-    endsOn: row.endsOn.toISOString().slice(0, 10),
-    reason: row.reason,
-    delegator: { userId: row.delegator.id, name: row.delegator.displayName },
-    delegate: { userId: row.delegate.id, name: row.delegate.displayName },
-    status: row.revokedAt
-      ? 'ENDED'
-      : row.endsOn < day
-        ? 'ENDED'
-        : row.startsOn > day
-          ? 'UPCOMING'
-          : 'ACTIVE',
-  };
-}
-
-function self(context: DomainContext) {
-  if (context.accessMode !== 'NATIVE' || !context.actor.userId)
-    throw new ForbiddenDomainError('Handing over approvals is for signed-in people only.');
-  return context.actor.userId;
+  private record(
+    context: DomainContext,
+    tx: Parameters<AuditService['record']>[2],
+    entityId: string,
+    action: string,
+    before: unknown,
+    after: unknown,
+  ) {
+    return this.audit.record(
+      context,
+      {
+        entityType: 'APPROVAL_DELEGATION',
+        entityId,
+        action,
+        ...(before ? { beforeState: jsonSnapshot(before) } : {}),
+        afterState: jsonSnapshot(after),
+      },
+      tx,
+    );
+  }
 }
