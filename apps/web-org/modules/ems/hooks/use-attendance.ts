@@ -20,12 +20,11 @@ import { holidayConflictsByRecord } from '../services/holiday-conflict-view';
 import { announceHolidayCheckIn, emitDataChanged, useDataChanged } from '../lib/data-events';
 import { useMinuteClock } from './use-minute-clock';
 import { useWorkWeek } from './use-work-week';
+import { useShiftHistory } from './use-shift-history';
+import { localDateKey } from '../lib/local-date';
 
-/** Local calendar date as `YYYY-MM-DD`; attendance is recorded in the employee's own day. */
-export function localDateKey(date: Date = new Date()): string {
-  const offset = date.getTimezoneOffset() * 60_000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 10);
-}
+// Attendance is recorded in the employee's own day; kept exported here for existing importers.
+export { localDateKey };
 
 function daysAgo(days: number): string {
   const date = new Date();
@@ -161,6 +160,8 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
       try {
         await operation();
         await refetchAll();
+        // Other attendance views (the timeline beside the check-in bar) hold their own copy.
+        emitDataChanged('attendance');
         return true;
       } catch (caught) {
         setSaveError(caught instanceof Error ? caught.message : 'The punch could not be recorded.');
@@ -207,11 +208,17 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
    * submitted" instead of what the API said — for example that the reason was too short.
    */
   const requestCorrection = useCallback(
-    async (attendanceId: string, reason: string) => {
+    async (
+      attendanceId: string,
+      reason: string,
+      times?: { correctedCheckIn?: string; correctedCheckOut?: string },
+    ) => {
       if (!organizationId || !employeeId)
         throw new Error('This account has no employee record, so attendance cannot be recorded.');
       try {
-        await attendanceRepository.requestCorrection(organizationId, attendanceId, reason);
+        await (times
+          ? attendanceRepository.requestCorrection(organizationId, attendanceId, reason, times)
+          : attendanceRepository.requestCorrection(organizationId, attendanceId, reason));
       } finally {
         // As `run` does, on failure too: show the records as the server holds them.
         await resource.refetch();
@@ -257,9 +264,13 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   );
 
   // Presentation shape the screens render, derived from the same records.
+  const shiftOn = useShiftHistory(employeeId);
   const days: AttendanceDayView[] = useMemo(
-    () => toAttendanceDayViews(records, todayKey, [], holidayConflicts, now, workWeekDays),
-    [records, todayKey, holidayConflicts, now, workWeekDays],
+    () =>
+      toAttendanceDayViews(records, todayKey, [], holidayConflicts, now, workWeekDays).map(
+        (day) => ({ ...day, shiftName: shiftOn(day.workDate) }),
+      ),
+    [records, todayKey, holidayConflicts, now, workWeekDays, shiftOn],
   );
 
   return {

@@ -93,12 +93,13 @@ export class AuthIdentityService {
       ? record.memberships.find((m) => m.organizationId === organizationId)
       : undefined;
 
-    const [roles, permissions] = active
+    const [roles, permissions, approvesInOwnRight] = active
       ? await Promise.all([
           this.loadRoles(userId, active.organizationId),
           this.rbac.loadOrganizationPermissions(userId, active.organizationId),
+          this.rbac.approvesInOwnRight(userId, active.organizationId),
         ])
-      : [[], new Set<string>()];
+      : [[], new Set<string>(), false];
 
     const platformPermissions = [
       ...new Set(
@@ -127,6 +128,8 @@ export class AuthIdentityService {
       memberships,
       roles,
       permissions: [...permissions],
+      /** Decides approvals as themselves (a manager, a named approver, or covering someone). */
+      approvesInOwnRight,
       platform: {
         // Platform authority is a distinct trust domain: holding the tenant `"*"` wildcard
         // never sets this flag.

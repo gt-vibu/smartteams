@@ -1,9 +1,11 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React, { useState } from 'react';
 import {
   Badge,
   Button,
+  Checkbox,
   DatePicker,
   Dialog,
   DialogContent,
@@ -25,9 +27,18 @@ import { HolidayReviewDialog } from './holiday-review-dialog';
  */
 export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
   const [deciding, setDeciding] = useState<{
-    item: ApprovalInboxItem;
+    items: ApprovalInboxItem[];
     status: 'APPROVED' | 'REJECTED';
   } | null>(null);
+  // Several requests decided at once, with one comment: the everyday "approve these five leaves".
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [bulkResult, setBulkResult] = useState<string | null>(null);
+  const keyOf = (item: ApprovalInboxItem) => `${item.domain}-${item.id}`;
+  const selectable = inbox.items.filter(
+    (item) => item.domain !== 'HOLIDAY_CHECK_IN' && inbox.canDecide(item),
+  );
+  const chosen = selectable.filter((item) => selected.has(keyOf(item)));
+  const single = deciding?.items.length === 1 ? deciding.items[0] : null;
   const [comment, setComment] = useState('');
   const [reviewing, setReviewing] = useState<ApprovalInboxItem | null>(null);
   // The approver's own check-out time, where they are not accepting the one proposed.
@@ -35,28 +46,43 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
   const [checkOutTime, setCheckOutTime] = useState('');
 
   const proposed =
-    deciding?.status === 'APPROVED' && deciding.item.proposedCheckOut
-      ? new Date(deciding.item.proposedCheckOut)
+    deciding?.status === 'APPROVED' && single?.proposedCheckOut
+      ? new Date(single.proposedCheckOut)
       : null;
   const replacement =
     checkOutDate && checkOutTime ? new Date(`${checkOutDate}T${checkOutTime}:00`) : null;
   const replacementInvalid = replacement !== null && Number.isNaN(replacement.getTime());
 
-  const openDecision = (item: ApprovalInboxItem, status: 'APPROVED' | 'REJECTED') => {
+  const openDecision = (items: ApprovalInboxItem[], status: 'APPROVED' | 'REJECTED') => {
     inbox.dismissError();
-    setDeciding({ item, status });
+    setBulkResult(null);
+    setDeciding({ items, status });
     setCheckOutDate('');
     setCheckOutTime('');
   };
 
   const confirm = async () => {
     if (!deciding || replacementInvalid) return;
-    const ok = await inbox.decide(
-      deciding.item,
-      deciding.status,
-      comment.trim(),
-      replacement && deciding.status === 'APPROVED' ? replacement.toISOString() : undefined,
-    );
+    let done = 0;
+    for (const item of deciding.items) {
+      const decided = await inbox.decide(
+        item,
+        deciding.status,
+        comment.trim(),
+        single && replacement && deciding.status === 'APPROVED'
+          ? replacement.toISOString()
+          : undefined,
+      );
+      if (decided) done += 1;
+    }
+    const ok = done === deciding.items.length;
+    if (deciding.items.length > 1)
+      setBulkResult(
+        ok
+          ? `${done} request${done === 1 ? '' : 's'} ${deciding.status === 'APPROVED' ? 'approved' : 'rejected'}.`
+          : `${done} of ${deciding.items.length} decided; the rest could not be — see the message above.`,
+      );
+    if (done > 0) setSelected(new Set());
     // A refused or failed decision keeps the dialog open with the error beside it.
     if (ok) {
       setComment('');
@@ -69,6 +95,51 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
   return (
     <>
       <div className="space-y-3">
+        {bulkResult && (
+          <p
+            className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs"
+            role="status"
+          >
+            {bulkResult}
+          </p>
+        )}
+
+        {selectable.length > 1 && !inbox.loading && (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+            <label className="flex items-center gap-2 text-xs text-foreground">
+              <Checkbox
+                aria-label="Select every request you can decide"
+                checked={chosen.length > 0 && chosen.length === selectable.length}
+                onCheckedChange={(checked) =>
+                  setSelected(checked === true ? new Set(selectable.map(keyOf)) : new Set())
+                }
+              />
+              {chosen.length ? `${chosen.length} selected` : 'Select all'}
+            </label>
+            {chosen.length > 0 && (
+              <div className="flex gap-2">
+                <Button
+                  disabled={inbox.saving}
+                  onClick={() => openDecision(chosen, 'REJECTED')}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                >
+                  Reject {chosen.length}
+                </Button>
+                <Button
+                  disabled={inbox.saving}
+                  onClick={() => openDecision(chosen, 'APPROVED')}
+                  size="sm"
+                  type="button"
+                >
+                  Approve {chosen.length}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
         {inbox.saveError && (
           <p
             className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
@@ -120,15 +191,37 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
               className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3"
               key={`${item.domain}-${item.id}`}
             >
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-foreground">{item.title}</p>
-                <p className="mt-0.5 break-words text-[11px] text-muted-foreground">
-                  {item.detail}
-                </p>
+              <div className="flex min-w-0 items-start gap-3">
+                {selectable.length > 1 &&
+                  item.domain !== 'HOLIDAY_CHECK_IN' &&
+                  inbox.canDecide(item) && (
+                    <Checkbox
+                      aria-label={`Select ${item.title}`}
+                      checked={selected.has(keyOf(item))}
+                      className="mt-0.5"
+                      onCheckedChange={(checked) =>
+                        setSelected((current) => {
+                          const next = new Set(current);
+                          if (checked === true) next.add(keyOf(item));
+                          else next.delete(keyOf(item));
+                          return next;
+                        })
+                      }
+                    />
+                  )}
+                <div className="min-w-0">
+                  {item.requester && (
+                    <p className="text-[11px] font-semibold text-primary">{item.requester}</p>
+                  )}
+                  <p className="text-xs font-bold text-foreground">{item.title}</p>
+                  <p className="mt-0.5 break-words text-[11px] text-muted-foreground">
+                    {item.detail}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">
-                  {item.submittedAt ? item.submittedAt.slice(0, 10) : 'pending'}
+                  {item.submittedAt ? formatDate(item.submittedAt) : 'pending'}
                 </Badge>
                 {item.domain === 'HOLIDAY_CHECK_IN' && inbox.canDecide(item) ? (
                   <Button
@@ -146,7 +239,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
                   <>
                     <Button
                       disabled={inbox.saving}
-                      onClick={() => openDecision(item, 'REJECTED')}
+                      onClick={() => openDecision([item], 'REJECTED')}
                       size="sm"
                       type="button"
                       variant="outline"
@@ -155,7 +248,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
                     </Button>
                     <Button
                       disabled={inbox.saving}
-                      onClick={() => openDecision(item, 'APPROVED')}
+                      onClick={() => openDecision([item], 'APPROVED')}
                       size="sm"
                       type="button"
                     >
@@ -175,7 +268,8 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
       <Dialog onOpenChange={(open) => !open && setDeciding(null)} open={deciding !== null}>
         <DialogContent className="sm:max-w-md">
           <DialogTitle>
-            {deciding?.status === 'APPROVED' ? 'Approve' : 'Reject'} this request
+            {deciding?.status === 'APPROVED' ? 'Approve' : 'Reject'}{' '}
+            {single ? 'this request' : `${deciding?.items.length ?? 0} requests`}
           </DialogTitle>
           <p className="mt-1 text-xs text-muted-foreground">
             The comment is recorded against the decision and shown to the requester.
@@ -184,7 +278,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
             {proposed && (
               <div className="rounded-md border border-border bg-muted/30 px-3 py-2.5">
                 <p className="text-[11px] text-foreground">
-                  {deciding?.item.autoClosed
+                  {single?.autoClosed
                     ? 'This day was closed automatically because no check-out was recorded.'
                     : 'This request adds the day’s check-out.'}{' '}
                   Approving records{' '}

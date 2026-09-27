@@ -1,4 +1,6 @@
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsIn,
@@ -112,4 +114,17 @@ export class ShiftAssignmentListQueryDto {
 export class EndShiftAssignmentDto {
   @Matches(DATE_ONLY) endsOn!: string;
   @IsString() @MinLength(3) @MaxLength(500) reason!: string;
+}
+
+export class ShiftRotationDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(500)
+  @IsUUID('4', { each: true })
+  employeeIds!: string[];
+  @IsArray() @ArrayMinSize(2) @ArrayMaxSize(6) @IsUUID('4', { each: true }) shiftIds!: string[];
+  @IsInt() @Min(1) @Max(12) weeksPerShift!: number;
+  @IsDateString() startsOn!: string;
+  @IsInt() @Min(1) @Max(26) totalWeeks!: number;
+  @IsOptional() @IsBoolean() stagger?: boolean;
 }

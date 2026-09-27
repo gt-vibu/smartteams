@@ -6,6 +6,8 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { toProjectDto, toTeamDto } from './workforce-mappers';
+import { assertProjectLead } from './project-lead';
+import { endLeadMembership } from './team-lead';
 
 @Injectable()
 export class TeamsProjectsService {
@@ -49,6 +51,10 @@ export class TeamsProjectsService {
             : {}),
         },
         include: {
+          // The lead's name, for the same reason as the members' below.
+          teamLead: {
+            select: { id: true, firstName: true, lastName: true, employeeNumber: true },
+          },
           members: {
             // The colleague's name, so a member list reads as people rather than ids. An employee
             // may only read their own employee record, so the name cannot come from there.
@@ -90,9 +96,21 @@ export class TeamsProjectsService {
       const projects = await tx.project.findMany({
         where: {
           organizationId: context.organizationId,
-          ...(self ? { members: { some: { employeeId: self.id } } } : {}),
+          // Their projects are the ones they work on or lead.
+          ...(self
+            ? {
+                OR: [
+                  { members: { some: { employeeId: self.id } } },
+                  { projectLeadEmployeeId: self.id },
+                ],
+              }
+            : {}),
         },
         include: {
+          // The lead's name, for the same reason as the members' below.
+          projectLead: {
+            select: { id: true, firstName: true, lastName: true, employeeNumber: true },
+          },
           members: {
             // The colleague's name, so a member list reads as people rather than ids. An employee
             // may only read their own employee record, so the name cannot come from there.
@@ -166,7 +184,12 @@ export class TeamsProjectsService {
   async updateTeam(
     context: DomainContext,
     teamId: string,
-    input: { name?: string; description?: string; branchId?: string; teamLeadEmployeeId?: string },
+    input: {
+      name?: string;
+      description?: string;
+      branchId?: string;
+      teamLeadEmployeeId?: string | null;
+    },
   ) {
     requirePermission(context, 'teams.write');
     return this.database.run(context, async (tx) => {
@@ -198,9 +221,15 @@ export class TeamsProjectsService {
           name: input.name?.trim(),
           description: input.description,
           branchId: input.branchId,
-          teamLeadEmployeeId: input.teamLeadEmployeeId,
+          ...(input.teamLeadEmployeeId !== undefined
+            ? { teamLeadEmployeeId: input.teamLeadEmployeeId }
+            : {}),
         },
       });
+      // The lead leads the team; they are not also one of its members. A member made lead leaves
+      // the member list today, with their membership history kept.
+      if (input.teamLeadEmployeeId && input.teamLeadEmployeeId !== before.teamLeadEmployeeId)
+        await endLeadMembership(tx, context, this.audit, before.id, input.teamLeadEmployeeId);
       await this.audit.record(
         context,
         {
@@ -254,6 +283,8 @@ export class TeamsProjectsService {
       branchId?: string;
       startDate?: string;
       endDate?: string;
+      /** Optional: a project may be created before anyone leads it. */
+      projectLeadEmployeeId?: string;
     },
   ) {
     requirePermission(context, 'projects.write');
@@ -271,6 +302,8 @@ export class TeamsProjectsService {
         }))
       )
         throw new NotFoundError('Branch');
+      if (input.projectLeadEmployeeId)
+        await assertProjectLead(tx, context.organizationId, input.projectLeadEmployeeId);
       const code =
         input.code?.trim().toUpperCase() || (await nextProjectCode(tx, context.organizationId));
       const clash = await tx.project.findFirst({
@@ -287,6 +320,7 @@ export class TeamsProjectsService {
           branchId: input.branchId,
           startDate: input.startDate ? dateOnly(input.startDate) : undefined,
           endDate: input.endDate ? dateOnly(input.endDate) : undefined,
+          projectLeadEmployeeId: input.projectLeadEmployeeId,
         },
       });
       await this.audit.record(
@@ -314,6 +348,8 @@ export class TeamsProjectsService {
       startDate?: string;
       endDate?: string;
       status?: ProjectStatus;
+      /** A new lead, or `null` to leave the project without one. Absent leaves it unchanged. */
+      projectLeadEmployeeId?: string | null;
     },
   ) {
     requirePermission(context, 'projects.write');
@@ -333,9 +369,14 @@ export class TeamsProjectsService {
         }))
       )
         throw new NotFoundError('Branch');
+      if (input.projectLeadEmployeeId)
+        await assertProjectLead(tx, context.organizationId, input.projectLeadEmployeeId);
       const updated = await tx.project.update({
         where: { id: before.id },
         data: {
+          ...(input.projectLeadEmployeeId !== undefined
+            ? { projectLeadEmployeeId: input.projectLeadEmployeeId }
+            : {}),
           code: input.code?.trim().toUpperCase(),
           name: input.name?.trim(),
           description: input.description,

@@ -1,9 +1,11 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React, { useState, useMemo } from 'react';
 import { Button, Select, Input } from '@smarteam/ui';
 import { AttendanceToolbar } from '../screen-2-attendance/attendance-toolbar';
 import { AttendanceTableView } from './attendance-table-view';
+import type { CorrectionTimes } from './correction-form';
 import { AttendanceDetailDrawer } from './attendance-detail-drawer';
 import { AttendanceSummaryFooter } from '../screen-2-attendance/attendance-summary-footer';
 import { useAttendance } from '../../hooks/use-attendance';
@@ -36,7 +38,10 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
       const dayPunches = r.record.punches ?? [];
       return {
         id: r.id,
-        date: `${r.dayLabel}-${r.workDate.slice(0, 4)}`,
+        date: formatDate(r.workDate),
+        workDate: r.workDate,
+        checkInAt: r.record.punches?.find((p) => p.punchType === 'IN')?.occurredAt,
+        checkOutAt: r.record.punches?.filter((p) => p.punchType === 'OUT').at(-1)?.occurredAt,
         firstIn: r.firstInTime || '-',
         lastOut: r.lastOutTime || (r.isToday && r.firstInTime ? 'Active (In)' : '-'),
         totalHours:
@@ -107,10 +112,9 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
    * to stay open. Swallowing the result here is what once let a rejected correction close the
    * drawer as though it had been accepted.
    */
-  const handleRegularize = async (recordId: string, reason: string) => {
-    await requestCorrection(recordId, reason);
-    setSelectedRow(null);
-  };
+  // The form shows it was sent, then closes the drawer itself.
+  const handleRegularize = (recordId: string, reason: string, times?: CorrectionTimes) =>
+    requestCorrection(recordId, reason, times);
 
   return (
     <div className="w-full max-w-full flex flex-col relative overflow-x-hidden">

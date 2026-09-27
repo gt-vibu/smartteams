@@ -26,6 +26,9 @@ export type SessionState = {
   isAuthenticated: boolean;
   /** True until the initial `GET /v1/auth/me` settles, so the shell can avoid flashing login. */
   isRestoring: boolean;
+  /** The session could not be checked (not "signed out"): the shell offers to try again. */
+  restoreFailed: boolean;
+  retryRestore: () => void;
   workspaceContext: WorkspaceContext;
   canSwitchWorkspace: boolean;
   visibleSpaces: ReturnType<typeof getVisibleSpaces>;
@@ -59,6 +62,8 @@ const AuthContext = createContext<SessionState | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [persona, setPersona] = useState<Persona | null>(null);
   const [isRestoring, setIsRestoring] = useState(true);
+  const [restoreFailed, setRestoreFailed] = useState(false);
+  const [restoreAttempt, setRestoreAttempt] = useState(0);
   const [workspaceContext, setWorkspaceContextState] = useState<WorkspaceContext>('EMPLOYEE');
 
   const sync = useCallback((next: Persona | null) => {
@@ -74,7 +79,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (active) sync(restored);
       })
       .catch(() => {
-        if (active) sync(null);
+        // Not a signed-out answer (that resolves to null): the check itself could not be made.
+        if (active) setRestoreFailed(true);
       })
       .finally(() => {
         if (active) setIsRestoring(false);
@@ -82,7 +88,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       active = false;
     };
-  }, [sync]);
+  }, [sync, restoreAttempt]);
+
+  const retryRestore = useCallback(() => {
+    setRestoreFailed(false);
+    setIsRestoring(true);
+    setRestoreAttempt((attempt) => attempt + 1);
+  }, []);
 
   const login = useCallback(
     async (email: string, password: string, organizationId?: string): Promise<LoginResult> => {
@@ -190,6 +202,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       memberships: authRepository.getMemberships(),
       isAuthenticated: persona !== null,
       isRestoring,
+      restoreFailed,
+      retryRestore,
       workspaceContext,
       canSwitchWorkspace: Boolean(persona?.canSwitchWorkspace),
       visibleSpaces,
@@ -204,7 +218,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAssignedToAnyTeam,
       canAccessSpace: (space) => visibleSpaces.some((entry) => entry.id === space),
       canAccessModule: (moduleName) =>
-        evaluateModuleAccess(moduleName, workspaceContext, permissions, isAssignedToAnyTeam),
+        evaluateModuleAccess(
+          moduleName,
+          workspaceContext,
+          permissions,
+          isAssignedToAnyTeam,
+          persona?.approvesInOwnRight ?? false,
+        ),
     };
     // `persona` carries the server's permission set, so it is the only input the permission
     // helpers below depend on.
@@ -212,6 +232,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     persona,
     permissions,
     isRestoring,
+    restoreFailed,
+    retryRestore,
     workspaceContext,
     isAssignedToAnyTeam,
     login,

@@ -119,8 +119,8 @@ describe('canAdministerOrganization', () => {
     expect(canAdministerOrganization(['organizations.read'])).toBe(false);
   });
 
-  it('treats a manager as an administrator', () => {
-    expect(canAdministerOrganization([...employee, 'rbac.read'])).toBe(true);
+  it('does not treat a manager, who can only read roles, as an administrator', () => {
+    expect(canAdministerOrganization([...employee, 'rbac.read'])).toBe(false);
   });
 
   it('treats an HR administrator as an administrator', () => {
@@ -135,5 +135,18 @@ describe('canAdministerOrganization', () => {
 
   it('is false for a person with no permissions at all', () => {
     expect(canAdministerOrganization([])).toBe(false);
+  });
+});
+
+describe('Approvals in the employee workspace', () => {
+  const hr = ['leave.requests.decide', 'timesheets.decide', 'approval-policies.read'];
+  it('is hidden for someone who approves only through an HR role', () => {
+    expect(canAccessModule('approvals', 'EMPLOYEE', hr, false, false)).toBe(false);
+  });
+  it('shows for someone who approves as themselves: a manager, a named approver, or cover', () => {
+    expect(canAccessModule('approvals', 'EMPLOYEE', [], false, true)).toBe(true);
+  });
+  it('stays in the admin workspace for HR', () => {
+    expect(canAccessModule('approvals', 'ADMIN', hr, false, false)).toBe(true);
   });
 });

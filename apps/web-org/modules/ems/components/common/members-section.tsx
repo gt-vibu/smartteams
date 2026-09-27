@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React, { useState } from 'react';
 import { Button } from '@smarteam/ui';
 import type { PicklistKind } from '../../hooks/use-picklist';
@@ -33,7 +34,10 @@ export function MembersSection({
   onChangeRole,
   onEnd,
   onAdd,
+  leadEmployeeId,
 }: {
+  /** The lead, when they also work as a member: marked, so the two roles read as one person's. */
+  leadEmployeeId?: string | null;
   members: readonly MemberView[];
   pastMembers: readonly MemberView[];
   roleKind: PicklistKind;
@@ -70,12 +74,19 @@ export function MembersSection({
                   {member.initials}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-xs font-semibold text-foreground">
-                    {member.displayName}
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate text-xs font-semibold text-foreground">
+                      {member.displayName}
+                    </span>
+                    {leadEmployeeId && member.employeeId === leadEmployeeId && (
+                      <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-px text-[9px] font-bold uppercase tracking-wide text-primary dark:bg-emerald-400/15 dark:text-emerald-200">
+                        Lead
+                      </span>
+                    )}
                   </span>
                   <span className="text-[10px] text-muted-foreground">
-                    {member.role ?? 'No role'} · since {member.since.slice(0, 10)}
-                    {member.until ? ` · until ${member.until.slice(0, 10)}` : ''}
+                    {member.role ?? 'No role'} · since {formatDate(member.since)}
+                    {member.until ? ` · until ${formatDate(member.until)}` : ''}
                   </span>
                 </span>
               </div>
@@ -154,7 +165,7 @@ export function MembersSection({
                     )}
                     {canWrite && member.until && (
                       <span className="self-center px-2 text-[11px] font-semibold text-muted-foreground">
-                        Leaves {member.until.slice(0, 10)}
+                        Leaves {formatDate(member.until)}
                       </span>
                     )}
                   </div>
@@ -184,8 +195,8 @@ export function MembersSection({
                     {member.displayName}
                   </span>
                   <span className="shrink-0 text-muted-foreground">
-                    {member.role ?? 'No role'} · {member.since.slice(0, 10)} to{' '}
-                    {member.until?.slice(0, 10)}
+                    {member.role ?? 'No role'} · {formatDate(member.since)} to{' '}
+                    {formatDate(member.until)}
                   </span>
                 </li>
               ))}

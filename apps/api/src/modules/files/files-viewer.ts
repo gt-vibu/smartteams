@@ -33,7 +33,7 @@ export async function loadFileViewer(
       select: { roleId: true },
     }),
   ]);
-  const [teams, ledTeams, reports] = employee
+  const [teams, ledTeams, reports, projects, ledProjects] = employee
     ? await Promise.all([
         tx.teamMember.findMany({
           where: { organizationId: context.organizationId, employeeId: employee.id, leftAt: null },
@@ -48,16 +48,41 @@ export async function loadFileViewer(
           where: { organizationId: context.organizationId, managerEmployeeId: employee.id },
           select: { id: true },
         }),
+        // Current project work only: an allocation that has ended no longer opens its files.
+        tx.projectMember.findMany({
+          where: {
+            organizationId: context.organizationId,
+            employeeId: employee.id,
+            startsOn: { lte: now },
+            OR: [{ endsOn: null }, { endsOn: { gte: startOfToday(now) } }],
+          },
+          select: { projectId: true },
+        }),
+        tx.project.findMany({
+          where: { organizationId: context.organizationId, projectLeadEmployeeId: employee.id },
+          select: { id: true },
+        }),
       ])
-    : [[], [], []];
+    : [[], [], [], [], []];
+  const ledProjectIds = new Set(ledProjects.map((project) => project.id));
+  const ledTeamIds = new Set(ledTeams.map((team) => team.id));
   return {
     userId,
     employeeId: employee?.id ?? null,
     roleIds: new Set(roles.map((role) => role.roleId)),
-    teamIds: new Set([...teams.map((team) => team.teamId), ...ledTeams.map((team) => team.id)]),
+    teamIds: new Set([...teams.map((team) => team.teamId), ...ledTeamIds]),
+    ledTeamIds,
     reportIds: new Set(reports.map((report) => report.id)),
+    // Leading a project is belonging to it too.
+    projectIds: new Set([...projects.map((row) => row.projectId), ...ledProjectIds]),
+    ledProjectIds,
     permissions: context.permissions,
   };
+}
+
+/** Midnight UTC of `now`'s date: allocation dates are calendar dates stored at UTC midnight. */
+function startOfToday(now: Date) {
+  return new Date(`${now.toISOString().slice(0, 10)}T00:00:00.000Z`);
 }
 
 /** Rows the viewer might reach, before the policy decides. Always tenant-scoped. */
@@ -83,7 +108,10 @@ export function candidateFilter(
     reach.push({ accessScope: 'TEAM', teamId: { in: [...viewer.teamIds] } });
     reach.push({ shares: { some: { ...liveShare, granteeTeamId: { in: [...viewer.teamIds] } } } });
   }
-  if (has('files.read.all')) reach.push({ accessScope: { in: ['EMPLOYEE', 'TEAM', 'INTERNAL'] } });
+  if (viewer.projectIds?.size)
+    reach.push({ accessScope: 'PROJECT', projectId: { in: [...viewer.projectIds] } });
+  if (has('files.read.all'))
+    reach.push({ accessScope: { in: ['EMPLOYEE', 'TEAM', 'PROJECT', 'INTERNAL'] } });
   if (has('files.reports.read') && viewer.reportIds.size)
     reach.push({ accessScope: 'EMPLOYEE', employeeId: { in: [...viewer.reportIds] } });
   if (!viewer.employeeId)

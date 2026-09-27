@@ -15,14 +15,18 @@ function MemberAvatars({ team }: { team: TeamView }) {
   const shown = team.activeMembers.slice(0, 5);
   const extra = team.activeMembers.length - shown.length;
   return (
-    <div className="flex items-center -space-x-2">
+    <div className="flex items-center -space-x-1">
       {shown.map((member) => (
+        // Opaque under the tint: the circles overlap, and a see-through one let the next cover
+        // the previous one's second letter.
         <span
-          className="grid size-7 place-items-center rounded-full border-2 border-card bg-primary/10 text-[10px] font-bold text-primary"
+          className="rounded-full border-2 border-card bg-card"
           key={member.memberId}
           title={member.displayName}
         >
-          {member.initials}
+          <span className="grid size-6 place-items-center rounded-full bg-primary/10 text-[9px] font-bold text-primary dark:bg-emerald-400/15 dark:text-emerald-200">
+            {member.initials}
+          </span>
         </span>
       ))}
       {extra > 0 && (
@@ -47,7 +51,9 @@ export function TeamCard({ team, onClick }: { team: TeamView; onClick: () => voi
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-foreground">{team.team.name}</p>
-          <p className="truncate text-xs text-muted-foreground">{team.branchName ?? 'No branch'}</p>
+          {team.branchName && (
+            <p className="truncate text-xs text-muted-foreground">{team.branchName}</p>
+          )}
         </div>
         <Badge variant="outline">{team.activeMembers.length}</Badge>
       </div>

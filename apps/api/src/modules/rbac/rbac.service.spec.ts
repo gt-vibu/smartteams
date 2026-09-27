@@ -12,6 +12,9 @@ function setup(options: { membership: boolean; permissionKeys?: string[] }) {
     ),
   };
   const tx = {
+    approvalDelegation: { findMany: jest.fn().mockResolvedValue([]) },
+    employee: { findFirst: jest.fn().mockResolvedValue(null) },
+    approvalPolicyStep: { findMany: jest.fn().mockResolvedValue([]) },
     userOrganization: {
       findFirst: jest.fn().mockResolvedValue(options.membership ? { id: 'membership-1' } : null),
     },

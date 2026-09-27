@@ -18,6 +18,13 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model ApprovalDelegation
+ * Someone away hands their approvals to a colleague for a span of days. Once the colleague accepts
+ * (or at once, when an administrator sets it up), the delegate may decide whatever the delegator
+ * could while it runs; the delegator keeps that right too.
+ */
+export type ApprovalDelegation = Prisma.ApprovalDelegationModel
+/**
  * Model FederationIdempotencyRecord
  * 
  */
@@ -57,6 +64,12 @@ export type WebhookDeliveryAttempt = Prisma.WebhookDeliveryAttemptModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model EmployeeResignation
+ * An employee's resignation, from the day they hand it in to the day they leave. Accepting it
+ * sets their last working day; the day after, they are off-boarded the ordinary way.
+ */
+export type EmployeeResignation = Prisma.EmployeeResignationModel
 /**
  * Model FederationClient
  * 
@@ -119,6 +132,23 @@ export type FileShare = Prisma.FileShareModel
  */
 export type FileObjectVersion = Prisma.FileObjectVersionModel
 /**
+ * Model CompOffCredit
+ * A day off earned by working a weekly off or a holiday. Approved, it is credited to the
+ * organization's comp-off leave type; unused, it lapses after that type's expiry.
+ */
+export type CompOffCredit = Prisma.CompOffCreditModel
+/**
+ * Model LeaveEncashment
+ * Unused leave exchanged for pay. Approved, the days leave the balance and the amount is added
+ * to the employee's next payroll run.
+ */
+export type LeaveEncashment = Prisma.LeaveEncashmentModel
+/**
+ * Model CustomFieldDefinition
+ * A field the organization adds to every employee record: a T-shirt size, a vehicle number.
+ */
+export type CustomFieldDefinition = Prisma.CustomFieldDefinitionModel
+/**
  * Model User
  * 
  */
@@ -180,6 +210,12 @@ export type PlatformRolePermission = Prisma.PlatformRolePermissionModel
  * 
  */
 export type UserPlatformRole = Prisma.UserPlatformRoleModel
+/**
+ * Model Notification
+ * Something one person should know about: a request waiting for their decision, or the outcome of
+ * one they made. One row per recipient, so each person reads, and marks read, only their own.
+ */
+export type Notification = Prisma.NotificationModel
 /**
  * Model AttendanceRecord
  * 

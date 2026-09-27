@@ -193,6 +193,7 @@ export function ScreenProjects() {
 
       <CreateProjectModal
         branches={directory.branches}
+        employees={directory.employees}
         existingNames={directory.projects.map((view) => view.project.name)}
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}

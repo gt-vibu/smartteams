@@ -82,6 +82,11 @@ export const authenticatedSessionSchema = z.object({
   roles: z.array(assignedRoleSchema),
   /** Tenant-scoped permission keys for the active organization. `"*"` never crosses tenants. */
   permissions: z.array(z.string().min(1)),
+  /**
+   * Decides approvals as themselves — has reports, is named on an approval step, or covers for a
+   * colleague — as opposed to through an HR or administrator role. Absent from older servers.
+   */
+  approvesInOwnRight: z.boolean().optional(),
   platform: platformAuthoritySchema,
   employee: z
     .object({

@@ -6,6 +6,7 @@ import {
   formatMinutes,
   type HolidayReviewDecision,
   type HolidayReviewOutcome,
+  formatDate,
 } from '@smarteam/contracts';
 import type { ApprovalInboxItem, ApprovalInboxState } from '../../hooks/use-approval-inbox';
 
@@ -84,7 +85,7 @@ export function HolidayReviewDialog({
               </span>
               <span className="text-muted-foreground">Holiday</span>
               <span className="font-semibold text-foreground">
-                {review.holiday.name} · {review.workDate}
+                {review.holiday.name} · {formatDate(review.workDate)}
               </span>
               <span className="text-muted-foreground">Punches</span>
               <span className="font-mono text-foreground">

@@ -39,12 +39,40 @@ export function fileExtension(originalName: string, contentType?: string) {
   return EXTENSIONS_BY_MIME[contentType?.toLowerCase() ?? ''] ?? extensionFromName(originalName);
 }
 
+/** Files whose name the system sets; everything else keeps the name it was uploaded with. */
+const SYSTEM_NAMED: ReadonlySet<FilePurpose> = new Set<FilePurpose>([
+  'PAYSLIP',
+  'PROFILE_IMAGE',
+  'PAYROLL_EXPORT',
+  'IMPORT',
+]);
+
+/** The uploader's own name, without path parts or control characters, and of a sane length. */
+function cleanOriginalName(originalName: string) {
+  const base = (originalName || '').split(/[\\/]/).pop() ?? '';
+  // Control characters are exactly what is being removed, so the pattern has to name them.
+  // eslint-disable-next-line no-control-regex
+  const printable = base.replace(/[\u0000-\u001f\u007f]/g, '');
+  return printable.trim().slice(0, 150);
+}
+
+/**
+ * The name a file is listed and downloaded under.
+ *
+ * Identity documents, payslips and profile pictures get a standard name (`AADHAAR_CARD.pdf`), so
+ * HR sees the same thing for everyone. A company policy or an offer letter keeps its own name: it
+ * was being listed as `OTHER.pdf`, and a folder of those is unusable.
+ */
 export function fileDisplayName(
   purpose: FilePurpose,
   originalName: string,
   documentType?: EmployeeDocumentType,
   contentType?: string,
 ) {
+  if (!(documentType && DOCUMENT_LABELS[documentType]) && !SYSTEM_NAMED.has(purpose)) {
+    const own = cleanOriginalName(originalName);
+    if (own) return own;
+  }
   const label =
     documentType && DOCUMENT_LABELS[documentType]
       ? DOCUMENT_LABELS[documentType]

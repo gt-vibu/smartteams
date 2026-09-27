@@ -21,6 +21,7 @@ import {
   validTransition,
 } from './payroll-calculation';
 import { createPayslips } from './payroll-line-calculator';
+import { describeDays, notify } from '../notifications/notify';
 
 /**
  * The life of a payroll run: creating one, adjusting it, moving it between states, and
@@ -278,8 +279,22 @@ export class PayrollRunsService {
               : undefined,
         },
       });
-      if (target === PayrollRunStatus.RELEASED)
+      if (target === PayrollRunStatus.RELEASED) {
         await createPayslips(tx, context.organizationId, run.id);
+        const paid = await tx.payslip.findMany({
+          where: { organizationId: context.organizationId, payrollRunId: run.id },
+          select: { employee: { select: { userId: true } } },
+        });
+        await notify(tx, context, {
+          recipients: paid.map((slip) => slip.employee.userId),
+          kind: 'PAYSLIP_RELEASED',
+          title: 'Your payslip is ready',
+          body: `Your payslip for ${describeDays(run.periodStart, run.periodEnd)} is ready to view and download.`,
+          module: 'payroll',
+          entityType: 'PAYROLL_RUN',
+          entityId: run.id,
+        });
+      }
       await this.audit.record(
         context,
         {

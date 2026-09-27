@@ -18,7 +18,7 @@ import { dirname, resolve } from 'node:path';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /** The parsers the frontend repository uses, run over the live responses. */
 const contracts = createRequire(import.meta.url)(resolve(ROOT, 'packages/contracts/dist/index.js'));
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, '.env'), 'utf8')
     .split(/\r?\n/)
@@ -143,6 +143,22 @@ async function main() {
   r = await org('GET', '/branches');
   check('the branch is listed after a refetch', (r.payload ?? []).length, seeded + 1);
 
+  // A branch added later offers the company's leave types without anyone assigning them.
+  const types = (await org('GET', '/leave/types')).payload ?? [];
+  const typeList = Array.isArray(types) ? types : (types.items ?? types.types ?? []);
+  r = await org('GET', `/leave/assignments?branchId=${branchId}`);
+  const assigned = Array.isArray(r.payload)
+    ? r.payload
+    : (r.payload?.items ?? r.payload?.assignments ?? []);
+  check(
+    'the new branch has every leave type assigned',
+    typeList.length > 0 &&
+      typeList.every((type) =>
+        assigned.some((a) => (a.leaveTypeId ?? a.leaveType?.id) === type.id),
+      ),
+    true,
+  );
+
   r = await org('PATCH', `/branches/${branchId}`, { name: 'Second site renamed' });
   check('update the branch', r.status, 200);
   r = await org('GET', '/branches');
@@ -152,8 +168,24 @@ async function main() {
     'Second site renamed',
   );
 
+  // The main branch: the first one until another is chosen, and not retired while it is main.
+  const firstBranchId = (await org('GET', '/branches')).payload?.find((b) => b.id !== branchId)?.id;
+  r = await org('GET', '/branches/primary');
+  check(
+    'the first branch is the main one until another is chosen',
+    r.payload?.branchId,
+    firstBranchId,
+  );
+  r = await org('PUT', '/branches/primary', { branchId });
+  check('another branch can be made the main one', r.payload?.branchId, branchId);
+  r = await org('POST', `/branches/${branchId}/deactivate`, { reason: 'Site closed' });
+  check('the main branch cannot be retired while it is main', r.status, 409);
+  r = await org('PUT', '/branches/primary', { branchId: firstBranchId });
+  check('the main branch can be handed back', r.payload?.branchId, firstBranchId);
   r = await org('POST', `/branches/${branchId}/deactivate`, { reason: 'Site closed' });
   check('retire the branch', r.status, [200, 201]);
+  r = await org('PUT', '/branches/primary', { branchId });
+  check('a retired branch cannot become the main one', r.status, 409);
   r = await org('GET', '/branches');
   check(
     'the retired branch reports its status rather than disappearing',

@@ -1,0 +1,30 @@
+/// Something one person should know about: a request waiting for their decision, or the outcome of
+/// one they made. One row per recipient, so each person reads, and marks read, only their own.
+model Notification {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String    @map("organization_id") @db.Uuid
+  recipientUserId String    @map("recipient_user_id") @db.Uuid
+  /// What happened, as a stable code: LEAVE_PENDING, LEAVE_DECIDED, TIMESHEET_PENDING, …
+  kind            String
+  title           String
+  body            String
+  /// The screen that shows the thing this is about.
+  module          String?
+  entityType      String?   @map("entity_type")
+  entityId        String?   @map("entity_id") @db.Uuid
+  /// Who caused it. Not a relation: the notification outlives changes to that account.
+  actorUserId     String?   @map("actor_user_id") @db.Uuid
+  /// When the action happened: written in the same transaction as the action itself.
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  readAt          DateTime? @map("read_at") @db.Timestamptz(6)
+  /// When it was sent by email; null until then, or for good when the person opted out.
+  emailedAt       DateTime? @map("emailed_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  recipient    User         @relation(fields: [recipientUserId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, recipientUserId, createdAt(sort: Desc)])
+  @@index([organizationId, recipientUserId, readAt])
+  @@index([organizationId, emailedAt, createdAt])
+  @@map("notifications")
+}

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Input } from '@smarteam/ui';
-import { formatMoney } from '@smarteam/contracts';
+import { formatDateRange, formatMoney } from '@smarteam/contracts';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
 
 /**
@@ -31,19 +31,21 @@ export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState })
 
   const query = search.trim().toLowerCase();
   const rows = admin.payslips.filter(
-    (slip) => !query || (slip.employeeNumber ?? '').toLowerCase().includes(query),
+    (slip) =>
+      !query ||
+      `${slip.employeeName ?? ''} ${slip.employeeNumber ?? ''}`.toLowerCase().includes(query),
   );
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          One row per released payslip. Tax identifiers and tax regime are not held by the backend.
+          What each person was paid, one row per released payslip.
         </p>
         <Input
           className="w-full min-w-0 sm:w-52"
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search employee number"
+          placeholder="Search name or employee ID"
           value={search}
         />
       </div>
@@ -74,10 +76,15 @@ export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState })
                   key={slip.id}
                 >
                   <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
-                    {slip.employeeNumber ?? slip.employeeId.slice(0, 8)}
+                    {slip.employeeName ?? 'Name not recorded'}
+                    {slip.employeeNumber && (
+                      <span className="ml-1.5 font-mono text-[10px] font-normal text-muted-foreground">
+                        {slip.employeeNumber}
+                      </span>
+                    )}
                   </td>
-                  <td data-label="Period" className="px-4 py-2.5 font-mono text-muted-foreground">
-                    {slip.run.periodStart.slice(0, 10)} – {slip.run.periodEnd.slice(0, 10)}
+                  <td data-label="Period" className="px-4 py-2.5 text-muted-foreground">
+                    {formatDateRange(slip.run.periodStart, slip.run.periodEnd)}
                   </td>
                   <td
                     data-label="Gross"

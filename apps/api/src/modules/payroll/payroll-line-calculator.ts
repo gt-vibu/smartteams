@@ -99,6 +99,8 @@ export type PayrollLineInput = {
     id: string;
     approvedAmount: Prisma.Decimal | null;
     recoveredAmount: Prisma.Decimal;
+    /** The most this run takes back, when the organization spreads recovery over months. */
+    instalment?: Prisma.Decimal | null;
   }>;
 };
 
@@ -225,7 +227,9 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
     const amount = allocateAdvanceRecovery(
       advance.approvedAmount ?? 0,
       advance.recoveredAmount,
-      availableNetPay,
+      advance.instalment
+        ? Prisma.Decimal.min(availableNetPay, advance.instalment)
+        : availableNetPay,
     );
     availableNetPay = availableNetPay.sub(amount);
     return { advance, amount };

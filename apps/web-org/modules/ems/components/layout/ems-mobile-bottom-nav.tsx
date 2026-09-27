@@ -5,6 +5,8 @@ import { useAuth } from '../../hooks/use-auth';
 import { adminNavItems } from './navigation-admin-items';
 import { employeeNavItems } from './navigation-employee-items';
 import type { NavItem } from './navigation-items';
+import { useUnreadByModule } from '../../hooks/use-notifications';
+import { UnreadDot } from './unread-dot';
 
 interface EmsMobileBottomNavProps {
   activeModule: string;
@@ -36,6 +38,7 @@ export function EmsMobileBottomNav({
   activeSpace,
 }: EmsMobileBottomNavProps) {
   const { canAccessModule } = useAuth();
+  const unreadByModule = useUnreadByModule();
   const [isMounted, setIsMounted] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
@@ -74,6 +77,9 @@ export function EmsMobileBottomNav({
   const overflowItems = allItems.slice(PRIMARY_COUNT);
   const hasOverflow = overflowItems.length > 0;
   const isOverflowActive = overflowItems.some((item) => item.id === activeModule);
+  const hasUnread = (id: string) => id !== activeModule && (unreadByModule[id] ?? 0) > 0;
+  // "More" carries the dot of anything new behind it, so it is not hidden two taps away.
+  const overflowUnread = overflowItems.some((item) => hasUnread(item.id));
 
   const handleSelect = (id: string) => {
     onSelectModule(id);
@@ -128,6 +134,7 @@ export function EmsMobileBottomNav({
                 key={item.id}
                 item={item}
                 isActive={activeModule === item.id}
+                unread={hasUnread(item.id)}
                 onSelect={handleSelect}
                 className="gap-2 rounded-xl px-1 py-3"
               />
@@ -138,6 +145,7 @@ export function EmsMobileBottomNav({
 
       <nav
         aria-label="Sections"
+        data-mobile-bottom-nav=""
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-stretch bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.3)]"
       >
@@ -146,6 +154,7 @@ export function EmsMobileBottomNav({
             key={item.id}
             item={item}
             isActive={activeModule === item.id}
+            unread={hasUnread(item.id)}
             onSelect={handleSelect}
             className="flex-1 gap-1 rounded-xl mx-1 my-1.5 px-0.5 py-1.5"
           />
@@ -157,7 +166,7 @@ export function EmsMobileBottomNav({
             onClick={() => setIsMoreOpen(!isMoreOpen)}
             aria-expanded={isMoreOpen}
             aria-current={isOverflowActive ? 'page' : undefined}
-            className={`flex-1 flex flex-col items-center justify-center gap-1 rounded-xl mx-1 my-1.5 px-0.5 py-1.5 min-h-[52px] transition-colors cursor-pointer ${
+            className={`relative flex-1 flex flex-col items-center justify-center gap-1 rounded-xl mx-1 my-1.5 px-0.5 py-1.5 min-h-[52px] transition-colors cursor-pointer ${
               isOverflowActive || isMoreOpen ? ACTIVE : INACTIVE
             }`}
           >
@@ -176,6 +185,9 @@ export function EmsMobileBottomNav({
               />
             </svg>
             <span className="text-[11px] font-semibold leading-none">More</span>
+            {overflowUnread && !isMoreOpen && (
+              <UnreadDot className="right-[calc(50%-18px)] top-1.5" />
+            )}
           </button>
         )}
       </nav>
@@ -192,11 +204,13 @@ export function EmsMobileBottomNav({
 function NavTarget({
   item,
   isActive,
+  unread = false,
   onSelect,
   className,
 }: {
   item: NavItem;
   isActive: boolean;
+  unread?: boolean;
   onSelect: (id: string) => void;
   className: string;
 }) {
@@ -205,7 +219,7 @@ function NavTarget({
       type="button"
       onClick={() => onSelect(item.id)}
       aria-current={isActive ? 'page' : undefined}
-      className={`flex flex-col items-center justify-center min-h-[52px] transition-colors cursor-pointer ${className} ${
+      className={`relative flex flex-col items-center justify-center min-h-[52px] transition-colors cursor-pointer ${className} ${
         isActive ? ACTIVE : INACTIVE
       }`}
     >
@@ -213,6 +227,7 @@ function NavTarget({
       <span className="text-[11px] font-semibold leading-none text-center truncate max-w-full px-0.5">
         {item.label}
       </span>
+      {unread && <UnreadDot className="right-[calc(50%-18px)] top-1.5" />}
     </button>
   );
 }

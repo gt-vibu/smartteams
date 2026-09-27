@@ -65,6 +65,10 @@ export class BranchDeactivationDto {
   @IsString() @MinLength(10) reason!: string;
 }
 
+export class PrimaryBranchDto {
+  @IsUUID() branchId!: string;
+}
+
 export class FederationTenantSyncDto extends CreateOrganizationDto {
   @IsOptional() @IsEnum(['ACTIVE', 'SUSPENDED']) status?: 'ACTIVE' | 'SUSPENDED';
 }

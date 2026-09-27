@@ -11,6 +11,8 @@ import { ConflictError } from '../../common/errors/domain-error';
 import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
 import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { attachApprovedEncashments } from './payroll-encashments';
+import { lateHalfDays, lateMarks } from '../attendance/attendance-late';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { MetricsService } from '../../common/metrics/metrics.service';
 import { OutboxService } from '../federation/outbox.service';
@@ -28,6 +30,7 @@ import { sumOvertimeByDayType } from './payroll-overtime-split';
 import { readOvertimeRates } from './payroll-overtime-rates';
 import { chunked, groupBy } from './payroll-bulk';
 import { findPolicy } from './payroll-policy-access';
+import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
 
 /**
  * Running the calculation for a whole payroll run.
@@ -216,6 +219,7 @@ export class PayrollCalculationService {
             period: { periodStart: { lte: run.periodEnd }, periodEnd: { gte: run.periodStart } },
           },
         });
+        await attachApprovedEncashments(tx, context, run);
         const adjustments = await tx.payrollAdjustment.findMany({
           where: { payrollRunId: run.id },
           orderBy: [{ employeeId: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
@@ -256,6 +260,49 @@ export class PayrollCalculationService {
           },
           select: { salaryCreditDate: true },
         });
+        // Before the outstanding advances are read: a recalculation found an advance this run had
+        // already recovered in full, left it out, then unwound the recovery — so it was never
+        // recovered at all.
+        // Unwind what a previous calculation of this run recovered, so a recalculation starts from
+        // the same place the first calculation did. Read the advances once by id and total the
+        // reversals per advance, rather than a lookup and a write per recovery row.
+        const previousRecoveries = await tx.salaryAdvanceRecovery.findMany({
+          where: { payrollRunId: run.id },
+          select: { salaryAdvanceId: true, amount: true },
+        });
+        if (previousRecoveries.length > 0) {
+          const reversalByAdvance = new Map<string, Prisma.Decimal>();
+          for (const recovery of previousRecoveries)
+            reversalByAdvance.set(
+              recovery.salaryAdvanceId,
+              (reversalByAdvance.get(recovery.salaryAdvanceId) ?? new Prisma.Decimal(0)).add(
+                recovery.amount,
+              ),
+            );
+          const affected = await tx.salaryAdvance.findMany({
+            where: {
+              organizationId: context.organizationId,
+              id: { in: [...reversalByAdvance.keys()] },
+            },
+            select: { id: true, recoveredAmount: true },
+          });
+          for (const advance of affected) {
+            const recovered = Prisma.Decimal.max(
+              new Prisma.Decimal(0),
+              advance.recoveredAmount.sub(
+                reversalByAdvance.get(advance.id) ?? new Prisma.Decimal(0),
+              ),
+            );
+            await tx.salaryAdvance.update({
+              where: { id: advance.id },
+              data: {
+                recoveredAmount: recovered,
+                status: recovered.isZero() ? 'APPROVED' : 'PARTIALLY_RECOVERED',
+              },
+            });
+          }
+        }
+        await tx.salaryAdvanceRecovery.deleteMany({ where: { payrollRunId: run.id } });
         const advanceCutoff = endOfDay(calendar?.salaryCreditDate ?? run.periodEnd);
         const advances = await tx.salaryAdvance.findMany({
           where: {
@@ -270,10 +317,29 @@ export class PayrollCalculationService {
         // of a billion pairs; grouping first makes the cost of assembling the run proportional to
         // the data rather than to the product of the data.
         const attendanceByEmployee = groupBy(attendanceRecords, (record) => record.employeeId);
+        // Late check-ins cost half a day for every so many, when the organization counts them.
+        const lateByEmployee = new Map<string, number>();
+        if (settings.lateMarksPerHalfDay > 0)
+          for (const mark of await lateMarks(tx, context.organizationId, {
+            from: run.periodStart,
+            to: run.periodEnd,
+          }))
+            lateByEmployee.set(mark.employeeId, (lateByEmployee.get(mark.employeeId) ?? 0) + 1);
         const leavesByEmployee = groupBy(approvedLeaves, (leave) => leave.employeeId);
         const timesheetsByEmployee = groupBy(timesheets, (timesheet) => timesheet.employeeId);
         const adjustmentsByEmployee = groupBy(adjustments, (adjustment) => adjustment.employeeId);
-        const advancesByEmployee = groupBy(advances, (advance) => advance.employeeId);
+        // Recovered in equal monthly shares when the organization spreads it; all at once otherwise.
+        const { recoveryMonths } = await readAdvanceRules(tx, context.organizationId);
+        const advancesByEmployee = groupBy(
+          advances.map((advance) => ({
+            ...advance,
+            instalment:
+              recoveryMonths > 1 && advance.approvedAmount
+                ? recoveryInstalment(advance.approvedAmount, recoveryMonths)
+                : null,
+          })),
+          (advance) => advance.employeeId,
+        );
         const holidayDatesByEmployee = new Map<string, string[]>();
         for (const sel of employeeHolidaySelections) {
           const list = holidayDatesByEmployee.get(sel.employeeId) ?? [];
@@ -287,6 +353,21 @@ export class PayrollCalculationService {
             const employeePolicy = employee.payrollPolicies[0] ?? null;
             const selectedPolicy = employeePolicy?.payrollPolicy ?? policy;
             if (!(employeePolicy?.payrollEnabled ?? selectedPolicy.payrollEnabledDefault))
+              return null;
+            // Nobody is paid for a period they were not employed in, and someone with nothing to
+            // be paid — no salary, no pay component, no one-off adjustment — is not issued an
+            // empty payslip that would count them as paid.
+            if (
+              (employee.dateOfJoining && employee.dateOfJoining > run.periodEnd) ||
+              (employee.dateOfLeaving && employee.dateOfLeaving < run.periodStart)
+            )
+              return null;
+            if (
+              !employee.compensations[0] &&
+              employee.payComponents.length === 0 &&
+              !(employeePolicy?.payrollPolicy?.components.length ?? 0) &&
+              !adjustmentsByEmployee.get(employee.id)?.length
+            )
               return null;
             const employeeComponentIds = new Set(
               employee.payComponents.map((assignment) => assignment.payComponentId),
@@ -333,22 +414,25 @@ export class PayrollCalculationService {
               // With the working-day calendar, so a working day with no attendance at all is an
               // absence. Without it only days explicitly marked ABSENT were, and someone who never
               // checked in was paid in full.
-              attendance: summarizeAttendance(
-                attendanceByEmployee.get(employee.id) ?? empty,
-                // The company can turn this off; then only days marked ABSENT cost pay.
-                !unmarkedDaysAreAbsent(settings.metadata)
-                  ? undefined
-                  : {
-                      periodStart: run.periodStart,
-                      periodEnd: run.periodEnd,
-                      workWeekDays: settings.workWeekDays,
-                      holidays,
-                      branchId: employee.primaryBranchId,
-                      leaves: leavesByEmployee.get(employee.id) ?? empty,
-                      employeeSelectedDates: holidayDatesByEmployee.get(employee.id),
-                      dateOfJoining: employee.dateOfJoining,
-                      dateOfLeaving: employee.dateOfLeaving,
-                    },
+              attendance: withLateHalfDays(
+                lateHalfDays(lateByEmployee.get(employee.id) ?? 0, settings.lateMarksPerHalfDay),
+                summarizeAttendance(
+                  attendanceByEmployee.get(employee.id) ?? empty,
+                  // The company can turn this off; then only days marked ABSENT cost pay.
+                  !unmarkedDaysAreAbsent(settings.metadata)
+                    ? undefined
+                    : {
+                        periodStart: run.periodStart,
+                        periodEnd: run.periodEnd,
+                        workWeekDays: settings.workWeekDays,
+                        holidays,
+                        branchId: employee.primaryBranchId,
+                        leaves: leavesByEmployee.get(employee.id) ?? empty,
+                        employeeSelectedDates: holidayDatesByEmployee.get(employee.id),
+                        dateOfJoining: employee.dateOfJoining,
+                        dateOfLeaving: employee.dateOfLeaving,
+                      },
+                ),
               ),
               // Days in the period before joining or after leaving. Priced exactly like unpaid leave.
               unemployedDays: unemployedDays(
@@ -371,46 +455,6 @@ export class PayrollCalculationService {
           })
           .filter((item): item is NonNullable<typeof item> => item !== null);
         const inputSnapshotHash = hash(snapshot);
-        // Unwind what a previous calculation of this run recovered, so a recalculation starts from
-        // the same place the first calculation did. Read the advances once by id and total the
-        // reversals per advance, rather than a lookup and a write per recovery row.
-        const previousRecoveries = await tx.salaryAdvanceRecovery.findMany({
-          where: { payrollRunId: run.id },
-          select: { salaryAdvanceId: true, amount: true },
-        });
-        if (previousRecoveries.length > 0) {
-          const reversalByAdvance = new Map<string, Prisma.Decimal>();
-          for (const recovery of previousRecoveries)
-            reversalByAdvance.set(
-              recovery.salaryAdvanceId,
-              (reversalByAdvance.get(recovery.salaryAdvanceId) ?? new Prisma.Decimal(0)).add(
-                recovery.amount,
-              ),
-            );
-          const affected = await tx.salaryAdvance.findMany({
-            where: {
-              organizationId: context.organizationId,
-              id: { in: [...reversalByAdvance.keys()] },
-            },
-            select: { id: true, recoveredAmount: true },
-          });
-          for (const advance of affected) {
-            const recovered = Prisma.Decimal.max(
-              new Prisma.Decimal(0),
-              advance.recoveredAmount.sub(
-                reversalByAdvance.get(advance.id) ?? new Prisma.Decimal(0),
-              ),
-            );
-            await tx.salaryAdvance.update({
-              where: { id: advance.id },
-              data: {
-                recoveredAmount: recovered,
-                status: recovered.isZero() ? 'APPROVED' : 'PARTIALLY_RECOVERED',
-              },
-            });
-          }
-        }
-        await tx.salaryAdvanceRecovery.deleteMany({ where: { payrollRunId: run.id } });
         await tx.payrollPayment.deleteMany({ where: { payrollRunId: run.id } });
         // Component rows hold the line item under `onDelete: Restrict`, so they go first. This only
         // bites on a recalculation of an employee who has assigned pay components — the path that
@@ -506,4 +550,9 @@ export class PayrollCalculationService {
       },
     );
   }
+}
+
+/** Late marks priced as half-days, alongside the ones attendance already recorded. */
+function withLateHalfDays(extra: number, summary: { absentDays: number; halfDays: number }) {
+  return extra ? { ...summary, halfDays: summary.halfDays + extra } : summary;
 }

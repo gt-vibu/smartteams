@@ -136,7 +136,19 @@ r = await t.org('POST', '/picklists/project-roles/rename', {
   name: 'Mobile Developer',
   to: 'App Developer',
 });
-ok('a role in use cannot be renamed (history would change)', r.status === 409, status(r));
+const renamedOn = rows((await t.org('GET', '/projects')).payload)
+  .find((p) => p.id === apollo.id)
+  ?.members?.find((m) => m.employeeId === ada.id)?.projectRole;
+ok(
+  'renaming a role in use renames it on the assignments that carry it',
+  good(r) && renamedOn === 'App Developer',
+  status(r) + ' ' + renamedOn,
+);
+r = await t.org('POST', '/picklists/project-roles/rename', {
+  name: 'App Developer',
+  to: 'Mobile Developer',
+});
+ok('and it can be renamed back', good(r), status(r));
 r = await t.org('POST', '/picklists/project-roles/archive', { name: 'Mobile Developer' });
 ok('it can be archived', good(r) && r.payload?.archived === true, status(r));
 r = await allocate(hermes.id, dev.id, 'Mobile Developer');
@@ -158,6 +170,26 @@ r = await t.org('POST', '/picklists/project-roles/remove', { name: 'Solution Arc
 ok(
   'an unused role can be deleted',
   good(r) && !(await names(t.org, 'project-roles')).includes('Solution Architect'),
+  status(r),
+);
+r = await t.org('POST', '/picklists/project-roles/rename', { name: 'Consultant', to: 'Advisor' });
+let roleNames = await names(t.org, 'project-roles');
+ok(
+  'a standard role can be renamed',
+  good(r) && roleNames.includes('Advisor') && !roleNames.includes('Consultant'),
+  status(r),
+);
+r = await t.org('POST', '/picklists/project-roles/remove', { name: 'Business Analyst' });
+roleNames = await names(t.org, 'project-roles');
+ok(
+  'an unused standard role can be deleted',
+  good(r) && !roleNames.includes('Business Analyst'),
+  status(r),
+);
+r = await t.org('POST', '/picklists/project-roles', { name: 'Business Analyst' });
+ok(
+  'and adding it again brings it back',
+  good(r) && (await names(t.org, 'project-roles')).includes('Business Analyst'),
   status(r),
 );
 

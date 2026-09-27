@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
 import {
   AttendanceDayStatus,
   AttendancePunchSource,
@@ -388,6 +389,40 @@ export class AttendanceCorrectionsService {
         },
         tx,
       );
+      const record = correction.attendanceRecord;
+      const requester = await requesterRouting(tx, context.organizationId, record.employeeId);
+      const on = describeDays(record.workDate, record.workDate);
+      if (finalStatus === 'PENDING') {
+        const next = correction.approvalPolicy?.steps.find((step) => step.stepNumber > stepNumber);
+        if (next)
+          await notify(tx, context, {
+            recipients: await stepApprovers(
+              tx,
+              context.organizationId,
+              next,
+              requester,
+              record.branchId ?? context.branchId,
+            ),
+            kind: 'ATTENDANCE_CORRECTION_PENDING',
+            title: 'Attendance correction awaiting your decision',
+            body: `${requester.name}'s correction for ${on} passed the previous approval step.`,
+            module: 'approvals',
+            entityType: 'ATTENDANCE_CORRECTION',
+            entityId: correction.id,
+          });
+      } else {
+        const approved = finalStatus === 'APPROVED';
+        await notify(tx, context, {
+          // The employee, and whoever raised it for them if that was someone else.
+          recipients: [requester.userId, correction.requestedByUserId],
+          kind: 'ATTENDANCE_CORRECTION_DECIDED',
+          title: approved ? 'Attendance correction approved' : 'Attendance correction rejected',
+          body: `The correction to ${on} was ${approved ? 'approved' : 'rejected'}: ${comment}`,
+          module: 'attendance',
+          entityType: 'ATTENDANCE_CORRECTION',
+          entityId: correction.id,
+        });
+      }
       return updated;
     });
   }

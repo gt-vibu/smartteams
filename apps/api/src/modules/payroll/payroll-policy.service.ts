@@ -83,6 +83,10 @@ export class PayrollPolicyService {
     return this.advances.requestAdvance(...args);
   }
 
+  advanceAllowance(...args: Parameters<PayrollAdvancesService['allowance']>) {
+    return this.advances.allowance(...args);
+  }
+
   decideAdvance(...args: Parameters<PayrollAdvancesService['decideAdvance']>) {
     return this.advances.decideAdvance(...args);
   }

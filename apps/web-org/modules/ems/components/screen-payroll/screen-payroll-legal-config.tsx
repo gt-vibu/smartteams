@@ -7,11 +7,13 @@ import {
   hasPermission,
   type PayrollPolicy,
   type StatutoryRule,
+  formatDate,
 } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { payrollRepository } from '../../repositories/payroll.repository';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import { OvertimeRatesCard } from './overtime-rates-card';
+import { AdvanceRulesCard } from './advance-rules-card';
 
 /**
  * The statutory rules and payroll policy the backend actually applies.
@@ -116,7 +118,7 @@ function RulesTable({ rules }: { rules: StatutoryRule[] }) {
                 data-label="Effective from"
                 className="px-4 py-2.5 font-mono text-muted-foreground"
               >
-                {rule.effectiveFrom.slice(0, 10)}
+                {formatDate(rule.effectiveFrom)}
               </td>
               <td
                 data-label="Employee"
@@ -221,12 +223,8 @@ export function ScreenPayrollLegalConfig() {
     <div className="space-y-5">
       <PolicySummary policy={policyResource.data} />
       <OvertimeRatesCard />
+      <AdvanceRulesCard />
       <RulesTable rules={rulesResource.data ?? []} />
-      <p className="text-[11px] leading-relaxed text-muted-foreground">
-        Company registration identifiers (PAN, TAN, EPF, ESI and professional-tax codes), tax regime
-        and gratuity are not stored by the backend and are therefore not shown. Income tax is not
-        calculated by payroll.
-      </p>
     </div>
   );
 }

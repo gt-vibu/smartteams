@@ -20,6 +20,13 @@ export interface EmployeeProfile {
     jobTitle?: string;
     isOnline: boolean;
   } | null;
+  /** People who report to this employee. */
+  directReports?: Array<{
+    id: string;
+    employeeNumber: string;
+    firstName: string;
+    lastName: string;
+  }>;
   departmentMembers: Array<{
     id: string;
     employeeNumber: string;

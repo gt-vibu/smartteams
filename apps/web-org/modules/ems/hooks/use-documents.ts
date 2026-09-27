@@ -17,7 +17,11 @@ import { useAsyncResource } from './use-async-resource';
  * The permissions read here only choose which buttons to show. Every action is decided again by
  * the server, which refuses what the caller may not do however the request is made.
  */
-export function useDocuments(section: DocumentSection) {
+export function useDocuments(
+  section: DocumentSection,
+  owner: { projectId?: string; teamId?: string } = {},
+) {
+  const { projectId, teamId } = owner;
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const permissions = useMemo(() => persona?.permissions ?? [], [persona]);
@@ -29,8 +33,8 @@ export function useDocuments(section: DocumentSection) {
   };
 
   const list = useAsyncResource<StoredDocument[]>(
-    () => documentsRepository.list(organizationId!, section),
-    [organizationId, section],
+    () => documentsRepository.list(organizationId!, section, { projectId, teamId }),
+    [organizationId, section, projectId, teamId],
     { enabled: Boolean(organizationId) && can.read },
   );
   const [busy, setBusy] = useState(false);

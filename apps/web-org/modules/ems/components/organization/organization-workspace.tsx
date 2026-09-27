@@ -125,7 +125,7 @@ export function OrganizationWorkspace({
               {organization.organization?.name ?? 'Organization'}
             </h1>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              People, structure and configuration for this tenant.
+              People, structure and settings for your organization.
             </p>
           </div>
         </div>

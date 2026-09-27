@@ -11,7 +11,8 @@ import type { HolidayConflict } from '@smarteam/contracts';
  * topic here is only a signal to refetch — it carries no data, so nothing is ever shown that the
  * server did not return.
  */
-export type DataTopic = 'attendance' | 'holidays' | 'approvals' | 'payroll' | 'timesheets';
+export type DataTopic =
+  'attendance' | 'holidays' | 'approvals' | 'payroll' | 'timesheets' | 'leave';
 
 const EVENT = 'smarteam:data-changed';
 

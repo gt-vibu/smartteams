@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Badge, Button, Input } from '@smarteam/ui';
-import { dateKey, isCancellable, type LeaveRequest, type LeaveType } from '@smarteam/contracts';
+import { formatDate, isCancellable, type LeaveRequest, type LeaveType } from '@smarteam/contracts';
 
 /** Status tone. Restrained on purpose: the row is not recoloured, only the badge. */
 function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
@@ -67,12 +67,24 @@ export function LeaveApplicationsTable({
                     {type && !type.paid && (
                       <span className="ml-1.5 text-[10px] text-muted-foreground">Unpaid</span>
                     )}
+                    {request.decisionComment && (
+                      <p className="mt-0.5 max-w-xs text-[11px] font-normal text-muted-foreground">
+                        “{request.decisionComment}”
+                      </p>
+                    )}
                   </td>
-                  <td data-label="From" className="px-4 py-2.5 font-mono text-muted-foreground">
-                    {dateKey(request.startDate)}
+                  <td
+                    data-bare=""
+                    data-label="From"
+                    className="px-4 py-2.5 whitespace-nowrap text-muted-foreground"
+                  >
+                    {formatDate(request.startDate)}
                   </td>
-                  <td data-label="To" className="px-4 py-2.5 font-mono text-muted-foreground">
-                    {dateKey(request.endDate)}
+                  <td
+                    data-label="to"
+                    className="px-4 py-2.5 whitespace-nowrap text-muted-foreground"
+                  >
+                    {formatDate(request.endDate)}
                   </td>
                   <td
                     data-label="Days"
@@ -80,7 +92,7 @@ export function LeaveApplicationsTable({
                   >
                     {request.requestedDays}
                   </td>
-                  <td data-label="Status" className="px-4 py-2.5">
+                  <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                     <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">

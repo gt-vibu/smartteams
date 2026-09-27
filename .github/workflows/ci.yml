@@ -167,7 +167,7 @@ jobs:
                        holiday-checkin shift-assignment auto-checkout default-approvers role-permissions \
                        password-flows documents identity-rules salary-revision \
                        product-audit workday-audit master-data shift-overtime lifecycle-edges \
-                       attendance-edges rbac-matrix employee-trace employee-branches; do
+                       attendance-edges rbac-matrix employee-trace employee-branches notifications leave-accrual employee-import approval-delegation leave-calendar resignations hr-extras approval-routing advance-rules; do
             # The storage round trips need a real bucket. Without one they are not run, and say
             # so; they are never counted as a pass.
             if { [ "$suite" = files ] || [ "$suite" = documents ]; } && { [ -z "$S3_BUCKET" ] || [ -z "$S3_ACCESS_KEY_ID" ]; }; then

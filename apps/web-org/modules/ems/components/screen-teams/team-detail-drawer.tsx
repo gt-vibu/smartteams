@@ -9,6 +9,8 @@ import { MembersSection } from '../common/members-section';
 import type { TeamDirectoryState } from '../../hooks/use-team-directory';
 import type { TeamView } from '../../services/team-directory';
 import { ArchiveDialog } from '../common/archive-dialog';
+import { GroupFilesSection } from '../common/group-files-section';
+import { LeadSection } from '../common/lead-section';
 import { EditTeamDialog } from './edit-team-dialog';
 
 /**
@@ -30,7 +32,7 @@ export function TeamDetailDrawer({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isArchiveOpen, setIsArchiveOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { persona } = useSession();
+  const { persona, session } = useSession();
   const canViewEmployee = hasPermission(persona?.permissions ?? [], 'employees.read.all');
 
   return (
@@ -41,7 +43,7 @@ export function TeamDetailDrawer({
 
           <div className="border-b border-border bg-muted/40 p-5 pr-14">
             <p className="text-sm font-bold text-foreground">{team.team.name}</p>
-            <p className="text-xs text-muted-foreground">{team.branchName ?? 'No branch'}</p>
+            {team.branchName && <p className="text-xs text-muted-foreground">{team.branchName}</p>}
             {team.team.description && (
               <p className="mt-2 text-xs text-muted-foreground">{team.team.description}</p>
             )}
@@ -86,6 +88,22 @@ export function TeamDetailDrawer({
               </div>
             )}
 
+            <LeadSection
+              busy={directory.saving}
+              canWrite={directory.canWrite && team.team.status !== 'ARCHIVED'}
+              employees={directory.employees}
+              kind="team"
+              lead={team.lead}
+              onSave={(employeeId) =>
+                directory.updateTeam(team.team.id, { teamLeadEmployeeId: employeeId })
+              }
+            />
+            {directory.canWrite && team.team.status !== 'ARCHIVED' && (
+              <p className="-mt-2 text-[11px] text-muted-foreground">
+                A member made lead moves off the member list; their time on the team is kept.
+              </p>
+            )}
+
             <MembersSection
               busy={directory.saving}
               canViewEmployee={canViewEmployee}
@@ -97,13 +115,28 @@ export function TeamDetailDrawer({
               pastMembers={team.pastMembers}
               roleKind="team-roles"
             />
+
+            <GroupFilesSection
+              canUpload={
+                team.team.status !== 'ARCHIVED' &&
+                (hasPermission(persona?.permissions ?? [], 'files.organization.manage') ||
+                  team.team.teamLeadEmployeeId === session?.employeeId ||
+                  team.activeMembers.some((member) => member.employeeId === session?.employeeId))
+              }
+              groupId={team.team.id}
+              kind="team"
+            />
           </div>
         </SheetContent>
       </Sheet>
 
       <AddMembersDialog
         employees={directory.employees}
-        excludeIds={team.activeMembers.map((member) => member.employeeId)}
+        // The lead leads the team; offering them as a member too is a choice that means nothing.
+        excludeIds={[
+          ...team.activeMembers.map((member) => member.employeeId),
+          ...(team.team.teamLeadEmployeeId ? [team.team.teamLeadEmployeeId] : []),
+        ]}
         nameOf={(id) => {
           const employee = directory.employees.find((entry) => entry.id === id);
           return employee ? employeeDisplayName(employee) : 'Someone';

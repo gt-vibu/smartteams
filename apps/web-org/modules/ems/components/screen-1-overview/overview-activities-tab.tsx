@@ -16,6 +16,7 @@ import { TimesheetStatusCard } from './timesheet-status-card';
 import { WorkScheduleCard } from './work-schedule-card';
 import { UpcomingHolidaysCard } from './upcoming-holidays-card';
 import { CompanyDocumentsCard } from './company-documents-card';
+import { localDateKey } from '../../lib/local-date';
 
 /**
  * The Activities tab: what is happening around the employee this week.
@@ -37,7 +38,7 @@ export function OverviewActivitiesTab({ onNavigateModule }: OverviewActivitiesTa
   const employeeHolidays = useEmployeeHolidays();
 
   // Effective holidays still ahead this year: mandatory ones plus the employee's confirmed picks.
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayKey = localDateKey();
   const upcomingHolidays: Holiday[] = useMemo(() => {
     const effective =
       employeeHolidays.hasEmployeeRecord && employeeHolidays.summary

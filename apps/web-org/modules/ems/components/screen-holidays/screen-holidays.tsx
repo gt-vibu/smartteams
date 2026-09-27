@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { formatDate, formatDateRange } from '@smarteam/contracts';
 import { CalendarDays, Settings2, Users } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
 import { Badge, Button, Input, SegmentedTabs } from '@smarteam/ui';
@@ -96,13 +97,6 @@ export function ScreenHolidays() {
   const optionalGroupCount = activeGroups.filter((g) => g.isOptional).length;
   const mandatoryGroupCount = activeGroups.filter((g) => !g.isOptional).length;
 
-  const totalOptionalDays = activeGroups
-    .filter((g) => g.isOptional)
-    .reduce((sum, g) => sum + g.totalDays, 0);
-  const totalMandatoryDays = activeGroups
-    .filter((g) => !g.isOptional)
-    .reduce((sum, g) => sum + g.totalDays, 0);
-
   const tabs = [
     { id: 'ALL', label: 'All Holidays', count: holidayGroups.length },
     { id: 'OPTIONAL', label: 'Optional Pool', count: optionalGroupCount },
@@ -116,7 +110,7 @@ export function ScreenHolidays() {
     <PageShell>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <ScreenHeader
-          description={`${mandatoryGroupCount} mandatory (${totalMandatoryDays}d) · ${optionalGroupCount} optional pool (${totalOptionalDays}d) in ${holidays.year}`}
+          description={`${mandatoryGroupCount} public${optionalGroupCount ? ` · ${optionalGroupCount} optional` : ''} in ${holidays.year}`}
           icon={CalendarDays}
           title="Holiday calendar"
           tone="success"
@@ -244,12 +238,16 @@ export function ScreenHolidays() {
                         key={`${group.name}-${group.startDate}-${group.isOptional}`}
                       >
                         {/* Date column (From → To format in one line) */}
-                        <td data-label="Date Range" className="px-4 py-3 font-mono text-foreground">
+                        <td
+                          data-bare=""
+                          data-label="Date Range"
+                          className="px-4 py-3 font-mono text-foreground"
+                        >
                           <div className="flex items-center gap-2">
                             <span>
                               {isMultiDay
-                                ? `${group.startDate} → ${group.endDate}`
-                                : group.startDate}
+                                ? formatDateRange(group.startDate, group.endDate)
+                                : formatDate(group.startDate)}
                             </span>
                             {isMultiDay ? (
                               <Badge
@@ -272,7 +270,7 @@ export function ScreenHolidays() {
                         </td>
 
                         {/* Type */}
-                        <td data-label="Type" className="px-4 py-3">
+                        <td data-bare="" data-label="Type" className="px-4 py-3">
                           {group.isOptional ? (
                             <Badge
                               variant="outline"
@@ -288,19 +286,23 @@ export function ScreenHolidays() {
                         </td>
 
                         {/* Scope */}
-                        <td data-label="Scope" className="px-4 py-3 text-muted-foreground">
+                        <td
+                          data-bare=""
+                          data-label="Scope"
+                          className="px-4 py-3 text-muted-foreground"
+                        >
                           {group.branchId ? 'One branch' : 'Whole organization'}
                         </td>
 
                         {/* Status */}
-                        <td data-label="Status" className="px-4 py-3">
+                        <td data-cell="status" data-label="Status" className="px-4 py-3">
                           <Badge variant={group.isActive ? 'success' : 'secondary'}>
                             {group.isActive ? 'Active' : 'Retired'}
                           </Badge>
                         </td>
 
                         {/* Employee Selections */}
-                        <td data-label="Employee Selections" className="px-4 py-3">
+                        <td data-bare="" data-label="Employee Selections" className="px-4 py-3">
                           {group.isOptional ? (
                             <button
                               type="button"
@@ -312,9 +314,7 @@ export function ScreenHolidays() {
                               <span>{groupSelectionCount} selected</span>
                             </button>
                           ) : (
-                            <span className="text-muted-foreground text-[11px]">
-                              All employees (Mandatory)
-                            </span>
+                            <span className="text-muted-foreground text-[11px]">—</span>
                           )}
                         </td>
 
@@ -362,12 +362,12 @@ export function ScreenHolidays() {
             </div>
           )}
 
-          <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Mandatory holidays automatically apply to all employees. Optional holidays are available
-            in an eligible pool and apply only when selected by an employee up to the annual
-            allowance ({holidays.settings.optionalHolidayAllowance} days). Multi-day holiday plans
-            appear consolidated in a single line with their full from–to date range.
-          </p>
+          {optionalGroupCount > 0 && (
+            <p className="text-[11px] text-muted-foreground">
+              Each employee may pick up to {holidays.settings.optionalHolidayAllowance} optional
+              days a year.
+            </p>
+          )}
         </>
       )}
 

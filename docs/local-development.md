@@ -172,14 +172,14 @@ curl http://localhost:4000/health/ready
 
 `{"status":"ok", ...}` with `database` and `redis` both `up`.
 
-For a populated tenant to sign in with:
+For a populated tenant to sign in with, run the database seed:
 
 ```bash
-node scripts/seed-ui-tenant.mjs
+pnpm --filter @smarteam/api db:seed
 ```
 
-It writes the credentials to `.seed-credentials.local` (gitignored, mode 0600) rather than
-printing the password.
+The ad-hoc test-data scripts that used to live in `scripts/` are being consolidated and are not in
+the repository for now.
 
 ## Verify
 

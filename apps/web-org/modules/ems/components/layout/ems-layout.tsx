@@ -10,6 +10,7 @@ import { HolidayCheckInPrompt } from '../common/holiday-check-in-prompt';
 import { NotificationDrawer } from './notification-drawer';
 import { EntityDetailDrawer } from '../common/entity-detail-drawer';
 import { useBackToClose } from '@smarteam/ui';
+import { NotificationsProvider, useNotifications } from '../../hooks/use-notifications';
 
 interface EmsLayoutProps {
   children: React.ReactNode;
@@ -21,7 +22,16 @@ interface EmsLayoutProps {
   orgActiveTab?: string;
 }
 
-export function EmsLayout({
+/** The workspace frame, with the one notification feed its bell, dots and screens share. */
+export function EmsLayout(props: EmsLayoutProps) {
+  return (
+    <NotificationsProvider>
+      <EmsLayoutBody {...props} />
+    </NotificationsProvider>
+  );
+}
+
+function EmsLayoutBody({
   children,
   activeModule,
   onSelectModule,
@@ -32,11 +42,19 @@ export function EmsLayout({
 }: EmsLayoutProps) {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
-  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const notifications = useNotifications();
+  const { markModuleRead, unreadByModule } = notifications;
+  const unreadHere = unreadByModule[activeModule] ?? 0;
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
 
   // Back closes the palette rather than the page behind it. Drawers and dialogs do this themselves.
   useBackToClose(isCommandPaletteOpen, () => setIsCommandPaletteOpen(false));
+
+  // The screen on show is where its notifications are seen: opening it reads them, and so does
+  // one arriving while it is open (the screen reloads to show what it is about).
+  useEffect(() => {
+    if (unreadHere > 0) void markModuleRead(activeModule);
+  }, [activeModule, unreadHere, markModuleRead]);
 
   // Global event listeners
   useEffect(() => {
@@ -65,7 +83,7 @@ export function EmsLayout({
         activeSpace={activeSpace}
         onSelectSpace={onSelectSpace}
         onOpenSearch={() => setIsCommandPaletteOpen(true)}
-        hasUnreadNotifications={unreadNotifications > 0}
+        hasUnreadNotifications={notifications.unread > 0}
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
       />
 
@@ -144,7 +162,7 @@ export function EmsLayout({
       <NotificationDrawer
         isOpen={isNotificationDrawerOpen}
         onClose={() => setIsNotificationDrawerOpen(false)}
-        onUnreadCountChange={setUnreadNotifications}
+        onSelectModule={onSelectModule}
       />
 
       {/* 6. Entity Detail Drawer */}

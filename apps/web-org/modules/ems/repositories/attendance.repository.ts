@@ -88,10 +88,12 @@ export const attendanceRepository = {
     organizationId: string,
     attendanceId: string,
     reason: string,
+    // The times the day should have had; approval moves the punches to them.
+    afterSnapshot?: { correctedCheckIn?: string; correctedCheckOut?: string },
   ): Promise<unknown> {
     return apiRequest(
       `${orgPath(organizationId, '/attendance')}/${encodeURIComponent(attendanceId)}/corrections`,
-      { method: 'POST', body: { reason } },
+      { method: 'POST', body: { reason, ...(afterSnapshot ? { afterSnapshot } : {}) } },
     );
   },
 

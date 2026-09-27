@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { LeaveBalanceTransactionType } from '../../generated/prisma/enums';
-import { LeaveRequestStatus } from '../../generated/prisma/enums';
+import { ApproverType, LeaveRequestStatus } from '../../generated/prisma/enums';
 import {
   requirePermission,
   requireReason,
@@ -11,6 +11,7 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertApprover } from '../approvals/approval-authorization';
+import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
 import { assertMayActForEmployee } from '../employees/employee-scope';
 import { toRequestDto } from './leave-shared';
 import { ledger, releaseReservation } from './leave-balance-ops';
@@ -154,6 +155,14 @@ export class LeaveDecisionsService {
         },
         tx,
       );
+      await this.announceDecision(
+        tx,
+        context,
+        request,
+        finalStatus,
+        pendingStep.stepNumber,
+        comment,
+      );
       return toRequestDto(updated, days);
     });
   }
@@ -236,6 +245,69 @@ export class LeaveDecisionsService {
         tx,
       );
       return toRequestDto(updated, days);
+    });
+  }
+
+  /**
+   * The outcome goes to the person who asked; a step passed on goes to whoever decides next. The
+   * approver who just decided hears nothing about their own action.
+   */
+  private async announceDecision(
+    tx: Prisma.TransactionClient,
+    context: DomainContext,
+    request: {
+      id: string;
+      employeeId: string;
+      branchId: string | null;
+      startDate: Date;
+      endDate: Date;
+      approvalPolicy: {
+        steps: Array<{
+          stepNumber: number;
+          approverType: ApproverType;
+          roleId: string | null;
+          approverUserId: string | null;
+        }>;
+      } | null;
+    },
+    finalStatus: string,
+    decidedStep: number,
+    comment: string,
+  ) {
+    const requester = await requesterRouting(tx, context.organizationId, request.employeeId);
+    const when = describeDays(request.startDate, request.endDate);
+    if (finalStatus === LeaveRequestStatus.PENDING) {
+      const next = request.approvalPolicy?.steps.find((step) => step.stepNumber > decidedStep);
+      if (!next) return;
+      await notify(tx, context, {
+        recipients: await stepApprovers(
+          tx,
+          context.organizationId,
+          next,
+          requester,
+          request.branchId,
+        ),
+        kind: 'LEAVE_PENDING',
+        title: 'Leave request awaiting your decision',
+        body: `${requester.name}'s leave for ${when} passed the previous approval step.`,
+        module: 'approvals',
+        entityType: 'LEAVE_REQUEST',
+        entityId: request.id,
+      });
+      return;
+    }
+    const approved = finalStatus === LeaveRequestStatus.APPROVED;
+    await notify(tx, context, {
+      recipients: [requester.userId],
+      kind: 'LEAVE_DECIDED',
+      title: approved ? 'Leave approved' : 'Leave rejected',
+      // The approver is told their comment is shown to the requester; this is where it is.
+      body: `Your leave for ${when} was ${approved ? 'approved' : 'rejected'}.${
+        comment.trim() ? ` “${comment.trim()}”` : ''
+      }`,
+      module: 'time-off',
+      entityType: 'LEAVE_REQUEST',
+      entityId: request.id,
     });
   }
 }

@@ -8,6 +8,7 @@ import { useEmployees, useProjects } from '../../hooks/use-workforce';
 import { useAttendance } from '../../hooks/use-attendance';
 import { COMMAND_MODULE_BY_ID, buildCommandItems } from './command-palette-items';
 import type { CommandItem } from './command-palette-types';
+import { workspaceTitle } from '../../services/authorization.policy';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ export function CommandPalette({
   onSelectEmployee,
   onSelectProject,
 }: CommandPaletteProps) {
-  const { workspaceContext, isAssignedToAnyTeam, canAccessModule } = useAuth();
+  const { persona, workspaceContext, isAssignedToAnyTeam, canAccessModule } = useAuth();
   const { data: employeeList } = useEmployees();
   const employees = employeeList ?? [];
   const { data: projectList } = useProjects();
@@ -306,7 +307,9 @@ export function CommandPalette({
           <span>
             Context:{' '}
             <span className="font-medium text-foreground">
-              {workspaceContext === 'ADMIN' ? 'Admin Workspace' : 'Employee Workspace'}
+              {workspaceContext === 'ADMIN'
+                ? workspaceTitle(persona).workspace
+                : 'Employee workspace'}
             </span>
           </span>
           <span className="flex items-center gap-1">

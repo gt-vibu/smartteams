@@ -137,7 +137,7 @@ export function AssignEmployeeModal({
           />
         </div>
 
-        <div className="max-h-[70vh] space-y-6 overflow-y-auto p-5">
+        <div className="sm:max-h-[70vh] space-y-6 overflow-y-auto p-5">
           {assignments.loading && (
             <p className="text-xs text-muted-foreground" role="status">
               Loading teams and projects...

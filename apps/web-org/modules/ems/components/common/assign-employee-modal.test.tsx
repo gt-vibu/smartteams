@@ -131,7 +131,7 @@ describe('AssignEmployeeModal', () => {
   it('shows an ended membership as previously held, unticked but distinct from never', async () => {
     renderModal({ teamMemberships: [teamMembership({ state: 'ENDED', endedOn: '2026-06-30' })] });
 
-    expect(await screen.findByText(/previously a member until 2026-06-30/i)).toBeInTheDocument();
+    expect(await screen.findByText(/previously a member until 30 Jun 2026/i)).toBeInTheDocument();
     expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 

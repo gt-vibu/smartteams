@@ -22,6 +22,21 @@ import {
 import { apiRequest } from '../lib/api-client';
 import { expectShape, orgPath, queryString } from './api-helpers';
 
+/** 0 means salary advances are turned off; recovery is in that many equal monthly shares. */
+export type AdvanceRules = { limitPercent: number; recoveryMonths: number };
+
+export type AdvanceAllowance = AdvanceRules & {
+  monthlySalary: number | null;
+  /** Null when the employee has no salary to measure against. */
+  limit: number | null;
+  outstanding: number;
+  /** Asked for and waiting on a decision. */
+  pending?: number;
+  /** Approved and not yet taken back from pay. */
+  repaying?: number;
+  available: number;
+};
+
 /**
  * Payroll data access.
  *
@@ -140,6 +155,27 @@ export const payrollRepository = {
     return advances;
   },
 
+  /** The organization's advance limit (a share of monthly salary) and repayment months. */
+  async getAdvanceRules(organizationId: string): Promise<AdvanceRules> {
+    return (await apiRequest(`${base(organizationId)}/advance-rules`, {
+      method: 'GET',
+    })) as AdvanceRules;
+  },
+
+  async saveAdvanceRules(organizationId: string, input: AdvanceRules): Promise<AdvanceRules> {
+    return (await apiRequest(`${base(organizationId)}/advance-rules`, {
+      method: 'PUT',
+      body: input,
+    })) as AdvanceRules;
+  },
+
+  /** How much more the signed-in employee may ask for, and why. */
+  async getAdvanceAllowance(organizationId: string): Promise<AdvanceAllowance> {
+    return (await apiRequest(`${base(organizationId)}/advances/allowance`, {
+      method: 'GET',
+    })) as AdvanceAllowance;
+  },
+
   async requestAdvance(
     organizationId: string,
     input: { employeeId: string; requestedAmount: number; reason: string },
@@ -149,6 +185,21 @@ export const payrollRepository = {
       body: input,
     });
     return expectShape(parseSalaryAdvanceList([payload])?.[0] ?? null, 'salary advance');
+  },
+
+  /** Approves (optionally for less than asked) or rejects an advance; recovered by payroll. */
+  async decideAdvance(
+    organizationId: string,
+    advanceId: string,
+    input: { status: 'APPROVED' | 'REJECTED'; comment: string; approvedAmount?: number },
+  ): Promise<unknown> {
+    return apiRequest(
+      `${base(organizationId)}/advances/${encodeURIComponent(advanceId)}/decision`,
+      {
+        method: 'POST',
+        body: input,
+      },
+    );
   },
 
   async createRun(organizationId: string, input: PayrollRunInput): Promise<PayrollRun> {

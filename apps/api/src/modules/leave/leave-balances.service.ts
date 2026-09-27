@@ -75,7 +75,7 @@ export class LeaveBalancesService {
         for (const branchId of branchIds)
           await provisionAssignedBalances(
             tx,
-            context.organizationId,
+            context,
             employee.id,
             branchId,
             settings.leaveYearStartMonth,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatWorkMinutes, type Timesheet } from '@smarteam/contracts';
+import { formatWorkMinutes, type Timesheet, formatDate } from '@smarteam/contracts';
 
 /** The most recently approved timesheet, shown as a confirmation on the overview screen. */
 export function TimesheetStatusCard({ notification }: { notification: Timesheet }) {
@@ -9,7 +9,7 @@ export function TimesheetStatusCard({ notification }: { notification: Timesheet 
         <p className="text-xs font-semibold text-foreground">Timesheet approved</p>
         <p className="mt-0.5 text-[11px] text-muted-foreground">
           {notification.period
-            ? `${notification.period.periodStart.slice(0, 10)} to ${notification.period.periodEnd.slice(0, 10)}`
+            ? `${formatDate(notification.period.periodStart)} to ${formatDate(notification.period.periodEnd)}`
             : 'Current period'}
           {' · '}
           {formatWorkMinutes(notification.totalMinutes)}

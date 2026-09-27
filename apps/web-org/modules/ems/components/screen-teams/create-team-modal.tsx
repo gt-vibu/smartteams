@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { employeeDisplayName, type Branch, type Employee } from '@smarteam/contracts';
+import type { Branch, Employee } from '@smarteam/contracts';
 import {
   Button,
-  Checkbox,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -18,6 +17,8 @@ import {
   Textarea,
 } from '@smarteam/ui';
 import { activeByName } from '../../lib/pickable';
+import { EmployeeCombobox } from '../common/employee-combobox';
+import { EmployeePicker } from '../common/employee-picker';
 
 interface CreateTeamModalProps {
   isOpen: boolean;
@@ -121,7 +122,7 @@ export function CreateTeamModal({
           New team
         </DialogTitle>
 
-        <div className="max-h-[70vh] space-y-4 overflow-y-auto p-5">
+        <div className="sm:max-h-[70vh] space-y-4 overflow-y-auto p-5">
           <div>
             <Label className="mb-1 block" htmlFor="team-name">
               Team name
@@ -177,23 +178,18 @@ export function CreateTeamModal({
               <Label className="mb-1 block" htmlFor="team-lead">
                 Team lead
               </Label>
-              <SelectMenu
+              <EmployeeCombobox
                 disabled={saving}
-                onValueChange={setTeamLeadEmployeeId}
-                value={teamLeadEmployeeId}
-              >
-                <SelectTrigger id="team-lead">
-                  <SelectValue placeholder="No lead" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={NONE}>No lead</SelectItem>
-                  {sorted.map((employee) => (
-                    <SelectItem key={employee.id} value={employee.id}>
-                      {employeeDisplayName(employee)} · {employee.employeeNumber}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
+                employees={employees}
+                id="team-lead"
+                noneLabel="No lead"
+                onChange={(id) => {
+                  setTeamLeadEmployeeId(id || NONE);
+                  // The lead leads the team; they are not also one of its members.
+                  if (id) setMemberIds((prev) => prev.filter((member) => member !== id));
+                }}
+                value={teamLeadEmployeeId === NONE ? '' : teamLeadEmployeeId}
+              />
             </div>
           </div>
 
@@ -206,34 +202,13 @@ export function CreateTeamModal({
                 No employees are recorded yet, so the team will be created empty.
               </p>
             ) : (
-              <div className="grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
-                {sorted.map((employee) => (
-                  <label
-                    className="flex items-center gap-3 rounded-md border border-border bg-card p-2.5"
-                    key={employee.id}
-                  >
-                    <Checkbox
-                      checked={memberIds.includes(employee.id)}
-                      disabled={saving}
-                      onCheckedChange={(checked) =>
-                        setMemberIds((prev) =>
-                          checked === true
-                            ? [...prev, employee.id]
-                            : prev.filter((id) => id !== employee.id),
-                        )
-                      }
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs font-semibold text-foreground">
-                        {employeeDisplayName(employee)}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {employee.employeeNumber}
-                      </span>
-                    </span>
-                  </label>
-                ))}
-              </div>
+              <EmployeePicker
+                disabled={saving}
+                employees={employees}
+                excludeIds={teamLeadEmployeeId === NONE ? [] : [teamLeadEmployeeId]}
+                onChange={setMemberIds}
+                selected={memberIds}
+              />
             )}
           </div>
         </div>

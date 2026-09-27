@@ -39,6 +39,10 @@ export class LeaveService {
     return this.types.createType(...args);
   }
 
+  updateType(...args: Parameters<LeaveTypesService['updateType']>) {
+    return this.types.updateType(...args);
+  }
+
   listTypes(context: DomainContext) {
     return this.types.listTypes(context);
   }

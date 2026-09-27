@@ -147,6 +147,15 @@ console.log('\nself-approval of a timesheet');
 
 console.log('\nsalary advances');
 {
+  // An advance is measured against a salary, so Ada needs one before she can ask.
+  await t.org('POST', '/employees/' + t.a.id + '/compensation', {
+    payType: 'SALARY',
+    payFrequency: 'MONTHLY',
+    baseAmount: 40000,
+    currencyCode: 'INR',
+    overtimeMultiplier: 1.5,
+    effectiveFrom: t.monthStart,
+  });
   const forColleague = await t.a.as('POST', '/payroll/advances', {
     employeeId: t.b.id,
     requestedAmount: 5000,
@@ -181,7 +190,16 @@ console.log('\nsalary advances');
   });
   ok('a colleague with the same role may approve it', good(decision), status(decision));
 
-  // The list pages: one advance per page here, followed by its cursor to the end.
+  // The list pages: one advance per page here, followed by its cursor to the end. Bea needs a
+  // salary for her request to fit the advance limit.
+  await t.org('POST', '/employees/' + t.b.id + '/compensation', {
+    payType: 'SALARY',
+    payFrequency: 'MONTHLY',
+    baseAmount: 40000,
+    currencyCode: 'INR',
+    overtimeMultiplier: 1.5,
+    effectiveFrom: t.monthStart,
+  });
   await t.b.as('POST', '/payroll/advances', {
     employeeId: t.b.id,
     requestedAmount: 3000,

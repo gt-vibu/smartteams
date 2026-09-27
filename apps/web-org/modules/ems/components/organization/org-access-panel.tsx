@@ -247,7 +247,7 @@ function PeopleTable({
                     </span>
                   )}
                 </td>
-                <td data-label="Status" className="px-4 py-2.5">
+                <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                   <span
                     className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                       member.isActive

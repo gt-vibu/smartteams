@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import { Button } from '@smarteam/ui';
-import { entryNotes, type TimesheetEntry } from '@smarteam/contracts';
+import React, { useRef } from 'react';
+import { Button, useFocusTrap } from '@smarteam/ui';
+import { entryNotes, type TimesheetEntry, formatDate } from '@smarteam/contracts';
 import type { TimesheetAuditRow } from './timesheet-audit-row';
 
 /**
@@ -24,15 +24,26 @@ export function TimesheetAuditDrawer({
   onDecide: (status: 'APPROVED' | 'REJECTED') => void;
   row: TimesheetAuditRow;
 }) {
+  // Focus stays in the panel and Escape closes it, as in every other drawer; neither did before.
+  const panelRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(true, panelRef, onClose);
   return (
-    <div aria-modal="true" className="fixed inset-0 z-50 overflow-hidden" role="dialog">
+    <div
+      aria-label={`Timesheet of ${row.employeeName}`}
+      aria-modal="true"
+      className="fixed inset-0 z-50 overflow-hidden"
+      role="dialog"
+    >
       <button
         aria-label="Close inspection"
         className="absolute inset-0 bg-black/30"
         onClick={onClose}
         type="button"
       />
-      <div className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-border bg-card shadow-xl">
+      <div
+        className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-border bg-card shadow-xl"
+        ref={panelRef}
+      >
         <div className="flex items-start justify-between border-b border-border p-4">
           <div>
             <h2 className="text-sm font-bold text-foreground">{row.employeeName}</h2>
@@ -112,7 +123,7 @@ function EntryCard({ entry }: { entry: TimesheetEntry }) {
     <li className="rounded-md border border-border bg-muted/30 px-3 py-2">
       <div className="flex items-baseline justify-between gap-3">
         <span className="font-mono text-[11px] font-semibold text-foreground">
-          {entry.workDate.slice(0, 10)}
+          {formatDate(entry.workDate)}
         </span>
         <span className="font-mono text-[11px] font-bold tabular-nums text-foreground">
           {hours} hrs

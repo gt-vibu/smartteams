@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Badge, Button, Icon } from '@smarteam/ui';
-import { employmentTypeLabel, hasPermission } from '@smarteam/contracts';
+import { employmentTypeLabel, hasPermission, formatDate } from '@smarteam/contracts';
 import { ChevronLeft } from 'lucide-react';
 import { useEmployeeDetail } from '../../hooks/use-employee-detail';
 import { useAssignments } from '../../hooks/use-assignments';
@@ -14,6 +14,8 @@ import { FormerEmployeeSummary } from './former-employee-summary';
 import { EmployeeShiftSection } from './employee-shift-section';
 import { EmployeeBranchesSection } from './employee-branches-section';
 import { EmployeeStatutorySection } from '../common/employee-statutory-section';
+import { EmployeeCustomFieldsSection } from '../common/employee-custom-fields-section';
+import { ProbationControl } from './probation-panel';
 import { AccountAccessPanel } from '../screen-onboarding/account-access-panel';
 import {
   EmployeeProjectsSection,
@@ -174,12 +176,12 @@ export function EmployeeProfile({
                   ['Work email', data.employee.workEmail ?? 'Not recorded'],
                   ['Phone', data.employee.phone ?? 'Not recorded'],
                   ['Employment type', employmentTypeLabel(data.employee.employmentType)],
-                  ['Date of joining', data.detail?.dateOfJoining?.slice(0, 10) ?? 'Not recorded'],
+                  ['Date of joining', formatDate(data.detail?.dateOfJoining) || 'Not recorded'],
                   ...(left
                     ? [
                         [
                           'Date of leaving',
-                          data.detail?.dateOfLeaving?.slice(0, 10) ?? 'Not recorded',
+                          formatDate(data.detail?.dateOfLeaving) || 'Not recorded',
                         ],
                       ]
                     : []),
@@ -196,6 +198,22 @@ export function EmployeeProfile({
                 <EmployeeReportingSection detail={data.detail} />
                 <EmployeeTeamsSection memberships={assignments.teamMemberships} />
                 <EmployeeProjectsSection memberships={assignments.projectMemberships} />
+                <EmployeeCustomFieldsSection employeeId={employeeId} readOnly={left} />
+                {detail.canWrite && !left && (
+                  <section className="rounded-lg border border-border bg-card p-4 text-xs">
+                    {data.detail?.confirmedOn ? (
+                      <p className="text-muted-foreground">
+                        Confirmed in their role on {formatDate(data.detail.confirmedOn)}.
+                      </p>
+                    ) : (
+                      <ProbationControl
+                        current={data.detail?.probationEndsOn?.slice(0, 10) ?? null}
+                        employeeId={employeeId}
+                        onSaved={() => void detail.refetch()}
+                      />
+                    )}
+                  </section>
+                )}
               </div>
               <EmployeeStatutorySection
                 canRead={data.canReadCompliance}

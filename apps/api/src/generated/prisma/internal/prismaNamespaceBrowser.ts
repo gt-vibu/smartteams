@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  ApprovalDelegation: 'ApprovalDelegation',
   FederationIdempotencyRecord: 'FederationIdempotencyRecord',
   FederationRequestRecord: 'FederationRequestRecord',
   WebhookSigningKey: 'WebhookSigningKey',
@@ -59,6 +60,7 @@ export const ModelName = {
   WebhookDelivery: 'WebhookDelivery',
   WebhookDeliveryAttempt: 'WebhookDeliveryAttempt',
   AuditLog: 'AuditLog',
+  EmployeeResignation: 'EmployeeResignation',
   FederationClient: 'FederationClient',
   FederationClientCredential: 'FederationClientCredential',
   FederationScope: 'FederationScope',
@@ -71,6 +73,9 @@ export const ModelName = {
   FileObject: 'FileObject',
   FileShare: 'FileShare',
   FileObjectVersion: 'FileObjectVersion',
+  CompOffCredit: 'CompOffCredit',
+  LeaveEncashment: 'LeaveEncashment',
+  CustomFieldDefinition: 'CustomFieldDefinition',
   User: 'User',
   UserInvitation: 'UserInvitation',
   EmployeeAccessCode: 'EmployeeAccessCode',
@@ -81,6 +86,7 @@ export const ModelName = {
   PlatformPermission: 'PlatformPermission',
   PlatformRolePermission: 'PlatformRolePermission',
   UserPlatformRole: 'UserPlatformRole',
+  Notification: 'Notification',
   AttendanceRecord: 'AttendanceRecord',
   AttendancePunch: 'AttendancePunch',
   AttendanceCorrection: 'AttendanceCorrection',
@@ -163,6 +169,24 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const ApprovalDelegationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  delegatorUserId: 'delegatorUserId',
+  delegateUserId: 'delegateUserId',
+  startsOn: 'startsOn',
+  endsOn: 'endsOn',
+  reason: 'reason',
+  createdAt: 'createdAt',
+  revokedAt: 'revokedAt',
+  acceptedAt: 'acceptedAt',
+  declinedAt: 'declinedAt',
+  createdByUserId: 'createdByUserId'
+} as const
+
+export type ApprovalDelegationScalarFieldEnum = (typeof ApprovalDelegationScalarFieldEnum)[keyof typeof ApprovalDelegationScalarFieldEnum]
 
 
 export const FederationIdempotencyRecordScalarFieldEnum = {
@@ -324,6 +348,24 @@ export const AuditLogScalarFieldEnum = {
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
+export const EmployeeResignationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  reason: 'reason',
+  requestedLastDay: 'requestedLastDay',
+  lastWorkingDay: 'lastWorkingDay',
+  status: 'status',
+  submittedAt: 'submittedAt',
+  decidedAt: 'decidedAt',
+  decidedByUserId: 'decidedByUserId',
+  decisionComment: 'decisionComment',
+  completedAt: 'completedAt'
+} as const
+
+export type EmployeeResignationScalarFieldEnum = (typeof EmployeeResignationScalarFieldEnum)[keyof typeof EmployeeResignationScalarFieldEnum]
+
+
 export const FederationClientScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -476,7 +518,10 @@ export const FileObjectScalarFieldEnum = {
   metadata: 'metadata',
   accessScope: 'accessScope',
   teamId: 'teamId',
+  projectId: 'projectId',
   allowDownload: 'allowDownload',
+  expiresOn: 'expiresOn',
+  expiryNotifiedAt: 'expiryNotifiedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -517,6 +562,62 @@ export const FileObjectVersionScalarFieldEnum = {
 export type FileObjectVersionScalarFieldEnum = (typeof FileObjectVersionScalarFieldEnum)[keyof typeof FileObjectVersionScalarFieldEnum]
 
 
+export const CompOffCreditScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  workDate: 'workDate',
+  days: 'days',
+  reason: 'reason',
+  status: 'status',
+  decidedByUserId: 'decidedByUserId',
+  decidedAt: 'decidedAt',
+  decisionComment: 'decisionComment',
+  expiresOn: 'expiresOn',
+  lapsedDays: 'lapsedDays',
+  createdAt: 'createdAt'
+} as const
+
+export type CompOffCreditScalarFieldEnum = (typeof CompOffCreditScalarFieldEnum)[keyof typeof CompOffCreditScalarFieldEnum]
+
+
+export const LeaveEncashmentScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  leaveTypeId: 'leaveTypeId',
+  days: 'days',
+  amount: 'amount',
+  status: 'status',
+  decidedByUserId: 'decidedByUserId',
+  decidedAt: 'decidedAt',
+  decisionComment: 'decisionComment',
+  payrollRunId: 'payrollRunId',
+  createdAt: 'createdAt'
+} as const
+
+export type LeaveEncashmentScalarFieldEnum = (typeof LeaveEncashmentScalarFieldEnum)[keyof typeof LeaveEncashmentScalarFieldEnum]
+
+
+export const CustomFieldDefinitionScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  key: 'key',
+  label: 'label',
+  fieldType: 'fieldType',
+  options: 'options',
+  required: 'required',
+  employeeEditable: 'employeeEditable',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomFieldDefinitionScalarFieldEnum = (typeof CustomFieldDefinitionScalarFieldEnum)[keyof typeof CustomFieldDefinitionScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -530,6 +631,7 @@ export const UserScalarFieldEnum = {
   isActive: 'isActive',
   tokenVersion: 'tokenVersion',
   passwordChangeRequired: 'passwordChangeRequired',
+  emailNotifications: 'emailNotifications',
   lastLoginAt: 'lastLoginAt',
   deactivatedAt: 'deactivatedAt',
   createdAt: 'createdAt',
@@ -664,6 +766,25 @@ export const UserPlatformRoleScalarFieldEnum = {
 export type UserPlatformRoleScalarFieldEnum = (typeof UserPlatformRoleScalarFieldEnum)[keyof typeof UserPlatformRoleScalarFieldEnum]
 
 
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  recipientUserId: 'recipientUserId',
+  kind: 'kind',
+  title: 'title',
+  body: 'body',
+  module: 'module',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  actorUserId: 'actorUserId',
+  createdAt: 'createdAt',
+  readAt: 'readAt',
+  emailedAt: 'emailedAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
 export const AttendanceRecordScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -788,6 +909,12 @@ export const LeaveTypeScalarFieldEnum = {
   annualAllowance: 'annualAllowance',
   monthlyAccrual: 'monthlyAccrual',
   carryoverLimit: 'carryoverLimit',
+  prorateForJoiners: 'prorateForJoiners',
+  sandwichOffDays: 'sandwichOffDays',
+  encashable: 'encashable',
+  maxEncashDays: 'maxEncashDays',
+  isCompOff: 'isCompOff',
+  compOffExpiryDays: 'compOffExpiryDays',
   requiresAttachment: 'requiresAttachment',
   isActive: 'isActive',
   createdAt: 'createdAt',
@@ -1336,6 +1463,7 @@ export const OrganizationSettingsScalarFieldEnum = {
   payrollFrequency: 'payrollFrequency',
   payrollDayOfMonth: 'payrollDayOfMonth',
   leaveYearStartMonth: 'leaveYearStartMonth',
+  primaryBranchId: 'primaryBranchId',
   optionalHolidayAllowance: 'optionalHolidayAllowance',
   geofenceMode: 'geofenceMode',
   geofenceOwnerSource: 'geofenceOwnerSource',
@@ -1345,6 +1473,12 @@ export const OrganizationSettingsScalarFieldEnum = {
   biometricOwnerClientId: 'biometricOwnerClientId',
   autoCheckOutMode: 'autoCheckOutMode',
   autoCheckOutAt: 'autoCheckOutAt',
+  approvalReminderDays: 'approvalReminderDays',
+  approvalEscalationDays: 'approvalEscalationDays',
+  lateGraceMinutes: 'lateGraceMinutes',
+  lateMarksPerHalfDay: 'lateMarksPerHalfDay',
+  advanceLimitPercent: 'advanceLimitPercent',
+  advanceRecoveryMonths: 'advanceRecoveryMonths',
   metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1513,6 +1647,9 @@ export const EmployeeScalarFieldEnum = {
   employmentType: 'employmentType',
   dateOfJoining: 'dateOfJoining',
   dateOfLeaving: 'dateOfLeaving',
+  probationEndsOn: 'probationEndsOn',
+  confirmedOn: 'confirmedOn',
+  customFields: 'customFields',
   managerEmployeeId: 'managerEmployeeId',
   geofenceMode: 'geofenceMode',
   primaryBranchId: 'primaryBranchId',
@@ -1816,6 +1953,7 @@ export const ProjectScalarFieldEnum = {
   status: 'status',
   startDate: 'startDate',
   endDate: 'endDate',
+  projectLeadEmployeeId: 'projectLeadEmployeeId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

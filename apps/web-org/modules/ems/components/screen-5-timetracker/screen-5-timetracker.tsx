@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Badge, Button, SegmentedTabs } from '@smarteam/ui';
-import { formatWorkMinutes } from '@smarteam/contracts';
+import { formatWorkMinutes, formatDate } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import { toDayGroups } from '../../services/timesheet-view';
 import { LogTimeModal } from '../screen-6-logtime/logtime-modal';
@@ -27,7 +27,7 @@ export function Screen5TimeTracker() {
   const tabs = timesheet.timesheets.slice(0, 10).map((sheet) => {
     const period = sheet.period;
     const label = period
-      ? `${period.periodStart.slice(0, 10)}${period.periodType !== 'WEEKLY' ? ` (${period.periodType.toLowerCase()})` : ''}`
+      ? `${formatDate(period.periodStart)}${period.periodType !== 'WEEKLY' ? ` (${period.periodType.toLowerCase()})` : ''}`
       : 'Period';
     return {
       id: sheet.id,
@@ -43,14 +43,18 @@ export function Screen5TimeTracker() {
 
   return (
     <PageShell>
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+      {/* Periods on the left, actions on the right on every width: Log Time holds the top-right
+          corner, and the status actions wrap beneath it rather than under the periods. */}
+      <div className="flex items-start justify-between gap-2 border-b border-border pb-2">
         {tabs.length > 0 ? (
-          <SegmentedTabs
-            aria-label="Timesheet periods"
-            items={tabs}
-            onValueChange={setPeriodId}
-            value={selected?.id ?? ''}
-          />
+          <div className="min-w-0 flex-1 overflow-x-auto">
+            <SegmentedTabs
+              aria-label="Timesheet periods"
+              items={tabs}
+              onValueChange={setPeriodId}
+              value={selected?.id ?? ''}
+            />
+          </div>
         ) : (
           <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 py-1">
             <Clock className="h-4 w-4" />
@@ -58,7 +62,8 @@ export function Screen5TimeTracker() {
           </div>
         )}
 
-        <div className="flex items-center gap-2">
+        {/* Reversed so the first action, Log Time, sits at the right end of the first line. */}
+        <div className="flex shrink-0 flex-row-reverse flex-wrap items-center gap-2">
           {timesheet.canWrite && (
             <Button
               onClick={() => setIsLogOpen(true)}
@@ -207,7 +212,7 @@ export function Screen5TimeTracker() {
                 >
                   <div className="flex items-center justify-between bg-muted/40 px-4 py-2">
                     <span className="font-mono text-xs font-semibold text-foreground">
-                      {group.workDate}
+                      {formatDate(group.workDate)}
                     </span>
                     <span className="text-xs font-mono font-medium tabular-nums text-muted-foreground">
                       {group.totalLabel}

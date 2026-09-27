@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/use-auth';
 import { useSession } from '../../hooks/auth-context';
 import { useEmployeeDetail } from '../../hooks/use-employee-detail';
 import { ProfileEditDrawer } from '../profile/profile-edit-drawer';
+import { workspaceTitle } from '../../services/authorization.policy';
 
 export function PersonaSwitcher() {
   const { persona, logout, workspaceContext } = useAuth();
@@ -27,13 +28,21 @@ export function PersonaSwitcher() {
         setIsOpen(false);
       }
     };
+    // Escape closes it too, as every other popover here does; the keyboard had no way out.
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false);
+    };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, []);
 
   // Clean role label for top bar
   const displayedRoleLabel =
-    workspaceContext === 'ADMIN' ? 'Tenant Admin' : (jobTitle ?? 'Employee');
+    workspaceContext === 'ADMIN' ? workspaceTitle(persona).badge : (jobTitle ?? 'Employee');
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -71,7 +80,11 @@ export function PersonaSwitcher() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-1.5rem)] bg-card border border-border rounded-[10px] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+        <div
+          aria-label="Account"
+          role="dialog"
+          className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-1.5rem)] bg-card border border-border rounded-[10px] shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+        >
           {/* Profile Header */}
           <div className="p-4 bg-muted/40 flex items-center gap-3 border-b border-border">
             <div className="h-10 w-10 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
@@ -126,7 +139,7 @@ export function PersonaSwitcher() {
                 />
               </svg>
               <span className="truncate">
-                {persona.branchName ?? (persona.branchId ? 'Branch assigned' : 'No branch')}
+                {persona.branchName ?? (persona.branchId ? '' : 'No branch')}
               </span>
             </div>
             <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-muted-foreground">
@@ -161,7 +174,9 @@ export function PersonaSwitcher() {
               <span
                 className={`h-1.5 w-1.5 rounded-full ${workspaceContext === 'ADMIN' ? 'bg-primary' : 'bg-muted-foreground'} animate-pulse`}
               />
-              {workspaceContext === 'ADMIN' ? 'Admin Workspace' : 'Employee Workspace'}
+              {workspaceContext === 'ADMIN'
+                ? workspaceTitle(persona).workspace
+                : 'Employee workspace'}
             </span>
           </div>
 

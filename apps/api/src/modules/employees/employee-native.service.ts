@@ -42,6 +42,20 @@ import { endCurrentRelationships } from './employee-lifecycle';
  * The native half of the module. Everything here is authoritative in this database, which is what
  * separates it from the federated half where BlizBooks owns most fields.
  */
+/**
+ * A directory row: the shared employee shape plus the joining date, which "recently joined" and
+ * tenure need. Added here rather than to `toEmployeeDto`, which a partner integration also reads.
+ */
+function directoryRow(
+  employee: Parameters<typeof toEmployeeDto>[0] & { dateOfJoining: Date | null },
+) {
+  const joined = employee.dateOfJoining;
+  return {
+    ...toEmployeeDto(employee),
+    dateOfJoining: joined ? joined.toISOString().slice(0, 10) : null,
+  };
+}
+
 @Injectable()
 export class EmployeeNativeService {
   constructor(
@@ -213,7 +227,7 @@ export class EmployeeNativeService {
         const self = await tx.employee.findFirst({
           where: { id: selfEmployeeId, organizationId: context.organizationId },
         });
-        return { items: self ? [toEmployeeDto(self)] : [], nextCursor: undefined };
+        return { items: self ? [directoryRow(self)] : [], nextCursor: undefined };
       }
       const employees = await tx.employee.findMany({
         where: { organizationId: context.organizationId },
@@ -227,7 +241,7 @@ export class EmployeeNativeService {
       const hasNextPage = employees.length > limit;
       const page = employees.slice(0, limit);
       return {
-        items: page.map((employee) => toEmployeeDto(employee)),
+        items: page.map(directoryRow),
         nextCursor: hasNextPage ? page.at(-1)?.id : undefined,
       };
     });
@@ -335,13 +349,20 @@ export class EmployeeNativeService {
       if (!employee) throw new NotFoundError('Employee');
       if (employee.userId && employee.userId === context.actor.userId)
         throw new ConflictError('You cannot deactivate your own employee record');
+      // The company's own date: from midnight to 05:30 in India the UTC date is still yesterday,
+      // which recorded the wrong last day and discarded a branch move made that morning. A
+      // partner integration keeps the date it has always been given.
+      const today =
+        context.accessMode === 'NATIVE'
+          ? await organizationToday(tx, context.organizationId)
+          : dateOnly(new Date().toISOString());
       const updated = await tx.employee.update({
         where: { id: employeeId },
         data: {
           status: 'INACTIVE',
           deactivatedAt: new Date(),
           // Their last day, unless one was already recorded when the exit was planned.
-          dateOfLeaving: employee.dateOfLeaving ?? dateOnly(new Date().toISOString()),
+          dateOfLeaving: employee.dateOfLeaving ?? today,
           version: { increment: 1 },
         },
       });
@@ -367,7 +388,7 @@ export class EmployeeNativeService {
         tx,
         context.organizationId,
         employeeId,
-        updated.dateOfLeaving ?? dateOnly(new Date().toISOString()),
+        updated.dateOfLeaving ?? today,
       );
       if (employee.userId) {
         // Someone who has left cannot sign in to this company again. Only this company: the same

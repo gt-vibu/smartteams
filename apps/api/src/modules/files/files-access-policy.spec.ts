@@ -244,3 +244,105 @@ describe('document access', () => {
     });
   });
 });
+
+describe('project documents', () => {
+  const projectFile = (overrides: Partial<AccessFile> = {}) =>
+    file({
+      accessScope: 'PROJECT',
+      employeeId: null,
+      projectId: 'p-apollo',
+      uploadedByUserId: 'u-asha',
+      ...overrides,
+    });
+  const member = viewer({ projectIds: new Set(['p-apollo']), ledProjectIds: new Set() });
+  const lead = viewer({
+    userId: 'u-lead',
+    employeeId: 'e-lead',
+    projectIds: new Set(['p-apollo']),
+    ledProjectIds: new Set(['p-apollo']),
+  });
+  const outsider = viewer({ userId: 'u-out', employeeId: 'e-out' });
+
+  it('a member reads and downloads a colleague’s project file, but cannot remove it', () => {
+    const decision = decideFileAccess(projectFile(), member);
+    expect(decision).toMatchObject({
+      view: true,
+      download: true,
+      manage: false,
+      reason: 'PROJECT',
+    });
+  });
+
+  it('a member may remove a file they put there themselves', () => {
+    const own = projectFile({ uploadedByUserId: member.userId });
+    expect(decideFileAccess(own, member).manage).toBe(true);
+  });
+
+  it('the lead looks after every file in the project', () => {
+    const decision = decideFileAccess(projectFile(), lead);
+    expect(decision).toMatchObject({ view: true, manage: true, reason: 'PROJECT_LEAD' });
+  });
+
+  it('someone not on the project cannot see it', () => {
+    expect(decideFileAccess(projectFile(), outsider).view).toBe(false);
+  });
+
+  it('nor can a member of a different project', () => {
+    const elsewhere = viewer({ projectIds: new Set(['p-hermes']) });
+    expect(decideFileAccess(projectFile(), elsewhere).view).toBe(false);
+  });
+
+  it('a view-only project file stays view-only for a member', () => {
+    expect(decideFileAccess(projectFile({ allowDownload: false }), member).download).toBe(false);
+  });
+
+  it('only people on the project may add files to it', () => {
+    expect(mayUploadTo('PROJECT', member, null, null, 'p-apollo')).toBe(true);
+    expect(mayUploadTo('PROJECT', outsider, null, null, 'p-apollo')).toBe(false);
+    expect(mayUploadTo('PROJECT', member, null, null, 'p-hermes')).toBe(false);
+    expect(mayUploadTo('PROJECT', hr, null, null, 'p-apollo')).toBe(true);
+  });
+});
+
+describe('team documents', () => {
+  const plan = file({
+    accessScope: 'TEAM',
+    employeeId: null,
+    teamId: 't-eng',
+    uploadedByUserId: 'u-asha',
+  });
+  const member = viewer({ teamIds: new Set(['t-eng']) });
+  const lead = viewer({
+    userId: 'u-lead',
+    employeeId: 'e-lead',
+    teamIds: new Set(['t-eng']),
+    ledTeamIds: new Set(['t-eng']),
+  });
+
+  it('a member reads and downloads a colleague’s team file, but cannot remove it', () => {
+    expect(decideFileAccess(plan, member)).toMatchObject({
+      view: true,
+      download: true,
+      manage: false,
+      reason: 'TEAM',
+    });
+  });
+  it('a member may remove a file they put there themselves', () => {
+    const own = file({ ...plan, uploadedByUserId: 'u-vibu' });
+    expect(decideFileAccess(own, member).manage).toBe(true);
+  });
+  it('the lead looks after every file in the team', () => {
+    expect(decideFileAccess(plan, lead)).toMatchObject({
+      view: true,
+      manage: true,
+      reason: 'TEAM_LEAD',
+    });
+  });
+  it('the lead of another team gets nothing here', () => {
+    const elsewhere = viewer({ teamIds: new Set(['t-ops']), ledTeamIds: new Set(['t-ops']) });
+    expect(decideFileAccess(plan, elsewhere).view).toBe(false);
+  });
+  it('a view-only team file stays view-only for a member', () => {
+    expect(decideFileAccess(file({ ...plan, allowDownload: false }), member).download).toBe(false);
+  });
+});

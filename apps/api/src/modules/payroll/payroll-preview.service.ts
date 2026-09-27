@@ -21,6 +21,7 @@ import { TimesheetStatus } from '../../generated/prisma/enums';
 import { dateOnly, type PreviewInput } from './payroll-policy.types';
 import { employeeScope, findPolicy, resolveEmployeeId } from './payroll-policy-access';
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
+import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
 
 @Injectable()
 export class PayrollPreviewService {
@@ -196,6 +197,7 @@ export class PayrollPreviewService {
 
       const jurisdiction = employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
       const advanceCutoff = endOfDay(periodEnd);
+      const { recoveryMonths } = await readAdvanceRules(tx, context.organizationId);
       const [rules, advances, adjustments] = await Promise.all([
         jurisdiction
           ? tx.payrollStatutoryRule.findMany({
@@ -273,7 +275,14 @@ export class PayrollPreviewService {
           employeeHolidaySelections.map((s) => s.holiday.holidayDate.toISOString().slice(0, 10)),
         ),
         adjustments,
-        advances,
+        // Spread the same way the run will spread it, so the preview matches the payslip.
+        advances: advances.map((advance) => ({
+          ...advance,
+          instalment:
+            recoveryMonths > 1 && advance.approvedAmount
+              ? recoveryInstalment(advance.approvedAmount, recoveryMonths)
+              : null,
+        })),
       };
 
       const computed = computePayrollLine(item, settings.standardDayMinutes);

@@ -8,8 +8,10 @@ import { ArchiveDialog } from '../common/archive-dialog';
 import { AddMembersDialog } from '../common/add-members-dialog';
 import { MembersSection } from '../common/members-section';
 import { EditProjectDialog } from './edit-project-dialog';
+import { LeadSection } from '../common/lead-section';
+import { GroupFilesSection } from '../common/group-files-section';
 import { useSession } from '../../hooks/auth-context';
-import { employeeDisplayName, hasPermission, type Employee } from '@smarteam/contracts';
+import { employeeDisplayName, hasPermission, type Employee, formatDate } from '@smarteam/contracts';
 
 const nameOf = (employees: readonly Employee[], id: string) => {
   const employee = employees.find((entry) => entry.id === id);
@@ -35,7 +37,7 @@ export function ProjectDetailDrawer({
   const [isArchiveOpen, setIsArchiveOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
-  const { persona } = useSession();
+  const { persona, session } = useSession();
   const canViewEmployee = hasPermission(persona?.permissions ?? [], 'employees.read.all');
 
   return (
@@ -49,7 +51,7 @@ export function ProjectDetailDrawer({
               <div className="min-w-0 flex-1">
                 <p className="truncate text-base font-bold text-foreground">{view.project.name}</p>
                 <p className="truncate font-mono text-[11px] text-muted-foreground mt-0.5">
-                  {view.project.code ?? '--'} · {view.branchName ?? 'No branch'}
+                  {[view.project.code, view.branchName].filter(Boolean).join(' · ')}
                 </p>
               </div>
               <Badge
@@ -70,9 +72,9 @@ export function ProjectDetailDrawer({
             )}
             <p className="mt-2 text-[11px] text-muted-foreground">
               {view.project.startDate
-                ? `From ${view.project.startDate.slice(0, 10)}`
+                ? `From ${formatDate(view.project.startDate)}`
                 : 'No start date'}
-              {view.project.endDate ? ` to ${view.project.endDate.slice(0, 10)}` : ''}
+              {view.project.endDate ? ` to ${formatDate(view.project.endDate)}` : ''}
             </p>
           </div>
 
@@ -105,10 +107,22 @@ export function ProjectDetailDrawer({
               </p>
             )}
 
+            <LeadSection
+              busy={directory.saving}
+              canWrite={directory.canWrite && view.project.status !== 'ARCHIVED'}
+              employees={directory.employees}
+              onSave={(employeeId) =>
+                directory.updateProject(view.project.id, { projectLeadEmployeeId: employeeId })
+              }
+              kind="project"
+              lead={view.lead}
+            />
+
             <MembersSection
               busy={directory.saving}
               canViewEmployee={canViewEmployee}
               canWrite={directory.canWrite && view.project.status !== 'ARCHIVED'}
+              leadEmployeeId={view.lead?.employeeId}
               members={view.activeMembers}
               onAdd={() => setIsAssignOpen(true)}
               onChangeRole={(memberId, role) =>
@@ -118,13 +132,27 @@ export function ProjectDetailDrawer({
               pastMembers={view.pastMembers}
               roleKind="project-roles"
             />
+
+            <GroupFilesSection
+              canUpload={
+                view.project.status !== 'ARCHIVED' &&
+                (hasPermission(persona?.permissions ?? [], 'files.organization.manage') ||
+                  view.lead?.employeeId === session?.employeeId ||
+                  view.activeMembers.some((member) => member.employeeId === session?.employeeId))
+              }
+              groupId={view.project.id}
+              kind="project"
+            />
           </div>
         </SheetContent>
       </Sheet>
 
       <AddMembersDialog
         employees={directory.employees}
-        excludeIds={view.activeMembers.map((member) => member.employeeId)}
+        excludeIds={[
+          ...view.activeMembers.map((member) => member.employeeId),
+          ...(view.lead ? [view.lead.employeeId] : []),
+        ]}
         nameOf={(id) => nameOf(directory.employees, id)}
         onAdd={(employeeId, projectRole) =>
           directory.addMember(view.project.id, {

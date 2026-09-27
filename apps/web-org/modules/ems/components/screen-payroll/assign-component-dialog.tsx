@@ -98,7 +98,7 @@ export function AssignComponentDialog({
       }}
       open={open}
     >
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogTitle>Assign a pay component</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <div>

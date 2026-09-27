@@ -4,29 +4,16 @@ import React, { useState } from 'react';
 import {
   Badge,
   Button,
-  Checkbox,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Input,
-  Label,
   SelectContent,
   SelectItem,
   SelectMenu,
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import type { Branch } from '@smarteam/contracts';
+import type { Branch, LeaveType } from '@smarteam/contracts';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
+import { ACCRUAL_LABEL, LeaveTypeDialog } from './leave-type-dialog';
 import type { LeaveTypeInput } from '../../repositories/leave.repository';
-
-const ACCRUAL_TYPES: LeaveTypeInput['accrualType'][] = [
-  'FIXED_ANNUAL',
-  'MONTHLY',
-  'PER_PAY_PERIOD',
-  'MANUAL',
-  'NONE',
-];
 
 /**
  * Leave types and their branch assignments.
@@ -41,40 +28,35 @@ export function LeavePolicyPanel({
   admin: LeaveAdminState;
   branches: Branch[];
 }) {
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [form, setForm] = useState<LeaveTypeInput>({
-    code: '',
-    name: '',
-    paid: true,
-    accrualType: 'FIXED_ANNUAL',
-    annualAllowance: 12,
-    requiresAttachment: false,
+  const [dialog, setDialog] = useState<{ open: boolean; editing: LeaveType | null }>({
+    open: false,
+    editing: null,
   });
-  const [error, setError] = useState('');
   const [assignBranch, setAssignBranch] = useState<Record<string, string>>({});
+  const editingId = dialog.editing?.id ?? null;
+  const busy = editingId
+    ? admin.isBusy(leaveAdminBusyKey.updateType(editingId))
+    : admin.isBusy(leaveAdminBusyKey.createType);
 
-  const submit = async () => {
-    if (!form.code.trim() || !form.name.trim()) {
-      setError('A code and a name are both required.');
-      return;
-    }
-    setError('');
-    const created = await admin.createType({
-      ...form,
-      code: form.code.trim().toUpperCase(),
-      name: form.name.trim(),
-    });
-    if (created) {
-      setForm({
-        code: '',
-        name: '',
-        paid: true,
-        accrualType: 'FIXED_ANNUAL',
-        annualAllowance: 12,
-        requiresAttachment: false,
-      });
-      setIsCreateOpen(false);
-    }
+  const save = async (input: LeaveTypeInput) => {
+    if (!editingId) return Boolean(await admin.createType(input));
+    return Boolean(
+      await admin.updateType(editingId, {
+        name: input.name,
+        paid: input.paid,
+        accrualType: input.accrualType,
+        annualAllowance: input.annualAllowance,
+        monthlyAccrual: input.monthlyAccrual,
+        carryoverLimit: input.carryoverLimit,
+        prorateForJoiners: input.prorateForJoiners,
+        sandwichOffDays: input.sandwichOffDays,
+        encashable: input.encashable,
+        maxEncashDays: input.maxEncashDays,
+        isCompOff: input.isCompOff,
+        compOffExpiryDays: input.compOffExpiryDays,
+        requiresAttachment: input.requiresAttachment,
+      }),
+    );
   };
 
   return (
@@ -89,7 +71,12 @@ export function LeavePolicyPanel({
           </p>
         </div>
         {admin.canWriteTypes && (
-          <Button onClick={() => setIsCreateOpen(true)} size="sm" type="button" variant="outline">
+          <Button
+            onClick={() => setDialog({ open: true, editing: null })}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
             New type
           </Button>
         )}
@@ -117,16 +104,23 @@ export function LeavePolicyPanel({
                 </p>
                 {/* The badge already says paid or unpaid; repeating it here left the line long
                     enough to wrap a word at a time beside the assignment control. */}
-                <p className="text-[11px] text-muted-foreground">
-                  {type.accrualType}
-                  {type.annualAllowance !== null && type.annualAllowance !== undefined
-                    ? ` · ${type.annualAllowance} days a year`
-                    : ''}
-                </p>
+                <p className="text-[11px] text-muted-foreground">{describeType(type)}</p>
               </div>
-              <Badge className="shrink-0" variant={type.paid ? 'secondary' : 'outline'}>
-                {type.paid ? 'Paid' : 'Unpaid'}
-              </Badge>
+              <span className="flex shrink-0 items-center gap-1.5">
+                <Badge variant={type.paid ? 'secondary' : 'outline'}>
+                  {type.paid ? 'Paid' : 'Unpaid'}
+                </Badge>
+                {admin.canWriteTypes && (
+                  <Button
+                    onClick={() => setDialog({ open: true, editing: type })}
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                  >
+                    Edit
+                  </Button>
+                )}
+              </span>
             </div>
 
             {admin.canWriteTypes && branches.length > 0 && (
@@ -179,131 +173,34 @@ export function LeavePolicyPanel({
         </p>
       )}
 
-      <Dialog onOpenChange={(open) => !open && setIsCreateOpen(false)} open={isCreateOpen}>
-        <DialogContent className="max-w-lg gap-0 p-0">
-          <DialogTitle className="border-b border-border px-5 py-4 text-sm font-semibold">
-            New leave type
-          </DialogTitle>
-
-          <div className="space-y-4 p-5">
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <Label className="mb-1 block" htmlFor="type-code">
-                  Code
-                </Label>
-                <Input
-                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                  id="type-code"
-                  onChange={(event) => setForm({ ...form, code: event.target.value })}
-                  placeholder="CL"
-                  value={form.code}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <Label className="mb-1 block" htmlFor="type-name">
-                  Name
-                </Label>
-                <Input
-                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                  id="type-name"
-                  onChange={(event) => setForm({ ...form, name: event.target.value })}
-                  placeholder="Casual Leave"
-                  value={form.name}
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label className="mb-1 block" htmlFor="type-accrual">
-                  Accrual
-                </Label>
-                <SelectMenu
-                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                  onValueChange={(value) =>
-                    setForm({ ...form, accrualType: value as LeaveTypeInput['accrualType'] })
-                  }
-                  value={form.accrualType}
-                >
-                  <SelectTrigger id="type-accrual">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ACCRUAL_TYPES.map((accrual) => (
-                      <SelectItem key={accrual} value={accrual}>
-                        {accrual}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectMenu>
-              </div>
-              <div>
-                <Label className="mb-1 block" htmlFor="type-allowance">
-                  Annual allowance
-                </Label>
-                <Input
-                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                  id="type-allowance"
-                  min={0}
-                  onChange={(event) =>
-                    setForm({ ...form, annualAllowance: Number(event.target.value) })
-                  }
-                  type="number"
-                  value={form.annualAllowance ?? 0}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-5">
-              <label className="flex items-center gap-2 text-xs text-foreground">
-                <Checkbox
-                  checked={form.paid}
-                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                  onCheckedChange={(checked) => setForm({ ...form, paid: checked === true })}
-                />
-                Paid leave
-              </label>
-              <label className="flex items-center gap-2 text-xs text-foreground">
-                <Checkbox
-                  checked={form.requiresAttachment}
-                  disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                  onCheckedChange={(checked) =>
-                    setForm({ ...form, requiresAttachment: checked === true })
-                  }
-                />
-                Requires an attachment
-              </label>
-            </div>
-
-            <p className="text-[11px] text-muted-foreground">
-              Unpaid leave reduces payable days in payroll; paid leave does not.
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
-            <p className="text-[11px] font-medium text-destructive" role="alert">
-              {error || admin.saveError}
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                onClick={() => setIsCreateOpen(false)}
-                type="button"
-                variant="outline"
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={admin.isBusy(leaveAdminBusyKey.createType)}
-                onClick={() => void submit()}
-                type="button"
-              >
-                {admin.isBusy(leaveAdminBusyKey.createType) ? 'Saving...' : 'Create type'}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <LeaveTypeDialog
+        busy={busy}
+        editing={dialog.editing}
+        onClose={() => setDialog({ open: false, editing: null })}
+        onSave={save}
+        open={dialog.open}
+        saveError={admin.saveError}
+      />
     </section>
   );
+}
+
+/** One line a person can read: "Earned every month · 1.5 a month · up to 5 carry forward". */
+function describeType(type: LeaveType) {
+  const label = (ACCRUAL_LABEL as Record<string, string | undefined>)[type.accrualType];
+  const parts = [label ?? type.accrualType];
+  if (type.accrualType === 'FIXED_ANNUAL' && type.annualAllowance)
+    parts.push(
+      `${type.annualAllowance} days a year${type.prorateForJoiners === false ? '' : ', pro-rated for joiners'}`,
+    );
+  if (type.accrualType === 'MONTHLY' && type.monthlyAccrual)
+    parts.push(`${type.monthlyAccrual} a month`);
+  if (type.isCompOff) parts.push('comp-off');
+  if (type.sandwichOffDays) parts.push('sandwich rule');
+  if (type.encashable) parts.push('encashable');
+  if (type.accrualType === 'FIXED_ANNUAL' || type.accrualType === 'MONTHLY')
+    parts.push(
+      type.carryoverLimit ? `up to ${type.carryoverLimit} carry forward` : 'no carry forward',
+    );
+  return parts.join(' · ');
 }

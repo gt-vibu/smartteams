@@ -17,7 +17,8 @@ export type EmsModule =
   | 'shifts'
   | 'holidays'
   | 'approvals'
-  | 'files';
+  | 'files'
+  | 'reports';
 
 export type AttendanceViewMode = 'timeline' | 'table' | 'calendar';
 
@@ -42,6 +43,7 @@ const VALID_MODULES: EmsModule[] = [
   'holidays',
   'approvals',
   'files',
+  'reports',
 ];
 
 function parseUrlParams(): EmsNavState {

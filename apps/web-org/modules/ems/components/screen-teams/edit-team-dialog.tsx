@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { employeeDisplayName, type Branch, type Employee, type Team } from '@smarteam/contracts';
+import React, { useEffect, useState } from 'react';
+import type { Branch, Employee, Team } from '@smarteam/contracts';
 import {
   Button,
   Dialog,
@@ -16,7 +16,7 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
-import { activeByName } from '../../lib/pickable';
+import { EmployeeCombobox } from '../common/employee-combobox';
 
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
@@ -57,7 +57,6 @@ export function EditTeamDialog({
   const [leadId, setLeadId] = useState('');
   const [error, setError] = useState('');
   const [nameClash, setNameClash] = useState(false);
-  const sorted = useMemo(() => activeByName(employees), [employees]);
 
   useEffect(() => {
     if (!open) return;
@@ -100,7 +99,7 @@ export function EditTeamDialog({
           Edit team &mdash; {team.name}
         </DialogTitle>
 
-        <div className="max-h-[70vh] space-y-4 overflow-y-auto p-5">
+        <div className="sm:max-h-[70vh] space-y-4 overflow-y-auto p-5">
           <div>
             <Label className="mb-1 block" htmlFor="edit-team-name">
               Name
@@ -148,18 +147,14 @@ export function EditTeamDialog({
               <Label className="mb-1 block" htmlFor="edit-team-lead">
                 Team lead
               </Label>
-              <SelectMenu disabled={saving} onValueChange={setLeadId} value={leadId}>
-                <SelectTrigger id="edit-team-lead">
-                  <SelectValue placeholder="No lead" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sorted.map((employee) => (
-                    <SelectItem key={employee.id} value={employee.id}>
-                      {employeeDisplayName(employee)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
+              <EmployeeCombobox
+                disabled={saving}
+                employees={employees}
+                id="edit-team-lead"
+                onChange={setLeadId}
+                placeholder="No lead"
+                value={leadId}
+              />
             </div>
           </div>
 

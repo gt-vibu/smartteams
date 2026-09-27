@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import type { Branch } from '@smarteam/contracts';
+import type { Branch, Employee } from '@smarteam/contracts';
 import {
   Button,
   DatePicker,
@@ -18,11 +18,14 @@ import {
   Textarea,
 } from '@smarteam/ui';
 import type { CreateProjectInput } from '../../repositories/teams-projects.repository';
+import { EmployeeCombobox } from '../common/employee-combobox';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   branches: readonly Branch[];
+  /** Who can be chosen to lead it. */
+  employees: readonly Employee[];
   /** Names already taken, so a second "beta" is questioned before it is created. */
   existingNames: readonly string[];
   saving: boolean;
@@ -45,6 +48,7 @@ export function CreateProjectModal({
   isOpen,
   onClose,
   branches,
+  employees,
   existingNames,
   saving,
   saveError,
@@ -54,6 +58,8 @@ export function CreateProjectModal({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [branchId, setBranchId] = useState(NONE);
+  // Optional: a project can be created before anyone leads it, and the lead set from its page.
+  const [leadId, setLeadId] = useState('');
   // Set once the administrator has been shown the name clash and chosen to go ahead anyway.
   const [nameClash, setNameClash] = useState(false);
   const [startDate, setStartDate] = useState('');
@@ -65,6 +71,7 @@ export function CreateProjectModal({
     setName('');
     setDescription('');
     setBranchId(NONE);
+    setLeadId('');
     setNameClash(false);
     setStartDate('');
     setEndDate('');
@@ -97,6 +104,7 @@ export function CreateProjectModal({
       name: name.trim(),
       ...(description.trim() ? { description: description.trim() } : {}),
       branchId,
+      ...(leadId ? { projectLeadEmployeeId: leadId } : {}),
       ...(startDate ? { startDate } : {}),
       ...(endDate ? { endDate } : {}),
     });
@@ -121,7 +129,7 @@ export function CreateProjectModal({
           New project
         </DialogTitle>
 
-        <div className="max-h-[70vh] space-y-4 overflow-y-auto p-5">
+        <div className="sm:max-h-[70vh] space-y-4 overflow-y-auto p-5">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <Label className="mb-1 block" htmlFor="project-code">
@@ -159,6 +167,20 @@ export function CreateProjectModal({
               onChange={(event) => setDescription(event.target.value)}
               rows={2}
               value={description}
+            />
+          </div>
+
+          <div>
+            <Label className="mb-1 block" htmlFor="project-lead">
+              Project lead <span className="font-normal text-muted-foreground">(optional)</span>
+            </Label>
+            <EmployeeCombobox
+              disabled={saving}
+              employees={employees}
+              id="project-lead"
+              noneLabel="No lead yet"
+              onChange={setLeadId}
+              value={leadId}
             />
           </div>
 

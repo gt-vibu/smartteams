@@ -67,6 +67,7 @@ export class PersonaRepository {
       assignedTeamIds: [],
       assignedProjectIds: [],
       directReportEmployeeIds: [],
+      approvesInOwnRight: session.approvesInOwnRight ?? false,
       managerEmployeeId: null,
       managerName: null,
       canSwitchWorkspace: canAdminister && hasEmployeeIdentity,

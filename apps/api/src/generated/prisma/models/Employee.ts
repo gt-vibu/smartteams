@@ -52,6 +52,8 @@ export type EmployeeMinAggregateOutputType = {
   employmentType: $Enums.EmploymentType | null
   dateOfJoining: Date | null
   dateOfLeaving: Date | null
+  probationEndsOn: Date | null
+  confirmedOn: Date | null
   managerEmployeeId: string | null
   geofenceMode: $Enums.GeofenceMode | null
   primaryBranchId: string | null
@@ -80,6 +82,8 @@ export type EmployeeMaxAggregateOutputType = {
   employmentType: $Enums.EmploymentType | null
   dateOfJoining: Date | null
   dateOfLeaving: Date | null
+  probationEndsOn: Date | null
+  confirmedOn: Date | null
   managerEmployeeId: string | null
   geofenceMode: $Enums.GeofenceMode | null
   primaryBranchId: string | null
@@ -108,6 +112,9 @@ export type EmployeeCountAggregateOutputType = {
   employmentType: number
   dateOfJoining: number
   dateOfLeaving: number
+  probationEndsOn: number
+  confirmedOn: number
+  customFields: number
   managerEmployeeId: number
   geofenceMode: number
   primaryBranchId: number
@@ -148,6 +155,8 @@ export type EmployeeMinAggregateInputType = {
   employmentType?: true
   dateOfJoining?: true
   dateOfLeaving?: true
+  probationEndsOn?: true
+  confirmedOn?: true
   managerEmployeeId?: true
   geofenceMode?: true
   primaryBranchId?: true
@@ -176,6 +185,8 @@ export type EmployeeMaxAggregateInputType = {
   employmentType?: true
   dateOfJoining?: true
   dateOfLeaving?: true
+  probationEndsOn?: true
+  confirmedOn?: true
   managerEmployeeId?: true
   geofenceMode?: true
   primaryBranchId?: true
@@ -204,6 +215,9 @@ export type EmployeeCountAggregateInputType = {
   employmentType?: true
   dateOfJoining?: true
   dateOfLeaving?: true
+  probationEndsOn?: true
+  confirmedOn?: true
+  customFields?: true
   managerEmployeeId?: true
   geofenceMode?: true
   primaryBranchId?: true
@@ -321,6 +335,9 @@ export type EmployeeGroupByOutputType = {
   employmentType: $Enums.EmploymentType
   dateOfJoining: Date | null
   dateOfLeaving: Date | null
+  probationEndsOn: Date | null
+  confirmedOn: Date | null
+  customFields: runtime.JsonValue
   managerEmployeeId: string | null
   geofenceMode: $Enums.GeofenceMode | null
   primaryBranchId: string | null
@@ -374,6 +391,9 @@ export type EmployeeWhereInput = {
   employmentType?: Prisma.EnumEmploymentTypeFilter<"Employee"> | $Enums.EmploymentType
   dateOfJoining?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
   dateOfLeaving?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  probationEndsOn?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  confirmedOn?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  customFields?: Prisma.JsonFilter<"Employee">
   managerEmployeeId?: Prisma.UuidNullableFilter<"Employee"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Employee"> | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.UuidNullableFilter<"Employee"> | string | null
@@ -392,6 +412,9 @@ export type EmployeeWhereInput = {
   department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
   departmentsHeaded?: Prisma.DepartmentListRelationFilter
   emergencyContacts?: Prisma.EmployeeEmergencyContactListRelationFilter
+  compOffCredits?: Prisma.CompOffCreditListRelationFilter
+  leaveEncashments?: Prisma.LeaveEncashmentListRelationFilter
+  resignations?: Prisma.EmployeeResignationListRelationFilter
   branchAssignments?: Prisma.EmployeeBranchAssignmentListRelationFilter
   fieldOwnership?: Prisma.EmployeeFieldOwnershipListRelationFilter
   employmentRecords?: Prisma.EmployeeEmploymentRecordListRelationFilter
@@ -419,6 +442,7 @@ export type EmployeeWhereInput = {
   payrollPayments?: Prisma.PayrollPaymentListRelationFilter
   files?: Prisma.FileObjectListRelationFilter
   teamLeadOf?: Prisma.TeamListRelationFilter
+  projectLeadOf?: Prisma.ProjectListRelationFilter
   webauthnCredentials?: Prisma.WebauthnCredentialListRelationFilter
   webauthnChallenges?: Prisma.WebauthnChallengeListRelationFilter
   personalProfile?: Prisma.XOR<Prisma.EmployeePersonalProfileNullableScalarRelationFilter, Prisma.EmployeePersonalProfileWhereInput> | null
@@ -446,6 +470,9 @@ export type EmployeeOrderByWithRelationInput = {
   employmentType?: Prisma.SortOrder
   dateOfJoining?: Prisma.SortOrderInput | Prisma.SortOrder
   dateOfLeaving?: Prisma.SortOrderInput | Prisma.SortOrder
+  probationEndsOn?: Prisma.SortOrderInput | Prisma.SortOrder
+  confirmedOn?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFields?: Prisma.SortOrder
   managerEmployeeId?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
   primaryBranchId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -464,6 +491,9 @@ export type EmployeeOrderByWithRelationInput = {
   department?: Prisma.DepartmentOrderByWithRelationInput
   departmentsHeaded?: Prisma.DepartmentOrderByRelationAggregateInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactOrderByRelationAggregateInput
+  compOffCredits?: Prisma.CompOffCreditOrderByRelationAggregateInput
+  leaveEncashments?: Prisma.LeaveEncashmentOrderByRelationAggregateInput
+  resignations?: Prisma.EmployeeResignationOrderByRelationAggregateInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentOrderByRelationAggregateInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipOrderByRelationAggregateInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordOrderByRelationAggregateInput
@@ -491,6 +521,7 @@ export type EmployeeOrderByWithRelationInput = {
   payrollPayments?: Prisma.PayrollPaymentOrderByRelationAggregateInput
   files?: Prisma.FileObjectOrderByRelationAggregateInput
   teamLeadOf?: Prisma.TeamOrderByRelationAggregateInput
+  projectLeadOf?: Prisma.ProjectOrderByRelationAggregateInput
   webauthnCredentials?: Prisma.WebauthnCredentialOrderByRelationAggregateInput
   webauthnChallenges?: Prisma.WebauthnChallengeOrderByRelationAggregateInput
   personalProfile?: Prisma.EmployeePersonalProfileOrderByWithRelationInput
@@ -523,6 +554,9 @@ export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
   employmentType?: Prisma.EnumEmploymentTypeFilter<"Employee"> | $Enums.EmploymentType
   dateOfJoining?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
   dateOfLeaving?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  probationEndsOn?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  confirmedOn?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  customFields?: Prisma.JsonFilter<"Employee">
   managerEmployeeId?: Prisma.UuidNullableFilter<"Employee"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Employee"> | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.UuidNullableFilter<"Employee"> | string | null
@@ -541,6 +575,9 @@ export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
   department?: Prisma.XOR<Prisma.DepartmentNullableScalarRelationFilter, Prisma.DepartmentWhereInput> | null
   departmentsHeaded?: Prisma.DepartmentListRelationFilter
   emergencyContacts?: Prisma.EmployeeEmergencyContactListRelationFilter
+  compOffCredits?: Prisma.CompOffCreditListRelationFilter
+  leaveEncashments?: Prisma.LeaveEncashmentListRelationFilter
+  resignations?: Prisma.EmployeeResignationListRelationFilter
   branchAssignments?: Prisma.EmployeeBranchAssignmentListRelationFilter
   fieldOwnership?: Prisma.EmployeeFieldOwnershipListRelationFilter
   employmentRecords?: Prisma.EmployeeEmploymentRecordListRelationFilter
@@ -568,6 +605,7 @@ export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
   payrollPayments?: Prisma.PayrollPaymentListRelationFilter
   files?: Prisma.FileObjectListRelationFilter
   teamLeadOf?: Prisma.TeamListRelationFilter
+  projectLeadOf?: Prisma.ProjectListRelationFilter
   webauthnCredentials?: Prisma.WebauthnCredentialListRelationFilter
   webauthnChallenges?: Prisma.WebauthnChallengeListRelationFilter
   personalProfile?: Prisma.XOR<Prisma.EmployeePersonalProfileNullableScalarRelationFilter, Prisma.EmployeePersonalProfileWhereInput> | null
@@ -595,6 +633,9 @@ export type EmployeeOrderByWithAggregationInput = {
   employmentType?: Prisma.SortOrder
   dateOfJoining?: Prisma.SortOrderInput | Prisma.SortOrder
   dateOfLeaving?: Prisma.SortOrderInput | Prisma.SortOrder
+  probationEndsOn?: Prisma.SortOrderInput | Prisma.SortOrder
+  confirmedOn?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFields?: Prisma.SortOrder
   managerEmployeeId?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
   primaryBranchId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -633,6 +674,9 @@ export type EmployeeScalarWhereWithAggregatesInput = {
   employmentType?: Prisma.EnumEmploymentTypeWithAggregatesFilter<"Employee"> | $Enums.EmploymentType
   dateOfJoining?: Prisma.DateTimeNullableWithAggregatesFilter<"Employee"> | Date | string | null
   dateOfLeaving?: Prisma.DateTimeNullableWithAggregatesFilter<"Employee"> | Date | string | null
+  probationEndsOn?: Prisma.DateTimeNullableWithAggregatesFilter<"Employee"> | Date | string | null
+  confirmedOn?: Prisma.DateTimeNullableWithAggregatesFilter<"Employee"> | Date | string | null
+  customFields?: Prisma.JsonWithAggregatesFilter<"Employee">
   managerEmployeeId?: Prisma.UuidNullableWithAggregatesFilter<"Employee"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableWithAggregatesFilter<"Employee"> | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.UuidNullableWithAggregatesFilter<"Employee"> | string | null
@@ -661,6 +705,9 @@ export type EmployeeCreateInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -676,6 +723,9 @@ export type EmployeeCreateInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -703,6 +753,7 @@ export type EmployeeCreateInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -730,6 +781,9 @@ export type EmployeeUncheckedCreateInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -743,6 +797,9 @@ export type EmployeeUncheckedCreateInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -770,6 +827,7 @@ export type EmployeeUncheckedCreateInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -795,6 +853,9 @@ export type EmployeeUpdateInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -810,6 +871,9 @@ export type EmployeeUpdateInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -837,6 +901,7 @@ export type EmployeeUpdateInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -864,6 +929,9 @@ export type EmployeeUncheckedUpdateInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -877,6 +945,9 @@ export type EmployeeUncheckedUpdateInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -904,6 +975,7 @@ export type EmployeeUncheckedUpdateInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -931,6 +1003,9 @@ export type EmployeeCreateManyInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -959,6 +1034,9 @@ export type EmployeeUpdateManyMutationInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -986,6 +1064,9 @@ export type EmployeeUncheckedUpdateManyInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -998,14 +1079,14 @@ export type EmployeeUncheckedUpdateManyInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type EmployeeNullableScalarRelationFilter = {
-  is?: Prisma.EmployeeWhereInput | null
-  isNot?: Prisma.EmployeeWhereInput | null
-}
-
 export type EmployeeScalarRelationFilter = {
   is?: Prisma.EmployeeWhereInput
   isNot?: Prisma.EmployeeWhereInput
+}
+
+export type EmployeeNullableScalarRelationFilter = {
+  is?: Prisma.EmployeeWhereInput | null
+  isNot?: Prisma.EmployeeWhereInput | null
 }
 
 export type EmployeeListRelationFilter = {
@@ -1046,6 +1127,9 @@ export type EmployeeCountOrderByAggregateInput = {
   employmentType?: Prisma.SortOrder
   dateOfJoining?: Prisma.SortOrder
   dateOfLeaving?: Prisma.SortOrder
+  probationEndsOn?: Prisma.SortOrder
+  confirmedOn?: Prisma.SortOrder
+  customFields?: Prisma.SortOrder
   managerEmployeeId?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   primaryBranchId?: Prisma.SortOrder
@@ -1080,6 +1164,8 @@ export type EmployeeMaxOrderByAggregateInput = {
   employmentType?: Prisma.SortOrder
   dateOfJoining?: Prisma.SortOrder
   dateOfLeaving?: Prisma.SortOrder
+  probationEndsOn?: Prisma.SortOrder
+  confirmedOn?: Prisma.SortOrder
   managerEmployeeId?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   primaryBranchId?: Prisma.SortOrder
@@ -1108,6 +1194,8 @@ export type EmployeeMinOrderByAggregateInput = {
   employmentType?: Prisma.SortOrder
   dateOfJoining?: Prisma.SortOrder
   dateOfLeaving?: Prisma.SortOrder
+  probationEndsOn?: Prisma.SortOrder
+  confirmedOn?: Prisma.SortOrder
   managerEmployeeId?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   primaryBranchId?: Prisma.SortOrder
@@ -1120,6 +1208,20 @@ export type EmployeeMinOrderByAggregateInput = {
 
 export type EmployeeSumOrderByAggregateInput = {
   version?: Prisma.SortOrder
+}
+
+export type EmployeeCreateNestedOneWithoutResignationsInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutResignationsInput, Prisma.EmployeeUncheckedCreateWithoutResignationsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutResignationsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+}
+
+export type EmployeeUpdateOneRequiredWithoutResignationsNestedInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutResignationsInput, Prisma.EmployeeUncheckedCreateWithoutResignationsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutResignationsInput
+  upsert?: Prisma.EmployeeUpsertWithoutResignationsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutResignationsInput, Prisma.EmployeeUpdateWithoutResignationsInput>, Prisma.EmployeeUncheckedUpdateWithoutResignationsInput>
 }
 
 export type EmployeeCreateNestedOneWithoutFilesInput = {
@@ -1136,6 +1238,34 @@ export type EmployeeUpdateOneWithoutFilesNestedInput = {
   delete?: Prisma.EmployeeWhereInput | boolean
   connect?: Prisma.EmployeeWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutFilesInput, Prisma.EmployeeUpdateWithoutFilesInput>, Prisma.EmployeeUncheckedUpdateWithoutFilesInput>
+}
+
+export type EmployeeCreateNestedOneWithoutCompOffCreditsInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutCompOffCreditsInput, Prisma.EmployeeUncheckedCreateWithoutCompOffCreditsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutCompOffCreditsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+}
+
+export type EmployeeUpdateOneRequiredWithoutCompOffCreditsNestedInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutCompOffCreditsInput, Prisma.EmployeeUncheckedCreateWithoutCompOffCreditsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutCompOffCreditsInput
+  upsert?: Prisma.EmployeeUpsertWithoutCompOffCreditsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutCompOffCreditsInput, Prisma.EmployeeUpdateWithoutCompOffCreditsInput>, Prisma.EmployeeUncheckedUpdateWithoutCompOffCreditsInput>
+}
+
+export type EmployeeCreateNestedOneWithoutLeaveEncashmentsInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutLeaveEncashmentsInput, Prisma.EmployeeUncheckedCreateWithoutLeaveEncashmentsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutLeaveEncashmentsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+}
+
+export type EmployeeUpdateOneRequiredWithoutLeaveEncashmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutLeaveEncashmentsInput, Prisma.EmployeeUncheckedCreateWithoutLeaveEncashmentsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutLeaveEncashmentsInput
+  upsert?: Prisma.EmployeeUpsertWithoutLeaveEncashmentsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutLeaveEncashmentsInput, Prisma.EmployeeUpdateWithoutLeaveEncashmentsInput>, Prisma.EmployeeUncheckedUpdateWithoutLeaveEncashmentsInput>
 }
 
 export type EmployeeCreateNestedOneWithoutUserInput = {
@@ -1786,6 +1916,22 @@ export type EmployeeUpdateOneRequiredWithoutTeamMembershipsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutTeamMembershipsInput, Prisma.EmployeeUpdateWithoutTeamMembershipsInput>, Prisma.EmployeeUncheckedUpdateWithoutTeamMembershipsInput>
 }
 
+export type EmployeeCreateNestedOneWithoutProjectLeadOfInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutProjectLeadOfInput, Prisma.EmployeeUncheckedCreateWithoutProjectLeadOfInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutProjectLeadOfInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+}
+
+export type EmployeeUpdateOneWithoutProjectLeadOfNestedInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutProjectLeadOfInput, Prisma.EmployeeUncheckedCreateWithoutProjectLeadOfInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutProjectLeadOfInput
+  upsert?: Prisma.EmployeeUpsertWithoutProjectLeadOfInput
+  disconnect?: Prisma.EmployeeWhereInput | boolean
+  delete?: Prisma.EmployeeWhereInput | boolean
+  connect?: Prisma.EmployeeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutProjectLeadOfInput, Prisma.EmployeeUpdateWithoutProjectLeadOfInput>, Prisma.EmployeeUncheckedUpdateWithoutProjectLeadOfInput>
+}
+
 export type EmployeeCreateNestedOneWithoutProjectMembershipsInput = {
   create?: Prisma.XOR<Prisma.EmployeeCreateWithoutProjectMembershipsInput, Prisma.EmployeeUncheckedCreateWithoutProjectMembershipsInput>
   connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutProjectMembershipsInput
@@ -1858,6 +2004,314 @@ export type EmployeeUncheckedUpdateManyWithoutDepartmentNestedInput = {
   deleteMany?: Prisma.EmployeeScalarWhereInput | Prisma.EmployeeScalarWhereInput[]
 }
 
+export type EmployeeCreateWithoutResignationsInput = {
+  id?: string
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutEmployeesInput
+  user?: Prisma.UserCreateNestedOneWithoutEmployeeInput
+  manager?: Prisma.EmployeeCreateNestedOneWithoutReportsInput
+  reports?: Prisma.EmployeeCreateNestedManyWithoutManagerInput
+  primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
+  departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeUncheckedCreateWithoutResignationsInput = {
+  id?: string
+  organizationId: string
+  userId?: string | null
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  primaryBranchId?: string | null
+  departmentId?: string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeCreateOrConnectWithoutResignationsInput = {
+  where: Prisma.EmployeeWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutResignationsInput, Prisma.EmployeeUncheckedCreateWithoutResignationsInput>
+}
+
+export type EmployeeUpsertWithoutResignationsInput = {
+  update: Prisma.XOR<Prisma.EmployeeUpdateWithoutResignationsInput, Prisma.EmployeeUncheckedUpdateWithoutResignationsInput>
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutResignationsInput, Prisma.EmployeeUncheckedCreateWithoutResignationsInput>
+  where?: Prisma.EmployeeWhereInput
+}
+
+export type EmployeeUpdateToOneWithWhereWithoutResignationsInput = {
+  where?: Prisma.EmployeeWhereInput
+  data: Prisma.XOR<Prisma.EmployeeUpdateWithoutResignationsInput, Prisma.EmployeeUncheckedUpdateWithoutResignationsInput>
+}
+
+export type EmployeeUpdateWithoutResignationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutEmployeesNestedInput
+  user?: Prisma.UserUpdateOneWithoutEmployeeNestedInput
+  manager?: Prisma.EmployeeUpdateOneWithoutReportsNestedInput
+  reports?: Prisma.EmployeeUpdateManyWithoutManagerNestedInput
+  primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
+  departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeUncheckedUpdateWithoutResignationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedUpdateOneWithoutEmployeeNestedInput
+}
+
 export type EmployeeCreateWithoutFilesInput = {
   id?: string
   employeeNumber: string
@@ -1874,6 +2328,9 @@ export type EmployeeCreateWithoutFilesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -1889,6 +2346,9 @@ export type EmployeeCreateWithoutFilesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -1915,6 +2375,7 @@ export type EmployeeCreateWithoutFilesInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -1942,6 +2403,9 @@ export type EmployeeUncheckedCreateWithoutFilesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -1955,6 +2419,9 @@ export type EmployeeUncheckedCreateWithoutFilesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -1981,6 +2448,7 @@ export type EmployeeUncheckedCreateWithoutFilesInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -2022,6 +2490,9 @@ export type EmployeeUpdateWithoutFilesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -2037,6 +2508,9 @@ export type EmployeeUpdateWithoutFilesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -2063,6 +2537,7 @@ export type EmployeeUpdateWithoutFilesInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -2090,6 +2565,9 @@ export type EmployeeUncheckedUpdateWithoutFilesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2103,6 +2581,9 @@ export type EmployeeUncheckedUpdateWithoutFilesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2129,6 +2610,7 @@ export type EmployeeUncheckedUpdateWithoutFilesInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -2138,7 +2620,7 @@ export type EmployeeUncheckedUpdateWithoutFilesInput = {
   holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedUpdateOneWithoutEmployeeNestedInput
 }
 
-export type EmployeeCreateWithoutUserInput = {
+export type EmployeeCreateWithoutCompOffCreditsInput = {
   id?: string
   employeeNumber: string
   firstName: string
@@ -2154,6 +2636,9 @@ export type EmployeeCreateWithoutUserInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -2162,12 +2647,15 @@ export type EmployeeCreateWithoutUserInput = {
   deactivatedAt?: Date | string | null
   version?: number
   organization: Prisma.OrganizationCreateNestedOneWithoutEmployeesInput
+  user?: Prisma.UserCreateNestedOneWithoutEmployeeInput
   manager?: Prisma.EmployeeCreateNestedOneWithoutReportsInput
   reports?: Prisma.EmployeeCreateNestedManyWithoutManagerInput
   primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -2195,6 +2683,7 @@ export type EmployeeCreateWithoutUserInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -2204,9 +2693,10 @@ export type EmployeeCreateWithoutUserInput = {
   holidayPolicy?: Prisma.EmployeeHolidayPolicyCreateNestedOneWithoutEmployeeInput
 }
 
-export type EmployeeUncheckedCreateWithoutUserInput = {
+export type EmployeeUncheckedCreateWithoutCompOffCreditsInput = {
   id?: string
   organizationId: string
+  userId?: string | null
   employeeNumber: string
   firstName: string
   middleName?: string | null
@@ -2221,6 +2711,9 @@ export type EmployeeUncheckedCreateWithoutUserInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -2234,6 +2727,8 @@ export type EmployeeUncheckedCreateWithoutUserInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2261,6 +2756,623 @@ export type EmployeeUncheckedCreateWithoutUserInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeCreateOrConnectWithoutCompOffCreditsInput = {
+  where: Prisma.EmployeeWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutCompOffCreditsInput, Prisma.EmployeeUncheckedCreateWithoutCompOffCreditsInput>
+}
+
+export type EmployeeUpsertWithoutCompOffCreditsInput = {
+  update: Prisma.XOR<Prisma.EmployeeUpdateWithoutCompOffCreditsInput, Prisma.EmployeeUncheckedUpdateWithoutCompOffCreditsInput>
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutCompOffCreditsInput, Prisma.EmployeeUncheckedCreateWithoutCompOffCreditsInput>
+  where?: Prisma.EmployeeWhereInput
+}
+
+export type EmployeeUpdateToOneWithWhereWithoutCompOffCreditsInput = {
+  where?: Prisma.EmployeeWhereInput
+  data: Prisma.XOR<Prisma.EmployeeUpdateWithoutCompOffCreditsInput, Prisma.EmployeeUncheckedUpdateWithoutCompOffCreditsInput>
+}
+
+export type EmployeeUpdateWithoutCompOffCreditsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutEmployeesNestedInput
+  user?: Prisma.UserUpdateOneWithoutEmployeeNestedInput
+  manager?: Prisma.EmployeeUpdateOneWithoutReportsNestedInput
+  reports?: Prisma.EmployeeUpdateManyWithoutManagerNestedInput
+  primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
+  departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeUncheckedUpdateWithoutCompOffCreditsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeCreateWithoutLeaveEncashmentsInput = {
+  id?: string
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutEmployeesInput
+  user?: Prisma.UserCreateNestedOneWithoutEmployeeInput
+  manager?: Prisma.EmployeeCreateNestedOneWithoutReportsInput
+  reports?: Prisma.EmployeeCreateNestedManyWithoutManagerInput
+  primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
+  departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeUncheckedCreateWithoutLeaveEncashmentsInput = {
+  id?: string
+  organizationId: string
+  userId?: string | null
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  primaryBranchId?: string | null
+  departmentId?: string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeCreateOrConnectWithoutLeaveEncashmentsInput = {
+  where: Prisma.EmployeeWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutLeaveEncashmentsInput, Prisma.EmployeeUncheckedCreateWithoutLeaveEncashmentsInput>
+}
+
+export type EmployeeUpsertWithoutLeaveEncashmentsInput = {
+  update: Prisma.XOR<Prisma.EmployeeUpdateWithoutLeaveEncashmentsInput, Prisma.EmployeeUncheckedUpdateWithoutLeaveEncashmentsInput>
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutLeaveEncashmentsInput, Prisma.EmployeeUncheckedCreateWithoutLeaveEncashmentsInput>
+  where?: Prisma.EmployeeWhereInput
+}
+
+export type EmployeeUpdateToOneWithWhereWithoutLeaveEncashmentsInput = {
+  where?: Prisma.EmployeeWhereInput
+  data: Prisma.XOR<Prisma.EmployeeUpdateWithoutLeaveEncashmentsInput, Prisma.EmployeeUncheckedUpdateWithoutLeaveEncashmentsInput>
+}
+
+export type EmployeeUpdateWithoutLeaveEncashmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutEmployeesNestedInput
+  user?: Prisma.UserUpdateOneWithoutEmployeeNestedInput
+  manager?: Prisma.EmployeeUpdateOneWithoutReportsNestedInput
+  reports?: Prisma.EmployeeUpdateManyWithoutManagerNestedInput
+  primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
+  departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeUncheckedUpdateWithoutLeaveEncashmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeCreateWithoutUserInput = {
+  id?: string
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutEmployeesInput
+  manager?: Prisma.EmployeeCreateNestedOneWithoutReportsInput
+  reports?: Prisma.EmployeeCreateNestedManyWithoutManagerInput
+  primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
+  departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeUncheckedCreateWithoutUserInput = {
+  id?: string
+  organizationId: string
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  primaryBranchId?: string | null
+  departmentId?: string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -2302,6 +3414,9 @@ export type EmployeeUpdateWithoutUserInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -2316,6 +3431,9 @@ export type EmployeeUpdateWithoutUserInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -2343,6 +3461,7 @@ export type EmployeeUpdateWithoutUserInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -2369,6 +3488,9 @@ export type EmployeeUncheckedUpdateWithoutUserInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2382,6 +3504,9 @@ export type EmployeeUncheckedUpdateWithoutUserInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2409,6 +3534,7 @@ export type EmployeeUncheckedUpdateWithoutUserInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -2434,6 +3560,9 @@ export type EmployeeCreateWithoutAccessCodesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -2449,6 +3578,9 @@ export type EmployeeCreateWithoutAccessCodesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -2476,6 +3608,7 @@ export type EmployeeCreateWithoutAccessCodesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -2502,6 +3635,9 @@ export type EmployeeUncheckedCreateWithoutAccessCodesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -2515,6 +3651,9 @@ export type EmployeeUncheckedCreateWithoutAccessCodesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2542,6 +3681,7 @@ export type EmployeeUncheckedCreateWithoutAccessCodesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -2582,6 +3722,9 @@ export type EmployeeUpdateWithoutAccessCodesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -2597,6 +3740,9 @@ export type EmployeeUpdateWithoutAccessCodesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -2624,6 +3770,7 @@ export type EmployeeUpdateWithoutAccessCodesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -2650,6 +3797,9 @@ export type EmployeeUncheckedUpdateWithoutAccessCodesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2663,6 +3813,9 @@ export type EmployeeUncheckedUpdateWithoutAccessCodesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2690,6 +3843,7 @@ export type EmployeeUncheckedUpdateWithoutAccessCodesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -2714,6 +3868,9 @@ export type EmployeeCreateWithoutAttendanceRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -2729,6 +3886,9 @@ export type EmployeeCreateWithoutAttendanceRecordsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -2755,6 +3915,7 @@ export type EmployeeCreateWithoutAttendanceRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -2782,6 +3943,9 @@ export type EmployeeUncheckedCreateWithoutAttendanceRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -2795,6 +3959,9 @@ export type EmployeeUncheckedCreateWithoutAttendanceRecordsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2821,6 +3988,7 @@ export type EmployeeUncheckedCreateWithoutAttendanceRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -2862,6 +4030,9 @@ export type EmployeeUpdateWithoutAttendanceRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -2877,6 +4048,9 @@ export type EmployeeUpdateWithoutAttendanceRecordsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -2903,6 +4077,7 @@ export type EmployeeUpdateWithoutAttendanceRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -2930,6 +4105,9 @@ export type EmployeeUncheckedUpdateWithoutAttendanceRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2943,6 +4121,9 @@ export type EmployeeUncheckedUpdateWithoutAttendanceRecordsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2969,6 +4150,7 @@ export type EmployeeUncheckedUpdateWithoutAttendanceRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -2994,6 +4176,9 @@ export type EmployeeCreateWithoutAttendancePunchesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3009,6 +4194,9 @@ export type EmployeeCreateWithoutAttendancePunchesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -3035,6 +4223,7 @@ export type EmployeeCreateWithoutAttendancePunchesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -3062,6 +4251,9 @@ export type EmployeeUncheckedCreateWithoutAttendancePunchesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -3075,6 +4267,9 @@ export type EmployeeUncheckedCreateWithoutAttendancePunchesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3101,6 +4296,7 @@ export type EmployeeUncheckedCreateWithoutAttendancePunchesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -3142,6 +4338,9 @@ export type EmployeeUpdateWithoutAttendancePunchesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3157,6 +4356,9 @@ export type EmployeeUpdateWithoutAttendancePunchesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -3183,6 +4385,7 @@ export type EmployeeUpdateWithoutAttendancePunchesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -3210,6 +4413,9 @@ export type EmployeeUncheckedUpdateWithoutAttendancePunchesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3223,6 +4429,9 @@ export type EmployeeUncheckedUpdateWithoutAttendancePunchesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3249,6 +4458,7 @@ export type EmployeeUncheckedUpdateWithoutAttendancePunchesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -3274,6 +4484,9 @@ export type EmployeeCreateWithoutHolidaySelectionsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3289,6 +4502,9 @@ export type EmployeeCreateWithoutHolidaySelectionsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -3315,6 +4531,7 @@ export type EmployeeCreateWithoutHolidaySelectionsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -3342,6 +4559,9 @@ export type EmployeeUncheckedCreateWithoutHolidaySelectionsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -3355,6 +4575,9 @@ export type EmployeeUncheckedCreateWithoutHolidaySelectionsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3381,6 +4604,7 @@ export type EmployeeUncheckedCreateWithoutHolidaySelectionsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -3422,6 +4646,9 @@ export type EmployeeUpdateWithoutHolidaySelectionsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3437,6 +4664,9 @@ export type EmployeeUpdateWithoutHolidaySelectionsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -3463,6 +4693,7 @@ export type EmployeeUpdateWithoutHolidaySelectionsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -3490,6 +4721,9 @@ export type EmployeeUncheckedUpdateWithoutHolidaySelectionsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3503,6 +4737,9 @@ export type EmployeeUncheckedUpdateWithoutHolidaySelectionsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3529,6 +4766,7 @@ export type EmployeeUncheckedUpdateWithoutHolidaySelectionsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -3554,6 +4792,9 @@ export type EmployeeCreateWithoutLeaveBalancesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3569,6 +4810,9 @@ export type EmployeeCreateWithoutLeaveBalancesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -3595,6 +4839,7 @@ export type EmployeeCreateWithoutLeaveBalancesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -3622,6 +4867,9 @@ export type EmployeeUncheckedCreateWithoutLeaveBalancesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -3635,6 +4883,9 @@ export type EmployeeUncheckedCreateWithoutLeaveBalancesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3661,6 +4912,7 @@ export type EmployeeUncheckedCreateWithoutLeaveBalancesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -3702,6 +4954,9 @@ export type EmployeeUpdateWithoutLeaveBalancesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3717,6 +4972,9 @@ export type EmployeeUpdateWithoutLeaveBalancesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -3743,6 +5001,7 @@ export type EmployeeUpdateWithoutLeaveBalancesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -3770,6 +5029,9 @@ export type EmployeeUncheckedUpdateWithoutLeaveBalancesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3783,6 +5045,9 @@ export type EmployeeUncheckedUpdateWithoutLeaveBalancesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3809,6 +5074,7 @@ export type EmployeeUncheckedUpdateWithoutLeaveBalancesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -3834,6 +5100,9 @@ export type EmployeeCreateWithoutLeaveRequestsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3849,6 +5118,9 @@ export type EmployeeCreateWithoutLeaveRequestsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -3875,6 +5147,7 @@ export type EmployeeCreateWithoutLeaveRequestsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -3902,6 +5175,9 @@ export type EmployeeUncheckedCreateWithoutLeaveRequestsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -3915,6 +5191,9 @@ export type EmployeeUncheckedCreateWithoutLeaveRequestsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3941,6 +5220,7 @@ export type EmployeeUncheckedCreateWithoutLeaveRequestsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -3982,6 +5262,9 @@ export type EmployeeUpdateWithoutLeaveRequestsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -3997,6 +5280,9 @@ export type EmployeeUpdateWithoutLeaveRequestsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -4023,6 +5309,7 @@ export type EmployeeUpdateWithoutLeaveRequestsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -4050,6 +5337,9 @@ export type EmployeeUncheckedUpdateWithoutLeaveRequestsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4063,6 +5353,9 @@ export type EmployeeUncheckedUpdateWithoutLeaveRequestsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -4089,6 +5382,7 @@ export type EmployeeUncheckedUpdateWithoutLeaveRequestsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -4114,6 +5408,9 @@ export type EmployeeCreateWithoutShiftsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -4129,6 +5426,9 @@ export type EmployeeCreateWithoutShiftsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -4155,6 +5455,7 @@ export type EmployeeCreateWithoutShiftsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -4182,6 +5483,9 @@ export type EmployeeUncheckedCreateWithoutShiftsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -4195,6 +5499,9 @@ export type EmployeeUncheckedCreateWithoutShiftsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -4221,6 +5528,7 @@ export type EmployeeUncheckedCreateWithoutShiftsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -4262,6 +5570,9 @@ export type EmployeeUpdateWithoutShiftsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -4277,6 +5588,9 @@ export type EmployeeUpdateWithoutShiftsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -4303,6 +5617,7 @@ export type EmployeeUpdateWithoutShiftsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -4330,6 +5645,9 @@ export type EmployeeUncheckedUpdateWithoutShiftsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4343,6 +5661,9 @@ export type EmployeeUncheckedUpdateWithoutShiftsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -4369,6 +5690,7 @@ export type EmployeeUncheckedUpdateWithoutShiftsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -4394,6 +5716,9 @@ export type EmployeeCreateWithoutTimesheetsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -4409,6 +5734,9 @@ export type EmployeeCreateWithoutTimesheetsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -4435,6 +5763,7 @@ export type EmployeeCreateWithoutTimesheetsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -4462,6 +5791,9 @@ export type EmployeeUncheckedCreateWithoutTimesheetsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -4475,6 +5807,9 @@ export type EmployeeUncheckedCreateWithoutTimesheetsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -4501,6 +5836,7 @@ export type EmployeeUncheckedCreateWithoutTimesheetsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -4542,6 +5878,9 @@ export type EmployeeUpdateWithoutTimesheetsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -4557,6 +5896,9 @@ export type EmployeeUpdateWithoutTimesheetsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -4583,6 +5925,7 @@ export type EmployeeUpdateWithoutTimesheetsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -4610,6 +5953,9 @@ export type EmployeeUncheckedUpdateWithoutTimesheetsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4623,6 +5969,9 @@ export type EmployeeUncheckedUpdateWithoutTimesheetsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -4649,6 +5998,7 @@ export type EmployeeUncheckedUpdateWithoutTimesheetsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -4674,6 +6024,9 @@ export type EmployeeCreateWithoutAttendanceHolidayReviewsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -4689,6 +6042,9 @@ export type EmployeeCreateWithoutAttendanceHolidayReviewsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -4715,6 +6071,7 @@ export type EmployeeCreateWithoutAttendanceHolidayReviewsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -4742,6 +6099,9 @@ export type EmployeeUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -4755,6 +6115,9 @@ export type EmployeeUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -4781,6 +6144,7 @@ export type EmployeeUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -4822,6 +6186,9 @@ export type EmployeeUpdateWithoutAttendanceHolidayReviewsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -4837,6 +6204,9 @@ export type EmployeeUpdateWithoutAttendanceHolidayReviewsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -4863,6 +6233,7 @@ export type EmployeeUpdateWithoutAttendanceHolidayReviewsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -4890,6 +6261,9 @@ export type EmployeeUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4903,6 +6277,9 @@ export type EmployeeUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -4929,6 +6306,7 @@ export type EmployeeUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -4954,6 +6332,9 @@ export type EmployeeCreateWithoutPayrollLinesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -4969,6 +6350,9 @@ export type EmployeeCreateWithoutPayrollLinesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -4995,6 +6379,7 @@ export type EmployeeCreateWithoutPayrollLinesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -5022,6 +6407,9 @@ export type EmployeeUncheckedCreateWithoutPayrollLinesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -5035,6 +6423,9 @@ export type EmployeeUncheckedCreateWithoutPayrollLinesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -5061,6 +6452,7 @@ export type EmployeeUncheckedCreateWithoutPayrollLinesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -5102,6 +6494,9 @@ export type EmployeeUpdateWithoutPayrollLinesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -5117,6 +6512,9 @@ export type EmployeeUpdateWithoutPayrollLinesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -5143,6 +6541,7 @@ export type EmployeeUpdateWithoutPayrollLinesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -5170,6 +6569,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollLinesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5183,6 +6585,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollLinesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -5209,6 +6614,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollLinesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -5234,6 +6640,9 @@ export type EmployeeCreateWithoutSalaryAdvancesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -5249,6 +6658,9 @@ export type EmployeeCreateWithoutSalaryAdvancesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -5275,6 +6687,7 @@ export type EmployeeCreateWithoutSalaryAdvancesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -5302,6 +6715,9 @@ export type EmployeeUncheckedCreateWithoutSalaryAdvancesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -5315,6 +6731,9 @@ export type EmployeeUncheckedCreateWithoutSalaryAdvancesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -5341,6 +6760,7 @@ export type EmployeeUncheckedCreateWithoutSalaryAdvancesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -5382,6 +6802,9 @@ export type EmployeeUpdateWithoutSalaryAdvancesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -5397,6 +6820,9 @@ export type EmployeeUpdateWithoutSalaryAdvancesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -5423,6 +6849,7 @@ export type EmployeeUpdateWithoutSalaryAdvancesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -5450,6 +6877,9 @@ export type EmployeeUncheckedUpdateWithoutSalaryAdvancesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5463,6 +6893,9 @@ export type EmployeeUncheckedUpdateWithoutSalaryAdvancesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -5489,6 +6922,7 @@ export type EmployeeUncheckedUpdateWithoutSalaryAdvancesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -5514,6 +6948,9 @@ export type EmployeeCreateWithoutAdvanceRecoveriesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -5529,6 +6966,9 @@ export type EmployeeCreateWithoutAdvanceRecoveriesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -5555,6 +6995,7 @@ export type EmployeeCreateWithoutAdvanceRecoveriesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -5582,6 +7023,9 @@ export type EmployeeUncheckedCreateWithoutAdvanceRecoveriesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -5595,6 +7039,9 @@ export type EmployeeUncheckedCreateWithoutAdvanceRecoveriesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -5621,6 +7068,7 @@ export type EmployeeUncheckedCreateWithoutAdvanceRecoveriesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -5662,6 +7110,9 @@ export type EmployeeUpdateWithoutAdvanceRecoveriesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -5677,6 +7128,9 @@ export type EmployeeUpdateWithoutAdvanceRecoveriesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -5703,6 +7157,7 @@ export type EmployeeUpdateWithoutAdvanceRecoveriesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -5730,6 +7185,9 @@ export type EmployeeUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5743,6 +7201,9 @@ export type EmployeeUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -5769,6 +7230,7 @@ export type EmployeeUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -5794,6 +7256,9 @@ export type EmployeeCreateWithoutPayrollPaymentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -5809,6 +7274,9 @@ export type EmployeeCreateWithoutPayrollPaymentsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -5835,6 +7303,7 @@ export type EmployeeCreateWithoutPayrollPaymentsInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -5862,6 +7331,9 @@ export type EmployeeUncheckedCreateWithoutPayrollPaymentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -5875,6 +7347,9 @@ export type EmployeeUncheckedCreateWithoutPayrollPaymentsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -5901,6 +7376,7 @@ export type EmployeeUncheckedCreateWithoutPayrollPaymentsInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -5942,6 +7418,9 @@ export type EmployeeUpdateWithoutPayrollPaymentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -5957,6 +7436,9 @@ export type EmployeeUpdateWithoutPayrollPaymentsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -5983,6 +7465,7 @@ export type EmployeeUpdateWithoutPayrollPaymentsInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -6010,6 +7493,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollPaymentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6023,6 +7509,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollPaymentsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -6049,6 +7538,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollPaymentsInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -6074,6 +7564,9 @@ export type EmployeeCreateWithoutPayrollAdjustmentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -6089,6 +7582,9 @@ export type EmployeeCreateWithoutPayrollAdjustmentsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -6115,6 +7611,7 @@ export type EmployeeCreateWithoutPayrollAdjustmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -6142,6 +7639,9 @@ export type EmployeeUncheckedCreateWithoutPayrollAdjustmentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -6155,6 +7655,9 @@ export type EmployeeUncheckedCreateWithoutPayrollAdjustmentsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -6181,6 +7684,7 @@ export type EmployeeUncheckedCreateWithoutPayrollAdjustmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -6222,6 +7726,9 @@ export type EmployeeUpdateWithoutPayrollAdjustmentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -6237,6 +7744,9 @@ export type EmployeeUpdateWithoutPayrollAdjustmentsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -6263,6 +7773,7 @@ export type EmployeeUpdateWithoutPayrollAdjustmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -6290,6 +7801,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6303,6 +7817,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -6329,6 +7846,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -6354,6 +7872,9 @@ export type EmployeeCreateWithoutPayslipsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -6369,6 +7890,9 @@ export type EmployeeCreateWithoutPayslipsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -6395,6 +7919,7 @@ export type EmployeeCreateWithoutPayslipsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -6422,6 +7947,9 @@ export type EmployeeUncheckedCreateWithoutPayslipsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -6435,6 +7963,9 @@ export type EmployeeUncheckedCreateWithoutPayslipsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -6461,6 +7992,7 @@ export type EmployeeUncheckedCreateWithoutPayslipsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -6502,6 +8034,9 @@ export type EmployeeUpdateWithoutPayslipsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -6517,6 +8052,9 @@ export type EmployeeUpdateWithoutPayslipsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -6543,6 +8081,7 @@ export type EmployeeUpdateWithoutPayslipsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -6570,6 +8109,9 @@ export type EmployeeUncheckedUpdateWithoutPayslipsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6583,6 +8125,9 @@ export type EmployeeUncheckedUpdateWithoutPayslipsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -6609,6 +8154,7 @@ export type EmployeeUncheckedUpdateWithoutPayslipsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -6634,6 +8180,9 @@ export type EmployeeCreateWithoutOrganizationInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -6648,6 +8197,9 @@ export type EmployeeCreateWithoutOrganizationInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -6675,6 +8227,7 @@ export type EmployeeCreateWithoutOrganizationInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -6701,6 +8254,9 @@ export type EmployeeUncheckedCreateWithoutOrganizationInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -6714,6 +8270,9 @@ export type EmployeeUncheckedCreateWithoutOrganizationInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -6741,6 +8300,7 @@ export type EmployeeUncheckedCreateWithoutOrganizationInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -6797,6 +8357,9 @@ export type EmployeeScalarWhereInput = {
   employmentType?: Prisma.EnumEmploymentTypeFilter<"Employee"> | $Enums.EmploymentType
   dateOfJoining?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
   dateOfLeaving?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  probationEndsOn?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  confirmedOn?: Prisma.DateTimeNullableFilter<"Employee"> | Date | string | null
+  customFields?: Prisma.JsonFilter<"Employee">
   managerEmployeeId?: Prisma.UuidNullableFilter<"Employee"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Employee"> | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.UuidNullableFilter<"Employee"> | string | null
@@ -6825,6 +8388,9 @@ export type EmployeeCreateWithoutPrimaryBranchInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -6839,6 +8405,9 @@ export type EmployeeCreateWithoutPrimaryBranchInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -6866,6 +8435,7 @@ export type EmployeeCreateWithoutPrimaryBranchInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -6893,6 +8463,9 @@ export type EmployeeUncheckedCreateWithoutPrimaryBranchInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   departmentId?: string | null
@@ -6905,6 +8478,9 @@ export type EmployeeUncheckedCreateWithoutPrimaryBranchInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -6932,6 +8508,7 @@ export type EmployeeUncheckedCreateWithoutPrimaryBranchInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -6983,6 +8560,9 @@ export type EmployeeCreateWithoutWebauthnCredentialsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -6998,6 +8578,9 @@ export type EmployeeCreateWithoutWebauthnCredentialsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -7025,6 +8608,7 @@ export type EmployeeCreateWithoutWebauthnCredentialsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
   bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
@@ -7051,6 +8635,9 @@ export type EmployeeUncheckedCreateWithoutWebauthnCredentialsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -7064,6 +8651,9 @@ export type EmployeeUncheckedCreateWithoutWebauthnCredentialsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7091,6 +8681,7 @@ export type EmployeeUncheckedCreateWithoutWebauthnCredentialsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
   bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7131,6 +8722,9 @@ export type EmployeeUpdateWithoutWebauthnCredentialsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -7146,6 +8740,9 @@ export type EmployeeUpdateWithoutWebauthnCredentialsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -7173,6 +8770,7 @@ export type EmployeeUpdateWithoutWebauthnCredentialsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
   bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
@@ -7199,6 +8797,9 @@ export type EmployeeUncheckedUpdateWithoutWebauthnCredentialsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7212,6 +8813,9 @@ export type EmployeeUncheckedUpdateWithoutWebauthnCredentialsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7239,6 +8843,7 @@ export type EmployeeUncheckedUpdateWithoutWebauthnCredentialsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
   bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7263,6 +8868,9 @@ export type EmployeeCreateWithoutWebauthnChallengesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -7278,6 +8886,9 @@ export type EmployeeCreateWithoutWebauthnChallengesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -7305,6 +8916,7 @@ export type EmployeeCreateWithoutWebauthnChallengesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
   bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
@@ -7331,6 +8943,9 @@ export type EmployeeUncheckedCreateWithoutWebauthnChallengesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -7344,6 +8959,9 @@ export type EmployeeUncheckedCreateWithoutWebauthnChallengesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7371,6 +8989,7 @@ export type EmployeeUncheckedCreateWithoutWebauthnChallengesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
   bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7411,6 +9030,9 @@ export type EmployeeUpdateWithoutWebauthnChallengesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -7426,6 +9048,9 @@ export type EmployeeUpdateWithoutWebauthnChallengesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -7453,6 +9078,7 @@ export type EmployeeUpdateWithoutWebauthnChallengesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
   bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
@@ -7479,6 +9105,9 @@ export type EmployeeUncheckedUpdateWithoutWebauthnChallengesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7492,6 +9121,9 @@ export type EmployeeUncheckedUpdateWithoutWebauthnChallengesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7519,6 +9151,7 @@ export type EmployeeUncheckedUpdateWithoutWebauthnChallengesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
   bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7543,6 +9176,9 @@ export type EmployeeCreateWithoutReportsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -7557,6 +9193,9 @@ export type EmployeeCreateWithoutReportsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -7584,6 +9223,7 @@ export type EmployeeCreateWithoutReportsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -7611,6 +9251,9 @@ export type EmployeeUncheckedCreateWithoutReportsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -7623,6 +9266,9 @@ export type EmployeeUncheckedCreateWithoutReportsInput = {
   version?: number
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7650,6 +9296,7 @@ export type EmployeeUncheckedCreateWithoutReportsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -7680,6 +9327,9 @@ export type EmployeeCreateWithoutManagerInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -7694,6 +9344,9 @@ export type EmployeeCreateWithoutManagerInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -7721,6 +9374,7 @@ export type EmployeeCreateWithoutManagerInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -7748,6 +9402,9 @@ export type EmployeeUncheckedCreateWithoutManagerInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
   departmentId?: string | null
@@ -7760,6 +9417,9 @@ export type EmployeeUncheckedCreateWithoutManagerInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7787,6 +9447,7 @@ export type EmployeeUncheckedCreateWithoutManagerInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -7833,6 +9494,9 @@ export type EmployeeUpdateWithoutReportsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -7847,6 +9511,9 @@ export type EmployeeUpdateWithoutReportsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -7874,6 +9541,7 @@ export type EmployeeUpdateWithoutReportsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -7901,6 +9569,9 @@ export type EmployeeUncheckedUpdateWithoutReportsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7913,6 +9584,9 @@ export type EmployeeUncheckedUpdateWithoutReportsInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7940,6 +9614,7 @@ export type EmployeeUncheckedUpdateWithoutReportsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -7981,6 +9656,9 @@ export type EmployeeCreateWithoutPersonalProfileInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -7996,6 +9674,9 @@ export type EmployeeCreateWithoutPersonalProfileInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -8023,6 +9704,7 @@ export type EmployeeCreateWithoutPersonalProfileInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
@@ -8049,6 +9731,9 @@ export type EmployeeUncheckedCreateWithoutPersonalProfileInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -8062,6 +9747,9 @@ export type EmployeeUncheckedCreateWithoutPersonalProfileInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8089,6 +9777,7 @@ export type EmployeeUncheckedCreateWithoutPersonalProfileInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8129,6 +9818,9 @@ export type EmployeeUpdateWithoutPersonalProfileInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -8144,6 +9836,9 @@ export type EmployeeUpdateWithoutPersonalProfileInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -8171,6 +9866,7 @@ export type EmployeeUpdateWithoutPersonalProfileInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
@@ -8197,6 +9893,9 @@ export type EmployeeUncheckedUpdateWithoutPersonalProfileInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8210,6 +9909,9 @@ export type EmployeeUncheckedUpdateWithoutPersonalProfileInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -8237,6 +9939,7 @@ export type EmployeeUncheckedUpdateWithoutPersonalProfileInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -8261,6 +9964,9 @@ export type EmployeeCreateWithoutBankAccountsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -8276,6 +9982,9 @@ export type EmployeeCreateWithoutBankAccountsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -8303,6 +10012,7 @@ export type EmployeeCreateWithoutBankAccountsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -8329,6 +10039,9 @@ export type EmployeeUncheckedCreateWithoutBankAccountsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -8342,6 +10055,9 @@ export type EmployeeUncheckedCreateWithoutBankAccountsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8369,6 +10085,7 @@ export type EmployeeUncheckedCreateWithoutBankAccountsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -8409,6 +10126,9 @@ export type EmployeeUpdateWithoutBankAccountsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -8424,6 +10144,9 @@ export type EmployeeUpdateWithoutBankAccountsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -8451,6 +10174,7 @@ export type EmployeeUpdateWithoutBankAccountsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -8477,6 +10201,9 @@ export type EmployeeUncheckedUpdateWithoutBankAccountsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8490,6 +10217,9 @@ export type EmployeeUncheckedUpdateWithoutBankAccountsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -8517,6 +10247,7 @@ export type EmployeeUncheckedUpdateWithoutBankAccountsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -8541,6 +10272,9 @@ export type EmployeeCreateWithoutReferencesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -8556,6 +10290,9 @@ export type EmployeeCreateWithoutReferencesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -8583,6 +10320,7 @@ export type EmployeeCreateWithoutReferencesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -8609,6 +10347,9 @@ export type EmployeeUncheckedCreateWithoutReferencesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -8622,6 +10363,9 @@ export type EmployeeUncheckedCreateWithoutReferencesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8649,6 +10393,7 @@ export type EmployeeUncheckedCreateWithoutReferencesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -8689,6 +10434,9 @@ export type EmployeeUpdateWithoutReferencesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -8704,6 +10452,9 @@ export type EmployeeUpdateWithoutReferencesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -8731,6 +10482,7 @@ export type EmployeeUpdateWithoutReferencesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -8757,6 +10509,9 @@ export type EmployeeUncheckedUpdateWithoutReferencesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8770,6 +10525,9 @@ export type EmployeeUncheckedUpdateWithoutReferencesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -8797,6 +10555,7 @@ export type EmployeeUncheckedUpdateWithoutReferencesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -8821,6 +10580,9 @@ export type EmployeeCreateWithoutHolidayPolicyInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -8836,6 +10598,9 @@ export type EmployeeCreateWithoutHolidayPolicyInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -8863,6 +10628,7 @@ export type EmployeeCreateWithoutHolidayPolicyInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -8889,6 +10655,9 @@ export type EmployeeUncheckedCreateWithoutHolidayPolicyInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -8902,6 +10671,9 @@ export type EmployeeUncheckedCreateWithoutHolidayPolicyInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8929,6 +10701,7 @@ export type EmployeeUncheckedCreateWithoutHolidayPolicyInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -8969,6 +10742,9 @@ export type EmployeeUpdateWithoutHolidayPolicyInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -8984,6 +10760,9 @@ export type EmployeeUpdateWithoutHolidayPolicyInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -9011,6 +10790,7 @@ export type EmployeeUpdateWithoutHolidayPolicyInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -9037,6 +10817,9 @@ export type EmployeeUncheckedUpdateWithoutHolidayPolicyInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9050,6 +10833,9 @@ export type EmployeeUncheckedUpdateWithoutHolidayPolicyInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -9077,6 +10863,7 @@ export type EmployeeUncheckedUpdateWithoutHolidayPolicyInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -9101,6 +10888,9 @@ export type EmployeeCreateWithoutEmergencyContactsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -9115,6 +10905,9 @@ export type EmployeeCreateWithoutEmergencyContactsInput = {
   primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -9142,6 +10935,7 @@ export type EmployeeCreateWithoutEmergencyContactsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -9169,6 +10963,9 @@ export type EmployeeUncheckedCreateWithoutEmergencyContactsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -9181,6 +10978,9 @@ export type EmployeeUncheckedCreateWithoutEmergencyContactsInput = {
   version?: number
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -9208,6 +11008,7 @@ export type EmployeeUncheckedCreateWithoutEmergencyContactsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -9249,6 +11050,9 @@ export type EmployeeUpdateWithoutEmergencyContactsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -9263,6 +11067,9 @@ export type EmployeeUpdateWithoutEmergencyContactsInput = {
   primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -9290,6 +11097,7 @@ export type EmployeeUpdateWithoutEmergencyContactsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -9317,6 +11125,9 @@ export type EmployeeUncheckedUpdateWithoutEmergencyContactsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9329,6 +11140,9 @@ export type EmployeeUncheckedUpdateWithoutEmergencyContactsInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -9356,6 +11170,7 @@ export type EmployeeUncheckedUpdateWithoutEmergencyContactsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -9381,6 +11196,9 @@ export type EmployeeCreateWithoutBranchAssignmentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -9396,6 +11214,9 @@ export type EmployeeCreateWithoutBranchAssignmentsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
@@ -9422,6 +11243,7 @@ export type EmployeeCreateWithoutBranchAssignmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -9449,6 +11271,9 @@ export type EmployeeUncheckedCreateWithoutBranchAssignmentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -9462,6 +11287,9 @@ export type EmployeeUncheckedCreateWithoutBranchAssignmentsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
@@ -9488,6 +11316,7 @@ export type EmployeeUncheckedCreateWithoutBranchAssignmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -9529,6 +11358,9 @@ export type EmployeeUpdateWithoutBranchAssignmentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -9544,6 +11376,9 @@ export type EmployeeUpdateWithoutBranchAssignmentsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
@@ -9570,6 +11405,7 @@ export type EmployeeUpdateWithoutBranchAssignmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -9597,6 +11433,9 @@ export type EmployeeUncheckedUpdateWithoutBranchAssignmentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9610,6 +11449,9 @@ export type EmployeeUncheckedUpdateWithoutBranchAssignmentsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
@@ -9636,6 +11478,7 @@ export type EmployeeUncheckedUpdateWithoutBranchAssignmentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -9661,6 +11504,9 @@ export type EmployeeCreateWithoutFieldOwnershipInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -9676,6 +11522,9 @@ export type EmployeeCreateWithoutFieldOwnershipInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
@@ -9702,6 +11551,7 @@ export type EmployeeCreateWithoutFieldOwnershipInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -9729,6 +11579,9 @@ export type EmployeeUncheckedCreateWithoutFieldOwnershipInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -9742,6 +11595,9 @@ export type EmployeeUncheckedCreateWithoutFieldOwnershipInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
@@ -9768,6 +11624,7 @@ export type EmployeeUncheckedCreateWithoutFieldOwnershipInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -9809,6 +11666,9 @@ export type EmployeeUpdateWithoutFieldOwnershipInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -9824,6 +11684,9 @@ export type EmployeeUpdateWithoutFieldOwnershipInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
@@ -9850,6 +11713,7 @@ export type EmployeeUpdateWithoutFieldOwnershipInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -9877,6 +11741,9 @@ export type EmployeeUncheckedUpdateWithoutFieldOwnershipInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9890,6 +11757,9 @@ export type EmployeeUncheckedUpdateWithoutFieldOwnershipInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
@@ -9916,6 +11786,7 @@ export type EmployeeUncheckedUpdateWithoutFieldOwnershipInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -9941,6 +11812,9 @@ export type EmployeeCreateWithoutEmploymentRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -9956,6 +11830,9 @@ export type EmployeeCreateWithoutEmploymentRecordsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
@@ -9982,6 +11859,7 @@ export type EmployeeCreateWithoutEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -10009,6 +11887,9 @@ export type EmployeeUncheckedCreateWithoutEmploymentRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -10022,6 +11903,9 @@ export type EmployeeUncheckedCreateWithoutEmploymentRecordsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
@@ -10048,6 +11932,7 @@ export type EmployeeUncheckedCreateWithoutEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -10078,6 +11963,9 @@ export type EmployeeCreateWithoutManagedEmploymentRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -10093,6 +11981,9 @@ export type EmployeeCreateWithoutManagedEmploymentRecordsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -10119,6 +12010,7 @@ export type EmployeeCreateWithoutManagedEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -10146,6 +12038,9 @@ export type EmployeeUncheckedCreateWithoutManagedEmploymentRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -10159,6 +12054,9 @@ export type EmployeeUncheckedCreateWithoutManagedEmploymentRecordsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -10185,6 +12083,7 @@ export type EmployeeUncheckedCreateWithoutManagedEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -10226,6 +12125,9 @@ export type EmployeeUpdateWithoutEmploymentRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -10241,6 +12143,9 @@ export type EmployeeUpdateWithoutEmploymentRecordsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
@@ -10267,6 +12172,7 @@ export type EmployeeUpdateWithoutEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -10294,6 +12200,9 @@ export type EmployeeUncheckedUpdateWithoutEmploymentRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10307,6 +12216,9 @@ export type EmployeeUncheckedUpdateWithoutEmploymentRecordsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
@@ -10333,6 +12245,7 @@ export type EmployeeUncheckedUpdateWithoutEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -10369,6 +12282,9 @@ export type EmployeeUpdateWithoutManagedEmploymentRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -10384,6 +12300,9 @@ export type EmployeeUpdateWithoutManagedEmploymentRecordsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -10410,6 +12329,7 @@ export type EmployeeUpdateWithoutManagedEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -10437,6 +12357,9 @@ export type EmployeeUncheckedUpdateWithoutManagedEmploymentRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10450,6 +12373,9 @@ export type EmployeeUncheckedUpdateWithoutManagedEmploymentRecordsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -10476,6 +12402,7 @@ export type EmployeeUncheckedUpdateWithoutManagedEmploymentRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -10501,6 +12428,9 @@ export type EmployeeCreateWithoutCompensationsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -10516,6 +12446,9 @@ export type EmployeeCreateWithoutCompensationsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -10542,6 +12475,7 @@ export type EmployeeCreateWithoutCompensationsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -10569,6 +12503,9 @@ export type EmployeeUncheckedCreateWithoutCompensationsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -10582,6 +12519,9 @@ export type EmployeeUncheckedCreateWithoutCompensationsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -10608,6 +12548,7 @@ export type EmployeeUncheckedCreateWithoutCompensationsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -10649,6 +12590,9 @@ export type EmployeeUpdateWithoutCompensationsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -10664,6 +12608,9 @@ export type EmployeeUpdateWithoutCompensationsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -10690,6 +12637,7 @@ export type EmployeeUpdateWithoutCompensationsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -10717,6 +12665,9 @@ export type EmployeeUncheckedUpdateWithoutCompensationsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10730,6 +12681,9 @@ export type EmployeeUncheckedUpdateWithoutCompensationsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -10756,6 +12710,7 @@ export type EmployeeUncheckedUpdateWithoutCompensationsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -10781,6 +12736,9 @@ export type EmployeeCreateWithoutPayrollPoliciesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -10796,6 +12754,9 @@ export type EmployeeCreateWithoutPayrollPoliciesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -10822,6 +12783,7 @@ export type EmployeeCreateWithoutPayrollPoliciesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -10849,6 +12811,9 @@ export type EmployeeUncheckedCreateWithoutPayrollPoliciesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -10862,6 +12827,9 @@ export type EmployeeUncheckedCreateWithoutPayrollPoliciesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -10888,6 +12856,7 @@ export type EmployeeUncheckedCreateWithoutPayrollPoliciesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -10929,6 +12898,9 @@ export type EmployeeUpdateWithoutPayrollPoliciesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -10944,6 +12916,9 @@ export type EmployeeUpdateWithoutPayrollPoliciesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -10970,6 +12945,7 @@ export type EmployeeUpdateWithoutPayrollPoliciesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -10997,6 +12973,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollPoliciesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11010,6 +12989,9 @@ export type EmployeeUncheckedUpdateWithoutPayrollPoliciesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -11036,6 +13018,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollPoliciesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -11061,6 +13044,9 @@ export type EmployeeCreateWithoutStatutoryProfilesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -11076,6 +13062,9 @@ export type EmployeeCreateWithoutStatutoryProfilesInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -11102,6 +13091,7 @@ export type EmployeeCreateWithoutStatutoryProfilesInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -11129,6 +13119,9 @@ export type EmployeeUncheckedCreateWithoutStatutoryProfilesInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -11142,6 +13135,9 @@ export type EmployeeUncheckedCreateWithoutStatutoryProfilesInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -11168,6 +13164,7 @@ export type EmployeeUncheckedCreateWithoutStatutoryProfilesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -11209,6 +13206,9 @@ export type EmployeeUpdateWithoutStatutoryProfilesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -11224,6 +13224,9 @@ export type EmployeeUpdateWithoutStatutoryProfilesInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -11250,6 +13253,7 @@ export type EmployeeUpdateWithoutStatutoryProfilesInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -11277,6 +13281,9 @@ export type EmployeeUncheckedUpdateWithoutStatutoryProfilesInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11290,6 +13297,9 @@ export type EmployeeUncheckedUpdateWithoutStatutoryProfilesInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -11316,6 +13326,7 @@ export type EmployeeUncheckedUpdateWithoutStatutoryProfilesInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -11341,6 +13352,9 @@ export type EmployeeCreateWithoutStatutoryRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -11356,6 +13370,9 @@ export type EmployeeCreateWithoutStatutoryRecordsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -11382,6 +13399,7 @@ export type EmployeeCreateWithoutStatutoryRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -11409,6 +13427,9 @@ export type EmployeeUncheckedCreateWithoutStatutoryRecordsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -11422,6 +13443,9 @@ export type EmployeeUncheckedCreateWithoutStatutoryRecordsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -11448,6 +13472,7 @@ export type EmployeeUncheckedCreateWithoutStatutoryRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -11489,6 +13514,9 @@ export type EmployeeUpdateWithoutStatutoryRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -11504,6 +13532,9 @@ export type EmployeeUpdateWithoutStatutoryRecordsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -11530,6 +13561,7 @@ export type EmployeeUpdateWithoutStatutoryRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -11557,6 +13589,9 @@ export type EmployeeUncheckedUpdateWithoutStatutoryRecordsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11570,6 +13605,9 @@ export type EmployeeUncheckedUpdateWithoutStatutoryRecordsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -11596,6 +13634,7 @@ export type EmployeeUncheckedUpdateWithoutStatutoryRecordsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -11621,6 +13660,9 @@ export type EmployeeCreateWithoutPayComponentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -11636,6 +13678,9 @@ export type EmployeeCreateWithoutPayComponentsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -11662,6 +13707,7 @@ export type EmployeeCreateWithoutPayComponentsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -11689,6 +13735,9 @@ export type EmployeeUncheckedCreateWithoutPayComponentsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -11702,6 +13751,9 @@ export type EmployeeUncheckedCreateWithoutPayComponentsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -11728,6 +13780,7 @@ export type EmployeeUncheckedCreateWithoutPayComponentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -11769,6 +13822,9 @@ export type EmployeeUpdateWithoutPayComponentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -11784,6 +13840,9 @@ export type EmployeeUpdateWithoutPayComponentsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -11810,6 +13869,7 @@ export type EmployeeUpdateWithoutPayComponentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -11837,6 +13897,9 @@ export type EmployeeUncheckedUpdateWithoutPayComponentsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -11850,6 +13913,9 @@ export type EmployeeUncheckedUpdateWithoutPayComponentsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -11876,6 +13942,7 @@ export type EmployeeUncheckedUpdateWithoutPayComponentsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -11901,6 +13968,9 @@ export type EmployeeCreateWithoutTeamLeadOfInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -11916,6 +13986,9 @@ export type EmployeeCreateWithoutTeamLeadOfInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -11942,6 +14015,7 @@ export type EmployeeCreateWithoutTeamLeadOfInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -11969,6 +14043,9 @@ export type EmployeeUncheckedCreateWithoutTeamLeadOfInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -11982,6 +14059,9 @@ export type EmployeeUncheckedCreateWithoutTeamLeadOfInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12008,6 +14088,7 @@ export type EmployeeUncheckedCreateWithoutTeamLeadOfInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -12049,6 +14130,9 @@ export type EmployeeUpdateWithoutTeamLeadOfInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -12064,6 +14148,9 @@ export type EmployeeUpdateWithoutTeamLeadOfInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -12090,6 +14177,7 @@ export type EmployeeUpdateWithoutTeamLeadOfInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -12117,6 +14205,9 @@ export type EmployeeUncheckedUpdateWithoutTeamLeadOfInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12130,6 +14221,9 @@ export type EmployeeUncheckedUpdateWithoutTeamLeadOfInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -12156,6 +14250,7 @@ export type EmployeeUncheckedUpdateWithoutTeamLeadOfInput = {
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -12181,6 +14276,9 @@ export type EmployeeCreateWithoutTeamMembershipsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -12196,6 +14294,9 @@ export type EmployeeCreateWithoutTeamMembershipsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -12222,6 +14323,7 @@ export type EmployeeCreateWithoutTeamMembershipsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -12249,6 +14351,9 @@ export type EmployeeUncheckedCreateWithoutTeamMembershipsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -12262,6 +14367,9 @@ export type EmployeeUncheckedCreateWithoutTeamMembershipsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12288,6 +14396,7 @@ export type EmployeeUncheckedCreateWithoutTeamMembershipsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -12329,6 +14438,9 @@ export type EmployeeUpdateWithoutTeamMembershipsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -12344,12 +14456,324 @@ export type EmployeeUpdateWithoutTeamMembershipsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
   compensations?: Prisma.EmployeeCompensationUpdateManyWithoutEmployeeNestedInput
   payComponents?: Prisma.EmployeePayComponentUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeUncheckedUpdateWithoutTeamMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeCreateWithoutProjectLeadOfInput = {
+  id?: string
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutEmployeesInput
+  user?: Prisma.UserCreateNestedOneWithoutEmployeeInput
+  manager?: Prisma.EmployeeCreateNestedOneWithoutReportsInput
+  reports?: Prisma.EmployeeCreateNestedManyWithoutManagerInput
+  primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
+  departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeUncheckedCreateWithoutProjectLeadOfInput = {
+  id?: string
+  organizationId: string
+  userId?: string | null
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  primaryBranchId?: string | null
+  departmentId?: string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeCreateOrConnectWithoutProjectLeadOfInput = {
+  where: Prisma.EmployeeWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutProjectLeadOfInput, Prisma.EmployeeUncheckedCreateWithoutProjectLeadOfInput>
+}
+
+export type EmployeeUpsertWithoutProjectLeadOfInput = {
+  update: Prisma.XOR<Prisma.EmployeeUpdateWithoutProjectLeadOfInput, Prisma.EmployeeUncheckedUpdateWithoutProjectLeadOfInput>
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutProjectLeadOfInput, Prisma.EmployeeUncheckedCreateWithoutProjectLeadOfInput>
+  where?: Prisma.EmployeeWhereInput
+}
+
+export type EmployeeUpdateToOneWithWhereWithoutProjectLeadOfInput = {
+  where?: Prisma.EmployeeWhereInput
+  data: Prisma.XOR<Prisma.EmployeeUpdateWithoutProjectLeadOfInput, Prisma.EmployeeUncheckedUpdateWithoutProjectLeadOfInput>
+}
+
+export type EmployeeUpdateWithoutProjectLeadOfInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutEmployeesNestedInput
+  user?: Prisma.UserUpdateOneWithoutEmployeeNestedInput
+  manager?: Prisma.EmployeeUpdateOneWithoutReportsNestedInput
+  reports?: Prisma.EmployeeUpdateManyWithoutManagerNestedInput
+  primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
+  departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUpdateManyWithoutEmployeeNestedInput
   projectMemberships?: Prisma.ProjectMemberUpdateManyWithoutEmployeeNestedInput
   attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
@@ -12379,7 +14803,7 @@ export type EmployeeUpdateWithoutTeamMembershipsInput = {
   holidayPolicy?: Prisma.EmployeeHolidayPolicyUpdateOneWithoutEmployeeNestedInput
 }
 
-export type EmployeeUncheckedUpdateWithoutTeamMembershipsInput = {
+export type EmployeeUncheckedUpdateWithoutProjectLeadOfInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12397,6 +14821,9 @@ export type EmployeeUncheckedUpdateWithoutTeamMembershipsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12410,12 +14837,16 @@ export type EmployeeUncheckedUpdateWithoutTeamMembershipsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
   compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutEmployeeNestedInput
   payComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutEmployeeNestedInput
   projectMemberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -12461,6 +14892,9 @@ export type EmployeeCreateWithoutProjectMembershipsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -12476,6 +14910,9 @@ export type EmployeeCreateWithoutProjectMembershipsInput = {
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -12502,6 +14939,7 @@ export type EmployeeCreateWithoutProjectMembershipsInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -12529,6 +14967,9 @@ export type EmployeeUncheckedCreateWithoutProjectMembershipsInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -12542,6 +14983,9 @@ export type EmployeeUncheckedCreateWithoutProjectMembershipsInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12568,6 +15012,7 @@ export type EmployeeUncheckedCreateWithoutProjectMembershipsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -12609,6 +15054,9 @@ export type EmployeeUpdateWithoutProjectMembershipsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -12624,6 +15072,9 @@ export type EmployeeUpdateWithoutProjectMembershipsInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -12650,6 +15101,7 @@ export type EmployeeUpdateWithoutProjectMembershipsInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -12677,6 +15129,9 @@ export type EmployeeUncheckedUpdateWithoutProjectMembershipsInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12690,6 +15145,9 @@ export type EmployeeUncheckedUpdateWithoutProjectMembershipsInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -12716,6 +15174,7 @@ export type EmployeeUncheckedUpdateWithoutProjectMembershipsInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -12741,6 +15200,9 @@ export type EmployeeCreateWithoutDepartmentsHeadedInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -12755,6 +15217,9 @@ export type EmployeeCreateWithoutDepartmentsHeadedInput = {
   primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
   department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -12782,6 +15247,7 @@ export type EmployeeCreateWithoutDepartmentsHeadedInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -12809,6 +15275,9 @@ export type EmployeeUncheckedCreateWithoutDepartmentsHeadedInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -12821,6 +15290,9 @@ export type EmployeeUncheckedCreateWithoutDepartmentsHeadedInput = {
   version?: number
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12848,6 +15320,7 @@ export type EmployeeUncheckedCreateWithoutDepartmentsHeadedInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -12878,6 +15351,9 @@ export type EmployeeCreateWithoutDepartmentInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -12892,6 +15368,9 @@ export type EmployeeCreateWithoutDepartmentInput = {
   primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
   departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
@@ -12919,6 +15398,7 @@ export type EmployeeCreateWithoutDepartmentInput = {
   payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
@@ -12946,6 +15426,9 @@ export type EmployeeUncheckedCreateWithoutDepartmentInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -12958,6 +15441,9 @@ export type EmployeeUncheckedCreateWithoutDepartmentInput = {
   reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
   departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12985,6 +15471,7 @@ export type EmployeeUncheckedCreateWithoutDepartmentInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
   teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
@@ -13031,6 +15518,9 @@ export type EmployeeUpdateWithoutDepartmentsHeadedInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -13045,6 +15535,9 @@ export type EmployeeUpdateWithoutDepartmentsHeadedInput = {
   primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -13072,6 +15565,7 @@ export type EmployeeUpdateWithoutDepartmentsHeadedInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -13099,6 +15593,9 @@ export type EmployeeUncheckedUpdateWithoutDepartmentsHeadedInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13111,6 +15608,9 @@ export type EmployeeUncheckedUpdateWithoutDepartmentsHeadedInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13138,6 +15638,7 @@ export type EmployeeUncheckedUpdateWithoutDepartmentsHeadedInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -13180,6 +15681,9 @@ export type EmployeeCreateManyOrganizationInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -13208,6 +15712,9 @@ export type EmployeeUpdateWithoutOrganizationInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -13222,6 +15729,9 @@ export type EmployeeUpdateWithoutOrganizationInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -13249,6 +15759,7 @@ export type EmployeeUpdateWithoutOrganizationInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -13275,6 +15786,9 @@ export type EmployeeUncheckedUpdateWithoutOrganizationInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13288,6 +15802,9 @@ export type EmployeeUncheckedUpdateWithoutOrganizationInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13315,6 +15832,7 @@ export type EmployeeUncheckedUpdateWithoutOrganizationInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -13341,6 +15859,9 @@ export type EmployeeUncheckedUpdateManyWithoutOrganizationInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13371,6 +15892,9 @@ export type EmployeeCreateManyPrimaryBranchInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   departmentId?: string | null
@@ -13398,6 +15922,9 @@ export type EmployeeUpdateWithoutPrimaryBranchInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -13412,6 +15939,9 @@ export type EmployeeUpdateWithoutPrimaryBranchInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -13439,6 +15969,7 @@ export type EmployeeUpdateWithoutPrimaryBranchInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -13466,6 +15997,9 @@ export type EmployeeUncheckedUpdateWithoutPrimaryBranchInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13478,6 +16012,9 @@ export type EmployeeUncheckedUpdateWithoutPrimaryBranchInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13505,6 +16042,7 @@ export type EmployeeUncheckedUpdateWithoutPrimaryBranchInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -13532,6 +16070,9 @@ export type EmployeeUncheckedUpdateManyWithoutPrimaryBranchInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13561,6 +16102,9 @@ export type EmployeeCreateManyManagerInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
   departmentId?: string | null
@@ -13588,6 +16132,9 @@ export type EmployeeUpdateWithoutManagerInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -13602,6 +16149,9 @@ export type EmployeeUpdateWithoutManagerInput = {
   department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -13629,6 +16179,7 @@ export type EmployeeUpdateWithoutManagerInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -13656,6 +16207,9 @@ export type EmployeeUncheckedUpdateWithoutManagerInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13668,6 +16222,9 @@ export type EmployeeUncheckedUpdateWithoutManagerInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13695,6 +16252,7 @@ export type EmployeeUncheckedUpdateWithoutManagerInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -13722,6 +16280,9 @@ export type EmployeeUncheckedUpdateManyWithoutManagerInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13751,6 +16312,9 @@ export type EmployeeCreateManyDepartmentInput = {
   employmentType: $Enums.EmploymentType
   dateOfJoining?: Date | string | null
   dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
   primaryBranchId?: string | null
@@ -13778,6 +16342,9 @@ export type EmployeeUpdateWithoutDepartmentInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -13792,6 +16359,9 @@ export type EmployeeUpdateWithoutDepartmentInput = {
   primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
   departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
@@ -13819,6 +16389,7 @@ export type EmployeeUpdateWithoutDepartmentInput = {
   payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
@@ -13846,6 +16417,9 @@ export type EmployeeUncheckedUpdateWithoutDepartmentInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13858,6 +16432,9 @@ export type EmployeeUncheckedUpdateWithoutDepartmentInput = {
   reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
   departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
   emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
   branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
   employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13885,6 +16462,7 @@ export type EmployeeUncheckedUpdateWithoutDepartmentInput = {
   payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
   teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
   personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
@@ -13912,6 +16490,9 @@ export type EmployeeUncheckedUpdateManyWithoutDepartmentInput = {
   employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
   dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13932,6 +16513,9 @@ export type EmployeeCountOutputType = {
   reports: number
   departmentsHeaded: number
   emergencyContacts: number
+  compOffCredits: number
+  leaveEncashments: number
+  resignations: number
   branchAssignments: number
   fieldOwnership: number
   employmentRecords: number
@@ -13959,6 +16543,7 @@ export type EmployeeCountOutputType = {
   payrollPayments: number
   files: number
   teamLeadOf: number
+  projectLeadOf: number
   webauthnCredentials: number
   webauthnChallenges: number
   bankAccounts: number
@@ -13970,6 +16555,9 @@ export type EmployeeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   reports?: boolean | EmployeeCountOutputTypeCountReportsArgs
   departmentsHeaded?: boolean | EmployeeCountOutputTypeCountDepartmentsHeadedArgs
   emergencyContacts?: boolean | EmployeeCountOutputTypeCountEmergencyContactsArgs
+  compOffCredits?: boolean | EmployeeCountOutputTypeCountCompOffCreditsArgs
+  leaveEncashments?: boolean | EmployeeCountOutputTypeCountLeaveEncashmentsArgs
+  resignations?: boolean | EmployeeCountOutputTypeCountResignationsArgs
   branchAssignments?: boolean | EmployeeCountOutputTypeCountBranchAssignmentsArgs
   fieldOwnership?: boolean | EmployeeCountOutputTypeCountFieldOwnershipArgs
   employmentRecords?: boolean | EmployeeCountOutputTypeCountEmploymentRecordsArgs
@@ -13997,6 +16585,7 @@ export type EmployeeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   payrollPayments?: boolean | EmployeeCountOutputTypeCountPayrollPaymentsArgs
   files?: boolean | EmployeeCountOutputTypeCountFilesArgs
   teamLeadOf?: boolean | EmployeeCountOutputTypeCountTeamLeadOfArgs
+  projectLeadOf?: boolean | EmployeeCountOutputTypeCountProjectLeadOfArgs
   webauthnCredentials?: boolean | EmployeeCountOutputTypeCountWebauthnCredentialsArgs
   webauthnChallenges?: boolean | EmployeeCountOutputTypeCountWebauthnChallengesArgs
   bankAccounts?: boolean | EmployeeCountOutputTypeCountBankAccountsArgs
@@ -14033,6 +16622,27 @@ export type EmployeeCountOutputTypeCountDepartmentsHeadedArgs<ExtArgs extends ru
  */
 export type EmployeeCountOutputTypeCountEmergencyContactsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.EmployeeEmergencyContactWhereInput
+}
+
+/**
+ * EmployeeCountOutputType without action
+ */
+export type EmployeeCountOutputTypeCountCompOffCreditsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CompOffCreditWhereInput
+}
+
+/**
+ * EmployeeCountOutputType without action
+ */
+export type EmployeeCountOutputTypeCountLeaveEncashmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeaveEncashmentWhereInput
+}
+
+/**
+ * EmployeeCountOutputType without action
+ */
+export type EmployeeCountOutputTypeCountResignationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeResignationWhereInput
 }
 
 /**
@@ -14227,6 +16837,13 @@ export type EmployeeCountOutputTypeCountTeamLeadOfArgs<ExtArgs extends runtime.T
 /**
  * EmployeeCountOutputType without action
  */
+export type EmployeeCountOutputTypeCountProjectLeadOfArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectWhereInput
+}
+
+/**
+ * EmployeeCountOutputType without action
+ */
 export type EmployeeCountOutputTypeCountWebauthnCredentialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.WebauthnCredentialWhereInput
 }
@@ -14278,6 +16895,9 @@ export type EmployeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   employmentType?: boolean
   dateOfJoining?: boolean
   dateOfLeaving?: boolean
+  probationEndsOn?: boolean
+  confirmedOn?: boolean
+  customFields?: boolean
   managerEmployeeId?: boolean
   geofenceMode?: boolean
   primaryBranchId?: boolean
@@ -14296,6 +16916,9 @@ export type EmployeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   department?: boolean | Prisma.Employee$departmentArgs<ExtArgs>
   departmentsHeaded?: boolean | Prisma.Employee$departmentsHeadedArgs<ExtArgs>
   emergencyContacts?: boolean | Prisma.Employee$emergencyContactsArgs<ExtArgs>
+  compOffCredits?: boolean | Prisma.Employee$compOffCreditsArgs<ExtArgs>
+  leaveEncashments?: boolean | Prisma.Employee$leaveEncashmentsArgs<ExtArgs>
+  resignations?: boolean | Prisma.Employee$resignationsArgs<ExtArgs>
   branchAssignments?: boolean | Prisma.Employee$branchAssignmentsArgs<ExtArgs>
   fieldOwnership?: boolean | Prisma.Employee$fieldOwnershipArgs<ExtArgs>
   employmentRecords?: boolean | Prisma.Employee$employmentRecordsArgs<ExtArgs>
@@ -14323,6 +16946,7 @@ export type EmployeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   payrollPayments?: boolean | Prisma.Employee$payrollPaymentsArgs<ExtArgs>
   files?: boolean | Prisma.Employee$filesArgs<ExtArgs>
   teamLeadOf?: boolean | Prisma.Employee$teamLeadOfArgs<ExtArgs>
+  projectLeadOf?: boolean | Prisma.Employee$projectLeadOfArgs<ExtArgs>
   webauthnCredentials?: boolean | Prisma.Employee$webauthnCredentialsArgs<ExtArgs>
   webauthnChallenges?: boolean | Prisma.Employee$webauthnChallengesArgs<ExtArgs>
   personalProfile?: boolean | Prisma.Employee$personalProfileArgs<ExtArgs>
@@ -14351,6 +16975,9 @@ export type EmployeeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   employmentType?: boolean
   dateOfJoining?: boolean
   dateOfLeaving?: boolean
+  probationEndsOn?: boolean
+  confirmedOn?: boolean
+  customFields?: boolean
   managerEmployeeId?: boolean
   geofenceMode?: boolean
   primaryBranchId?: boolean
@@ -14386,6 +17013,9 @@ export type EmployeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   employmentType?: boolean
   dateOfJoining?: boolean
   dateOfLeaving?: boolean
+  probationEndsOn?: boolean
+  confirmedOn?: boolean
+  customFields?: boolean
   managerEmployeeId?: boolean
   geofenceMode?: boolean
   primaryBranchId?: boolean
@@ -14421,6 +17051,9 @@ export type EmployeeSelectScalar = {
   employmentType?: boolean
   dateOfJoining?: boolean
   dateOfLeaving?: boolean
+  probationEndsOn?: boolean
+  confirmedOn?: boolean
+  customFields?: boolean
   managerEmployeeId?: boolean
   geofenceMode?: boolean
   primaryBranchId?: boolean
@@ -14433,7 +17066,7 @@ export type EmployeeSelectScalar = {
   version?: boolean
 }
 
-export type EmployeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "userId" | "employeeNumber" | "firstName" | "middleName" | "lastName" | "preferredName" | "workEmail" | "personalEmail" | "phone" | "identitySource" | "externalId" | "status" | "employmentType" | "dateOfJoining" | "dateOfLeaving" | "managerEmployeeId" | "geofenceMode" | "primaryBranchId" | "departmentId" | "ownedFields" | "metadata" | "createdAt" | "updatedAt" | "deactivatedAt" | "version", ExtArgs["result"]["employee"]>
+export type EmployeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "userId" | "employeeNumber" | "firstName" | "middleName" | "lastName" | "preferredName" | "workEmail" | "personalEmail" | "phone" | "identitySource" | "externalId" | "status" | "employmentType" | "dateOfJoining" | "dateOfLeaving" | "probationEndsOn" | "confirmedOn" | "customFields" | "managerEmployeeId" | "geofenceMode" | "primaryBranchId" | "departmentId" | "ownedFields" | "metadata" | "createdAt" | "updatedAt" | "deactivatedAt" | "version", ExtArgs["result"]["employee"]>
 export type EmployeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Employee$userArgs<ExtArgs>
@@ -14443,6 +17076,9 @@ export type EmployeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   department?: boolean | Prisma.Employee$departmentArgs<ExtArgs>
   departmentsHeaded?: boolean | Prisma.Employee$departmentsHeadedArgs<ExtArgs>
   emergencyContacts?: boolean | Prisma.Employee$emergencyContactsArgs<ExtArgs>
+  compOffCredits?: boolean | Prisma.Employee$compOffCreditsArgs<ExtArgs>
+  leaveEncashments?: boolean | Prisma.Employee$leaveEncashmentsArgs<ExtArgs>
+  resignations?: boolean | Prisma.Employee$resignationsArgs<ExtArgs>
   branchAssignments?: boolean | Prisma.Employee$branchAssignmentsArgs<ExtArgs>
   fieldOwnership?: boolean | Prisma.Employee$fieldOwnershipArgs<ExtArgs>
   employmentRecords?: boolean | Prisma.Employee$employmentRecordsArgs<ExtArgs>
@@ -14470,6 +17106,7 @@ export type EmployeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   payrollPayments?: boolean | Prisma.Employee$payrollPaymentsArgs<ExtArgs>
   files?: boolean | Prisma.Employee$filesArgs<ExtArgs>
   teamLeadOf?: boolean | Prisma.Employee$teamLeadOfArgs<ExtArgs>
+  projectLeadOf?: boolean | Prisma.Employee$projectLeadOfArgs<ExtArgs>
   webauthnCredentials?: boolean | Prisma.Employee$webauthnCredentialsArgs<ExtArgs>
   webauthnChallenges?: boolean | Prisma.Employee$webauthnChallengesArgs<ExtArgs>
   personalProfile?: boolean | Prisma.Employee$personalProfileArgs<ExtArgs>
@@ -14505,6 +17142,9 @@ export type $EmployeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     department: Prisma.$DepartmentPayload<ExtArgs> | null
     departmentsHeaded: Prisma.$DepartmentPayload<ExtArgs>[]
     emergencyContacts: Prisma.$EmployeeEmergencyContactPayload<ExtArgs>[]
+    compOffCredits: Prisma.$CompOffCreditPayload<ExtArgs>[]
+    leaveEncashments: Prisma.$LeaveEncashmentPayload<ExtArgs>[]
+    resignations: Prisma.$EmployeeResignationPayload<ExtArgs>[]
     branchAssignments: Prisma.$EmployeeBranchAssignmentPayload<ExtArgs>[]
     fieldOwnership: Prisma.$EmployeeFieldOwnershipPayload<ExtArgs>[]
     employmentRecords: Prisma.$EmployeeEmploymentRecordPayload<ExtArgs>[]
@@ -14532,6 +17172,7 @@ export type $EmployeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     payrollPayments: Prisma.$PayrollPaymentPayload<ExtArgs>[]
     files: Prisma.$FileObjectPayload<ExtArgs>[]
     teamLeadOf: Prisma.$TeamPayload<ExtArgs>[]
+    projectLeadOf: Prisma.$ProjectPayload<ExtArgs>[]
     webauthnCredentials: Prisma.$WebauthnCredentialPayload<ExtArgs>[]
     webauthnChallenges: Prisma.$WebauthnChallengePayload<ExtArgs>[]
     personalProfile: Prisma.$EmployeePersonalProfilePayload<ExtArgs> | null
@@ -14566,6 +17207,18 @@ export type $EmployeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     employmentType: $Enums.EmploymentType
     dateOfJoining: Date | null
     dateOfLeaving: Date | null
+    /**
+     * The end of probation; null when the person was never on probation.
+     */
+    probationEndsOn: Date | null
+    /**
+     * When they were confirmed in the job after probation.
+     */
+    confirmedOn: Date | null
+    /**
+     * Values for the organization's own employee fields, keyed by field key.
+     */
+    customFields: runtime.JsonValue
     managerEmployeeId: string | null
     geofenceMode: $Enums.GeofenceMode | null
     primaryBranchId: string | null
@@ -14981,6 +17634,9 @@ export interface Prisma__EmployeeClient<T, Null = never, ExtArgs extends runtime
   department<T extends Prisma.Employee$departmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$departmentArgs<ExtArgs>>): Prisma.Prisma__DepartmentClient<runtime.Types.Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   departmentsHeaded<T extends Prisma.Employee$departmentsHeadedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$departmentsHeadedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   emergencyContacts<T extends Prisma.Employee$emergencyContactsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$emergencyContactsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeEmergencyContactPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  compOffCredits<T extends Prisma.Employee$compOffCreditsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$compOffCreditsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompOffCreditPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  leaveEncashments<T extends Prisma.Employee$leaveEncashmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$leaveEncashmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveEncashmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  resignations<T extends Prisma.Employee$resignationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$resignationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeResignationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   branchAssignments<T extends Prisma.Employee$branchAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$branchAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeBranchAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fieldOwnership<T extends Prisma.Employee$fieldOwnershipArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$fieldOwnershipArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeFieldOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   employmentRecords<T extends Prisma.Employee$employmentRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$employmentRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeEmploymentRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -15008,6 +17664,7 @@ export interface Prisma__EmployeeClient<T, Null = never, ExtArgs extends runtime
   payrollPayments<T extends Prisma.Employee$payrollPaymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$payrollPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.Employee$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileObjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   teamLeadOf<T extends Prisma.Employee$teamLeadOfArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$teamLeadOfArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projectLeadOf<T extends Prisma.Employee$projectLeadOfArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$projectLeadOfArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webauthnCredentials<T extends Prisma.Employee$webauthnCredentialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$webauthnCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebauthnCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webauthnChallenges<T extends Prisma.Employee$webauthnChallengesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$webauthnChallengesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebauthnChallengePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   personalProfile<T extends Prisma.Employee$personalProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$personalProfileArgs<ExtArgs>>): Prisma.Prisma__EmployeePersonalProfileClient<runtime.Types.Result.GetResult<Prisma.$EmployeePersonalProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -15061,6 +17718,9 @@ export interface EmployeeFieldRefs {
   readonly employmentType: Prisma.FieldRef<"Employee", 'EmploymentType'>
   readonly dateOfJoining: Prisma.FieldRef<"Employee", 'DateTime'>
   readonly dateOfLeaving: Prisma.FieldRef<"Employee", 'DateTime'>
+  readonly probationEndsOn: Prisma.FieldRef<"Employee", 'DateTime'>
+  readonly confirmedOn: Prisma.FieldRef<"Employee", 'DateTime'>
+  readonly customFields: Prisma.FieldRef<"Employee", 'Json'>
   readonly managerEmployeeId: Prisma.FieldRef<"Employee", 'String'>
   readonly geofenceMode: Prisma.FieldRef<"Employee", 'GeofenceMode'>
   readonly primaryBranchId: Prisma.FieldRef<"Employee", 'String'>
@@ -15617,6 +18277,78 @@ export type Employee$emergencyContactsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.EmployeeEmergencyContactScalarFieldEnum | Prisma.EmployeeEmergencyContactScalarFieldEnum[]
+}
+
+/**
+ * Employee.compOffCredits
+ */
+export type Employee$compOffCreditsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CompOffCredit
+   */
+  select?: Prisma.CompOffCreditSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CompOffCredit
+   */
+  omit?: Prisma.CompOffCreditOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CompOffCreditInclude<ExtArgs> | null
+  where?: Prisma.CompOffCreditWhereInput
+  orderBy?: Prisma.CompOffCreditOrderByWithRelationInput | Prisma.CompOffCreditOrderByWithRelationInput[]
+  cursor?: Prisma.CompOffCreditWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CompOffCreditScalarFieldEnum | Prisma.CompOffCreditScalarFieldEnum[]
+}
+
+/**
+ * Employee.leaveEncashments
+ */
+export type Employee$leaveEncashmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveEncashment
+   */
+  select?: Prisma.LeaveEncashmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeaveEncashment
+   */
+  omit?: Prisma.LeaveEncashmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeaveEncashmentInclude<ExtArgs> | null
+  where?: Prisma.LeaveEncashmentWhereInput
+  orderBy?: Prisma.LeaveEncashmentOrderByWithRelationInput | Prisma.LeaveEncashmentOrderByWithRelationInput[]
+  cursor?: Prisma.LeaveEncashmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeaveEncashmentScalarFieldEnum | Prisma.LeaveEncashmentScalarFieldEnum[]
+}
+
+/**
+ * Employee.resignations
+ */
+export type Employee$resignationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeResignation
+   */
+  select?: Prisma.EmployeeResignationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeResignation
+   */
+  omit?: Prisma.EmployeeResignationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeResignationInclude<ExtArgs> | null
+  where?: Prisma.EmployeeResignationWhereInput
+  orderBy?: Prisma.EmployeeResignationOrderByWithRelationInput | Prisma.EmployeeResignationOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeResignationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeResignationScalarFieldEnum | Prisma.EmployeeResignationScalarFieldEnum[]
 }
 
 /**
@@ -16265,6 +18997,30 @@ export type Employee$teamLeadOfArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.TeamScalarFieldEnum | Prisma.TeamScalarFieldEnum[]
+}
+
+/**
+ * Employee.projectLeadOf
+ */
+export type Employee$projectLeadOfArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
 }
 
 /**

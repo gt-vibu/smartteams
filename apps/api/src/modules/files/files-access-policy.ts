@@ -20,6 +20,8 @@ export type AccessFile = {
   accessScope: FileAccessScope;
   employeeId: string | null;
   teamId: string | null;
+  /** Set on a PROJECT-scoped file; absent on callers that predate project files. */
+  projectId?: string | null;
   uploadedByUserId: string | null;
   allowDownload: boolean;
   shares: ReadonlyArray<AccessShare>;
@@ -40,10 +42,16 @@ export type AccessViewer = {
   /** The caller's employee in this organization, if they have one. */
   employeeId: string | null;
   roleIds: ReadonlySet<string>;
-  /** Teams the caller's employee currently belongs to. */
+  /** Teams the caller's employee currently belongs to or leads. */
   teamIds: ReadonlySet<string>;
+  /** The subset they lead, who look after every file in it. */
+  ledTeamIds?: ReadonlySet<string>;
   /** Employees whose current manager is the caller's employee. */
   reportIds: ReadonlySet<string>;
+  /** Projects the caller currently works on or leads. */
+  projectIds?: ReadonlySet<string>;
+  /** The subset they lead, who look after every file in it. */
+  ledProjectIds?: ReadonlySet<string>;
   permissions: ReadonlySet<string>;
 };
 
@@ -65,7 +73,17 @@ export type AccessDecision = {
 };
 
 export type AccessReason =
-  'OWNER' | 'ABOUT_YOU' | 'HR' | 'MANAGER' | 'TEAM' | 'ORGANIZATION' | 'ADMINISTRATOR' | 'SHARED';
+  | 'OWNER'
+  | 'ABOUT_YOU'
+  | 'HR'
+  | 'MANAGER'
+  | 'TEAM'
+  | 'TEAM_LEAD'
+  | 'PROJECT'
+  | 'PROJECT_LEAD'
+  | 'ORGANIZATION'
+  | 'ADMINISTRATOR'
+  | 'SHARED';
 
 const DENY: AccessDecision = {
   view: false,
@@ -147,10 +165,36 @@ export function decideFileAccess(
         base = reader('MANAGER');
       break;
     case 'TEAM':
+      // The same hierarchy as a project: the lead looks after every file in the team; a member
+      // reads them all and may remove what they put there themselves.
       if (publishes) base = full('ADMINISTRATOR', shares);
+      else if (file.teamId !== null && viewer.ledTeamIds?.has(file.teamId))
+        base = full('TEAM_LEAD', shares);
+      else if (file.teamId !== null && viewer.teamIds.has(file.teamId))
+        base = {
+          ...reader('TEAM'),
+          download: file.allowDownload || readAll,
+          manage: file.uploadedByUserId === viewer.userId,
+        };
       else if (readAll) base = { ...reader('HR'), download: true };
-      else if (file.teamId !== null && viewer.teamIds.has(file.teamId)) base = reader('TEAM');
       break;
+    case 'PROJECT': {
+      // Hierarchical: the lead looks after every file in the project; a member reads them all and
+      // may remove what they put there themselves.
+      const projectId = file.projectId ?? null;
+      if (publishes) base = full('ADMINISTRATOR', shares);
+      else if (projectId !== null && viewer.ledProjectIds?.has(projectId))
+        base = full('PROJECT_LEAD', shares);
+      else if (projectId !== null && viewer.projectIds?.has(projectId))
+        base = {
+          ...reader('PROJECT'),
+          // Someone who could download it anyway through breadth is not held back by being a member.
+          download: file.allowDownload || readAll,
+          manage: file.uploadedByUserId === viewer.userId,
+        };
+      else if (readAll) base = { ...reader('HR'), download: true };
+      break;
+    }
     case 'ORGANIZATION':
       base = publishes ? full('ADMINISTRATOR', shares) : reader('ORGANIZATION');
       break;
@@ -174,9 +218,13 @@ export function decideFileAccess(
 /** Which scopes a caller may create a file in, and for whom. */
 export function mayUploadTo(
   scope: FileAccessScope,
-  viewer: Pick<AccessViewer, 'permissions' | 'employeeId'> & { teamIds?: ReadonlySet<string> },
+  viewer: Pick<AccessViewer, 'permissions' | 'employeeId'> & {
+    teamIds?: ReadonlySet<string>;
+    projectIds?: ReadonlySet<string>;
+  },
   forEmployeeId: string | null,
   teamId: string | null = null,
+  projectId: string | null = null,
 ): boolean {
   const can = (permission: string) =>
     viewer.permissions.has(permission) || viewer.permissions.has('*');
@@ -194,6 +242,12 @@ export function mayUploadTo(
       return (
         can('files.organization.manage') ||
         (teamId !== null && Boolean(viewer.teamIds?.has(teamId)))
+      );
+    case 'PROJECT':
+      // Anyone on a project (or leading it) may share a file with it.
+      return (
+        can('files.organization.manage') ||
+        (projectId !== null && Boolean(viewer.projectIds?.has(projectId)))
       );
     case 'ORGANIZATION':
       return can('files.organization.manage');

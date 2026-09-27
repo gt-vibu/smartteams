@@ -1,8 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge, Button } from '@smarteam/ui';
-import { formatMoney, type Payslip } from '@smarteam/contracts';
+import { Button } from '@smarteam/ui';
+import { formatDate, formatDateRange, formatMoney, type Payslip } from '@smarteam/contracts';
+import { downloadPayslipPdf } from '../../lib/payslip-pdf';
+import { downloadAnnualStatementPdf, type AnnualStatement } from '../../lib/annual-statement-pdf';
+import { useSession } from '../../hooks/auth-context';
+import { apiRequest } from '../../lib/api-client';
+import { orgPath } from '../../repositories/api-helpers';
+
+/** The financial year (April to March) a date falls in, by its starting year. */
+const financialYearOf = (date: Date) =>
+  date.getUTCMonth() >= 3 ? date.getUTCFullYear() : date.getUTCFullYear() - 1;
 
 /**
  * Payslips as the backend stored them.
@@ -16,7 +25,7 @@ import { formatMoney, type Payslip } from '@smarteam/contracts';
  */
 
 const periodLabel = (payslip: Payslip) =>
-  `${payslip.run.periodStart.slice(0, 10)} to ${payslip.run.periodEnd.slice(0, 10)}`;
+  formatDateRange(payslip.run.periodStart, payslip.run.periodEnd);
 
 function Breakdown({ payslip }: { payslip: Payslip }) {
   if (payslip.components.length === 0) {
@@ -58,6 +67,9 @@ function Breakdown({ payslip }: { payslip: Payslip }) {
 
 export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const { session } = useSession();
 
   if (payslips.length === 0) {
     return (
@@ -70,8 +82,61 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
     );
   }
 
+  /** Runs one download at a time, and says so when the file could not be made. */
+  const download = async (key: string, failure: string, make: () => Promise<void>) => {
+    setBusy(key);
+    setFailed(null);
+    try {
+      await make();
+    } catch {
+      setFailed(failure);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const annual = (year: number) => {
+    const first = payslips[0];
+    if (!first || !session) return;
+    void download(
+      `fy-${year}`,
+      'The annual statement could not be downloaded. Try again.',
+      async () => {
+        const statement = (await apiRequest(
+          orgPath(
+            session.organizationId,
+            `/payroll/employees/${encodeURIComponent(first.employeeId)}/annual-statement?year=${year}`,
+          ),
+          { method: 'GET' },
+        )) as AnnualStatement;
+        await downloadAnnualStatementPdf(statement, first.organizationName ?? '');
+      },
+    );
+  };
+  const thisYear = financialYearOf(new Date());
+
   return (
     <div className="space-y-2">
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <span className="text-[11px] text-muted-foreground">Annual statement (Form 16 Part B)</span>
+        {[thisYear, thisYear - 1].map((year) => (
+          <Button
+            disabled={busy !== null}
+            key={year}
+            onClick={() => annual(year)}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
+            FY {year}-{String((year + 1) % 100).padStart(2, '0')}
+          </Button>
+        ))}
+      </div>
+      {failed && (
+        <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs" role="alert">
+          {failed}
+        </p>
+      )}
       {payslips.map((payslip) => {
         const expanded = expandedId === payslip.id;
         return (
@@ -80,19 +145,30 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
               <div>
                 <p className="text-xs font-bold text-foreground">{periodLabel(payslip)}</p>
                 <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  {payslip.run.status} · issued {payslip.issuedAt?.slice(0, 10) ?? '--'}
+                  {payslip.issuedAt ? `Issued ${formatDate(payslip.issuedAt)}` : 'Not issued yet'}
                 </p>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                 <div className="text-right">
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Net</p>
                   <p className="font-mono text-sm font-bold text-foreground">
                     {formatMoney(payslip.totals.netAmount, payslip.run.currencyCode ?? 'INR')}
                   </p>
                 </div>
-                <Badge variant={payslip.status === 'PENDING_UPLOAD' ? 'secondary' : 'sky'}>
-                  {payslip.status.replace(/_/g, ' ').toLowerCase()}
-                </Badge>
+                <Button
+                  disabled={busy !== null}
+                  onClick={() =>
+                    void download(
+                      payslip.id,
+                      'The payslip could not be downloaded. Try again.',
+                      () => downloadPayslipPdf(payslip),
+                    )
+                  }
+                  size="sm"
+                  type="button"
+                >
+                  {busy === payslip.id ? 'Preparing…' : 'Download PDF'}
+                </Button>
                 <Button
                   onClick={() => setExpandedId(expanded ? null : payslip.id)}
                   size="sm"
@@ -120,9 +196,6 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
                   </span>
                 </div>
                 <Breakdown payslip={payslip} />
-                <p className="px-4 py-2.5 text-[10px] text-muted-foreground">
-                  Payable and loss-of-pay days are not published on a payslip by the API.
-                </p>
               </div>
             )}
           </div>

@@ -180,11 +180,17 @@ function Row({
               Cancel
             </Button>
           </div>
-        ) : (
+        ) : null}
+        {renaming && entry.usage.total > 0 ? (
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            The {entry.usage.total} record{entry.usage.total === 1 ? '' : 's'} using it are renamed
+            too.
+          </p>
+        ) : renaming ? null : (
           <span className="font-semibold text-foreground">{entry.name}</span>
         )}
       </td>
-      <td className="px-4 py-2" data-label="Status">
+      <td className="px-4 py-2" data-cell="status" data-label="Status">
         <Badge className="text-[10px]" variant="outline">
           {entry.archived ? 'Archived' : 'Active'}
         </Badge>
@@ -197,7 +203,7 @@ function Row({
       {list.canAdd && (
         <td className="px-4 py-2" data-label="Actions">
           <div className="flex flex-wrap gap-1.5">
-            {!entry.standard && unused && !renaming && (
+            {!renaming && (
               <Button
                 onClick={() => setRenaming({ from: entry.name, to: entry.name })}
                 size="sm"
@@ -218,18 +224,18 @@ function Row({
             >
               {entry.archived ? 'Restore' : 'Archive'}
             </Button>
-            {!entry.standard && unused && (
-              <Button
-                className="text-destructive"
-                disabled={list.saving}
-                onClick={() => void list.remove(entry.name)}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                Delete
-              </Button>
-            )}
+            {/* In use, it can only be archived: deleting would leave records naming nothing. */}
+            <Button
+              className="text-destructive"
+              disabled={list.saving || !unused}
+              onClick={() => void list.remove(entry.name)}
+              size="sm"
+              title={unused ? undefined : 'In use — archive it instead'}
+              type="button"
+              variant="outline"
+            >
+              Delete
+            </Button>
           </div>
         </td>
       )}

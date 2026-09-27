@@ -1,5 +1,6 @@
 import {
   employeeDisplayName,
+  formatDateRange,
   type Employee,
   type Timesheet,
   type TimesheetEntry,
@@ -43,7 +44,7 @@ const minutesToHours = (minutes: number) => Math.round((minutes / 60) * 10) / 10
 function periodLabel(timesheet: Timesheet): string {
   if (!timesheet.period) return '--';
   const { periodStart, periodEnd, periodType } = timesheet.period;
-  return `${periodType} · ${periodStart.slice(0, 10)} – ${periodEnd.slice(0, 10)}`;
+  return `${periodType.charAt(0)}${periodType.slice(1).toLowerCase()} · ${formatDateRange(periodStart, periodEnd)}`;
 }
 
 export function toAuditRows(timesheets: Timesheet[], employees: Employee[]): TimesheetAuditRow[] {

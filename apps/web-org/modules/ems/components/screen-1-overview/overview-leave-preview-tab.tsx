@@ -73,7 +73,7 @@ export function OverviewLeavePreviewTab() {
                     >
                       {request.requestedDays}
                     </td>
-                    <td data-label="Status" className="px-3 py-2.5 text-right">
+                    <td data-cell="status" data-label="Status" className="px-3 py-2.5 text-right">
                       <Badge
                         variant={
                           request.status === 'REJECTED'

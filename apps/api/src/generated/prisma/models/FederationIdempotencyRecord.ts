@@ -546,10 +546,6 @@ export type FederationIdempotencyRecordOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
 export type EnumIdempotencyStatusFieldUpdateOperationsInput = {
   set?: $Enums.IdempotencyStatus
 }
@@ -564,18 +560,6 @@ export type NullableIntFieldUpdateOperationsInput = {
 
 export type NullableBytesFieldUpdateOperationsInput = {
   set?: runtime.Bytes | null
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
 }
 
 export type FederationIdempotencyRecordCreateNestedManyWithoutClientInput = {

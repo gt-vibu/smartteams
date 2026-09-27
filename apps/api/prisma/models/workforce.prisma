@@ -22,6 +22,12 @@ model Employee {
   employmentType    EmploymentType @map("employment_type")
   dateOfJoining     DateTime?      @map("date_of_joining") @db.Date
   dateOfLeaving     DateTime?      @map("date_of_leaving") @db.Date
+  /// The end of probation; null when the person was never on probation.
+  probationEndsOn   DateTime?      @map("probation_ends_on") @db.Date
+  /// When they were confirmed in the job after probation.
+  confirmedOn       DateTime?      @map("confirmed_on") @db.Date
+  /// Values for the organization's own employee fields, keyed by field key.
+  customFields      Json           @default("{}") @map("custom_fields")
   managerEmployeeId String?        @map("manager_employee_id") @db.Uuid
   geofenceMode      GeofenceMode?  @map("geofence_mode")
   primaryBranchId   String?        @map("primary_branch_id") @db.Uuid
@@ -42,6 +48,9 @@ model Employee {
   department               Department?                @relation("DepartmentMembers", fields: [departmentId], references: [id], onDelete: SetNull)
   departmentsHeaded        Department[]               @relation("DepartmentHead")
   emergencyContacts        EmployeeEmergencyContact[]
+  compOffCredits           CompOffCredit[]
+  leaveEncashments         LeaveEncashment[]
+  resignations             EmployeeResignation[]
   branchAssignments        EmployeeBranchAssignment[]
   fieldOwnership           EmployeeFieldOwnership[]
   employmentRecords        EmployeeEmploymentRecord[]
@@ -69,6 +78,7 @@ model Employee {
   payrollPayments          PayrollPayment[]
   files                    FileObject[]
   teamLeadOf               Team[]
+  projectLeadOf            Project[]
   webauthnCredentials      WebauthnCredential[]
   webauthnChallenges       WebauthnChallenge[]
   personalProfile          EmployeePersonalProfile?
@@ -450,15 +460,19 @@ model Project {
   status         ProjectStatus @default(PLANNED)
   startDate      DateTime?     @map("start_date") @db.Date
   endDate        DateTime?     @map("end_date") @db.Date
+  projectLeadEmployeeId String? @map("project_lead_employee_id") @db.Uuid
   createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   branch       Branch?         @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  projectLead  Employee?       @relation(fields: [projectLeadEmployeeId], references: [id], onDelete: SetNull)
   members      ProjectMember[]
+  files        FileObject[]
 
   @@unique([organizationId, code])
   @@index([organizationId, status, startDate])
+  @@index([organizationId, projectLeadEmployeeId])
   @@map("projects")
 }
 

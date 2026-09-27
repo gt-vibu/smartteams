@@ -1,3 +1,4 @@
+import { OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -23,7 +24,22 @@ export class LeaveTypeDto {
   @IsOptional() @IsNumber() @Min(0) annualAllowance?: number;
   @IsOptional() @IsNumber() @Min(0) monthlyAccrual?: number;
   @IsOptional() @IsNumber() @Min(0) carryoverLimit?: number;
+  @IsOptional() @IsBoolean() prorateForJoiners?: boolean;
+  @IsOptional() @IsBoolean() sandwichOffDays?: boolean;
+  @IsOptional() @IsBoolean() encashable?: boolean;
+  @IsOptional() @IsNumber() @Min(0) maxEncashDays?: number;
+  @IsOptional() @IsBoolean() isCompOff?: boolean;
+  @IsOptional() @IsInt() @Min(1) compOffExpiryDays?: number;
   @IsBoolean() requiresAttachment!: boolean;
+}
+
+/** Everything about a type but its code, which requests and balances refer to. */
+export class LeaveTypeUpdateDto extends OmitType(LeaveTypeDto, ['code'] as const) {}
+
+/** A span of days for the team calendar. */
+export class LeaveCalendarQueryDto {
+  @IsDateString() from!: string;
+  @IsDateString() to!: string;
 }
 
 export class LeaveRequestDto {

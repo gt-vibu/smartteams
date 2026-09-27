@@ -19,7 +19,7 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-foreground">{view.project.name}</p>
           <p className="truncate font-mono text-[11px] text-muted-foreground">
-            {view.project.code ?? '--'} · {view.branchName ?? 'No branch'}
+            {[view.project.code, view.branchName].filter(Boolean).join(' · ')}
           </p>
         </div>
         <Badge variant="outline">{view.project.status ?? 'UNKNOWN'}</Badge>
@@ -30,7 +30,8 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
       )}
 
       <p className="border-t border-border pt-3 text-[11px] text-muted-foreground">
-        {count} {count === 1 ? 'member' : 'members'}
+        {view.lead ? `Lead: ${view.lead.displayName}` : 'No lead'} · {count}{' '}
+        {count === 1 ? 'member' : 'members'}
       </p>
     </button>
   );
@@ -50,6 +51,7 @@ export function ProjectTable({
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Project</th>
             <th className="px-4 py-2.5 font-bold">Code</th>
+            <th className="px-4 py-2.5 font-bold">Lead</th>
             <th className="px-4 py-2.5 font-bold">Branch</th>
             <th className="px-4 py-2.5 font-bold">Status</th>
             <th className="px-4 py-2.5 font-bold">Members</th>
@@ -68,10 +70,17 @@ export function ProjectTable({
               <td data-label="Code" className="px-4 py-2.5 font-mono text-muted-foreground">
                 {view.project.code ?? '--'}
               </td>
+              <td data-label="Lead" className="px-4 py-2.5 text-muted-foreground">
+                {view.lead?.displayName ?? 'No lead'}
+              </td>
               <td data-label="Branch" className="px-4 py-2.5 text-muted-foreground">
                 {view.branchName ?? '--'}
               </td>
-              <td data-label="Status" className="px-4 py-2.5 text-muted-foreground">
+              <td
+                data-cell="status"
+                data-label="Status"
+                className="px-4 py-2.5 text-muted-foreground"
+              >
                 {view.project.status ?? '--'}
               </td>
               <td

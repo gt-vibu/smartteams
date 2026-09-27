@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { formatDate } from '@smarteam/contracts';
 import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { Badge, Button, Checkbox } from '@smarteam/ui';
 import type { Holiday } from '@smarteam/contracts';
@@ -100,7 +101,7 @@ export function AvailableHolidayPlanCard({
             </div>
           ) : (
             <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
-              {group.startDate} · {weekday(group.startDate)}
+              {formatDate(group.startDate)} · {weekday(group.startDate)}
             </div>
           )}
         </div>

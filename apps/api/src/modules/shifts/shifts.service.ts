@@ -7,6 +7,7 @@ import {
 } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
+import { describeDays, notify } from '../notifications/notify';
 
 type ShiftInput = {
   /** Federation sends one; the app leaves it out and it is made from the name. */
@@ -267,6 +268,15 @@ export class ShiftsService {
           endsOn: end,
           sourceAccessMode: context.accessMode,
         },
+      });
+      await notify(tx, context, {
+        recipients: [employee.userId],
+        kind: 'SHIFT_ASSIGNED',
+        title: 'Your shift has changed',
+        body: `You are on the ${shift.name} shift from ${describeDays(start, start)}${end ? ` until ${describeDays(end, end)}` : ''}.`,
+        module: 'attendance',
+        entityType: 'EMPLOYEE_SHIFT_ASSIGNMENT',
+        entityId: assignment.id,
       });
       await this.audit.record(
         context,

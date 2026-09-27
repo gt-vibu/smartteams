@@ -42,10 +42,39 @@ export type LeaveTypeInput = {
   annualAllowance?: number;
   monthlyAccrual?: number;
   carryoverLimit?: number;
+  prorateForJoiners?: boolean;
+  sandwichOffDays?: boolean;
+  encashable?: boolean;
+  maxEncashDays?: number;
+  isCompOff?: boolean;
+  compOffExpiryDays?: number;
   requiresAttachment: boolean;
 };
 
+/** One stretch of someone's leave on the team calendar. `type` is null when not the viewer's to know. */
+export type LeaveCalendarEntry = {
+  id: string;
+  employeeId: string;
+  name: string;
+  employeeNumber: string;
+  startDate: string;
+  endDate: string;
+  days: number;
+  status: 'APPROVED' | 'PENDING';
+  type: string | null;
+  isYou: boolean;
+};
+
 export const leaveRepository = {
+  /** Who is off between two dates, among the people the caller works with. */
+  async calendar(organizationId: string, from: string, to: string): Promise<LeaveCalendarEntry[]> {
+    const payload = (await apiRequest(
+      `${orgPath(organizationId, '/leave')}/calendar${queryString({ from, to })}`,
+      { method: 'GET' },
+    )) as { entries?: LeaveCalendarEntry[] };
+    return payload.entries ?? [];
+  },
+
   async listTypes(organizationId: string): Promise<LeaveType[]> {
     return expectShape(
       parseLeaveTypeList(
@@ -144,6 +173,18 @@ export const leaveRepository = {
   async createType(organizationId: string, input: LeaveTypeInput): Promise<unknown> {
     return apiRequest(`${orgPath(organizationId, '/leave')}/types`, {
       method: 'POST',
+      body: input,
+    });
+  },
+
+  /** Everything but the code, which requests and balances refer to. */
+  async updateType(
+    organizationId: string,
+    typeId: string,
+    input: Omit<LeaveTypeInput, 'code'>,
+  ): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/leave')}/types/${encodeURIComponent(typeId)}`, {
+      method: 'PATCH',
       body: input,
     });
   },

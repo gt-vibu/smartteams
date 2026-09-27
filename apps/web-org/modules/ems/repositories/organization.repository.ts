@@ -80,6 +80,22 @@ export const organizationRepository = {
     );
   },
 
+  /** The main branch: the one chosen, or the oldest active one until someone chooses. */
+  async getPrimaryBranch(
+    organizationId: string,
+  ): Promise<{ branchId: string; name: string; chosen: boolean } | null> {
+    return (await apiRequest(orgPath(organizationId, '/branches/primary'), {
+      method: 'GET',
+    })) as { branchId: string; name: string; chosen: boolean } | null;
+  },
+
+  async setPrimaryBranch(organizationId: string, branchId: string): Promise<unknown> {
+    return apiRequest(orgPath(organizationId, '/branches/primary'), {
+      method: 'PUT',
+      body: { branchId },
+    });
+  },
+
   async getBranchOverview(organizationId: string, branchId: string): Promise<BranchOverview> {
     return (await apiRequest(
       orgPath(organizationId, `/branches/${encodeURIComponent(branchId)}/overview`),

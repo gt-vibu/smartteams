@@ -175,6 +175,16 @@ model LeaveType {
   annualAllowance    Decimal?         @map("annual_allowance") @db.Decimal(10, 2)
   monthlyAccrual     Decimal?         @map("monthly_accrual") @db.Decimal(10, 2)
   carryoverLimit     Decimal?         @map("carryover_limit") @db.Decimal(10, 2)
+  /// Whether someone joining mid-year gets the part of the allowance for the months left.
+  prorateForJoiners  Boolean          @default(true) @map("prorate_for_joiners")
+  /// Weekends and holidays between two leave days count as leave too.
+  sandwichOffDays    Boolean          @default(false) @map("sandwich_off_days")
+  /// Unused days may be exchanged for pay, up to `maxEncashDays` a year.
+  encashable         Boolean          @default(false)
+  maxEncashDays      Decimal?         @map("max_encash_days") @db.Decimal(10, 2)
+  /// Credited for working a day off rather than accrued; each credit lapses after `compOffExpiryDays`.
+  isCompOff          Boolean          @default(false) @map("is_comp_off")
+  compOffExpiryDays  Int?             @map("comp_off_expiry_days") @db.SmallInt
   requiresAttachment Boolean          @default(false) @map("requires_attachment")
   isActive           Boolean          @default(true) @map("is_active")
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -182,6 +192,8 @@ model LeaveType {
 
   organization      Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   policyAssignments LeavePolicyAssignment[]
+  compOffCredits    CompOffCredit[]
+  encashments       LeaveEncashment[]
   balances          LeaveBalance[]
   requests          LeaveRequest[]
 

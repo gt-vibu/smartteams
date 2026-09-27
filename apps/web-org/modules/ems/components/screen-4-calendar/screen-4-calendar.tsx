@@ -88,7 +88,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     for (let offset = firstDayOffset; offset > 0; offset -= 1) {
       const date = new Date(year, month, 1 - offset);
       days.push({
-        date: date.toISOString().slice(0, 10),
+        date: localDateKey(date),
         dayNumber: date.getDate(),
         isCurrentMonth: false,
         dayStatus: 'EMPTY',
@@ -162,7 +162,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
         daysInMonth + (days.length - firstDayOffset - daysInMonth) + 1,
       );
       days.push({
-        date: date.toISOString().slice(0, 10),
+        date: localDateKey(date),
         dayNumber: date.getDate(),
         isCurrentMonth: false,
         dayStatus: 'EMPTY',

@@ -41,10 +41,14 @@ export class PicklistsService {
         select: { metadata: true },
       });
       const usage = await usageOf(tx, context.organizationId, kind);
-      return readEntries(settings?.metadata, kind).map((entry) => ({
-        ...entry,
-        usage: usage.get(entry.name.toLowerCase()) ?? { total: 0, active: 0 },
-      }));
+      return readEntries(settings?.metadata, kind)
+        .filter((entry) => !entry.removed)
+        .map((entry) => ({
+          name: entry.name,
+          archived: entry.archived,
+          standard: entry.standard,
+          usage: usage.get(entry.name.toLowerCase()) ?? { total: 0, active: 0 },
+        }));
     });
   }
 
@@ -53,30 +57,49 @@ export class PicklistsService {
     const name = checkedName(rawName);
     return this.change(context, kind, 'PICKLIST_ENTRY_ADDED', (entries) => {
       const existing = entries.find((entry) => same(entry.name, name));
-      // Adding a name that was archived brings it back rather than making a second one.
+      // Adding a name that was archived or removed brings it back rather than making a second one.
       if (existing)
         return {
-          entries: entries.map((e) => (e === existing ? { ...e, archived: false } : e)),
+          entries: entries.map((e) =>
+            e === existing ? { ...e, archived: false, removed: false } : e,
+          ),
           result: existing.name,
         };
       return { entries: [...entries, { name, archived: false, standard: false }], result: name };
     });
   }
 
-  /** A new spelling for a company entry nothing uses yet. A used one is archived and replaced. */
+  /**
+   * A new name for any entry, standard or the company's own. The records that carry it are
+   * renamed with it, so the list and the people it describes never disagree — the way fixing a
+   * misspelt role should work. A standard name is replaced by the company's own spelling.
+   */
   async rename(context: DomainContext, kind: PicklistKind, from: string, rawTo: string) {
     requirePermission(context, PICKLISTS[kind].writePermission);
     const to = checkedName(rawTo);
-    return this.change(context, kind, 'PICKLIST_ENTRY_RENAMED', (entries, usage) => {
+    return this.change(context, kind, 'PICKLIST_ENTRY_RENAMED', async (entries, _usage, tx) => {
       const entry = find(entries, from);
-      if (entry.standard) throw new ConflictError('Standard entries cannot be renamed.');
-      if ((usage.get(entry.name.toLowerCase())?.total ?? 0) > 0)
-        throw new ConflictError(
-          `"${entry.name}" is already used, so renaming it would rewrite history. Archive it and add "${to}" instead.`,
-        );
-      if (entries.some((e) => e !== entry && same(e.name, to)))
+      if (entries.some((e) => e !== entry && !e.removed && same(e.name, to)))
         throw new ConflictError(`"${to}" is already in the list.`);
-      return { entries: entries.map((e) => (e === entry ? { ...e, name: to } : e)), result: to };
+      if (!same(entry.name, to)) await renameUses(tx, context.organizationId, kind, entry.name, to);
+      if (!entry.standard)
+        return { entries: entries.map((e) => (e === entry ? { ...e, name: to } : e)), result: to };
+      // A standard name stays in the catalogue but leaves this company's list; its new spelling
+      // is the company's own entry from here on.
+      const renamed = entries.find((e) => e.removed && same(e.name, to));
+      return {
+        entries: [
+          ...entries.map((e) =>
+            e === entry
+              ? { ...e, removed: true }
+              : e === renamed
+                ? { ...e, removed: false, archived: entry.archived }
+                : e,
+          ),
+          ...(renamed ? [] : [{ name: to, archived: entry.archived, standard: false }]),
+        ],
+        result: to,
+      };
     });
   }
 
@@ -101,14 +124,18 @@ export class PicklistsService {
     requirePermission(context, PICKLISTS[kind].writePermission);
     return this.change(context, kind, 'PICKLIST_ENTRY_REMOVED', (entries, usage) => {
       const entry = find(entries, name);
-      if (entry.standard)
-        throw new ConflictError('Standard entries cannot be deleted; archive it.');
       const used = usage.get(entry.name.toLowerCase())?.total ?? 0;
       if (used > 0)
         throw new ConflictError(
           `"${entry.name}" is used on ${used} record${used === 1 ? '' : 's'}, so it can only be archived.`,
         );
-      return { entries: entries.filter((e) => e !== entry), result: entry.name };
+      // A standard name is hidden from this company's list; the company's own is deleted.
+      return {
+        entries: entry.standard
+          ? entries.map((e) => (e === entry ? { ...e, removed: true } : e))
+          : entries.filter((e) => e !== entry),
+        result: entry.name,
+      };
     });
   }
 
@@ -119,13 +146,20 @@ export class PicklistsService {
     apply: (
       entries: StoredEntry[],
       usage: Map<string, Usage>,
-    ) => { entries: StoredEntry[]; result: string },
+      tx: TenantTransaction,
+    ) =>
+      | { entries: StoredEntry[]; result: string }
+      | Promise<{ entries: StoredEntry[]; result: string }>,
   ) {
     return this.database.run(context, async (tx) => {
       // Locked first, so two changes at once are applied one after the other.
       const metadata = await lockSettings(tx, context.organizationId);
       const before = readEntries(metadata, kind);
-      const { entries, result } = apply(before, await usageOf(tx, context.organizationId, kind));
+      const { entries, result } = await apply(
+        before,
+        await usageOf(tx, context.organizationId, kind),
+        tx,
+      );
       await tx.organizationSettings.update({
         where: { organizationId: context.organizationId },
         data: { metadata: writeEntries(metadata, kind, entries) },
@@ -157,9 +191,35 @@ function checkedName(raw: string) {
 }
 
 function find(entries: StoredEntry[], name: string) {
-  const entry = entries.find((e) => same(e.name, name));
+  const entry = entries.find((e) => !e.removed && same(e.name, name));
   if (!entry) throw new NotFoundError('Entry');
   return entry;
+}
+
+/** Gives every record that carries `from` the name `to`, whatever its case or spacing. */
+async function renameUses(
+  tx: TenantTransaction,
+  organizationId: string,
+  kind: PicklistKind,
+  from: string,
+  to: string,
+) {
+  const matches = { equals: from, mode: 'insensitive' as const };
+  if (kind === 'project-roles')
+    await tx.projectMember.updateMany({
+      where: { organizationId, projectRole: matches },
+      data: { projectRole: to },
+    });
+  else if (kind === 'team-roles')
+    await tx.teamMember.updateMany({
+      where: { organizationId, teamRole: matches },
+      data: { teamRole: to },
+    });
+  else
+    await tx.employeeEmploymentRecord.updateMany({
+      where: { organizationId, jobTitle: matches },
+      data: { jobTitle: to },
+    });
 }
 
 /** How many records carry each name (keyed in lower case), and how many of those are current. */

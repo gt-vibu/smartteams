@@ -10,6 +10,7 @@ import {
   Label,
   Select,
 } from '@smarteam/ui';
+import { localDateKey } from '../../lib/local-date';
 
 /**
  * Opening a timesheet period, and deriving the sheets for it.
@@ -106,11 +107,7 @@ export function OpenPeriodDialog({
                       const diffToMonday = (day === 0 ? -6 : 1) - day;
                       const monday = new Date(now.getTime() + diffToMonday * 86400000);
                       const sunday = new Date(monday.getTime() + 6 * 86400000);
-                      applyPreset(
-                        'WEEKLY',
-                        monday.toISOString().slice(0, 10),
-                        sunday.toISOString().slice(0, 10),
-                      );
+                      applyPreset('WEEKLY', localDateKey(monday), localDateKey(sunday));
                     }}
                     className={`text-[11px] px-2.5 py-1 rounded border transition-colors cursor-pointer ${
                       periodType === 'WEEKLY'
@@ -125,10 +122,8 @@ export function OpenPeriodDialog({
                     type="button"
                     onClick={() => {
                       const now = new Date();
-                      const start = now.toISOString().slice(0, 10);
-                      const end = new Date(now.getTime() + 13 * 86400000)
-                        .toISOString()
-                        .slice(0, 10);
+                      const start = localDateKey(now);
+                      const end = localDateKey(new Date(now.getTime() + 13 * 86400000));
                       applyPreset('BIWEEKLY', start, end);
                     }}
                     className={`text-[11px] px-2.5 py-1 rounded border transition-colors cursor-pointer ${
@@ -146,8 +141,8 @@ export function OpenPeriodDialog({
                       const now = new Date();
                       const y = now.getFullYear();
                       const m = now.getMonth();
-                      const start = new Date(y, m, 1).toISOString().slice(0, 10);
-                      const end = new Date(y, m + 1, 0).toISOString().slice(0, 10);
+                      const start = localDateKey(new Date(y, m, 1));
+                      const end = localDateKey(new Date(y, m + 1, 0));
                       applyPreset('MONTHLY', start, end);
                     }}
                     className={`text-[11px] px-2.5 py-1 rounded border transition-colors cursor-pointer ${
@@ -252,32 +247,32 @@ function getPeriodDefaults(type: string): { start: string; end: string } {
   if (type === 'MONTHLY') {
     const y = now.getFullYear();
     const m = now.getMonth();
-    const start = new Date(y, m, 1).toISOString().slice(0, 10);
-    const end = new Date(y, m + 1, 0).toISOString().slice(0, 10);
+    const start = localDateKey(new Date(y, m, 1));
+    const end = localDateKey(new Date(y, m + 1, 0));
     return { start, end };
   }
   if (type === 'BIWEEKLY') {
-    const start = now.toISOString().slice(0, 10);
-    const end = new Date(now.getTime() + 13 * 86400000).toISOString().slice(0, 10);
+    const start = localDateKey(now);
+    const end = localDateKey(new Date(now.getTime() + 13 * 86400000));
     return { start, end };
   }
   if (type === 'WEEKLY') {
-    const start = now.toISOString().slice(0, 10);
-    const end = new Date(now.getTime() + 6 * 86400000).toISOString().slice(0, 10);
+    const start = localDateKey(now);
+    const end = localDateKey(new Date(now.getTime() + 6 * 86400000));
     return { start, end };
   }
   return {
-    start: now.toISOString().slice(0, 10),
-    end: new Date(now.getTime() + 29 * 86400000).toISOString().slice(0, 10),
+    start: localDateKey(now),
+    end: localDateKey(new Date(now.getTime() + 29 * 86400000)),
   };
 }
 
 function isoToday(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDateKey();
 }
 
 function isoPlusDays(days: number): string {
   const date = new Date();
   date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+  return localDateKey(date);
 }

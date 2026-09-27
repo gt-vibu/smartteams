@@ -388,13 +388,6 @@ export function StandardDataTable<T>({
                           )}
                         </span>
                       )}
-
-                      {/* Pin indicator tag if pinned */}
-                      {pin && (
-                        <span className="text-[9px] font-bold text-primary bg-primary/15 px-1 rounded uppercase">
-                          {pin}
-                        </span>
-                      )}
                     </button>
                   </th>
                 );

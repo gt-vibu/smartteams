@@ -4,21 +4,39 @@ import React, { useState } from 'react';
 import { Badge, Button } from '@smarteam/ui';
 import { approvalDomainLabel, type ApprovalDomain, type ApprovalPolicy } from '@smarteam/contracts';
 import { useApprovalPolicies } from '../../hooks/use-approval-policies';
+import { useRoles } from '../../hooks/use-roles';
+import { useSession } from '../../hooks/auth-context';
+import { useAsyncResource } from '../../hooks/use-async-resource';
+import { approvalsRepository } from '../../repositories/approvals.repository';
 import { ApprovalPolicyDialog } from './approval-policy-dialog';
 
 /**
- * Approval routing rules for the organisation.
- *
- * Replaces a builder backed by `approval-policies.json` and `localStorage`. A policy written
- * there never reached the server, so leave and attendance approvals routed by whatever the
- * backend already held while the screen showed something else entirely.
- *
- * A policy's steps name approvers by role or by user. `MANAGER` steps are not offered: the
- * backend cannot resolve a manager, because a user account is not linked to an employee record —
- * the gap recorded in `docs/backend-gaps.md`.
+ * Approval routing rules for the organisation: for each kind of request, the chain of people it
+ * passes through. Everything shown is what the server routes by; retired versions stay on record
+ * but are hidden until asked for.
  */
 export function ApprovalPolicyBuilder() {
   const policies = useApprovalPolicies();
+  const roles = useRoles();
+  // Who approves each step, in words: the role's name, the person's manager, or a named user.
+  const { session } = useSession();
+  const people = useAsyncResource(
+    () => approvalsRepository.approverCandidates(session!.organizationId),
+    [session?.organizationId],
+    { enabled: Boolean(session?.organizationId) && policies.canWrite },
+  );
+  const roleName = (id: string | null | undefined) =>
+    roles.roles.find((role) => role.id === id)?.name ?? 'A role';
+  const stepLabel = (step: ApprovalPolicy['steps'][number]) =>
+    step.approverType === 'MANAGER'
+      ? step.roleId
+        ? `Reporting manager (or ${roleName(step.roleId)})`
+        : 'Reporting manager'
+      : step.approverType === 'ROLE'
+        ? roleName(step.roleId)
+        : (people.data?.find((person) => person.userId === step.approverUserId)?.name ??
+          'A named person');
+  const [showRetired, setShowRetired] = useState(false);
   const [editing, setEditing] = useState<ApprovalPolicy | null>(null);
   const [creating, setCreating] = useState(false);
 
@@ -37,7 +55,9 @@ export function ApprovalPolicyBuilder() {
   }
 
   const byDomain = new Map<ApprovalDomain, ApprovalPolicy[]>();
+  const retiredCount = policies.policies.filter((policy) => !policy.isActive).length;
   for (const policy of policies.policies) {
+    if (!policy.isActive && !showRetired) continue;
     byDomain.set(policy.domain, [...(byDomain.get(policy.domain) ?? []), policy]);
   }
 
@@ -45,7 +65,16 @@ export function ApprovalPolicyBuilder() {
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          Each domain routes to its default policy. Steps are approved in order.
+          Each kind of request follows its default policy, one step after another.
+          {retiredCount > 0 && (
+            <button
+              className="ml-2 font-semibold text-primary underline-offset-2 hover:underline"
+              onClick={() => setShowRetired((value) => !value)}
+              type="button"
+            >
+              {showRetired ? 'Hide retired' : `Show retired (${retiredCount})`}
+            </button>
+          )}
         </p>
         {policies.canWrite && (
           <Button onClick={() => setCreating(true)} size="sm" type="button">
@@ -125,10 +154,10 @@ export function ApprovalPolicyBuilder() {
                     </td>
                     <td data-label="Steps" className="px-4 py-2.5 text-muted-foreground">
                       {policy.steps
-                        .map((step) => `${step.stepNumber}. ${step.approverType.toLowerCase()}`)
+                        .map((step) => `${step.stepNumber}. ${stepLabel(step)}`)
                         .join('  ·  ')}
                     </td>
-                    <td data-label="Status" className="px-4 py-2.5">
+                    <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                       <div className="flex flex-wrap gap-1.5">
                         {policy.isDefault && <Badge variant="sky">Default</Badge>}
                         <Badge variant={policy.isActive ? 'success' : 'secondary'}>

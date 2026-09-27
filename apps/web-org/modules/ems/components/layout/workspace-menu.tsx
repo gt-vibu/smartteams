@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { navIcons } from './navigation-icons';
+import { workspaceTitle } from '../../services/authorization.policy';
 
 interface WorkspaceMenuProps {
   activeSpace: string;
@@ -22,7 +23,8 @@ interface WorkspaceMenuProps {
  * stopped the label from ever truncating, so at ~540px the chevron ran into the search icon.
  */
 export function WorkspaceMenu({ activeSpace, onSelectSpace }: WorkspaceMenuProps) {
-  const { workspaceContext, canSwitchWorkspace, switchWorkspace, visibleSpaces } = useAuth();
+  const { persona, workspaceContext, canSwitchWorkspace, switchWorkspace, visibleSpaces } =
+    useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -112,7 +114,7 @@ export function WorkspaceMenu({ activeSpace, onSelectSpace }: WorkspaceMenuProps
             <div className={hasSpaceChoice ? 'border-t border-sidebar-border md:border-t-0' : ''}>
               <MenuHeading>Operating context</MenuHeading>
               <MenuItem
-                label="Admin workspace"
+                label={workspaceTitle(persona).workspace}
                 icon={navIcons.building}
                 isCurrent={workspaceContext === 'ADMIN'}
                 onSelect={() => chooseWorkspace('ADMIN')}

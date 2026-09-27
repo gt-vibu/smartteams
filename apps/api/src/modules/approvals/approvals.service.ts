@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { Prisma } from '../../generated/prisma/client';
 import { ApprovalDomain, ApproverType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
@@ -167,10 +168,6 @@ export class ApprovalsService {
           tx.timesheetApproval.count({ where: { approvalPolicyStepId: { in: stepIds } } }),
           tx.payrollApproval.count({ where: { approvalPolicyStepId: { in: stepIds } } }),
         ]);
-        if (attendance + leave + timesheet + payroll > 0)
-          throw new ConflictError(
-            'Approval policy steps already have workflow history and cannot be replaced',
-          );
         const roles = input.steps.filter((step) => step.roleId).map((step) => step.roleId!);
         const users = input.steps
           .filter((step) => step.approverUserId)
@@ -193,6 +190,11 @@ export class ApprovalsService {
           })) !== users.length
         )
           throw new NotFoundError('Approval user');
+        if (attendance + leave + timesheet + payroll > 0)
+          // Past decisions name these steps, so they stay exactly as they were: the policy moves
+          // to a new version and the old one is retired. Requests already on their way finish
+          // on the steps they started with; new ones follow the new steps.
+          return this.newVersion(tx, context, before, input, input.steps, makeDefault);
         await tx.approvalPolicyStep.deleteMany({ where: { approvalPolicyId: before.id } });
       }
       const after = await tx.approvalPolicy.update({
@@ -228,6 +230,80 @@ export class ApprovalsService {
         tx,
       );
       return toDto(after);
+    });
+  }
+
+  private async newVersion(
+    tx: Prisma.TransactionClient,
+    context: DomainContext,
+    before: { id: string; domain: ApprovalDomain; code: string; name: string },
+    input: { code?: string; name?: string },
+    steps: PolicyInput['steps'],
+    makeDefault: boolean,
+  ) {
+    const retired = await tx.approvalPolicy.update({
+      where: { id: before.id },
+      // Codes are unique per domain, retired or not; the old version keeps a dated one.
+      data: {
+        isActive: false,
+        isDefault: false,
+        code: `${before.code}-V${Date.now().toString(36).toUpperCase()}`,
+      },
+    });
+    const next = await tx.approvalPolicy.create({
+      data: {
+        organizationId: context.organizationId,
+        domain: before.domain,
+        code: (input.code ?? before.code).trim().toUpperCase(),
+        name: (input.name ?? before.name).trim(),
+        isDefault: makeDefault,
+        createdByUserId: context.actor.userId,
+        steps: {
+          create: steps.map((step) => ({
+            organizationId: context.organizationId,
+            stepNumber: step.stepNumber,
+            approverType: step.approverType,
+            roleId: step.roleId,
+            approverUserId: step.approverUserId,
+            required: step.required ?? true,
+          })),
+        },
+      },
+      include: { steps: { orderBy: { stepNumber: 'asc' } } },
+    });
+    await this.audit.record(
+      context,
+      {
+        entityType: 'APPROVAL_POLICY',
+        entityId: next.id,
+        action: 'APPROVAL_POLICY_VERSIONED',
+        beforeState: jsonSnapshot(retired),
+        afterState: jsonSnapshot(next),
+      },
+      tx,
+    );
+    return toDto(next);
+  }
+
+  /** People who can be named as an approver: active employees with an active login. */
+  async approverCandidates(context: DomainContext) {
+    requirePermission(context, 'approval-policies.write');
+    return this.database.run(context, async (tx) => {
+      const rows = await tx.employee.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: 'ACTIVE',
+          userId: { not: null },
+          user: { is: { isActive: true } },
+        },
+        orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
+        select: { userId: true, firstName: true, lastName: true, employeeNumber: true },
+      });
+      return rows.map((row) => ({
+        userId: row.userId!,
+        name: `${row.firstName} ${row.lastName}`.trim(),
+        employeeNumber: row.employeeNumber,
+      }));
     });
   }
 
@@ -318,7 +394,8 @@ function validateSteps(steps: PolicyInput['steps']) {
     if (
       (step.approverType === ApproverType.ROLE && (!hasRole || hasUser)) ||
       (step.approverType === ApproverType.USER && (!hasUser || hasRole)) ||
-      (step.approverType === ApproverType.MANAGER && (hasRole || hasUser))
+      // A manager step may name a backup role, for requesters with no manager to ask.
+      (step.approverType === ApproverType.MANAGER && hasUser)
     )
       throw new ConflictError('Approval step approver does not match its approver type');
   }

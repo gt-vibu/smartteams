@@ -353,6 +353,12 @@ export type OrganizationWhereInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryListRelationFilter
   outboxEvents?: Prisma.OutboxEventListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
+  approvalDelegations?: Prisma.ApprovalDelegationListRelationFilter
+  resignations?: Prisma.EmployeeResignationListRelationFilter
+  compOffCredits?: Prisma.CompOffCreditListRelationFilter
+  leaveEncashments?: Prisma.LeaveEncashmentListRelationFilter
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionListRelationFilter
   homeFederationClients?: Prisma.FederationClientListRelationFilter
   webauthnCredentials?: Prisma.WebauthnCredentialListRelationFilter
   webauthnChallenges?: Prisma.WebauthnChallengeListRelationFilter
@@ -445,6 +451,12 @@ export type OrganizationOrderByWithRelationInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryOrderByRelationAggregateInput
   outboxEvents?: Prisma.OutboxEventOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  approvalDelegations?: Prisma.ApprovalDelegationOrderByRelationAggregateInput
+  resignations?: Prisma.EmployeeResignationOrderByRelationAggregateInput
+  compOffCredits?: Prisma.CompOffCreditOrderByRelationAggregateInput
+  leaveEncashments?: Prisma.LeaveEncashmentOrderByRelationAggregateInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionOrderByRelationAggregateInput
   homeFederationClients?: Prisma.FederationClientOrderByRelationAggregateInput
   webauthnCredentials?: Prisma.WebauthnCredentialOrderByRelationAggregateInput
   webauthnChallenges?: Prisma.WebauthnChallengeOrderByRelationAggregateInput
@@ -541,6 +553,12 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   webhookDeliveries?: Prisma.WebhookDeliveryListRelationFilter
   outboxEvents?: Prisma.OutboxEventListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
+  approvalDelegations?: Prisma.ApprovalDelegationListRelationFilter
+  resignations?: Prisma.EmployeeResignationListRelationFilter
+  compOffCredits?: Prisma.CompOffCreditListRelationFilter
+  leaveEncashments?: Prisma.LeaveEncashmentListRelationFilter
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionListRelationFilter
   homeFederationClients?: Prisma.FederationClientListRelationFilter
   webauthnCredentials?: Prisma.WebauthnCredentialListRelationFilter
   webauthnChallenges?: Prisma.WebauthnChallengeListRelationFilter
@@ -673,6 +691,12 @@ export type OrganizationCreateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -765,6 +789,12 @@ export type OrganizationUncheckedCreateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -857,6 +887,12 @@ export type OrganizationUpdateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -949,6 +985,12 @@ export type OrganizationUncheckedUpdateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1002,14 +1044,14 @@ export type OrganizationUncheckedUpdateManyInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type OrganizationNullableScalarRelationFilter = {
-  is?: Prisma.OrganizationWhereInput | null
-  isNot?: Prisma.OrganizationWhereInput | null
-}
-
 export type OrganizationScalarRelationFilter = {
   is?: Prisma.OrganizationWhereInput
   isNot?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationNullableScalarRelationFilter = {
+  is?: Prisma.OrganizationWhereInput | null
+  isNot?: Prisma.OrganizationWhereInput | null
 }
 
 export type OrganizationSourceExternalIdCompoundUniqueInput = {
@@ -1071,6 +1113,20 @@ export type OrganizationMinOrderByAggregateInput = {
 
 export type OrganizationSumOrderByAggregateInput = {
   version?: Prisma.SortOrder
+}
+
+export type OrganizationCreateNestedOneWithoutApprovalDelegationsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutApprovalDelegationsInput, Prisma.OrganizationUncheckedCreateWithoutApprovalDelegationsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutApprovalDelegationsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutApprovalDelegationsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutApprovalDelegationsInput, Prisma.OrganizationUncheckedCreateWithoutApprovalDelegationsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutApprovalDelegationsInput
+  upsert?: Prisma.OrganizationUpsertWithoutApprovalDelegationsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutApprovalDelegationsInput, Prisma.OrganizationUpdateWithoutApprovalDelegationsInput>, Prisma.OrganizationUncheckedUpdateWithoutApprovalDelegationsInput>
 }
 
 export type OrganizationCreateNestedOneWithoutIdempotencyRecordsInput = {
@@ -1163,6 +1219,20 @@ export type OrganizationUpdateOneWithoutAuditLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.OrganizationUpdateWithoutAuditLogsInput>, Prisma.OrganizationUncheckedUpdateWithoutAuditLogsInput>
 }
 
+export type OrganizationCreateNestedOneWithoutResignationsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutResignationsInput, Prisma.OrganizationUncheckedCreateWithoutResignationsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutResignationsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutResignationsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutResignationsInput, Prisma.OrganizationUncheckedCreateWithoutResignationsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutResignationsInput
+  upsert?: Prisma.OrganizationUpsertWithoutResignationsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutResignationsInput, Prisma.OrganizationUpdateWithoutResignationsInput>, Prisma.OrganizationUncheckedUpdateWithoutResignationsInput>
+}
+
 export type OrganizationCreateNestedOneWithoutHomeFederationClientsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutHomeFederationClientsInput, Prisma.OrganizationUncheckedCreateWithoutHomeFederationClientsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutHomeFederationClientsInput
@@ -1235,6 +1305,48 @@ export type OrganizationUpdateOneRequiredWithoutFilesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutFilesInput, Prisma.OrganizationUpdateWithoutFilesInput>, Prisma.OrganizationUncheckedUpdateWithoutFilesInput>
 }
 
+export type OrganizationCreateNestedOneWithoutCompOffCreditsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCompOffCreditsInput, Prisma.OrganizationUncheckedCreateWithoutCompOffCreditsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCompOffCreditsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutCompOffCreditsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCompOffCreditsInput, Prisma.OrganizationUncheckedCreateWithoutCompOffCreditsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCompOffCreditsInput
+  upsert?: Prisma.OrganizationUpsertWithoutCompOffCreditsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCompOffCreditsInput, Prisma.OrganizationUpdateWithoutCompOffCreditsInput>, Prisma.OrganizationUncheckedUpdateWithoutCompOffCreditsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutLeaveEncashmentsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutLeaveEncashmentsInput, Prisma.OrganizationUncheckedCreateWithoutLeaveEncashmentsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutLeaveEncashmentsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutLeaveEncashmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutLeaveEncashmentsInput, Prisma.OrganizationUncheckedCreateWithoutLeaveEncashmentsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutLeaveEncashmentsInput
+  upsert?: Prisma.OrganizationUpsertWithoutLeaveEncashmentsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutLeaveEncashmentsInput, Prisma.OrganizationUpdateWithoutLeaveEncashmentsInput>, Prisma.OrganizationUncheckedUpdateWithoutLeaveEncashmentsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutCustomFieldDefinitionsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomFieldDefinitionsInput, Prisma.OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCustomFieldDefinitionsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutCustomFieldDefinitionsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomFieldDefinitionsInput, Prisma.OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutCustomFieldDefinitionsInput
+  upsert?: Prisma.OrganizationUpsertWithoutCustomFieldDefinitionsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCustomFieldDefinitionsInput, Prisma.OrganizationUpdateWithoutCustomFieldDefinitionsInput>, Prisma.OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput>
+}
+
 export type OrganizationCreateNestedOneWithoutInvitationsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutInvitationsInput, Prisma.OrganizationUncheckedCreateWithoutInvitationsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutInvitationsInput
@@ -1291,6 +1403,20 @@ export type OrganizationUpdateOneWithoutSessionsNestedInput = {
   delete?: Prisma.OrganizationWhereInput | boolean
   connect?: Prisma.OrganizationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutSessionsInput, Prisma.OrganizationUpdateWithoutSessionsInput>, Prisma.OrganizationUncheckedUpdateWithoutSessionsInput>
+}
+
+export type OrganizationCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutNotificationsInput, Prisma.OrganizationUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutNotificationsInput, Prisma.OrganizationUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.OrganizationUpsertWithoutNotificationsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutNotificationsInput, Prisma.OrganizationUpdateWithoutNotificationsInput>, Prisma.OrganizationUncheckedUpdateWithoutNotificationsInput>
 }
 
 export type OrganizationCreateNestedOneWithoutAttendanceRecordsInput = {
@@ -2153,6 +2279,410 @@ export type OrganizationUpdateOneRequiredWithoutProjectMembersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutProjectMembersInput, Prisma.OrganizationUpdateWithoutProjectMembersInput>, Prisma.OrganizationUncheckedUpdateWithoutProjectMembersInput>
 }
 
+export type OrganizationCreateWithoutApprovalDelegationsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutApprovalDelegationsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutApprovalDelegationsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutApprovalDelegationsInput, Prisma.OrganizationUncheckedCreateWithoutApprovalDelegationsInput>
+}
+
+export type OrganizationUpsertWithoutApprovalDelegationsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutApprovalDelegationsInput, Prisma.OrganizationUncheckedUpdateWithoutApprovalDelegationsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutApprovalDelegationsInput, Prisma.OrganizationUncheckedCreateWithoutApprovalDelegationsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutApprovalDelegationsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutApprovalDelegationsInput, Prisma.OrganizationUncheckedUpdateWithoutApprovalDelegationsInput>
+}
+
+export type OrganizationUpdateWithoutApprovalDelegationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutApprovalDelegationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
 export type OrganizationCreateWithoutIdempotencyRecordsInput = {
   id?: string
   name: string
@@ -2239,6 +2769,12 @@ export type OrganizationCreateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -2330,6 +2866,12 @@ export type OrganizationUncheckedCreateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2437,6 +2979,12 @@ export type OrganizationUpdateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -2528,6 +3076,12 @@ export type OrganizationUncheckedUpdateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -2619,6 +3173,12 @@ export type OrganizationCreateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -2710,6 +3270,12 @@ export type OrganizationUncheckedCreateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2817,6 +3383,12 @@ export type OrganizationUpdateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -2908,6 +3480,12 @@ export type OrganizationUncheckedUpdateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -2999,6 +3577,12 @@ export type OrganizationCreateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -3090,6 +3674,12 @@ export type OrganizationUncheckedCreateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3197,6 +3787,12 @@ export type OrganizationUpdateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -3288,6 +3884,12 @@ export type OrganizationUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3379,6 +3981,12 @@ export type OrganizationCreateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -3470,6 +4078,12 @@ export type OrganizationUncheckedCreateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3577,6 +4191,12 @@ export type OrganizationUpdateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -3668,6 +4288,12 @@ export type OrganizationUncheckedUpdateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3759,6 +4385,12 @@ export type OrganizationCreateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -3850,6 +4482,12 @@ export type OrganizationUncheckedCreateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3957,6 +4595,12 @@ export type OrganizationUpdateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -4048,6 +4692,12 @@ export type OrganizationUncheckedUpdateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4139,6 +4789,12 @@ export type OrganizationCreateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -4230,6 +4886,12 @@ export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -4337,6 +4999,12 @@ export type OrganizationUpdateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -4428,6 +5096,416 @@ export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutResignationsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutResignationsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutResignationsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutResignationsInput, Prisma.OrganizationUncheckedCreateWithoutResignationsInput>
+}
+
+export type OrganizationUpsertWithoutResignationsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutResignationsInput, Prisma.OrganizationUncheckedUpdateWithoutResignationsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutResignationsInput, Prisma.OrganizationUncheckedCreateWithoutResignationsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutResignationsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutResignationsInput, Prisma.OrganizationUncheckedUpdateWithoutResignationsInput>
+}
+
+export type OrganizationUpdateWithoutResignationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutResignationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4520,6 +5598,12 @@ export type OrganizationCreateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
 }
@@ -4611,6 +5695,12 @@ export type OrganizationUncheckedCreateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
 }
@@ -4718,6 +5808,12 @@ export type OrganizationUpdateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
 }
@@ -4809,6 +5905,12 @@ export type OrganizationUncheckedUpdateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
 }
@@ -4899,6 +6001,12 @@ export type OrganizationCreateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -4990,6 +6098,12 @@ export type OrganizationUncheckedCreateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5097,6 +6211,12 @@ export type OrganizationUpdateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -5188,6 +6308,12 @@ export type OrganizationUncheckedUpdateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5279,6 +6405,12 @@ export type OrganizationCreateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -5370,6 +6502,12 @@ export type OrganizationUncheckedCreateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5477,6 +6615,12 @@ export type OrganizationUpdateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -5568,6 +6712,12 @@ export type OrganizationUncheckedUpdateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5659,6 +6809,12 @@ export type OrganizationCreateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -5750,6 +6906,12 @@ export type OrganizationUncheckedCreateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5857,6 +7019,12 @@ export type OrganizationUpdateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -5948,6 +7116,12 @@ export type OrganizationUncheckedUpdateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6039,6 +7213,12 @@ export type OrganizationCreateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -6130,6 +7310,12 @@ export type OrganizationUncheckedCreateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6237,6 +7423,12 @@ export type OrganizationUpdateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -6328,6 +7520,1224 @@ export type OrganizationUncheckedUpdateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutCompOffCreditsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutCompOffCreditsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutCompOffCreditsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCompOffCreditsInput, Prisma.OrganizationUncheckedCreateWithoutCompOffCreditsInput>
+}
+
+export type OrganizationUpsertWithoutCompOffCreditsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCompOffCreditsInput, Prisma.OrganizationUncheckedUpdateWithoutCompOffCreditsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCompOffCreditsInput, Prisma.OrganizationUncheckedCreateWithoutCompOffCreditsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutCompOffCreditsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCompOffCreditsInput, Prisma.OrganizationUncheckedUpdateWithoutCompOffCreditsInput>
+}
+
+export type OrganizationUpdateWithoutCompOffCreditsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutCompOffCreditsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutLeaveEncashmentsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutLeaveEncashmentsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutLeaveEncashmentsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutLeaveEncashmentsInput, Prisma.OrganizationUncheckedCreateWithoutLeaveEncashmentsInput>
+}
+
+export type OrganizationUpsertWithoutLeaveEncashmentsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutLeaveEncashmentsInput, Prisma.OrganizationUncheckedUpdateWithoutLeaveEncashmentsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutLeaveEncashmentsInput, Prisma.OrganizationUncheckedCreateWithoutLeaveEncashmentsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutLeaveEncashmentsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutLeaveEncashmentsInput, Prisma.OrganizationUncheckedUpdateWithoutLeaveEncashmentsInput>
+}
+
+export type OrganizationUpdateWithoutLeaveEncashmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutLeaveEncashmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutCustomFieldDefinitionsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutCustomFieldDefinitionsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomFieldDefinitionsInput, Prisma.OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput>
+}
+
+export type OrganizationUpsertWithoutCustomFieldDefinitionsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutCustomFieldDefinitionsInput, Prisma.OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutCustomFieldDefinitionsInput, Prisma.OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutCustomFieldDefinitionsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutCustomFieldDefinitionsInput, Prisma.OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput>
+}
+
+export type OrganizationUpdateWithoutCustomFieldDefinitionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6419,6 +8829,12 @@ export type OrganizationCreateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -6510,6 +8926,12 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6617,6 +9039,12 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -6708,6 +9136,12 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6799,6 +9233,12 @@ export type OrganizationCreateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -6890,6 +9330,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6997,6 +9443,12 @@ export type OrganizationUpdateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -7088,6 +9540,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7179,6 +9637,12 @@ export type OrganizationCreateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -7270,6 +9734,12 @@ export type OrganizationUncheckedCreateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7377,6 +9847,12 @@ export type OrganizationUpdateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -7468,6 +9944,12 @@ export type OrganizationUncheckedUpdateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7559,6 +10041,12 @@ export type OrganizationCreateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -7650,6 +10138,12 @@ export type OrganizationUncheckedCreateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7757,6 +10251,12 @@ export type OrganizationUpdateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -7848,6 +10348,416 @@ export type OrganizationUncheckedUpdateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutNotificationsInput, Prisma.OrganizationUncheckedCreateWithoutNotificationsInput>
+}
+
+export type OrganizationUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutNotificationsInput, Prisma.OrganizationUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutNotificationsInput, Prisma.OrganizationUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutNotificationsInput, Prisma.OrganizationUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type OrganizationUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7939,6 +10849,12 @@ export type OrganizationCreateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -8030,6 +10946,12 @@ export type OrganizationUncheckedCreateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8137,6 +11059,12 @@ export type OrganizationUpdateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -8228,6 +11156,12 @@ export type OrganizationUncheckedUpdateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8319,6 +11253,12 @@ export type OrganizationCreateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -8410,6 +11350,12 @@ export type OrganizationUncheckedCreateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8517,6 +11463,12 @@ export type OrganizationUpdateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -8608,6 +11560,12 @@ export type OrganizationUncheckedUpdateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8699,6 +11657,12 @@ export type OrganizationCreateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -8790,6 +11754,12 @@ export type OrganizationUncheckedCreateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8897,6 +11867,12 @@ export type OrganizationUpdateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -8988,6 +11964,12 @@ export type OrganizationUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9079,6 +12061,12 @@ export type OrganizationCreateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -9170,6 +12158,12 @@ export type OrganizationUncheckedCreateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9277,6 +12271,12 @@ export type OrganizationUpdateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -9368,6 +12368,12 @@ export type OrganizationUncheckedUpdateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9459,6 +12465,12 @@ export type OrganizationCreateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -9550,6 +12562,12 @@ export type OrganizationUncheckedCreateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9657,6 +12675,12 @@ export type OrganizationUpdateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -9748,6 +12772,12 @@ export type OrganizationUncheckedUpdateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9839,6 +12869,12 @@ export type OrganizationCreateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -9930,6 +12966,12 @@ export type OrganizationUncheckedCreateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10037,6 +13079,12 @@ export type OrganizationUpdateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -10128,6 +13176,12 @@ export type OrganizationUncheckedUpdateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10219,6 +13273,12 @@ export type OrganizationCreateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -10310,6 +13370,12 @@ export type OrganizationUncheckedCreateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10417,6 +13483,12 @@ export type OrganizationUpdateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -10508,6 +13580,12 @@ export type OrganizationUncheckedUpdateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10599,6 +13677,12 @@ export type OrganizationCreateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -10690,6 +13774,12 @@ export type OrganizationUncheckedCreateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10797,6 +13887,12 @@ export type OrganizationUpdateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -10888,6 +13984,12 @@ export type OrganizationUncheckedUpdateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10979,6 +14081,12 @@ export type OrganizationCreateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -11070,6 +14178,12 @@ export type OrganizationUncheckedCreateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11177,6 +14291,12 @@ export type OrganizationUpdateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -11268,6 +14388,12 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11359,6 +14485,12 @@ export type OrganizationCreateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -11450,6 +14582,12 @@ export type OrganizationUncheckedCreateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11557,6 +14695,12 @@ export type OrganizationUpdateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -11648,6 +14792,12 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11739,6 +14889,12 @@ export type OrganizationCreateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -11830,6 +14986,12 @@ export type OrganizationUncheckedCreateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11937,6 +15099,12 @@ export type OrganizationUpdateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -12028,6 +15196,12 @@ export type OrganizationUncheckedUpdateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12119,6 +15293,12 @@ export type OrganizationCreateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -12210,6 +15390,12 @@ export type OrganizationUncheckedCreateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12317,6 +15503,12 @@ export type OrganizationUpdateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -12408,6 +15600,12 @@ export type OrganizationUncheckedUpdateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12499,6 +15697,12 @@ export type OrganizationCreateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -12590,6 +15794,12 @@ export type OrganizationUncheckedCreateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12697,6 +15907,12 @@ export type OrganizationUpdateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -12788,6 +16004,12 @@ export type OrganizationUncheckedUpdateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12879,6 +16101,12 @@ export type OrganizationCreateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -12970,6 +16198,12 @@ export type OrganizationUncheckedCreateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13077,6 +16311,12 @@ export type OrganizationUpdateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -13168,6 +16408,12 @@ export type OrganizationUncheckedUpdateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13259,6 +16505,12 @@ export type OrganizationCreateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -13350,6 +16602,12 @@ export type OrganizationUncheckedCreateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13457,6 +16715,12 @@ export type OrganizationUpdateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -13548,6 +16812,12 @@ export type OrganizationUncheckedUpdateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13639,6 +16909,12 @@ export type OrganizationCreateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -13730,6 +17006,12 @@ export type OrganizationUncheckedCreateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13837,6 +17119,12 @@ export type OrganizationUpdateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -13928,6 +17216,12 @@ export type OrganizationUncheckedUpdateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14019,6 +17313,12 @@ export type OrganizationCreateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -14110,6 +17410,12 @@ export type OrganizationUncheckedCreateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14217,6 +17523,12 @@ export type OrganizationUpdateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -14308,6 +17620,12 @@ export type OrganizationUncheckedUpdateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14399,6 +17717,12 @@ export type OrganizationCreateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -14490,6 +17814,12 @@ export type OrganizationUncheckedCreateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14597,6 +17927,12 @@ export type OrganizationUpdateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -14688,6 +18024,12 @@ export type OrganizationUncheckedUpdateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14779,6 +18121,12 @@ export type OrganizationCreateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -14870,6 +18218,12 @@ export type OrganizationUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14977,6 +18331,12 @@ export type OrganizationUpdateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -15068,6 +18428,12 @@ export type OrganizationUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15159,6 +18525,12 @@ export type OrganizationCreateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -15250,6 +18622,12 @@ export type OrganizationUncheckedCreateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15357,6 +18735,12 @@ export type OrganizationUpdateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -15448,6 +18832,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15539,6 +18929,12 @@ export type OrganizationCreateWithoutPayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -15630,6 +19026,12 @@ export type OrganizationUncheckedCreateWithoutPayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15737,6 +19139,12 @@ export type OrganizationUpdateWithoutPayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -15828,6 +19236,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15919,6 +19333,12 @@ export type OrganizationCreateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -16010,6 +19430,12 @@ export type OrganizationUncheckedCreateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16117,6 +19543,12 @@ export type OrganizationUpdateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -16208,6 +19640,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16299,6 +19737,12 @@ export type OrganizationCreateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -16390,6 +19834,12 @@ export type OrganizationUncheckedCreateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16497,6 +19947,12 @@ export type OrganizationUpdateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -16588,6 +20044,12 @@ export type OrganizationUncheckedUpdateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16679,6 +20141,12 @@ export type OrganizationCreateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -16770,6 +20238,12 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16877,6 +20351,12 @@ export type OrganizationUpdateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -16968,6 +20448,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17059,6 +20545,12 @@ export type OrganizationCreateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -17150,6 +20642,12 @@ export type OrganizationUncheckedCreateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17257,6 +20755,12 @@ export type OrganizationUpdateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -17348,6 +20852,12 @@ export type OrganizationUncheckedUpdateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17439,6 +20949,12 @@ export type OrganizationCreateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -17530,6 +21046,12 @@ export type OrganizationUncheckedCreateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17637,6 +21159,12 @@ export type OrganizationUpdateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -17728,6 +21256,12 @@ export type OrganizationUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17819,6 +21353,12 @@ export type OrganizationCreateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -17910,6 +21450,12 @@ export type OrganizationUncheckedCreateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18017,6 +21563,12 @@ export type OrganizationUpdateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -18108,6 +21660,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18199,6 +21757,12 @@ export type OrganizationCreateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -18290,6 +21854,12 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18397,6 +21967,12 @@ export type OrganizationUpdateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -18488,6 +22064,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18579,6 +22161,12 @@ export type OrganizationCreateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -18670,6 +22258,12 @@ export type OrganizationUncheckedCreateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18777,6 +22371,12 @@ export type OrganizationUpdateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -18868,6 +22468,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18959,6 +22565,12 @@ export type OrganizationCreateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -19050,6 +22662,12 @@ export type OrganizationUncheckedCreateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19157,6 +22775,12 @@ export type OrganizationUpdateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -19248,6 +22872,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19339,6 +22969,12 @@ export type OrganizationCreateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -19430,6 +23066,12 @@ export type OrganizationUncheckedCreateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19537,6 +23179,12 @@ export type OrganizationUpdateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -19628,6 +23276,12 @@ export type OrganizationUncheckedUpdateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19719,6 +23373,12 @@ export type OrganizationCreateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -19810,6 +23470,12 @@ export type OrganizationUncheckedCreateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19917,6 +23583,12 @@ export type OrganizationUpdateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -20008,6 +23680,12 @@ export type OrganizationUncheckedUpdateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20099,6 +23777,12 @@ export type OrganizationCreateWithoutUserRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -20190,6 +23874,12 @@ export type OrganizationUncheckedCreateWithoutUserRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20297,6 +23987,12 @@ export type OrganizationUpdateWithoutUserRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -20388,6 +24084,12 @@ export type OrganizationUncheckedUpdateWithoutUserRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20479,6 +24181,12 @@ export type OrganizationCreateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -20570,6 +24278,12 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20677,6 +24391,12 @@ export type OrganizationUpdateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -20768,6 +24488,12 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20859,6 +24585,12 @@ export type OrganizationCreateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -20950,6 +24682,12 @@ export type OrganizationUncheckedCreateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21057,6 +24795,12 @@ export type OrganizationUpdateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -21148,6 +24892,12 @@ export type OrganizationUncheckedUpdateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21239,6 +24989,12 @@ export type OrganizationCreateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -21330,6 +25086,12 @@ export type OrganizationUncheckedCreateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21437,6 +25199,12 @@ export type OrganizationUpdateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -21528,6 +25296,12 @@ export type OrganizationUncheckedUpdateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21619,6 +25393,12 @@ export type OrganizationCreateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -21710,6 +25490,12 @@ export type OrganizationUncheckedCreateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21817,6 +25603,12 @@ export type OrganizationUpdateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -21908,6 +25700,12 @@ export type OrganizationUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21999,6 +25797,12 @@ export type OrganizationCreateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -22090,6 +25894,12 @@ export type OrganizationUncheckedCreateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22197,6 +26007,12 @@ export type OrganizationUpdateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -22288,6 +26104,12 @@ export type OrganizationUncheckedUpdateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22379,6 +26201,12 @@ export type OrganizationCreateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -22470,6 +26298,12 @@ export type OrganizationUncheckedCreateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22577,6 +26411,12 @@ export type OrganizationUpdateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -22668,6 +26508,12 @@ export type OrganizationUncheckedUpdateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22759,6 +26605,12 @@ export type OrganizationCreateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -22850,6 +26702,12 @@ export type OrganizationUncheckedCreateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22957,6 +26815,12 @@ export type OrganizationUpdateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -23048,6 +26912,12 @@ export type OrganizationUncheckedUpdateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23140,6 +27010,12 @@ export type OrganizationCreateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
 }
@@ -23231,6 +27107,12 @@ export type OrganizationUncheckedCreateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
 }
@@ -23338,6 +27220,12 @@ export type OrganizationUpdateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
 }
@@ -23429,6 +27317,12 @@ export type OrganizationUncheckedUpdateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
 }
@@ -23520,6 +27414,12 @@ export type OrganizationCreateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
 }
@@ -23611,6 +27511,12 @@ export type OrganizationUncheckedCreateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
 }
@@ -23718,6 +27624,12 @@ export type OrganizationUpdateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
 }
@@ -23809,6 +27721,12 @@ export type OrganizationUncheckedUpdateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
 }
@@ -23899,6 +27817,12 @@ export type OrganizationCreateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -23990,6 +27914,12 @@ export type OrganizationUncheckedCreateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24097,6 +28027,12 @@ export type OrganizationUpdateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -24188,6 +28124,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24279,6 +28221,12 @@ export type OrganizationCreateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -24370,6 +28318,12 @@ export type OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24477,6 +28431,12 @@ export type OrganizationUpdateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -24568,6 +28528,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24659,6 +28625,12 @@ export type OrganizationCreateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -24750,6 +28722,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24857,6 +28835,12 @@ export type OrganizationUpdateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -24948,6 +28932,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25039,6 +29029,12 @@ export type OrganizationCreateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -25130,6 +29126,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25237,6 +29239,12 @@ export type OrganizationUpdateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -25328,6 +29336,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25419,6 +29433,12 @@ export type OrganizationCreateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -25510,6 +29530,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25617,6 +29643,12 @@ export type OrganizationUpdateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -25708,6 +29740,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25799,6 +29837,12 @@ export type OrganizationCreateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -25890,6 +29934,12 @@ export type OrganizationUncheckedCreateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25997,6 +30047,12 @@ export type OrganizationUpdateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -26088,6 +30144,12 @@ export type OrganizationUncheckedUpdateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26179,6 +30241,12 @@ export type OrganizationCreateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -26270,6 +30338,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26377,6 +30451,12 @@ export type OrganizationUpdateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -26468,6 +30548,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26559,6 +30645,12 @@ export type OrganizationCreateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -26650,6 +30742,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26757,6 +30855,12 @@ export type OrganizationUpdateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -26848,6 +30952,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26939,6 +31049,12 @@ export type OrganizationCreateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -27030,6 +31146,12 @@ export type OrganizationUncheckedCreateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27137,6 +31259,12 @@ export type OrganizationUpdateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -27228,6 +31356,12 @@ export type OrganizationUncheckedUpdateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27319,6 +31453,12 @@ export type OrganizationCreateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -27410,6 +31550,12 @@ export type OrganizationUncheckedCreateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27517,6 +31663,12 @@ export type OrganizationUpdateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -27608,6 +31760,12 @@ export type OrganizationUncheckedUpdateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27699,6 +31857,12 @@ export type OrganizationCreateWithoutEmployeePayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -27790,6 +31954,12 @@ export type OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27897,6 +32067,12 @@ export type OrganizationUpdateWithoutEmployeePayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -27988,6 +32164,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28079,6 +32261,12 @@ export type OrganizationCreateWithoutEmployeeStatutoryProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -28170,6 +32358,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28277,6 +32471,12 @@ export type OrganizationUpdateWithoutEmployeeStatutoryProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -28368,6 +32568,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28459,6 +32665,12 @@ export type OrganizationCreateWithoutEmployeeStatutoryRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -28550,6 +32762,12 @@ export type OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28657,6 +32875,12 @@ export type OrganizationUpdateWithoutEmployeeStatutoryRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -28748,6 +32972,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28839,6 +33069,12 @@ export type OrganizationCreateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -28930,6 +33166,12 @@ export type OrganizationUncheckedCreateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29037,6 +33279,12 @@ export type OrganizationUpdateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -29128,6 +33376,12 @@ export type OrganizationUncheckedUpdateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29219,6 +33473,12 @@ export type OrganizationCreateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -29310,6 +33570,12 @@ export type OrganizationUncheckedCreateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29417,6 +33683,12 @@ export type OrganizationUpdateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -29508,6 +33780,12 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29599,6 +33877,12 @@ export type OrganizationCreateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -29690,6 +33974,12 @@ export type OrganizationUncheckedCreateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29797,6 +34087,12 @@ export type OrganizationUpdateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -29888,6 +34184,12 @@ export type OrganizationUncheckedUpdateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29979,6 +34281,12 @@ export type OrganizationCreateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -30070,6 +34378,12 @@ export type OrganizationUncheckedCreateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30177,6 +34491,12 @@ export type OrganizationUpdateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -30268,6 +34588,12 @@ export type OrganizationUncheckedUpdateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30359,6 +34685,12 @@ export type OrganizationCreateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -30450,6 +34782,12 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30557,6 +34895,12 @@ export type OrganizationUpdateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -30648,6 +34992,12 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30739,6 +35089,12 @@ export type OrganizationCreateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
@@ -30830,6 +35186,12 @@ export type OrganizationUncheckedCreateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
   homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30937,6 +35299,12 @@ export type OrganizationUpdateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
@@ -31028,6 +35396,12 @@ export type OrganizationUncheckedUpdateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
   homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
   webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
   webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31111,6 +35485,12 @@ export type OrganizationCountOutputType = {
   webhookDeliveries: number
   outboxEvents: number
   auditLogs: number
+  notifications: number
+  approvalDelegations: number
+  resignations: number
+  compOffCredits: number
+  leaveEncashments: number
+  customFieldDefinitions: number
   homeFederationClients: number
   webauthnCredentials: number
   webauthnChallenges: number
@@ -31189,6 +35569,12 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   webhookDeliveries?: boolean | OrganizationCountOutputTypeCountWebhookDeliveriesArgs
   outboxEvents?: boolean | OrganizationCountOutputTypeCountOutboxEventsArgs
   auditLogs?: boolean | OrganizationCountOutputTypeCountAuditLogsArgs
+  notifications?: boolean | OrganizationCountOutputTypeCountNotificationsArgs
+  approvalDelegations?: boolean | OrganizationCountOutputTypeCountApprovalDelegationsArgs
+  resignations?: boolean | OrganizationCountOutputTypeCountResignationsArgs
+  compOffCredits?: boolean | OrganizationCountOutputTypeCountCompOffCreditsArgs
+  leaveEncashments?: boolean | OrganizationCountOutputTypeCountLeaveEncashmentsArgs
+  customFieldDefinitions?: boolean | OrganizationCountOutputTypeCountCustomFieldDefinitionsArgs
   homeFederationClients?: boolean | OrganizationCountOutputTypeCountHomeFederationClientsArgs
   webauthnCredentials?: boolean | OrganizationCountOutputTypeCountWebauthnCredentialsArgs
   webauthnChallenges?: boolean | OrganizationCountOutputTypeCountWebauthnChallengesArgs
@@ -31711,6 +36097,48 @@ export type OrganizationCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtim
 /**
  * OrganizationCountOutputType without action
  */
+export type OrganizationCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountApprovalDelegationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApprovalDelegationWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountResignationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmployeeResignationWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountCompOffCreditsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CompOffCreditWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountLeaveEncashmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeaveEncashmentWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountCustomFieldDefinitionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomFieldDefinitionWhereInput
+}
+
+/**
+ * OrganizationCountOutputType without action
+ */
 export type OrganizationCountOutputTypeCountHomeFederationClientsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FederationClientWhereInput
 }
@@ -31817,6 +36245,12 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   webhookDeliveries?: boolean | Prisma.Organization$webhookDeliveriesArgs<ExtArgs>
   outboxEvents?: boolean | Prisma.Organization$outboxEventsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Organization$auditLogsArgs<ExtArgs>
+  notifications?: boolean | Prisma.Organization$notificationsArgs<ExtArgs>
+  approvalDelegations?: boolean | Prisma.Organization$approvalDelegationsArgs<ExtArgs>
+  resignations?: boolean | Prisma.Organization$resignationsArgs<ExtArgs>
+  compOffCredits?: boolean | Prisma.Organization$compOffCreditsArgs<ExtArgs>
+  leaveEncashments?: boolean | Prisma.Organization$leaveEncashmentsArgs<ExtArgs>
+  customFieldDefinitions?: boolean | Prisma.Organization$customFieldDefinitionsArgs<ExtArgs>
   homeFederationClients?: boolean | Prisma.Organization$homeFederationClientsArgs<ExtArgs>
   webauthnCredentials?: boolean | Prisma.Organization$webauthnCredentialsArgs<ExtArgs>
   webauthnChallenges?: boolean | Prisma.Organization$webauthnChallengesArgs<ExtArgs>
@@ -31946,6 +36380,12 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   webhookDeliveries?: boolean | Prisma.Organization$webhookDeliveriesArgs<ExtArgs>
   outboxEvents?: boolean | Prisma.Organization$outboxEventsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Organization$auditLogsArgs<ExtArgs>
+  notifications?: boolean | Prisma.Organization$notificationsArgs<ExtArgs>
+  approvalDelegations?: boolean | Prisma.Organization$approvalDelegationsArgs<ExtArgs>
+  resignations?: boolean | Prisma.Organization$resignationsArgs<ExtArgs>
+  compOffCredits?: boolean | Prisma.Organization$compOffCreditsArgs<ExtArgs>
+  leaveEncashments?: boolean | Prisma.Organization$leaveEncashmentsArgs<ExtArgs>
+  customFieldDefinitions?: boolean | Prisma.Organization$customFieldDefinitionsArgs<ExtArgs>
   homeFederationClients?: boolean | Prisma.Organization$homeFederationClientsArgs<ExtArgs>
   webauthnCredentials?: boolean | Prisma.Organization$webauthnCredentialsArgs<ExtArgs>
   webauthnChallenges?: boolean | Prisma.Organization$webauthnChallengesArgs<ExtArgs>
@@ -32030,6 +36470,12 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     webhookDeliveries: Prisma.$WebhookDeliveryPayload<ExtArgs>[]
     outboxEvents: Prisma.$OutboxEventPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    approvalDelegations: Prisma.$ApprovalDelegationPayload<ExtArgs>[]
+    resignations: Prisma.$EmployeeResignationPayload<ExtArgs>[]
+    compOffCredits: Prisma.$CompOffCreditPayload<ExtArgs>[]
+    leaveEncashments: Prisma.$LeaveEncashmentPayload<ExtArgs>[]
+    customFieldDefinitions: Prisma.$CustomFieldDefinitionPayload<ExtArgs>[]
     homeFederationClients: Prisma.$FederationClientPayload<ExtArgs>[]
     webauthnCredentials: Prisma.$WebauthnCredentialPayload<ExtArgs>[]
     webauthnChallenges: Prisma.$WebauthnChallengePayload<ExtArgs>[]
@@ -32515,6 +36961,12 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   webhookDeliveries<T extends Prisma.Organization$webhookDeliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$webhookDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outboxEvents<T extends Prisma.Organization$outboxEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$outboxEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutboxEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.Organization$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.Organization$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvalDelegations<T extends Prisma.Organization$approvalDelegationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$approvalDelegationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalDelegationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  resignations<T extends Prisma.Organization$resignationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$resignationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeResignationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  compOffCredits<T extends Prisma.Organization$compOffCreditsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$compOffCreditsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompOffCreditPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  leaveEncashments<T extends Prisma.Organization$leaveEncashmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$leaveEncashmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveEncashmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customFieldDefinitions<T extends Prisma.Organization$customFieldDefinitionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$customFieldDefinitionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomFieldDefinitionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   homeFederationClients<T extends Prisma.Organization$homeFederationClientsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$homeFederationClientsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FederationClientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webauthnCredentials<T extends Prisma.Organization$webauthnCredentialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$webauthnCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebauthnCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webauthnChallenges<T extends Prisma.Organization$webauthnChallengesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$webauthnChallengesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebauthnChallengePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -34697,6 +39149,150 @@ export type Organization$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+}
+
+/**
+ * Organization.notifications
+ */
+export type Organization$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * Organization.approvalDelegations
+ */
+export type Organization$approvalDelegationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApprovalDelegation
+   */
+  select?: Prisma.ApprovalDelegationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApprovalDelegation
+   */
+  omit?: Prisma.ApprovalDelegationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApprovalDelegationInclude<ExtArgs> | null
+  where?: Prisma.ApprovalDelegationWhereInput
+  orderBy?: Prisma.ApprovalDelegationOrderByWithRelationInput | Prisma.ApprovalDelegationOrderByWithRelationInput[]
+  cursor?: Prisma.ApprovalDelegationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ApprovalDelegationScalarFieldEnum | Prisma.ApprovalDelegationScalarFieldEnum[]
+}
+
+/**
+ * Organization.resignations
+ */
+export type Organization$resignationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmployeeResignation
+   */
+  select?: Prisma.EmployeeResignationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmployeeResignation
+   */
+  omit?: Prisma.EmployeeResignationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmployeeResignationInclude<ExtArgs> | null
+  where?: Prisma.EmployeeResignationWhereInput
+  orderBy?: Prisma.EmployeeResignationOrderByWithRelationInput | Prisma.EmployeeResignationOrderByWithRelationInput[]
+  cursor?: Prisma.EmployeeResignationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmployeeResignationScalarFieldEnum | Prisma.EmployeeResignationScalarFieldEnum[]
+}
+
+/**
+ * Organization.compOffCredits
+ */
+export type Organization$compOffCreditsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CompOffCredit
+   */
+  select?: Prisma.CompOffCreditSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CompOffCredit
+   */
+  omit?: Prisma.CompOffCreditOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CompOffCreditInclude<ExtArgs> | null
+  where?: Prisma.CompOffCreditWhereInput
+  orderBy?: Prisma.CompOffCreditOrderByWithRelationInput | Prisma.CompOffCreditOrderByWithRelationInput[]
+  cursor?: Prisma.CompOffCreditWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CompOffCreditScalarFieldEnum | Prisma.CompOffCreditScalarFieldEnum[]
+}
+
+/**
+ * Organization.leaveEncashments
+ */
+export type Organization$leaveEncashmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeaveEncashment
+   */
+  select?: Prisma.LeaveEncashmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeaveEncashment
+   */
+  omit?: Prisma.LeaveEncashmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeaveEncashmentInclude<ExtArgs> | null
+  where?: Prisma.LeaveEncashmentWhereInput
+  orderBy?: Prisma.LeaveEncashmentOrderByWithRelationInput | Prisma.LeaveEncashmentOrderByWithRelationInput[]
+  cursor?: Prisma.LeaveEncashmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeaveEncashmentScalarFieldEnum | Prisma.LeaveEncashmentScalarFieldEnum[]
+}
+
+/**
+ * Organization.customFieldDefinitions
+ */
+export type Organization$customFieldDefinitionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomFieldDefinition
+   */
+  select?: Prisma.CustomFieldDefinitionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomFieldDefinition
+   */
+  omit?: Prisma.CustomFieldDefinitionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomFieldDefinitionInclude<ExtArgs> | null
+  where?: Prisma.CustomFieldDefinitionWhereInput
+  orderBy?: Prisma.CustomFieldDefinitionOrderByWithRelationInput | Prisma.CustomFieldDefinitionOrderByWithRelationInput[]
+  cursor?: Prisma.CustomFieldDefinitionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomFieldDefinitionScalarFieldEnum | Prisma.CustomFieldDefinitionScalarFieldEnum[]
 }
 
 /**

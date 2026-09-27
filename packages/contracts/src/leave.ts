@@ -17,6 +17,12 @@ export const leaveTypeSchema = z.object({
   annualAllowance: z.coerce.number().nullable().optional(),
   monthlyAccrual: z.coerce.number().nullable().optional(),
   carryoverLimit: z.coerce.number().nullable().optional(),
+  prorateForJoiners: z.boolean().optional(),
+  sandwichOffDays: z.boolean().optional(),
+  encashable: z.boolean().optional(),
+  maxEncashDays: z.coerce.number().nullable().optional(),
+  isCompOff: z.boolean().optional(),
+  compOffExpiryDays: z.number().nullable().optional(),
   requiresAttachment: z.boolean().optional(),
   isActive: z.boolean().optional(),
 });
@@ -49,6 +55,8 @@ export const leaveRequestSchema = z.object({
   requestedDays: z.coerce.number(),
   status: z.string(),
   reason: z.string().nullable().optional(),
+  /** What the approver wrote when deciding it; sent to the requester's own app only. */
+  decisionComment: z.string().nullable().optional(),
   version: z.number().optional(),
   externalEmployeeId: z.string().nullable().optional(),
 });
@@ -105,6 +113,17 @@ export const leaveInboxEntrySchema = z.object({
   requestedDays: z.coerce.number().optional(),
   status: z.string().optional(),
   reason: z.string().nullable().optional(),
+  submittedAt: z.string().nullable().optional(),
+  // Who is asking and for which leave: an approver cannot decide on dates alone.
+  employee: z
+    .object({
+      firstName: z.string(),
+      lastName: z.string().nullable().optional(),
+      employeeNumber: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
+  leaveType: z.object({ name: z.string(), paid: z.boolean() }).nullable().optional(),
 });
 
 export type LeaveInboxEntry = z.infer<typeof leaveInboxEntrySchema>;

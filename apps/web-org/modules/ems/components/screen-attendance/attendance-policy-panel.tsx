@@ -13,6 +13,7 @@ import {
 } from '@smarteam/ui';
 import { useAttendancePreferences } from '../../hooks/use-attendance-preferences';
 import { AutoCheckOutSection } from './auto-check-out-section';
+import { LateRulesSection } from './late-rules-section';
 
 const GEOFENCE_MODES = [
   { value: 'DISABLED', label: 'Disabled' },
@@ -161,6 +162,8 @@ export function AttendancePolicyPanel() {
             </div>
 
             <AutoCheckOutSection policy={policy} />
+
+            <LateRulesSection canWrite={policy.canWrite} />
 
             {!policy.canWrite && (
               <p className="text-[11px] text-muted-foreground">

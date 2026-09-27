@@ -5,7 +5,7 @@ import { Button } from '@smarteam/ui';
 import { UserPlus } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
 import { PersonAvatar } from '../common/person-avatar';
-import { employeeDisplayName } from '@smarteam/contracts';
+import { employeeDisplayName, formatDate } from '@smarteam/contracts';
 import { useEmployeeOnboarding, type OnboardingInput } from '../../hooks/use-employee-onboarding';
 import { useEmployees } from '../../hooks/use-workforce';
 import { useOrganization } from '../../hooks/use-organization';
@@ -21,9 +21,8 @@ import { PageShell } from '../layout/page-shell';
  * Create the employee, record their employment and reporting line, and give them a login with a
  * least-privilege role — the whole of onboarding, in one dialog.
  *
- * "Recently joined" is deliberately not ordered by joining date: the joining date is only
- * readable one employee at a time, so sorting on it would cost a request per person. The roll is
- * shown in the order it arrives until the list itself carries the date.
+ * "Recently joined" is the eight latest joining dates on the directory list; people with no
+ * joining date recorded come last.
  */
 export function ScreenOnboarding() {
   const employees = useEmployees();
@@ -104,6 +103,7 @@ export function ScreenOnboarding() {
 
       <OnboardEmployeeDialog
         branches={organization.branches}
+        defaultBranchId={organization.primaryBranchId}
         busy={onboarding.busy}
         canCreateAccount={onboarding.canCreateAccount}
         employeeRoleId={employeeRoleId}
@@ -153,10 +153,9 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
       </div>
     );
 
-  // The employee list has no joining date and no created-at, so "recent" cannot be ordered from
-  // it. Showing the newest by employee number would be a guess, so this shows the roll as the API
-  // returns it and links out to each record, where the joining date is real.
-  const recent = rows.slice(0, 8);
+  const recent = [...rows]
+    .sort((a, b) => (b.dateOfJoining ?? '').localeCompare(a.dateOfJoining ?? ''))
+    .slice(0, 8);
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
@@ -165,6 +164,7 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Employee</th>
             <th className="px-4 py-2.5 font-bold">Number</th>
+            <th className="px-4 py-2.5 font-bold">Joined</th>
             <th className="px-4 py-2.5 font-bold">Status</th>
           </tr>
         </thead>
@@ -185,7 +185,17 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
               <td data-label="Number" className="px-4 py-2.5 font-mono text-muted-foreground">
                 {employee.employeeNumber}
               </td>
-              <td data-label="Status" className="px-4 py-2.5 text-muted-foreground">
+              <td
+                data-label="Joined"
+                className="whitespace-nowrap px-4 py-2.5 text-muted-foreground"
+              >
+                {employee.dateOfJoining ? formatDate(employee.dateOfJoining) : 'Not recorded'}
+              </td>
+              <td
+                data-cell="status"
+                data-label="Status"
+                className="px-4 py-2.5 text-muted-foreground"
+              >
                 {employee.status.toLowerCase()}
               </td>
             </tr>

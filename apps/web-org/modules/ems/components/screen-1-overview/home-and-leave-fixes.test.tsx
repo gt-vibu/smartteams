@@ -27,6 +27,10 @@ const requests = [
     }) as unknown as LeaveRequest,
 );
 
+// The team calendar loads its own data; this test is about the request list and balances.
+vi.mock('../screen-7-timeoff/team-leave-calendar', () => ({ TeamLeaveCalendar: () => null }));
+vi.mock('../screen-7-timeoff/leave-extras-panel', () => ({ LeaveExtrasPanel: () => null }));
+
 vi.mock('../../hooks/use-leave', () => ({
   useLeave: () => ({
     requests,

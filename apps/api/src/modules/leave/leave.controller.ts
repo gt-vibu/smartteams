@@ -1,18 +1,32 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   LeaveAdjustmentDto,
   LeaveBalanceQueryDto,
+  LeaveCalendarQueryDto,
   LeaveCancelDto,
   LeaveDecisionDto,
   LeaveRequestDto,
   LeaveRequestQueryDto,
   LeavePolicyAssignmentDto,
   LeaveTypeDto,
+  LeaveTypeUpdateDto,
 } from './leave.dto';
 import { LeaveService } from './leave.service';
+import { LeaveCalendarService } from './leave-calendar.service';
 
 @Controller('v1/organizations/:organizationId/leave')
 @UseGuards(NativeJwtGuard)
@@ -20,6 +34,7 @@ export class LeaveController {
   constructor(
     private readonly leave: LeaveService,
     private readonly contexts: DomainContextFactory,
+    private readonly calendarService: LeaveCalendarService,
   ) {}
 
   /**
@@ -41,6 +56,17 @@ export class LeaveController {
         ...(query.limit ? { limit: query.limit } : {}),
       }),
     );
+  }
+
+  /** Who is off between two dates, among the people the caller works with. */
+  @Get('calendar') calendar(
+    @Param('organizationId') organizationId: string,
+    @Query() query: LeaveCalendarQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.calendarService.calendar(context, query.from, query.to));
   }
 
   /** Requests awaiting the signed-in user's decision. */
@@ -79,6 +105,16 @@ export class LeaveController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.leave.createType(context, body));
+  }
+  @Patch('types/:typeId') updateType(
+    @Param('organizationId') organizationId: string,
+    @Param('typeId', ParseUUIDPipe) typeId: string,
+    @Body() body: LeaveTypeUpdateDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.updateType(context, typeId, body));
   }
   @Get('assignments') assignments(
     @Param('organizationId') organizationId: string,

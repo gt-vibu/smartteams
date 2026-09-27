@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { formatDate } from '@smarteam/contracts';
 import {
   Badge,
   Button,
@@ -22,7 +23,7 @@ function formatHolidayDate(dateStr: string) {
   try {
     const d = new Date(dateStr.slice(0, 10) + 'T00:00:00');
     return {
-      formatted: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      formatted: formatDate(dateStr),
       dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
     };
   } catch {
@@ -169,49 +170,56 @@ export function ScreenEmployeeHolidays() {
 
       <PageShell>
         <div className="space-y-4">
-          {/* Top Summary Metric Banner */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
-                <Calendar className="h-4 w-4" />
+          {/* The totals matter only when there are optional holidays to choose; otherwise the
+              list below already says everything. */}
+          {employeeHolidays.allowance > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <Calendar className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">Public Holidays</p>
+                  <p className="text-lg font-bold text-foreground">
+                    {employeeHolidays.mandatoryHolidays.length}{' '}
+                    {employeeHolidays.mandatoryHolidays.length === 1 ? 'day' : 'days'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground">Public Holidays</p>
-                <p className="text-lg font-bold text-foreground">
-                  {employeeHolidays.mandatoryHolidays.length} Days
-                </p>
-              </div>
-            </div>
 
-            <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <Sparkles className="h-4 w-4" />
+              <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    Optional Allowance
+                  </p>
+                  <p className="text-lg font-bold text-foreground">
+                    {employeeHolidays.selectedCount} / {employeeHolidays.allowance} Chosen
+                    <span className="text-xs font-normal text-muted-foreground ml-1">
+                      ({employeeHolidays.remainingAllowance} remaining)
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground">Optional Allowance</p>
-                <p className="text-lg font-bold text-foreground">
-                  {employeeHolidays.selectedCount} / {employeeHolidays.allowance} Chosen
-                  <span className="text-xs font-normal text-muted-foreground ml-1">
-                    ({employeeHolidays.remainingAllowance} remaining)
-                  </span>
-                </p>
-              </div>
-            </div>
 
-            <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-success/10 text-success">
-                <CheckCircle2 className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground">
-                  Total Holiday Benefit
-                </p>
-                <p className="text-lg font-bold text-foreground">
-                  {employeeHolidays.mandatoryHolidays.length + employeeHolidays.selectedCount} Days
-                </p>
+              <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-success/10 text-success">
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    Total Holiday Benefit
+                  </p>
+                  <p className="text-lg font-bold text-foreground">
+                    {employeeHolidays.mandatoryHolidays.length + employeeHolidays.selectedCount}{' '}
+                    days
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Compact Filter Bar */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
@@ -309,7 +317,7 @@ export function ScreenEmployeeHolidays() {
                             {item.typeLabel}
                           </Badge>
                         </td>
-                        <td data-label="Status" className="px-4 py-3">
+                        <td data-bare="" data-label="Status" className="px-4 py-3">
                           {conflicts.get(item.id) && (
                             <span
                               className={`mb-1 block w-fit rounded-full border px-2 py-0.5 text-[10px] font-semibold ${HOLIDAY_CONFLICT_PILL[conflicts.get(item.id)!.tone]}`}

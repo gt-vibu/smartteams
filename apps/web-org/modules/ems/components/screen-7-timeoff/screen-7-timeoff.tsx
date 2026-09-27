@@ -6,6 +6,8 @@ import { useLeave } from '../../hooks/use-leave';
 import { LeaveBalanceCards } from './leave-balance-cards';
 import { LeaveApplicationsTable } from './leave-applications-table';
 import { ApplyLeaveModal } from './apply-leave-modal';
+import { TeamLeaveCalendar } from './team-leave-calendar';
+import { LeaveExtrasPanel } from './leave-extras-panel';
 import { PageShell } from '../layout/page-shell';
 
 const STATUS_FILTERS = [
@@ -178,6 +180,10 @@ export function Screen7TimeOff() {
               )}
               <LeaveBalanceCards balances={leave.balances} typesById={leave.typesById} />
             </section>
+
+            <LeaveExtrasPanel types={leave.types} />
+
+            <TeamLeaveCalendar />
           </>
         )}
       </PageShell>

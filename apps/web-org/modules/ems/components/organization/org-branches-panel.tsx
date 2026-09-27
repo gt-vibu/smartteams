@@ -29,6 +29,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
   const [creating, setCreating] = useState(false);
   const [retiring, setRetiring] = useState<Branch | null>(null);
   const [settings, setSettings] = useState<Branch | null>(null);
+  const activeCount = state.branches.filter((branch) => branch.status !== 'DEACTIVATED').length;
 
   if (state.branchesForbidden) {
     return <Unavailable detail="You do not have permission to view branches." />;
@@ -83,58 +84,82 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
               </tr>
             </thead>
             <tbody>
-              {state.branches.map((branch) => (
-                <tr
-                  className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
-                  key={branch.id}
-                >
-                  <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
-                    {branch.name}
-                  </td>
-                  <td data-label="Code" className="px-4 py-2.5 font-mono text-muted-foreground">
-                    {branch.code}
-                  </td>
-                  <td data-label="Status" className="px-4 py-2.5">
-                    <Badge variant={branch.status === 'DEACTIVATED' ? 'secondary' : 'success'}>
-                      {branch.status === 'DEACTIVATED' ? 'Retired' : 'Active'}
-                    </Badge>
-                  </td>
-                  <td data-cell="actions" className="px-4 py-2.5 text-right">
-                    {branch.status !== 'DEACTIVATED' && (
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          onClick={() => setSettings(branch)}
-                          size="sm"
-                          type="button"
-                          variant="outline"
-                        >
-                          Settings
-                        </Button>
-                      </div>
-                    )}
-                    {state.can.writeBranches && branch.status !== 'DEACTIVATED' && (
-                      <div className="mt-1.5 flex justify-end gap-2">
-                        <Button
-                          onClick={() => setEditing(branch)}
-                          size="sm"
-                          type="button"
-                          variant="outline"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          onClick={() => setRetiring(branch)}
-                          size="sm"
-                          type="button"
-                          variant="ghost"
-                        >
-                          Retire
-                        </Button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {state.branches.map((branch) => {
+                // "Main branch" only means something when there is more than one to choose from.
+                const choosing = activeCount > 1;
+                const isPrimary = choosing && branch.id === state.primaryBranchId;
+                return (
+                  <tr
+                    className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
+                    key={branch.id}
+                  >
+                    <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
+                      {branch.name}
+                      {isPrimary && (
+                        <Badge className="ml-2" variant="sky">
+                          Main branch
+                        </Badge>
+                      )}
+                    </td>
+                    <td data-label="Code" className="px-4 py-2.5 font-mono text-muted-foreground">
+                      {branch.code}
+                    </td>
+                    <td data-cell="status" data-label="Status" className="px-4 py-2.5">
+                      <Badge variant={branch.status === 'DEACTIVATED' ? 'secondary' : 'success'}>
+                        {branch.status === 'DEACTIVATED' ? 'Retired' : 'Active'}
+                      </Badge>
+                    </td>
+                    <td data-cell="actions" className="px-4 py-2.5 text-right">
+                      {branch.status !== 'DEACTIVATED' && (
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            onClick={() => setSettings(branch)}
+                            size="sm"
+                            type="button"
+                            variant="outline"
+                          >
+                            Settings
+                          </Button>
+                        </div>
+                      )}
+                      {state.can.writeBranches && branch.status !== 'DEACTIVATED' && (
+                        <div className="mt-1.5 flex justify-end gap-2">
+                          <Button
+                            onClick={() => setEditing(branch)}
+                            size="sm"
+                            type="button"
+                            variant="outline"
+                          >
+                            Edit
+                          </Button>
+                          {choosing && !isPrimary && (
+                            <Button
+                              disabled={state.saving}
+                              onClick={() => void state.setPrimaryBranch(branch.id)}
+                              size="sm"
+                              type="button"
+                              variant="outline"
+                            >
+                              Make main
+                            </Button>
+                          )}
+                          {/* The main branch hands that role on before it can be retired. */}
+                          {!isPrimary && (
+                            <Button
+                              onClick={() => setRetiring(branch)}
+                              size="sm"
+                              type="button"
+                              variant="ghost"
+                            >
+                              Retire
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -150,6 +175,8 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
 
       <p className="text-[11px] text-muted-foreground">
         Open a branch's Settings to see how many current employees are based there.
+        {activeCount > 1 &&
+          ' New employees are placed in the main branch unless you choose another.'}
       </p>
 
       <BranchDialog

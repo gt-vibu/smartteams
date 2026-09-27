@@ -2,7 +2,13 @@
 
 import React from 'react';
 import { Button } from '@smarteam/ui';
-import { DOCUMENT_REASON_LABEL, formatFileSize, type StoredDocument } from '@smarteam/contracts';
+import { expiryNote } from './document-expiry-dialog';
+import {
+  DOCUMENT_REASON_LABEL,
+  formatDate,
+  formatFileSize,
+  type StoredDocument,
+} from '@smarteam/contracts';
 
 /** Who a document is for, in words. */
 function audience(document: StoredDocument): string {
@@ -13,6 +19,8 @@ function audience(document: StoredDocument): string {
       return document.employee ? document.employee.name : 'Employee';
     case 'TEAM':
       return document.team ? `Team: ${document.team.name}` : 'Team';
+    case 'PROJECT':
+      return document.project ? `Project: ${document.project.name}` : 'Project';
     case 'ORGANIZATION':
       return 'Everyone';
     case 'INTERNAL':
@@ -34,6 +42,7 @@ export function DocumentTable({
   onDownload,
   onShare,
   onDelete,
+  onSetExpiry,
 }: {
   documents: StoredDocument[];
   busy: boolean;
@@ -41,6 +50,8 @@ export function DocumentTable({
   onDownload: (document: StoredDocument) => void;
   onShare: (document: StoredDocument) => void;
   onDelete: (document: StoredDocument) => void;
+  /** When given, those who manage a document can set when it expires. */
+  onSetExpiry?: (document: StoredDocument) => void;
 }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-card">
@@ -62,24 +73,39 @@ export function DocumentTable({
                 <div className="text-[10px] text-muted-foreground">
                   {kind(document)} · {formatFileSize(document.byteSize)}
                 </div>
+                {expiryNote(document.expiresOn) && (
+                  <div
+                    className={`text-[10px] font-semibold ${expiryNote(document.expiresOn)?.urgent ? 'text-destructive' : 'text-muted-foreground'}`}
+                  >
+                    {expiryNote(document.expiresOn)?.text}
+                  </div>
+                )}
               </td>
-              <td className="px-3 py-2.5 text-foreground" data-label="For">
+              <td className="px-3 py-2.5 text-foreground" data-bare="" data-label="For">
                 {audience(document)}
               </td>
-              <td className="px-3 py-2.5 text-muted-foreground" data-label="Uploaded">
-                <div>{new Date(document.uploadedAt).toLocaleDateString()}</div>
+              <td className="px-3 py-2.5 text-muted-foreground" data-bare="" data-label="Uploaded">
+                <div>{formatDate(document.uploadedAt)}</div>
                 {document.uploadedBy && <div className="text-[10px]">by {document.uploadedBy}</div>}
               </td>
-              <td className="px-3 py-2.5 text-muted-foreground" data-label="Access">
-                <div>
-                  {document.access.reason ? DOCUMENT_REASON_LABEL[document.access.reason] : ''}
-                </div>
-                <div className="text-[10px]">
-                  {document.access.download ? 'View and download' : 'View only'}
-                  {document.activeShares ? ` · shared ${document.activeShares}×` : ''}
-                </div>
+              <td className="px-3 py-2.5 text-muted-foreground" data-bare="" data-label="Access">
+                {/* Only what is out of the ordinary: an administrator publishes everything they see,
+                    and downloading is the norm, so neither is repeated on every row. */}
+                {document.access.reason && document.access.reason !== 'ADMINISTRATOR' && (
+                  <div>{DOCUMENT_REASON_LABEL[document.access.reason]}</div>
+                )}
+                {(!document.access.download || Boolean(document.activeShares)) && (
+                  <div className="text-[10px]">
+                    {[
+                      !document.access.download && 'View only',
+                      document.activeShares && `Shared with ${document.activeShares}`,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </div>
+                )}
               </td>
-              <td className="px-3 py-2.5" data-label="Actions">
+              <td className="px-3 py-2.5" data-cell="actions" data-label="Actions">
                 <div className="flex flex-wrap justify-end gap-1.5">
                   <Button
                     disabled={busy}
@@ -110,6 +136,17 @@ export function DocumentTable({
                       variant="outline"
                     >
                       Share
+                    </Button>
+                  )}
+                  {document.access.manage && onSetExpiry && (
+                    <Button
+                      disabled={busy}
+                      onClick={() => onSetExpiry(document)}
+                      size="sm"
+                      type="button"
+                      variant="ghost"
+                    >
+                      Expiry
                     </Button>
                   )}
                   {document.access.manage && (

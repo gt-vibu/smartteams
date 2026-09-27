@@ -20,6 +20,7 @@ import type { JobType, Project } from '@smarteam/contracts';
 import { QuickAddJobDialog } from './quick-add-job-dialog';
 import { QuickAddProjectDialog } from './quick-add-project-dialog';
 import { LogTimeHoursField, normalizeTimeInput, type HoursMode } from './logtime-hours-field';
+import { localDateKey } from '../../lib/local-date';
 
 interface LogTimeModalProps {
   isOpen: boolean;
@@ -50,7 +51,7 @@ export function LogTimeModal({
   onCreateJobType,
   onCreateProject,
 }: LogTimeModalProps) {
-  const initialDate = React.useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const initialDate = React.useMemo(() => localDateKey(), []);
 
   const [projectId, setProjectId] = useState<string>('');
   const [jobName, setJobName] = useState<string>('');
@@ -71,7 +72,7 @@ export function LogTimeModal({
   React.useEffect(() => {
     if (isOpen) {
       setError('');
-      setWorkDate(new Date().toISOString().slice(0, 10));
+      setWorkDate(localDateKey());
       if (projects.length > 0 && !projectId) {
         setProjectId(projects[0]?.id ?? '');
       }
@@ -86,7 +87,7 @@ export function LogTimeModal({
     // No invented job: with none defined the field stays empty, and it is required.
     setJobName(jobTypes[0]?.name ?? '');
     setWorkItem('');
-    setWorkDate(new Date().toISOString().slice(0, 10));
+    setWorkDate(localDateKey());
     setDescription('');
     setHoursMode('TOTAL');
     setTotalHours('00:00');
@@ -178,7 +179,7 @@ export function LogTimeModal({
           }
         }}
       >
-        <DialogContent className="flex flex-col max-h-[85dvh] sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
+        <DialogContent className="flex flex-col sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
           {/* Header */}
           <DialogHeader className="shrink-0 flex flex-row items-center justify-between border-b border-border/80 px-6 py-3 bg-muted/20">
             <DialogTitle className="text-base font-semibold text-foreground tracking-tight">
@@ -187,7 +188,7 @@ export function LogTimeModal({
           </DialogHeader>
 
           {/* Form Content - 2 Column Zoho People Layout */}
-          <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-5 space-y-3.5 text-xs">
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-5 space-y-3.5 text-xs">
             {/* Project Name */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
               <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">

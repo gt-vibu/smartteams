@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button, Input, Label } from '@smarteam/ui';
-import { hasPermission } from '@smarteam/contracts';
+import { formatDate, hasPermission, formatDateRange } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import { shiftsRepository } from '../../repositories/shifts.repository';
@@ -80,8 +80,8 @@ export function EmployeeShiftSection({
           <span className="font-semibold text-foreground">{current.shift.name}</span>
           <span className="text-muted-foreground">
             {' '}
-            · since {current.startsOn}
-            {current.endsOn ? ` · until ${current.endsOn}` : ' · permanent'}
+            · since {formatDate(current.startsOn)}
+            {current.endsOn ? ` · until ${formatDate(current.endsOn)}` : ' · permanent'}
           </span>
         </p>
       ) : (
@@ -92,7 +92,7 @@ export function EmployeeShiftSection({
       {upcoming.map((row) => (
         <p className="text-muted-foreground" key={row.id}>
           Moves to <span className="font-semibold text-foreground">{row.shift.name}</span> on{' '}
-          {row.startsOn}
+          {formatDate(row.startsOn)}
         </p>
       ))}
 
@@ -146,9 +146,7 @@ export function EmployeeShiftSection({
             {past.map((row) => (
               <li className="flex justify-between gap-2 text-muted-foreground" key={row.id}>
                 <span className="font-semibold text-foreground">{row.shift.name}</span>
-                <span>
-                  {row.startsOn} to {row.endsOn}
-                </span>
+                <span>{formatDateRange(row.startsOn, row.endsOn)}</span>
               </li>
             ))}
           </ul>

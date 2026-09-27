@@ -6,6 +6,7 @@ export const documentScopeSchema = z.enum([
   'PERSONAL',
   'EMPLOYEE',
   'TEAM',
+  'PROJECT',
   'ORGANIZATION',
   'INTERNAL',
 ]);
@@ -17,6 +18,9 @@ export const documentAccessReasonSchema = z.enum([
   'HR',
   'MANAGER',
   'TEAM',
+  'TEAM_LEAD',
+  'PROJECT',
+  'PROJECT_LEAD',
   'ORGANIZATION',
   'ADMINISTRATOR',
   'SHARED',
@@ -28,6 +32,7 @@ export const documentSectionSchema = z.enum([
   'shared',
   'organization',
   'team',
+  'project',
   'employees',
   'internal',
 ]);
@@ -45,7 +50,13 @@ export const documentSchema = z.object({
     .object({ id: z.string().uuid(), name: z.string(), employeeNumber: z.string() })
     .nullable(),
   team: z.object({ id: z.string().uuid(), name: z.string() }).nullable(),
+  // Optional: a response from before project files existed has no such field.
+  project: z
+    .object({ id: z.string().uuid(), name: z.string(), code: z.string() })
+    .nullable()
+    .optional(),
   allowDownload: z.boolean(),
+  expiresOn: z.string().nullable().optional(),
   activeShares: z.number().optional(),
   access: z.object({
     view: z.boolean(),
@@ -104,6 +115,9 @@ export const DOCUMENT_REASON_LABEL: Record<DocumentAccessReason, string> = {
   HR: 'Employee record',
   MANAGER: 'Your report',
   TEAM: 'Your team',
+  TEAM_LEAD: 'You lead this team',
+  PROJECT: 'Your project',
+  PROJECT_LEAD: 'You lead this project',
   ORGANIZATION: 'Company-wide',
   ADMINISTRATOR: 'You publish this',
   SHARED: 'Shared with you',

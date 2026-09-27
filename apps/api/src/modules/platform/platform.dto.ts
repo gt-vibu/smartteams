@@ -1,5 +1,5 @@
 import { IsDateString, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
-import { IsEnum } from 'class-validator';
+import { IsEnum, ValidateIf } from 'class-validator';
 import { ProjectStatus } from '../../generated/prisma/enums';
 export class TeamDto {
   @IsString() name!: string;
@@ -20,7 +20,9 @@ export class UpdateTeamDto {
   @IsOptional() @IsString() name?: string;
   @IsOptional() @IsString() description?: string;
   @IsOptional() @IsUUID() branchId?: string;
-  @IsOptional() @IsUUID() teamLeadEmployeeId?: string;
+  /** `null` removes the lead. */
+  @IsOptional() @ValidateIf((_, value) => value !== null) @IsUUID() teamLeadEmployeeId?:
+    string | null;
 }
 export class TeamDeactivationDto {
   @IsString() @MinLength(2) reason!: string;
@@ -33,6 +35,7 @@ export class ProjectDto {
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsDateString() startDate?: string;
   @IsOptional() @IsDateString() endDate?: string;
+  @IsOptional() @IsUUID() projectLeadEmployeeId?: string;
 }
 export class ProjectMemberDto {
   @IsUUID() employeeId!: string;
@@ -48,6 +51,9 @@ export class UpdateProjectDto {
   @IsOptional() @IsDateString() startDate?: string;
   @IsOptional() @IsDateString() endDate?: string;
   @IsOptional() @IsEnum(ProjectStatus) status?: ProjectStatus;
+  /** `null` removes the lead. */
+  @IsOptional() @ValidateIf((_, value) => value !== null) @IsUUID() projectLeadEmployeeId?:
+    string | null;
 }
 export class ProjectDeactivationDto {
   @IsString() @MinLength(2) reason!: string;

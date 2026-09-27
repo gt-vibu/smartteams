@@ -7,9 +7,12 @@ import { Button } from '@smarteam/ui';
 import { useApprovalInbox } from '../../hooks/use-approval-inbox';
 import { ApprovalPolicyBuilder } from './approval-policy-builder';
 import { ApprovalQueue } from './approval-queue';
+import { DelegationPanel } from './delegation-panel';
+import { ApprovalFollowUpCard } from './approval-follow-up-card';
 import { PageShell } from '../layout/page-shell';
+import { useAuth } from '../../hooks/use-auth';
 
-type View = 'queue' | 'policies';
+type View = 'queue' | 'cover' | 'policies';
 
 /**
  * Approvals.
@@ -24,26 +27,36 @@ type View = 'queue' | 'policies';
  */
 export function ScreenApprovals() {
   const inbox = useApprovalInbox();
-  const [view, setView] = useState<View>('queue');
+  const { workspaceContext, hasPermission } = useAuth();
+  const admin = workspaceContext === 'ADMIN';
+  // Only the tabs this person can use in this workspace. Someone's own workspace has their queue
+  // and their cover; routing policies, and cover for others, belong to the admin workspace.
+  const views: Array<{ id: View; label: string }> = [
+    { id: 'queue', label: `Awaiting me${inbox.items.length ? ` (${inbox.items.length})` : ''}` },
+    ...(!admin || hasPermission('approval-policies.write')
+      ? [{ id: 'cover' as const, label: 'Away cover' }]
+      : []),
+    ...(admin && hasPermission('approval-policies.read')
+      ? [{ id: 'policies' as const, label: 'Routing policies' }]
+      : []),
+  ];
+  const [chosen, setView] = useState<View>('queue');
+  const view = views.some((entry) => entry.id === chosen) ? chosen : 'queue';
 
   return (
     <PageShell>
       <ScreenHeader
-        description="Decisions routed to you, and the policies that route them."
+        description={
+          admin
+            ? 'Decisions routed to you, and the policies that route them.'
+            : 'Requests waiting for your decision, and cover while you are away.'
+        }
         icon={CheckCircle2}
         title="Approvals"
         tone="success"
       />
-      <div className="flex items-center gap-4 border-b border-border pb-2">
-        {(
-          [
-            {
-              id: 'queue',
-              label: `Awaiting me${inbox.items.length ? ` (${inbox.items.length})` : ''}`,
-            },
-            { id: 'policies', label: 'Routing policies' },
-          ] as Array<{ id: View; label: string }>
-        ).map((entry) => (
+      <div className="flex items-center gap-4 overflow-x-auto border-b border-border pb-2">
+        {views.map((entry) => (
           <Button
             className={`rounded-none pb-1 text-xs font-semibold ${
               view === entry.id
@@ -61,9 +74,16 @@ export function ScreenApprovals() {
         ))}
       </div>
 
-      {view === 'policies' && <ApprovalPolicyBuilder />}
+      {view === 'policies' && (
+        <>
+          <ApprovalFollowUpCard />
+          <ApprovalPolicyBuilder />
+        </>
+      )}
 
       {view === 'queue' && <ApprovalQueue inbox={inbox} />}
+
+      {view === 'cover' && <DelegationPanel admin={admin} />}
     </PageShell>
   );
 }

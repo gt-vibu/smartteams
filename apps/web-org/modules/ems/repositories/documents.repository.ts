@@ -29,6 +29,7 @@ export type DocumentUploadRequest = {
   byteSize: number;
   employeeId?: string;
   teamId?: string;
+  projectId?: string;
   allowDownload?: boolean;
 };
 
@@ -43,9 +44,14 @@ export type ShareRequest = {
 };
 
 export const documentsRepository = {
-  async list(organizationId: string, section: DocumentSection): Promise<StoredDocument[]> {
+  /** `projectId` or `teamId` narrows the list to that group's files, for its own page. */
+  async list(
+    organizationId: string,
+    section: DocumentSection,
+    owner: { projectId?: string; teamId?: string } = {},
+  ): Promise<StoredDocument[]> {
     return parseDocuments(
-      await apiRequest(`${base(organizationId)}/documents${queryString({ section })}`, {
+      await apiRequest(`${base(organizationId)}/documents${queryString({ section, ...owner })}`, {
         method: 'GET',
       }),
     );

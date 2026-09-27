@@ -68,9 +68,10 @@ export function toFileDto<T extends { byteSize: bigint }>(file: T) {
   const rest: Record<string, unknown> = { ...file };
   delete rest.accessScope;
   delete rest.teamId;
+  delete rest.projectId;
   delete rest.allowDownload;
   return {
-    ...(rest as Omit<T, 'accessScope' | 'teamId' | 'allowDownload'>),
+    ...(rest as Omit<T, 'accessScope' | 'teamId' | 'projectId' | 'allowDownload'>),
     byteSize: file.byteSize.toString(),
   };
 }

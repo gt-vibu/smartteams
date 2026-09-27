@@ -40,6 +40,7 @@ export function usePayrollAdmin() {
     release: hasPermission(permissions, 'payroll.runs.release'),
     lock: hasPermission(permissions, 'payroll.runs.lock'),
     adjust: hasPermission(permissions, 'payroll.adjustments.write'),
+    pay: hasPermission(permissions, 'payroll.payments.write'),
   };
 
   const runResource = useAsyncResource<PayrollRun[]>(

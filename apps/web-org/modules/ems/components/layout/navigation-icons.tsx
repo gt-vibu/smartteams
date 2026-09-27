@@ -62,6 +62,8 @@ export const navIcons = {
     'M6.3 18.1A11.2 11.2 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .5 0 1-.1 1.6',
     'M12 10.5a14.9 14.9 0 01-3.6 9.8m6.7-4.6a18.7 18.7 0 01-2.5 5.3',
   ]),
+  /** Bars: figures across the organization. */
+  reports: outline('M4 20h16M7 16v-5m5 5V7m5 9v-8'),
   /** A clock: when someone is rostered to work. */
   shifts: outline('M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'),
   /** A folder: work grouped into projects. */

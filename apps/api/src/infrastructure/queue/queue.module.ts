@@ -22,6 +22,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BullModule.registerQueue({ name: 'attendance-auto-check-out' }),
     BullModule.registerQueue({ name: 'employee-branch-transfer' }),
     BullModule.registerQueue({ name: 'mail-delivery' }),
+    BullModule.registerQueue({ name: 'leave-accrual' }),
+    BullModule.registerQueue({ name: 'notification-mail' }),
+    BullModule.registerQueue({ name: 'employee-exits' }),
+    BullModule.registerQueue({ name: 'approval-reminders' }),
   ],
   exports: [BullModule],
 })
