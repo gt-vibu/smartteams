@@ -12,7 +12,7 @@ import {
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
-import { DocumentQueryDto, DocumentUploadDto, FileShareDto } from './files.dto';
+import { DocumentExpiryDto, DocumentQueryDto, DocumentUploadDto, FileShareDto } from './files.dto';
 import { FilesDocumentsService } from './files-documents.service';
 import { FilesSharesService } from './files-shares.service';
 
@@ -40,7 +40,15 @@ export class FilesDocumentsController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.documents.list(context, query.section ?? 'all', query.employeeId));
+      .then((context) =>
+        this.documents.list(
+          context,
+          query.section ?? 'all',
+          query.employeeId,
+          query.projectId,
+          query.teamId,
+        ),
+      );
   }
 
   @Post('documents/uploads') begin(
@@ -51,6 +59,17 @@ export class FilesDocumentsController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.documents.beginUpload(context, body));
+  }
+
+  @Post(':fileId/expiry') setExpiry(
+    @Param('organizationId') organizationId: string,
+    @Param('fileId', ParseUUIDPipe) fileId: string,
+    @Body() body: DocumentExpiryDto,
+    @Req() request: AuthedRequest,
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.documents.setExpiry(context, fileId, body.expiresOn));
   }
 
   @Post(':fileId/view') view(

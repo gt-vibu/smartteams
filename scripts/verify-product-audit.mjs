@@ -446,8 +446,19 @@ console.log('\nCompany lists (project roles, job titles)');
   );
   r = await asha.as('POST', '/picklists/project-roles', { name: 'Chief Everything' });
   ok('an employee cannot add to the list', refused(r), status(r));
+  // Standard roles are the company's to prune: an unused one leaves the list and can come back.
   r = await A.org('POST', '/picklists/project-roles/remove', { name: 'Project Manager' });
-  ok('a standard role cannot be removed', r.status === 409, status(r));
+  ok(
+    'an unused standard role can be removed',
+    good(r) && !(await names(A.org, 'project-roles')).includes('Project Manager'),
+    status(r),
+  );
+  r = await A.org('POST', '/picklists/project-roles', { name: 'Project Manager' });
+  ok(
+    'a removed standard role can be added back',
+    good(r) && (await names(A.org, 'project-roles')).includes('Project Manager'),
+    status(r),
+  );
   ok(
     'another company does not see this company’s role',
     !(await names(B.org, 'project-roles')).includes('Solution Architect'),

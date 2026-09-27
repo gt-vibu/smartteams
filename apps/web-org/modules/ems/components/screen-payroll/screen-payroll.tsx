@@ -144,6 +144,7 @@ export function ScreenPayroll() {
             ) : (
               <PayrollAdvancesPanel
                 advances={payroll.advances}
+                allowance={payroll.advanceAllowance}
                 canRequest={payroll.canRequestAdvance && !payroll.hasNoEmployeeRecord}
                 onRequest={payroll.requestAdvance}
                 saveError={payroll.saveError}

@@ -14,6 +14,7 @@ import { leaveRepository, type LeaveTypeInput } from '../repositories/leave.repo
 import { workforceRepository } from '../repositories/workforce.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { useDataChanged } from '../lib/data-events';
 
 type Loaded = {
   types: LeaveType[];
@@ -33,6 +34,7 @@ type Loaded = {
 export const leaveAdminBusyKey = {
   assign: (code: string) => `assign:${code}`,
   createType: 'create-type',
+  updateType: (typeId: string) => `update-type:${typeId}`,
   decide: (requestId: string) => `decide:${requestId}`,
   adjust: (employeeId: string, leaveTypeId: string) => `adjust:${employeeId}:${leaveTypeId}`,
 } as const;
@@ -68,6 +70,8 @@ export function useLeaveAdmin() {
     { enabled: Boolean(organizationId) && (canReadRequests || canReadTypes) },
   );
 
+  // A new request, announced by a notification, joins the queue without a reload.
+  useDataChanged(['leave'], resource.refetch);
   const { saving, saveError, run } = useMutationRunner(resource.refetch);
 
   /**
@@ -108,6 +112,17 @@ export function useLeaveAdmin() {
       track(leaveAdminBusyKey.createType, () =>
         run(
           () => leaveRepository.createType(organizationId!, input),
+          'The leave type could not be saved.',
+        ),
+      ),
+    [organizationId, run, track],
+  );
+
+  const updateType = useCallback(
+    (typeId: string, input: Omit<LeaveTypeInput, 'code'>) =>
+      track(leaveAdminBusyKey.updateType(typeId), () =>
+        run(
+          () => leaveRepository.updateType(organizationId!, typeId, input),
           'The leave type could not be saved.',
         ),
       ),
@@ -159,6 +174,7 @@ export function useLeaveAdmin() {
     saveError,
     decide,
     createType,
+    updateType,
     assignType,
     adjustBalance,
     canDecide,

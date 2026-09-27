@@ -38,6 +38,7 @@ function setup(self: { id: string } | null = { id: EMPLOYEE_A }) {
     $queryRaw: jest.fn().mockResolvedValue([]),
     employee: { findFirst: jest.fn().mockResolvedValue(self) },
     payslip: { findMany: jest.fn().mockResolvedValue([]) },
+    organization: { findUnique: jest.fn().mockResolvedValue({ name: 'Acme' }) },
     payrollLineItem: { findMany: jest.fn().mockResolvedValue([]) },
   };
   const database = {

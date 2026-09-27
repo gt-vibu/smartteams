@@ -18,7 +18,7 @@ import { setupCall } from './lib/setup-call.mjs';
 import { weekdaysAgo } from './lib/dates.mjs';
 import { testAadhaar } from './lib/aadhaar.mjs';
 
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 let pass = 0,
   fail = 0;
 const ok = (l, c, d = '') => {
@@ -773,6 +773,105 @@ console.log('\n=== ISOLATION AND SCOPING ===');
       : 'setup skipped (calc ' + calcPast.status + ', derive ' + red.status + ')',
   );
 }
+
+// A recalculation first unwinds what the run recovered, then recovers again. It read the
+// outstanding advances before unwinding, so an advance this run had recovered in full was left
+// out, then marked unrecovered: the money was never taken back.
+await scenario(
+  '13. an advance recovered in full stays recovered through a recalculation',
+  async (t, runId) =>
+    good(
+      await t.org('POST', '/payroll/runs/' + runId + '/adjustments', {
+        payrollRunId: runId,
+        employeeId: t.employeeId,
+        type: 'BONUS',
+        amount: 100,
+        description: 'forces a recalculation',
+        taxable: false,
+      }),
+    )
+      ? 'ok'
+      : 'skip',
+  {
+    setup: async (t) => {
+      const a = await t.org('POST', '/payroll/advances', {
+        employeeId: t.employeeId,
+        requestedAmount: 1000,
+        reason: 'recovered before the recalculation',
+      });
+      await t.org('POST', '/payroll/advances/' + a.payload?.id + '/decision', {
+        status: 'APPROVED',
+        comment: 'approved before the first calculation',
+      });
+    },
+    after: async (t) => {
+      const list = rows(
+        (await t.org('GET', '/payroll/advances?employeeId=' + t.employeeId)).payload,
+      );
+      const advance = list.find((row) => row.reason === 'recovered before the recalculation');
+      ok(
+        'the advance is still recovered in full',
+        advance?.status === 'RECOVERED' && Number(advance?.recoveredAmount) === 1000,
+        advance ? advance.status + ' ' + advance.recoveredAmount : 'advance not found',
+      );
+    },
+  },
+);
+
+// Paid or unpaid decides what payroll deducts for a leave day, and payroll reads it from the type
+// when it calculates. Switching a type after a run was calculated left the run's figures as they
+// were, so it could be approved paying the day in full.
+const reviewOf = async (t) => {
+  const review = await t.org('GET', '/payroll/runs/' + t.runId + '/review');
+  return review.payload?.items?.find((item) => item.employeeId === t.employeeId)?.breakdown;
+};
+await scenario(
+  '14. a leave type switched from paid to unpaid',
+  async (t) => {
+    t.paidBefore = (await reviewOf(t))?.paidLeaveDays;
+    const r = await t.org('PATCH', '/leave/types/' + t.switchType.id, {
+      name: t.switchType.name,
+      paid: false,
+      accrualType: 'FIXED_ANNUAL',
+      annualAllowance: 10,
+      requiresAttachment: false,
+    });
+    return good(r) ? 'ok' : 'skip';
+  },
+  {
+    setup: async (t) => {
+      const type = await t.org('POST', '/leave/types', {
+        code: 'SWITCH',
+        name: 'Switchable Leave',
+        paid: true,
+        accrualType: 'FIXED_ANNUAL',
+        annualAllowance: 10,
+        requiresAttachment: false,
+      });
+      t.switchType = type.payload;
+      await t.org('POST', '/leave/types/SWITCH/assign', { branchId: t.branchId });
+      const leave = await t.org('POST', '/leave/requests', {
+        employeeId: t.employeeId,
+        leaveTypeId: type.payload?.id,
+        startDate: weekdaysAgo(3),
+        endDate: weekdaysAgo(3),
+        reason: 'paid until the type changes',
+      });
+      await t.org('POST', '/leave/requests/' + leave.payload?.id + '/decision', {
+        status: 'APPROVED',
+        comment: 'approved before payroll',
+      });
+    },
+    after: async (t) => {
+      const now = await reviewOf(t);
+      ok(
+        'the day counted as paid leave, and after the switch as unpaid',
+        t.paidBefore === 1 && now?.paidLeaveDays === 0 && now?.unpaidDays >= 1,
+        'paid before=' + t.paidBefore + ' after=' + JSON.stringify(now),
+      );
+    },
+  },
+);
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 if (fail > 0) process.exitCode = 1;

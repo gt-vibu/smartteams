@@ -4,6 +4,7 @@ import { ConflictError } from '../../common/errors/domain-error';
 import type { AuditService } from '../audit/audit.service';
 import { jsonSnapshot } from '../audit/audit.service';
 import { assertResolvableApprovers } from '../approvals/approval-authorization';
+import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
 
 /** The fields of an attendance record a correction is routed and snapshotted from. */
 export type CorrectableRecord = {
@@ -80,5 +81,28 @@ export async function createAttendanceCorrection(
     },
     tx,
   );
+  const firstStep = policy.steps[0];
+  const day = await tx.attendanceRecord.findUnique({
+    where: { id: record.id },
+    select: { employeeId: true, workDate: true },
+  });
+  if (firstStep && day) {
+    const requester = await requesterRouting(tx, context.organizationId, day.employeeId);
+    await notify(tx, context, {
+      recipients: await stepApprovers(
+        tx,
+        context.organizationId,
+        firstStep,
+        requester,
+        correctionBranchId,
+      ),
+      kind: 'ATTENDANCE_CORRECTION_PENDING',
+      title: 'Attendance correction awaiting your decision',
+      body: `${requester.name}'s attendance for ${describeDays(day.workDate, day.workDate)}: ${reason}`,
+      module: 'approvals',
+      entityType: 'ATTENDANCE_CORRECTION',
+      entityId: correction.id,
+    });
+  }
   return correction;
 }

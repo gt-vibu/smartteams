@@ -87,16 +87,33 @@ export class PayrollPayslipsService {
               },
             },
           },
-          employee: { select: { externalId: true, employeeNumber: true } },
+          employee: {
+            select: { externalId: true, employeeNumber: true, firstName: true, lastName: true },
+          },
           fileObject: { select: { id: true, status: true } },
         },
         orderBy: { issuedAt: 'desc' },
       });
+      const native = context.accessMode === AccessMode.NATIVE;
+      // The employer's name heads a printed payslip; employees cannot read the organization itself.
+      const employer = native
+        ? await tx.organization.findUnique({
+            where: { id: context.organizationId },
+            select: { name: true },
+          })
+        : null;
       return payslips.map((payslip) => ({
         id: payslip.id,
         employeeId: payslip.employeeId,
         externalEmployeeId: payslip.employee.externalId,
         employeeNumber: payslip.employee.employeeNumber,
+        // The app's run breakdown names people; a partner's payslip shape stays as it was.
+        ...(native
+          ? {
+              employeeName: `${payslip.employee.firstName} ${payslip.employee.lastName}`.trim(),
+              organizationName: employer?.name ?? null,
+            }
+          : {}),
         status: payslip.status,
         issuedAt: payslip.issuedAt,
         file: payslip.fileObject,

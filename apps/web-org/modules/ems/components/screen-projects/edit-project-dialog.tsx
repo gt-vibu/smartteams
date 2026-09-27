@@ -108,7 +108,7 @@ export function EditProjectDialog({
           Edit project &mdash; {project.code ?? project.name}
         </DialogTitle>
 
-        <div className="max-h-[70vh] space-y-4 overflow-y-auto p-5">
+        <div className="sm:max-h-[70vh] space-y-4 overflow-y-auto p-5">
           <div>
             <Label className="mb-1 block" htmlFor="edit-project-name">
               Name

@@ -15,6 +15,7 @@ const leave: ApprovalInboxItem = {
   id: 'leave-1',
   domain: 'LEAVE',
   employeeId: 'employee-1',
+  requester: null,
   title: 'Leave request',
   detail: '2026-09-21 to 2026-09-22 · Family function',
   submittedAt: '2026-09-14T09:00:00.000Z',

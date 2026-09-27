@@ -21,7 +21,7 @@ import { resolveDatabaseUrl } from './lib/database-url.mjs';
 import { setupCall } from './lib/setup-call.mjs';
 import { testAadhaar } from './lib/aadhaar.mjs';
 
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 // `pg` is a dependency of the API workspace, not of the repo root, so resolve it from there.
 const require = createRequire(new URL('../apps/api/package.json', import.meta.url));
 const { Client } = require('pg');

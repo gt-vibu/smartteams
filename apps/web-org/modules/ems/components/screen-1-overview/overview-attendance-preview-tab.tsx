@@ -2,6 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@smarteam/ui';
 
+import { formatDate } from '@smarteam/contracts';
 import React from 'react';
 import { useAttendance } from '../../hooks/use-attendance';
 
@@ -66,7 +67,7 @@ export function OverviewAttendancePreviewTab() {
                   data-cell="primary"
                   className="py-2.5 px-4 font-mono font-semibold text-foreground"
                 >
-                  {r.workDate}
+                  {formatDate(r.workDate)}
                 </TableCell>
                 <TableCell data-label="Day" className="py-2.5 px-3 text-muted-foreground">
                   {r.dayOfWeek}
@@ -83,7 +84,11 @@ export function OverviewAttendancePreviewTab() {
                 >
                   {r.workedLabel}
                 </TableCell>
-                <TableCell data-label="Status" className="py-2.5 px-3 text-right">
+                <TableCell
+                  data-cell="status"
+                  data-label="Status"
+                  className="py-2.5 px-3 text-right"
+                >
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${
                       r.dayStatus === 'PRESENT'

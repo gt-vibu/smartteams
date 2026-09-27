@@ -36,6 +36,8 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { ShiftsModule } from './modules/shifts/shifts.module';
 import { HolidaysModule } from './modules/holidays/holidays.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import { TimesheetsModule } from './modules/timesheets/timesheets.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -80,6 +82,8 @@ import { UsersModule } from './modules/users/users.module';
     TimesheetsModule,
     ShiftsModule,
     HolidaysModule,
+    NotificationsModule,
+    ReportsModule,
     PayrollModule,
     FederationModule,
     AuditModule,

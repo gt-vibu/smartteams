@@ -15,6 +15,7 @@ const autoClosed: ApprovalInboxItem = {
   id: 'correction-1',
   domain: 'ATTENDANCE_CORRECTION',
   employeeId: 'employee-1',
+  requester: null,
   title: 'Day closed with no check-out',
   detail: 'Proposed check-out at 16 Sep, 23:59 · Closed automatically',
   submittedAt: '2026-09-16T18:30:00.000Z',

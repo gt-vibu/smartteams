@@ -52,7 +52,17 @@ export function usePayroll() {
     { enabled: Boolean(organizationId) && canReadAdvances },
   );
 
-  const { saving, saveError, run } = useMutationRunner(advanceResource.refetch);
+  // What the employee may still ask for; refreshed with the list, since a request uses it up.
+  const allowanceResource = useAsyncResource(
+    () => payrollRepository.getAdvanceAllowance(organizationId!),
+    [organizationId, employeeId],
+    { enabled: Boolean(organizationId && employeeId) && canRequestAdvance },
+  );
+  const refetchAdvances = useCallback(async () => {
+    await Promise.all([advanceResource.refetch(), allowanceResource.refetch()]);
+  }, [advanceResource, allowanceResource]);
+
+  const { saving, saveError, run } = useMutationRunner(refetchAdvances);
 
   const requestAdvance = useCallback(
     (input: { requestedAmount: number; reason: string }) =>
@@ -68,6 +78,7 @@ export function usePayroll() {
     profile: profileResource.data ?? null,
     payslips: useMemo(() => payslipResource.data ?? [], [payslipResource.data]),
     advances: useMemo(() => advanceResource.data ?? [], [advanceResource.data]),
+    advanceAllowance: allowanceResource.data ?? null,
 
     loading: profileResource.loading || payslipResource.loading || advanceResource.loading,
     error: profileResource.error ?? payslipResource.error ?? advanceResource.error,

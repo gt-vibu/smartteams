@@ -3,7 +3,7 @@
 import React from 'react';
 import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
-import { formatWorkMinutes } from '@smarteam/contracts';
+import { formatWorkMinutes, formatDate } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
 
 export function GreetingActivityCard() {
@@ -62,8 +62,8 @@ export function GreetingActivityCard() {
             <div className="text-foreground">
               Your timesheet —{' '}
               <strong className="text-foreground font-semibold">
-                Timesheet ({approvedTimesheet.period?.periodStart.slice(0, 10)} -{' '}
-                {approvedTimesheet.period?.periodEnd.slice(0, 10)})
+                Timesheet ({formatDate(approvedTimesheet.period?.periodStart)} -{' '}
+                {formatDate(approvedTimesheet.period?.periodEnd)})
               </strong>{' '}
               has been approved.
             </div>

@@ -4,6 +4,7 @@ import React from 'react';
 import { Button } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 import { useMyTeams } from '../../hooks/use-teams';
+import { workspaceTitle } from '../../services/authorization.policy';
 
 /** The breadcrumb name of each admin module; a module missing here showed as "Files Vault". */
 const ORGANIZATION_MODULE_LABELS: Record<string, string> = {
@@ -19,6 +20,7 @@ const ORGANIZATION_MODULE_LABELS: Record<string, string> = {
   holidays: 'Holidays',
   approvals: 'Approvals',
   files: 'Files Vault',
+  reports: 'Reports',
 };
 
 interface ContextBarProps {
@@ -132,7 +134,7 @@ export function ContextBar({
         <span className="inline-flex items-center gap-1.5 rounded-[4px] border border-border bg-muted px-2 py-0.5 text-[10px] font-semibold text-foreground">
           <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
           {workspaceContext === 'ADMIN'
-            ? 'Admin Workspace (Governance)'
+            ? workspaceTitle(persona).workspace
             : activeSpace === 'Team' && primaryTeam
               ? `Team: ${primaryTeam.name}`
               : `Employee (${persona.name})`}

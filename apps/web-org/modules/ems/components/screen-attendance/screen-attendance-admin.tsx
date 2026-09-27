@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { permittedTabs } from '../../lib/permitted-tabs';
-import { hasPermission } from '@smarteam/contracts';
+import { formatDate, hasPermission } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { Clock3 } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
@@ -221,8 +221,12 @@ export function ScreenAttendanceAdmin() {
                       className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
                       key={row.id}
                     >
-                      <td data-label="Date" className="px-4 py-2.5 font-mono text-foreground">
-                        {row.workDate}
+                      <td
+                        data-bare=""
+                        data-label="Date"
+                        className="px-4 py-2.5 font-mono text-foreground"
+                      >
+                        {formatDate(row.workDate)}
                       </td>
                       <td data-cell="primary" className="px-4 py-2.5">
                         <span className="block font-semibold text-foreground">
@@ -256,7 +260,7 @@ export function ScreenAttendanceAdmin() {
                       >
                         {row.overtimeLabel}
                       </td>
-                      <td data-label="Status" className="px-4 py-2.5">
+                      <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                         <Badge variant="outline">{row.dayStatus}</Badge>
                         {row.correctionStatus === 'PENDING' && (
                           <Badge className="ml-1" variant="secondary">

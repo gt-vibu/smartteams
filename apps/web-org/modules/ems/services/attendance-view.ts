@@ -16,7 +16,8 @@ import type { HolidayConflictView } from './holiday-conflict-view';
  *
  *  - `isRestrictedHoliday` — the holiday calendar is not reconciled yet. `holidayName` is set only
  *    for a check-in on the employee's approved optional holiday, from the API's conflict list.
- *  - `shiftCode` / `shiftName` — the shifts module is not reconciled yet.
+ *  - `shiftCode` / `shiftName` — a record stores no shift; `useAttendance` fills the name from
+ *    the employee's assignment history.
  *
  * They are null rather than invented, so a working day is never labelled as a holiday.
  */

@@ -30,6 +30,7 @@ function context(accessMode: DomainContext['accessMode'] = 'NATIVE'): DomainCont
 
 function setup(sheetOwnerUserId: string, step: { approverType: string; approverUserId?: string }) {
   const tx = {
+    approvalDelegation: { findMany: jest.fn().mockResolvedValue([]) },
     timesheet: {
       findFirst: jest.fn().mockResolvedValue({
         id: SHEET,

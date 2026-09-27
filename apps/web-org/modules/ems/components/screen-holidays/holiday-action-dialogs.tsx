@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { formatDate, formatDateRange } from '@smarteam/contracts';
 import { Button, Dialog, DialogContent, DialogTitle, Input, Label, Textarea } from '@smarteam/ui';
 import type { Holiday, EmployeeHolidayPolicy, EmployeeHolidaySelection } from '@smarteam/contracts';
 import type { HolidaysState } from '../../hooks/use-holidays';
@@ -61,7 +62,7 @@ export function RetireHolidayDialog({
         <DialogTitle>Retire {targetGroup?.name ?? 'holiday'}</DialogTitle>
         <p className="mt-1 text-xs text-muted-foreground">
           {targetGroup && targetGroup.totalDays > 1
-            ? `Retiring all ${targetGroup.totalDays} days (${targetGroup.startDate} → ${targetGroup.endDate}).`
+            ? `Retiring all ${targetGroup.totalDays} days (${formatDateRange(targetGroup.startDate, targetGroup.endDate)}).`
             : ''}{' '}
           The holiday stops applying to future leave calculations. Leave already approved keeps the
           days it was charged.
@@ -179,8 +180,8 @@ export function HolidaySelectionsDialog({
 
         <div className="text-xs text-muted-foreground font-mono mt-1">
           {isMultiDay
-            ? `${holidayGroup.startDate} → ${holidayGroup.endDate} (${holidayGroup.totalDays} days)`
-            : holidayGroup.startDate}
+            ? `${formatDateRange(holidayGroup.startDate, holidayGroup.endDate)} (${holidayGroup.totalDays} days)`
+            : formatDate(holidayGroup.startDate)}
         </div>
 
         <div className="mt-4">

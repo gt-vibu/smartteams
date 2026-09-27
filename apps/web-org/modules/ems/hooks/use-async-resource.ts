@@ -83,7 +83,11 @@ export function useAsyncResource<T>(
     void run(false);
   }, [enabled, run, ...deps]);
 
-  const refetch = useCallback(() => run(true), [run]);
+  // A resource that is off because its inputs are missing stays off: a data-changed signal used
+  // to refetch it anyway, sending a request with a null id (`employeeId=null`) that the API refused.
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
+  const refetch = useCallback(() => (enabledRef.current ? run(true) : Promise.resolve()), [run]);
 
   return { data, loading, refreshing, error, forbidden, refetch };
 }

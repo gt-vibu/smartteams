@@ -42,7 +42,11 @@ function summaryOf(member: WithEmployee) {
     : null;
 }
 
-export function toTeamDto(team: TeamRow) {
+export function toTeamDto(
+  team: TeamRow & {
+    teamLead?: { id: string; firstName: string; lastName: string; employeeNumber: string } | null;
+  },
+) {
   return {
     id: team.id,
     organizationId: team.organizationId,
@@ -50,6 +54,7 @@ export function toTeamDto(team: TeamRow) {
     name: team.name,
     description: team.description,
     teamLeadEmployeeId: team.teamLeadEmployeeId,
+    teamLead: team.teamLead ? summaryOf({ employee: team.teamLead }) : null,
     status: team.status,
     createdAt: team.createdAt.toISOString(),
     members: team.members.map(toTeamMemberDto),
@@ -68,7 +73,16 @@ export function toTeamMemberDto(member: TeamRow['members'][number]) {
   };
 }
 
-export function toProjectDto(project: ProjectRow) {
+export function toProjectDto(
+  project: ProjectRow & {
+    projectLead?: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      employeeNumber: string;
+    } | null;
+  },
+) {
   return {
     id: project.id,
     organizationId: project.organizationId,
@@ -79,6 +93,8 @@ export function toProjectDto(project: ProjectRow) {
     status: project.status,
     startDate: project.startDate ? dateOnly(project.startDate) : null,
     endDate: project.endDate ? dateOnly(project.endDate) : null,
+    projectLeadEmployeeId: project.projectLeadEmployeeId,
+    projectLead: project.projectLead ? summaryOf({ employee: project.projectLead }) : null,
     createdAt: project.createdAt.toISOString(),
     members: project.members.map(toProjectMemberDto),
   };

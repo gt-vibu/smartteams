@@ -91,7 +91,7 @@ export function AccessManageDrawer({
           {member.email}
         </p>
 
-        <div className="grid max-h-[65vh] grid-cols-1 gap-0 overflow-y-auto sm:grid-cols-2">
+        <div className="grid sm:max-h-[65vh] grid-cols-1 gap-0 overflow-y-auto sm:grid-cols-2">
           <div className="space-y-2 border-b border-border p-5 sm:border-b-0 sm:border-r">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
               Roles

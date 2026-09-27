@@ -649,10 +649,6 @@ export type AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedI
   deleteMany?: Prisma.AttendanceCorrectionScalarWhereInput | Prisma.AttendanceCorrectionScalarWhereInput[]
 }
 
-export type EnumApprovalStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ApprovalStatus
-}
-
 export type AttendanceCorrectionCreateNestedOneWithoutApprovalsInput = {
   create?: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
   connectOrCreate?: Prisma.AttendanceCorrectionCreateOrConnectWithoutApprovalsInput

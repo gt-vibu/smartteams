@@ -8,11 +8,13 @@ import { AttendanceAutoCheckOutProcessor } from './attendance-auto-checkout.proc
 import { AttendanceWorkWeekController } from './attendance-work-week.controller';
 import { AttendanceWorkWeekService } from './attendance-work-week.service';
 import { QueueModule } from '../../infrastructure/queue/queue.module';
+import { AttendanceLateController } from './attendance-late.controller';
+import { AttendanceLateService } from './attendance-late.service';
 
 @Module({
   imports: [QueueModule],
   // Work week first: its fixed path must win over the attendance controller's `:id` routes.
-  controllers: [AttendanceWorkWeekController, AttendanceController],
+  controllers: [AttendanceWorkWeekController, AttendanceLateController, AttendanceController],
   exports: [AttendanceService, WebauthnService],
   providers: [
     AttendanceService,
@@ -21,6 +23,7 @@ import { QueueModule } from '../../infrastructure/queue/queue.module';
     AttendanceAutoCheckOutService,
     AttendanceAutoCheckOutProcessor,
     AttendanceWorkWeekService,
+    AttendanceLateService,
   ],
 })
 export class AttendanceModule {}

@@ -17,10 +17,13 @@ import { adminNavItems } from './navigation-admin-items';
 
 const canAccessModule = vi.fn<(moduleId: string) => boolean>();
 vi.mock('../../hooks/use-auth', () => ({ useAuth: () => ({ canAccessModule }) }));
+let unreadByModule: Record<string, number> = {};
+vi.mock('../../hooks/use-notifications', () => ({ useUnreadByModule: () => unreadByModule }));
 
 beforeEach(() => {
   canAccessModule.mockReset();
   canAccessModule.mockReturnValue(true);
+  unreadByModule = {};
 });
 
 const renderNav = (activeModule = 'home', onSelectModule = vi.fn()) => {
@@ -111,5 +114,19 @@ describe('navigation icons', () => {
       const duplicated = shapes.filter((shape, index) => shapes.indexOf(shape) !== index);
       expect(duplicated).toEqual([]);
     }
+  });
+
+  it('marks a section with something new, and not the one already open', () => {
+    unreadByModule = { 'time-off': 2, home: 1 };
+    renderNav('home');
+    expect(tab('Time Off').querySelector('[data-unread-dot]')).not.toBeNull();
+    expect(tab('Home').querySelector('[data-unread-dot]')).toBeNull();
+    expect(tab('Time Off')).toHaveAccessibleName(/new/);
+  });
+
+  it('puts the dot on More when what is new is behind it', () => {
+    unreadByModule = { approvals: 1 };
+    renderNav('home');
+    expect(tab('More').querySelector('[data-unread-dot]')).not.toBeNull();
   });
 });

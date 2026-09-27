@@ -75,6 +75,7 @@ function setup(
     recordUpdate: undefined as undefined | Record<string, unknown>,
   };
   const tx = {
+    approvalDelegation: { findMany: jest.fn().mockResolvedValue([]) },
     $queryRaw: jest.fn().mockResolvedValue([]),
     employee: {
       findFirst: jest.fn((args: { where: { userId?: string } }) =>
@@ -89,6 +90,10 @@ function setup(
     },
     attendanceRecord: {
       findFirst: jest.fn(() => Promise.resolve({ ...recordRow, punches: [...punches] })),
+      // Read to word the notification the approver receives.
+      findUnique: jest.fn(() =>
+        Promise.resolve({ employeeId: EMPLOYEE, workDate: new Date('2026-09-18T00:00:00Z') }),
+      ),
       update: jest.fn((args: { data: Record<string, unknown> }) => {
         state.recordUpdate = args.data;
         return Promise.resolve({ ...recordRow, ...args.data });
@@ -154,6 +159,7 @@ function setup(
     // No shift and no holiday, so overtime is measured against the standard day.
     employeeShiftAssignment: { findFirst: jest.fn().mockResolvedValue(null) },
     holiday: { findFirst: jest.fn().mockResolvedValue(null) },
+    notification: { createMany: jest.fn().mockResolvedValue({ count: 1 }) },
     employeeHolidaySelection: { findFirst: jest.fn().mockResolvedValue(null) },
     organizationSettings: {
       findUniqueOrThrow: jest.fn().mockResolvedValue({ standardDayMinutes: 480 }),

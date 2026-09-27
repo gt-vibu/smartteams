@@ -8,6 +8,20 @@ export type AuthorizationContext = {
   permissions: ReadonlySet<string>;
 };
 
+/** What a delegate may do on a colleague's behalf: decide requests, and nothing more. */
+const DECISION_PERMISSIONS = [
+  'leave.requests.decide',
+  'timesheets.decide',
+  'attendance.corrections.decide',
+] as const;
+
+/** The decision each kind of routed request needs. */
+const DECISION_BY_DOMAIN: Record<string, (typeof DECISION_PERMISSIONS)[number]> = {
+  LEAVE: 'leave.requests.decide',
+  TIMESHEET: 'timesheets.decide',
+  ATTENDANCE_CORRECTION: 'attendance.corrections.decide',
+};
+
 @Injectable()
 export class RbacService {
   constructor(private readonly database: TenantDatabaseService) {}
@@ -45,30 +59,77 @@ export class RbacService {
           where: { userId, organizationId, status: 'ACTIVE' },
           select: { id: true },
         });
-        if (!membership) return [];
-        return tx.userRole.findMany({
+        if (!membership) return { own: [], delegated: [], routed: [] };
+        // Someone covering a colleague's approvals may decide what that colleague could, for the
+        // days of the handover. Only decision permissions travel; nothing else about the
+        // colleague's access does, and each decision is still checked against its approval step.
+        const day = new Date(`${now.toISOString().slice(0, 10)}T00:00:00.000Z`);
+        const delegators = (
+          await tx.approvalDelegation.findMany({
+            where: {
+              organizationId,
+              delegateUserId: userId,
+              revokedAt: null,
+              startsOn: { lte: day },
+              endsOn: { gte: day },
+            },
+            select: { delegatorUserId: true },
+          })
+        ).map((row) => row.delegatorUserId);
+        const roles = (holders: string[]) =>
+          tx.userRole.findMany({
+            where: {
+              userId: { in: holders },
+              organizationId,
+              startsAt: { lte: now },
+              AND: [
+                { OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
+                ...(branchId ? [{ OR: [{ branchId: null }, { branchId }] }] : []),
+              ],
+            },
+            select: {
+              role: {
+                select: { permissions: { select: { permission: { select: { key: true } } } } },
+              },
+            },
+          });
+        // Whoever a policy routes requests to may decide them, whatever their role: a reporting
+        // manager with someone reporting to them, or a person named on a step. Each decision is
+        // still checked against the step it is for, so this reaches only their own requests.
+        const hasReports = Boolean(
+          await tx.employee.findFirst({
+            where: { organizationId, status: 'ACTIVE', manager: { is: { userId } } },
+            select: { id: true },
+          }),
+        );
+        const routedSteps = await tx.approvalPolicyStep.findMany({
           where: {
-            userId,
             organizationId,
-            startsAt: { lte: now },
-            AND: [
-              { OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
-              ...(branchId ? [{ OR: [{ branchId: null }, { branchId }] }] : []),
+            OR: [
+              { approverUserId: userId },
+              ...(hasReports ? [{ approverType: 'MANAGER' as const }] : []),
             ],
           },
-          select: {
-            role: {
-              select: { permissions: { select: { permission: { select: { key: true } } } } },
-            },
-          },
+          select: { approvalPolicy: { select: { domain: true } } },
         });
+        return {
+          own: await roles([userId]),
+          delegated: delegators.length ? await roles(delegators) : [],
+          routed: routedSteps.map((step) => step.approvalPolicy.domain as string),
+        };
       },
     );
-    return new Set(
-      assignments.flatMap((assignment) =>
-        assignment.role.permissions.map((item) => item.permission.key),
-      ),
-    );
+    const keys = (rows: typeof assignments.own) =>
+      rows.flatMap((assignment) => assignment.role.permissions.map((item) => item.permission.key));
+    const own = new Set(keys(assignments.own));
+    const theirs = new Set(keys(assignments.delegated));
+    for (const permission of DECISION_PERMISSIONS)
+      if (theirs.has('*') || theirs.has(permission)) own.add(permission);
+    for (const domain of assignments.routed) {
+      const permission = DECISION_BY_DOMAIN[domain];
+      if (permission) own.add(permission);
+    }
+    return own;
   }
 
   /**

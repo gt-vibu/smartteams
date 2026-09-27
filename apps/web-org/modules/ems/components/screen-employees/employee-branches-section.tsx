@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { formatDate, formatDateRange } from '@smarteam/contracts';
 import { Badge, Button } from '@smarteam/ui';
 import type { BranchMembership } from '@smarteam/contracts';
 import { useBranchMemberships } from '../../hooks/use-branch-memberships';
@@ -9,7 +10,7 @@ import { BranchChangeForm, type BranchChange } from './employee-branch-form';
 const today = () => new Intl.DateTimeFormat('en-CA').format(new Date());
 
 const span = (row: BranchMembership) =>
-  row.endsOn ? `${row.startsOn} – ${row.endsOn}` : `since ${row.startsOn}`;
+  row.endsOn ? formatDateRange(row.startsOn, row.endsOn) : `since ${formatDate(row.startsOn)}`;
 
 /**
  * Where an employee belongs: one primary branch, any additional ones, and the history of both.
@@ -99,7 +100,7 @@ export function EmployeeBranchesSection({
                   </Button>
                 ) : null
               }
-              badge={`Moves here on ${scheduled.startsOn}`}
+              badge={`Moves here on ${formatDate(scheduled.startsOn)}`}
               row={scheduled}
             />
           )}

@@ -90,7 +90,7 @@ export function LeaveRequestQueue({
             return (
               <React.Fragment key={request.id}>
                 <tr
-                  className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none"
+                  className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
                   onClick={() => setViewing(request)}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
@@ -128,7 +128,7 @@ export function LeaveRequestQueue({
                   >
                     {request.requestedDays}
                   </td>
-                  <td data-label="Status" className="px-4 py-2.5">
+                  <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                     <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">

@@ -17,4 +17,5 @@ export const adminNavItems: NavItem[] = [
   { id: 'payroll', label: 'Payroll', icon: navIcons.payroll },
   { id: 'approvals', label: 'Approvals', icon: navIcons.approvals },
   { id: 'files', label: 'Files', icon: navIcons.files },
+  { id: 'reports', label: 'Reports', icon: navIcons.reports },
 ];

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { Input } from '@smarteam/ui';
-import { hasPermission } from '@smarteam/contracts';
+import { formatDate, hasPermission, formatDateRange } from '@smarteam/contracts';
 import { currentMonthRange } from '../../hooks/use-attendance-admin';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
@@ -93,9 +93,9 @@ export function EmployeeAttendanceTab({ employeeId }: { employeeId: string }) {
               {rows.map((record) => (
                 <tr className="border-b border-border last:border-0" key={record.id}>
                   <td className="px-4 py-2 font-mono" data-cell="primary">
-                    {record.workDate}
+                    {formatDate(record.workDate)}
                   </td>
-                  <td className="px-4 py-2" data-label="Status">
+                  <td className="px-4 py-2" data-cell="status" data-label="Status">
                     {record.dayStatus.replace(/_/g, ' ').toLowerCase()}
                   </td>
                   <td className="px-4 py-2 font-mono" data-label="Worked">
@@ -180,7 +180,8 @@ export function EmployeeLeaveTab({ employeeId }: { employeeId: string }) {
                 <div>
                   <p className="font-semibold text-foreground">{typeName(request.leaveTypeId)}</p>
                   <p className="font-mono text-muted-foreground">
-                    {request.startDate} → {request.endDate} · {request.requestedDays} day
+                    {formatDateRange(request.startDate, request.endDate)} · {request.requestedDays}{' '}
+                    day
                     {request.requestedDays === 1 ? '' : 's'}
                   </p>
                 </div>

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Button,
   Input,
   SelectContent,
   SelectItem,
@@ -9,8 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import { employeeDisplayName, employmentTypeLabel } from '@smarteam/contracts';
-import { IdCard, Search } from 'lucide-react';
+import {
+  employeeDisplayName,
+  employmentTypeLabel,
+  formatDate,
+  hasPermission,
+} from '@smarteam/contracts';
+import { Download, IdCard, Search, Upload } from 'lucide-react';
+import { useSession } from '../../hooks/auth-context';
+import { downloadFile, toCsv } from '../../lib/csv';
+import { EmployeeImportDialog } from './employee-import-dialog';
+import { ResignationsPanel } from './resignations-panel';
+import { ProbationPanel } from './probation-panel';
+import { CustomFieldsPanel } from './custom-fields-panel';
 import { ScreenHeader } from '../common/screen-header';
 import { PageShell } from '../layout/page-shell';
 import { PersonAvatar } from '../common/person-avatar';
@@ -18,6 +30,7 @@ import { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 import { EmployeeProfile } from './employee-profile';
 import { useScreenTab } from '../../hooks/use-screen-tab';
 import { ListPager, PAGE_SIZE } from '../common/list-pager';
+import { localDateKey } from '../../lib/local-date';
 
 const ALL = '__all__';
 
@@ -31,12 +44,15 @@ export function ScreenEmployees() {
   const [query, setQuery] = useState('');
   const [department, setDepartment] = useState(ALL);
   // Current staff and those who have left are separate lists, as in any HR system.
-  const [view, setView] = useScreenTab<'current' | 'former'>(
+  const [view, setView] = useScreenTab<'current' | 'former' | 'exits' | 'probation' | 'fields'>(
     'people',
-    ['current', 'former'],
+    ['current', 'former', 'exits', 'probation', 'fields'],
     'current',
   );
   const [selectedId, setSelectedId] = useSelectedEmployee();
+  const { persona } = useSession();
+  const canImport = hasPermission(persona?.permissions ?? [], 'employees.write');
+  const [importing, setImporting] = useState(false);
 
   const departments = useMemo(
     () =>
@@ -69,6 +85,34 @@ export function ScreenEmployees() {
   const pageRows = rows.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
   const formerCount = directory.entries.filter((entry) => entry.status !== 'ACTIVE').length;
 
+  /** Exactly the list on screen — the current filters and search — as a spreadsheet. */
+  const exportList = () =>
+    downloadFile(
+      `employees-${localDateKey()}.csv`,
+      toCsv([
+        [
+          'Employee ID',
+          'Name',
+          'Job title',
+          'Department',
+          'Work email',
+          'Employment type',
+          'Joined',
+          'Status',
+        ],
+        ...rows.map((entry) => [
+          entry.employeeNumber,
+          employeeDisplayName(entry),
+          entry.jobTitle ?? '',
+          entry.department ?? '',
+          entry.workEmail ?? '',
+          employmentTypeLabel(entry.employmentType),
+          formatDate(entry.dateOfJoining),
+          entry.status === 'ACTIVE' ? 'Current' : 'Former',
+        ]),
+      ]),
+    );
+
   if (selectedId)
     return (
       <PageShell>
@@ -83,13 +127,49 @@ export function ScreenEmployees() {
         icon={IdCard}
         title="Employees"
         tone="primary"
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Button
+              className="gap-1.5"
+              disabled={rows.length === 0}
+              onClick={exportList}
+              size="sm"
+              type="button"
+              variant="outline"
+            >
+              <Download className="h-3.5 w-3.5" /> Export
+            </Button>
+            {canImport && (
+              <Button
+                className="gap-1.5"
+                onClick={() => setImporting(true)}
+                size="sm"
+                type="button"
+              >
+                <Upload className="h-3.5 w-3.5" /> Import
+              </Button>
+            )}
+          </div>
+        }
+      />
+      <EmployeeImportDialog
+        onClose={() => setImporting(false)}
+        onImported={() => void directory.refetch()}
+        open={importing}
       />
 
-      <div className="flex gap-4 border-b border-border" role="tablist">
+      <div className="flex gap-4 overflow-x-auto border-b border-border" role="tablist">
         {(
           [
             ['current', 'Current employees'],
             ['former', `Former employees${formerCount ? ` (${formerCount})` : ''}`],
+            ...(canImport
+              ? ([
+                  ['probation', 'Probation'],
+                  ['exits', 'Exits'],
+                  ['fields', 'Fields'],
+                ] as const)
+              : []),
           ] as const
         ).map(([id, label]) => (
           <button
@@ -109,128 +189,154 @@ export function ScreenEmployees() {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[220px] flex-1">
-          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            aria-label="Search employees"
-            className="pl-8"
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by name, ID, email or job title"
-            value={query}
-          />
-        </div>
-        <div className="w-44">
-          <SelectMenu onValueChange={setDepartment} value={department}>
-            <SelectTrigger aria-label="Department">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All departments</SelectItem>
-              {departments.map((name) => (
-                <SelectItem key={name} value={name}>
-                  {name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectMenu>
-        </div>
-      </div>
-
-      {directory.loading ? (
-        <p className="py-8 text-center text-xs text-muted-foreground" role="status">
-          Loading employees…
-        </p>
-      ) : directory.error ? (
-        <p
-          className="rounded-lg border border-border bg-card p-8 text-center text-xs text-destructive"
-          role="alert"
-        >
-          {directory.error}
-        </p>
-      ) : rows.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border bg-card/60 p-8 text-center text-xs text-muted-foreground">
-          {directory.entries.length === 0
-            ? 'No employees yet. Add one from Onboarding.'
-            : view === 'former'
-              ? 'Nobody has left the company.'
-              : 'No one matches these filters.'}
-        </p>
+      {view === 'exits' ? (
+        <ResignationsPanel />
+      ) : view === 'probation' ? (
+        <ProbationPanel />
+      ) : view === 'fields' ? (
+        <CustomFieldsPanel />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border bg-card">
-          <table className="stack-table w-full min-w-[760px] text-left text-xs">
-            <thead className="border-b border-border bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground">
-              <tr>
-                <th className="px-4 py-2.5 font-bold">Name</th>
-                <th className="px-4 py-2.5 font-bold">Employee ID</th>
-                <th className="px-4 py-2.5 font-bold">Department</th>
-                <th className="px-4 py-2.5 font-bold">Type</th>
-                <th className="px-4 py-2.5 font-bold">Joined</th>
-                <th className="px-4 py-2.5 font-bold">Login</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pageRows.map((entry) => (
-                <tr
-                  className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-none"
-                  key={entry.id}
-                  onClick={() => setSelectedId(entry.id)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault();
-                      setSelectedId(entry.id);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <td className="px-4 py-2.5" data-cell="primary">
-                    <div className="flex items-center gap-2.5">
-                      <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
-                      <div className="min-w-0">
-                        <div className="truncate font-semibold text-foreground">
-                          {employeeDisplayName(entry)}
+        <>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative min-w-[220px] flex-1">
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                aria-label="Search employees"
+                className="pl-8"
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search by name, ID, email or job title"
+                value={query}
+              />
+            </div>
+            <div className="w-44">
+              <SelectMenu onValueChange={setDepartment} value={department}>
+                <SelectTrigger aria-label="Department">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>All departments</SelectItem>
+                  {departments.map((name) => (
+                    <SelectItem key={name} value={name}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectMenu>
+            </div>
+          </div>
+
+          {directory.loading ? (
+            <p className="py-8 text-center text-xs text-muted-foreground" role="status">
+              Loading employees…
+            </p>
+          ) : directory.error ? (
+            <p
+              className="rounded-lg border border-border bg-card p-8 text-center text-xs text-destructive"
+              role="alert"
+            >
+              {directory.error}
+            </p>
+          ) : rows.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-border bg-card/60 p-8 text-center text-xs text-muted-foreground">
+              {directory.entries.length === 0
+                ? 'No employees yet. Add one from Onboarding.'
+                : view === 'former'
+                  ? 'Nobody has left the company.'
+                  : 'No one matches these filters.'}
+            </p>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+              <table className="stack-table w-full min-w-[760px] text-left text-xs">
+                <thead className="border-b border-border bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-2.5 font-bold">Name</th>
+                    <th className="px-4 py-2.5 font-bold">Employee ID</th>
+                    <th className="px-4 py-2.5 font-bold">Department</th>
+                    <th className="px-4 py-2.5 font-bold">Type</th>
+                    <th className="px-4 py-2.5 font-bold">Joined</th>
+                    <th className="px-4 py-2.5 font-bold">Login</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pageRows.map((entry) => (
+                    <tr
+                      className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                      key={entry.id}
+                      onClick={() => setSelectedId(entry.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setSelectedId(entry.id);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <td className="px-4 py-2.5" data-cell="primary">
+                        <div className="flex items-center gap-2.5">
+                          <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
+                          <div className="min-w-0">
+                            <div className="truncate font-semibold text-foreground">
+                              {employeeDisplayName(entry)}
+                            </div>
+                            {entry.jobTitle && (
+                              <div className="truncate text-[11px] text-muted-foreground">
+                                {entry.jobTitle}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="truncate text-[11px] text-muted-foreground">
-                          {entry.jobTitle ?? 'No job title'}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td
-                    className="px-4 py-2.5 font-mono text-muted-foreground"
-                    data-label="Employee ID"
-                  >
-                    {entry.employeeNumber}
-                  </td>
-                  <td className="px-4 py-2.5 text-muted-foreground" data-label="Department">
-                    {entry.department ?? '—'}
-                  </td>
-                  <td className="px-4 py-2.5 text-muted-foreground" data-label="Type">
-                    {employmentTypeLabel(entry.employmentType)}
-                  </td>
-                  <td className="px-4 py-2.5 font-mono text-muted-foreground" data-label="Joined">
-                    {entry.dateOfJoining ?? '—'}
-                  </td>
-                  <td className="px-4 py-2.5" data-label="Login">
-                    {entry.hasUserAccount ? (
-                      <span className="text-emerald-700 dark:text-emerald-400">Can sign in</span>
-                    ) : (
-                      <span className="text-amber-700 dark:text-amber-400">No login</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <ListPager
-            noun={view === 'former' ? 'former employees' : 'employees'}
-            onPage={setPage}
-            page={currentPage}
-            pageCount={pageCount}
-            total={rows.length}
-          />
-        </div>
+                      </td>
+                      <td
+                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                        data-bare=""
+                        data-label="Employee ID"
+                      >
+                        {entry.employeeNumber}
+                      </td>
+                      <td
+                        className="px-4 py-2.5 text-muted-foreground"
+                        data-bare=""
+                        data-label="Department"
+                      >
+                        {entry.department ?? '—'}
+                      </td>
+                      <td
+                        className="px-4 py-2.5 text-muted-foreground"
+                        data-bare=""
+                        data-label="Type"
+                      >
+                        {employmentTypeLabel(entry.employmentType)}
+                      </td>
+                      <td
+                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                        data-label="Joined"
+                      >
+                        {formatDate(entry.dateOfJoining) || '—'}
+                      </td>
+                      <td className="px-4 py-2.5" data-bare="" data-label="Login">
+                        {entry.hasUserAccount ? (
+                          <span className="text-emerald-700 dark:text-emerald-400">
+                            Can sign in
+                          </span>
+                        ) : (
+                          <span className="text-amber-700 dark:text-amber-400">No login</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <ListPager
+                noun={view === 'former' ? 'former employees' : 'employees'}
+                onPage={setPage}
+                page={currentPage}
+                pageCount={pageCount}
+                total={rows.length}
+              />
+            </div>
+          )}
+        </>
       )}
     </PageShell>
   );

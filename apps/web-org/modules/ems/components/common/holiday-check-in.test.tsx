@@ -137,6 +137,7 @@ const item: ApprovalInboxItem = {
   id: review.id,
   domain: 'HOLIDAY_CHECK_IN',
   employeeId: ID(2),
+  requester: 'Ada Case',
   title: 'Worked on an approved optional holiday',
   detail: '',
   submittedAt: review.createdAt,

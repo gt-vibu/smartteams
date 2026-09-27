@@ -78,7 +78,7 @@ export function AccessCreateRoleDialog({
           </div>
         </div>
 
-        <div className="max-h-[50vh] space-y-4 overflow-y-auto p-5">
+        <div className="sm:max-h-[50vh] space-y-4 overflow-y-auto p-5">
           {GROUPS.map((group) => (
             <div key={group.module}>
               <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">

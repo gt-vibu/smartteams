@@ -2,10 +2,12 @@
 
 import { useCallback, useMemo } from 'react';
 import {
+  formatDateRange,
   hasPermission,
   type HolidayReviewDecision,
   type HolidayReviewInboxItem,
   type HolidayReviewOutcome,
+  formatDate,
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { leaveRepository } from '../repositories/leave.repository';
@@ -14,6 +16,8 @@ import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
 import { holidayConflictsRepository } from '../repositories/holiday-conflicts.repository';
 import { emitDataChanged, useDataChanged } from '../lib/data-events';
+import { useLeaveExtrasInbox } from './use-leave-extras-inbox';
+import { useAdvanceInbox } from './use-advance-inbox';
 
 /**
  * Everything awaiting the signed-in user's decision, across the domains that have an inbox.
@@ -29,12 +33,15 @@ import { emitDataChanged, useDataChanged } from '../lib/data-events';
  * the dialog needs.
  */
 
-export type ApprovalDomainKey = 'LEAVE' | 'ATTENDANCE_CORRECTION' | 'HOLIDAY_CHECK_IN';
+export type ApprovalDomainKey =
+  'LEAVE' | 'ATTENDANCE_CORRECTION' | 'HOLIDAY_CHECK_IN' | 'COMP_OFF' | 'ENCASHMENT' | 'ADVANCE';
 
 export type ApprovalInboxItem = {
   id: string;
   domain: ApprovalDomainKey;
   employeeId: string;
+  /** Who is asking, as the request carries it; null when the API sent no name. */
+  requester: string | null;
   title: string;
   detail: string;
   submittedAt: string | null;
@@ -44,6 +51,21 @@ export type ApprovalInboxItem = {
   /** Whether the end-of-day close raised it rather than the employee. */
   autoClosed?: boolean;
 };
+
+const clockTime = (iso: string) =>
+  new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+
+type RequesterSummary = {
+  firstName: string;
+  lastName?: string | null;
+  employeeNumber?: string | null;
+};
+
+function requesterName(employee: RequesterSummary | null | undefined) {
+  if (!employee) return null;
+  const name = `${employee.firstName} ${employee.lastName ?? ''}`.trim();
+  return employee.employeeNumber ? `${name} (${employee.employeeNumber})` : name;
+}
 
 export function useApprovalInbox() {
   const { session, persona } = useSession();
@@ -73,9 +95,18 @@ export function useApprovalInbox() {
     { enabled: Boolean(organizationId) && canDecideAttendance },
   );
 
+  // Comp-off and encashment wait on people too, so they belong in the same inbox.
+  const extras = useLeaveExtrasInbox();
+  const advances = useAdvanceInbox();
   const refetchAll = useCallback(async () => {
-    await Promise.all([leave.refetch(), attendance.refetch(), holidayReviews.refetch()]);
-  }, [attendance, leave, holidayReviews]);
+    await Promise.all([
+      leave.refetch(),
+      attendance.refetch(),
+      holidayReviews.refetch(),
+      extras.refetch(),
+      advances.refetch(),
+    ]);
+  }, [attendance, leave, holidayReviews, extras, advances]);
   useDataChanged(['approvals'], refetchAll);
 
   const { saving, saveError, setSaveError, run } = useMutationRunner(refetchAll);
@@ -85,30 +116,45 @@ export function useApprovalInbox() {
       const request = entry as {
         id: string;
         employeeId: string;
+        employee?: RequesterSummary | null;
+        leaveType?: { name: string; paid: boolean } | null;
+        requestedDays?: number | string | null;
         startDate?: string;
         endDate?: string;
         reason?: string | null;
-        createdAt?: string;
+        submittedAt?: string | null;
       };
+      // What an approver decides on: who, which leave, how long, when and why.
+      const days = request.requestedDays == null ? null : Number(request.requestedDays);
+      const kind = request.leaveType
+        ? `${request.leaveType.name}${request.leaveType.paid ? '' : ' (unpaid)'}`
+        : 'Leave request';
       return {
         id: request.id,
         domain: 'LEAVE' as const,
         employeeId: request.employeeId,
-        title: 'Leave request',
-        detail: `${request.startDate?.slice(0, 10) ?? '--'} to ${request.endDate?.slice(0, 10) ?? '--'}${
-          request.reason ? ` · ${request.reason}` : ''
-        }`,
-        submittedAt: request.createdAt ?? null,
+        requester: requesterName(request.employee),
+        title: days === null ? kind : `${kind} · ${days} ${days === 1 ? 'day' : 'days'}`,
+        detail: `${
+          request.startDate && request.endDate
+            ? formatDateRange(request.startDate, request.endDate)
+            : '--'
+        }${request.reason ? ` · ${request.reason}` : ''}`,
+        submittedAt: request.submittedAt ?? null,
       };
     });
     const attendanceItems = (attendance.data ?? []).map((entry) => {
       const correction = entry as {
         id: string;
         employeeId?: string;
+        employee?: RequesterSummary | null;
         reason?: string | null;
         requestedAt?: string;
+        createdAt?: string;
         afterSnapshot?: {
           missingCheckOut?: { occurredAt?: string; autoClosed?: boolean };
+          correctedCheckIn?: string;
+          correctedCheckOut?: string;
         } | null;
       };
       // The approver has to see the time they are being asked to accept, not only the reason.
@@ -126,6 +172,7 @@ export function useApprovalInbox() {
         id: correction.id,
         domain: 'ATTENDANCE_CORRECTION' as const,
         employeeId: correction.employeeId ?? '',
+        requester: requesterName(correction.employee),
         title: autoClosed
           ? 'Day closed with no check-out'
           : requestedCheckOut
@@ -133,8 +180,17 @@ export function useApprovalInbox() {
             : 'Attendance correction',
         detail: requestedCheckOut
           ? `${autoClosed ? 'Proposed check-out' : 'Check-out'} at ${when} · ${correction.reason ?? ''}`
-          : (correction.reason ?? '--'),
-        submittedAt: correction.requestedAt ?? null,
+          : [
+              // The times asked for, so the approver sees what approving changes.
+              correction.afterSnapshot?.correctedCheckIn &&
+                `Check-in to ${clockTime(correction.afterSnapshot.correctedCheckIn)}`,
+              correction.afterSnapshot?.correctedCheckOut &&
+                `Check-out to ${clockTime(correction.afterSnapshot.correctedCheckOut)}`,
+              correction.reason ?? '--',
+            ]
+              .filter(Boolean)
+              .join(' · '),
+        submittedAt: correction.requestedAt ?? correction.createdAt ?? null,
         ...(requestedCheckOut ? { proposedCheckOut: requestedCheckOut } : {}),
         autoClosed,
       };
@@ -143,15 +199,22 @@ export function useApprovalInbox() {
       id: review.id,
       domain: 'HOLIDAY_CHECK_IN' as const,
       employeeId: review.employee.id,
+      requester: requesterName(review.employee),
       title: 'Worked on an approved optional holiday',
       detail: `${`${review.employee.firstName} ${review.employee.lastName ?? ''}`.trim()} · ${
         review.holiday.name
-      } (${review.workDate}) · ${review.reason}`,
+      } (${formatDate(review.workDate)}) · ${review.reason}`,
       submittedAt: review.createdAt,
       holidayReview: review,
     }));
-    return [...leaveItems, ...attendanceItems, ...holidayItems];
-  }, [attendance.data, leave.data, holidayReviews.data]);
+    const extraItems = extras.items.map((item) => ({
+      ...item,
+      employeeId: '',
+      submittedAt: null,
+    }));
+    const advanceItems = advances.items.map((item) => ({ ...item, employeeId: '' }));
+    return [...leaveItems, ...attendanceItems, ...holidayItems, ...extraItems, ...advanceItems];
+  }, [attendance.data, leave.data, holidayReviews.data, extras.items, advances.items]);
 
   /**
    * Keeps the holiday or converts the day. Resolves with the server's result only once it has
@@ -188,28 +251,39 @@ export function useApprovalInbox() {
     ) => {
       const ok = await run(
         () =>
-          item.domain === 'LEAVE'
-            ? leaveRepository.decide(organizationId!, item.id, status, comment)
-            : attendanceRepository.decideCorrection(
-                organizationId!,
-                item.id,
-                status,
-                comment,
-                checkOutAt,
-              ),
+          item.domain === 'ADVANCE'
+            ? advances.decide(item.id, status === 'APPROVED', comment)
+            : item.domain === 'COMP_OFF' || item.domain === 'ENCASHMENT'
+              ? extras.decide({ id: item.id, domain: item.domain }, status === 'APPROVED', comment)
+              : item.domain === 'LEAVE'
+                ? leaveRepository.decide(organizationId!, item.id, status, comment)
+                : attendanceRepository.decideCorrection(
+                    organizationId!,
+                    item.id,
+                    status,
+                    comment,
+                    checkOutAt,
+                  ),
         'The decision could not be recorded.',
       );
       // An approved correction changes the day, its timesheet and what payroll owes for it.
+      // An approved advance is recovered by the next payroll run.
+      if (ok && item.domain === 'ADVANCE') emitDataChanged('payroll', 'approvals');
       if (ok && item.domain === 'ATTENDANCE_CORRECTION')
         emitDataChanged('attendance', 'timesheets', 'payroll', 'approvals');
       return ok;
     },
-    [organizationId, run],
+    [organizationId, run, extras, advances],
   );
 
   return {
     items,
-    loading: leave.loading || attendance.loading || holidayReviews.loading,
+    loading:
+      leave.loading ||
+      attendance.loading ||
+      holidayReviews.loading ||
+      extras.loading ||
+      advances.loading,
     error: leave.error ?? attendance.error ?? holidayReviews.error,
     leaveForbidden: leave.forbidden || !canReadLeave,
     attendanceForbidden: attendance.forbidden || !canReadAttendance,
@@ -219,8 +293,13 @@ export function useApprovalInbox() {
     dismissError: () => setSaveError(null),
     decide,
     decideHolidayReview,
+    // Comp-off, encashment and advances are listed only for someone who may decide them.
     canDecide: (item: ApprovalInboxItem) =>
-      item.domain === 'LEAVE' ? canDecideLeave : canDecideAttendance,
+      item.domain === 'COMP_OFF' || item.domain === 'ENCASHMENT' || item.domain === 'ADVANCE'
+        ? true
+        : item.domain === 'LEAVE'
+          ? canDecideLeave
+          : canDecideAttendance,
   };
 }
 

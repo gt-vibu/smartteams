@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { hasPermission } from '@smarteam/contracts';
+import { hasPermission, formatDate } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import { payrollRepository } from '../../repositories/payroll.repository';
@@ -56,8 +56,8 @@ export function FormerEmployeeSummary({
   }, [payslips.data]);
 
   const facts: Array<[string, string]> = [
-    ['Joined', joined?.slice(0, 10) ?? 'Not recorded'],
-    ['Left', left?.slice(0, 10) ?? 'Not recorded'],
+    ['Joined', formatDate(joined) || 'Not recorded'],
+    ['Left', formatDate(left) || 'Not recorded'],
     ['Time with the company', tenure(joined, left)],
   ];
   if (canReadPay && !payslips.loading && !payslips.error)
@@ -69,7 +69,7 @@ export function FormerEmployeeSummary({
       [
         'Last payslip',
         totals.last
-          ? `${totals.last.run.periodStart.slice(0, 10)} to ${totals.last.run.periodEnd.slice(0, 10)}`
+          ? `${formatDate(totals.last.run.periodStart)} to ${formatDate(totals.last.run.periodEnd)}`
           : 'None',
       ],
     );

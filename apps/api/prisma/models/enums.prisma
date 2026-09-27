@@ -412,6 +412,7 @@ enum FileAccessScope {
   TEAM
   ORGANIZATION
   INTERNAL
+  PROJECT
 }
 
 enum FileShareGrantee {

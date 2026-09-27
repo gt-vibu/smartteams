@@ -1,5 +1,4 @@
-import { Prisma } from '../../generated/prisma/client';
-import type { LeaveAccrualType } from '../../generated/prisma/enums';
+import type { Prisma } from '../../generated/prisma/client';
 import type { DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
 
@@ -50,27 +49,6 @@ export function leavePeriod(date: Date, leaveYearStartMonth: number) {
   };
 }
 
-export function initialEntitlement(
-  type: {
-    accrualType: LeaveAccrualType;
-    annualAllowance: Prisma.Decimal | null;
-    monthlyAccrual: Prisma.Decimal | null;
-  },
-  periodStart: Date,
-  date: Date,
-) {
-  if (type.accrualType === 'FIXED_ANNUAL') return type.annualAllowance ?? new Prisma.Decimal(0);
-  if (type.accrualType === 'MONTHLY') {
-    const months =
-      (date.getUTCFullYear() - periodStart.getUTCFullYear()) * 12 +
-      date.getUTCMonth() -
-      periodStart.getUTCMonth() +
-      1;
-    return (type.monthlyAccrual ?? new Prisma.Decimal(0)).mul(months);
-  }
-  return new Prisma.Decimal(0);
-}
-
 /**
  * Employee self-scoping, matching the convention already used by Timesheets, Compliance and
  * Payroll: a plain `read` permission may only see the caller's own records, `<permission>.all`
@@ -78,18 +56,27 @@ export function initialEntitlement(
  * breadth their scope already carries.
  */
 
-export function toTypeDto(type: {
-  id: string;
-  code: string;
-  name: string;
-  paid: boolean;
-  accrualType: string;
-  annualAllowance: unknown;
-  monthlyAccrual: unknown;
-  carryoverLimit: unknown;
-  requiresAttachment: boolean;
-  isActive: boolean;
-}) {
+export function toTypeDto(
+  type: {
+    id: string;
+    code: string;
+    name: string;
+    paid: boolean;
+    accrualType: string;
+    annualAllowance: unknown;
+    monthlyAccrual: unknown;
+    carryoverLimit: unknown;
+    prorateForJoiners: boolean;
+    sandwichOffDays: boolean;
+    encashable: boolean;
+    maxEncashDays: unknown;
+    isCompOff: boolean;
+    compOffExpiryDays: number | null;
+    requiresAttachment: boolean;
+    isActive: boolean;
+  },
+  native = false,
+) {
   return {
     id: type.id,
     code: type.code,
@@ -99,6 +86,17 @@ export function toTypeDto(type: {
     annualAllowance: type.annualAllowance,
     monthlyAccrual: type.monthlyAccrual,
     carryoverLimit: type.carryoverLimit,
+    // App only: a partner's leave-type shape is frozen.
+    ...(native
+      ? {
+          prorateForJoiners: type.prorateForJoiners,
+          sandwichOffDays: type.sandwichOffDays,
+          encashable: type.encashable,
+          maxEncashDays: type.maxEncashDays,
+          isCompOff: type.isCompOff,
+          compOffExpiryDays: type.compOffExpiryDays,
+        }
+      : {}),
     requiresAttachment: type.requiresAttachment,
     isActive: type.isActive,
   };

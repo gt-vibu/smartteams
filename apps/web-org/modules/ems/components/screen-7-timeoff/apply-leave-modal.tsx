@@ -124,6 +124,10 @@ export function ApplyLeaveModal({
                     {types.map((type) => (
                       <SelectItem key={type.id} value={type.id}>
                         {type.name}
+                        {/* Two types may share a name; the code is what tells them apart. */}
+                        {types.some((other) => other.id !== type.id && other.name === type.name)
+                          ? ` · ${type.code}`
+                          : ''}
                         {type.paid ? '' : ' (unpaid)'}
                       </SelectItem>
                     ))}

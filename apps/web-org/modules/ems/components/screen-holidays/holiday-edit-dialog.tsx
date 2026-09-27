@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { formatDate, formatDateRange } from '@smarteam/contracts';
 import { Button, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 import type { Holiday } from '@smarteam/contracts';
 import type { HolidaysState } from '../../hooks/use-holidays';
@@ -120,8 +121,8 @@ export function HolidayDialog({
           {isEditing ? (
             <p className="text-[11px] text-muted-foreground font-mono">
               {activeTargetGroup!.totalDays > 1
-                ? `${activeTargetGroup!.startDate} → ${activeTargetGroup!.endDate} (${activeTargetGroup!.totalDays} days)`
-                : activeTargetGroup!.startDate}{' '}
+                ? `${formatDateRange(activeTargetGroup!.startDate, activeTargetGroup!.endDate)} (${activeTargetGroup!.totalDays} days)`
+                : formatDate(activeTargetGroup!.startDate)}{' '}
               · the dates cannot be changed, because leave already charged against them was
               calculated from them.
             </p>

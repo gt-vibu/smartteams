@@ -87,7 +87,7 @@ export function EditEmployeeDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
         <DialogTitle>Edit {employeeDisplayName(employee)}</DialogTitle>
         <p className="mt-1 text-xs text-muted-foreground">Employee ID {employee.employeeNumber}</p>
 

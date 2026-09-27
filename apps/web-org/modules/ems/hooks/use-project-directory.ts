@@ -7,13 +7,15 @@ import { membershipRepository, workforceRepository } from '../repositories/workf
 import {
   teamsProjectsRepository,
   type CreateProjectInput,
+  type UpdateProjectInput,
 } from '../repositories/teams-projects.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
 import { indexEmployees, toProjectView, type ProjectView } from '../services/team-directory';
+import { localDateKey } from '../lib/local-date';
 
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDateKey();
 }
 
 type Loaded = { projects: Project[]; employees: Employee[]; branches: Branch[] };
@@ -39,6 +41,7 @@ export function useProjectDirectory() {
   const canRead = hasPermission(permissions, 'projects.read');
   const canWrite = hasPermission(permissions, 'projects.write');
   const canReadEmployees = hasPermission(permissions, 'employees.read');
+  const canReadBranches = hasPermission(permissions, 'branches.read');
   // Without this the API answers with the caller's own rows only, so there is no "all" view.
   const canReadAll = hasPermission(permissions, 'projects.read.all');
 
@@ -47,11 +50,13 @@ export function useProjectDirectory() {
       const [projects, employees, branches] = await Promise.all([
         workforceRepository.listProjects(organizationId!),
         canReadEmployees ? workforceRepository.listEmployees(organizationId!) : Promise.resolve([]),
-        workforceRepository.listBranches(organizationId!).catch(() => [] as Branch[]),
+        canReadBranches
+          ? workforceRepository.listBranches(organizationId!).catch(() => [] as Branch[])
+          : Promise.resolve([] as Branch[]),
       ]);
       return { projects, employees, branches };
     },
-    [organizationId, canReadEmployees],
+    [organizationId, canReadEmployees, canReadBranches],
     { enabled: Boolean(organizationId) && canRead },
   );
 
@@ -68,8 +73,10 @@ export function useProjectDirectory() {
   const myProjects = useMemo(
     () =>
       employeeId
-        ? views.filter((view) =>
-            view.activeMembers.some((member) => member.employeeId === employeeId),
+        ? views.filter(
+            (view) =>
+              view.lead?.employeeId === employeeId ||
+              view.activeMembers.some((member) => member.employeeId === employeeId),
           )
         : [],
     [views, employeeId],
@@ -93,7 +100,7 @@ export function useProjectDirectory() {
 
   /** Renames a project, moves it to another branch, or changes its dates. */
   const updateProject = useCallback(
-    (projectId: string, input: Partial<CreateProjectInput>) =>
+    (projectId: string, input: UpdateProjectInput) =>
       run(
         () => teamsProjectsRepository.updateProject(organizationId!, projectId, input),
         'The project could not be saved.',

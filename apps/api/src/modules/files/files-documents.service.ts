@@ -14,17 +14,19 @@ import { fileDisplayName } from './file-naming';
 import type { EmployeeDocumentType } from './file.constants';
 
 export type DocumentSection =
-  'all' | 'mine' | 'shared' | 'organization' | 'team' | 'employees' | 'internal';
+  'all' | 'mine' | 'shared' | 'organization' | 'team' | 'project' | 'employees' | 'internal';
 
 const FILE_SELECT = {
   id: true,
   organizationId: true,
   employeeId: true,
   teamId: true,
+  projectId: true,
   uploadedByUserId: true,
   purpose: true,
   accessScope: true,
   allowDownload: true,
+  expiresOn: true,
   originalName: true,
   contentType: true,
   byteSize: true,
@@ -33,6 +35,7 @@ const FILE_SELECT = {
   createdAt: true,
   employee: { select: { id: true, firstName: true, lastName: true, employeeNumber: true } },
   team: { select: { id: true, name: true } },
+  project: { select: { id: true, name: true, code: true } },
   uploadedBy: { select: { displayName: true } },
   shares: {
     select: {
@@ -65,7 +68,13 @@ export class FilesDocumentsService {
     private readonly access: FilesAccessService,
   ) {}
 
-  async list(context: DomainContext, section: DocumentSection, employeeId?: string) {
+  async list(
+    context: DomainContext,
+    section: DocumentSection,
+    employeeId?: string,
+    projectId?: string,
+    teamId?: string,
+  ) {
     requirePermission(context, 'files.read');
     return this.database.run(context, async (tx) => {
       const viewer = await loadFileViewer(tx, context);
@@ -73,6 +82,10 @@ export class FilesDocumentsService {
         where: {
           ...candidateFilter(context, viewer),
           ...(employeeId ? { employeeId } : {}),
+          // One project's files, for its own page.
+          ...(projectId ? { accessScope: 'PROJECT' as const, projectId } : {}),
+          // One team's files, for its own page.
+          ...(teamId ? { accessScope: 'TEAM' as const, teamId } : {}),
         },
         select: FILE_SELECT,
         orderBy: { createdAt: 'desc' },
@@ -82,6 +95,36 @@ export class FilesDocumentsService {
         .map((row) => ({ row, access: decideFileAccess(row, viewer) }))
         .filter(({ row, access }) => access.view && inSection(section, row.accessScope, access))
         .map(({ row, access }) => toDocument(row, access));
+    });
+  }
+
+  /**
+   * The day a document stops being valid — a passport, a visa, a contract — or none. Its person
+   * and HR are told a month ahead. Whoever may manage the file may set it.
+   */
+  async setExpiry(context: DomainContext, fileId: string, expiresOn: string | null) {
+    const { file } = await this.authorize(context, fileId, 'manage');
+    return this.database.run(context, async (tx) => {
+      const updated = await tx.fileObject.update({
+        where: { id: file.id },
+        data: {
+          expiresOn: expiresOn ? new Date(`${expiresOn.slice(0, 10)}T00:00:00.000Z`) : null,
+          // A new date is a new warning to give.
+          expiryNotifiedAt: null,
+        },
+        select: { id: true, expiresOn: true },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'FILE_OBJECT',
+          entityId: file.id,
+          action: 'FILE_EXPIRY_SET',
+          afterState: { expiresOn },
+        },
+        tx,
+      );
+      return { id: updated.id, expiresOn: updated.expiresOn?.toISOString().slice(0, 10) ?? null };
     });
   }
 
@@ -134,6 +177,7 @@ export class FilesDocumentsService {
       checksumSha256?: string;
       employeeId?: string;
       teamId?: string;
+      projectId?: string;
       allowDownload?: boolean;
       documentType?: EmployeeDocumentType;
     },
@@ -146,10 +190,12 @@ export class FilesDocumentsService {
         : input.scope === 'EMPLOYEE'
           ? (input.employeeId ?? self.employeeId)
           : null;
-    if (!mayUploadTo(input.scope, self, forEmployee, input.teamId ?? null))
+    if (!mayUploadTo(input.scope, self, forEmployee, input.teamId ?? null, input.projectId ?? null))
       throw new ForbiddenDomainError('You cannot add a document there');
     if (input.scope === 'TEAM' && !input.teamId)
       throw new ForbiddenDomainError('Choose the team the document is for');
+    if (input.scope === 'PROJECT' && !input.projectId)
+      throw new ForbiddenDomainError('Choose the project the document is for');
     return this.upload.beginUpload(
       context,
       {
@@ -161,7 +207,12 @@ export class FilesDocumentsService {
         employeeId: forEmployee ?? undefined,
         documentType: input.documentType,
       },
-      { scope: input.scope, teamId: input.teamId, allowDownload: input.allowDownload },
+      {
+        scope: input.scope,
+        teamId: input.teamId,
+        projectId: input.projectId,
+        allowDownload: input.allowDownload,
+      },
     );
   }
 
@@ -214,6 +265,7 @@ export class FilesDocumentsService {
 
 type Row = {
   id: string;
+  expiresOn: Date | null;
   employeeId: string | null;
   teamId: string | null;
   purpose: FilePurpose;
@@ -226,6 +278,7 @@ type Row = {
   createdAt: Date;
   employee: { id: string; firstName: string; lastName: string; employeeNumber: string } | null;
   team: { id: string; name: string } | null;
+  project: { id: string; name: string; code: string } | null;
   uploadedBy: { displayName: string } | null;
   shares: ReadonlyArray<{ revokedAt: Date | null; expiresAt: Date | null }>;
 };
@@ -253,6 +306,8 @@ function inSection(section: DocumentSection, scope: FileAccessScope, access: Acc
       return scope === 'ORGANIZATION';
     case 'team':
       return scope === 'TEAM';
+    case 'project':
+      return scope === 'PROJECT';
     case 'employees':
       return scope === 'EMPLOYEE' && (access.reason === 'HR' || access.reason === 'MANAGER');
     case 'internal':
@@ -279,7 +334,9 @@ function toDocument(row: Row, access: AccessDecision) {
         }
       : null,
     team: row.team,
+    project: row.project,
     allowDownload: row.allowDownload,
+    expiresOn: row.expiresOn?.toISOString().slice(0, 10) ?? null,
     // Counted for anyone who may manage sharing; the list of grantees is its own route.
     activeShares: access.share
       ? row.shares.filter(

@@ -71,6 +71,10 @@ function setup(
     },
     attendanceRecord: {
       findMany: jest.fn().mockResolvedValue(options.openDays === 0 ? [] : [record]),
+      findUnique: jest.fn().mockResolvedValue({
+        employeeId: 'employee-1',
+        workDate: new Date('2026-09-18T00:00:00Z'),
+      }),
     },
     employeeShiftAssignment: {
       findFirst: jest.fn().mockResolvedValue(options.nightShift ? { id: 'assignment-1' } : null),
@@ -109,6 +113,7 @@ function setup(
     userRole: { findFirst: jest.fn().mockResolvedValue(null), findMany: jest.fn() },
     employee: { findFirst: jest.fn().mockResolvedValue({ userId: 'manager-1' }) },
     user: { findFirst: jest.fn().mockResolvedValue({ id: 'manager-1' }) },
+    notification: { createMany: jest.fn().mockResolvedValue({ count: 1 }) },
   };
   const database = {
     run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),

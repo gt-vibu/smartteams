@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { formatDate } from '@smarteam/contracts';
 import { Calendar, CheckCircle2, CheckSquare, Sparkles, XCircle } from 'lucide-react';
 import { Badge, Button } from '@smarteam/ui';
 import type { Holiday, EmployeeHolidaySelection } from '@smarteam/contracts';
@@ -306,7 +307,7 @@ export function OptionalHolidaysCard() {
                       </div>
                     ) : (
                       <div className="text-[11px] text-muted-foreground font-mono">
-                        {group.startDate} · {weekday(group.startDate)}
+                        {formatDate(group.startDate)} · {weekday(group.startDate)}
                       </div>
                     )}
                   </div>

@@ -14,6 +14,10 @@ export interface AttendanceTableRow {
   holidayConflict?: HolidayConflictView;
   shift: string; // "General Shift"
   canRegularize?: boolean;
+  /** The day, and its first check-in and last check-out as instants, for a correction. */
+  workDate?: string;
+  checkInAt?: string;
+  checkOutAt?: string;
   /** The open check-in of a past day that never had a check-out, as an ISO instant. */
   openCheckInAt?: string;
   punches?: Array<{

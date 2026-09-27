@@ -15,17 +15,15 @@ interface TimelineTrackViewProps {
   onSelectDay?: (dayId: string) => void;
 }
 
-const HOURS_SCALE = [
-  '10 AM',
-  '11 AM',
-  '12 PM',
-  '01 PM',
-  '02 PM',
-  '03 PM',
-  '04 PM',
-  '05 PM',
-  '06 PM',
-];
+/**
+ * The whole day, every three hours, at the positions the punches are drawn at. The ruler used to
+ * read 10 AM to 6 PM across the track while the dots were placed on a 24-hour scale, so a 9:25 AM
+ * check-in sat under "01 PM" and a late check-out ran off the labelled range.
+ */
+const HOURS_SCALE = ['12 AM', '3 AM', '6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM', '12 AM'];
+const tickAt = (index: number) => (index / (HOURS_SCALE.length - 1)) * 100;
+/** Two punches closer than this share one label: side by side, their times ran into each other. */
+const SHARED_LABEL_PERCENT = 10;
 
 /**
  * A week of attendance as tracks against the working day.
@@ -46,13 +44,16 @@ export function TimelineTrackView({ days, onSelectDay }: TimelineTrackViewProps)
         <div className="text-right text-xs font-bold text-foreground sm:order-last sm:col-span-2">
           Total hours
         </div>
-        <div className="col-span-2 grid grid-cols-9 text-center sm:col-span-8">
+        <div className="relative col-span-2 mx-2 h-4 sm:col-span-8">
           {HOURS_SCALE.map((hour, index) => (
-            // Every hour on a laptop; every other hour on a phone, where nine labels in 310px
-            // would run together.
+            // Every label on a laptop; every other one on a phone, where nine in 310px run together.
             <span
-              key={hour}
-              className={`font-mono text-[10px] text-muted-foreground ${index % 2 ? 'invisible sm:visible' : ''}`}
+              key={`${hour}-${index}`}
+              className={`absolute whitespace-nowrap font-mono text-[10px] text-muted-foreground ${index % 2 ? 'invisible sm:visible' : ''}`}
+              style={{
+                left: `${tickAt(index)}%`,
+                transform: `translateX(${index === 0 ? '0' : index === HOURS_SCALE.length - 1 ? '-100%' : '-50%'})`,
+              }}
             >
               {hour}
             </span>
@@ -61,10 +62,6 @@ export function TimelineTrackView({ days, onSelectDay }: TimelineTrackViewProps)
       </div>
 
       <div className="relative divide-y divide-slate-100 dark:divide-slate-800">
-        {/* A fixed guide at ~1:30 PM, not the current time. Drawn only where the track has the
-            fixed desktop geometry it was placed against. */}
-        <div className="pointer-events-none absolute bottom-0 top-0 z-10 hidden w-px border-r border-dashed border-sky-400 sm:block sm:left-[calc(16.666%+43.5%)]" />
-
         {days.map((day) => (
           <TimelineRow key={day.id} day={day} onSelect={onSelectDay} />
         ))}
@@ -88,6 +85,11 @@ function TimelineRow({
     ? formatMinutesToDuration(day.inProgressMinutes ?? 0) || '00h 00m'
     : '';
   const isSameTime = day.firstInTime && day.lastOutTime && day.firstInTime === day.lastOutTime;
+  const sharedLabel =
+    Boolean(day.lastOutTime && !isSameTime) &&
+    day.spanStartPercent != null &&
+    day.spanEndPercent != null &&
+    day.spanEndPercent - day.spanStartPercent < SHARED_LABEL_PERCENT;
   const track = CONFLICT_TRACK[day.holidayConflict?.tone ?? 'working'];
   const times =
     day.status === 'PRESENT' && day.firstInTime
@@ -164,9 +166,13 @@ function TimelineRow({
       </div>
 
       <div className="relative col-span-2 flex h-8 items-center px-2 sm:col-span-8">
-        <div className="pointer-events-none absolute inset-0 grid grid-cols-9 opacity-40">
-          {HOURS_SCALE.map((hour) => (
-            <div key={hour} className="h-full border-r border-border" />
+        <div className="pointer-events-none absolute inset-y-0 left-2 right-2 opacity-40">
+          {HOURS_SCALE.map((hour, index) => (
+            <div
+              key={`${hour}-${index}`}
+              className="absolute inset-y-0 border-l border-border"
+              style={{ left: `${tickAt(index)}%` }}
+            />
           ))}
         </div>
 
@@ -175,12 +181,12 @@ function TimelineRow({
             <div className={`relative h-0.5 w-full rounded-full ${track.line}`}>
               {day.firstInTime && (
                 <TrackStamp percent={day.spanStartPercent ?? 0} dot={track.in}>
-                  {day.firstInTime}
+                  {sharedLabel ? `${day.firstInTime} – ${day.lastOutTime}` : day.firstInTime}
                 </TrackStamp>
               )}
               {day.lastOutTime && !isSameTime && (
                 <TrackStamp percent={day.spanEndPercent ?? 100} dot={track.out}>
-                  {day.lastOutTime}
+                  {sharedLabel ? null : day.lastOutTime}
                 </TrackStamp>
               )}
             </div>
@@ -216,11 +222,20 @@ function TrackStamp({
   children: React.ReactNode;
 }) {
   return (
-    <div className="absolute -top-1.5 flex flex-col items-center" style={{ left: `${percent}%` }}>
+    // Centred on its time; a label near either end is kept inside the track.
+    <div
+      className={`absolute -top-1.5 flex flex-col ${percent > 85 ? 'items-end' : percent < 10 ? 'items-start' : 'items-center'}`}
+      style={{
+        left: `${percent}%`,
+        transform: `translateX(${percent > 85 ? 'calc(-100% + 7px)' : percent < 10 ? '-7px' : '-50%'})`,
+      }}
+    >
       <div className={`h-3.5 w-3.5 rounded-full border-2 border-white shadow-xs ${dot}`} />
-      <span className="mt-1 hidden whitespace-nowrap font-mono text-[10px] font-semibold text-foreground sm:inline">
-        {children}
-      </span>
+      {children && (
+        <span className="mt-1 hidden whitespace-nowrap font-mono text-[10px] font-semibold text-foreground sm:inline">
+          {children}
+        </span>
+      )}
     </div>
   );
 }

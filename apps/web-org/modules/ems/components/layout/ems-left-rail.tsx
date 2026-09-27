@@ -4,6 +4,8 @@ import React from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { adminNavItems } from './navigation-admin-items';
 import { employeeNavItems } from './navigation-employee-items';
+import { useUnreadByModule } from '../../hooks/use-notifications';
+import { UnreadDot } from './unread-dot';
 
 interface EmsLeftRailProps {
   activeModule: string;
@@ -17,6 +19,7 @@ export function EmsLeftRail({
   activeSpace = 'My Space',
 }: EmsLeftRailProps) {
   const { canAccessModule } = useAuth();
+  const unreadByModule = useUnreadByModule();
   const isOrgSpace = activeSpace === 'Organization';
 
   // Employee workspace items
@@ -47,6 +50,9 @@ export function EmsLeftRail({
               >
                 {item.icon('h-4 w-4')}
               </div>
+              {!isActive && (unreadByModule[item.id] ?? 0) > 0 && (
+                <UnreadDot className="right-3 top-1.5" ring="ring-sidebar dark:ring-background" />
+              )}
               <span
                 className={`text-[9.5px] leading-tight font-medium text-center px-0.5 break-normal tracking-tight max-w-[66px] ${isActive ? 'text-white font-bold' : 'text-sidebar-foreground/80 group-hover:text-white'}`}
               >

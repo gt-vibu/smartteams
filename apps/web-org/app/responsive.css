@@ -82,11 +82,19 @@
   }
   /* A column of cells, so the title can be moved to the top with `order` — the identifying column
      is not always the first one (attendance leads with the date, the catalogue with the code). */
+  /*
+   * A card reads as a list item, not a form: the name on top, the status in the corner, and the
+   * remaining fields flowing along a line or two ("From 5 Nov · To 5 Nov · Days 1") instead of
+   * one "LABEL ........ value" row each, which turned every table into a page of metadata.
+   */
   .stack-table :where(tr) {
     position: relative;
     display: flex;
-    flex-direction: column;
-    padding: 0.75rem 1rem;
+    flex-flow: row wrap;
+    align-items: baseline;
+    column-gap: 0.9rem;
+    row-gap: 0.3rem;
+    padding: 0.8rem 1rem;
   }
   .stack-table :where(tr[data-row='group']) {
     flex-direction: row;
@@ -95,14 +103,14 @@
     padding-block: 0.6rem;
   }
   .stack-table :where(td:not(.hidden)) {
-    display: flex;
+    display: inline-flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
+    justify-content: flex-start;
+    gap: 0.3rem;
     min-width: 0;
-    max-width: none;
-    padding: 0.2rem 0;
-    text-align: right;
+    max-width: 100%;
+    padding: 0;
+    text-align: left;
     overflow-wrap: anywhere;
   }
   /* `hidden md:table-cell` means "not a card line": at a tablet width the breakpoint has brought
@@ -117,22 +125,40 @@
        proportional "TYPE" whenever the value was a date. */
     font-family: var(--font-sans);
     font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    font-weight: 500;
     text-align: left;
     color: var(--muted-foreground);
+  }
+  /* A value that explains itself (an employee number, a department) needs no label beside it. */
+  .stack-table :where(td[data-bare], td[data-cell='actions'])::before {
+    content: none;
   }
   .stack-table :where(td[data-cell='primary']:not(.hidden)) {
     order: -1;
     display: block;
-    padding-bottom: 0.4rem;
+    flex-basis: 100%;
+    padding-bottom: 0.1rem;
     font-size: 0.875rem;
     text-align: left;
   }
   .stack-table :where(td[data-cell='block']:not(.hidden), td[colspan]:not(.hidden)) {
     display: block;
+    flex-basis: 100%;
     text-align: left;
+  }
+  /* The status is what people scan for, so it sits in the card's corner as a pill, unlabelled. */
+  .stack-table :where(tr:not([data-row='group']) td[data-cell='status']:not(.hidden)) {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    width: auto;
+    padding: 0;
+  }
+  .stack-table :where(td[data-cell='status'])::before {
+    content: none;
+  }
+  .stack-table :where(tr:has(> td[data-cell='status']) td[data-cell='primary']) {
+    padding-right: 6.5rem;
   }
   .stack-table :where(tr[data-row='group'] td[colspan]:not(.hidden)) {
     flex: 1;
@@ -143,6 +169,7 @@
   }
   .stack-table :where(td[data-cell='actions']:not(.hidden)) {
     order: 1;
+    flex-basis: 100%;
     justify-content: flex-end;
     flex-wrap: wrap;
     margin-top: 0.5rem;
@@ -185,5 +212,36 @@
 @media (max-width: 767.98px) {
   :root {
     --ems-context-bar-height: 0px;
+  }
+}
+
+/*
+ * While someone is typing, the section bar gets out of the way.
+ *
+ * The layout resizes to sit above the on-screen keyboard (`interactiveWidget: 'resizes-content'`
+ * in the root layout), so a bar fixed to the bottom rode up with it and sat directly on top of the
+ * field being typed into — on the Timesheet screen it covered most of what was left. Only fields
+ * that raise a keyboard count; a checkbox or a button taking focus changes nothing.
+ */
+@media (max-width: 767px) {
+  body:has(
+      :is(
+        input:not(
+          [type='checkbox'],
+          [type='radio'],
+          [type='button'],
+          [type='submit'],
+          [type='reset'],
+          [type='range'],
+          [type='file'],
+          [type='color']
+        ),
+        textarea,
+        select,
+        [contenteditable='true']
+      ):focus
+    )
+    [data-mobile-bottom-nav] {
+    display: none;
   }
 }

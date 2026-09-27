@@ -61,8 +61,11 @@ export function isPicklistKind(value: string): value is PicklistKind {
   return Object.prototype.hasOwnProperty.call(PICKLISTS, value);
 }
 
-/** One entry as stored: the company's own, or a standard one it archived. */
-export type StoredEntry = { name: string; archived: boolean; standard: boolean };
+/**
+ * One entry as stored: the company's own, or a standard one it archived. `removed` is a standard
+ * name the company renamed or deleted: it stays out of the list, and adding it again brings it back.
+ */
+export type StoredEntry = { name: string; archived: boolean; standard: boolean; removed?: boolean };
 
 type Metadata = Prisma.JsonObject;
 const asMetadata = (value: unknown): Metadata =>
@@ -79,9 +82,12 @@ export const same = (a: string, b: string) => a.toLowerCase() === b.toLowerCase(
 export function readEntries(metadata: unknown, kind: PicklistKind): StoredEntry[] {
   const list = PICKLISTS[kind];
   const data = asMetadata(metadata);
-  const retired = Array.isArray(data[`${list.key}Archived`])
-    ? (data[`${list.key}Archived`] as unknown[]).filter((v): v is string => typeof v === 'string')
-    : [];
+  const names = (key: string) =>
+    Array.isArray(data[key])
+      ? (data[key] as unknown[]).filter((v): v is string => typeof v === 'string')
+      : [];
+  const retired = names(`${list.key}Archived`);
+  const removed = names(`${list.key}Removed`);
   // Entries were once stored as plain names; both shapes are read.
   const own = (Array.isArray(data[list.key]) ? (data[list.key] as unknown[]) : []).flatMap(
     (item): StoredEntry[] => {
@@ -102,6 +108,7 @@ export function readEntries(metadata: unknown, kind: PicklistKind): StoredEntry[
       name,
       archived: retired.some((r) => same(r, name)),
       standard: true,
+      removed: removed.some((r) => same(r, name)),
     })),
     ...own.filter((entry) => !list.standard.some((s) => same(s, entry.name))),
   ].sort((a, b) => a.name.localeCompare(b.name));
@@ -116,6 +123,7 @@ export function writeEntries(metadata: unknown, kind: PicklistKind, entries: Sto
       .filter((e) => !e.standard)
       .map((e) => (e.archived ? { name: e.name, archived: true } : { name: e.name })),
     [`${list.key}Archived`]: entries.filter((e) => e.standard && e.archived).map((e) => e.name),
+    [`${list.key}Removed`]: entries.filter((e) => e.standard && e.removed).map((e) => e.name),
   } satisfies Prisma.InputJsonObject;
 }
 
@@ -156,7 +164,7 @@ export async function ensureEntry(
     throw new ConflictError('Names must be between 2 and 80 characters.');
   const metadata = await lockSettings(tx, context.organizationId);
   const entries = readEntries(metadata, kind);
-  const existing = entries.find((entry) => same(entry.name, name));
+  const existing = entries.find((entry) => same(entry.name, name) && !entry.removed);
   if (existing?.archived)
     throw new ConflictError(`"${existing.name}" is archived. Restore it before using it again.`);
   if (existing) return existing.name;
@@ -165,10 +173,14 @@ export async function ensureEntry(
   await tx.organizationSettings.update({
     where: { organizationId: context.organizationId },
     data: {
-      metadata: writeEntries(metadata, kind, [
-        ...entries,
-        { name, archived: false, standard: false },
-      ]),
+      metadata: writeEntries(
+        metadata,
+        kind,
+        // A standard name the company had removed comes back; anything else is added as its own.
+        entries.some((entry) => entry.removed && same(entry.name, name))
+          ? entries.map((entry) => (same(entry.name, name) ? { ...entry, removed: false } : entry))
+          : [...entries, { name, archived: false, standard: false }],
+      ),
     },
   });
   return name;

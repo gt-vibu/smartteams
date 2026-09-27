@@ -74,7 +74,7 @@ export function EmployeeSelectionsTable({
                 <td data-label="Holiday Date" className="px-4 py-2.5 font-mono text-foreground">
                   {holDate}
                 </td>
-                <td data-label="Status" className="px-4 py-2.5">
+                <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                   <Badge variant={sel.status === 'CONFIRMED' ? 'success' : 'secondary'}>
                     {sel.status}
                   </Badge>

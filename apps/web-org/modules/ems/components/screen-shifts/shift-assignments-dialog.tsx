@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { formatDate, formatDateRange } from '@smarteam/contracts';
 import {
   Badge,
   Button,
@@ -60,7 +61,7 @@ export function ShiftAssignmentsDialog({
           Show ended assignments
         </label>
 
-        <div className="mt-3 max-h-[60vh] space-y-2 overflow-y-auto">
+        <div className="mt-3 sm:max-h-[60vh] space-y-2 overflow-y-auto">
           {assignments.error && (
             <p role="alert" className="text-xs text-destructive">
               {assignments.error}
@@ -88,8 +89,10 @@ export function ShiftAssignmentsDialog({
                       </span>
                     )}
                   </p>
-                  <p className="font-mono text-[11px] text-muted-foreground">
-                    {assignment.startsOn} → {assignment.endsOn ?? 'open-ended'}
+                  <p className="text-[11px] text-muted-foreground">
+                    {assignment.endsOn
+                      ? formatDateRange(assignment.startsOn, assignment.endsOn)
+                      : `From ${formatDate(assignment.startsOn)}, no end date`}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

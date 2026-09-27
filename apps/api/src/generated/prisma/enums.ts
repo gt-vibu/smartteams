@@ -589,7 +589,8 @@ export const FileAccessScope = {
   EMPLOYEE: 'EMPLOYEE',
   TEAM: 'TEAM',
   ORGANIZATION: 'ORGANIZATION',
-  INTERNAL: 'INTERNAL'
+  INTERNAL: 'INTERNAL',
+  PROJECT: 'PROJECT'
 } as const
 
 export type FileAccessScope = (typeof FileAccessScope)[keyof typeof FileAccessScope]
@@ -639,3 +640,14 @@ export const ExternalEntityType = {
 } as const
 
 export type ExternalEntityType = (typeof ExternalEntityType)[keyof typeof ExternalEntityType]
+
+
+export const ResignationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  WITHDRAWN: 'WITHDRAWN',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type ResignationStatus = (typeof ResignationStatus)[keyof typeof ResignationStatus]

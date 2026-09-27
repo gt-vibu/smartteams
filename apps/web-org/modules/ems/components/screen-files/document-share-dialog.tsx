@@ -14,7 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import { employeeDisplayName, type DocumentShare, type StoredDocument } from '@smarteam/contracts';
+import {
+  type DocumentShare,
+  employeeDisplayName,
+  formatDate,
+  type StoredDocument,
+} from '@smarteam/contracts';
 import type { DocumentsState } from '../../hooks/use-documents';
 import { useEmployees, useTeams } from '../../hooks/use-workforce';
 import { useRoles } from '../../hooks/use-roles';
@@ -92,7 +97,7 @@ export function DocumentShareDialog({
 
   return (
     <Dialog onOpenChange={(open) => !open && onClose()} open={document !== null}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <DialogTitle>Share “{document?.name}”</DialogTitle>
         <div className="mt-4 space-y-4">
           <div className="grid gap-3 sm:grid-cols-[140px_1fr]">
@@ -185,7 +190,7 @@ export function DocumentShareDialog({
                         {' · '}
                         {share.canDownload ? 'view and download' : 'view only'}
                         {share.expiresAt
-                          ? ` · ${share.expired ? 'expired' : 'until'} ${new Date(share.expiresAt).toLocaleDateString()}`
+                          ? ` · ${share.expired ? 'expired' : 'until'} ${formatDate(share.expiresAt)}`
                           : ''}
                       </span>
                     </span>

@@ -6,6 +6,7 @@ import { ScreenHeader } from '../common/screen-header';
 import { Button } from '@smarteam/ui';
 import { formatWeekdays, shiftMinutes, type Shift } from '@smarteam/contracts';
 import { useShifts } from '../../hooks/use-shifts';
+import { RotationDialog } from './rotation-dialog';
 import { AssignShiftDialog, RetireShiftDialog, ShiftDialog } from './shift-dialogs';
 import { ShiftAssignmentsDialog } from './shift-assignments-dialog';
 import { PageShell } from '../layout/page-shell';
@@ -23,6 +24,7 @@ import { PageShell } from '../layout/page-shell';
  */
 export function ScreenShifts() {
   const shifts = useShifts();
+  const [rotating, setRotating] = useState(false);
   const [editing, setEditing] = useState<Shift | null>(null);
   const [creating, setCreating] = useState(false);
   const [assigning, setAssigning] = useState<Shift | null>(null);
@@ -50,9 +52,16 @@ export function ScreenShifts() {
       <ScreenHeader
         actions={
           shifts.canWrite && (
-            <Button onClick={() => setCreating(true)} size="sm" type="button">
-              New shift
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              {shifts.shifts.length >= 2 && (
+                <Button onClick={() => setRotating(true)} size="sm" type="button" variant="outline">
+                  Rotating roster
+                </Button>
+              )}
+              <Button onClick={() => setCreating(true)} size="sm" type="button">
+                New shift
+              </Button>
+            </div>
           )
         }
         description="Working patterns attendance measures against. Assignments are effective-dated; see and end them under People."
@@ -214,6 +223,12 @@ export function ScreenShifts() {
         canWrite={shifts.canWrite}
         onOpenChange={(open) => !open && setViewingPeople(null)}
         shift={viewingPeople}
+      />
+      <RotationDialog
+        onClose={() => setRotating(false)}
+        onPlanned={() => void shifts.refetch()}
+        open={rotating}
+        shifts={shifts.shifts}
       />
       <RetireShiftDialog
         onOpenChange={(open) => !open && setRetiring(null)}

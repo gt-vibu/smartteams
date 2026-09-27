@@ -56,10 +56,16 @@ export class FilesUploadService {
      * employee's file, or an internal one when there is no employee. The documents service
      * checks the caller may publish to the scope before passing it.
      */
-    access?: { scope: FileAccessScope; teamId?: string; allowDownload?: boolean },
+    access?: {
+      scope: FileAccessScope;
+      teamId?: string;
+      projectId?: string;
+      allowDownload?: boolean;
+    },
   ) {
     requireFilePermission(context, 'write');
-    const sharedScope = access?.scope === 'ORGANIZATION' || access?.scope === 'TEAM';
+    const sharedScope =
+      access?.scope === 'ORGANIZATION' || access?.scope === 'TEAM' || access?.scope === 'PROJECT';
     // `files.write` is a self-service permission. It used to accept any employee id and any
     // purpose, so an employee could attach documents to a colleague's record or leave request, and
     // file payroll documents under anyone's name.
@@ -117,9 +123,20 @@ export class FilesUploadService {
       if (access?.teamId) {
         const team = await tx.team.findFirst({
           where: { id: access.teamId, organizationId: context.organizationId },
-          select: { id: true },
+          select: { status: true },
         });
         if (!team) throw new NotFoundError('Team');
+        if (team.status === 'ARCHIVED')
+          throw new ConflictError('An archived team takes no new files');
+      }
+      if (access?.projectId) {
+        const project = await tx.project.findFirst({
+          where: { id: access.projectId, organizationId: context.organizationId },
+          select: { status: true },
+        });
+        if (!project) throw new NotFoundError('Project');
+        if (project.status === 'ARCHIVED')
+          throw new ConflictError('An archived project takes no new files');
       }
       const employee = employeeId
         ? await tx.employee.findFirst({
@@ -156,6 +173,7 @@ export class FilesUploadService {
               ? FileAccessScope.EMPLOYEE
               : FileAccessScope.INTERNAL),
           teamId: access?.scope === 'TEAM' ? access.teamId : undefined,
+          projectId: access?.scope === 'PROJECT' ? access.projectId : undefined,
           allowDownload: access?.allowDownload ?? true,
           metadata: input.documentType
             ? { documentType: input.documentType, displayName }

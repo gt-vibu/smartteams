@@ -31,6 +31,8 @@ export type ApprovalPolicyInput = {
   >;
 };
 
+export type ApproverCandidate = { userId: string; name: string; employeeNumber: string };
+
 export const approvalsRepository = {
   async listPolicies(organizationId: string): Promise<ApprovalPolicy[]> {
     return expectShape(
@@ -57,6 +59,12 @@ export const approvalsRepository = {
       ),
       'approval policy',
     );
+  },
+
+  /** People who can be named on a step: active employees with a login. */
+  async approverCandidates(organizationId: string): Promise<ApproverCandidate[]> {
+    const rows = await apiRequest(`${base(organizationId)}/approver-candidates`, { method: 'GET' });
+    return Array.isArray(rows) ? (rows as ApproverCandidate[]) : [];
   },
 
   /** Retires a policy. The backend requires a reason and records it in the audit trail. */

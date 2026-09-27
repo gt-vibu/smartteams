@@ -12,6 +12,8 @@ import { markPayrollStale } from '../payroll/payroll-staleness';
 import { OutboxService } from '../federation/outbox.service';
 import { assertApprover, assertResolvableApprovers } from '../approvals/approval-authorization';
 import { assertMayActForEmployee } from '../employees/employee-scope';
+import type { Prisma } from '../../generated/prisma/client';
+import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
 
 /**
  * A timesheet's approval cycle: submit, recall, and the approver's decision.
@@ -149,6 +151,24 @@ export class TimesheetLifecycleService {
         },
         tx,
       );
+      const requester = await requesterRouting(tx, context.organizationId, timesheet.employeeId);
+      const firstStep = policy.steps[0];
+      if (firstStep)
+        await notify(tx, context, {
+          recipients: await stepApprovers(
+            tx,
+            context.organizationId,
+            firstStep,
+            requester,
+            approvalBranchId,
+          ),
+          kind: 'TIMESHEET_PENDING',
+          title: 'Timesheet awaiting your approval',
+          body: `${requester.name} submitted their timesheet for ${periodLabel(await periodOf(tx, timesheet.timesheetPeriodId))}.`,
+          module: 'approvals',
+          entityType: 'TIMESHEET',
+          entityId: timesheet.id,
+        });
       return updated;
     });
   }
@@ -265,7 +285,53 @@ export class TimesheetLifecycleService {
         },
         tx,
       );
+      const requester = await requesterRouting(tx, context.organizationId, timesheet.employeeId);
+      const which = periodLabel(period);
+      if (hasMoreSteps && status !== 'REJECTED') {
+        const next = timesheet.approvalPolicy.steps.find((step) => step.stepNumber > stepNumber);
+        if (next)
+          await notify(tx, context, {
+            recipients: await stepApprovers(
+              tx,
+              context.organizationId,
+              next,
+              requester,
+              timesheet.branchId ?? context.branchId,
+            ),
+            kind: 'TIMESHEET_PENDING',
+            title: 'Timesheet awaiting your approval',
+            body: `${requester.name}'s timesheet for ${which} passed the previous approval step.`,
+            module: 'approvals',
+            entityType: 'TIMESHEET',
+            entityId: timesheet.id,
+          });
+      } else {
+        const approved = status === TimesheetStatus.APPROVED;
+        await notify(tx, context, {
+          recipients: [requester.userId],
+          kind: 'TIMESHEET_DECIDED',
+          title: approved ? 'Timesheet approved' : 'Timesheet returned',
+          body: approved
+            ? `Your timesheet for ${which} was approved.`
+            : `Your timesheet for ${which} was rejected: ${comment}`,
+          module: 'timesheet',
+          entityType: 'TIMESHEET',
+          entityId: timesheet.id,
+        });
+      }
       return updated;
     });
   }
+}
+
+async function periodOf(tx: Prisma.TransactionClient, periodId: string) {
+  return tx.timesheetPeriod.findUnique({
+    where: { id: periodId },
+    select: { periodStart: true, periodEnd: true },
+  });
+}
+
+/** "1 – 30 Sept 2026", or "this period" if the period is gone. */
+function periodLabel(period: { periodStart: Date; periodEnd: Date } | null) {
+  return period ? describeDays(period.periodStart, period.periodEnd) : 'this period';
 }

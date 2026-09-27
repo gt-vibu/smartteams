@@ -92,7 +92,7 @@ export function DepartmentDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <DialogTitle>{department ? `Edit ${department.name}` : 'New department'}</DialogTitle>
         <div className="mt-4 space-y-4">
           <div>

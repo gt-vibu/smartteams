@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import { Badge } from '@smarteam/ui';
 import type { EmployeeDetail } from '@smarteam/contracts';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
@@ -51,7 +52,7 @@ export function EmployeeTeamsSection({ memberships }: { memberships: TeamMembers
             >
               <span className="truncate text-xs text-muted-foreground">{m.team.name}</span>
               <span className="text-[10px] text-muted-foreground">
-                Left {m.endedOn?.slice(0, 10)}
+                Left {formatDate(m.endedOn)}
               </span>
             </div>
           ))}
@@ -91,7 +92,7 @@ export function EmployeeProjectsSection({ memberships }: { memberships: ProjectM
             >
               <span className="truncate text-xs text-muted-foreground">{m.project.name}</span>
               <span className="text-[10px] text-muted-foreground">
-                Ended {m.endedOn?.slice(0, 10)}
+                Ended {formatDate(m.endedOn)}
               </span>
             </div>
           ))}

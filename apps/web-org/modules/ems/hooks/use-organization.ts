@@ -44,9 +44,19 @@ export function useOrganization() {
     { enabled: Boolean(organizationId) && canReadBranches },
   );
 
+  const primaryResource = useAsyncResource(
+    () => organizationRepository.getPrimaryBranch(organizationId!),
+    [organizationId],
+    { enabled: Boolean(organizationId) && canReadBranches },
+  );
+
   const refetchAll = useCallback(async () => {
-    await Promise.all([organizationResource.refetch(), branchResource.refetch()]);
-  }, [branchResource, organizationResource]);
+    await Promise.all([
+      organizationResource.refetch(),
+      branchResource.refetch(),
+      primaryResource.refetch(),
+    ]);
+  }, [branchResource, organizationResource, primaryResource]);
 
   const { saving, saveError, setSaveError, run } = useMutationRunner(refetchAll);
 
@@ -77,6 +87,15 @@ export function useOrganization() {
     [organizationId, run],
   );
 
+  const setPrimaryBranch = useCallback(
+    (branchId: string) =>
+      run(
+        () => organizationRepository.setPrimaryBranch(organizationId!, branchId),
+        'The main branch could not be changed.',
+      ),
+    [organizationId, run],
+  );
+
   const retireBranch = useCallback(
     (branchId: string, reason: string) =>
       run(
@@ -89,6 +108,8 @@ export function useOrganization() {
   return {
     organization: organizationResource.data ?? null,
     branches: useMemo(() => branchResource.data ?? [], [branchResource.data]),
+    /** Where new people are placed by default. */
+    primaryBranchId: primaryResource.data?.branchId ?? null,
 
     loading: organizationResource.loading || branchResource.loading,
     error: organizationResource.error ?? branchResource.error,
@@ -102,6 +123,7 @@ export function useOrganization() {
     updateOrganization,
     createBranch,
     updateBranch,
+    setPrimaryBranch,
     retireBranch,
     can: { updateOrganization: canUpdateOrganization, writeBranches: canWriteBranches },
   };

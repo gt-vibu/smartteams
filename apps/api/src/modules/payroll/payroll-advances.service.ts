@@ -25,6 +25,8 @@ import {
 import { employeeScope, resolveEmployeeId } from './payroll-policy-access';
 import { pageArgs, toPage, type ListPage } from './payroll-list-page';
 import { canActForAllEmployees, resolveActingEmployeeId } from '../employees/employee-scope';
+import { advanceAllowance } from './payroll-advance-rules';
+import { notify, permissionHolders } from '../notifications/notify';
 
 /**
  * Salary advances and payment marking.
@@ -60,7 +62,11 @@ export class PayrollAdvancesService {
         });
       const rows = await tx.salaryAdvance.findMany({
         where,
-        include: { recoveries: true },
+        // Who asked, so an approver's list names people; the unpaged partner shape stays as it was.
+        include: {
+          recoveries: true,
+          employee: { select: { firstName: true, lastName: true, employeeNumber: true } },
+        },
         // The id breaks ties, so two advances raised in the same instant cannot swap across pages.
         orderBy: [{ requestedAt: 'desc' }, { id: 'desc' }],
         ...pageArgs(page),
@@ -93,7 +99,14 @@ export class PayrollAdvancesService {
       if (!employeeId) throw new NotFoundError('Employee');
       if (input.amount <= 0 || !Number.isFinite(input.amount))
         throw new ConflictError('Advance amount must be greater than zero');
-      return tx.salaryAdvance.create({
+      // The organization's limit, for requests made here. Partners raise advances through
+      // Federation under their own rules, and that contract does not change.
+      if (context.accessMode === AccessMode.NATIVE) {
+        // One request at a time per person, so two sent together cannot both fit the same room.
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`advance:${employeeId}`}))`;
+        await assertWithinAllowance(tx, context.organizationId, employeeId, input.amount);
+      }
+      const created = await tx.salaryAdvance.create({
         data: {
           organizationId: context.organizationId,
           employeeId,
@@ -103,6 +116,42 @@ export class PayrollAdvancesService {
           source: context.accessMode === AccessMode.FEDERATION ? 'FEDERATION' : 'NATIVE',
         },
       });
+      // Whoever may approve advances is told there is one waiting. `notify` writes nothing for a
+      // partner's request, so Federation's behaviour is unchanged.
+      if (context.accessMode === AccessMode.NATIVE) {
+        const person = await tx.employee.findUnique({
+          where: { id: employeeId },
+          select: { firstName: true, lastName: true, userId: true },
+        });
+        await notify(tx, context, {
+          recipients: (
+            await permissionHolders(tx, context.organizationId, ['payroll.advances.approve'])
+          ).filter((userId) => userId !== person?.userId),
+          kind: 'ADVANCE_PENDING',
+          title: 'Salary advance request',
+          body: `${`${person?.firstName ?? ''} ${person?.lastName ?? ''}`.trim() || 'An employee'} asks for an advance of ${money(input.amount)}: ${input.reason.trim()}`,
+          module: 'approvals',
+          entityType: 'SALARY_ADVANCE',
+          entityId: created.id,
+        });
+      }
+      return created;
+    });
+  }
+
+  /** How much more the employee may ask for, and the rule behind it. */
+  async allowance(context: DomainContext, requestedEmployeeId?: string) {
+    requirePermission(context, 'payroll.advances.read');
+    return this.database.run(context, async (tx) => {
+      const employeeId = await resolveEmployeeId(
+        tx,
+        context,
+        requestedEmployeeId,
+        false,
+        'payroll.advances.read.all',
+      );
+      if (!employeeId) throw new NotFoundError('Employee');
+      return advanceAllowance(tx, context.organizationId, employeeId);
     });
   }
 
@@ -136,6 +185,15 @@ export class PayrollAdvancesService {
         // An approved advance is recovered from net pay, so any run already calculated for a
         // period covering the approval now omits a deduction it should carry.
         await markPayrollStale(tx, context.organizationId, new Date());
+        await notify(tx, context, {
+          recipients: [advance.employee.userId],
+          kind: 'ADVANCE_DECIDED',
+          title: 'Salary advance approved',
+          body: `Your advance of ${money(amount)} was approved. It is recovered from your pay.${input.comment ? ` Note: ${input.comment}` : ''}`,
+          module: 'payroll',
+          entityType: 'SALARY_ADVANCE',
+          entityId: advance.id,
+        });
         return tx.salaryAdvance.update({
           where: { id: advance.id },
           data: {
@@ -146,6 +204,15 @@ export class PayrollAdvancesService {
           },
         });
       }
+      await notify(tx, context, {
+        recipients: [advance.employee.userId],
+        kind: 'ADVANCE_DECIDED',
+        title: 'Salary advance not approved',
+        body: `Your advance of ${money(Number(advance.requestedAmount))} was not approved.${input.comment ? ` Reason: ${input.comment}` : ''}`,
+        module: 'payroll',
+        entityType: 'SALARY_ADVANCE',
+        entityId: advance.id,
+      });
       return tx.salaryAdvance.update({
         where: { id: advance.id },
         data: {
@@ -231,4 +298,31 @@ export class PayrollAdvancesService {
       });
     });
   }
+}
+
+/** Refuses a request the organization's advance limit does not leave room for, saying why. */
+async function assertWithinAllowance(
+  tx: Parameters<Parameters<TenantDatabaseService['run']>[1]>[0],
+  organizationId: string,
+  employeeId: string,
+  amount: number,
+) {
+  const allowance = await advanceAllowance(tx, organizationId, employeeId);
+  if (allowance.limitPercent === 0)
+    throw new ConflictError('Salary advances are turned off for your organisation.');
+  if (allowance.limit === null)
+    throw new ConflictError(
+      'You have no salary on record yet, so an advance cannot be measured against it. Ask HR.',
+    );
+  if (amount > allowance.available)
+    throw new ConflictError(
+      allowance.available <= 0
+        ? `You can have up to ${money(allowance.limit)} (${allowance.limitPercent}% of your monthly salary) in advances, and ${money(allowance.outstanding)} is already requested or still being repaid.`
+        : `You can ask for at most ${money(allowance.available)} now: ${allowance.limitPercent}% of your monthly salary is ${money(allowance.limit)}, and ${money(allowance.outstanding)} is already requested or still being repaid.`,
+    );
+}
+
+/** An amount as people read it in messages: 38,200.00. */
+function money(value: number) {
+  return value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }

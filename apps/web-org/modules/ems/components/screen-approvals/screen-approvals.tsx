@@ -7,9 +7,11 @@ import { Button } from '@smarteam/ui';
 import { useApprovalInbox } from '../../hooks/use-approval-inbox';
 import { ApprovalPolicyBuilder } from './approval-policy-builder';
 import { ApprovalQueue } from './approval-queue';
+import { DelegationPanel } from './delegation-panel';
+import { ApprovalFollowUpCard } from './approval-follow-up-card';
 import { PageShell } from '../layout/page-shell';
 
-type View = 'queue' | 'policies';
+type View = 'queue' | 'cover' | 'policies';
 
 /**
  * Approvals.
@@ -34,13 +36,14 @@ export function ScreenApprovals() {
         title="Approvals"
         tone="success"
       />
-      <div className="flex items-center gap-4 border-b border-border pb-2">
+      <div className="flex items-center gap-4 overflow-x-auto border-b border-border pb-2">
         {(
           [
             {
               id: 'queue',
               label: `Awaiting me${inbox.items.length ? ` (${inbox.items.length})` : ''}`,
             },
+            { id: 'cover', label: 'Away cover' },
             { id: 'policies', label: 'Routing policies' },
           ] as Array<{ id: View; label: string }>
         ).map((entry) => (
@@ -61,9 +64,16 @@ export function ScreenApprovals() {
         ))}
       </div>
 
-      {view === 'policies' && <ApprovalPolicyBuilder />}
+      {view === 'policies' && (
+        <>
+          <ApprovalFollowUpCard />
+          <ApprovalPolicyBuilder />
+        </>
+      )}
 
       {view === 'queue' && <ApprovalQueue inbox={inbox} />}
+
+      {view === 'cover' && <DelegationPanel />}
     </PageShell>
   );
 }

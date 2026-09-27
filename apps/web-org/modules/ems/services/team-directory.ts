@@ -47,6 +47,7 @@ export type ProjectMemberView = MemberView & {
 export type ProjectView = {
   project: Project;
   branchName: string | null;
+  lead: { employeeId: string; displayName: string; employeeNumber: string } | null;
   activeMembers: ProjectMemberView[];
   pastMembers: ProjectMemberView[];
 };
@@ -69,6 +70,7 @@ export function indexEmployees(employees: readonly Employee[]): Map<string, Empl
 
 function branchNameOf(branches: readonly Branch[], branchId: string | null | undefined) {
   if (!branchId) return null;
+  // Someone who cannot read branches sees no branch name rather than a placeholder for one.
   return branches.find((branch) => branch.id === branchId)?.name ?? null;
 }
 
@@ -122,7 +124,10 @@ export function toTeamView(
   branches: readonly Branch[],
 ): TeamView {
   const members = team.members ?? [];
-  const leadEmployee = team.teamLeadEmployeeId ? employees.get(team.teamLeadEmployeeId) : undefined;
+  // The directory entry when this viewer may read it; otherwise the name the team carries.
+  const leadEmployee = team.teamLeadEmployeeId
+    ? (employees.get(team.teamLeadEmployeeId) ?? team.teamLead ?? undefined)
+    : undefined;
 
   return {
     team,
@@ -159,9 +164,21 @@ export function toProjectView(
   branches: readonly Branch[],
 ): ProjectView {
   const members = project.members ?? [];
+  const leadId = project.projectLeadEmployeeId ?? null;
+  // The directory entry when this viewer may read it; otherwise the name the project carries.
+  const leadEmployee = leadId
+    ? (employees.get(leadId) ?? project.projectLead ?? undefined)
+    : undefined;
   return {
     project,
     branchName: branchNameOf(branches, project.branchId),
+    lead: leadId
+      ? {
+          employeeId: leadId,
+          displayName: leadEmployee ? employeeDisplayName(leadEmployee) : MISSING.displayName,
+          employeeNumber: leadEmployee?.employeeNumber ?? MISSING.employeeNumber,
+        }
+      : null,
     activeMembers: members
       .filter((member) => current(member.endsOn))
       .map((member) => projectMemberView(member, employees)),

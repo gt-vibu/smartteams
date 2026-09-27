@@ -29,6 +29,7 @@ import { JobTitlePicker } from './job-title-picker';
 import { ShiftPicker } from '../common/shift-picker';
 import { Field, Fieldset } from './form-fields';
 import { activeByName, byName } from '../../lib/pickable';
+import { localDateKey } from '../../lib/local-date';
 
 const NEW_DEPARTMENT = '__new__';
 
@@ -50,6 +51,8 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   employees: Employee[];
   branches: Branch[];
+  /** The organization's main branch, where a new hire is placed unless someone picks another. */
+  defaultBranchId?: string | null;
   /** The least-privilege role a new joiner receives. Absent when roles could not be read. */
   employeeRoleId: string | null;
   /** Roles the login may be given; the Employee role is chosen unless the admin picks another. */
@@ -70,7 +73,7 @@ const EMPTY = {
   phone: '',
   aadhaarNumber: '',
   employmentType: 'FULL_TIME',
-  dateOfJoining: new Date().toISOString().slice(0, 10),
+  dateOfJoining: localDateKey(),
   primaryBranchId: '',
   jobTitle: '',
   departmentId: '',
@@ -84,6 +87,7 @@ export function OnboardEmployeeDialog({
   onOpenChange,
   employees,
   branches,
+  defaultBranchId,
   employeeRoleId,
   roles,
   canCreateAccount,
@@ -102,7 +106,11 @@ export function OnboardEmployeeDialog({
   // successful onboarding, which skipped the old reset and opened the next one pre-filled.
   useEffect(() => {
     if (!open) setForm({ ...EMPTY });
-  }, [open]);
+    else if (defaultBranchId)
+      setForm((current) =>
+        current.primaryBranchId ? current : { ...current, primaryBranchId: defaultBranchId },
+      );
+  }, [open, defaultBranchId]);
 
   const set = (key: keyof typeof EMPTY, value: string) =>
     setForm((current) => ({ ...current, [key]: value }));
@@ -158,7 +166,7 @@ export function OnboardEmployeeDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="sm:max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogTitle>Add employee</DialogTitle>
         <p className="mt-1 text-xs text-muted-foreground">
           Leave anything you do not know yet blank &mdash; you can add it to their record later.

@@ -57,6 +57,7 @@ function setup(run: Partial<RunRow> = {}) {
       findFirst: jest.fn().mockResolvedValue({ id: EMPLOYEE }),
       findMany: jest.fn().mockResolvedValue([]),
     },
+    leaveEncashment: { findMany: jest.fn().mockResolvedValue([]) },
     payrollAdjustment: {
       create: jest.fn().mockResolvedValue({ id: 'adj', amount: 500 }),
       findMany: jest.fn().mockResolvedValue([]),
@@ -79,6 +80,8 @@ function setup(run: Partial<RunRow> = {}) {
       findUniqueOrThrow: jest
         .fn()
         .mockResolvedValue({ workWeekDays: [1, 2, 3, 4, 5], standardDayMinutes: 480 }),
+      // No advance rules saved: advances are recovered all at once.
+      findUnique: jest.fn().mockResolvedValue(null),
     },
     holiday: { findMany: jest.fn().mockResolvedValue([]) },
     employeeHolidaySelection: { findMany: jest.fn().mockResolvedValue([]) },

@@ -17,11 +17,11 @@ import React from 'react';
  */
 
 const TONES = [
-  'bg-primary/10 text-primary',
-  'bg-sky-500/10 text-sky-600 dark:text-sky-400',
-  'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-  'bg-amber-500/10 text-amber-600 dark:text-amber-500',
-  'bg-violet-500/10 text-violet-600 dark:text-violet-400',
+  'bg-primary/10 text-primary dark:bg-emerald-400/15 dark:text-emerald-200',
+  'bg-sky-500/10 text-sky-600 dark:bg-sky-400/15 dark:text-sky-200',
+  'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-400/15 dark:text-emerald-200',
+  'bg-amber-500/10 text-amber-600 dark:bg-amber-400/15 dark:text-amber-200',
+  'bg-violet-500/10 text-violet-600 dark:bg-violet-400/15 dark:text-violet-200',
 ] as const;
 
 const SIZES = {

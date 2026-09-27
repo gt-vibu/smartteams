@@ -1,4 +1,5 @@
 import type { Employee, SalaryProfile } from '@smarteam/contracts';
+import { localDateKey } from '../../lib/local-date';
 
 export interface SalaryStructureExportOptions {
   orgName?: string;
@@ -41,7 +42,7 @@ export async function downloadSalaryStructurePdf(options: SalaryStructureExportO
     : NOT_RECORDED;
   const effectiveDate = compensation?.effectiveFrom
     ? compensation.effectiveFrom.slice(0, 10)
-    : new Date().toISOString().slice(0, 10);
+    : localDateKey();
   const generationDate = new Date().toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'long',

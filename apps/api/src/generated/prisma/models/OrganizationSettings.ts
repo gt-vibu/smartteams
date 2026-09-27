@@ -32,6 +32,12 @@ export type OrganizationSettingsAvgAggregateOutputType = {
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number | null
   optionalHolidayAllowance: number | null
+  approvalReminderDays: number | null
+  approvalEscalationDays: number | null
+  lateGraceMinutes: number | null
+  lateMarksPerHalfDay: number | null
+  advanceLimitPercent: number | null
+  advanceRecoveryMonths: number | null
 }
 
 export type OrganizationSettingsSumAggregateOutputType = {
@@ -40,6 +46,12 @@ export type OrganizationSettingsSumAggregateOutputType = {
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number | null
   optionalHolidayAllowance: number | null
+  approvalReminderDays: number | null
+  approvalEscalationDays: number | null
+  lateGraceMinutes: number | null
+  lateMarksPerHalfDay: number | null
+  advanceLimitPercent: number | null
+  advanceRecoveryMonths: number | null
 }
 
 export type OrganizationSettingsMinAggregateOutputType = {
@@ -48,6 +60,7 @@ export type OrganizationSettingsMinAggregateOutputType = {
   payrollFrequency: $Enums.PayFrequency | null
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number | null
+  primaryBranchId: string | null
   optionalHolidayAllowance: number | null
   geofenceMode: $Enums.GeofenceMode | null
   geofenceOwnerSource: $Enums.OwnerSource | null
@@ -57,6 +70,12 @@ export type OrganizationSettingsMinAggregateOutputType = {
   biometricOwnerClientId: string | null
   autoCheckOutMode: $Enums.AutoCheckOutMode | null
   autoCheckOutAt: Date | null
+  approvalReminderDays: number | null
+  approvalEscalationDays: number | null
+  lateGraceMinutes: number | null
+  lateMarksPerHalfDay: number | null
+  advanceLimitPercent: number | null
+  advanceRecoveryMonths: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -67,6 +86,7 @@ export type OrganizationSettingsMaxAggregateOutputType = {
   payrollFrequency: $Enums.PayFrequency | null
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number | null
+  primaryBranchId: string | null
   optionalHolidayAllowance: number | null
   geofenceMode: $Enums.GeofenceMode | null
   geofenceOwnerSource: $Enums.OwnerSource | null
@@ -76,6 +96,12 @@ export type OrganizationSettingsMaxAggregateOutputType = {
   biometricOwnerClientId: string | null
   autoCheckOutMode: $Enums.AutoCheckOutMode | null
   autoCheckOutAt: Date | null
+  approvalReminderDays: number | null
+  approvalEscalationDays: number | null
+  lateGraceMinutes: number | null
+  lateMarksPerHalfDay: number | null
+  advanceLimitPercent: number | null
+  advanceRecoveryMonths: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -87,6 +113,7 @@ export type OrganizationSettingsCountAggregateOutputType = {
   payrollFrequency: number
   payrollDayOfMonth: number
   leaveYearStartMonth: number
+  primaryBranchId: number
   optionalHolidayAllowance: number
   geofenceMode: number
   geofenceOwnerSource: number
@@ -96,6 +123,12 @@ export type OrganizationSettingsCountAggregateOutputType = {
   biometricOwnerClientId: number
   autoCheckOutMode: number
   autoCheckOutAt: number
+  approvalReminderDays: number
+  approvalEscalationDays: number
+  lateGraceMinutes: number
+  lateMarksPerHalfDay: number
+  advanceLimitPercent: number
+  advanceRecoveryMonths: number
   metadata: number
   createdAt: number
   updatedAt: number
@@ -109,6 +142,12 @@ export type OrganizationSettingsAvgAggregateInputType = {
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
   optionalHolidayAllowance?: true
+  approvalReminderDays?: true
+  approvalEscalationDays?: true
+  lateGraceMinutes?: true
+  lateMarksPerHalfDay?: true
+  advanceLimitPercent?: true
+  advanceRecoveryMonths?: true
 }
 
 export type OrganizationSettingsSumAggregateInputType = {
@@ -117,6 +156,12 @@ export type OrganizationSettingsSumAggregateInputType = {
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
   optionalHolidayAllowance?: true
+  approvalReminderDays?: true
+  approvalEscalationDays?: true
+  lateGraceMinutes?: true
+  lateMarksPerHalfDay?: true
+  advanceLimitPercent?: true
+  advanceRecoveryMonths?: true
 }
 
 export type OrganizationSettingsMinAggregateInputType = {
@@ -125,6 +170,7 @@ export type OrganizationSettingsMinAggregateInputType = {
   payrollFrequency?: true
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
+  primaryBranchId?: true
   optionalHolidayAllowance?: true
   geofenceMode?: true
   geofenceOwnerSource?: true
@@ -134,6 +180,12 @@ export type OrganizationSettingsMinAggregateInputType = {
   biometricOwnerClientId?: true
   autoCheckOutMode?: true
   autoCheckOutAt?: true
+  approvalReminderDays?: true
+  approvalEscalationDays?: true
+  lateGraceMinutes?: true
+  lateMarksPerHalfDay?: true
+  advanceLimitPercent?: true
+  advanceRecoveryMonths?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -144,6 +196,7 @@ export type OrganizationSettingsMaxAggregateInputType = {
   payrollFrequency?: true
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
+  primaryBranchId?: true
   optionalHolidayAllowance?: true
   geofenceMode?: true
   geofenceOwnerSource?: true
@@ -153,6 +206,12 @@ export type OrganizationSettingsMaxAggregateInputType = {
   biometricOwnerClientId?: true
   autoCheckOutMode?: true
   autoCheckOutAt?: true
+  approvalReminderDays?: true
+  approvalEscalationDays?: true
+  lateGraceMinutes?: true
+  lateMarksPerHalfDay?: true
+  advanceLimitPercent?: true
+  advanceRecoveryMonths?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -164,6 +223,7 @@ export type OrganizationSettingsCountAggregateInputType = {
   payrollFrequency?: true
   payrollDayOfMonth?: true
   leaveYearStartMonth?: true
+  primaryBranchId?: true
   optionalHolidayAllowance?: true
   geofenceMode?: true
   geofenceOwnerSource?: true
@@ -173,6 +233,12 @@ export type OrganizationSettingsCountAggregateInputType = {
   biometricOwnerClientId?: true
   autoCheckOutMode?: true
   autoCheckOutAt?: true
+  approvalReminderDays?: true
+  approvalEscalationDays?: true
+  lateGraceMinutes?: true
+  lateMarksPerHalfDay?: true
+  advanceLimitPercent?: true
+  advanceRecoveryMonths?: true
   metadata?: true
   createdAt?: true
   updatedAt?: true
@@ -272,6 +338,7 @@ export type OrganizationSettingsGroupByOutputType = {
   payrollFrequency: $Enums.PayFrequency
   payrollDayOfMonth: number | null
   leaveYearStartMonth: number
+  primaryBranchId: string | null
   optionalHolidayAllowance: number
   geofenceMode: $Enums.GeofenceMode
   geofenceOwnerSource: $Enums.OwnerSource
@@ -281,6 +348,12 @@ export type OrganizationSettingsGroupByOutputType = {
   biometricOwnerClientId: string | null
   autoCheckOutMode: $Enums.AutoCheckOutMode
   autoCheckOutAt: Date
+  approvalReminderDays: number
+  approvalEscalationDays: number
+  lateGraceMinutes: number
+  lateMarksPerHalfDay: number
+  advanceLimitPercent: number
+  advanceRecoveryMonths: number
   metadata: runtime.JsonValue
   createdAt: Date
   updatedAt: Date
@@ -316,6 +389,7 @@ export type OrganizationSettingsWhereInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFilter<"OrganizationSettings"> | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.IntNullableFilter<"OrganizationSettings"> | number | null
   leaveYearStartMonth?: Prisma.IntFilter<"OrganizationSettings"> | number
+  primaryBranchId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
@@ -325,6 +399,12 @@ export type OrganizationSettingsWhereInput = {
   biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
+  approvalReminderDays?: Prisma.IntFilter<"OrganizationSettings"> | number
+  approvalEscalationDays?: Prisma.IntFilter<"OrganizationSettings"> | number
+  lateGraceMinutes?: Prisma.IntFilter<"OrganizationSettings"> | number
+  lateMarksPerHalfDay?: Prisma.IntFilter<"OrganizationSettings"> | number
+  advanceLimitPercent?: Prisma.IntFilter<"OrganizationSettings"> | number
+  advanceRecoveryMonths?: Prisma.IntFilter<"OrganizationSettings"> | number
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
@@ -340,6 +420,7 @@ export type OrganizationSettingsOrderByWithRelationInput = {
   payrollFrequency?: Prisma.SortOrder
   payrollDayOfMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
+  primaryBranchId?: Prisma.SortOrderInput | Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
@@ -349,6 +430,12 @@ export type OrganizationSettingsOrderByWithRelationInput = {
   biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   autoCheckOutMode?: Prisma.SortOrder
   autoCheckOutAt?: Prisma.SortOrder
+  approvalReminderDays?: Prisma.SortOrder
+  approvalEscalationDays?: Prisma.SortOrder
+  lateGraceMinutes?: Prisma.SortOrder
+  lateMarksPerHalfDay?: Prisma.SortOrder
+  advanceLimitPercent?: Prisma.SortOrder
+  advanceRecoveryMonths?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -367,6 +454,7 @@ export type OrganizationSettingsWhereUniqueInput = Prisma.AtLeast<{
   payrollFrequency?: Prisma.EnumPayFrequencyFilter<"OrganizationSettings"> | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.IntNullableFilter<"OrganizationSettings"> | number | null
   leaveYearStartMonth?: Prisma.IntFilter<"OrganizationSettings"> | number
+  primaryBranchId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
@@ -376,6 +464,12 @@ export type OrganizationSettingsWhereUniqueInput = Prisma.AtLeast<{
   biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
+  approvalReminderDays?: Prisma.IntFilter<"OrganizationSettings"> | number
+  approvalEscalationDays?: Prisma.IntFilter<"OrganizationSettings"> | number
+  lateGraceMinutes?: Prisma.IntFilter<"OrganizationSettings"> | number
+  lateMarksPerHalfDay?: Prisma.IntFilter<"OrganizationSettings"> | number
+  advanceLimitPercent?: Prisma.IntFilter<"OrganizationSettings"> | number
+  advanceRecoveryMonths?: Prisma.IntFilter<"OrganizationSettings"> | number
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
@@ -391,6 +485,7 @@ export type OrganizationSettingsOrderByWithAggregationInput = {
   payrollFrequency?: Prisma.SortOrder
   payrollDayOfMonth?: Prisma.SortOrderInput | Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
+  primaryBranchId?: Prisma.SortOrderInput | Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
@@ -400,6 +495,12 @@ export type OrganizationSettingsOrderByWithAggregationInput = {
   biometricOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   autoCheckOutMode?: Prisma.SortOrder
   autoCheckOutAt?: Prisma.SortOrder
+  approvalReminderDays?: Prisma.SortOrder
+  approvalEscalationDays?: Prisma.SortOrder
+  lateGraceMinutes?: Prisma.SortOrder
+  lateMarksPerHalfDay?: Prisma.SortOrder
+  advanceLimitPercent?: Prisma.SortOrder
+  advanceRecoveryMonths?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -420,6 +521,7 @@ export type OrganizationSettingsScalarWhereWithAggregatesInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyWithAggregatesFilter<"OrganizationSettings"> | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.IntNullableWithAggregatesFilter<"OrganizationSettings"> | number | null
   leaveYearStartMonth?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
+  primaryBranchId?: Prisma.UuidNullableWithAggregatesFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"OrganizationSettings"> | $Enums.OwnerSource
@@ -429,6 +531,12 @@ export type OrganizationSettingsScalarWhereWithAggregatesInput = {
   biometricOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"OrganizationSettings"> | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
+  approvalReminderDays?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
+  approvalEscalationDays?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
+  lateGraceMinutes?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
+  lateMarksPerHalfDay?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
+  advanceLimitPercent?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
+  advanceRecoveryMonths?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
   metadata?: Prisma.JsonWithAggregatesFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationSettings"> | Date | string
@@ -440,6 +548,7 @@ export type OrganizationSettingsCreateInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -447,6 +556,12 @@ export type OrganizationSettingsCreateInput = {
   biometricOwnerSource?: $Enums.OwnerSource
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -462,6 +577,7 @@ export type OrganizationSettingsUncheckedCreateInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -471,6 +587,12 @@ export type OrganizationSettingsUncheckedCreateInput = {
   biometricOwnerClientId?: string | null
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -482,6 +604,7 @@ export type OrganizationSettingsUpdateInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -489,6 +612,12 @@ export type OrganizationSettingsUpdateInput = {
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -504,6 +633,7 @@ export type OrganizationSettingsUncheckedUpdateInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -513,6 +643,12 @@ export type OrganizationSettingsUncheckedUpdateInput = {
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -525,6 +661,7 @@ export type OrganizationSettingsCreateManyInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -534,6 +671,12 @@ export type OrganizationSettingsCreateManyInput = {
   biometricOwnerClientId?: string | null
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -545,6 +688,7 @@ export type OrganizationSettingsUpdateManyMutationInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -552,6 +696,12 @@ export type OrganizationSettingsUpdateManyMutationInput = {
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -564,6 +714,7 @@ export type OrganizationSettingsUncheckedUpdateManyInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -573,6 +724,12 @@ export type OrganizationSettingsUncheckedUpdateManyInput = {
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -600,6 +757,7 @@ export type OrganizationSettingsCountOrderByAggregateInput = {
   payrollFrequency?: Prisma.SortOrder
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
+  primaryBranchId?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
@@ -609,6 +767,12 @@ export type OrganizationSettingsCountOrderByAggregateInput = {
   biometricOwnerClientId?: Prisma.SortOrder
   autoCheckOutMode?: Prisma.SortOrder
   autoCheckOutAt?: Prisma.SortOrder
+  approvalReminderDays?: Prisma.SortOrder
+  approvalEscalationDays?: Prisma.SortOrder
+  lateGraceMinutes?: Prisma.SortOrder
+  lateMarksPerHalfDay?: Prisma.SortOrder
+  advanceLimitPercent?: Prisma.SortOrder
+  advanceRecoveryMonths?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -620,6 +784,12 @@ export type OrganizationSettingsAvgOrderByAggregateInput = {
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
+  approvalReminderDays?: Prisma.SortOrder
+  approvalEscalationDays?: Prisma.SortOrder
+  lateGraceMinutes?: Prisma.SortOrder
+  lateMarksPerHalfDay?: Prisma.SortOrder
+  advanceLimitPercent?: Prisma.SortOrder
+  advanceRecoveryMonths?: Prisma.SortOrder
 }
 
 export type OrganizationSettingsMaxOrderByAggregateInput = {
@@ -628,6 +798,7 @@ export type OrganizationSettingsMaxOrderByAggregateInput = {
   payrollFrequency?: Prisma.SortOrder
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
+  primaryBranchId?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
@@ -637,6 +808,12 @@ export type OrganizationSettingsMaxOrderByAggregateInput = {
   biometricOwnerClientId?: Prisma.SortOrder
   autoCheckOutMode?: Prisma.SortOrder
   autoCheckOutAt?: Prisma.SortOrder
+  approvalReminderDays?: Prisma.SortOrder
+  approvalEscalationDays?: Prisma.SortOrder
+  lateGraceMinutes?: Prisma.SortOrder
+  lateMarksPerHalfDay?: Prisma.SortOrder
+  advanceLimitPercent?: Prisma.SortOrder
+  advanceRecoveryMonths?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -647,6 +824,7 @@ export type OrganizationSettingsMinOrderByAggregateInput = {
   payrollFrequency?: Prisma.SortOrder
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
+  primaryBranchId?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
@@ -656,6 +834,12 @@ export type OrganizationSettingsMinOrderByAggregateInput = {
   biometricOwnerClientId?: Prisma.SortOrder
   autoCheckOutMode?: Prisma.SortOrder
   autoCheckOutAt?: Prisma.SortOrder
+  approvalReminderDays?: Prisma.SortOrder
+  approvalEscalationDays?: Prisma.SortOrder
+  lateGraceMinutes?: Prisma.SortOrder
+  lateMarksPerHalfDay?: Prisma.SortOrder
+  advanceLimitPercent?: Prisma.SortOrder
+  advanceRecoveryMonths?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -666,6 +850,12 @@ export type OrganizationSettingsSumOrderByAggregateInput = {
   payrollDayOfMonth?: Prisma.SortOrder
   leaveYearStartMonth?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
+  approvalReminderDays?: Prisma.SortOrder
+  approvalEscalationDays?: Prisma.SortOrder
+  lateGraceMinutes?: Prisma.SortOrder
+  lateMarksPerHalfDay?: Prisma.SortOrder
+  advanceLimitPercent?: Prisma.SortOrder
+  advanceRecoveryMonths?: Prisma.SortOrder
 }
 
 export type OrganizationSettingsCreateNestedManyWithoutGeofenceOwnerClientInput = {
@@ -815,6 +1005,7 @@ export type OrganizationSettingsCreateWithoutGeofenceOwnerClientInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -822,6 +1013,12 @@ export type OrganizationSettingsCreateWithoutGeofenceOwnerClientInput = {
   biometricOwnerSource?: $Enums.OwnerSource
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -836,6 +1033,7 @@ export type OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput =
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -844,6 +1042,12 @@ export type OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput =
   biometricOwnerClientId?: string | null
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -865,6 +1069,7 @@ export type OrganizationSettingsCreateWithoutBiometricOwnerClientInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -872,6 +1077,12 @@ export type OrganizationSettingsCreateWithoutBiometricOwnerClientInput = {
   biometricOwnerSource?: $Enums.OwnerSource
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -886,6 +1097,7 @@ export type OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput 
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -894,6 +1106,12 @@ export type OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput 
   biometricOwnerSource?: $Enums.OwnerSource
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -935,6 +1153,7 @@ export type OrganizationSettingsScalarWhereInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFilter<"OrganizationSettings"> | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.IntNullableFilter<"OrganizationSettings"> | number | null
   leaveYearStartMonth?: Prisma.IntFilter<"OrganizationSettings"> | number
+  primaryBranchId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
@@ -944,6 +1163,12 @@ export type OrganizationSettingsScalarWhereInput = {
   biometricOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFilter<"OrganizationSettings"> | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
+  approvalReminderDays?: Prisma.IntFilter<"OrganizationSettings"> | number
+  approvalEscalationDays?: Prisma.IntFilter<"OrganizationSettings"> | number
+  lateGraceMinutes?: Prisma.IntFilter<"OrganizationSettings"> | number
+  lateMarksPerHalfDay?: Prisma.IntFilter<"OrganizationSettings"> | number
+  advanceLimitPercent?: Prisma.IntFilter<"OrganizationSettings"> | number
+  advanceRecoveryMonths?: Prisma.IntFilter<"OrganizationSettings"> | number
   metadata?: Prisma.JsonFilter<"OrganizationSettings">
   createdAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationSettings"> | Date | string
@@ -971,6 +1196,7 @@ export type OrganizationSettingsCreateWithoutOrganizationInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -978,6 +1204,12 @@ export type OrganizationSettingsCreateWithoutOrganizationInput = {
   biometricOwnerSource?: $Enums.OwnerSource
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -991,6 +1223,7 @@ export type OrganizationSettingsUncheckedCreateWithoutOrganizationInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -1000,6 +1233,12 @@ export type OrganizationSettingsUncheckedCreateWithoutOrganizationInput = {
   biometricOwnerClientId?: string | null
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1027,6 +1266,7 @@ export type OrganizationSettingsUpdateWithoutOrganizationInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1034,6 +1274,12 @@ export type OrganizationSettingsUpdateWithoutOrganizationInput = {
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1047,6 +1293,7 @@ export type OrganizationSettingsUncheckedUpdateWithoutOrganizationInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1056,6 +1303,12 @@ export type OrganizationSettingsUncheckedUpdateWithoutOrganizationInput = {
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1068,6 +1321,7 @@ export type OrganizationSettingsCreateManyGeofenceOwnerClientInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -1076,6 +1330,12 @@ export type OrganizationSettingsCreateManyGeofenceOwnerClientInput = {
   biometricOwnerClientId?: string | null
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1088,6 +1348,7 @@ export type OrganizationSettingsCreateManyBiometricOwnerClientInput = {
   payrollFrequency?: $Enums.PayFrequency
   payrollDayOfMonth?: number | null
   leaveYearStartMonth?: number
+  primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
   geofenceOwnerSource?: $Enums.OwnerSource
@@ -1096,6 +1357,12 @@ export type OrganizationSettingsCreateManyBiometricOwnerClientInput = {
   biometricOwnerSource?: $Enums.OwnerSource
   autoCheckOutMode?: $Enums.AutoCheckOutMode
   autoCheckOutAt?: Date | string
+  approvalReminderDays?: number
+  approvalEscalationDays?: number
+  lateGraceMinutes?: number
+  lateMarksPerHalfDay?: number
+  advanceLimitPercent?: number
+  advanceRecoveryMonths?: number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1107,6 +1374,7 @@ export type OrganizationSettingsUpdateWithoutGeofenceOwnerClientInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1114,6 +1382,12 @@ export type OrganizationSettingsUpdateWithoutGeofenceOwnerClientInput = {
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1128,6 +1402,7 @@ export type OrganizationSettingsUncheckedUpdateWithoutGeofenceOwnerClientInput =
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1136,6 +1411,12 @@ export type OrganizationSettingsUncheckedUpdateWithoutGeofenceOwnerClientInput =
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1148,6 +1429,7 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientInp
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1156,6 +1438,12 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientInp
   biometricOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1167,6 +1455,7 @@ export type OrganizationSettingsUpdateWithoutBiometricOwnerClientInput = {
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1174,6 +1463,12 @@ export type OrganizationSettingsUpdateWithoutBiometricOwnerClientInput = {
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1188,6 +1483,7 @@ export type OrganizationSettingsUncheckedUpdateWithoutBiometricOwnerClientInput 
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1196,6 +1492,12 @@ export type OrganizationSettingsUncheckedUpdateWithoutBiometricOwnerClientInput 
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1208,6 +1510,7 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientIn
   payrollFrequency?: Prisma.EnumPayFrequencyFieldUpdateOperationsInput | $Enums.PayFrequency
   payrollDayOfMonth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   leaveYearStartMonth?: Prisma.IntFieldUpdateOperationsInput | number
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1216,6 +1519,12 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientIn
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   autoCheckOutMode?: Prisma.EnumAutoCheckOutModeFieldUpdateOperationsInput | $Enums.AutoCheckOutMode
   autoCheckOutAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvalReminderDays?: Prisma.IntFieldUpdateOperationsInput | number
+  approvalEscalationDays?: Prisma.IntFieldUpdateOperationsInput | number
+  lateGraceMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  lateMarksPerHalfDay?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceLimitPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  advanceRecoveryMonths?: Prisma.IntFieldUpdateOperationsInput | number
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1230,6 +1539,7 @@ export type OrganizationSettingsSelect<ExtArgs extends runtime.Types.Extensions.
   payrollFrequency?: boolean
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
+  primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
   geofenceOwnerSource?: boolean
@@ -1239,6 +1549,12 @@ export type OrganizationSettingsSelect<ExtArgs extends runtime.Types.Extensions.
   biometricOwnerClientId?: boolean
   autoCheckOutMode?: boolean
   autoCheckOutAt?: boolean
+  approvalReminderDays?: boolean
+  approvalEscalationDays?: boolean
+  lateGraceMinutes?: boolean
+  lateMarksPerHalfDay?: boolean
+  advanceLimitPercent?: boolean
+  advanceRecoveryMonths?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1254,6 +1570,7 @@ export type OrganizationSettingsSelectCreateManyAndReturn<ExtArgs extends runtim
   payrollFrequency?: boolean
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
+  primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
   geofenceOwnerSource?: boolean
@@ -1263,6 +1580,12 @@ export type OrganizationSettingsSelectCreateManyAndReturn<ExtArgs extends runtim
   biometricOwnerClientId?: boolean
   autoCheckOutMode?: boolean
   autoCheckOutAt?: boolean
+  approvalReminderDays?: boolean
+  approvalEscalationDays?: boolean
+  lateGraceMinutes?: boolean
+  lateMarksPerHalfDay?: boolean
+  advanceLimitPercent?: boolean
+  advanceRecoveryMonths?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1278,6 +1601,7 @@ export type OrganizationSettingsSelectUpdateManyAndReturn<ExtArgs extends runtim
   payrollFrequency?: boolean
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
+  primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
   geofenceOwnerSource?: boolean
@@ -1287,6 +1611,12 @@ export type OrganizationSettingsSelectUpdateManyAndReturn<ExtArgs extends runtim
   biometricOwnerClientId?: boolean
   autoCheckOutMode?: boolean
   autoCheckOutAt?: boolean
+  approvalReminderDays?: boolean
+  approvalEscalationDays?: boolean
+  lateGraceMinutes?: boolean
+  lateMarksPerHalfDay?: boolean
+  advanceLimitPercent?: boolean
+  advanceRecoveryMonths?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1302,6 +1632,7 @@ export type OrganizationSettingsSelectScalar = {
   payrollFrequency?: boolean
   payrollDayOfMonth?: boolean
   leaveYearStartMonth?: boolean
+  primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
   geofenceOwnerSource?: boolean
@@ -1311,12 +1642,18 @@ export type OrganizationSettingsSelectScalar = {
   biometricOwnerClientId?: boolean
   autoCheckOutMode?: boolean
   autoCheckOutAt?: boolean
+  approvalReminderDays?: boolean
+  approvalEscalationDays?: boolean
+  lateGraceMinutes?: boolean
+  lateMarksPerHalfDay?: boolean
+  advanceLimitPercent?: boolean
+  advanceRecoveryMonths?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "optionalHolidayAllowance" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "autoCheckOutMode" | "autoCheckOutAt" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
+export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "primaryBranchId" | "optionalHolidayAllowance" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "autoCheckOutMode" | "autoCheckOutAt" | "approvalReminderDays" | "approvalEscalationDays" | "lateGraceMinutes" | "lateMarksPerHalfDay" | "advanceLimitPercent" | "advanceRecoveryMonths" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
 export type OrganizationSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
@@ -1347,6 +1684,10 @@ export type $OrganizationSettingsPayload<ExtArgs extends runtime.Types.Extension
     payrollFrequency: $Enums.PayFrequency
     payrollDayOfMonth: number | null
     leaveYearStartMonth: number
+    /**
+     * The organization's main branch; null until an administrator chooses one (the oldest stands in).
+     */
+    primaryBranchId: string | null
     optionalHolidayAllowance: number
     geofenceMode: $Enums.GeofenceMode
     geofenceOwnerSource: $Enums.OwnerSource
@@ -1356,6 +1697,30 @@ export type $OrganizationSettingsPayload<ExtArgs extends runtime.Types.Extension
     biometricOwnerClientId: string | null
     autoCheckOutMode: $Enums.AutoCheckOutMode
     autoCheckOutAt: Date
+    /**
+     * Days a request may wait before its approvers are reminded, every day after. 0 turns it off.
+     */
+    approvalReminderDays: number
+    /**
+     * Days a request may wait before administrators are told it is stuck. 0 turns it off.
+     */
+    approvalEscalationDays: number
+    /**
+     * Minutes after the shift starts that a check-in still counts as on time.
+     */
+    lateGraceMinutes: number
+    /**
+     * Every this many late check-ins in a month cost half a day's pay. 0 turns it off.
+     */
+    lateMarksPerHalfDay: number
+    /**
+     * Most an employee may ask for or owe in salary advances, as a percentage of monthly gross. 0 turns advances off.
+     */
+    advanceLimitPercent: number
+    /**
+     * Equal monthly instalments an approved advance is recovered in; 1 takes it all from the next pay.
+     */
+    advanceRecoveryMonths: number
     metadata: runtime.JsonValue
     createdAt: Date
     updatedAt: Date
@@ -1791,6 +2156,7 @@ export interface OrganizationSettingsFieldRefs {
   readonly payrollFrequency: Prisma.FieldRef<"OrganizationSettings", 'PayFrequency'>
   readonly payrollDayOfMonth: Prisma.FieldRef<"OrganizationSettings", 'Int'>
   readonly leaveYearStartMonth: Prisma.FieldRef<"OrganizationSettings", 'Int'>
+  readonly primaryBranchId: Prisma.FieldRef<"OrganizationSettings", 'String'>
   readonly optionalHolidayAllowance: Prisma.FieldRef<"OrganizationSettings", 'Int'>
   readonly geofenceMode: Prisma.FieldRef<"OrganizationSettings", 'GeofenceMode'>
   readonly geofenceOwnerSource: Prisma.FieldRef<"OrganizationSettings", 'OwnerSource'>
@@ -1800,6 +2166,12 @@ export interface OrganizationSettingsFieldRefs {
   readonly biometricOwnerClientId: Prisma.FieldRef<"OrganizationSettings", 'String'>
   readonly autoCheckOutMode: Prisma.FieldRef<"OrganizationSettings", 'AutoCheckOutMode'>
   readonly autoCheckOutAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>
+  readonly approvalReminderDays: Prisma.FieldRef<"OrganizationSettings", 'Int'>
+  readonly approvalEscalationDays: Prisma.FieldRef<"OrganizationSettings", 'Int'>
+  readonly lateGraceMinutes: Prisma.FieldRef<"OrganizationSettings", 'Int'>
+  readonly lateMarksPerHalfDay: Prisma.FieldRef<"OrganizationSettings", 'Int'>
+  readonly advanceLimitPercent: Prisma.FieldRef<"OrganizationSettings", 'Int'>
+  readonly advanceRecoveryMonths: Prisma.FieldRef<"OrganizationSettings", 'Int'>
   readonly metadata: Prisma.FieldRef<"OrganizationSettings", 'Json'>
   readonly createdAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OrganizationSettings", 'DateTime'>

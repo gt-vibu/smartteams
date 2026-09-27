@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Badge, Button } from '@smarteam/ui';
-import { formatMoney, type Employee, type SalaryProfile } from '@smarteam/contracts';
+import { formatMoney, type Employee, type SalaryProfile, formatDate } from '@smarteam/contracts';
 import {
   Briefcase,
   Calendar,
@@ -48,7 +48,7 @@ export function CompensationHeaderCard({
   const annualCtc = monthlyCtc * 12;
 
   const effectiveFrom = compensation?.effectiveFrom
-    ? compensation.effectiveFrom.slice(0, 10)
+    ? formatDate(compensation.effectiveFrom)
     : 'Not configured';
 
   const employeeName = employee

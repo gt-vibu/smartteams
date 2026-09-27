@@ -95,6 +95,14 @@ export class OrganizationsService {
     return this.branches.updateBranch(...args);
   }
 
+  primaryBranch(context: DomainContext) {
+    return this.branches.primaryBranch(context);
+  }
+
+  setPrimaryBranch(context: DomainContext, branchId: string) {
+    return this.branches.setPrimaryBranch(context, branchId);
+  }
+
   deactivateBranch(context: DomainContext, branchId: string, reason: string) {
     return this.branches.deactivateBranch(context, branchId, reason);
   }

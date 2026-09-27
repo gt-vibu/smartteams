@@ -42,6 +42,8 @@ export class EmployeeDetailService {
           employmentType: true,
           dateOfJoining: true,
           dateOfLeaving: true,
+          probationEndsOn: true,
+          confirmedOn: true,
           primaryBranchId: true,
           departmentId: true,
           managerEmployeeId: true,
@@ -93,6 +95,8 @@ export class EmployeeDetailService {
         employmentType: employee.employmentType,
         dateOfJoining: employee.dateOfJoining,
         dateOfLeaving: employee.dateOfLeaving,
+        probationEndsOn: employee.probationEndsOn,
+        confirmedOn: employee.confirmedOn,
         primaryBranchId: employee.primaryBranchId,
         jobTitle: employment?.jobTitle ?? null,
         // The department record when the employee has one; the older free text otherwise.

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { formatDate } from '@smarteam/contracts';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@smarteam/ui';
 import {
   Download,
@@ -92,8 +93,7 @@ export function CompanyDocumentsCard() {
                       {file.name}
                     </p>
                     <p className="text-[10px] text-muted-foreground font-mono">
-                      {formatBytes(file.byteSize)} ·{' '}
-                      {new Date(file.uploadedAt).toLocaleDateString()}
+                      {formatBytes(file.byteSize)} · {formatDate(file.uploadedAt)}
                     </p>
                   </div>
                 </div>

@@ -15,6 +15,7 @@ import {
 import { Sliders, Sparkles, Calculator, Check } from 'lucide-react';
 import { formatMoney } from '@smarteam/contracts';
 import type { CompensationState } from '../../hooks/use-compensation';
+import { localDateKey } from '../../lib/local-date';
 
 interface ConfigureSalaryPolicyDialogProps {
   compensation: CompensationState;
@@ -49,7 +50,7 @@ export function ConfigureSalaryPolicyDialog({
         setHraPct(String(currentPolicy.hraPercentage));
         setBaseMin(String(currentPolicy.baseMinimum));
       }
-      setEffectiveFrom(new Date().toISOString().slice(0, 10));
+      setEffectiveFrom(localDateKey());
     }
   }, [open, currentPolicy]);
 
@@ -97,7 +98,7 @@ export function ConfigureSalaryPolicyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[92vh] overflow-y-auto">
+      <DialogContent className="max-w-lg sm:max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">

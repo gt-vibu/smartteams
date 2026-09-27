@@ -6,6 +6,7 @@ import {
   employeeDisplayName,
   joiningDateFrom,
   type Employee,
+  type EmployeeDetail,
   type EmploymentRecord,
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
@@ -30,6 +31,8 @@ export type EmployeeProfileView = {
   joiningDate: string | null;
   managerEmployeeId: string | null;
   employmentHistory: EmploymentRecord[];
+  /** The reporting line; null when it could not be read. */
+  detail: EmployeeDetail | null;
 };
 
 function initialsOf(name: string): string {
@@ -52,9 +55,12 @@ export function useEmployeeProfile() {
 
   const state = useAsyncResource<EmployeeProfileView>(
     async () => {
-      const [employee, history] = await Promise.all([
+      const [employee, history, detail] = await Promise.all([
         workforceRepository.getEmployee(organizationId!, employeeId!),
         workforceRepository.listEmploymentRecords(organizationId!, employeeId!),
+        // The reporting line and the department record. Optional: without it the profile still
+        // shows everything else, and says nothing about a manager rather than guessing.
+        workforceRepository.getEmployeeDetail(organizationId!, employeeId!).catch(() => null),
       ]);
       const current = currentEmploymentRecord(history);
       const displayName = employeeDisplayName(employee);
@@ -63,8 +69,9 @@ export function useEmployeeProfile() {
         displayName,
         initials: initialsOf(displayName),
         jobTitle: current?.jobTitle ?? null,
-        department: current?.department ?? null,
-        joiningDate: joiningDateFrom(history),
+        department: detail?.department ?? current?.department ?? null,
+        joiningDate: detail?.dateOfJoining ?? joiningDateFrom(history),
+        detail,
         managerEmployeeId: current?.managerEmployeeId ?? null,
         employmentHistory: history,
       };
@@ -87,10 +94,9 @@ export function useEmployeeProfile() {
  *
  * Fields the backend genuinely cannot supply are null or empty, never invented:
  *  - `avatarUrl` — the schema has no avatar image; the UI falls back to `initials`.
- *  - `manager` — only `managerEmployeeId` is stored, and there is no endpoint returning the
- *    manager's details, so this stays null.
- *  - `departmentMembers` — `department` is a free-text field on the employment record, not an
- *    entity, so there is no membership list to fetch.
+ *  - `manager` and `directReports` come from the employee's detail record; when it cannot be
+ *    read they are left empty rather than guessed.
+ *  - `departmentMembers` — there is no membership list for the signed-in person to read.
  *
  * These gaps are listed in the module report rather than papered over.
  */
@@ -111,7 +117,16 @@ export function useEmployee() {
         avatarUrl: null,
         joinedDate: data.joiningDate ?? undefined,
         phone: data.employee.phone ?? undefined,
-        manager: null,
+        manager: data.detail?.manager
+          ? {
+              id: data.detail.manager.id,
+              employeeNumber: data.detail.manager.employeeNumber,
+              firstName: data.detail.manager.firstName,
+              lastName: data.detail.manager.lastName,
+              isOnline: false,
+            }
+          : null,
+        directReports: data.detail?.directReports ?? [],
         departmentMembers: [],
       }
     : null;

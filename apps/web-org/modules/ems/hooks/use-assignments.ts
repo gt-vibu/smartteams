@@ -11,10 +11,11 @@ import {
   type ProjectMembership,
   type TeamMembership,
 } from '../services/membership-state';
+import { localDateKey } from '../lib/local-date';
 
 /** Today in the `YYYY-MM-DD` form the API's date-only fields expect. */
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDateKey();
 }
 
 export type AssignmentChange =

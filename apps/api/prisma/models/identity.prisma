@@ -11,17 +11,22 @@ model User {
   isActive                 Boolean      @default(true) @map("is_active")
   tokenVersion             Int          @default(0) @map("token_version")
   passwordChangeRequired   Boolean      @default(false) @map("password_change_required")
+  /// Whether in-app notifications are also sent by email. Each person decides for themselves.
+  emailNotifications       Boolean      @default(true) @map("email_notifications")
   lastLoginAt              DateTime?    @map("last_login_at") @db.Timestamptz(6)
   deactivatedAt            DateTime?    @map("deactivated_at") @db.Timestamptz(6)
   createdAt                DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
 
+  delegationsGiven                ApprovalDelegation[] @relation("DelegationsGiven")
+  delegationsReceived             ApprovalDelegation[] @relation("DelegationsReceived")
   memberships                     UserOrganization[]
   employee                        Employee?
   authSessions                    AuthSession[]
   platformRoleAssignments         UserPlatformRole[]
   organizationRoleAssignments     UserRole[]
   auditLogs                       AuditLog[]
+  notifications                   Notification[]
   uploadedFiles                   FileObject[]                       @relation("FileUploadedBy")
   createdFileVersions             FileObjectVersion[]
   createdInvitations              UserInvitation[]                   @relation("InvitationCreatedBy")

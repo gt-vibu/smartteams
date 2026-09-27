@@ -9,9 +9,15 @@ import {
   DatePicker,
   Input,
   Label,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
   Textarea,
 } from '@smarteam/ui';
-import { isCalculationStale, type PayrollRun } from '@smarteam/contracts';
+import { employeeDisplayName, isCalculationStale, type PayrollRun } from '@smarteam/contracts';
+import { useEmployees } from '../../hooks/use-workforce';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
 
 /**
@@ -223,6 +229,9 @@ export function AddAdjustmentDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const [employeeId, setEmployeeId] = useState('');
+  // Chosen by name: the field used to ask for the internal id, which nobody can type.
+  const employees = useEmployees();
+  const active = (employees.data ?? []).filter((employee) => employee.status === 'ACTIVE');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
 
@@ -258,14 +267,22 @@ export function AddAdjustmentDialog({
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <div>
             <Label className="mb-1 block" htmlFor="adjustment-employee">
-              Employee id
+              Employee
             </Label>
-            <Input
-              disabled={admin.saving}
-              id="adjustment-employee"
-              onChange={(event) => setEmployeeId(event.target.value)}
-              value={employeeId}
-            />
+            <SelectMenu disabled={admin.saving} onValueChange={setEmployeeId} value={employeeId}>
+              <SelectTrigger id="adjustment-employee">
+                <SelectValue
+                  placeholder={employees.loading ? 'Loading people…' : 'Choose a person'}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {active.map((employee) => (
+                  <SelectItem key={employee.id} value={employee.id}>
+                    {employeeDisplayName(employee)} · {employee.employeeNumber}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </SelectMenu>
           </div>
           <div>
             <Label className="mb-1 block" htmlFor="adjustment-amount">
@@ -282,7 +299,7 @@ export function AddAdjustmentDialog({
           </div>
           <div>
             <Label className="mb-1 block" htmlFor="adjustment-description">
-              Description
+              What it is for
             </Label>
             <Input
               disabled={admin.saving}

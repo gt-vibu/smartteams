@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import type { Prisma } from '../../generated/prisma/client';
 import type { FileShareGrantee } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { FilesDocumentsService } from './files-documents.service';
+import { notify } from '../notifications/notify';
 
 export type ShareInput = {
   granteeType: FileShareGrantee;
@@ -102,6 +104,15 @@ export class FilesSharesService {
           createdByUserId: context.actor.userId,
         },
       });
+      await notify(tx, context, {
+        recipients: await shareRecipients(tx, context.organizationId, input.granteeType, granteeId),
+        kind: 'DOCUMENT_SHARED',
+        title: 'A document was shared with you',
+        body: await shareBody(tx, context, fileId),
+        module: 'files',
+        entityType: 'FILE_OBJECT',
+        entityId: fileId,
+      });
       await this.audit.record(
         context,
         {
@@ -185,4 +196,54 @@ async function assertGrantee(tx: Tx, organizationId: string, type: FileShareGran
         : await tx.team.findFirst({ where: { organizationId, id }, select: { id: true } });
   if (!found)
     throw new NotFoundError(type === 'USER' ? 'Member' : type === 'ROLE' ? 'Role' : 'Team');
+}
+
+/** Everyone a new share reaches: the person, the role's current holders, or the team's members. */
+async function shareRecipients(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  granteeType: FileShareGrantee,
+  granteeId: string,
+): Promise<string[]> {
+  if (granteeType === 'USER') return [granteeId];
+  const now = new Date();
+  if (granteeType === 'ROLE') {
+    const holders = await tx.userRole.findMany({
+      where: {
+        organizationId,
+        roleId: granteeId,
+        startsAt: { lte: now },
+        OR: [{ endsAt: null }, { endsAt: { gt: now } }],
+      },
+      select: { userId: true },
+    });
+    return holders.map((holder) => holder.userId);
+  }
+  const [members, team] = await Promise.all([
+    tx.teamMember.findMany({
+      where: { organizationId, teamId: granteeId, leftAt: null },
+      select: { employee: { select: { userId: true } } },
+    }),
+    tx.team.findFirst({
+      where: { id: granteeId, organizationId },
+      select: { teamLead: { select: { userId: true } } },
+    }),
+  ]);
+  return [
+    ...members.flatMap((member) => (member.employee.userId ? [member.employee.userId] : [])),
+    ...(team?.teamLead?.userId ? [team.teamLead.userId] : []),
+  ];
+}
+
+async function shareBody(tx: Prisma.TransactionClient, context: DomainContext, fileId: string) {
+  const [file, actor] = await Promise.all([
+    tx.fileObject.findFirst({
+      where: { id: fileId, organizationId: context.organizationId },
+      select: { originalName: true },
+    }),
+    context.actor.userId
+      ? tx.user.findUnique({ where: { id: context.actor.userId }, select: { displayName: true } })
+      : null,
+  ]);
+  return `${actor?.displayName ?? 'Someone'} shared "${file?.originalName ?? 'a document'}" with you.`;
 }

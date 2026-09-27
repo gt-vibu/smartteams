@@ -156,6 +156,7 @@ async function upload(as, body, orgId = A_ORG) {
     ...(body.purpose ? { purpose: body.purpose } : {}),
     ...(body.employeeId ? { employeeId: body.employeeId } : {}),
     ...(body.teamId ? { teamId: body.teamId } : {}),
+    ...(body.projectId ? { projectId: body.projectId } : {}),
     ...(body.allowDownload !== undefined ? { allowDownload: body.allowDownload } : {}),
   });
   if (r.status !== 201) return { status: r.status, payload: r.payload };
@@ -351,9 +352,130 @@ async function main() {
     403,
   );
 
-  console.log('\nflow D2 - a team file shared with someone already on the team');
   const branchList = (await admin('GET', '/branches')).payload;
   const teamBranchId = (branchList?.items ?? branchList)[0]?.id;
+
+  console.log('\nflow D3 - project files: members share, the lead looks after them');
+  const project = (
+    await admin('POST', '/projects', {
+      name: `Docs Project ${Date.now()}`,
+      branchId: teamBranchId,
+      projectLeadEmployeeId: asha.employeeId,
+    })
+  ).payload;
+  r = await admin('POST', `/projects/${project?.id}/members`, {
+    employeeId: vibu.employeeId,
+    startsOn: '2026-01-01',
+  });
+  check('setup: Vibu works on the project, Asha leads it', r.status, 201);
+  const memberFile = await upload(vibu.as, {
+    name: 'Design.pdf',
+    purpose: 'OTHER',
+    scope: 'PROJECT',
+    projectId: project?.id,
+  });
+  check('a member adds a file to the project', memberFile.status, [200, 201]);
+  const projectList = (who) =>
+    who.as('GET', `/files/documents?section=project&projectId=${project?.id}`);
+  check(
+    'the lead sees it on the project',
+    ids(await projectList(asha)).includes(memberFile.fileId),
+    true,
+  );
+  check(
+    'and so does the member who added it',
+    ids(await projectList(vibu)).includes(memberFile.fileId),
+    true,
+  );
+  check(
+    'someone not on the project cannot open it',
+    (await manager.as('POST', `/files/${memberFile.fileId}/view`)).status,
+    404,
+  );
+  check(
+    'nor add a file to it',
+    (
+      await upload(manager.as, {
+        name: 'Intruder.pdf',
+        purpose: 'OTHER',
+        scope: 'PROJECT',
+        projectId: project?.id,
+      })
+    ).status,
+    403,
+  );
+  const adminFile = await upload(admin, {
+    name: 'Brief.pdf',
+    purpose: 'OTHER',
+    scope: 'PROJECT',
+    projectId: project?.id,
+  });
+  check(
+    'a member cannot remove a file someone else added',
+    (await vibu.as('POST', `/files/${adminFile.fileId}/delete`, { reason: 'not mine' })).status,
+    403,
+  );
+  check(
+    'the lead can remove any file on the project',
+    (await asha.as('POST', `/files/${memberFile.fileId}/delete`, { reason: 'superseded' })).status,
+    [200, 201],
+  );
+
+  console.log('\nflow D4 - team files: the same hierarchy as a project');
+  const ledTeam = (
+    await admin('POST', '/teams', {
+      name: `Docs Team ${Date.now()}`,
+      branchId: teamBranchId,
+      teamLeadEmployeeId: asha.employeeId,
+    })
+  ).payload;
+  r = await admin('POST', `/teams/${ledTeam?.id}/members`, {
+    employeeId: vibu.employeeId,
+    joinedAt: '2026-01-01',
+  });
+  check('setup: Vibu is on the team, Asha leads it', r.status, 201);
+  const ledTeamList = (who) => who.as('GET', `/files/documents?section=team&teamId=${ledTeam?.id}`);
+  const memberTeamFile = await upload(vibu.as, {
+    name: 'Standup.pdf',
+    purpose: 'OTHER',
+    scope: 'TEAM',
+    teamId: ledTeam?.id,
+  });
+  check('a member adds a file to the team', memberTeamFile.status, [200, 201]);
+  check(
+    'the lead sees it on the team',
+    ids(await ledTeamList(asha)).includes(memberTeamFile.fileId),
+    true,
+  );
+  check(
+    'someone not on the team cannot open it',
+    (await manager.as('POST', `/files/${memberTeamFile.fileId}/view`)).status,
+    404,
+  );
+  const teamAdminFile = await upload(admin, {
+    name: 'Charter.pdf',
+    purpose: 'OTHER',
+    scope: 'TEAM',
+    teamId: ledTeam?.id,
+  });
+  check(
+    'a member cannot remove a file someone else added',
+    (await vibu.as('POST', `/files/${teamAdminFile.fileId}/delete`, { reason: 'not mine' })).status,
+    403,
+  );
+  check(
+    'the lead can remove any file on the team',
+    (await asha.as('POST', `/files/${teamAdminFile.fileId}/delete`, { reason: 'outdated' })).status,
+    [200, 201],
+  );
+  check(
+    'a member can remove the file they added',
+    (await vibu.as('POST', `/files/${memberTeamFile.fileId}/delete`, { reason: 'wrong file' }))
+      .status,
+    [200, 201],
+  );
+
+  console.log('\nflow D2 - a team file shared with someone already on the team');
   const team = (
     await admin('POST', '/teams', { name: `Docs QA ${Date.now()}`, branchId: teamBranchId })
   ).payload;

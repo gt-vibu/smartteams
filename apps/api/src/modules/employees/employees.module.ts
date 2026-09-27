@@ -11,9 +11,24 @@ import { QueueModule } from '../../infrastructure/queue/queue.module';
 import { EmployeeBranchesController } from './employee-branches.controller';
 import { EmployeeBranchesService } from './employee-branches.service';
 import { EmployeeBranchTransferProcessor } from './employee-branch-transfer.processor';
+import { EmployeeImportController } from './employee-import.controller';
+import { EmployeeImportService } from './employee-import.service';
+import { EmployeeResignationsController } from './employee-resignations.controller';
+import { EmployeeResignationsService } from './employee-resignations.service';
+import { EmployeeResignationsProcessor } from './employee-resignations.processor';
+import { EmployeeExtrasController } from './employee-extras.controller';
+import { EmployeeCustomFieldsService } from './employee-custom-fields.service';
+import { EmployeeMilestonesService } from './employee-milestones.service';
 
 @Module({
-  controllers: [EmployeesController, DepartmentsController, EmployeeBranchesController],
+  controllers: [
+    EmployeesController,
+    DepartmentsController,
+    EmployeeBranchesController,
+    EmployeeImportController,
+    EmployeeResignationsController,
+    EmployeeExtrasController,
+  ],
   imports: [AuthModule, QueueModule],
   providers: [
     EmployeesService,
@@ -23,6 +38,11 @@ import { EmployeeBranchTransferProcessor } from './employee-branch-transfer.proc
     DepartmentsService,
     EmployeeBranchesService,
     EmployeeBranchTransferProcessor,
+    EmployeeImportService,
+    EmployeeResignationsService,
+    EmployeeResignationsProcessor,
+    EmployeeCustomFieldsService,
+    EmployeeMilestonesService,
   ],
   exports: [
     EmployeesService,

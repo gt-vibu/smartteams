@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import { Checkbox } from '@smarteam/ui';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
 import type { ProjectDraftMap, RoleDraft, TeamDraft } from '../../services/assignment-changes';
@@ -55,7 +56,7 @@ export function TeamPicker({
                   </span>
                   {membership.state === 'ENDED' && (
                     <span className="text-[10px] text-muted-foreground">
-                      Previously a member until {membership.endedOn?.slice(0, 10)}
+                      Previously a member until {formatDate(membership.endedOn)}
                     </span>
                   )}
                 </span>
@@ -132,7 +133,7 @@ export function ProjectPicker({
 
                 {membership.state === 'ENDED' && (
                   <p className="mt-1 pl-8 text-[10px] text-muted-foreground">
-                    Was on this project until {membership.endedOn?.slice(0, 10)}
+                    Was on this project until {formatDate(membership.endedOn)}
                   </p>
                 )}
                 {selected && membership.state !== 'ACTIVE' && (

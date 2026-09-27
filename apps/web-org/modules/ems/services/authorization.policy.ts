@@ -131,8 +131,16 @@ const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
   // Holidays are part of the organization record: reading is `organizations.read`, editing is
   // `organizations.update`. Viewing the screen only requires the former.
   holidays: ['organizations.read'],
-  approvals: ['approval-policies.read'],
+  // Whoever decides requests needs the inbox even without reading the routing policies (HR).
+  approvals: ['approval-policies.read', ...APPROVAL_DECISION_PERMISSIONS],
   files: ['files.read.all'],
+  // Each report is held to its own screen's organization-wide read; any one opens the screen.
+  reports: [
+    'employees.read.all',
+    'attendance.read.all',
+    'leave.requests.read.all',
+    'timesheets.read.all',
+  ],
 };
 
 /**
@@ -147,8 +155,9 @@ const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
  * and ORG_ADMIN are at or above it. Drawing the line here corrects the employee case without
  * moving anybody else, which is why it is drawn here rather than somewhere tidier.
  */
+// `rbac.read` is not here: the MANAGER role holds it to see role names, and treating it as an
+// administrative signal put every manager in the Organization workspace with nothing to do there.
 const ORGANIZATION_WIDE_PERMISSIONS = [
-  'rbac.read',
   'rbac.write',
   'members.read',
   'members.write',
@@ -243,4 +252,25 @@ export function canAccessModule(
     default:
       return false;
   }
+}
+
+/**
+ * What the organization workspace is called for this person, and the label under their name.
+ *
+ * "Admin" belongs to someone who administers the whole tenant. An HR Admin runs people
+ * operations from the same workspace but is not the company's administrator, and seeing "Admin
+ * workspace" and "Tenant Admin" read as if they had been handed everything.
+ */
+export function workspaceTitle(persona: {
+  permissions: readonly string[];
+  roles: ReadonlyArray<{ code: string; name: string }>;
+}): { workspace: string; badge: string } {
+  if (persona.permissions.includes('*'))
+    return { workspace: 'Admin workspace', badge: 'Tenant Admin' };
+  if (persona.roles.some((role) => role.code === 'HR_ADMIN'))
+    return { workspace: 'HR workspace', badge: 'HR Admin' };
+  const role = persona.roles.find((entry) => !['EMPLOYEE', 'MANAGER'].includes(entry.code));
+  return role
+    ? { workspace: `${role.name} workspace`, badge: role.name }
+    : { workspace: 'Admin workspace', badge: 'Admin' };
 }

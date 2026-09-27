@@ -12,6 +12,7 @@ import userEvent from '@testing-library/user-event';
 import { WorkspaceMenu } from './workspace-menu';
 
 type Auth = {
+  persona: { permissions: string[]; roles: { code: string; name: string }[] };
   workspaceContext: 'ADMIN' | 'EMPLOYEE';
   canSwitchWorkspace: boolean;
   switchWorkspace: (target: 'ADMIN' | 'EMPLOYEE') => void;
@@ -22,6 +23,7 @@ vi.mock('../../hooks/use-auth', () => ({ useAuth: () => auth }));
 
 beforeEach(() => {
   auth = {
+    persona: { permissions: ['*'], roles: [{ code: 'ORG_ADMIN', name: 'Organization Admin' }] },
     workspaceContext: 'EMPLOYEE',
     canSwitchWorkspace: false,
     switchWorkspace: vi.fn(),
@@ -80,5 +82,25 @@ describe('WorkspaceMenu', () => {
     auth.visibleSpaces = [{ id: 'My Space' }];
     const { container } = render(<WorkspaceMenu activeSpace="My Space" onSelectSpace={vi.fn()} />);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('calls it the HR workspace for an HR administrator', async () => {
+    auth = {
+      ...auth,
+      canSwitchWorkspace: true,
+      persona: {
+        permissions: ['employees.read.all'],
+        roles: [
+          { code: 'EMPLOYEE', name: 'Employee' },
+          { code: 'HR_ADMIN', name: 'HR Admin' },
+        ],
+      },
+    };
+    render(<WorkspaceMenu activeSpace="My Space" onSelectSpace={vi.fn()} />);
+    await userEvent.click(trigger());
+    expect(screen.getByRole('menuitemradio', { name: /hr workspace/i })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('menuitemradio', { name: /admin workspace/i }),
+    ).not.toBeInTheDocument();
   });
 });

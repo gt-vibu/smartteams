@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React, { useState } from 'react';
 import { Badge, Button, Label, Textarea } from '@smarteam/ui';
 import type { AttendanceCorrection } from '@smarteam/contracts';
@@ -67,7 +68,7 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate text-xs font-semibold text-foreground">
-                    {correction.workDate?.slice(0, 10) ?? 'Unknown date'}
+                    {formatDate(correction.workDate) || 'Unknown date'}
                   </p>
                   <p className="text-[11px] text-muted-foreground">
                     {correction.employee

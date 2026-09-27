@@ -11,6 +11,7 @@ import { useSession } from './auth-context';
 import { leaveRepository, type CreateLeaveRequestInput } from '../repositories/leave.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { useDataChanged } from '../lib/data-events';
 
 type Loaded = { types: LeaveType[]; balances: LeaveBalance[]; requests: LeaveRequest[] };
 
@@ -49,6 +50,8 @@ export function useLeave() {
     { enabled: Boolean(organizationId) && (canReadTypes || canReadBalances || canReadRequests) },
   );
 
+  // A decision on one of these requests, announced by a notification, is shown without a reload.
+  useDataChanged(['leave'], resource.refetch);
   const { saving, saveError, setSaveError, run } = useMutationRunner(resource.refetch);
 
   const apply = useCallback(

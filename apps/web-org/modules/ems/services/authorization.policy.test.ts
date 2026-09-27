@@ -119,8 +119,8 @@ describe('canAdministerOrganization', () => {
     expect(canAdministerOrganization(['organizations.read'])).toBe(false);
   });
 
-  it('treats a manager as an administrator', () => {
-    expect(canAdministerOrganization([...employee, 'rbac.read'])).toBe(true);
+  it('does not treat a manager, who can only read roles, as an administrator', () => {
+    expect(canAdministerOrganization([...employee, 'rbac.read'])).toBe(false);
   });
 
   it('treats an HR administrator as an administrator', () => {

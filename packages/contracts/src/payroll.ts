@@ -50,6 +50,10 @@ export const payslipSchema = z.object({
   employeeId: z.string().uuid(),
   externalEmployeeId: z.string().nullable().optional(),
   employeeNumber: z.string().nullable().optional(),
+  /** The person's name, for the app's run breakdown. */
+  employeeName: z.string().optional(),
+  /** The employer, printed at the head of the payslip. */
+  organizationName: z.string().nullable().optional(),
   status: z.string(),
   issuedAt: z.string().nullable().optional(),
   file: z.object({ id: z.string(), status: z.string() }).nullable().optional(),
@@ -181,6 +185,14 @@ export const salaryAdvanceSchema = z.object({
   reason: z.string().nullable().optional(),
   requestedAt: z.string(),
   approvedAt: z.string().nullable().optional(),
+  employee: z
+    .object({
+      firstName: z.string(),
+      lastName: z.string().nullable().optional(),
+      employeeNumber: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export const payrollPaymentSchema = z.object({

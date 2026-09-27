@@ -10,6 +10,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 import { branchDto, runScoped } from './organization-shared';
+import { primaryBranchOf } from './organization-primary-branch';
 
 /**
  * Branches: the places a tenant operates from.
@@ -73,6 +74,23 @@ export class OrganizationBranchesService {
           address: input.address === undefined ? undefined : jsonSnapshot(input.address),
         },
       });
+      // A new branch offers every leave type the company has. A type is requestable only where it
+      // is assigned, so people hired into a branch added later could not apply for any leave
+      // until an administrator assigned each type to it by hand.
+      const leaveTypes = await tx.leaveType.findMany({
+        where: { organizationId: context.organizationId, isActive: true },
+        select: { id: true },
+      });
+      if (leaveTypes.length)
+        await tx.leavePolicyAssignment.createMany({
+          data: leaveTypes.map((type) => ({
+            organizationId: context.organizationId,
+            branchId: branch.id,
+            leaveTypeId: type.id,
+            sourceAccessMode: context.accessMode,
+          })),
+          skipDuplicates: true,
+        });
       await this.audit.record(
         context,
         {
@@ -179,6 +197,47 @@ export class OrganizationBranchesService {
     });
   }
 
+  /** The organization's main branch, and whether an administrator chose it. */
+  async primaryBranch(context: DomainContext) {
+    requirePermission(context, 'branches.read');
+    return this.database.run(context, async (tx) => {
+      const primary = await primaryBranchOf(tx, context.organizationId);
+      return primary ? { branchId: primary.id, name: primary.name, chosen: primary.chosen } : null;
+    });
+  }
+
+  /** Makes an active branch the organization's main one. */
+  async setPrimaryBranch(context: DomainContext, branchId: string) {
+    requirePermission(context, 'branches.write');
+    return this.database.run(context, async (tx) => {
+      const branch = await tx.branch.findFirst({
+        where: { id: branchId, organizationId: context.organizationId },
+        select: { id: true, name: true, status: true },
+      });
+      if (!branch) throw new NotFoundError('Branch');
+      if (branch.status !== 'ACTIVE')
+        throw new ConflictError(`${branch.name} is not active, so it cannot be the main branch.`);
+      const before = await primaryBranchOf(tx, context.organizationId);
+      await tx.organizationSettings.upsert({
+        where: { organizationId: context.organizationId },
+        create: { organizationId: context.organizationId, primaryBranchId: branch.id },
+        update: { primaryBranchId: branch.id },
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'BRANCH',
+          entityId: branch.id,
+          action: 'PRIMARY_BRANCH_SET',
+          beforeState: jsonSnapshot({ primaryBranchId: before?.id ?? null }),
+          afterState: jsonSnapshot({ primaryBranchId: branch.id }),
+        },
+        tx,
+      );
+      return { branchId: branch.id, name: branch.name, chosen: true };
+    });
+  }
+
   async deactivateBranch(context: DomainContext, branchId: string, reason: string) {
     requirePermission(context, 'branches.write');
     requireReason({ ...context, reason }, 'Branch deactivation requires a reason');
@@ -189,8 +248,22 @@ export class OrganizationBranchesService {
       if (!before) throw new NotFoundError('Branch');
       if (before.status === 'DEACTIVATED') throw new ConflictError('Branch is already deactivated');
       const today = await organizationToday(tx, context.organizationId);
-      if (context.accessMode === 'NATIVE')
+      if (context.accessMode === 'NATIVE') {
+        // The main branch is where new people are placed; another has to take that role first.
+        const primary = await primaryBranchOf(tx, context.organizationId);
+        const others = await tx.branch.count({
+          where: {
+            organizationId: context.organizationId,
+            status: 'ACTIVE',
+            id: { not: before.id },
+          },
+        });
+        if (primary?.id === before.id && others > 0)
+          throw new ConflictError(
+            `${before.name} is the main branch. Make another branch the main one before closing it.`,
+          );
         await assertBranchCanClose(tx, context.organizationId, before, today);
+      }
       const updated = await tx.branch.update({
         where: { id: before.id },
         data: { status: 'DEACTIVATED' },

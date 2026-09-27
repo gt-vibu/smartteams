@@ -102,9 +102,7 @@ export function PayrollStructurePanel({
     <div className="space-y-4">
       {/* Header bar with download options */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground">
-          Your configured compensation structure and statutory allowances.
-        </p>
+        <span />
         <div className="flex items-center gap-2">
           <Button
             size="sm"
@@ -178,12 +176,6 @@ export function PayrollStructurePanel({
           ))}
         </Section>
       )}
-
-      <p className="text-[11px] leading-relaxed text-muted-foreground">
-        Figures are calculated by payroll from your organisation&apos;s policy and statutory rules.
-        Income tax, gratuity and annual cost to company are not calculated by the system and are
-        therefore not shown.
-      </p>
     </div>
   );
 }

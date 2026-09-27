@@ -19,8 +19,14 @@ model FileObject {
   accessScope      FileAccessScope @default(EMPLOYEE) @map("access_scope")
   /// The team a TEAM-scoped file belongs to.
   teamId           String?         @map("team_id") @db.Uuid
+  /// The project a PROJECT-scoped file belongs to.
+  projectId        String?         @map("project_id") @db.Uuid
   /// Whether readers other than its managers may download it, or only view it.
   allowDownload    Boolean         @default(true) @map("allow_download")
+  /// The day a document such as a passport or contract stops being valid.
+  expiresOn        DateTime?       @map("expires_on") @db.Date
+  /// When its owner and HR were last told it is expiring.
+  expiryNotifiedAt DateTime?       @map("expiry_notified_at") @db.Timestamptz(6)
   createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt        DateTime?       @map("deleted_at") @db.Timestamptz(6)
@@ -32,6 +38,7 @@ model FileObject {
   versions     FileObjectVersion[]
   payslip      Payslip?
   team         Team?               @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  project      Project?            @relation(fields: [projectId], references: [id], onDelete: SetNull)
   shares       FileShare[]
 
   @@unique([bucket, objectKey])
@@ -40,6 +47,7 @@ model FileObject {
   @@index([organizationId, leaveRequestId])
   @@index([organizationId, accessScope])
   @@index([organizationId, teamId])
+  @@index([organizationId, projectId])
   @@map("file_objects")
 }
 

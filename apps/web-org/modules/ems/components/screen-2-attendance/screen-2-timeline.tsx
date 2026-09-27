@@ -1,13 +1,16 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React, { useState, useMemo } from 'react';
 import { AttendanceToolbar } from './attendance-toolbar';
 import { AttendanceActionBar } from './attendance-action-bar';
 import { TimelineTrackView } from './timeline-track-view';
 import { AttendanceSummaryFooter } from './attendance-summary-footer';
+import type { CorrectionTimes } from '../screen-3-attendance-table/correction-form';
 import { AttendanceDetailDrawer } from '../screen-3-attendance-table/attendance-detail-drawer';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useAttendanceWeek } from '../../hooks/use-attendance-week';
+import { useMyShift } from '../../hooks/use-my-shift';
 import { attendanceSummaryStats, toTimelineStatus } from '../../services/attendance-view';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { PageShell } from '../layout/page-shell';
@@ -20,6 +23,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
   const week = useAttendanceWeek();
   const {
     days: records,
+    loading,
     isCheckedIn,
     timerDisplay,
     requestCorrection,
@@ -27,6 +31,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     explainHolidayCheckIn,
   } = useAttendance(30, week.window);
   const [selectedRow, setSelectedRow] = useState<AttendanceTableRow | null>(null);
+  const { shift, unassigned } = useMyShift();
 
   const tableRows: AttendanceTableRow[] = useMemo(() => {
     return records.map((r) => {
@@ -37,7 +42,10 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
           : undefined;
       return {
         id: r.id,
-        date: `${r.dayLabel}-${r.workDate.slice(0, 4)}`,
+        date: formatDate(r.workDate),
+        workDate: r.workDate,
+        checkInAt: r.record.punches?.find((p) => p.punchType === 'IN')?.occurredAt,
+        checkOutAt: r.record.punches?.filter((p) => p.punchType === 'OUT').at(-1)?.occurredAt,
         firstIn: r.firstInTime || '-',
         lastOut: r.lastOutTime || (r.isToday && r.firstInTime ? 'Active (In)' : '-'),
         totalHours:
@@ -68,7 +76,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
         holidayConflict: r.holidayConflict ?? undefined,
         record: r.record,
         openCheckInAt,
-        shift: 'General Shift',
+        shift: r.shiftName ?? 'Not recorded',
         punches: dayPunches.map((p) => ({
           type: p.punchType as 'IN' | 'OUT',
           time: new Date(p.occurredAt).toLocaleTimeString([], {
@@ -115,9 +123,9 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
 
   const stats = attendanceSummaryStats(records);
 
-  const handleRegularize = async (recordId: string, reasonText: string) => {
-    return requestCorrection(recordId, reasonText);
-  };
+  // The form shows it was sent, then closes the drawer itself.
+  const handleRegularize = (recordId: string, reason: string, times?: CorrectionTimes) =>
+    requestCorrection(recordId, reason, times);
 
   return (
     <div className="w-full flex flex-col">
@@ -138,17 +146,33 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
         {/* Shift Info & Check-in / Check-out Action Bar */}
         <AttendanceActionBar />
 
-        {/* Main Timeline Card */}
-        <TimelineTrackView
-          days={timelineDays}
-          onSelectDay={(dayId) => {
-            const found = tableRows.find((row) => row.id === dayId);
-            if (found) setSelectedRow(found);
-          }}
-        />
+        {/* Until the week has loaded, say so: an empty grid over "0 Days" read as no attendance. */}
+        {loading && records.length === 0 ? (
+          <p
+            className="rounded-lg border border-border bg-card py-10 text-center text-xs text-muted-foreground"
+            role="status"
+          >
+            Loading attendance…
+          </p>
+        ) : (
+          <>
+            {/* Main Timeline Card */}
+            <TimelineTrackView
+              days={timelineDays}
+              onSelectDay={(dayId) => {
+                const found = tableRows.find((row) => row.id === dayId);
+                if (found) setSelectedRow(found);
+              }}
+            />
 
-        {/* Bottom Summary Metric Strip */}
-        <AttendanceSummaryFooter stats={stats} />
+            {/* Bottom Summary Metric Strip */}
+            <AttendanceSummaryFooter
+              shiftHours={shift ? `${shift.startsAt} – ${shift.endsAt}` : ''}
+              shiftName={shift?.name ?? (unassigned ? 'No shift assigned' : undefined)}
+              stats={stats}
+            />
+          </>
+        )}
       </PageShell>
 
       {/* Slide-in Detail Drawer with Missing Check-Out & Regularization Form */}

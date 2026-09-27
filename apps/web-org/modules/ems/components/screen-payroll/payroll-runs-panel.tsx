@@ -2,13 +2,22 @@
 
 import React, { useState } from 'react';
 import { Badge, Button } from '@smarteam/ui';
-import { formatMoney, isCalculationStale, type PayrollRun } from '@smarteam/contracts';
+import {
+  formatDate,
+  formatDateRange,
+  formatMoney,
+  isCalculationStale,
+  type PayrollRun,
+} from '@smarteam/contracts';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
 import {
   AddAdjustmentDialog,
   CreatePayrollRunDialog,
   PayrollRunActions,
 } from './payroll-run-actions';
+import { isPaid, PayrollRunBreakdown } from './payroll-run-breakdown';
+import { PayrollRunExports } from './payroll-run-exports';
+import { PayrollRunReview } from './payroll-run-review';
 
 /**
  * Payroll runs for the organisation.
@@ -29,6 +38,7 @@ const statusTone = (run: PayrollRun) => {
 export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
   const [creating, setCreating] = useState(false);
   const [adjustingRunId, setAdjustingRunId] = useState<string | null>(null);
+  const [openRunId, setOpenRunId] = useState<string | null>(null);
 
   if (admin.forbidden) {
     return (
@@ -47,10 +57,7 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
-          Figures come from attendance, leave, approved timesheets, salary structure and statutory
-          rules.
-        </p>
+        <span />
         {admin.can.write && (
           <Button onClick={() => setCreating(true)} size="sm" type="button">
             Start a run
@@ -106,6 +113,9 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
         admin.runs.map((run) => {
           const slips = admin.payslipsForRun(run.id);
           const released = run.status === 'RELEASED' || run.status === 'LOCKED';
+          const paidCount = slips.filter(isPaid).length;
+          const unpaidCount = slips.length - paidCount;
+          const showing = openRunId === run.id;
           const totals = slips.reduce(
             (sum, slip) => ({
               gross: sum.gross + slip.totals.grossAmount,
@@ -119,11 +129,11 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
               <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <div>
                   <p className="text-xs font-bold text-foreground">
-                    {run.periodStart.slice(0, 10)} to {run.periodEnd.slice(0, 10)}
+                    {formatDateRange(run.periodStart, run.periodEnd)}
                   </p>
                   <p className="mt-0.5 text-[10px] text-muted-foreground">
                     {run.calculatedAt
-                      ? `Calculated ${run.calculatedAt.slice(0, 10)}`
+                      ? `Calculated ${formatDate(run.calculatedAt)}`
                       : 'Not calculated yet'}
                   </p>
                 </div>
@@ -155,7 +165,10 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
               {released && !admin.payslipsUnavailable && (
                 <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-4">
                   {[
-                    { label: 'Employees paid', value: String(slips.length) },
+                    {
+                      label: 'Employees paid',
+                      value: unpaidCount ? `${paidCount} of ${slips.length}` : String(paidCount),
+                    },
                     { label: 'Gross', value: formatMoney(totals.gross) },
                     { label: 'Deductions', value: formatMoney(totals.deduction) },
                     { label: 'Net', value: formatMoney(totals.net) },
@@ -172,16 +185,37 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
                 </dl>
               )}
 
+              {released && !admin.payslipsUnavailable && (
+                <>
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2">
+                    <p className="text-[11px] text-muted-foreground">
+                      {unpaidCount > 0
+                        ? `${unpaidCount} employee${unpaidCount === 1 ? ' had' : 's had'} nothing to pay this period.`
+                        : ''}
+                    </p>
+                    <Button
+                      aria-expanded={showing}
+                      onClick={() => setOpenRunId(showing ? null : run.id)}
+                      size="sm"
+                      type="button"
+                      variant="ghost"
+                    >
+                      {showing ? 'Hide breakdown' : 'View breakdown'}
+                    </Button>
+                  </div>
+                  {showing && <PayrollRunBreakdown slips={slips} />}
+                  <PayrollRunExports canPay={admin.can.pay} runId={run.id} />
+                </>
+              )}
+
               {released && admin.payslipsUnavailable && (
                 <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted-foreground">
                   Run totals need permission to read every employee&apos;s payslips.
                 </p>
               )}
 
-              {!released && run.status !== 'DRAFT' && (
-                <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted-foreground">
-                  Per-employee figures become available once the run is released.
-                </p>
+              {!released && run.calculatedAt && !admin.payslipsUnavailable && (
+                <PayrollRunReview calculatedAt={run.calculatedAt} runId={run.id} />
               )}
             </div>
           );

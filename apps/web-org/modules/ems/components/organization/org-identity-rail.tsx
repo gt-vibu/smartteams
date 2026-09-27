@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React from 'react';
 import {
   CalendarDays,
@@ -14,6 +15,7 @@ import type { TileTone } from '../common/module-tile';
 import type { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 import type { OrganizationState } from '../../hooks/use-organization';
 import type { HolidaysState } from '../../hooks/use-holidays';
+import { localDateKey } from '../../lib/local-date';
 
 /**
  * Who this organization is, and its headline figures.
@@ -45,7 +47,7 @@ export function OrgIdentityRail({
   holidays: HolidaysState;
   organization: OrganizationState;
 }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
   const upcoming = holidays.holidays
     .filter((holiday) => holiday.isActive && holiday.holidayDate.slice(0, 10) >= today)
     .slice(0, 4);
@@ -78,8 +80,8 @@ export function OrgIdentityRail({
                 </span>
               )}
               <span className="block">
-                {organization.organization?.currencyCode ?? '--'} ·{' '}
-                {organization.organization?.source === 'BLIZBOOKS' ? 'BlizBooks' : 'Native'}
+                {organization.organization?.currencyCode ?? '--'}
+                {organization.organization?.source === 'BLIZBOOKS' ? ' · BlizBooks' : ''}
               </span>
             </div>
           </div>
@@ -147,7 +149,7 @@ export function OrgIdentityRail({
               <li className="flex items-baseline justify-between gap-3 py-1.5" key={holiday.id}>
                 <span className="min-w-0 truncate text-xs text-foreground">{holiday.name}</span>
                 <span className="shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground">
-                  {holiday.holidayDate.slice(0, 10)}
+                  {formatDate(holiday.holidayDate)}
                 </span>
               </li>
             ))}

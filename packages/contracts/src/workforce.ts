@@ -68,6 +68,8 @@ export const employeeSchema = z.object({
   employmentType: z.string(),
   primaryBranchId: z.string().uuid().nullable(),
   version: z.number().int(),
+  /** On the directory list; absent where the API does not send it. */
+  dateOfJoining: z.string().nullable().optional(),
 });
 
 /**
@@ -121,6 +123,7 @@ export const teamSchema = z.object({
   status: z.string().optional(),
   branchId: z.string().uuid().nullable().optional(),
   teamLeadEmployeeId: z.string().uuid().nullable().optional(),
+  teamLead: membershipEmployeeSchema.nullable().optional(),
   createdAt: z.string().optional(),
   members: z.array(teamMemberSchema).optional(),
 });
@@ -136,6 +139,9 @@ export const projectSchema = z.object({
   branchId: z.string().uuid().nullable().optional(),
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
+  /** Who leads the project, if anyone yet. */
+  projectLeadEmployeeId: z.string().uuid().nullable().optional(),
+  projectLead: membershipEmployeeSchema.nullable().optional(),
   createdAt: z.string().optional(),
   members: z.array(projectMemberSchema).optional(),
 });
@@ -310,6 +316,8 @@ export const employeeDetailSchema = z.object({
   employmentType: z.string(),
   dateOfJoining: z.string().nullable(),
   dateOfLeaving: z.string().nullable(),
+  probationEndsOn: z.string().nullable().optional(),
+  confirmedOn: z.string().nullable().optional(),
   primaryBranchId: z.string().uuid().nullable(),
   jobTitle: z.string().nullable(),
   department: z.string().nullable(),

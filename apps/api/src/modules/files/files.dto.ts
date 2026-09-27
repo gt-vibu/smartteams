@@ -11,6 +11,7 @@ import {
   MaxLength,
   Min,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 import { EMPLOYEE_DOCUMENT_TYPES, type EmployeeDocumentType } from './file.constants';
 export class FileUploadDto {
@@ -56,15 +57,24 @@ import type { FilePurpose } from '../../generated/prisma/enums';
 
 export class DocumentQueryDto {
   @IsOptional()
-  @IsIn(['all', 'mine', 'shared', 'organization', 'team', 'employees', 'internal'])
-  section?: 'all' | 'mine' | 'shared' | 'organization' | 'team' | 'employees' | 'internal';
+  @IsIn(['all', 'mine', 'shared', 'organization', 'team', 'project', 'employees', 'internal'])
+  section?:
+    'all' | 'mine' | 'shared' | 'organization' | 'team' | 'project' | 'employees' | 'internal';
   @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsUUID() projectId?: string;
+  @IsOptional() @IsUUID() teamId?: string;
+}
+
+/** Null clears it. */
+export class DocumentExpiryDto {
+  @ValidateIf((_, value) => value !== null) @IsDateString() expiresOn!: string | null;
 }
 
 export class DocumentUploadDto extends FileUploadDto {
-  @IsIn(['PERSONAL', 'EMPLOYEE', 'TEAM', 'ORGANIZATION'])
-  scope!: 'PERSONAL' | 'EMPLOYEE' | 'TEAM' | 'ORGANIZATION';
+  @IsIn(['PERSONAL', 'EMPLOYEE', 'TEAM', 'PROJECT', 'ORGANIZATION'])
+  scope!: 'PERSONAL' | 'EMPLOYEE' | 'TEAM' | 'PROJECT' | 'ORGANIZATION';
   @IsOptional() @IsUUID() teamId?: string;
+  @IsOptional() @IsUUID() projectId?: string;
   @IsOptional() @IsBoolean() allowDownload?: boolean;
 }
 

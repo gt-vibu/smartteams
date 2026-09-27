@@ -10,15 +10,18 @@ import { useAuth } from '../../hooks/use-auth';
 import { useDocuments } from '../../hooks/use-documents';
 import { DocumentTable } from './document-table';
 import { DocumentUploadDialog } from './document-upload-dialog';
+import { DocumentExpiryDialog } from './document-expiry-dialog';
 import { DocumentShareDialog } from './document-share-dialog';
+import { asOwnWorkspace } from './workspace-access';
 
 /**
  * Documents, by who they are for.
  *
  * The employee workspace shows your files, what was shared with you, the company's documents and
- * your teams'. The admin workspace shows the company's, employees' and teams' documents. Switching
- * workspace changes only these sections: the server decides every list and every action from the
- * signed-in person, whichever workspace they are looking at.
+ * your teams'. The admin workspace shows the company's, employees' and teams' documents. The server
+ * decides every list and every action from the signed-in person; in the employee workspace the
+ * actions someone holds only through an HR or administrator role are left for the admin workspace
+ * (`asOwnWorkspace`).
  */
 const SECTIONS: Record<
   'EMPLOYEE' | 'ADMIN',
@@ -33,11 +36,13 @@ const SECTIONS: Record<
     { id: 'shared', label: 'Shared with me', empty: 'Nothing has been shared with you yet.' },
     { id: 'organization', label: 'Company', empty: 'No company documents have been published.' },
     { id: 'team', label: 'My teams', empty: 'Your teams have no documents yet.' },
+    { id: 'project', label: 'My projects', empty: 'Your projects have no documents yet.' },
   ],
   ADMIN: [
     { id: 'organization', label: 'Company', empty: 'No company documents have been published.' },
     { id: 'employees', label: 'Employee files', empty: 'No employee documents yet.' },
     { id: 'team', label: 'Team files', empty: 'No team documents yet.' },
+    { id: 'project', label: 'Project files', empty: 'No project documents yet.' },
   ],
 };
 
@@ -48,6 +53,7 @@ export function ScreenFiles() {
   const [sectionId, setSectionId] = useState<DocumentSection>(sections[0]!.id);
   const section = sections.find((entry) => entry.id === sectionId) ?? sections[0]!;
   const documents = useDocuments(section.id);
+  const [expiring, setExpiring] = useState<StoredDocument | null>(null);
   const [uploading, setUploading] = useState(false);
   const [sharing, setSharing] = useState<StoredDocument | null>(null);
   const [deleting, setDeleting] = useState<StoredDocument | null>(null);
@@ -74,7 +80,7 @@ export function ScreenFiles() {
             </Button>
           )
         }
-        description="Every document says who it is for and why you can see it."
+        description="Your documents, and what your company and teams share with you."
         icon={FolderOpen}
         title="Documents"
         tone="neutral"
@@ -142,9 +148,14 @@ export function ScreenFiles() {
           ) : (
             <DocumentTable
               busy={documents.busy}
-              documents={documents.documents}
+              documents={
+                workspace === 'EMPLOYEE'
+                  ? documents.documents.map((document) => asOwnWorkspace(document, section.id))
+                  : documents.documents
+              }
               onDelete={setDeleting}
               onDownload={(document) => void documents.download(document.id)}
+              onSetExpiry={setExpiring}
               onShare={setSharing}
               onView={(document) => void documents.view(document.id)}
             />
@@ -196,6 +207,11 @@ export function ScreenFiles() {
           </div>
         </DialogContent>
       </Dialog>
+      <DocumentExpiryDialog
+        document={expiring}
+        onClose={() => setExpiring(null)}
+        onSaved={() => void documents.refetch()}
+      />
     </PageShell>
   );
 }

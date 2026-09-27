@@ -56,7 +56,7 @@ describe('EmployeeBranchesSection', () => {
     const scheduled = row({ branchName: 'Mysuru', startsOn: '2026-10-01', state: 'UPCOMING' });
     show([row({ endsOn: '2026-09-30' }), scheduled]);
     expect(screen.queryByRole('button', { name: 'Transfer primary' })).toBeNull();
-    expect(screen.getByText('Moves here on 2026-10-01')).toBeTruthy();
+    expect(screen.getByText('Moves here on 1 Oct 2026')).toBeTruthy();
     await userEvent.click(screen.getByRole('button', { name: 'Cancel transfer' }));
     expect(cancel).toHaveBeenCalledWith(scheduled.id);
   });
@@ -68,7 +68,7 @@ describe('EmployeeBranchesSection', () => {
     ]);
     await userEvent.click(screen.getByRole('button', { name: /branch history \(1\)/i }));
     expect(screen.getByText('Koramangala')).toBeTruthy();
-    expect(screen.getByText(/2026-01-05 – 2026-09-20/)).toBeTruthy();
+    expect(screen.getByText(/5 Jan – 20 Sep 2026/)).toBeTruthy();
   });
 
   it('offers no changes for someone who has left', () => {

@@ -61,7 +61,7 @@ describe('People on a shift', () => {
   it("lists the server's assignments for the shift", async () => {
     render(<ShiftAssignmentsDialog canWrite onOpenChange={vi.fn()} shift={shift} />);
     expect(await screen.findByText('Ada Case')).toBeInTheDocument();
-    expect(screen.getByText('2026-09-01 → open-ended')).toBeInTheDocument();
+    expect(screen.getByText('From 1 Sep 2026, no end date')).toBeInTheDocument();
     expect(screen.getByText('Current')).toBeInTheDocument();
     expect(repository.assignments).toHaveBeenCalledWith('org-1', {
       shiftId: 'shift-1',

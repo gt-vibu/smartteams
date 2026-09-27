@@ -10,7 +10,7 @@ interface AttendanceSummaryFooterProps {
 
 export function AttendanceSummaryFooter({
   stats,
-  // Shift assignment is not wired; the footer says so instead of naming a shift nobody set.
+  // Today's assignment when the screen has one; otherwise it says so rather than naming one.
   shiftName = 'Shift not recorded',
   shiftHours = '',
 }: AttendanceSummaryFooterProps) {

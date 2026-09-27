@@ -7,6 +7,7 @@ import { workforceRepository } from '../repositories/workforce.repository';
 import {
   teamsProjectsRepository,
   type CreateTeamInput,
+  type UpdateTeamInput,
 } from '../repositories/teams-projects.repository';
 import { membershipRepository } from '../repositories/workforce.repository';
 import { useAsyncResource } from './use-async-resource';
@@ -17,10 +18,11 @@ import {
   toTeamView,
   type TeamView,
 } from '../services/team-directory';
+import { localDateKey } from '../lib/local-date';
 
 /** Today in the `YYYY-MM-DD` form the API's date-only fields expect. */
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDateKey();
 }
 
 type Loaded = { teams: Team[]; employees: Employee[]; branches: Branch[] };
@@ -41,6 +43,7 @@ export function useTeamDirectory() {
   const canRead = hasPermission(permissions, 'teams.read');
   const canWrite = hasPermission(permissions, 'teams.write');
   const canReadEmployees = hasPermission(permissions, 'employees.read');
+  const canReadBranches = hasPermission(permissions, 'branches.read');
   // Without this the API answers with the caller's own rows only, so there is no "all" view.
   const canReadAll = hasPermission(permissions, 'teams.read.all');
 
@@ -51,11 +54,13 @@ export function useTeamDirectory() {
         // Names come from the employee directory; without permission the roster still renders,
         // showing membership without the people's names rather than inventing them.
         canReadEmployees ? workforceRepository.listEmployees(organizationId!) : Promise.resolve([]),
-        workforceRepository.listBranches(organizationId!).catch(() => [] as Branch[]),
+        canReadBranches
+          ? workforceRepository.listBranches(organizationId!).catch(() => [] as Branch[])
+          : Promise.resolve([] as Branch[]),
       ]);
       return { teams, employees, branches };
     },
-    [organizationId, canReadEmployees],
+    [organizationId, canReadEmployees, canReadBranches],
     { enabled: Boolean(organizationId) && canRead },
   );
 
@@ -86,7 +91,7 @@ export function useTeamDirectory() {
 
   /** Renames a team, moves it to another branch, or changes its lead. */
   const updateTeam = useCallback(
-    (teamId: string, input: Partial<CreateTeamInput>) =>
+    (teamId: string, input: UpdateTeamInput) =>
       run(
         () => teamsProjectsRepository.updateTeam(organizationId!, teamId, input),
         'The team could not be saved.',

@@ -108,3 +108,34 @@ export function passwordChangedMail(input: { to: string; displayName: string }):
   ]);
   return { to: input.to, subject, text, html };
 }
+
+/** An in-app notification, also sent by email: what happened, and a link to where it is. */
+export function notificationMail(input: {
+  to: string;
+  displayName: string;
+  organizationName: string;
+  title: string;
+  body: string;
+  url: string;
+}): MailMessage {
+  const subject = `${input.title} · ${input.organizationName}`;
+  const text = [
+    `Hello ${input.displayName},`,
+    '',
+    input.body,
+    '',
+    `Open Smarteam: ${input.url}`,
+    '',
+    'You can turn these emails off from the notifications panel in Smarteam.',
+  ].join('\n');
+  const html = layout(
+    input.title,
+    [
+      `Hello ${escape(input.displayName)},`,
+      escape(input.body),
+      `<span style="color:#55615b;font-size:12px">${escape(input.organizationName)} · turn these emails off from the notifications panel.</span>`,
+    ],
+    { label: 'Open in Smarteam', url: input.url },
+  );
+  return { to: input.to, subject, text, html };
+}

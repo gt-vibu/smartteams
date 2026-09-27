@@ -24,6 +24,8 @@ import {
 } from './shifts.dto';
 import { ShiftAssignmentsService } from './shift-assignments.service';
 import { ShiftsService } from './shifts.service';
+import { ShiftRotationService } from './shift-rotation.service';
+import { ShiftRotationDto } from './shifts.dto';
 
 @Controller('v1/organizations/:organizationId/shifts')
 @UseGuards(NativeJwtGuard)
@@ -32,7 +34,19 @@ export class ShiftsController {
     private readonly shifts: ShiftsService,
     private readonly assignments: ShiftAssignmentsService,
     private readonly contexts: DomainContextFactory,
+    private readonly rotation: ShiftRotationService,
   ) {}
+
+  /** Plans a rotating roster: each person cycles through the shifts, a few weeks on each. */
+  @Post('rotations') rotate(
+    @Param('organizationId') organizationId: string,
+    @Body() body: ShiftRotationDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.rotation.rotate(context, body));
+  }
   /** The shift an employee is assigned to on a day — the caller's own unless they may read others. */
   @Get('assignments/current') current(
     @Param('organizationId') organizationId: string,
