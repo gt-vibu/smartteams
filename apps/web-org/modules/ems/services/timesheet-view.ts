@@ -1,4 +1,10 @@
-import { entriesByDate, entryNotes, formatWorkMinutes, type Timesheet } from '@smarteam/contracts';
+import {
+  entriesByDate,
+  entryNotes,
+  formatDate,
+  formatWorkMinutes,
+  type Timesheet,
+} from '@smarteam/contracts';
 
 /**
  * Presentation shapes derived from timesheets the API returned.
@@ -59,27 +65,40 @@ export function summarize(timesheets: readonly Timesheet[]): TimesheetSummary {
   };
 }
 
-/** One timesheet's entries, grouped by day, newest first. */
+/**
+ * One timesheet's entries, grouped by day, newest first.
+ *
+ * An entry with no time, no project and no note says nothing, and drawing it left an empty row
+ * under a "0m" day; such entries are left out, and a day left with none is not shown.
+ */
 export function toDayGroups(timesheet: Timesheet | null): TimesheetDayGroup[] {
   if (!timesheet) return [];
-  return entriesByDate(timesheet).map((group) => ({
-    workDate: group.workDate,
-    totalLabel: formatWorkMinutes(group.totalMinutes),
-    entries: group.entries.map((entry) => ({
-      id: entry.id,
-      minutes: entry.minutes,
-      label: formatWorkMinutes(entry.minutes),
-      // Never the stored blob an entry's project and job type are encoded into.
-      description: entryNotes(entry) || null,
-      projectId: entry.projectId ?? null,
-      projectName: entry.projectName ?? null,
-      jobName: entry.jobName ?? null,
-      workItem: entry.workItem ?? null,
-      billable: entry.billable ?? true,
-      startTime: entry.startTime ?? null,
-      endTime: entry.endTime ?? null,
-    })),
-  }));
+  return entriesByDate(timesheet)
+    .map((group) => ({
+      ...group,
+      entries: group.entries.filter(
+        (entry) => entry.minutes > 0 || Boolean(entryNotes(entry)) || Boolean(entry.projectId),
+      ),
+    }))
+    .filter((group) => group.entries.length > 0)
+    .map((group) => ({
+      workDate: group.workDate,
+      totalLabel: formatWorkMinutes(group.entries.reduce((sum, entry) => sum + entry.minutes, 0)),
+      entries: group.entries.map((entry) => ({
+        id: entry.id,
+        minutes: entry.minutes,
+        label: formatWorkMinutes(entry.minutes),
+        // Never the stored blob an entry's project and job type are encoded into.
+        description: entryNotes(entry) || null,
+        projectId: entry.projectId ?? null,
+        projectName: entry.projectName ?? null,
+        jobName: entry.jobName ?? null,
+        workItem: entry.workItem ?? null,
+        billable: entry.billable ?? true,
+        startTime: entry.startTime ?? null,
+        endTime: entry.endTime ?? null,
+      })),
+    }));
 }
 
 /**
@@ -114,4 +133,28 @@ export function parseDuration(text: string): number | null {
   if (bare) return Math.round(Number(trimmed));
 
   return null;
+}
+
+// en-US: en-GB writes "Sept", unlike every other date in the app.
+const MONTH_YEAR = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
+/**
+ * What a timesheet period is called on its tab: "Sep 2026" for a calendar month, otherwise the
+ * dates it runs between. A start date alone ("29 Sep 2026") did not say what the tab held.
+ */
+export function periodLabel(period: {
+  periodStart: string;
+  periodEnd: string;
+  periodType: string;
+}): string {
+  const start = period.periodStart.slice(0, 10);
+  const end = period.periodEnd.slice(0, 10);
+  if (period.periodType === 'MONTHLY' && start.endsWith('-01'))
+    return MONTH_YEAR.format(new Date(`${start}T00:00:00Z`));
+  if (start === end) return formatDate(start);
+  return `${formatDate(start).split(' ').slice(0, 2).join(' ')} – ${formatDate(end)}`;
 }

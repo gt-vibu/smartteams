@@ -17,7 +17,13 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
-import { formatDate, formatMinutes, formatMoney, type LeaveType } from '@smarteam/contracts';
+import {
+  formatDate,
+  formatMinutes,
+  formatMoney,
+  type LeaveType,
+  LIMITS,
+} from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import { emitDataChanged } from '../../lib/data-events';
@@ -132,6 +138,16 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
   };
 
   const submitAsk = async () => {
+    if (asking === 'comp-off' && (!form.workDate || form.reason.trim().length < 3)) {
+      setError(
+        !form.workDate ? 'Choose the day you worked.' : 'Add a reason of at least 3 characters.',
+      );
+      return;
+    }
+    if (asking === 'encash' && !form.typeId) {
+      setError('Choose a leave type to encash.');
+      return;
+    }
     const done =
       asking === 'comp-off'
         ? await run(() =>
@@ -183,7 +199,7 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
               type="button"
               variant="outline"
             >
-              Ask for comp-off
+              Apply comp off
             </Button>
           )}
           {encashable.length > 0 && (
@@ -262,7 +278,7 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
 
       <Dialog onOpenChange={(next) => !next && !busy && setAsking(null)} open={asking !== null}>
         <DialogContent className="sm:max-w-md">
-          <DialogTitle>{asking === 'comp-off' ? 'Ask for comp-off' : 'Encash leave'}</DialogTitle>
+          <DialogTitle>{asking === 'comp-off' ? 'Apply comp off' : 'Encash leave'}</DialogTitle>
           <div className="mt-3 space-y-3">
             {asking === 'comp-off' ? (
               <>
@@ -293,6 +309,7 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
                     What was the work?
                   </Label>
                   <Textarea
+                    maxLength={LIMITS.reason}
                     disabled={busy}
                     id="comp-reason"
                     onChange={(event) => setForm({ ...form, reason: event.target.value })}
@@ -332,6 +349,7 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
                     Days
                   </Label>
                   <Input
+                    max={366}
                     className="w-28"
                     disabled={busy}
                     id="encash-days"
@@ -377,6 +395,7 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
               {deciding?.approve ? 'Note (optional)' : 'Reason'}
             </Label>
             <Textarea
+              maxLength={LIMITS.reason}
               disabled={busy}
               id="extra-comment"
               onChange={(event) => setForm({ ...form, comment: event.target.value })}

@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Building2, Users } from 'lucide-react';
 import { Button } from '@smarteam/ui';
 import {
   employeeDisplayName,
   type EmployeeDirectoryEntry,
   employmentTypeLabel,
+  formatDate,
 } from '@smarteam/contracts';
 import { PersonAvatar } from '../common/person-avatar';
 import type {
@@ -14,6 +15,7 @@ import type {
   ReportingNode,
   useEmployeeDirectory,
 } from '../../hooks/use-employee-directory';
+import { statusLabel } from '../../lib/status-label';
 
 /**
  * People, departments and the reporting line.
@@ -86,18 +88,49 @@ function DirectoryTable({
   directory: Directory;
   onNavigateModule?: (module: string) => void;
 }) {
-  // A summary, not the directory. Onboarding owns the full roster and the actions on it.
-  const rows = directory.entries.slice(0, PREVIEW_LIMIT);
-  const remaining = directory.entries.length - rows.length;
+  const [show, setShow] = useState<'ACTIVE' | 'FORMER' | 'ALL'>('ACTIVE');
+  const active = directory.entries.filter((entry) => entry.status === 'ACTIVE');
+  const former = directory.entries.filter((entry) => entry.status !== 'ACTIVE');
+  const shown = show === 'ACTIVE' ? active : show === 'FORMER' ? former : directory.entries;
+  // A summary, not the directory. The Employees screen owns the full roster and its actions.
+  const rows = shown.slice(0, PREVIEW_LIMIT);
+  const remaining = shown.length - rows.length;
+  const filters = [
+    { id: 'ACTIVE' as const, label: 'Active', count: active.length },
+    { id: 'FORMER' as const, label: 'Former', count: former.length },
+    { id: 'ALL' as const, label: 'All', count: directory.entries.length },
+  ];
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div
+        aria-label="Show"
+        className="flex gap-1.5 border-b border-border px-4 py-2.5"
+        role="tablist"
+      >
+        {filters.map((filter) => (
+          <button
+            aria-selected={show === filter.id}
+            className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors ${
+              show === filter.id
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border text-muted-foreground hover:text-foreground'
+            }`}
+            key={filter.id}
+            onClick={() => setShow(filter.id)}
+            role="tab"
+            type="button"
+          >
+            {filter.label} ({filter.count})
+          </button>
+        ))}
+      </div>
       <div className="overflow-x-auto">
         <table className="stack-table w-full min-w-[760px] text-left text-xs">
           <thead>
             <tr className="border-b border-border bg-table-header text-[10px] uppercase tracking-wider text-muted-foreground">
               <th className="px-4 py-2.5 font-bold">Name</th>
-              <th className="px-4 py-2.5 font-bold">Number</th>
+              <th className="px-4 py-2.5 font-bold">Employee ID</th>
               <th className="px-4 py-2.5 font-bold">Department</th>
               <th className="px-4 py-2.5 font-bold">Type</th>
               <th className="px-4 py-2.5 font-bold">Joined</th>
@@ -119,29 +152,33 @@ function DirectoryTable({
                       <div className="truncate font-semibold text-foreground">
                         {employeeDisplayName(entry)}
                       </div>
-                      <div className="truncate text-[11px] text-muted-foreground">
-                        {entry.jobTitle ?? 'No job title'}
-                      </div>
+                      {entry.jobTitle && (
+                        <div className="truncate text-[11px] text-muted-foreground">
+                          {entry.jobTitle}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </td>
                 <td
-                  data-label="Number"
+                  data-bare=""
+                  data-label="Employee ID"
                   className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
                 >
                   {entry.employeeNumber}
                 </td>
-                <td data-label="Department" className="px-4 py-2.5 text-muted-foreground">
-                  {entry.department ?? '--'}
+                <td
+                  data-bare=""
+                  data-label="Department"
+                  className="px-4 py-2.5 text-muted-foreground"
+                >
+                  {entry.department ?? '—'}
                 </td>
-                <td data-label="Type" className="px-4 py-2.5 text-muted-foreground">
+                <td data-bare="" data-label="Type" className="px-4 py-2.5 text-muted-foreground">
                   {employmentTypeLabel(entry.employmentType)}
                 </td>
-                <td
-                  data-label="Joined"
-                  className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
-                >
-                  {entry.dateOfJoining ?? '--'}
+                <td data-label="Joined" className="px-4 py-2.5 tabular-nums text-muted-foreground">
+                  {entry.dateOfJoining ? formatDate(entry.dateOfJoining) : '—'}
                 </td>
                 <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                   <StatusPill status={entry.status} />
@@ -154,8 +191,8 @@ function DirectoryTable({
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2.5">
         <span className="text-[11px] text-muted-foreground">
           {remaining > 0
-            ? `Showing ${rows.length} of ${directory.entries.length}`
-            : `${directory.entries.length} ${directory.entries.length === 1 ? 'person' : 'people'}`}
+            ? `Showing ${rows.length} of ${shown.length}`
+            : `${shown.length} ${shown.length === 1 ? 'person' : 'people'}`}
         </span>
         <Button
           className="h-auto gap-1 px-2 py-1 text-[11px]"
@@ -321,7 +358,7 @@ function StatusPill({ status }: { status: string }) {
     <span
       className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${tone}`}
     >
-      {status.toLowerCase()}
+      {statusLabel(status)}
     </span>
   );
 }

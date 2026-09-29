@@ -226,6 +226,7 @@ export function EmployeePolicyDialog({
             {useCustomAllowance && (
               <div className="mt-2 flex items-center gap-3">
                 <Input
+                  step={1}
                   className="w-24"
                   disabled={holidays.saving}
                   max={365}

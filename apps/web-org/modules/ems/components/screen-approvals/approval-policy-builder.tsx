@@ -72,7 +72,7 @@ export function ApprovalPolicyBuilder() {
               onClick={() => setShowRetired((value) => !value)}
               type="button"
             >
-              {showRetired ? 'Hide retired' : `Show retired (${retiredCount})`}
+              {showRetired ? 'Hide inactive' : `Show inactive (${retiredCount})`}
             </button>
           )}
         </p>
@@ -161,7 +161,7 @@ export function ApprovalPolicyBuilder() {
                       <div className="flex flex-wrap gap-1.5">
                         {policy.isDefault && <Badge variant="sky">Default</Badge>}
                         <Badge variant={policy.isActive ? 'success' : 'secondary'}>
-                          {policy.isActive ? 'Active' : 'Retired'}
+                          {policy.isActive ? 'Active' : 'Inactive'}
                         </Badge>
                       </div>
                     </td>

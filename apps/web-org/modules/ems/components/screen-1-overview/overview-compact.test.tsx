@@ -28,13 +28,13 @@ vi.mock('../screen-4-calendar/screen-4-calendar', () => ({
 }));
 vi.mock('../layout/botanical-cover', () => ({ BotanicalCover: () => null }));
 
-let explicit = new Set<string>();
+let modules = new Set<string>();
 vi.mock('../../hooks/use-auth', () => ({
-  useAuth: () => ({ hasExplicitPermission: (key: string) => explicit.has(key) }),
+  useAuth: () => ({ canAccessModule: (module: string) => modules.has(module) }),
 }));
 
 beforeEach(() => {
-  explicit = new Set();
+  modules = new Set();
 });
 
 const ALL = ['profile-card', 'activities', 'approvals', 'dashboard', 'leave', 'attendance'];
@@ -69,18 +69,15 @@ describe('OverviewCompact', () => {
     expect(tabs).toEqual(['Profile', 'Activities', 'Dashboard']);
   });
 
-  it.each(['leave.requests.decide', 'attendance.corrections.decide', 'timesheets.decide'])(
-    'offers Approvals to a manager holding %s',
-    (key) => {
-      explicit = new Set([key]);
-      renderAt('Profile');
-      expect(screen.getByRole('tab', { name: 'Approvals' })).toBeInTheDocument();
-    },
-  );
+  it('offers Approvals where the navigation does — to someone who approves as themselves', () => {
+    modules = new Set(['approvals']);
+    renderAt('Profile');
+    expect(screen.getByRole('tab', { name: 'Approvals' })).toBeInTheDocument();
+  });
 
-  it('does not offer Approvals for keys the catalogue does not have', () => {
-    // These were the keys checked here, and no role holds them, so no manager ever saw the tab.
-    explicit = new Set(['leave.approve', 'attendance.approve']);
+  it('does not offer Approvals to an HR role deciding from its own workspace', () => {
+    // HR holds the decide permissions; checking those put Approvals in their employee workspace.
+    modules = new Set(['time-off', 'attendance', 'timesheet']);
     renderAt('Profile');
     expect(screen.queryByRole('tab', { name: 'Approvals' })).not.toBeInTheDocument();
   });

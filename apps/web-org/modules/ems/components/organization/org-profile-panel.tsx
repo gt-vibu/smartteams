@@ -40,6 +40,7 @@ function withCurrent<T extends { label: string }>(
 import type { Organization } from '@smarteam/contracts';
 import { TimezoneSelect } from '../common/timezone-select';
 import type { OrganizationState } from '../../hooks/use-organization';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 
 /**
  * The organization profile.
@@ -134,6 +135,8 @@ function ProfileForm({
               Name
             </Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Organization name', LIMITS.title, 2)}
               disabled={state.saving || !state.can.updateOrganization}
               id="org-name"
               onChange={(event) => setName(event.target.value)}

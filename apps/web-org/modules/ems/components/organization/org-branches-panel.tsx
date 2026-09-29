@@ -15,6 +15,7 @@ import type { Branch } from '@smarteam/contracts';
 import type { OrganizationState } from '../../hooks/use-organization';
 import { Unavailable } from './org-profile-panel';
 import { BranchSettingsDrawer } from './branch-settings-drawer';
+import { LIMITS, codeProblem, textProblem } from '@smarteam/contracts';
 
 /**
  * Branches.
@@ -85,7 +86,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
             </thead>
             <tbody>
               {state.branches.map((branch) => {
-                // "Main branch" only means something when there is more than one to choose from.
+                // "Primary" only means something when there is more than one to choose from.
                 const choosing = activeCount > 1;
                 const isPrimary = choosing && branch.id === state.primaryBranchId;
                 return (
@@ -97,7 +98,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                       {branch.name}
                       {isPrimary && (
                         <Badge className="ml-2" variant="sky">
-                          Main branch
+                          Primary
                         </Badge>
                       )}
                     </td>
@@ -106,12 +107,13 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                     </td>
                     <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                       <Badge variant={branch.status === 'DEACTIVATED' ? 'secondary' : 'success'}>
-                        {branch.status === 'DEACTIVATED' ? 'Retired' : 'Active'}
+                        {branch.status === 'DEACTIVATED' ? 'Inactive' : 'Active'}
                       </Badge>
                     </td>
                     <td data-cell="actions" className="px-4 py-2.5 text-right">
+                      {/* One row, in the same order on every branch. */}
                       {branch.status !== 'DEACTIVATED' && (
-                        <div className="flex justify-end gap-2">
+                        <div className="flex flex-wrap justify-end gap-2">
                           <Button
                             onClick={() => setSettings(branch)}
                             size="sm"
@@ -120,39 +122,39 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                           >
                             Settings
                           </Button>
-                        </div>
-                      )}
-                      {state.can.writeBranches && branch.status !== 'DEACTIVATED' && (
-                        <div className="mt-1.5 flex justify-end gap-2">
-                          <Button
-                            onClick={() => setEditing(branch)}
-                            size="sm"
-                            type="button"
-                            variant="outline"
-                          >
-                            Edit
-                          </Button>
-                          {choosing && !isPrimary && (
-                            <Button
-                              disabled={state.saving}
-                              onClick={() => void state.setPrimaryBranch(branch.id)}
-                              size="sm"
-                              type="button"
-                              variant="outline"
-                            >
-                              Make main
-                            </Button>
-                          )}
-                          {/* The main branch hands that role on before it can be retired. */}
-                          {!isPrimary && (
-                            <Button
-                              onClick={() => setRetiring(branch)}
-                              size="sm"
-                              type="button"
-                              variant="ghost"
-                            >
-                              Retire
-                            </Button>
+                          {state.can.writeBranches && (
+                            <>
+                              <Button
+                                onClick={() => setEditing(branch)}
+                                size="sm"
+                                type="button"
+                                variant="outline"
+                              >
+                                Edit
+                              </Button>
+                              {choosing && !isPrimary && (
+                                <Button
+                                  disabled={state.saving}
+                                  onClick={() => void state.setPrimaryBranch(branch.id)}
+                                  size="sm"
+                                  type="button"
+                                  variant="outline"
+                                >
+                                  Set as primary
+                                </Button>
+                              )}
+                              {/* The primary branch hands that role on before it can be deactivated. */}
+                              {!isPrimary && (
+                                <Button
+                                  onClick={() => setRetiring(branch)}
+                                  size="sm"
+                                  type="button"
+                                  variant="ghost"
+                                >
+                                  Deactivate
+                                </Button>
+                              )}
+                            </>
                           )}
                         </div>
                       )}
@@ -176,7 +178,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
       <p className="text-[11px] text-muted-foreground">
         Open a branch's Settings to see how many current employees are based there.
         {activeCount > 1 &&
-          ' New employees are placed in the main branch unless you choose another.'}
+          ' New employees are placed in the primary branch unless you choose another.'}
       </p>
 
       <BranchDialog
@@ -213,16 +215,24 @@ function BranchDialog({
 }) {
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
+  const [problem, setProblem] = useState('');
 
   useEffect(() => {
     if (!open) return;
     setName(branch?.name ?? '');
     setCode(branch?.code ?? '');
+    setProblem('');
   }, [branch, open]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (name.trim().length < 2 || !code.trim()) return;
+    if (name.trim().length < 2 || !code.trim()) {
+      setProblem(
+        name.trim().length < 2 ? 'Enter a branch name of at least 2 characters.' : 'Enter a code.',
+      );
+      return;
+    }
+    setProblem('');
     const input = { name: name.trim(), code: code.trim() };
     const ok = branch
       ? await state.updateBranch(branch.id, input)
@@ -240,6 +250,8 @@ function BranchDialog({
               Name
             </Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Branch name', LIMITS.title, 2)}
               disabled={state.saving}
               id="branch-name"
               onChange={(event) => setName(event.target.value)}
@@ -251,15 +263,17 @@ function BranchDialog({
               Code
             </Label>
             <Input
+              maxLength={LIMITS.code}
+              problem={codeProblem(code, 'Branch code', LIMITS.code)}
               disabled={state.saving}
               id="branch-code"
               onChange={(event) => setCode(event.target.value)}
               value={code}
             />
           </div>
-          {state.saveError && (
+          {(problem || state.saveError) && (
             <p className="text-xs text-destructive" role="alert">
-              {state.saveError}
+              {problem || state.saveError}
             </p>
           )}
           <div className="flex justify-end gap-2">
@@ -272,7 +286,7 @@ function BranchDialog({
               Cancel
             </Button>
             <Button disabled={state.saving} type="submit">
-              {state.saving ? 'Saving...' : 'Save'}
+              {state.saving ? 'Saving…' : branch ? 'Save' : 'Create branch'}
             </Button>
           </div>
         </form>
@@ -307,12 +321,13 @@ function RetireBranchDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-md">
-        <DialogTitle>Retire {branch?.name ?? 'branch'}</DialogTitle>
+        <DialogTitle>Deactivate {branch?.name ?? 'branch'}</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <Label className="block" htmlFor="branch-retire-reason">
             Reason
           </Label>
           <Textarea
+            maxLength={LIMITS.reason}
             disabled={state.saving}
             id="branch-retire-reason"
             onChange={(event) => setReason(event.target.value)}
@@ -333,7 +348,7 @@ function RetireBranchDialog({
               Cancel
             </Button>
             <Button disabled={state.saving || reason.trim().length < 2} type="submit">
-              {state.saving ? 'Retiring...' : 'Retire'}
+              {state.saving ? 'Deactivating…' : 'Deactivate'}
             </Button>
           </div>
         </form>

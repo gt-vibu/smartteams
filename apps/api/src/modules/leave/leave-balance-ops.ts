@@ -25,7 +25,12 @@ export async function provisionAssignedBalances(
   leaveYearStartMonth: number,
 ) {
   const assignments = await tx.leavePolicyAssignment.findMany({
-    where: { organizationId: context.organizationId, branchId },
+    where: {
+      organizationId: context.organizationId,
+      branchId,
+      // A deactivated type cannot be requested, so it opens no new balance (federation unchanged).
+      ...(context.accessMode === 'NATIVE' ? { leaveType: { isActive: true } } : {}),
+    },
     include: { leaveType: true },
   });
   for (const assignment of assignments)

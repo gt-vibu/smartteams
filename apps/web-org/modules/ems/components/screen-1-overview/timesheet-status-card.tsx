@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatWorkMinutes, type Timesheet, formatDate } from '@smarteam/contracts';
+import { statusLabel } from '../../lib/status-label';
 
 /** The most recently approved timesheet, shown as a confirmation on the overview screen. */
 export function TimesheetStatusCard({ notification }: { notification: Timesheet }) {
@@ -16,7 +17,7 @@ export function TimesheetStatusCard({ notification }: { notification: Timesheet 
         </p>
       </div>
       <span className="shrink-0 rounded border border-border px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
-        {notification.status}
+        {statusLabel(notification.status)}
       </span>
     </div>
   );

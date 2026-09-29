@@ -30,7 +30,7 @@ function Row({
         <span className="font-medium text-foreground">{name}</span>
         {note && <span className="mt-0.5 block text-[10px] text-muted-foreground">{note}</span>}
       </td>
-      <td className="px-4 py-2.5 text-right font-mono text-foreground">
+      <td className="px-4 py-2.5 text-right tabular-nums text-foreground">
         {tone === 'deduction' && amount > 0 ? '-' : ''}
         {formatMoney(amount)}
       </td>
@@ -67,7 +67,7 @@ function Section({
             </td>
             <td
               data-label="Monthly"
-              className="px-4 py-2.5 text-right font-mono font-bold text-foreground"
+              className="px-4 py-2.5 text-right tabular-nums font-bold text-foreground"
             >
               {formatMoney(total)}
             </td>
@@ -137,7 +137,7 @@ export function PayrollStructurePanel({
             <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               {tile.label}
             </dt>
-            <dd className="mt-1 font-mono text-sm font-bold text-foreground">
+            <dd className="mt-1 tabular-nums text-sm font-bold text-foreground">
               {formatMoney(tile.value)}
             </dd>
           </div>

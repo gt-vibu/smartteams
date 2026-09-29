@@ -94,7 +94,7 @@ export function DatePicker({
   const firstDayIndex = new Date(year, month, 1).getDay();
 
   const displayFormatted = selectedDate
-    ? selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    ? `${selectedDate.getDate()} ${SHORT_MONTHS[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`
     : placeholder;
 
   return (
@@ -244,3 +244,19 @@ export function DatePicker({
     </Popover>
   );
 }
+
+/** Month names as the rest of the app writes them ("Sep", never "Sept"). */
+const SHORT_MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];

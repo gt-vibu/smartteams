@@ -117,12 +117,15 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const checkInTimestamp = openCheckInAt(todayRecord);
   const isDayCompleted = Boolean(todayRecord && todayRecord.status === 'COMPLETED' && !checkedIn);
 
-  // Live timer or completed day duration
+  // The day's worked time: earlier sessions today, plus the one running now. Checking in again
+  // carries on from the total rather than starting at zero; the gap between sessions is not
+  // counted.
+  const earlierSeconds = (checkInTimestamp ? (todayRecord?.workedMinutes ?? 0) : 0) * 60;
   useEffect(() => {
     if (checkInTimestamp) {
       const tick = () => {
         const started = new Date(checkInTimestamp).getTime();
-        const seconds = Math.max(0, Math.floor((Date.now() - started) / 1000));
+        const seconds = earlierSeconds + Math.max(0, Math.floor((Date.now() - started) / 1000));
         setTimerDisplay({
           hrs: String(Math.floor(seconds / 3600)).padStart(2, '0'),
           mins: String(Math.floor((seconds % 3600) / 60)).padStart(2, '0'),
@@ -147,7 +150,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     }
 
     setTimerDisplay(ZERO_TIMER);
-  }, [checkInTimestamp, todayRecord]);
+  }, [checkInTimestamp, todayRecord, earlierSeconds]);
 
   const run = useCallback(
     async (operation: () => Promise<unknown>) => {

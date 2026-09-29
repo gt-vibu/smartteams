@@ -57,7 +57,7 @@ describe('attendance drawer, day with no check-out', () => {
   it('offers "Add missing check-out", not the punch correction', () => {
     renderDrawer();
     expect(screen.getByText('Add missing check-out')).toBeInTheDocument();
-    expect(screen.queryByText('Correct an existing punch')).not.toBeInTheDocument();
+    expect(screen.queryByText('Regularize attendance')).not.toBeInTheDocument();
   });
 
   it('prefills no time, and will not send until a time and reason are given', async () => {
@@ -102,7 +102,7 @@ describe('attendance drawer, day with no check-out', () => {
 describe('attendance drawer, day with a check-out', () => {
   it('keeps the punch correction and does not offer to add a check-out', () => {
     renderDrawer({ openCheckInAt: undefined, lastOut: '18:00' });
-    expect(screen.getByText('Correct an existing punch')).toBeInTheDocument();
+    expect(screen.getByText('Regularize attendance')).toBeInTheDocument();
     expect(screen.queryByText('Add missing check-out')).not.toBeInTheDocument();
   });
 });

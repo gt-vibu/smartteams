@@ -16,9 +16,14 @@ import {
 } from '@smarteam/ui';
 import {
   aadhaarProblem,
+  codeProblem,
+  dateProblem,
+  emailProblem,
   EMPLOYMENT_TYPE_OPTIONS,
   employeeDisplayName,
   formatAadhaar,
+  LIMITS,
+  personNameProblem,
   type Branch,
   type Employee,
 } from '@smarteam/contracts';
@@ -30,6 +35,8 @@ import { ShiftPicker } from '../common/shift-picker';
 import { Field, Fieldset } from './form-fields';
 import { activeByName, byName } from '../../lib/pickable';
 import { localDateKey } from '../../lib/local-date';
+import { PhoneField, phoneIsValid } from '../common/phone-field';
+import { CheckedInput, optionalProblem } from '../common/checked-input';
 
 const NEW_DEPARTMENT = '__new__';
 
@@ -50,6 +57,8 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   employees: Employee[];
+  /** Each person's current job title, shown beside their name in "Reports to". */
+  jobTitles?: ReadonlyMap<string, string>;
   branches: Branch[];
   /** The organization's main branch, where a new hire is placed unless someone picks another. */
   defaultBranchId?: string | null;
@@ -86,6 +95,7 @@ export function OnboardEmployeeDialog({
   open,
   onOpenChange,
   employees,
+  jobTitles,
   branches,
   defaultBranchId,
   employeeRoleId,
@@ -125,11 +135,24 @@ export function OnboardEmployeeDialog({
   // Shown once something has been typed, so an untouched form does not open on an error.
   const aadhaarError = aadhaarProblem(form.aadhaarNumber);
   const showAadhaarError = form.aadhaarNumber.length > 0 && aadhaarError !== null;
+  // Each field held to the rule the API applies, so what the form accepts the server accepts.
+  const problems = {
+    firstName: personNameProblem(form.firstName, 'First name'),
+    lastName: personNameProblem(form.lastName, 'Last name'),
+    workEmail: optionalProblem(form.workEmail, emailProblem),
+    personalEmail: optionalProblem(form.personalEmail, emailProblem),
+    employeeNumber: optionalProblem(form.employeeNumber, (value) =>
+      codeProblem(value, 'Employee ID', LIMITS.employeeNumber),
+    ),
+    dateOfJoining: dateProblem(form.dateOfJoining, 'Joining date', {
+      earliest: '1950-01-01',
+      latest: `${new Date().getFullYear() + 1}-12-31`,
+    }),
+  };
   const complete =
     aadhaarError === null &&
-    form.firstName.trim().length > 0 &&
-    form.lastName.trim().length > 0 &&
-    form.dateOfJoining.length === 10 &&
+    phoneIsValid(form.phone) &&
+    Object.values(problems).every((problem) => problem === null) &&
     // Required whenever a login can be made: it is the address they sign in with.
     (!accountPossible || accountEmail.length > 0);
 
@@ -175,29 +198,45 @@ export function OnboardEmployeeDialog({
         <div className="mt-5 space-y-5">
           <Fieldset legend="Person">
             <Field label="First name" required>
-              <Input onChange={(e) => set('firstName', e.target.value)} value={form.firstName} />
+              <CheckedInput
+                autoComplete="given-name"
+                maxLength={LIMITS.personName}
+                onChange={(value) => set('firstName', value)}
+                problem={problems.firstName}
+                value={form.firstName}
+              />
             </Field>
             <Field label="Last name" required>
-              <Input onChange={(e) => set('lastName', e.target.value)} value={form.lastName} />
+              <CheckedInput
+                autoComplete="family-name"
+                maxLength={LIMITS.personName}
+                onChange={(value) => set('lastName', value)}
+                problem={problems.lastName}
+                value={form.lastName}
+              />
             </Field>
             <Field label="Work email" required={accountPossible}>
-              <Input
-                onChange={(e) => set('workEmail', e.target.value)}
+              <CheckedInput
+                maxLength={LIMITS.email}
+                onChange={(value) => set('workEmail', value.trim())}
+                problem={problems.workEmail}
                 type="email"
                 value={form.workEmail}
               />
             </Field>
             <Field label="Personal email">
-              <Input
-                onChange={(e) => set('personalEmail', e.target.value)}
+              <CheckedInput
+                maxLength={LIMITS.email}
+                onChange={(value) => set('personalEmail', value.trim())}
+                problem={problems.personalEmail}
                 type="email"
                 value={form.personalEmail}
               />
             </Field>
             <Field label="Phone">
-              <Input
-                inputMode="tel"
-                onChange={(e) => set('phone', e.target.value)}
+              <PhoneField
+                id="onboard-phone"
+                onChange={(value) => set('phone', value)}
                 value={form.phone}
               />
             </Field>
@@ -205,6 +244,8 @@ export function OnboardEmployeeDialog({
               <Input
                 aria-invalid={showAadhaarError || undefined}
                 inputMode="numeric"
+                // 12 digits and the two spaces formatAadhaar puts between the groups.
+                maxLength={14}
                 onChange={(e) => set('aadhaarNumber', formatAadhaar(e.target.value))}
                 placeholder="1234 5678 9012"
                 value={form.aadhaarNumber}
@@ -250,9 +291,11 @@ export function OnboardEmployeeDialog({
                 </div>
               ) : (
                 <>
-                  <Input
-                    onChange={(e) => set('employeeNumber', e.target.value)}
+                  <CheckedInput
+                    maxLength={LIMITS.employeeNumber}
+                    onChange={(value) => set('employeeNumber', value.toUpperCase())}
                     placeholder="Assigned automatically"
+                    problem={problems.employeeNumber}
                     value={form.employeeNumber}
                   />
                   <p className="mt-1 text-[11px] text-muted-foreground">
@@ -329,7 +372,13 @@ export function OnboardEmployeeDialog({
                   <SelectItem value="none">No manager</SelectItem>
                   {activeByName(employees).map((employee) => (
                     <SelectItem key={employee.id} value={employee.id}>
-                      {employeeDisplayName(employee)}
+                      {[
+                        employeeDisplayName(employee),
+                        jobTitles?.get(employee.id),
+                        employee.employeeNumber,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
                     </SelectItem>
                   ))}
                 </SelectContent>

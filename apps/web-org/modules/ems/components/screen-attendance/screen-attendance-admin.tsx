@@ -17,6 +17,7 @@ import { WorkWeekPanel } from './work-week-panel';
 import { PageShell } from '../layout/page-shell';
 import { useMinuteClock } from '../../hooks/use-minute-clock';
 import { useWorkWeek } from '../../hooks/use-work-week';
+import { statusLabel } from '../../lib/status-label';
 
 type Tab = 'records' | 'corrections' | 'policy';
 
@@ -42,7 +43,7 @@ export function ScreenAttendanceAdmin() {
   const { tabs, active } = permittedTabs<Tab, { id: Tab; label: string; allowed: boolean }>(
     [
       { id: 'records', label: 'Records', allowed: may('attendance.read.all') },
-      { id: 'corrections', label: 'Corrections', allowed: may('attendance.corrections.decide') },
+      { id: 'corrections', label: 'Regularization', allowed: may('attendance.corrections.decide') },
       {
         id: 'policy',
         label: 'Policy',
@@ -82,12 +83,7 @@ export function ScreenAttendanceAdmin() {
 
   return (
     <PageShell>
-      <ScreenHeader
-        description="Records, corrections and the attendance policy."
-        icon={Clock3}
-        title="Attendance"
-        tone="success"
-      />
+      <ScreenHeader icon={Clock3} title="Attendance" tone="success" />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex items-center gap-4">
           {tabs.map(({ id, label }) => (
@@ -138,6 +134,7 @@ export function ScreenAttendanceAdmin() {
             <Input
               className="w-full min-w-0 sm:w-44"
               onChange={(event) => setSearch(event.target.value)}
+              aria-label="Search employee"
               placeholder="Search employee"
               value={search}
             />
@@ -224,7 +221,7 @@ export function ScreenAttendanceAdmin() {
                       <td
                         data-bare=""
                         data-label="Date"
-                        className="px-4 py-2.5 font-mono text-foreground"
+                        className="px-4 py-2.5 tabular-nums text-foreground"
                       >
                         {formatDate(row.workDate)}
                       </td>
@@ -233,35 +230,35 @@ export function ScreenAttendanceAdmin() {
                           {row.employeeName ?? 'Not in the directory'}
                         </span>
                         <span className="text-[10px] text-muted-foreground">
-                          {row.employeeNumber ?? '--'}
+                          {row.employeeNumber ?? '—'}
                         </span>
                       </td>
                       <td
                         data-label="First in"
-                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
-                        {row.firstInTime ?? '--'}
+                        {row.firstInTime ?? '—'}
                       </td>
                       <td
                         data-label="Last out"
-                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
-                        {row.lastOutTime ?? '--'}
+                        {row.lastOutTime ?? '—'}
                       </td>
                       <td
                         data-label="Worked"
-                        className="px-4 py-2.5 font-mono font-bold text-foreground"
+                        className="px-4 py-2.5 tabular-nums font-bold text-foreground"
                       >
                         {row.workedLabel}
                       </td>
                       <td
                         data-label="Overtime"
-                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
                         {row.overtimeLabel}
                       </td>
                       <td data-cell="status" data-label="Status" className="px-4 py-2.5">
-                        <Badge variant="outline">{row.dayStatus}</Badge>
+                        <Badge variant="outline">{statusLabel(row.dayStatus)}</Badge>
                         {row.correctionStatus === 'PENDING' && (
                           <Badge className="ml-1" variant="secondary">
                             Correction pending

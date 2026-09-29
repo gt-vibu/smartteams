@@ -110,12 +110,7 @@ export function ScreenReports() {
 
   return (
     <PageShell>
-      <ScreenHeader
-        description="Headcount, attendance, leave and project hours — each exportable to a spreadsheet."
-        icon={BarChart3}
-        title="Reports"
-        tone="primary"
-      />
+      <ScreenHeader icon={BarChart3} title="Reports" tone="primary" />
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <SegmentedTabs
           aria-label="Report"

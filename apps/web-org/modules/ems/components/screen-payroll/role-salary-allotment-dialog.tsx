@@ -22,6 +22,7 @@ import { useEmployees, useTeams } from '../../hooks/use-workforce';
 import type { CompensationState } from '../../hooks/use-compensation';
 import { payrollRepository } from '../../repositories/payroll.repository';
 import { useSession } from '../../hooks/auth-context';
+import { LIMITS } from '@smarteam/contracts';
 
 interface RoleSalaryAllotmentDialogProps {
   compensation: CompensationState;
@@ -279,6 +280,8 @@ export function RoleSalaryAllotmentDialog({
                 Monthly Gross Salary (₹)
               </Label>
               <Input
+                min={0}
+                max={LIMITS.amount}
                 id="role-gross"
                 type="number"
                 inputMode="decimal"

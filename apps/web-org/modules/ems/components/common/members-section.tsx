@@ -135,7 +135,8 @@ export function MembersSection({
                         View employee
                       </Button>
                     )}
-                    {canWrite && (
+                    {/* Only a current membership's role can change; an ending one is history. */}
+                    {canWrite && !member.until && (
                       <Button
                         disabled={busy}
                         onClick={() =>
@@ -182,7 +183,7 @@ export function MembersSection({
             onClick={() => setShowPast((open) => !open)}
             type="button"
           >
-            {showPast ? 'Hide' : 'Show'} past members ({pastMembers.length})
+            {showPast ? 'Hide' : 'Show'} former members ({pastMembers.length})
           </button>
           {showPast && (
             <ul className="mt-1.5 space-y-1">

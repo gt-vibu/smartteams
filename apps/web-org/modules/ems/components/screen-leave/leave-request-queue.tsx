@@ -7,9 +7,11 @@ import {
   employeeDisplayName,
   type Employee,
   type LeaveRequest,
+  LIMITS,
 } from '@smarteam/contracts';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 import { LeaveRequestDialog } from './leave-request-dialog';
+import { statusLabel } from '../../lib/status-label';
 
 function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
   if (status === 'REJECTED') return 'destructive';
@@ -124,12 +126,14 @@ export function LeaveRequestQueue({
                   </td>
                   <td
                     data-label="Days"
-                    className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                    className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
                   >
                     {request.requestedDays}
                   </td>
                   <td data-cell="status" data-label="Status" className="px-4 py-2.5">
-                    <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
+                    <Badge variant={statusVariant(request.status)}>
+                      {statusLabel(request.status)}
+                    </Badge>
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">
                     {request.status === 'PENDING' && admin.canDecide && activeId !== request.id && (
@@ -160,6 +164,7 @@ export function LeaveRequestQueue({
                     <td className="px-4 py-3" colSpan={7}>
                       <div className="flex flex-wrap items-center gap-2">
                         <Input
+                          maxLength={LIMITS.reason}
                           aria-label="Decision comment"
                           className="max-w-sm"
                           disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}

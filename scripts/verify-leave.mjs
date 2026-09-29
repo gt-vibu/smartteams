@@ -192,7 +192,8 @@ async function main() {
     `/v1/organizations/${orgId}/leave/types`,
     {
       code: 'CL',
-      name: 'Casual Leave',
+      // Not a default's name: two types with one name are refused.
+      name: 'Paid Time Off',
       paid: true,
       accrualType: 'FIXED_ANNUAL',
       annualAllowance: 12,
@@ -202,6 +203,22 @@ async function main() {
   );
   check('create a paid leave type', r.status, 201);
   const paidTypeId = r.payload?.id;
+
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/leave/types`,
+    {
+      code: 'CL2',
+      name: 'casual leave',
+      paid: true,
+      accrualType: 'FIXED_ANNUAL',
+      annualAllowance: 12,
+      requiresAttachment: false,
+    },
+    AH,
+  );
+  check('a second type with a default name is refused', r.status, 409);
 
   r = await call(
     A,

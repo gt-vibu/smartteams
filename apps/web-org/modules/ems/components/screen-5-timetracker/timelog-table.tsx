@@ -12,7 +12,7 @@ export function TimeLogTable({ logs, onSelectLog }: TimeLogTableProps) {
   const columns: ColumnDef<TimeLogItem>[] = [
     {
       id: 'jobName',
-      header: 'Job Name',
+      header: 'Job',
       accessorKey: 'jobName',
       sortable: true,
       pinned: 'left',
@@ -20,7 +20,7 @@ export function TimeLogTable({ logs, onSelectLog }: TimeLogTableProps) {
     },
     {
       id: 'projectName',
-      header: 'Project Name',
+      header: 'Project',
       accessorKey: 'projectName',
       sortable: true,
       filterable: true,
@@ -35,7 +35,7 @@ export function TimeLogTable({ logs, onSelectLog }: TimeLogTableProps) {
     },
     {
       id: 'isBillable',
-      header: 'Billable Status',
+      header: 'Billable',
       accessorKey: (log) => (log.isBillable ? 'Billable' : 'Non-billable'),
       filterable: true,
       filterOptions: [

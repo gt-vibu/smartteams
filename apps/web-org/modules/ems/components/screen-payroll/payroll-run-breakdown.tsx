@@ -75,13 +75,13 @@ export function PayrollRunBreakdown({ slips }: { slips: readonly Payslip[] }) {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2 text-right font-mono tabular-nums">
+                  <td className="px-4 py-2 text-right tabular-nums">
                     {formatMoney(slip.totals.grossAmount)}
                   </td>
-                  <td className="px-4 py-2 text-right font-mono tabular-nums">
+                  <td className="px-4 py-2 text-right tabular-nums">
                     {formatMoney(slip.totals.deductionAmount)}
                   </td>
-                  <td className="px-4 py-2 text-right font-mono font-bold tabular-nums">
+                  <td className="px-4 py-2 text-right font-bold tabular-nums">
                     {formatMoney(slip.totals.netAmount)}
                   </td>
                 </tr>

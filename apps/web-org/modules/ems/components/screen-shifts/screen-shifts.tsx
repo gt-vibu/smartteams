@@ -64,7 +64,6 @@ export function ScreenShifts() {
             </div>
           )
         }
-        description="Working patterns attendance measures against. Assignments are effective-dated; see and end them under People."
         icon={CalendarClock}
         title="Shifts"
         tone="accent"
@@ -143,10 +142,13 @@ export function ScreenShifts() {
                       {shift.startsAt.slice(0, 5)} – {shift.endsAt.slice(0, 5)}
                       {shift.crossesMidnight && <span className="ml-1 text-[10px]">(+1 day)</span>}
                     </td>
-                    <td data-label="Break" className="px-4 py-2.5 font-mono text-muted-foreground">
+                    <td
+                      data-label="Break"
+                      className="px-4 py-2.5 tabular-nums text-muted-foreground"
+                    >
                       {shift.breakMinutes}m
                     </td>
-                    <td data-label="Net" className="px-4 py-2.5 font-mono text-foreground">
+                    <td data-label="Net" className="px-4 py-2.5 tabular-nums text-foreground">
                       {Math.floor(minutes / 60)}h {minutes % 60}m
                     </td>
                     <td data-cell="actions" className="px-4 py-2.5 text-right">
@@ -183,7 +185,7 @@ export function ScreenShifts() {
                               type="button"
                               variant="ghost"
                             >
-                              Retire
+                              Deactivate
                             </Button>
                           </>
                         )}

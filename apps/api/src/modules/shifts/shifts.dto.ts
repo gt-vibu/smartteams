@@ -17,6 +17,8 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import { IsClockTime, IsCode, IsText, IsWholeNumber } from '../../common/validation/field-rules';
 import { Type } from 'class-transformer';
 
 export class BreakRuleDto {
@@ -47,19 +49,20 @@ export class ShiftDto {
 
 /** A shift created in the app: a name is enough, and the code is generated from it. */
 export class NativeShiftDto {
-  @IsOptional() @IsString() code?: string;
-  @IsString() name!: string;
+  @IsOptional() @IsCode('Shift code') code?: string;
+  @IsText('Shift name', LIMITS.title, 2) name!: string;
   @IsOptional() @IsUUID() branchId?: string;
   @IsArray()
   @IsNumber({}, { each: true })
   @Min(1, { each: true })
   @Max(7, { each: true })
   daysOfWeek!: number[];
-  @IsString() startsAt!: string;
-  @IsString() endsAt!: string;
+  @IsClockTime('Start time') startsAt!: string;
+  @IsClockTime('End time') endsAt!: string;
   @IsBoolean() crossesMidnight!: boolean;
-  @IsNumber() @Min(0) breakMinutes!: number;
+  @IsWholeNumber('Break', 0, 720) breakMinutes!: number;
   @IsOptional()
+  @ArrayMaxSize(10)
   @ValidateNested({ each: true })
   @Type(() => BreakRuleDto)
   breakRules?: BreakRuleDto[];

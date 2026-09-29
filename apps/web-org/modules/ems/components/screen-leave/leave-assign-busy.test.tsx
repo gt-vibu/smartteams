@@ -104,6 +104,6 @@ describe('the leave types panel while one type is assigning', () => {
     // The other type is untouched: its branch picker still works, and its button still says Assign.
     expect(screen.getByRole('button', { name: 'Assign' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Branch for Earned Leave' })).not.toBeDisabled();
-    expect(screen.getByRole('button', { name: 'New type' })).not.toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add leave type' })).not.toBeDisabled();
   });
 });

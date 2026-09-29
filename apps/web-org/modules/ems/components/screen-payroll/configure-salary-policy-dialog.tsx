@@ -13,7 +13,7 @@ import {
   Label,
 } from '@smarteam/ui';
 import { Sliders, Sparkles, Calculator, Check } from 'lucide-react';
-import { formatMoney } from '@smarteam/contracts';
+import { formatMoney, LIMITS } from '@smarteam/contracts';
 import type { CompensationState } from '../../hooks/use-compensation';
 import { localDateKey } from '../../lib/local-date';
 
@@ -266,6 +266,7 @@ export function ConfigureSalaryPolicyDialog({
               </Label>
               <div className="relative">
                 <Input
+                  max={LIMITS.amount}
                   id="policy-base-min"
                   type="number"
                   min="0"

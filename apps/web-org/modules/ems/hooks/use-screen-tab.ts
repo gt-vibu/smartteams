@@ -26,6 +26,8 @@ export function scrollCanvasToTop(): void {
   document.getElementById('ems-main-canvas')?.scrollTo({ top: 0, behavior: 'instant' });
 }
 
+const SCREEN_TAB_EVENT = 'ems:screen-tab';
+
 export function useScreenTab<T extends string>(
   /** The query parameter to use. `tab` for a screen's primary tabs. */
   key: string,
@@ -47,7 +49,11 @@ export function useScreenTab<T extends string>(
   useEffect(() => {
     const onPopState = () => setTabState(read());
     window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
+    window.addEventListener(SCREEN_TAB_EVENT, onPopState);
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+      window.removeEventListener(SCREEN_TAB_EVENT, onPopState);
+    };
   }, [read]);
 
   // A module change clears the tab parameter, so re-read when it disappears underneath us —
@@ -71,6 +77,8 @@ export function useScreenTab<T extends string>(
       else params.set(key, next);
       const query = params.toString();
       window.history.pushState(null, '', query ? `?${query}` : window.location.pathname);
+      // Anything else showing where the person is (the breadcrumb) follows the change.
+      window.dispatchEvent(new Event(SCREEN_TAB_EVENT));
     },
     [fallback, key],
   );

@@ -2,7 +2,14 @@
 
 import React, { useState } from 'react';
 import { Badge, Button, Input } from '@smarteam/ui';
-import { formatDate, isCancellable, type LeaveRequest, type LeaveType } from '@smarteam/contracts';
+import {
+  formatDate,
+  isCancellable,
+  type LeaveRequest,
+  type LeaveType,
+  LIMITS,
+} from '@smarteam/contracts';
+import { statusLabel } from '../../lib/status-label';
 
 /** Status tone. Restrained on purpose: the row is not recoloured, only the badge. */
 function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
@@ -88,12 +95,14 @@ export function LeaveApplicationsTable({
                   </td>
                   <td
                     data-label="Days"
-                    className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                    className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
                   >
                     {request.requestedDays}
                   </td>
                   <td data-cell="status" data-label="Status" className="px-4 py-2.5">
-                    <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
+                    <Badge variant={statusVariant(request.status)}>
+                      {statusLabel(request.status)}
+                    </Badge>
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">
                     {cancellable && cancellingId !== request.id && (
@@ -118,6 +127,7 @@ export function LeaveApplicationsTable({
                     <td className="px-4 py-3" colSpan={6}>
                       <div className="flex flex-wrap items-center gap-2">
                         <Input
+                          maxLength={LIMITS.reason}
                           aria-label="Cancellation reason"
                           className="max-w-sm"
                           disabled={saving}

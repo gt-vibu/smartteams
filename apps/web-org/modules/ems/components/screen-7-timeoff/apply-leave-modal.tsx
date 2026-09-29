@@ -16,6 +16,7 @@ import {
   Textarea,
 } from '@smarteam/ui';
 import type { LeaveBalance, LeaveType } from '@smarteam/contracts';
+import { LIMITS } from '@smarteam/contracts';
 
 interface ApplyLeaveModalProps {
   isOpen: boolean;
@@ -173,6 +174,7 @@ export function ApplyLeaveModal({
                   Reason
                 </Label>
                 <Textarea
+                  maxLength={LIMITS.reason}
                   disabled={saving}
                   id="leave-reason"
                   onChange={(event) => setReason(event.target.value)}
@@ -182,8 +184,7 @@ export function ApplyLeaveModal({
               </div>
 
               <p className="text-[11px] text-muted-foreground">
-                Working days are counted by the server using your branch calendar, so weekends and
-                holidays in the range are not deducted.
+                Weekends and holidays in the range are not counted.
               </p>
             </>
           )}

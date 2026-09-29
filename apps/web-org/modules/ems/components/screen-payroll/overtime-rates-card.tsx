@@ -72,7 +72,7 @@ export function OvertimeRatesCard() {
               {label}
             </Label>
             <Input
-              className="h-10 font-mono text-sm font-semibold"
+              className="h-10 tabular-nums text-sm font-semibold"
               disabled={!rates.canWrite || rates.saving}
               id={id}
               inputMode="decimal"

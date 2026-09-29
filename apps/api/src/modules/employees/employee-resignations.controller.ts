@@ -1,25 +1,23 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
-import {
-  IsBoolean,
-  IsDateString,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsBoolean, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsCalendarDate, yearsFromToday } from '../../common/validation/field-rules';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { EmployeeResignationsService } from './employee-resignations.service';
 
 export class ResignationDto {
   @IsString() @MinLength(3) @MaxLength(1000) reason!: string;
-  @IsDateString() requestedLastDay!: string;
+  // The service refuses a day in the past, in its own words; this holds it to a real date.
+  @IsCalendarDate('Last working day', { latest: yearsFromToday(1) })
+  requestedLastDay!: string;
 }
 
 export class ResignationDecisionDto {
   @IsBoolean() accept!: boolean;
-  @IsOptional() @IsDateString() lastWorkingDay?: string;
+  @IsOptional()
+  @IsCalendarDate('Last working day', { earliest: yearsFromToday(-1), latest: yearsFromToday(1) })
+  lastWorkingDay?: string;
   @IsOptional() @IsString() @MaxLength(1000) comment?: string;
 }
 

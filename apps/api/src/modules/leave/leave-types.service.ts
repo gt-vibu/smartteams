@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { type LeaveAccrualType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
-import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import {
+  TenantDatabaseService,
+  type TenantTransaction,
+} from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { toTypeDto } from './leave-shared';
 import { provisionBalancesForAll } from './leave-balance-ops';
@@ -42,6 +45,8 @@ export class LeaveTypesService {
   async createType(context: DomainContext, input: LeaveTypeInput) {
     requirePermission(context, 'leave.types.write');
     return this.database.run(context, async (tx) => {
+      if (context.accessMode === 'NATIVE')
+        await assertTypeIsNew(tx, context.organizationId, input.name, input.code);
       const type = await tx.leaveType.create({
         data: {
           organizationId: context.organizationId,
@@ -87,6 +92,8 @@ export class LeaveTypesService {
         where: { id: typeId, organizationId: context.organizationId },
       });
       if (!before) throw new NotFoundError('Leave type');
+      if (context.accessMode === 'NATIVE')
+        await assertTypeIsNew(tx, context.organizationId, input.name, null, before.id);
       const type = await tx.leaveType.update({
         where: { id: before.id },
         data: {
@@ -315,4 +322,34 @@ export class LeaveTypesService {
       }));
     });
   }
+}
+
+/**
+ * Two leave types with one name are indistinguishable wherever an employee picks one, and a code
+ * already in use would fail at the database. Both are refused with a sentence instead.
+ */
+async function assertTypeIsNew(
+  tx: TenantTransaction,
+  organizationId: string,
+  name: string,
+  code: string | null,
+  exceptId?: string,
+) {
+  const clash = await tx.leaveType.findFirst({
+    where: {
+      organizationId,
+      ...(exceptId ? { id: { not: exceptId } } : {}),
+      OR: [
+        { name: { equals: name.trim(), mode: 'insensitive' } },
+        ...(code ? [{ code: code.trim().toUpperCase() }] : []),
+      ],
+    },
+    select: { name: true, code: true },
+  });
+  if (!clash) return;
+  throw new ConflictError(
+    code && clash.code === code.trim().toUpperCase()
+      ? `The code ${clash.code} is already used by ${clash.name}.`
+      : `A leave type called ${clash.name} already exists.`,
+  );
 }

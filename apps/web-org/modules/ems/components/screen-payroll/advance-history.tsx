@@ -34,9 +34,7 @@ function AdvanceCard({ advance }: { advance: SalaryAdvance }) {
     <li className="rounded-xl border border-border bg-card p-3.5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-base font-bold tabular-nums text-foreground">
-            {rupees(shown)}
-          </p>
+          <p className=" text-base font-bold tabular-nums text-foreground">{rupees(shown)}</p>
           {approved !== null && approved !== advance.requestedAmount && (
             <p className="text-[11px] text-muted-foreground">
               Asked for {rupees(advance.requestedAmount)}

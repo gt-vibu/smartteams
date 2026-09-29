@@ -13,6 +13,7 @@ import { DocumentUploadDialog } from './document-upload-dialog';
 import { DocumentExpiryDialog } from './document-expiry-dialog';
 import { DocumentShareDialog } from './document-share-dialog';
 import { asOwnWorkspace } from './workspace-access';
+import { LIMITS } from '@smarteam/contracts';
 
 /**
  * Documents, by who they are for.
@@ -80,9 +81,8 @@ export function ScreenFiles() {
             </Button>
           )
         }
-        description="Your documents, and what your company and teams share with you."
         icon={FolderOpen}
-        title="Documents"
+        title="Files"
         tone="neutral"
       />
 
@@ -186,6 +186,7 @@ export function ScreenFiles() {
               Reason
             </Label>
             <Textarea
+              maxLength={LIMITS.reason}
               id="delete-reason"
               onChange={(event) => setReason(event.target.value)}
               rows={2}

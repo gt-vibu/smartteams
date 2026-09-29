@@ -122,7 +122,7 @@ export function GroupedTimeLogTable({ groupedLogs, onSelectEntry }: GroupedTimeL
                       {/* Duration */}
                       <TableCell
                         data-label="Duration"
-                        className="py-3 px-4 w-20 font-mono font-semibold text-foreground text-right"
+                        className="py-3 px-4 w-20 tabular-nums font-semibold text-foreground text-right"
                       >
                         {entry.duration}
                       </TableCell>

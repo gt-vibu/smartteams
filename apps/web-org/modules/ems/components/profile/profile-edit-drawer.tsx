@@ -14,6 +14,9 @@ import {
 } from '@smarteam/ui';
 import { ChangePasswordSection } from './change-password-section';
 import { useEmployee } from '../../hooks/use-employee';
+import { LIMITS, personNameProblem } from '@smarteam/contracts';
+import { PhoneField, phoneIsValid } from '../common/phone-field';
+import { CheckedInput } from '../common/checked-input';
 
 interface ProfileEditDrawerProps {
   isOpen: boolean;
@@ -36,17 +39,32 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
     setPhone(employee.phone ?? '');
   }, [employee]);
 
+  // Only what was changed is checked and sent, so a name saved under older rules does not stop
+  // someone correcting their phone number.
+  const changes = employee
+    ? {
+        ...(firstName.trim() !== employee.firstName ? { firstName: firstName.trim() } : {}),
+        ...(lastName.trim() !== employee.lastName ? { lastName: lastName.trim() } : {}),
+        ...(phone.trim() !== (employee.phone ?? '') ? { phone: phone.trim() } : {}),
+      }
+    : {};
+  const firstNameProblem =
+    'firstName' in changes ? personNameProblem(firstName, 'First name') : null;
+  const lastNameProblem = 'lastName' in changes ? personNameProblem(lastName, 'Last name') : null;
+  const canSave =
+    Object.keys(changes).length > 0 &&
+    firstNameProblem === null &&
+    lastNameProblem === null &&
+    (!('phone' in changes) || phoneIsValid(phone));
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!canSave) return;
     setSaving(true);
     setSaveError(null);
     try {
       // Persists via PATCH and refetches, so the drawer closes on confirmed server state.
-      await updateProfile({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        phone: phone.trim(),
-      });
+      await updateProfile(changes);
       setIsSaved(true);
       window.setTimeout(() => {
         setIsSaved(false);
@@ -81,30 +99,36 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="profile-first-name" className="text-xs font-semibold">
-                      First Name <span className="text-destructive">*</span>
+                      First name <span className="text-destructive">*</span>
                     </Label>
-                    <Input
+                    <CheckedInput
+                      autoComplete="given-name"
                       id="profile-first-name"
-                      value={firstName}
-                      onChange={(event) => setFirstName(event.target.value)}
+                      maxLength={LIMITS.personName}
+                      onChange={setFirstName}
+                      problem={firstNameProblem}
                       required
+                      value={firstName}
                     />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="profile-last-name" className="text-xs font-semibold">
-                      Last Name <span className="text-destructive">*</span>
+                      Last name <span className="text-destructive">*</span>
                     </Label>
-                    <Input
+                    <CheckedInput
+                      autoComplete="family-name"
                       id="profile-last-name"
-                      value={lastName}
-                      onChange={(event) => setLastName(event.target.value)}
+                      maxLength={LIMITS.personName}
+                      onChange={setLastName}
+                      problem={lastNameProblem}
                       required
+                      value={lastName}
                     />
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="profile-email" className="text-xs font-semibold">
-                    Work Email (Read Only)
+                    Work email
                   </Label>
                   <Input
                     id="profile-email"
@@ -115,19 +139,13 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="profile-phone" className="text-xs font-semibold">
-                    Contact Phone
+                    Phone
                   </Label>
-                  <Input
-                    id="profile-phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(event) => setPhone(event.target.value)}
-                    placeholder="+91 98765 43210"
-                  />
+                  <PhoneField id="profile-phone" onChange={setPhone} value={phone} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="profile-department" className="text-xs font-semibold">
-                    Department (Read Only)
+                    Department
                   </Label>
                   <Input
                     id="profile-department"
@@ -166,7 +184,7 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
                 <Button
                   form="profile-edit-form"
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || !canSave}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-xs transition-colors cursor-pointer"
                 >
                   {saving ? 'Saving…' : 'Save Changes'}

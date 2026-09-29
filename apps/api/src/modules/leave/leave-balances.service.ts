@@ -86,9 +86,14 @@ export class LeaveBalancesService {
           organizationId: context.organizationId,
           employeeId,
           ...(context.branchId ? { employee: employeeScope(context) } : {}),
-          ...(context.branchId
-            ? { leaveType: { policyAssignments: { some: { branchId: context.branchId } } } }
-            : {}),
+          leaveType: {
+            ...(context.branchId
+              ? { policyAssignments: { some: { branchId: context.branchId } } }
+              : {}),
+            // A deactivated type is no longer offered, so its balance card goes too. Federation
+            // keeps reading every balance, as its contract always has.
+            ...(context.accessMode === 'NATIVE' ? { isActive: true } : {}),
+          },
         },
         include: { leaveType: true },
         orderBy: [{ employeeId: 'asc' }, { periodStart: 'desc' }],

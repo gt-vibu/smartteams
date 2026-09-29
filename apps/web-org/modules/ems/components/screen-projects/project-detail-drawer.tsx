@@ -12,6 +12,7 @@ import { LeadSection } from '../common/lead-section';
 import { GroupFilesSection } from '../common/group-files-section';
 import { useSession } from '../../hooks/auth-context';
 import { employeeDisplayName, hasPermission, type Employee, formatDate } from '@smarteam/contracts';
+import { statusLabel } from '../../lib/status-label';
 
 const nameOf = (employees: readonly Employee[], id: string) => {
   const employee = employees.find((entry) => entry.id === id);
@@ -62,7 +63,7 @@ export function ProjectDetailDrawer({
                     : ''
                 }`}
               >
-                {view.project.status ?? 'UNKNOWN'}
+                {statusLabel(view.project.status)}
               </Badge>
             </div>
             {view.project.description && (
@@ -150,7 +151,10 @@ export function ProjectDetailDrawer({
       <AddMembersDialog
         employees={directory.employees}
         excludeIds={[
-          ...view.activeMembers.map((member) => member.employeeId),
+          // Someone leaving or gone can be added again; only a current member is left out.
+          ...view.activeMembers
+            .filter((member) => !member.until)
+            .map((member) => member.employeeId),
           ...(view.lead ? [view.lead.employeeId] : []),
         ]}
         nameOf={(id) => nameOf(directory.employees, id)}

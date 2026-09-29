@@ -66,6 +66,11 @@ export function OrganizationWorkspace({
     hasPermission(persona.permissions, 'rbac.read');
 
   const may = (permission: string) => hasPermission(persona.permissions, permission);
+  // Headcount: the people who work here now, not every record ever kept.
+  const activeCount = directory.entries.filter((entry) => entry.status === 'ACTIVE').length;
+  const activeBranches = organization.branches.filter(
+    (branch) => branch.status !== 'DEACTIVATED',
+  ).length;
   // Each tab is offered only to someone its API would answer; a remembered tab that has since
   // become unavailable falls back to Overview rather than opening onto a refusal.
   const { tabs, active } = permittedTabs<Tab, { id: Tab; label: string; allowed: boolean }>(
@@ -73,7 +78,7 @@ export function OrganizationWorkspace({
       { id: 'overview', label: 'Overview', allowed: true },
       {
         id: 'people',
-        label: `People${directory.entries.length ? ` (${directory.entries.length})` : ''}`,
+        label: `People${activeCount ? ` (${activeCount})` : ''}`,
         allowed: may('employees.read.all'),
       },
       {
@@ -90,7 +95,7 @@ export function OrganizationWorkspace({
       { id: 'reporting', label: 'Reporting', allowed: may('employees.read.all') },
       {
         id: 'branches',
-        label: `Branches${organization.branches.length ? ` (${organization.branches.length})` : ''}`,
+        label: `Branches${activeBranches ? ` (${activeBranches})` : ''}`,
         allowed: may('branches.read'),
       },
       { id: 'access', label: 'Access', allowed: canSeeAccess },
@@ -113,7 +118,7 @@ export function OrganizationWorkspace({
         shell's, so the header and the content it sat above were aligned to different columns.
       */}
       <PageBleed className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-background/95 pt-4 backdrop-blur-sm">
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-3">
           <span
             aria-hidden="true"
             className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"
@@ -124,9 +129,6 @@ export function OrganizationWorkspace({
             <h1 className="truncate text-sm font-bold text-foreground">
               {organization.organization?.name ?? 'Organization'}
             </h1>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              People, structure and settings for your organization.
-            </p>
           </div>
         </div>
 
@@ -179,7 +181,9 @@ export function OrganizationWorkspace({
           <OrgIdentityRail directory={directory} holidays={holidays} organization={organization} />
         )}
 
-        <div className="lg:col-span-2">
+        {/* Only the organization's card overlaps the cover. The tab's own content — its heading,
+            tabs and action buttons — starts below it, so nothing sits on the decoration. */}
+        <div className={`lg:col-span-2 ${showIdentity ? 'lg:pt-12' : ''}`}>
           {tab === 'overview' && <OrgShortcuts onNavigateModule={onNavigateModule} />}
           {tab === 'people' && (
             <OrgPeoplePanel

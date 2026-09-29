@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
+import { LIMITS } from '@smarteam/contracts';
 
 interface ArchiveDialogProps {
   isOpen: boolean;
@@ -70,6 +71,7 @@ export function ArchiveDialog({
               Reason
             </Label>
             <Textarea
+              maxLength={LIMITS.reason}
               disabled={saving}
               id="archive-reason"
               onChange={(event) => setReason(event.target.value)}

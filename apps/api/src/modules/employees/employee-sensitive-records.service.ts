@@ -1,4 +1,4 @@
-import { saveAadhaar } from './employee-identity-rules';
+import { assertPanFree, saveAadhaar } from './employee-identity-rules';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Prisma } from '../../generated/prisma/client';
@@ -64,6 +64,8 @@ export class EmployeeSensitiveRecordsService {
     requirePermission(context, 'employees.personal_details.write');
     return this.database.run(context, async (tx) => {
       await this.assertEmployee(tx, context.organizationId, employeeId);
+      if (options.enforceIdentityRules && input.panNumber?.trim())
+        await assertPanFree(tx, this.config, context.organizationId, employeeId, input.panNumber);
       if (options.enforceIdentityRules && input.aadhaarNumber?.trim()) {
         await saveAadhaar(tx, this.config, context.organizationId, employeeId, input.aadhaarNumber);
         input = { ...input, aadhaarNumber: undefined };

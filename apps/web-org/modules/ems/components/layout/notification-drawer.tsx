@@ -13,6 +13,7 @@ import {
 } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 import { useNotifications } from '../../hooks/use-notifications';
+import { formatDate } from '@smarteam/contracts';
 
 interface NotificationDrawerProps {
   isOpen: boolean;
@@ -31,7 +32,7 @@ function timeAgo(iso: string, now: number) {
   if (hours < 24) return `${hours} h ago`;
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days} d ago`;
-  return then.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  return formatDate(then);
 }
 
 function iconFor(kind: string) {

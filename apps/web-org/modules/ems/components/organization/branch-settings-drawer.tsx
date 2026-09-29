@@ -14,12 +14,13 @@ import {
   SheetContent,
   SheetTitle,
 } from '@smarteam/ui';
-import { hasPermission, type Branch } from '@smarteam/contracts';
+import { hasPermission, type Branch, LIMITS, textProblem } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import { organizationRepository } from '../../repositories/organization.repository';
 import { attendanceRepository } from '../../repositories/attendance.repository';
 import { TimezoneSelect } from '../common/timezone-select';
+import { pinCodeProblem } from '@smarteam/contracts';
 
 type Location = { name: string; latitude: string; longitude: string; radiusMeters: string };
 const ADDRESS = ['line1', 'line2', 'city', 'state', 'postalCode', 'country'] as const;
@@ -87,6 +88,11 @@ export function BranchSettingsDrawer({
       })),
     );
   }, [data]);
+
+  // An Indian address (or one naming no country) takes a 6-digit PIN code.
+  const pin = (address.postalCode ?? '').trim();
+  const country = (address.country ?? '').trim();
+  const pinError = pin && (!country || /^india$/i.test(country)) ? pinCodeProblem(pin) : null;
 
   const save = async (work: () => Promise<unknown>, done: string) => {
     setBusy(true);
@@ -203,16 +209,24 @@ export function BranchSettingsDrawer({
                     <div className={key.startsWith('line') ? 'col-span-2' : ''} key={key}>
                       <Label className="mb-1 block">{ADDRESS_LABEL[key]}</Label>
                       <Input
+                        aria-invalid={(key === 'postalCode' && Boolean(pinError)) || undefined}
                         disabled={!canEditBranch || busy}
+                        inputMode={key === 'postalCode' ? 'numeric' : undefined}
+                        maxLength={key === 'postalCode' ? 10 : undefined}
                         onChange={(e) => setAddress({ ...address, [key]: e.target.value })}
                         value={address[key] ?? ''}
                       />
+                      {key === 'postalCode' && pinError && (
+                        <p className="mt-1 text-[11px] text-destructive">{pinError}</p>
+                      )}
                     </div>
                   ))}
                 </div>
                 {canEditBranch && (
                   <Button
-                    disabled={busy || details.name.trim().length < 2 || !details.code.trim()}
+                    disabled={
+                      busy || details.name.trim().length < 2 || !details.code.trim() || !!pinError
+                    }
                     onClick={() => void saveDetails()}
                     size="sm"
                     type="button"
@@ -275,6 +289,8 @@ export function BranchSettingsDrawer({
                       key={index}
                     >
                       <Input
+                        maxLength={LIMITS.title}
+                        problem={textProblem(location.name, 'Location name', LIMITS.title, 2)}
                         className="col-span-2"
                         disabled={!canEditAttendance || busy}
                         onChange={(e) => setLocation(index, 'name', e.target.value)}
@@ -282,6 +298,10 @@ export function BranchSettingsDrawer({
                         value={location.name}
                       />
                       <Input
+                        type="number"
+                        min={-90}
+                        max={90}
+                        step="any"
                         disabled={!canEditAttendance || busy}
                         inputMode="decimal"
                         onChange={(e) => setLocation(index, 'latitude', e.target.value)}
@@ -289,6 +309,10 @@ export function BranchSettingsDrawer({
                         value={location.latitude}
                       />
                       <Input
+                        type="number"
+                        min={-180}
+                        max={180}
+                        step="any"
                         disabled={!canEditAttendance || busy}
                         inputMode="decimal"
                         onChange={(e) => setLocation(index, 'longitude', e.target.value)}
@@ -296,6 +320,10 @@ export function BranchSettingsDrawer({
                         value={location.longitude}
                       />
                       <Input
+                        type="number"
+                        min={10}
+                        max={10000}
+                        step={1}
                         disabled={!canEditAttendance || busy}
                         inputMode="numeric"
                         onChange={(e) => setLocation(index, 'radiusMeters', e.target.value)}

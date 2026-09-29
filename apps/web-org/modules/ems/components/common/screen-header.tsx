@@ -32,14 +32,15 @@ export function ScreenHeader({
   tone = 'neutral',
 }: {
   actions?: React.ReactNode;
-  description: string;
+  /** Only for something the title does not already say, such as a count. */
+  description?: string;
   icon: LucideIcon;
   title: string;
   tone?: TileTone;
 }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-3">
-      <div className="flex min-w-0 items-start gap-3">
+      <div className={`flex min-w-0 gap-3 ${description ? 'items-start' : 'items-center'}`}>
         <span
           aria-hidden="true"
           className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg ${TONES[tone]}`}
@@ -48,7 +49,7 @@ export function ScreenHeader({
         </span>
         <div className="min-w-0">
           <h1 className="text-sm font-bold text-foreground">{title}</h1>
-          <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+          {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
         </div>
       </div>
       {actions}

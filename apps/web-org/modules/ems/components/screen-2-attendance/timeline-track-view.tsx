@@ -2,6 +2,7 @@ import React from 'react';
 import type { TimelineDayRecord } from '../../types/attendance-timeline.types';
 import { formatMinutesToDuration } from '../../utils/format.utils';
 import { HOLIDAY_CONFLICT_PILL } from '../../services/holiday-conflict-view';
+import { axisTicks, onAxis, type TimelineAxis } from '../../services/timeline-axis';
 
 /** The track's colours for a check-in on an approved optional holiday, by its review state. */
 const CONFLICT_TRACK = {
@@ -13,15 +14,11 @@ const CONFLICT_TRACK = {
 interface TimelineTrackViewProps {
   days: TimelineDayRecord[];
   onSelectDay?: (dayId: string) => void;
+  /** The hours the ruler spans: the shift with room either side (see `timelineAxis`). */
+  axis?: TimelineAxis;
 }
 
-/**
- * The whole day, every three hours, at the positions the punches are drawn at. The ruler used to
- * read 10 AM to 6 PM across the track while the dots were placed on a 24-hour scale, so a 9:25 AM
- * check-in sat under "01 PM" and a late check-out ran off the labelled range.
- */
-const HOURS_SCALE = ['12 AM', '3 AM', '6 AM', '9 AM', '12 PM', '3 PM', '6 PM', '9 PM', '12 AM'];
-const tickAt = (index: number) => (index / (HOURS_SCALE.length - 1)) * 100;
+const WHOLE_DAY: TimelineAxis = { startHour: 0, endHour: 24 };
 /** Two punches closer than this share one label: side by side, their times ran into each other. */
 const SHARED_LABEL_PERCENT = 10;
 
@@ -34,7 +31,9 @@ const SHARED_LABEL_PERCENT = 10;
  * check-in and check-out stamps move off the track below `sm`: at phone width a short shift puts
  * the two dots about 30px apart, and their labels landed on top of each other.
  */
-export function TimelineTrackView({ days, onSelectDay }: TimelineTrackViewProps) {
+export function TimelineTrackView({ days, onSelectDay, axis = WHOLE_DAY }: TimelineTrackViewProps) {
+  // The ruler and the punches share one scale, so a stamp always sits under its own hour.
+  const ticks = axisTicks(axis);
   return (
     <div className="relative w-full overflow-hidden rounded-lg border border-slate-200/90 bg-white shadow-xs dark:border-slate-800 dark:bg-card">
       {/* Header: on a phone the ruler drops beneath "Day / Total" and spans the full width, exactly
@@ -45,17 +44,17 @@ export function TimelineTrackView({ days, onSelectDay }: TimelineTrackViewProps)
           Total hours
         </div>
         <div className="relative col-span-2 mx-2 h-4 sm:col-span-8">
-          {HOURS_SCALE.map((hour, index) => (
-            // Every label on a laptop; every other one on a phone, where nine in 310px run together.
+          {ticks.map((tick, index) => (
+            // Every label on a laptop; every other one on a phone, where they would run together.
             <span
-              key={`${hour}-${index}`}
-              className={`absolute whitespace-nowrap font-mono text-[10px] text-muted-foreground ${index % 2 ? 'invisible sm:visible' : ''}`}
+              key={tick.percent}
+              className={`absolute whitespace-nowrap text-[10px] tabular-nums text-muted-foreground ${index % 2 ? 'invisible sm:visible' : ''}`}
               style={{
-                left: `${tickAt(index)}%`,
-                transform: `translateX(${index === 0 ? '0' : index === HOURS_SCALE.length - 1 ? '-100%' : '-50%'})`,
+                left: `${tick.percent}%`,
+                transform: `translateX(${index === 0 ? '0' : index === ticks.length - 1 ? '-100%' : '-50%'})`,
               }}
             >
-              {hour}
+              {tick.label}
             </span>
           ))}
         </div>
@@ -63,7 +62,7 @@ export function TimelineTrackView({ days, onSelectDay }: TimelineTrackViewProps)
 
       <div className="relative divide-y divide-slate-100 dark:divide-slate-800">
         {days.map((day) => (
-          <TimelineRow key={day.id} day={day} onSelect={onSelectDay} />
+          <TimelineRow key={day.id} day={day} onSelect={onSelectDay} axis={axis} ticks={ticks} />
         ))}
       </div>
     </div>
@@ -73,9 +72,13 @@ export function TimelineTrackView({ days, onSelectDay }: TimelineTrackViewProps)
 function TimelineRow({
   day,
   onSelect,
+  axis,
+  ticks,
 }: {
   day: TimelineDayRecord;
   onSelect?: (dayId: string) => void;
+  axis: TimelineAxis;
+  ticks: ReadonlyArray<{ percent: number }>;
 }) {
   const durationStr = formatMinutesToDuration(day.workedMinutes);
   const inProgress = day.inProgressMinutes !== undefined;
@@ -89,7 +92,7 @@ function TimelineRow({
     Boolean(day.lastOutTime && !isSameTime) &&
     day.spanStartPercent != null &&
     day.spanEndPercent != null &&
-    day.spanEndPercent - day.spanStartPercent < SHARED_LABEL_PERCENT;
+    onAxis(day.spanEndPercent, axis) - onAxis(day.spanStartPercent, axis) < SHARED_LABEL_PERCENT;
   const track = CONFLICT_TRACK[day.holidayConflict?.tone ?? 'working'];
   const times =
     day.status === 'PRESENT' && day.firstInTime
@@ -101,24 +104,27 @@ function TimelineRow({
       onClick={() => onSelect?.(day.id)}
       className={`grid grid-cols-2 items-center gap-y-2.5 px-4 py-3 transition-colors sm:grid-cols-12 sm:py-3.5 ${
         onSelect ? 'cursor-pointer' : ''
-      } ${day.isToday ? 'bg-sky-50/20' : 'hover:bg-muted/40'}`}
+      } ${day.isToday ? 'bg-primary/5' : 'hover:bg-muted/40'}`}
     >
       <div className="flex min-w-0 flex-col items-start gap-0.5 sm:col-span-2">
         {day.isToday ? (
-          <span className="flex h-6 items-center justify-center rounded-[4px] bg-primary px-2 text-xs font-bold text-white shadow-xs">
-            {day.dayLabel}
+          <span className="flex h-6 items-center justify-center rounded-[4px] bg-primary px-2 text-xs font-bold text-primary-foreground shadow-xs">
+            {day.dayOfWeek} {day.dayLabel}
           </span>
         ) : (
-          <span className="text-xs font-bold text-foreground">{day.dayLabel}</span>
+          <span className="text-xs font-bold text-foreground">
+            <span className="font-medium text-muted-foreground">{day.dayOfWeek}</span>{' '}
+            {day.dayLabel}
+          </span>
         )}
         {times && (
-          <span className="font-mono text-[11px] text-muted-foreground sm:hidden">{times}</span>
+          <span className="text-[11px] tabular-nums text-muted-foreground sm:hidden">{times}</span>
         )}
       </div>
 
       <div className="text-right sm:order-last sm:col-span-2">
         <div
-          className={`font-mono text-xs font-bold ${
+          className={`text-xs font-semibold tabular-nums ${
             inProgress
               ? 'text-primary'
               : day.checkOutMissing
@@ -134,7 +140,19 @@ function TimelineRow({
                 : 'No check-out'
               : durationStr
                 ? `${durationStr} worked`
-                : '00:00 Hrs worked'}
+                : day.status === 'LEAVE'
+                  ? (day.leaveName ?? 'On leave')
+                  : day.status === 'HOLIDAY'
+                    ? (day.holidayName ?? 'Holiday')
+                    : day.status === 'WEEKEND'
+                      ? 'Weekend'
+                      : day.status === 'ABSENT'
+                        ? 'Absent'
+                        : day.status === 'UPCOMING'
+                          ? '—'
+                          : day.isToday
+                            ? 'Not checked in'
+                            : 'Not worked'}
         </div>
         {inProgress && (
           <div className="mt-0.5 text-[10px] font-medium text-muted-foreground">
@@ -151,7 +169,7 @@ function TimelineRow({
               }}
               className="inline-flex h-6 items-center rounded-md border border-destructive/30 bg-destructive/10 px-2 text-[10px] font-bold text-destructive hover:bg-destructive/20 focus:outline-hidden cursor-pointer"
             >
-              Request a correction
+              Request regularization
             </button>
           </div>
         )}
@@ -167,11 +185,11 @@ function TimelineRow({
 
       <div className="relative col-span-2 flex h-8 items-center px-2 sm:col-span-8">
         <div className="pointer-events-none absolute inset-y-0 left-2 right-2 opacity-40">
-          {HOURS_SCALE.map((hour, index) => (
+          {ticks.map((tick) => (
             <div
-              key={`${hour}-${index}`}
+              key={tick.percent}
               className="absolute inset-y-0 border-l border-border"
-              style={{ left: `${tickAt(index)}%` }}
+              style={{ left: `${tick.percent}%` }}
             />
           ))}
         </div>
@@ -180,12 +198,12 @@ function TimelineRow({
           <div className="relative flex w-full items-center">
             <div className={`relative h-0.5 w-full rounded-full ${track.line}`}>
               {day.firstInTime && (
-                <TrackStamp percent={day.spanStartPercent ?? 0} dot={track.in}>
+                <TrackStamp percent={onAxis(day.spanStartPercent ?? 0, axis)} dot={track.in}>
                   {sharedLabel ? `${day.firstInTime} – ${day.lastOutTime}` : day.firstInTime}
                 </TrackStamp>
               )}
               {day.lastOutTime && !isSameTime && (
-                <TrackStamp percent={day.spanEndPercent ?? 100} dot={track.out}>
+                <TrackStamp percent={onAxis(day.spanEndPercent ?? 100, axis)} dot={track.out}>
                   {sharedLabel ? null : day.lastOutTime}
                 </TrackStamp>
               )}
@@ -194,18 +212,44 @@ function TimelineRow({
         )}
 
         {day.status === 'HOLIDAY' && (
-          <TrackPill line="bg-cyan-200" pill="border-cyan-200 bg-cyan-50 text-cyan-800">
+          <TrackPill
+            line="bg-cyan-200 dark:bg-cyan-900"
+            pill="border-cyan-200 bg-cyan-50 text-cyan-800 dark:border-cyan-900 dark:bg-cyan-950 dark:text-cyan-200"
+          >
             {day.holidayName || 'Holiday'}
           </TrackPill>
         )}
 
         {day.status === 'WEEKEND' && (
-          <TrackPill line="bg-amber-200" pill="border-amber-200 bg-amber-50 text-amber-800">
+          <TrackPill
+            line="bg-amber-200 dark:bg-amber-900"
+            pill="border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200"
+          >
             Weekend
           </TrackPill>
         )}
 
-        {day.status === 'EMPTY' && <div className="h-0.5 w-full bg-slate-200/60" />}
+        {day.status === 'LEAVE' && (
+          <TrackPill
+            line="bg-violet-200 dark:bg-violet-800"
+            pill="border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-200"
+          >
+            {day.leaveName ?? 'On leave'}
+          </TrackPill>
+        )}
+
+        {day.status === 'ABSENT' && (
+          <TrackPill
+            line="bg-rose-200 dark:bg-rose-900"
+            pill="border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-300"
+          >
+            Absent
+          </TrackPill>
+        )}
+
+        {(day.status === 'EMPTY' || day.status === 'UPCOMING') && (
+          <div className="h-0.5 w-full bg-slate-200/60 dark:bg-slate-700/60" />
+        )}
       </div>
     </div>
   );
@@ -232,7 +276,7 @@ function TrackStamp({
     >
       <div className={`h-3.5 w-3.5 rounded-full border-2 border-white shadow-xs ${dot}`} />
       {children && (
-        <span className="mt-1 hidden whitespace-nowrap font-mono text-[10px] font-semibold text-foreground sm:inline">
+        <span className="mt-1 hidden whitespace-nowrap text-[10px] font-semibold tabular-nums text-foreground sm:inline">
           {children}
         </span>
       )}

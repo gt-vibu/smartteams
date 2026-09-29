@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 import { Badge, Button, SegmentedTabs } from '@smarteam/ui';
 import { formatWorkMinutes, formatDate } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
-import { toDayGroups } from '../../services/timesheet-view';
+import { periodLabel, toDayGroups } from '../../services/timesheet-view';
 import { LogTimeModal } from '../screen-6-logtime/logtime-modal';
 import { PageShell } from '../layout/page-shell';
 import { Briefcase, Clock, Plus } from 'lucide-react';
+import { statusLabel } from '../../lib/status-label';
 
 /**
  * The employee's own time log.
@@ -26,9 +27,7 @@ export function Screen5TimeTracker() {
 
   const tabs = timesheet.timesheets.slice(0, 10).map((sheet) => {
     const period = sheet.period;
-    const label = period
-      ? `${formatDate(period.periodStart)}${period.periodType !== 'WEEKLY' ? ` (${period.periodType.toLowerCase()})` : ''}`
-      : 'Period';
+    const label = period ? periodLabel(period) : 'Period';
     return {
       id: sheet.id,
       label,
@@ -58,7 +57,7 @@ export function Screen5TimeTracker() {
         ) : (
           <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 py-1">
             <Clock className="h-4 w-4" />
-            <span>Time Tracker</span>
+            <span>Timesheet</span>
           </div>
         )}
 
@@ -72,7 +71,7 @@ export function Screen5TimeTracker() {
               className="gap-1.5 text-xs font-semibold shadow-xs cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Log Time</span>
+              <span>Log time</span>
             </Button>
           )}
 
@@ -85,7 +84,7 @@ export function Screen5TimeTracker() {
               variant="outline"
               title={selected.totalMinutes <= 0 ? 'Log time entries before submitting' : undefined}
             >
-              {timesheet.saving ? 'Submitting...' : 'Submit'}
+              {timesheet.saving ? 'Submitting…' : 'Submit'}
             </Button>
           )}
 
@@ -99,7 +98,7 @@ export function Screen5TimeTracker() {
                 variant="ghost"
                 className="text-xs text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/50"
               >
-                Recall to Draft
+                Recall to draft
               </Button>
               <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-md border border-amber-200 dark:border-amber-800/60 font-medium">
                 <span>Submitted</span>
@@ -183,7 +182,7 @@ export function Screen5TimeTracker() {
           {selected && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Badge variant={selected.status === 'APPROVED' ? 'secondary' : 'outline'}>
-                {selected.status}
+                {statusLabel(selected.status)}
               </Badge>
               <span>
                 {formatWorkMinutes(selected.regularMinutes)} regular ·{' '}
@@ -199,8 +198,8 @@ export function Screen5TimeTracker() {
               </div>
               <p className="text-sm font-semibold text-foreground">No time entries recorded yet</p>
               <p className="mt-1 text-xs text-muted-foreground max-w-sm">
-                Click <strong>Log Time</strong> above to log work against your assigned projects and
-                jobs.
+                Select <strong>Log time</strong> above to log work against your assigned projects
+                and jobs.
               </p>
             </div>
           ) : (
@@ -211,10 +210,10 @@ export function Screen5TimeTracker() {
                   key={group.workDate}
                 >
                   <div className="flex items-center justify-between bg-muted/40 px-4 py-2">
-                    <span className="font-mono text-xs font-semibold text-foreground">
+                    <span className="text-xs font-semibold text-foreground">
                       {formatDate(group.workDate)}
                     </span>
-                    <span className="text-xs font-mono font-medium tabular-nums text-muted-foreground">
+                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
                       {group.totalLabel}
                     </span>
                   </div>
@@ -239,13 +238,13 @@ export function Screen5TimeTracker() {
                             </span>
                           )}
                           {entry.workItem && (
-                            <span className="text-[11px] font-mono text-muted-foreground">
+                            <span className="text-[11px] text-muted-foreground">
                               #{entry.workItem}
                             </span>
                           )}
                           {entry.billable === false && (
                             <Badge variant="secondary" className="text-[9px]">
-                              Non-Billable
+                              Non-billable
                             </Badge>
                           )}
                         </div>
@@ -257,11 +256,11 @@ export function Screen5TimeTracker() {
                       </div>
                       <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                         {entry.startTime && entry.endTime && (
-                          <span className="text-[11px] font-mono text-muted-foreground">
+                          <span className="text-[11px] tabular-nums text-muted-foreground">
                             {entry.startTime} - {entry.endTime}
                           </span>
                         )}
-                        <span className="font-mono text-xs font-bold tabular-nums text-foreground bg-muted/30 px-2 py-1 rounded">
+                        <span className="text-xs font-semibold tabular-nums text-foreground bg-muted/30 px-2 py-1 rounded">
                           {entry.label}
                         </span>
                       </div>

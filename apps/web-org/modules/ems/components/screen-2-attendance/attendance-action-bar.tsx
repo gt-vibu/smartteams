@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '@smarteam/ui';
 import { useAttendance } from '../../hooks/use-attendance';
+import { useDayContext } from '../../hooks/use-day-context';
 
 /**
  * Check-in and check-out.
@@ -25,6 +26,19 @@ export function AttendanceActionBar() {
     hasNoEmployeeRecord,
   } = useAttendance();
 
+  // On approved leave, a holiday or a weekly off, "Not checked in" read like a missed day. The bar
+  // says what today is instead, and still lets someone who is working check in.
+  const { resolve, leaveByDate, holidayByDate, todayKey } = useDayContext();
+  const today = resolve(todayKey);
+  const dayOff =
+    today === 'LEAVE'
+      ? `On ${leaveByDate.get(todayKey) ?? 'leave'} today`
+      : today === 'HOLIDAY'
+        ? `${holidayByDate.get(todayKey)?.name ?? 'Holiday'} today`
+        : today === 'WEEKEND'
+          ? 'Weekly off today'
+          : null;
+
   const isSingleCompleted = isDayCompleted && sessionMode === 'SINGLE';
   const disabled =
     saving || !canWrite || hasNoEmployeeRecord || (isSingleCompleted && !isCheckedIn);
@@ -39,7 +53,7 @@ export function AttendanceActionBar() {
               ? 'Attendance completed for today'
               : isDayCompleted
                 ? 'Checked out'
-                : 'Not checked in'}
+                : (dayOff ?? 'Not checked in')}
         </p>
         <p className="text-[11px] text-muted-foreground" role={saveError ? 'alert' : undefined}>
           {saveError ??
@@ -49,7 +63,9 @@ export function AttendanceActionBar() {
                 ? 'You do not have permission to record attendance.'
                 : isSingleCompleted
                   ? 'Your attendance session for today is complete.'
-                  : 'Your punches are recorded automatically.')}
+                  : dayOff && !isCheckedIn && !isDayCompleted
+                    ? 'Check in only if you are working today.'
+                    : 'Your punches are recorded automatically.')}
         </p>
       </div>
 

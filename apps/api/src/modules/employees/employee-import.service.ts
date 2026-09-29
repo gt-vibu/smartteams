@@ -9,6 +9,7 @@ import { primaryBranchOf } from '../organizations/organization-primary-branch';
 import { normalizeEmail, normalizeEmployeeNumber } from './employee-identity-rules';
 import {
   fingerprintEmployeeSecret,
+  fingerprintsOfEmployeeSecret,
   isValidAadhaar,
   normalizeAadhaar,
 } from './employee-sensitive-data';
@@ -177,7 +178,12 @@ export class EmployeeImportService {
         else if (!isValidAadhaar(aadhaar)) errors.push('Aadhaar number is not valid.');
         else {
           const hash = fingerprintEmployeeSecret(this.config, aadhaar);
-          if (takenAadhaar.has(hash)) errors.push('This Aadhaar number is already recorded.');
+          if (
+            fingerprintsOfEmployeeSecret(this.config, aadhaar).some((each) =>
+              takenAadhaar.has(each),
+            )
+          )
+            errors.push('This Aadhaar number is already recorded.');
           else if (seenAadhaar.has(hash))
             errors.push(`The same Aadhaar number is also on row ${seenAadhaar.get(hash)}.`);
           else seenAadhaar.set(hash, row);

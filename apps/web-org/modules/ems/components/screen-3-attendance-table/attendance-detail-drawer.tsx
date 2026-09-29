@@ -4,6 +4,7 @@ import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { MissingCheckOutForm } from '../common/missing-check-out-form';
 import { HolidayConflictSection } from '../common/holiday-conflict-section';
 import { CorrectionForm, type CorrectionTimes } from './correction-form';
+import { statusLabel } from '../../lib/status-label';
 
 /** Where a punch came from, in words: the internal source codes mean nothing to an employee. */
 const PUNCH_SOURCE: Record<string, string> = {
@@ -109,7 +110,7 @@ export function AttendanceDetailDrawer({
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-medium">Status</span>
-                <span className="font-semibold text-foreground">{row.status}</span>
+                <span className="font-semibold text-foreground">{statusLabel(row.status)}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-medium">Total Worked</span>
@@ -190,11 +191,10 @@ export function AttendanceDetailDrawer({
             ) : (
               <div className="pt-2 border-t border-border">
                 <div className="text-xs font-bold text-foreground mb-1.5">
-                  Correct an existing punch
+                  Regularize attendance
                 </div>
                 <p className="text-[11px] text-muted-foreground mb-2.5">
-                  Ask for the day to be corrected; it goes to whoever approves attendance
-                  corrections.
+                  Ask for this day to be regularized. Your approver reviews the request.
                 </p>
                 {onSubmitRegularization ? (
                   <CorrectionForm

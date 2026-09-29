@@ -174,6 +174,7 @@ export function CustomFieldsPanel() {
                   Choices, separated by commas
                 </Label>
                 <Input
+                  maxLength={3000}
                   disabled={busy}
                   id="field-options"
                   onChange={(event) => setOptionsText(event.target.value)}

@@ -53,9 +53,14 @@ export function OrgIdentityRail({
     .slice(0, 4);
 
   const name = organization.organization?.name ?? 'Organization';
-  const active = directory.entries.filter((entry) => entry.status === 'ACTIVE').length;
-  const withoutManager = directory.entries.filter((entry) => !entry.managerEmployeeId).length;
-  const withoutLogin = directory.entries.filter((entry) => !entry.hasUserAccount).length;
+  const current = directory.entries.filter((entry) => entry.status === 'ACTIVE');
+  const active = current.length;
+  const former = directory.entries.length - active;
+  const withoutManager = current.filter((entry) => !entry.managerEmployeeId).length;
+  const withoutLogin = current.filter((entry) => !entry.hasUserAccount).length;
+  const activeBranches = organization.branches.filter(
+    (branch) => branch.status !== 'DEACTIVATED',
+  ).length;
 
   const peopleState = directory.forbidden ? 'No permission' : null;
   const peopleValue = (count: number) => (directory.loading ? null : String(count));
@@ -90,17 +95,17 @@ export function OrgIdentityRail({
         <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-3">
           <MiniStat
             icon={Users}
-            label="People"
+            label="Employees"
             tone="primary"
             unavailable={peopleState}
-            value={peopleValue(directory.entries.length)}
+            value={peopleValue(active)}
           />
           <MiniStat
             icon={CheckCircle2}
-            label="Active"
-            tone="success"
+            label="Former"
+            tone="neutral"
             unavailable={peopleState}
-            value={peopleValue(active)}
+            value={peopleValue(former)}
           />
           <MiniStat
             icon={Network}
@@ -121,7 +126,7 @@ export function OrgIdentityRail({
             label="Branches"
             tone="neutral"
             unavailable={organization.branchesForbidden ? 'No permission' : null}
-            value={organization.loading ? null : String(organization.branches.length)}
+            value={organization.loading ? null : String(activeBranches)}
           />
         </dl>
       </section>
@@ -204,7 +209,7 @@ function MiniStat({
           className={
             unavailable
               ? 'truncate text-[11px] text-muted-foreground'
-              : 'font-mono text-sm font-semibold tabular-nums text-foreground'
+              : ' text-sm font-semibold tabular-nums text-foreground'
           }
           title={unavailable ?? undefined}
         >

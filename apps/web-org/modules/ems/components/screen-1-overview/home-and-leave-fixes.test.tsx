@@ -69,12 +69,12 @@ describe('Time Off status tabs', () => {
     const balances = screen.getByRole('region', { name: 'Leave balances' });
     // The list the tabs control comes first in the page.
     expect(list.compareDocumentPosition(balances) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(within(list).getByText('PENDING')).toBeInTheDocument();
-    expect(within(list).getByText('APPROVED')).toBeInTheDocument();
+    expect(within(list).getByText('Pending')).toBeInTheDocument();
+    expect(within(list).getByText('Approved')).toBeInTheDocument();
 
     await userEvent.setup().click(screen.getByRole('tab', { name: /Approved/ }));
-    expect(within(list).queryByText('PENDING')).not.toBeInTheDocument();
-    expect(within(list).getByText('APPROVED')).toBeInTheDocument();
+    expect(within(list).queryByText('Pending')).not.toBeInTheDocument();
+    expect(within(list).getByText('Approved')).toBeInTheDocument();
     expect(within(list).getByRole('heading')).toHaveTextContent('Approved requests');
   });
 });

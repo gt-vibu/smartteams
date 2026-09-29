@@ -59,7 +59,7 @@ export function CompanyDocumentsCard() {
             Official policies, company assets, and documents published for your organization.
           </p>
         </div>
-        <Badge variant="outline" className="text-[10px] font-mono">
+        <Badge variant="outline" className="text-[10px] tabular-nums">
           {activeFiles.length} {activeFiles.length === 1 ? 'file' : 'files'}
         </Badge>
       </CardHeader>
@@ -92,7 +92,7 @@ export function CompanyDocumentsCard() {
                     <p className="text-xs font-medium text-foreground truncate" title={file.name}>
                       {file.name}
                     </p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
+                    <p className="text-[10px] text-muted-foreground tabular-nums">
                       {formatBytes(file.byteSize)} · {formatDate(file.uploadedAt)}
                     </p>
                   </div>

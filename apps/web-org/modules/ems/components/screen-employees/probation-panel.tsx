@@ -11,7 +11,7 @@ import {
   Label,
   Textarea,
 } from '@smarteam/ui';
-import { formatDate } from '@smarteam/contracts';
+import { formatDate, LIMITS } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import {
@@ -156,6 +156,7 @@ export function ProbationPanel() {
                 Note to them (optional)
               </Label>
               <Textarea
+                maxLength={LIMITS.reason}
                 disabled={busy}
                 id="probation-note"
                 onChange={(event) => setNote(event.target.value)}

@@ -1,30 +1,29 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
+import { IsBoolean, IsIn, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
 import {
-  IsBoolean,
-  IsDateString,
-  IsIn,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MaxLength,
-  Min,
-} from 'class-validator';
+  IsCalendarDate,
+  IsNumberBetween,
+  IsText,
+  daysFromToday,
+} from '../../common/validation/field-rules';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { LeaveCompOffService } from './leave-comp-off.service';
 import { LeaveEncashmentService } from './leave-encashment.service';
 
 export class CompOffRequestDto {
-  @IsDateString() workDate!: string;
-  @IsIn([0.5, 1]) days!: number;
-  @IsString() @MaxLength(500) reason!: string;
+  // A day already worked: from the last three months up to today, in every timezone.
+  @IsCalendarDate('Day worked', { earliest: daysFromToday(-92), latest: daysFromToday(1) })
+  workDate!: string;
+  @IsIn([0.5, 1], { message: 'Choose a full day or half a day.' }) days!: number;
+  @IsText('Reason', LIMITS.reason, 3) reason!: string;
 }
 
 export class EncashmentRequestDto {
   @IsUUID() leaveTypeId!: string;
-  @IsNumber() @Min(0.5) days!: number;
+  @IsNumberBetween('Days to encash', 0.5, 366) days!: number;
 }
 
 export class ExtraDecisionDto {

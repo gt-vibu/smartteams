@@ -158,6 +158,7 @@ export function ResignationsPanel() {
                 {deciding?.accept ? 'Note to them (optional)' : 'Reason'}
               </Label>
               <Textarea
+                maxLength={1000}
                 disabled={busy}
                 id="exit-comment"
                 onChange={(event) => setComment(event.target.value)}

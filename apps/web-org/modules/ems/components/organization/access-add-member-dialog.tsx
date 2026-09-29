@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import type { RoleWithPermissions } from '@smarteam/contracts';
 import { Button, Checkbox, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
+import { LIMITS, emailProblem, personNameProblem } from '@smarteam/contracts';
 
 /**
  * Onboards a new member with one or more roles in a single call.
@@ -83,6 +84,8 @@ export function AccessAddMemberDialog({
             <div className="space-y-1.5">
               <Label htmlFor="member-name">Name</Label>
               <Input
+                maxLength={LIMITS.personName}
+                problem={personNameProblem(displayName, 'Name')}
                 id="member-name"
                 onChange={(event) => setDisplayName(event.target.value)}
                 value={displayName}
@@ -91,6 +94,8 @@ export function AccessAddMemberDialog({
             <div className="space-y-1.5">
               <Label htmlFor="member-email">Email</Label>
               <Input
+                maxLength={LIMITS.email}
+                problem={emailProblem(email)}
                 id="member-email"
                 onChange={(event) => setEmail(event.target.value)}
                 type="email"
@@ -127,6 +132,7 @@ export function AccessAddMemberDialog({
           <div className="space-y-1.5">
             <Label htmlFor="member-reason">Reason</Label>
             <Input
+              maxLength={LIMITS.reason}
               id="member-reason"
               onChange={(event) => setReason(event.target.value)}
               placeholder="Why is this person being added?"

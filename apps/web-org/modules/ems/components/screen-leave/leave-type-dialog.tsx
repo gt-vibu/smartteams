@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@smarteam/ui';
 import type { LeaveTypeInput } from '../../repositories/leave.repository';
+import { LIMITS, codeProblem, textProblem } from '@smarteam/contracts';
 
 type Accrual = LeaveTypeInput['accrualType'];
 
@@ -123,7 +124,7 @@ export function LeaveTypeDialog({
     <Dialog onOpenChange={(next) => !next && onClose()} open={open}>
       <DialogContent className="max-w-lg gap-0 p-0">
         <DialogTitle className="border-b border-border px-5 py-4 text-sm font-semibold">
-          {editing ? `Edit ${editing.name}` : 'New leave type'}
+          {editing ? `Edit ${editing.name}` : 'Add leave type'}
         </DialogTitle>
 
         <div className="min-h-0 space-y-4 overflow-y-auto p-5 sm:max-h-[70vh]">
@@ -133,6 +134,8 @@ export function LeaveTypeDialog({
                 Code
               </Label>
               <Input
+                maxLength={LIMITS.code}
+                problem={codeProblem(form.code, 'Code', LIMITS.code)}
                 disabled={busy || Boolean(editing)}
                 id="type-code"
                 onChange={(event) => set({ code: event.target.value })}
@@ -145,6 +148,8 @@ export function LeaveTypeDialog({
                 Name
               </Label>
               <Input
+                maxLength={LIMITS.title}
+                problem={textProblem(form.name, 'Name', LIMITS.title, 2)}
                 disabled={busy}
                 id="type-name"
                 onChange={(event) => set({ name: event.target.value })}
@@ -182,6 +187,7 @@ export function LeaveTypeDialog({
                 Days per year
               </Label>
               <Input
+                max={366}
                 disabled={busy}
                 id="type-allowance"
                 inputMode="decimal"
@@ -214,6 +220,7 @@ export function LeaveTypeDialog({
                 Days earned each month
               </Label>
               <Input
+                max={31}
                 disabled={busy}
                 id="type-monthly"
                 inputMode="decimal"
@@ -251,6 +258,7 @@ export function LeaveTypeDialog({
                     Most days that carry forward
                   </Label>
                   <Input
+                    max={366}
                     disabled={busy}
                     id="type-carry"
                     inputMode="decimal"
@@ -290,6 +298,7 @@ export function LeaveTypeDialog({
                   <span className="text-muted-foreground">(blank for no limit)</span>
                 </Label>
                 <Input
+                  max={366}
                   className="w-28"
                   disabled={busy}
                   id="type-encash-max"
@@ -318,6 +327,8 @@ export function LeaveTypeDialog({
                   <span className="text-muted-foreground">(blank: never lapses)</span>
                 </Label>
                 <Input
+                  max={365}
+                  step={1}
                   className="w-28"
                   disabled={busy}
                   id="type-comp-expiry"

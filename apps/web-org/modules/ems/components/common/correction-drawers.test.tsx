@@ -36,7 +36,7 @@ const day: CalendarDayItem = {
   attendanceRecordId: RECORD_ID,
 };
 
-const submitButton = () => screen.getByRole('button', { name: /submit correction request/i });
+const submitButton = () => screen.getByRole('button', { name: /submit regularization request/i });
 
 describe('AttendanceDetailDrawer', () => {
   it('keeps submission disabled below the length the API accepts', async () => {

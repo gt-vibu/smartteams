@@ -42,28 +42,23 @@ export function ScreenPayrollAdmin() {
     [
       {
         id: 'RUNS',
-        label: `Payroll runs${admin.runs.length ? ` (${admin.runs.length})` : ''}`,
+        label: `Pay runs${admin.runs.length ? ` (${admin.runs.length})` : ''}`,
         allowed: may('payroll.runs.read'),
       },
-      { id: 'EMPLOYEE_PAY', label: 'Employee pay', allowed: may('payroll.payslips.read.all') },
+      { id: 'EMPLOYEE_PAY', label: 'Employee salaries', allowed: may('payroll.payslips.read.all') },
       {
         id: 'COMPENSATION',
         label: 'Compensation',
         allowed: may('payroll.employee-profile.read.all') || may('payroll.components.read'),
       },
-      { id: 'STATUTORY', label: 'Statutory rules', allowed: may('payroll.policy.read') },
+      { id: 'STATUTORY', label: 'Statutory components', allowed: may('payroll.policy.read') },
     ],
     tab,
   );
 
   return (
     <PageShell>
-      <ScreenHeader
-        description="Runs, compensation, statutory configuration and employee pay."
-        icon={Wallet}
-        title="Payroll"
-        tone="warning"
-      />
+      <ScreenHeader icon={Wallet} title="Payroll" tone="warning" />
       <div className="flex items-center gap-4 border-b border-border pb-2">
         {tabs.map((entry) => (
           <Button

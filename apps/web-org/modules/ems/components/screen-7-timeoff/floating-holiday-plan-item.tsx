@@ -96,11 +96,11 @@ export function AvailableHolidayPlanCard({
           </div>
 
           {isMultiDay ? (
-            <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
+            <div className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
               {formatDateDisplay(group.startDate)} → {formatDateDisplay(group.endDate)}
             </div>
           ) : (
-            <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
+            <div className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
               {formatDate(group.startDate)} · {weekday(group.startDate)}
             </div>
           )}

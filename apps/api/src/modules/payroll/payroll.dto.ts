@@ -14,6 +14,14 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import {
+  IsAmount,
+  IsCalendarDate,
+  IsNumberBetween,
+  IsText,
+  yearsFromToday,
+} from '../../common/validation/field-rules';
 import {
   PayFrequency,
   PayrollPaymentMethod,
@@ -34,9 +42,10 @@ export class PayComponentDto {
 export class PayComponentAssignmentDto {
   @IsUUID() employeeId!: string;
   @IsUUID() payComponentId!: string;
-  @IsOptional() @IsNumber() @Min(0) amount?: number;
+  @IsOptional() @IsAmount('Amount') amount?: number;
   @IsOptional() @IsNumber() @Min(0) @Max(100) percentage?: number;
-  @IsDateString() effectiveFrom!: string;
+  @IsCalendarDate('Effective date', { earliest: yearsFromToday(-5), latest: yearsFromToday(2) })
+  effectiveFrom!: string;
   @IsOptional() @IsDateString() effectiveTo?: string;
 }
 export class PayrollRunDto {
@@ -61,7 +70,7 @@ export class PayrollActionDto {
   @IsString() @MinLength(3) comment!: string;
 }
 export class PayrollCorrectionDto {
-  @IsString() @MinLength(10) reason!: string;
+  @IsText('Reason', LIMITS.reason, 10) reason!: string;
 }
 export class PayrollCalendarDto {
   @IsOptional() @IsDateString() periodStart?: string;
@@ -130,7 +139,8 @@ export class PayrollPolicyComponentDto {
 
 export class EmployeePayrollPolicyDto {
   @IsUUID() employeeId!: string;
-  @IsDateString() effectiveFrom!: string;
+  @IsCalendarDate('Effective date', { earliest: yearsFromToday(-5), latest: yearsFromToday(2) })
+  effectiveFrom!: string;
   @IsOptional() @IsDateString() effectiveTo?: string;
   @IsBoolean() payrollEnabled!: boolean;
   @IsEnum(SalarySlipMode) salarySlipMode!: SalarySlipMode;
@@ -138,17 +148,18 @@ export class EmployeePayrollPolicyDto {
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
   @IsOptional() @IsUUID() payrollPolicyId?: string;
-  @IsOptional() @IsString() statutoryJurisdiction?: string;
+  @IsOptional() @IsText('State', 60) statutoryJurisdiction?: string;
 }
 
 export class SalaryProfileDto {
   @IsUUID() employeeId!: string;
-  @IsNumber() @Min(0) grossSalary!: number;
+  @IsAmount('Gross salary') grossSalary!: number;
   @IsEnum(['SALARY', 'HOURLY', 'DAILY', 'PER_SHIFT']) payType!:
     'SALARY' | 'HOURLY' | 'DAILY' | 'PER_SHIFT';
   @IsEnum(PayFrequency) payFrequency!: PayFrequency;
-  @IsNumber() @Min(0) overtimeMultiplier!: number;
-  @IsDateString() effectiveFrom!: string;
+  @IsNumberBetween('Overtime multiplier', 1, 5) overtimeMultiplier!: number;
+  @IsCalendarDate('Effective date', { earliest: yearsFromToday(-5), latest: yearsFromToday(2) })
+  effectiveFrom!: string;
   @IsOptional() @IsDateString() effectiveTo?: string;
   @IsBoolean() payrollEnabled!: boolean;
   @IsEnum(SalarySlipMode) salarySlipMode!: SalarySlipMode;
@@ -161,7 +172,7 @@ export class SalaryProfileDto {
 
 export class SalaryProfilePreviewDto {
   @IsUUID() employeeId!: string;
-  @IsNumber() @Min(0) @Max(100_000_000) grossSalary!: number;
+  @IsAmount('Gross salary') grossSalary!: number;
   @IsOptional() @IsBoolean() pfEnabled?: boolean;
   @IsOptional() @IsBoolean() esiEnabled?: boolean;
   @IsOptional() @IsBoolean() ptEnabled?: boolean;
@@ -169,7 +180,7 @@ export class SalaryProfilePreviewDto {
 
 export class PayrollPreviewDto {
   @IsUUID() employeeId!: string;
-  @IsNumber() @Min(0) @IsOptional() payableDays?: number;
+  @IsOptional() @IsNumberBetween('Payable days', 0, 31) payableDays?: number;
   @IsDateString() periodStart!: string;
   @IsDateString() periodEnd!: string;
 }
@@ -189,9 +200,9 @@ export class StatutoryRuleDto {
 
 export class SalaryAdvanceDto {
   @IsUUID() employeeId!: string;
-  @IsNumber() @Min(0.01) requestedAmount!: number;
-  @IsString() @MinLength(3) reason!: string;
-  @IsOptional() @IsString() externalId?: string;
+  @IsAmount('Amount', LIMITS.amount, 1) requestedAmount!: number;
+  @IsText('Reason', LIMITS.reason, 3) reason!: string;
+  @IsOptional() @IsText('Reference', 120) externalId?: string;
 }
 
 export class SalaryAdvanceDecisionDto {

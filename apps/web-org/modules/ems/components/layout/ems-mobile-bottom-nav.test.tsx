@@ -57,7 +57,7 @@ describe('EmsMobileBottomNav', () => {
 
   it('marks the current section with a tint the whole target carries, not an edge rule', () => {
     renderNav('time-off');
-    const active = tab('Time Off');
+    const active = tab('Leave');
     expect(active).toHaveAttribute('aria-current', 'page');
     expect(active.className).toContain('bg-primary/12');
     expect(tab('Home')).not.toHaveAttribute('aria-current');
@@ -119,9 +119,9 @@ describe('navigation icons', () => {
   it('marks a section with something new, and not the one already open', () => {
     unreadByModule = { 'time-off': 2, home: 1 };
     renderNav('home');
-    expect(tab('Time Off').querySelector('[data-unread-dot]')).not.toBeNull();
+    expect(tab('Leave').querySelector('[data-unread-dot]')).not.toBeNull();
     expect(tab('Home').querySelector('[data-unread-dot]')).toBeNull();
-    expect(tab('Time Off')).toHaveAccessibleName(/new/);
+    expect(tab('Leave')).toHaveAccessibleName(/new/);
   });
 
   it('puts the dot on More when what is new is behind it', () => {

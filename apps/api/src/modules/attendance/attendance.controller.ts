@@ -23,7 +23,6 @@ import {
   HolidayConflictQueryDto,
   HolidayReviewDecisionDto,
   HolidayReviewRequestDto,
-  PunchDto,
 } from './attendance.dto';
 import { AttendanceService } from './attendance.service';
 import { parseWebauthnResponse, WebauthnService } from './webauthn.service';
@@ -35,6 +34,7 @@ import {
   RevokeCredentialDto,
 } from './webauthn.dto';
 
+import { NativePunchDto } from './attendance-native.dto';
 @Controller('v1/organizations/:organizationId/attendance')
 @UseGuards(NativeJwtGuard)
 export class AttendanceController {
@@ -144,7 +144,7 @@ export class AttendanceController {
 
   @Post('check-ins') checkIn(
     @Param('organizationId') organizationId: string,
-    @Body() body: PunchDto,
+    @Body() body: NativePunchDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -153,7 +153,7 @@ export class AttendanceController {
   }
   @Post('check-outs') checkOut(
     @Param('organizationId') organizationId: string,
-    @Body() body: PunchDto,
+    @Body() body: NativePunchDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

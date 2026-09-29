@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
+import { LIMITS } from '@smarteam/contracts';
 
 /**
  * Asks why, before an irreversible or contested decision goes through.
@@ -59,6 +60,7 @@ export function DecisionReasonDialog({
             Reason
           </Label>
           <Textarea
+            maxLength={LIMITS.reason}
             autoFocus
             disabled={busy}
             id="decision-reason"

@@ -1,6 +1,6 @@
 'use client';
 
-import { formatDate } from '@smarteam/contracts';
+import { formatDate, formatDateTime, LIMITS } from '@smarteam/contracts';
 import React, { useState } from 'react';
 import {
   Badge,
@@ -178,8 +178,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
           <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
             <p className="text-sm font-bold text-foreground">Nothing awaiting your decision</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Leave requests, attendance corrections and holiday check-ins routed to you appear
-              here.
+              Leave, regularization and other requests waiting for your approval appear here.
             </p>
           </div>
         )}
@@ -282,15 +281,8 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
                     ? 'This day was closed automatically because no check-out was recorded.'
                     : 'This request adds the day’s check-out.'}{' '}
                   Approving records{' '}
-                  <span className="font-mono font-semibold">
-                    {proposed.toLocaleString(undefined, {
-                      day: 'numeric',
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>{' '}
-                  as the check-out. Enter the real time instead if you know it.
+                  <span className="font-mono font-semibold">{formatDateTime(proposed)}</span> as the
+                  check-out. Enter the real time instead if you know it.
                 </p>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <div>
@@ -328,6 +320,7 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
               Comment
             </Label>
             <Textarea
+              maxLength={LIMITS.reason}
               disabled={inbox.saving}
               id="decision-comment"
               onChange={(event) => setComment(event.target.value)}

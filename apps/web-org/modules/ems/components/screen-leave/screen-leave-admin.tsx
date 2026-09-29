@@ -52,7 +52,8 @@ export function ScreenLeaveAdmin() {
       {
         id: 'requests' as Tab,
         label: 'Requests',
-        count: counts.get('PENDING') ?? 0,
+        // Only when something is waiting: "Requests 0" read as though there were none at all.
+        count: counts.get('PENDING') || undefined,
         allowed: may('leave.requests.read.all'),
       },
       { id: 'balances' as Tab, label: 'Balances', allowed: may('leave.balances.read.all') },
@@ -80,12 +81,7 @@ export function ScreenLeaveAdmin() {
 
   return (
     <PageShell>
-      <ScreenHeader
-        description="Requests, balances and the leave types they draw from."
-        icon={CalendarDays}
-        title="Leave"
-        tone="accent"
-      />
+      <ScreenHeader icon={CalendarDays} title="Leave" tone="accent" />
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border">
         <SegmentedTabs
           aria-label="Leave administration sections"

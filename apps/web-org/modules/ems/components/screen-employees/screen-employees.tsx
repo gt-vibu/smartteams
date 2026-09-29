@@ -123,7 +123,6 @@ export function ScreenEmployees() {
   return (
     <PageShell>
       <ScreenHeader
-        description="Everyone in the organization. Open a person to see and edit their details, payroll, attendance and leave."
         icon={IdCard}
         title="Employees"
         tone="primary"
@@ -166,8 +165,8 @@ export function ScreenEmployees() {
             ...(canImport
               ? ([
                   ['probation', 'Probation'],
-                  ['exits', 'Exits'],
-                  ['fields', 'Fields'],
+                  ['exits', 'Exit details'],
+                  ['fields', 'Custom fields'],
                 ] as const)
               : []),
           ] as const
@@ -288,7 +287,7 @@ export function ScreenEmployees() {
                         </div>
                       </td>
                       <td
-                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                         data-bare=""
                         data-label="Employee ID"
                       >
@@ -309,7 +308,7 @@ export function ScreenEmployees() {
                         {employmentTypeLabel(entry.employmentType)}
                       </td>
                       <td
-                        className="px-4 py-2.5 font-mono text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                         data-label="Joined"
                       >
                         {formatDate(entry.dateOfJoining) || '—'}

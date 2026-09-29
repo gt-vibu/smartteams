@@ -141,6 +141,7 @@ export function ScreenCompensation() {
                   <Input
                     className="h-8 pl-8 text-xs"
                     onChange={(event) => setSearch(event.target.value)}
+                    aria-label="Search name, ID or email"
                     placeholder="Search name, ID or email..."
                     value={search}
                   />

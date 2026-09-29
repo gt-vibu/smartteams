@@ -5,6 +5,7 @@ import type { ColumnDef } from '@smarteam/ui';
 import { Button, StandardDataTable } from '@smarteam/ui';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { HOLIDAY_CONFLICT_PILL } from '../../services/holiday-conflict-view';
+import { statusLabel } from '../../lib/status-label';
 
 interface AttendanceTableViewProps {
   rows: AttendanceTableRow[];
@@ -19,7 +20,7 @@ function StatusBadge({ row }: { row: AttendanceTableRow }) {
         className={`inline-flex max-w-full items-center rounded border px-2 py-0.5 text-[11px] font-semibold ${HOLIDAY_CONFLICT_PILL[row.holidayConflict.tone]}`}
         title={row.holidayConflict.detail}
       >
-        <span className="truncate">{row.status}</span>
+        <span className="truncate">{statusLabel(row.status)}</span>
       </span>
     );
   }
@@ -43,7 +44,7 @@ function StatusBadge({ row }: { row: AttendanceTableRow }) {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-800 bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200/70">
         <span className="h-1.5 w-1.5 rounded-full bg-cyan-500 shrink-0" />
-        {row.status}
+        {statusLabel(row.status)}
       </span>
     );
   }
@@ -240,12 +241,12 @@ function AttendanceDesktopTable({ rows, onSelectRow }: AttendanceTableViewProps)
     },
     {
       id: 'overtime',
-      header: 'Overtime/Deviation',
+      header: 'Overtime',
       accessorKey: 'overtime',
       sortable: true,
       cell: (row) => (
         <span
-          className={`font-mono font-medium whitespace-nowrap ${
+          className={`tabular-nums font-medium whitespace-nowrap ${
             row.overtime !== '-' && row.overtime !== '00:00'
               ? 'text-rose-600 dark:text-rose-400'
               : 'text-emerald-700 dark:text-emerald-400'
@@ -270,7 +271,7 @@ function AttendanceDesktopTable({ rows, onSelectRow }: AttendanceTableViewProps)
     },
     {
       id: 'shift',
-      header: 'Shift(s)',
+      header: 'Shift',
       accessorKey: 'shift',
       filterable: true,
       cell: (row) => <span className="text-slate-600 dark:text-slate-300">{row.shift}</span>,

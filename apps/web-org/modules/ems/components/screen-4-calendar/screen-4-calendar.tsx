@@ -5,20 +5,20 @@ import { CalendarToolbar } from './calendar-toolbar';
 import { CalendarGrid } from './calendar-grid';
 import { CalendarDetailDrawer } from './calendar-detail-drawer';
 import { localDateKey, useAttendance } from '../../hooks/use-attendance';
-import { useHolidays } from '../../hooks/use-holidays';
-import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
-import { useLeave } from '../../hooks/use-leave';
-import { useWorkWeek } from '../../hooks/use-work-week';
-import { approvedLeaveByDate } from '../../services/leave-calendar';
-import { toCalendarStatus } from '../../services/attendance-view';
+import { useDayContext } from '../../hooks/use-day-context';
 import type { CalendarDayItem } from '../../types/calendar.types';
 import { PageShell } from '../layout/page-shell';
 
 interface Screen4CalendarProps {
   onToggleView?: (view: 'timeline' | 'table' | 'calendar') => void;
+  /**
+   * Inside Home, under Home's own sticky tabs: the month bar scrolls with the page instead of
+   * sticking, where it would slide beneath those tabs.
+   */
+  embedded?: boolean;
 }
 
-export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
+export function Screen4Calendar({ onToggleView, embedded = false }: Screen4CalendarProps = {}) {
   const [selectedDay, setSelectedDay] = useState<CalendarDayItem | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   // Open on the current month rather than a hardcoded demo month.
@@ -36,45 +36,9 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     requestMissingCheckOut,
     explainHolidayCheckIn,
   } = useAttendance(30, monthWindow);
-  const holidays = useHolidays();
-  const employeeHolidays = useEmployeeHolidays();
-  const leave = useLeave();
-  const { isWeeklyOff } = useWorkWeek();
-  // Approved leave by day, so a granted leave shows on the calendar rather than a blank day.
-  const leaveByDate = useMemo(
-    () => approvedLeaveByDate(leave.requests, leave.types),
-    [leave.requests, leave.types],
-  );
-
-  // Map of effective holidays for this employee (mandatory + confirmed selected optional)
-  const effectiveHolidayMap = useMemo(() => {
-    const map = new Map<string, { name: string; isOptional: boolean }>();
-    if (employeeHolidays.hasEmployeeRecord && employeeHolidays.summary) {
-      for (const h of employeeHolidays.mandatoryHolidays) {
-        if (h.isActive) {
-          map.set(h.holidayDate.slice(0, 10), { name: h.name, isOptional: false });
-        }
-      }
-      for (const s of employeeHolidays.selections) {
-        if (s.status === 'CONFIRMED' && s.holiday && s.holiday.isActive) {
-          map.set(s.holiday.holidayDate.slice(0, 10), { name: s.holiday.name, isOptional: true });
-        }
-      }
-    } else {
-      for (const h of holidays.holidays) {
-        if (h.isActive && !h.isOptional) {
-          map.set(h.holidayDate.slice(0, 10), { name: h.name, isOptional: false });
-        }
-      }
-    }
-    return map;
-  }, [
-    employeeHolidays.hasEmployeeRecord,
-    employeeHolidays.summary,
-    employeeHolidays.mandatoryHolidays,
-    employeeHolidays.selections,
-    holidays.holidays,
-  ]);
+  // What each day was: worked, leave, holiday, weekly off, absent or still to come. The same
+  // rules the Home work schedule and the attendance timeline use.
+  const { resolve, holidayByDate, leaveByDate, todayKey } = useDayContext();
 
   // Generate the visible month from attendance and holiday data.
   const calendarDays: CalendarDayItem[] = useMemo(() => {
@@ -83,7 +47,6 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     const month = viewDate.getMonth();
     const firstDayOffset = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const demoToday = records.find((record) => record.isToday)?.workDate;
 
     for (let offset = firstDayOffset; offset > 0; offset -= 1) {
       const date = new Date(year, month, 1 - offset);
@@ -97,32 +60,17 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
 
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-      // The company's weekly offs, not a fixed Saturday and Sunday.
-      const isWeekend = isWeeklyOff(new Date(year, month, d));
-      const isToday = dateStr === demoToday;
-      const holidayInfo = effectiveHolidayMap.get(dateStr);
+      const holidayInfo = holidayByDate.get(dateStr);
       const leaveName = leaveByDate.get(dateStr);
 
       // Find the attendance record the server returned for this date.
       const record = records.find((r) => r.workDate === dateStr);
       const dayPunches = record?.record.punches ?? [];
 
-      // Worked beats everything; then approved leave, then a holiday, then the weekend.
-      const worked = record ? toCalendarStatus(record.dayStatus) : null;
+      const resolved = resolve(dateStr, record);
+      const isToday = resolved === 'TODAY' || dateStr === todayKey;
       const dayStatus: CalendarDayItem['dayStatus'] =
-        worked && worked !== 'ABSENT'
-          ? worked
-          : leaveName
-            ? 'LEAVE'
-            : worked
-              ? worked
-              : holidayInfo
-                ? 'HOLIDAY'
-                : isWeekend
-                  ? 'WEEKEND'
-                  : demoToday && dateStr > demoToday
-                    ? 'UPCOMING'
-                    : 'EMPTY';
+        resolved === 'HALF_DAY' ? 'PRESENT' : resolved === 'TODAY' ? 'EMPTY' : resolved;
 
       days.push({
         date: dateStr,
@@ -170,7 +118,7 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
     }
 
     return days;
-  }, [records, viewDate, effectiveHolidayMap, leaveByDate, isWeeklyOff]);
+  }, [records, viewDate, holidayByDate, leaveByDate, resolve, todayKey]);
 
   const handleToday = () => {
     const today = records.find((record) => record.isToday)?.workDate;
@@ -196,7 +144,14 @@ export function Screen4Calendar({ onToggleView }: Screen4CalendarProps = {}) {
   return (
     <div className="w-full flex flex-col">
       {/* 1. Month Navigator & View Switcher — sticky within scroll container */}
-      <div className="sticky top-[var(--ems-context-bar-height)] z-20 px-4 sm:px-6 bg-muted">
+      <div
+        className={
+          embedded
+            ? // The page shell's width and gutters, so the bar lines up with the grid below it.
+              'mx-auto w-full max-w-[1400px] px-4 pt-4 sm:px-6 lg:px-8 [&>div]:rounded-lg [&>div]:border'
+            : 'sticky top-[var(--ems-context-bar-height)] z-20 px-4 sm:px-6 bg-muted'
+        }
+      >
         <CalendarToolbar
           monthName={viewDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
           onPrevMonth={() =>

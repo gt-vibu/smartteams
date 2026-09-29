@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button, DatePicker, Input, Label } from '@smarteam/ui';
-import { type SalaryProfile } from '@smarteam/contracts';
+import { type SalaryProfile, LIMITS } from '@smarteam/contracts';
 import { Check, Save } from 'lucide-react';
 import type { CompensationState } from '../../hooks/use-compensation';
 import { useOvertimeRates } from '../../hooks/use-overtime-rates';
@@ -187,7 +187,8 @@ export function CompensationSalaryForm({
             </span>
             {unit === 'monthly' ? (
               <Input
-                className="h-10 pl-7 font-mono text-sm font-semibold"
+                max={LIMITS.amount}
+                className="h-10 pl-7 tabular-nums text-sm font-semibold"
                 disabled={locked}
                 id="gross-salary"
                 inputMode="decimal"
@@ -205,7 +206,8 @@ export function CompensationSalaryForm({
               />
             ) : (
               <Input
-                className="h-10 pl-7 pr-12 font-mono text-sm font-semibold"
+                max={1000}
+                className="h-10 pl-7 pr-12 tabular-nums text-sm font-semibold"
                 disabled={locked}
                 id="gross-salary"
                 inputMode="decimal"
@@ -236,7 +238,7 @@ export function CompensationSalaryForm({
             Overtime rate
           </Label>
           <Input
-            className="h-10 font-mono text-sm font-semibold"
+            className="h-10 tabular-nums text-sm font-semibold"
             disabled={locked}
             id="salary-overtime"
             inputMode="decimal"

@@ -6,16 +6,17 @@ import {
   IsDateString,
   IsInt,
   IsOptional,
-  IsString,
   IsUUID,
   Max,
   Min,
-  MinLength,
 } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import { IsCalendarDate, IsText, yearsFromToday } from '../../common/validation/field-rules';
 
 export class HolidayDto {
-  @IsString() @MinLength(2) name!: string;
-  @IsDateString() holidayDate!: string;
+  @IsText('Holiday name', LIMITS.title, 2) name!: string;
+  @IsCalendarDate('Holiday date', { earliest: yearsFromToday(-5), latest: yearsFromToday(5) })
+  holidayDate!: string;
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsBoolean() isOptional?: boolean;
 }
@@ -26,12 +27,12 @@ export class HolidayDto {
  * another.
  */
 export class UpdateHolidayDto {
-  @IsOptional() @IsString() @MinLength(2) name?: string;
+  @IsOptional() @IsText('Holiday name', LIMITS.title, 2) name?: string;
   @IsOptional() @IsBoolean() isOptional?: boolean;
 }
 
 export class HolidayDeactivationDto {
-  @IsString() @MinLength(2) reason!: string;
+  @IsText('Reason', LIMITS.reason, 2) reason!: string;
 }
 
 export class HolidayQueryDto {
@@ -60,7 +61,7 @@ export class CancelHolidaySelectionDto {
   holidayId!: string;
 
   @IsOptional()
-  @IsString()
+  @IsText('Reason', LIMITS.reason)
   reason?: string;
 }
 

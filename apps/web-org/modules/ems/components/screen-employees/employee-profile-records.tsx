@@ -11,6 +11,7 @@ import { useLeaveAdmin } from '../../hooks/use-leave-admin';
 import { useCompensation } from '../../hooks/use-compensation';
 import { useEmployees } from '../../hooks/use-workforce';
 import { EmployeeCompensationPanel } from '../screen-payroll/employee-compensation-panel';
+import { statusLabel } from '../../lib/status-label';
 
 const note =
   'rounded-lg border border-dashed border-border bg-card/60 p-6 text-center text-xs text-muted-foreground';
@@ -92,16 +93,16 @@ export function EmployeeAttendanceTab({ employeeId }: { employeeId: string }) {
             <tbody>
               {rows.map((record) => (
                 <tr className="border-b border-border last:border-0" key={record.id}>
-                  <td className="px-4 py-2 font-mono" data-cell="primary">
+                  <td className="px-4 py-2 tabular-nums" data-cell="primary">
                     {formatDate(record.workDate)}
                   </td>
                   <td className="px-4 py-2" data-cell="status" data-label="Status">
-                    {record.dayStatus.replace(/_/g, ' ').toLowerCase()}
+                    {statusLabel(record.dayStatus)}
                   </td>
-                  <td className="px-4 py-2 font-mono" data-label="Worked">
+                  <td className="px-4 py-2 tabular-nums" data-label="Worked">
                     {hours(record.workedMinutes)}
                   </td>
-                  <td className="px-4 py-2 font-mono" data-label="Overtime">
+                  <td className="px-4 py-2 tabular-nums" data-label="Overtime">
                     {hours(record.overtimeMinutes)}
                   </td>
                 </tr>
@@ -179,14 +180,14 @@ export function EmployeeLeaveTab({ employeeId }: { employeeId: string }) {
               >
                 <div>
                   <p className="font-semibold text-foreground">{typeName(request.leaveTypeId)}</p>
-                  <p className="font-mono text-muted-foreground">
+                  <p className="tabular-nums text-muted-foreground">
                     {formatDateRange(request.startDate, request.endDate)} · {request.requestedDays}{' '}
                     day
                     {request.requestedDays === 1 ? '' : 's'}
                   </p>
                 </div>
                 <span className="rounded bg-muted px-2 py-0.5 text-[10px] font-bold uppercase text-muted-foreground">
-                  {request.status}
+                  {statusLabel(request.status)}
                 </span>
               </li>
             ))}

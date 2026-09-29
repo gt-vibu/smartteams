@@ -16,20 +16,22 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   AccessCodeIssueDto,
-  CompensationDto,
   CreateEmployeeDto,
-  EmergencyContactDto,
   EmployeeDeactivationDto,
-  EmployeePersonalProfileDto,
-  EmployeeBankAccountDto,
   EmployeeReferenceDto,
-  EmployeeReferencesDto,
-  EmploymentRecordDto,
   ManagerAssignmentDto,
   EmployeeListQueryDto,
   UserLinkDto,
   UpdateEmployeeDto,
 } from './employees.dto';
+import {
+  NativeCompensationDto,
+  NativeEmergencyContactDto,
+  NativeEmployeeBankAccountDto,
+  NativeEmployeePersonalProfileDto,
+  NativeEmployeeReferencesDto,
+  NativeEmploymentRecordDto,
+} from './employees-native.dto';
 import { ConflictError } from '../../common/errors/domain-error';
 import { EmployeesService } from './employees.service';
 import { EmployeeDetailService } from './employee-detail.service';
@@ -138,7 +140,7 @@ export class EmployeesController {
   @Post(':employeeId/emergency-contacts') addContact(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmergencyContactDto,
+    @Body() body: NativeEmergencyContactDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -158,7 +160,7 @@ export class EmployeesController {
   @Put(':employeeId/personal-profile') updatePersonalProfile(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmployeePersonalProfileDto,
+    @Body() body: NativeEmployeePersonalProfileDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts.native(request.user.userId, organizationId).then((context) =>
@@ -181,7 +183,7 @@ export class EmployeesController {
   @Post(':employeeId/bank-accounts') addBankAccount(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmployeeBankAccountDto,
+    @Body() body: NativeEmployeeBankAccountDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -192,7 +194,7 @@ export class EmployeesController {
   @Put(':employeeId/bank-accounts/primary') replacePrimaryBankAccount(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmployeeBankAccountDto,
+    @Body() body: NativeEmployeeBankAccountDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -224,7 +226,7 @@ export class EmployeesController {
   @Put(':employeeId/references') replaceReferences(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmployeeReferencesDto,
+    @Body() body: NativeEmployeeReferencesDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -244,7 +246,7 @@ export class EmployeesController {
   @Post(':employeeId/employment-records') employment(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmploymentRecordDto,
+    @Body() body: NativeEmploymentRecordDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -254,7 +256,7 @@ export class EmployeesController {
   @Post(':employeeId/compensation') compensation(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: CompensationDto,
+    @Body() body: NativeCompensationDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

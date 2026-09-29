@@ -177,7 +177,7 @@ export function buildCommandItems({
       },
       {
         id: 'act-leave',
-        title: 'Apply for Leave / Time Off',
+        title: 'Apply for leave',
         subtitle: 'Submit casual or sick leave request',
         category: 'Actions',
         icon: (
@@ -216,7 +216,7 @@ export function buildCommandItems({
       },
       {
         id: 'nav-attendance',
-        title: 'Attendance (Side Nav)',
+        title: 'Attendance',
         subtitle: 'Daily check-in timeline and attendance calendar',
         category: 'Navigation',
         icon: <span className="text-muted-foreground">⏱️</span>,
@@ -228,7 +228,7 @@ export function buildCommandItems({
       },
       {
         id: 'nav-time-off',
-        title: 'Time Off / Leave (Side Nav)',
+        title: 'Leave',
         subtitle: 'Personal leave balances & applications',
         category: 'Navigation',
         icon: <span className="text-muted-foreground">🌴</span>,

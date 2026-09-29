@@ -1,10 +1,11 @@
 'use client';
 
-import { formatDate } from '@smarteam/contracts';
+import { formatDate, LIMITS } from '@smarteam/contracts';
 import React, { useState } from 'react';
 import { Badge, Button, Label, Textarea } from '@smarteam/ui';
 import type { AttendanceCorrection } from '@smarteam/contracts';
 import type { AttendanceAdminState } from '../../hooks/use-attendance-admin';
+import { statusLabel } from '../../lib/status-label';
 
 /**
  * The correction queue, and the approve/reject action.
@@ -83,12 +84,14 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
                       className="mt-1 text-[11px] text-muted-foreground"
                       key={`${correction.id}-${approval.stepNumber}`}
                     >
-                      Step {approval.stepNumber}: {approval.status}
+                      Step {approval.stepNumber}: {statusLabel(approval.status)}
                       {approval.comment ? ` — ${approval.comment}` : ''}
                     </p>
                   ))}
                 </div>
-                <Badge variant={isPending ? 'outline' : 'secondary'}>{correction.status}</Badge>
+                <Badge variant={isPending ? 'outline' : 'secondary'}>
+                  {statusLabel(correction.status)}
+                </Badge>
               </div>
 
               {isPending && admin.canDecide && (
@@ -99,6 +102,7 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
                         Decision comment
                       </Label>
                       <Textarea
+                        maxLength={LIMITS.reason}
                         disabled={admin.saving}
                         id={`decision-${correction.id}`}
                         onChange={(event) => setComment(event.target.value)}

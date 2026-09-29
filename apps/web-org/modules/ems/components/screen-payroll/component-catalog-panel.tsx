@@ -17,6 +17,7 @@ import {
 } from '@smarteam/ui';
 import type { PayComponentDefinition } from '@smarteam/contracts';
 import type { CompensationState } from '../../hooks/use-compensation';
+import { LIMITS, codeProblem, textProblem } from '@smarteam/contracts';
 
 /**
  * The organisation's pay-component catalogue.
@@ -198,6 +199,8 @@ function CreateComponentDialog({
                 Code
               </Label>
               <Input
+                maxLength={LIMITS.code}
+                problem={codeProblem(code, 'Component code', LIMITS.code)}
                 disabled={compensation.saving}
                 id="component-code"
                 onChange={(event) => setCode(event.target.value)}
@@ -209,6 +212,8 @@ function CreateComponentDialog({
                 Name
               </Label>
               <Input
+                maxLength={LIMITS.title}
+                problem={textProblem(name, 'Component name', LIMITS.title, 2)}
                 disabled={compensation.saving}
                 id="component-name"
                 onChange={(event) => setName(event.target.value)}

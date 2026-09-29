@@ -82,7 +82,9 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
                 <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {tile.label}
                 </dt>
-                <dd className="mt-0.5 font-mono text-xs font-bold text-foreground">{tile.value}</dd>
+                <dd className="mt-0.5 tabular-nums text-xs font-bold text-foreground">
+                  {tile.value}
+                </dd>
               </div>
             ))}
           </dl>
@@ -108,13 +110,11 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-2 text-right font-mono tabular-nums">
-                      {formatMoney(item.gross)}
-                    </td>
-                    <td className="px-4 py-2 text-right font-mono tabular-nums">
+                    <td className="px-4 py-2 text-right tabular-nums">{formatMoney(item.gross)}</td>
+                    <td className="px-4 py-2 text-right tabular-nums">
                       {formatMoney(item.deductions)}
                     </td>
-                    <td className="px-4 py-2 text-right font-mono font-semibold tabular-nums">
+                    <td className="px-4 py-2 text-right font-semibold tabular-nums">
                       {formatMoney(item.net)}
                     </td>
                   </tr>

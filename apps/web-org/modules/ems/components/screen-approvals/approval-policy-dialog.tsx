@@ -14,7 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import { approvalDomainLabel, type ApprovalDomain, type ApprovalPolicy } from '@smarteam/contracts';
+import {
+  approvalDomainLabel,
+  type ApprovalDomain,
+  type ApprovalPolicy,
+  LIMITS,
+  codeProblem,
+  textProblem,
+} from '@smarteam/contracts';
 import type { ApprovalPolicyState } from '../../hooks/use-approval-policies';
 import { useRoles } from '../../hooks/use-roles';
 import { useSession } from '../../hooks/auth-context';
@@ -156,6 +163,8 @@ export function ApprovalPolicyDialog({
                 Name
               </Label>
               <Input
+                maxLength={LIMITS.title}
+                problem={textProblem(name, 'Name', LIMITS.title, 2)}
                 disabled={policies.saving}
                 id="policy-name"
                 onChange={(event) => setName(event.target.value)}
@@ -168,6 +177,8 @@ export function ApprovalPolicyDialog({
                 Code
               </Label>
               <Input
+                maxLength={LIMITS.code}
+                problem={codeProblem(code, 'Code', LIMITS.code)}
                 disabled={policies.saving}
                 id="policy-code"
                 onChange={(event) => setCode(event.target.value)}

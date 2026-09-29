@@ -53,9 +53,7 @@ export function Screen7TimeOff() {
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6">
         {/* Mobile View: Top action bar with page label on left and Apply button on top right */}
         <div className="flex items-center justify-between pt-2.5 pb-1 sm:hidden">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Leave Requests
-          </span>
+          <span className="text-sm font-bold text-foreground">Leave</span>
           <Button
             disabled={!leave.canWrite || leave.hasNoEmployeeRecord}
             onClick={() => setIsApplyOpen(true)}

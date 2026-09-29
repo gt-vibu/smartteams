@@ -55,7 +55,9 @@ export function TeamCard({ team, onClick }: { team: TeamView; onClick: () => voi
             <p className="truncate text-xs text-muted-foreground">{team.branchName}</p>
           )}
         </div>
-        <Badge variant="outline">{team.activeMembers.length}</Badge>
+        <Badge variant="outline">
+          {team.activeMembers.length} {team.activeMembers.length === 1 ? 'member' : 'members'}
+        </Badge>
       </div>
 
       {team.team.description && (
@@ -101,12 +103,15 @@ export function TeamTable({
                 {team.team.name}
               </td>
               <td data-label="Branch" className="px-4 py-2.5 text-muted-foreground">
-                {team.branchName ?? '--'}
+                {team.branchName ?? '—'}
               </td>
               <td data-label="Lead" className="px-4 py-2.5 text-muted-foreground">
-                {team.lead?.displayName ?? '--'}
+                {team.lead?.displayName ?? '—'}
               </td>
-              <td data-label="Members" className="px-4 py-2.5 font-mono font-bold text-foreground">
+              <td
+                data-label="Members"
+                className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
+              >
                 {team.activeMembers.length}
               </td>
             </tr>

@@ -3,9 +3,10 @@ import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import type { NativeRequestUser } from '../auth/jwt.guard';
 import { NativeJwtGuard } from '../auth/jwt.guard';
-import { ComplianceQueryDto, StatutoryProfileDto, StatutoryRecordWriteDto } from './compliance.dto';
+import { ComplianceQueryDto } from './compliance.dto';
 import { ComplianceService } from './compliance.service';
 
+import { NativeStatutoryProfileDto, NativeStatutoryRecordWriteDto } from './compliance-native.dto';
 @Controller('v1/organizations/:organizationId/compliance')
 @UseGuards(NativeJwtGuard)
 export class ComplianceController {
@@ -29,7 +30,7 @@ export class ComplianceController {
   upsertProfile(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: StatutoryProfileDto,
+    @Body() body: NativeStatutoryProfileDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -53,7 +54,7 @@ export class ComplianceController {
   upsertRecord(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: StatutoryRecordWriteDto,
+    @Body() body: NativeStatutoryRecordWriteDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

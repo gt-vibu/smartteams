@@ -12,8 +12,9 @@ interface OverviewDashboardTabProps {
 }
 
 export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabProps) {
-  const { persona, hasPermission } = useAuth();
-  const isAdmin = hasPermission('*') || persona.badge.includes('Admin');
+  // Links follow the same access rule as the navigation, so Home never offers a screen the
+  // workspace would refuse (an HR role reaches Approvals from the HR workspace, not from here).
+  const { canAccessModule } = useAuth();
   const { days: records } = useAttendance();
   const { summary } = useTimesheet();
   const { balances, types } = useLeave();
@@ -62,7 +63,7 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
               Timesheet
             </span>
           </div>
-          <div className="text-xl font-bold font-mono text-foreground mt-2">
+          <div className="text-xl font-bold tabular-nums text-foreground mt-2">
             {summary.totalLabel}
           </div>
           <p className="text-[11px] text-muted-foreground mt-1">
@@ -112,49 +113,32 @@ export function OverviewDashboardTab({ onNavigateModule }: OverviewDashboardTabP
 
         {/* Quick Navigate Actions */}
         <div className="lg:col-span-5 bg-card rounded-[6px] border border-border p-5 shadow-xs space-y-3">
-          <h4 className="text-xs font-bold text-foreground">Quick Module Navigation</h4>
+          <h4 className="text-xs font-bold text-foreground">Quick links</h4>
           <div className="space-y-2 text-xs">
-            <Button
-              onClick={() => onNavigateModule?.('attendance', 'timeline')}
-              className="w-full p-2.5 bg-muted/40 hover:bg-sky-50 border border-border hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
-            >
-              <div className="font-semibold text-foreground">View Attendance Timeline</div>
-              <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-            </Button>
-            <Button
-              onClick={() => onNavigateModule?.('attendance', 'calendar')}
-              className="w-full p-2.5 bg-muted/40 hover:bg-sky-50 border border-border hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
-            >
-              <div className="font-semibold text-foreground">Open Shift & Month Calendar</div>
-              <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-            </Button>
-            <Button
-              onClick={() => onNavigateModule?.('timesheet')}
-              className="w-full p-2.5 bg-muted/40 hover:bg-sky-50 border border-border hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
-            >
-              <div className="font-semibold text-foreground">Log & Submit Timesheets</div>
-              <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-            </Button>
-            {isAdmin ? (
-              <Button
-                onClick={() => onNavigateModule?.('approvals')}
-                className="w-full p-2.5 bg-muted/40 hover:bg-sky-50 border border-border hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
-              >
-                <div className="font-semibold text-foreground">Review Managerial Approvals</div>
-                <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={() => onNavigateModule?.('time-off')}
-                className="w-full p-2.5 bg-muted/40 hover:bg-sky-50 border border-border hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
-              >
-                <div className="font-semibold text-foreground">Apply for Time Off / Leave</div>
-                <span className="text-sky-600 font-bold text-[11px]">Go →</span>
-              </Button>
-            )}
+            {quickLinks
+              .filter((link) => canAccessModule(link.module))
+              .map((link) => (
+                <Button
+                  key={link.label}
+                  onClick={() => onNavigateModule?.(link.module, link.view)}
+                  className="w-full p-2.5 bg-muted/40 hover:bg-sky-50 border border-border hover:border-sky-300 rounded text-left flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <div className="font-semibold text-foreground">{link.label}</div>
+                  <span className="text-sky-600 font-bold text-[11px]">Go →</span>
+                </Button>
+              ))}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+const quickLinks: ReadonlyArray<{ label: string; module: string; view?: 'timeline' | 'calendar' }> =
+  [
+    { label: 'Attendance timeline', module: 'attendance', view: 'timeline' },
+    { label: 'Attendance calendar', module: 'attendance', view: 'calendar' },
+    { label: 'Log time', module: 'timesheet' },
+    { label: 'Apply for leave', module: 'time-off' },
+    { label: 'Approvals', module: 'approvals' },
+  ];

@@ -11,6 +11,7 @@ import {
   Input,
   Label,
 } from '@smarteam/ui';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 
 interface QuickAddJobDialogProps {
   isOpen: boolean;
@@ -61,9 +62,11 @@ export function QuickAddJobDialog({ isOpen, onClose, onAdd }: QuickAddJobDialogP
         <form onSubmit={handleSubmit} className="space-y-4 p-5">
           <div className="space-y-1.5">
             <Label htmlFor="quick-job-name" className="text-xs font-medium">
-              Job Name <span className="text-destructive">*</span>
+              Job name <span className="text-destructive">*</span>
             </Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Job name', LIMITS.title, 2)}
               id="quick-job-name"
               placeholder="e.g. API Development, System Architecture"
               value={name}

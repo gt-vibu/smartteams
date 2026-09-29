@@ -5,6 +5,7 @@ import {
   workDateKey,
   type AttendanceCorrection,
   type AttendanceRecord,
+  formatDate,
 } from '@smarteam/contracts';
 import type { HolidayConflictView } from './holiday-conflict-view';
 
@@ -101,7 +102,8 @@ export function toAttendanceDayView(
   return {
     id: record.id,
     workDate: key,
-    dayLabel: date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
+    // "28 Sep": the day and month, as every other date in the app writes them.
+    dayLabel: formatDate(date).split(' ').slice(0, 2).join(' '),
     dayOfWeek: DAY_NAMES[weekday] ?? '',
     dayNumber: date.getDate(),
     isToday: key === options.todayKey,
@@ -184,13 +186,18 @@ export function attendanceTotals(views: readonly AttendanceDayView[]) {
  */
 export function attendanceSummaryStats(views: readonly AttendanceDayView[]) {
   const present = (view: AttendanceDayView) =>
-    view.dayStatus === 'PRESENT' &&
+    ['PRESENT', 'LATE', 'HALF_DAY', 'ON_DUTY'].includes(view.dayStatus) &&
     (!view.holidayConflict || view.holidayConflict.state === 'CONVERTED_TO_WORKING_DAY');
+  // No "payable days" or "on duty" figure: payable days depend on whether each leave was paid,
+  // which payroll decides, and there is no on-duty record. A figure that could disagree with the
+  // payslip, or is always zero, is worse than none.
   return {
-    payableDays: views.filter((view) => present(view) || view.dayStatus === 'WEEKEND').length,
-    presentDays: views.filter(present).length,
-    onDutyDays: 0,
-    paidLeaveDays: views.filter((view) => view.dayStatus === 'LEAVE').length,
+    // A half day counts as half.
+    presentDays: views
+      .filter(present)
+      .reduce((sum, view) => sum + (view.dayStatus === 'HALF_DAY' ? 0.5 : 1), 0),
+    leaveDays: views.filter((view) => ['LEAVE', 'ON_LEAVE'].includes(view.dayStatus)).length,
+    workedMinutes: views.reduce((sum, view) => sum + (view.workedMinutes || 0), 0),
     holidayDays: views.filter(
       (view) => view.dayStatus === 'HOLIDAY' || view.holidayConflict?.state === 'HOLIDAY_KEPT',
     ).length,

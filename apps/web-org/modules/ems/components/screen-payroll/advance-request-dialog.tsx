@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
 import type { AdvanceAllowance } from '../../repositories/payroll.repository';
 import { AllowanceMeter, allowanceBlock, rupees } from './advance-allowance';
+import { LIMITS } from '@smarteam/contracts';
 
 /**
  * Asking for a salary advance.
@@ -104,7 +105,7 @@ export function AdvanceRequestDialog({
                 <input
                   aria-describedby="advance-amount-help"
                   aria-invalid={overLimit || (tried && !entered) || undefined}
-                  className="ml-2 w-full bg-transparent font-mono text-lg font-semibold tabular-nums text-foreground outline-none placeholder:text-muted-foreground/60"
+                  className="ml-2 w-full bg-transparent text-lg font-semibold tabular-nums text-foreground outline-none placeholder:text-muted-foreground/60"
                   disabled={saving}
                   id="advance-amount"
                   inputMode="decimal"
@@ -177,6 +178,7 @@ export function AdvanceRequestDialog({
                 Reason
               </Label>
               <Textarea
+                maxLength={LIMITS.reason}
                 aria-invalid={(tried && !reasonOk) || undefined}
                 disabled={saving}
                 id="advance-reason"

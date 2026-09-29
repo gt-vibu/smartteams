@@ -7,6 +7,7 @@ import {
   formatDate,
   formatFileSize,
   type StoredDocument,
+  LIMITS,
 } from '@smarteam/contracts';
 import { Upload } from 'lucide-react';
 import { useDocuments } from '../../hooks/use-documents';
@@ -162,6 +163,7 @@ export function GroupFilesSection({
               {removing?.id === document.id && (
                 <div className="mt-2 space-y-2 rounded-md border border-border p-2">
                   <Input
+                    maxLength={LIMITS.reason}
                     aria-label="Why this file is being removed"
                     disabled={documents.busy}
                     onChange={(event) => setReason(event.target.value)}

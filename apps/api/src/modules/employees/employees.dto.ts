@@ -15,6 +15,16 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { LIMITS } from '@smarteam/contracts';
+import {
+  IsAadhaar,
+  IsCalendarDate,
+  IsCode,
+  IsEmailAddress,
+  IsPersonName,
+  IsPhoneNumber,
+  yearsFromToday,
+} from '../../common/validation/field-rules';
 import {
   EmployeeStatus,
   EmploymentType,
@@ -24,21 +34,23 @@ import {
 
 export class CreateEmployeeDto {
   /** Optional when `departmentId` names a department with a number series: it is taken from it. */
-  @IsOptional() @IsString() @MinLength(1) employeeNumber?: string;
+  @IsOptional() @IsCode('Employee ID', LIMITS.employeeNumber) employeeNumber?: string;
   @IsOptional() @IsUUID() departmentId?: string;
-  @IsString() @MinLength(1) firstName!: string;
-  @IsOptional() @IsString() middleName?: string;
-  @IsString() @MinLength(1) lastName!: string;
-  @IsOptional() @IsString() preferredName?: string;
-  @IsOptional() @IsString() workEmail?: string;
-  @IsOptional() @IsString() personalEmail?: string;
-  @IsOptional() @IsString() phone?: string;
+  @IsPersonName('First name') firstName!: string;
+  @IsOptional() @IsPersonName('Middle name') middleName?: string;
+  @IsPersonName('Last name') lastName!: string;
+  @IsOptional() @IsPersonName('Preferred name') preferredName?: string;
+  @IsOptional() @IsEmailAddress() workEmail?: string;
+  @IsOptional() @IsEmailAddress() personalEmail?: string;
+  /** A calling code and number; an Indian number is 10 digits starting 6–9. */
+  @IsOptional() @IsPhoneNumber() phone?: string;
   @IsEnum(EmploymentType) employmentType!: EmploymentType;
-  @IsOptional() @IsDateString() dateOfJoining?: string;
+  @IsOptional()
+  @IsCalendarDate('Joining date', { earliest: '1950-01-01', latest: yearsFromToday(1) })
+  dateOfJoining?: string;
   @IsOptional() @IsUUID() primaryBranchId?: string;
   /** Required. Spaces are allowed as printed on the card; the check digit is verified. */
-  @IsString()
-  @Matches(/^[\d\s-]{12,16}$/, { message: 'Enter a 12-digit Aadhaar number' })
+  @IsAadhaar()
   aadhaarNumber!: string;
   /** Set when onboarding will create a login next, so a taken address is refused up front. */
   @IsOptional() @IsBoolean() createLogin?: boolean;
@@ -59,17 +71,20 @@ export class FederatedEmployeeDto {
 }
 
 export class UpdateEmployeeDto {
-  @IsOptional() @IsString() firstName?: string;
-  @IsOptional() @IsString() middleName?: string;
-  @IsOptional() @IsString() lastName?: string;
-  @IsOptional() @IsString() preferredName?: string;
-  @IsOptional() @IsString() workEmail?: string;
-  @IsOptional() @IsString() personalEmail?: string;
-  @IsOptional() @IsString() phone?: string;
+  @IsOptional() @IsPersonName('First name') firstName?: string;
+  @IsOptional() @IsPersonName('Middle name') middleName?: string;
+  @IsOptional() @IsPersonName('Last name') lastName?: string;
+  @IsOptional() @IsPersonName('Preferred name') preferredName?: string;
+  @IsOptional() @IsEmailAddress() workEmail?: string;
+  @IsOptional() @IsEmailAddress() personalEmail?: string;
+  /** A calling code and number; an Indian number is 10 digits starting 6–9. */
+  @IsOptional() @IsPhoneNumber() phone?: string;
   @IsOptional() @IsEnum(EmployeeStatus) status?: EmployeeStatus;
   @IsOptional() @IsUUID() primaryBranchId?: string;
   @IsOptional() @IsEnum(EmploymentType) employmentType?: EmploymentType;
-  @IsOptional() @IsDateString() dateOfJoining?: string;
+  @IsOptional()
+  @IsCalendarDate('Joining date', { earliest: '1950-01-01', latest: yearsFromToday(1) })
+  dateOfJoining?: string;
 }
 
 export class BranchAssignmentDto {
@@ -80,7 +95,7 @@ export class BranchAssignmentDto {
 }
 
 export class EmployeeDeactivationDto {
-  @IsString() @MinLength(10) reason!: string;
+  @IsString() @MinLength(10) @MaxLength(500) reason!: string;
 }
 
 export class EmergencyContactDto {

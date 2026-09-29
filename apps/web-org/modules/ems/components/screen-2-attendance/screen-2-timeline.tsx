@@ -11,7 +11,11 @@ import { AttendanceDetailDrawer } from '../screen-3-attendance-table/attendance-
 import { useAttendance } from '../../hooks/use-attendance';
 import { useAttendanceWeek } from '../../hooks/use-attendance-week';
 import { useMyShift } from '../../hooks/use-my-shift';
-import { attendanceSummaryStats, toTimelineStatus } from '../../services/attendance-view';
+import { useDayContext } from '../../hooks/use-day-context';
+import { attendanceSummaryStats } from '../../services/attendance-view';
+import { datesBetween, dayParts, type ResolvedDayStatus } from '../../services/day-status';
+import { timelineAxis } from '../../services/timeline-axis';
+import type { TimelineDayRecord } from '../../types/attendance-timeline.types';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { PageShell } from '../layout/page-shell';
 
@@ -89,39 +93,94 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
     });
   }, [records]);
 
-  const timelineDays = records.map((r) => ({
-    id: r.id,
-    dayLabel: r.dayLabel,
-    dayOfWeek: r.dayOfWeek,
-    dayNumber: r.dayNumber,
-    isToday: r.isToday,
-    firstInTime: r.firstInTime || undefined,
-    lastOutTime: r.lastOutTime || undefined,
-    workedMinutes: r.workedMinutes,
-    // The open day's total is what has been recorded plus what is still being worked; anything
-    // else leaves the row reading 00:00 next to a running timer on the same screen.
-    inProgressMinutes:
-      r.isToday && isCheckedIn
-        ? r.record.workedMinutes + Math.floor(timerDisplay.totalSeconds / 60)
-        : undefined,
-    // A past day whose last punch is a check-in never had its check-out recorded. It counts no
-    // worked time until a correction supplies one, and the row should say so rather than 00:00.
-    checkOutMissing: !r.isToday && r.record.punches?.at(-1)?.punchType === 'IN',
-    status: toTimelineStatus(r.dayStatus),
-    holidayName: r.holidayName ?? undefined,
-    // A check-in on an approved optional holiday is shown by its review state, not as "Present".
-    holidayConflict: r.holidayConflict
-      ? {
-          label: r.holidayConflict.label,
-          detail: r.holidayConflict.detail,
-          tone: r.holidayConflict.tone,
-        }
-      : undefined,
-    spanStartPercent: r.spanStartPercent ?? undefined,
-    spanEndPercent: r.spanEndPercent ?? undefined,
-  }));
+  // Every day of the week in order, not only the days with a record: a day with none still says
+  // whether it was leave, a holiday, a weekly off, absent or still to come.
+  const dayContext = useDayContext();
+  const byDate = new Map(records.map((record) => [record.workDate, record]));
+  const weekDates = datesBetween(week.window.from, week.window.to);
+  const resolved = new Map(
+    weekDates.map((dateKey) => [dateKey, dayContext.resolve(dateKey, byDate.get(dateKey))]),
+  );
+  const trackStatus = (status: ResolvedDayStatus | undefined): TimelineDayRecord['status'] =>
+    status === 'PRESENT' || status === 'HALF_DAY'
+      ? 'PRESENT'
+      : status === 'LEAVE' ||
+          status === 'HOLIDAY' ||
+          status === 'WEEKEND' ||
+          status === 'ABSENT' ||
+          status === 'UPCOMING'
+        ? status
+        : 'EMPTY';
 
-  const stats = attendanceSummaryStats(records);
+  const timelineDays: TimelineDayRecord[] = weekDates.map((dateKey) => {
+    const r = byDate.get(dateKey);
+    const status = trackStatus(resolved.get(dateKey));
+    const leaveName = dayContext.leaveByDate.get(dateKey);
+    const holidayName = r?.holidayName ?? dayContext.holidayByDate.get(dateKey)?.name;
+    if (!r) {
+      const { dayOfWeek, dayNumber } = dayParts(dateKey);
+      return {
+        id: `day-${dateKey}`,
+        dayLabel: formatDate(dateKey).split(' ').slice(0, 2).join(' '),
+        dayOfWeek,
+        dayNumber,
+        isToday: dateKey === dayContext.todayKey,
+        workedMinutes: 0,
+        status,
+        ...(leaveName ? { leaveName } : {}),
+        ...(holidayName ? { holidayName } : {}),
+      };
+    }
+    return {
+      id: r.id,
+      dayLabel: r.dayLabel,
+      dayOfWeek: r.dayOfWeek,
+      dayNumber: r.dayNumber,
+      isToday: r.isToday,
+      firstInTime: r.firstInTime || undefined,
+      lastOutTime: r.lastOutTime || undefined,
+      workedMinutes: r.workedMinutes,
+      // The open day's total is what has been recorded plus what is still being worked; anything
+      // else leaves the row reading 00:00 next to a running timer on the same screen.
+      inProgressMinutes:
+        r.isToday && isCheckedIn
+          ? r.record.workedMinutes + Math.floor(timerDisplay.totalSeconds / 60)
+          : undefined,
+      // A past day whose last punch is a check-in never had its check-out recorded. It counts no
+      // worked time until a correction supplies one, and the row should say so rather than 00:00.
+      checkOutMissing: !r.isToday && r.record.punches?.at(-1)?.punchType === 'IN',
+      status,
+      ...(leaveName ? { leaveName } : {}),
+      ...(holidayName ? { holidayName } : {}),
+      // A check-in on an approved optional holiday is shown by its review state, not as "Present".
+      holidayConflict: r.holidayConflict
+        ? {
+            label: r.holidayConflict.label,
+            detail: r.holidayConflict.detail,
+            tone: r.holidayConflict.tone,
+          }
+        : undefined,
+      spanStartPercent: r.spanStartPercent ?? undefined,
+      spanEndPercent: r.spanEndPercent ?? undefined,
+    };
+  });
+
+  // The ruler spans the shift with room either side, widened to fit any punch this week.
+  const axis = timelineAxis(
+    shift,
+    records.flatMap((r) =>
+      [r.spanStartPercent, r.spanEndPercent].filter((value): value is number => value != null),
+    ),
+  );
+
+  // Leave, holidays and weekly offs are counted from the whole week, not only recorded days.
+  const counted = [...resolved.values()];
+  const stats = {
+    ...attendanceSummaryStats(records),
+    leaveDays: counted.filter((status) => status === 'LEAVE').length,
+    holidayDays: counted.filter((status) => status === 'HOLIDAY').length,
+    weekendDays: counted.filter((status) => status === 'WEEKEND').length,
+  };
 
   // The form shows it was sent, then closes the drawer itself.
   const handleRegularize = (recordId: string, reason: string, times?: CorrectionTimes) =>
@@ -158,6 +217,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
           <>
             {/* Main Timeline Card */}
             <TimelineTrackView
+              axis={axis}
               days={timelineDays}
               onSelectDay={(dayId) => {
                 const found = tableRows.find((row) => row.id === dayId);

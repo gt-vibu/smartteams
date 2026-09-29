@@ -16,14 +16,25 @@ export function AttendanceSummaryFooter({
 }: AttendanceSummaryFooterProps) {
   const [unitMode, setUnitMode] = useState<'days' | 'hours'>('days');
 
-  const metrics = [
-    { label: 'Payable Days', value: `${stats.payableDays} Days`, color: 'border-l-sky-500' },
-    { label: 'Present', value: `${stats.presentDays} Days`, color: 'border-l-emerald-500' },
-    { label: 'On Duty', value: `${stats.onDutyDays} Day`, color: 'border-l-indigo-500' },
-    { label: 'Paid leave', value: `${stats.paidLeaveDays} Day`, color: 'border-l-amber-500' },
-    { label: 'Holidays', value: `${stats.holidayDays} Day`, color: 'border-l-cyan-500' },
-    { label: 'Weekend', value: `${stats.weekendDays} Days`, color: 'border-l-amber-400' },
-  ];
+  // "1 day", "3 days": one rule for every figure, rather than a unit fixed per tile.
+  const days = (count: number) => `${count} ${count === 1 ? 'day' : 'days'}`;
+  const hm = (minutes: number) => `${Math.floor(minutes / 60)}h ${Math.round(minutes % 60)}m`;
+  const metrics =
+    unitMode === 'days'
+      ? [
+          { label: 'Present', value: days(stats.presentDays), color: 'border-l-emerald-500' },
+          { label: 'Leave', value: days(stats.leaveDays), color: 'border-l-amber-500' },
+          { label: 'Holidays', value: days(stats.holidayDays), color: 'border-l-cyan-500' },
+          { label: 'Weekend', value: days(stats.weekendDays), color: 'border-l-amber-400' },
+        ]
+      : [
+          { label: 'Worked', value: hm(stats.workedMinutes), color: 'border-l-emerald-500' },
+          {
+            label: 'Average a day',
+            value: stats.presentDays ? hm(stats.workedMinutes / stats.presentDays) : '—',
+            color: 'border-l-sky-500',
+          },
+        ];
 
   return (
     <div className="bg-card rounded-[6px] border border-border/90 p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col md:flex-row items-center justify-between gap-4">

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { EmployeeProfile } from '../../types/employee.types';
+import { greetingFor } from '../../utils/formatters';
 
 interface GreetingCardProps {
   employee: EmployeeProfile;
@@ -30,10 +31,8 @@ export function GreetingCard({ employee }: GreetingCardProps) {
         {/* Greeting Message */}
         <div className="min-w-0 flex-1">
           <h1 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug m-0 break-words">
-            Good Afternoon{' '}
-            <span className="text-slate-900 dark:text-white">
-              {employee.firstName} {employee.lastName}
-            </span>
+            {greetingFor(new Date())},{' '}
+            <span className="text-slate-900 dark:text-white">{employee.firstName}</span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
             Have a productive day!

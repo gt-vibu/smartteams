@@ -18,6 +18,8 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import { IsText, IsWholeNumber } from '../../common/validation/field-rules';
 import { AttendanceDayStatus } from '../../generated/prisma/enums';
 import {
   ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
@@ -130,10 +132,10 @@ export class HolidayReviewDecisionDto {
 }
 
 export class WorkLocationDto {
-  @IsString() @MinLength(2) name!: string;
+  @IsText('Location name', LIMITS.title, 2) name!: string;
   @IsNumber() @Min(-90) @Max(90) latitude!: number;
   @IsNumber() @Min(-180) @Max(180) longitude!: number;
-  @IsNumber() @Min(1) radiusMeters!: number;
+  @IsWholeNumber('Radius in metres', 10, 10_000) radiusMeters!: number;
 }
 
 export class AttendancePreferencesDto {

@@ -2,7 +2,13 @@
 
 import React, { useMemo, useState } from 'react';
 import { Button, Input } from '@smarteam/ui';
-import { dateKey, employeeDisplayName, entitlementOf, type Employee } from '@smarteam/contracts';
+import {
+  dateKey,
+  employeeDisplayName,
+  entitlementOf,
+  type Employee,
+  LIMITS,
+} from '@smarteam/contracts';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 
 /**
@@ -71,6 +77,7 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
       <Input
         className="max-w-xs"
         onChange={(event) => setSearch(event.target.value)}
+        aria-label="Search employee"
         placeholder="Search employee"
         value={search}
       />
@@ -116,25 +123,25 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                       </td>
                       <td
                         data-label="Entitled"
-                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
                         {entitlementOf(balance)}
                       </td>
                       <td
                         data-label="Used"
-                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
                         {balance.usedAmount}
                       </td>
                       <td
                         data-label="Pending"
-                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
                         {balance.reservedAmount}
                       </td>
                       <td
                         data-label="Available"
-                        className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                        className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
                       >
                         {balance.availableAmount}
                       </td>
@@ -160,6 +167,9 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                         <td className="px-4 py-3" colSpan={7}>
                           <div className="flex flex-wrap items-center gap-2">
                             <Input
+                              min={-366}
+                              max={366}
+                              step={0.5}
                               aria-label="Days to adjust"
                               className="w-24"
                               disabled={admin.isBusy(
@@ -170,6 +180,7 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                               value={amount}
                             />
                             <Input
+                              maxLength={LIMITS.reason}
                               aria-label="Adjustment reason"
                               className="max-w-sm"
                               disabled={admin.isBusy(

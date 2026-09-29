@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Input,
   SelectContent,
   SelectItem,
   SelectMenu,
@@ -16,7 +15,10 @@ import {
 } from '@smarteam/ui';
 import {
   EMPLOYMENT_TYPE_OPTIONS,
+  emailProblem,
   employeeDisplayName,
+  LIMITS,
+  personNameProblem,
   type Employee,
   type EmployeeDetail,
 } from '@smarteam/contracts';
@@ -31,6 +33,8 @@ import { useEmployees } from '../../hooks/use-workforce';
 import { Field, Fieldset } from '../screen-onboarding/form-fields';
 import { JobTitlePicker } from '../screen-onboarding/job-title-picker';
 import { activeByName, byName } from '../../lib/pickable';
+import { PhoneField, phoneIsValid } from './phone-field';
+import { CheckedInput, optionalProblem } from './checked-input';
 
 const NONE = '__none__';
 
@@ -71,7 +75,22 @@ export function EditEmployeeDialog({
   const set = <K extends keyof EmployeeEditForm>(key: K, value: EmployeeEditForm[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
   const dirty = JSON.stringify(form) !== JSON.stringify(initial);
-  const valid = form.firstName.trim() !== '' && form.lastName.trim() !== '';
+  // Only what was changed is checked, as only that is sent: a record saved under older rules is
+  // not held hostage to a field nobody touched.
+  const changed = (key: keyof EmployeeEditForm) => form[key] !== initial[key];
+  const problems = {
+    firstName: changed('firstName') ? personNameProblem(form.firstName, 'First name') : null,
+    lastName: changed('lastName') ? personNameProblem(form.lastName, 'Last name') : null,
+    workEmail: changed('workEmail') ? optionalProblem(form.workEmail, emailProblem) : null,
+    personalEmail: changed('personalEmail')
+      ? optionalProblem(form.personalEmail, emailProblem)
+      : null,
+  };
+  const valid =
+    form.firstName.trim() !== '' &&
+    form.lastName.trim() !== '' &&
+    (!changed('phone') || phoneIsValid(form.phone)) &&
+    Object.values(problems).every((problem) => problem === null);
   // A manager cannot be the employee themselves.
   const managers = activeByName(
     (employees.data ?? []).filter((candidate) => candidate.id !== employee.id),
@@ -94,29 +113,43 @@ export function EditEmployeeDialog({
         <div className="mt-5 space-y-5">
           <Fieldset legend="Person">
             <Field label="First name" required>
-              <Input onChange={(e) => set('firstName', e.target.value)} value={form.firstName} />
+              <CheckedInput
+                maxLength={LIMITS.personName}
+                onChange={(value) => set('firstName', value)}
+                problem={problems.firstName}
+                value={form.firstName}
+              />
             </Field>
             <Field label="Last name" required>
-              <Input onChange={(e) => set('lastName', e.target.value)} value={form.lastName} />
+              <CheckedInput
+                maxLength={LIMITS.personName}
+                onChange={(value) => set('lastName', value)}
+                problem={problems.lastName}
+                value={form.lastName}
+              />
             </Field>
             <Field label="Work email">
-              <Input
-                onChange={(e) => set('workEmail', e.target.value)}
+              <CheckedInput
+                maxLength={LIMITS.email}
+                onChange={(value) => set('workEmail', value.trim())}
+                problem={problems.workEmail}
                 type="email"
                 value={form.workEmail}
               />
             </Field>
             <Field label="Personal email">
-              <Input
-                onChange={(e) => set('personalEmail', e.target.value)}
+              <CheckedInput
+                maxLength={LIMITS.email}
+                onChange={(value) => set('personalEmail', value.trim())}
+                problem={problems.personalEmail}
                 type="email"
                 value={form.personalEmail}
               />
             </Field>
             <Field label="Phone">
-              <Input
-                inputMode="tel"
-                onChange={(e) => set('phone', e.target.value)}
+              <PhoneField
+                id="edit-phone"
+                onChange={(value) => set('phone', value)}
                 value={form.phone}
               />
             </Field>

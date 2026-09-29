@@ -66,9 +66,7 @@ export function AllowanceMeter({
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {asked > 0 ? 'Left after this request' : 'Available to request'}
           </p>
-          <p className="mt-0.5 font-mono text-2xl font-bold tabular-nums text-foreground">
-            {rupees(left)}
-          </p>
+          <p className="mt-0.5 text-2xl font-bold tabular-nums text-foreground">{rupees(left)}</p>
         </div>
         <p className="pb-1 text-right text-xs text-muted-foreground">
           of <span className="font-semibold text-foreground">{rupees(limit)}</span> limit
@@ -134,9 +132,7 @@ export function AllowanceSummary({ allowance }: { allowance: AdvanceAllowance })
           <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
             {tile.label}
           </p>
-          <p
-            className={`mt-0.5 font-mono text-sm font-bold tabular-nums sm:text-base ${tile.tone}`}
-          >
+          <p className={`mt-0.5 text-sm font-bold tabular-nums sm:text-base ${tile.tone}`}>
             {rupees(tile.value)}
           </p>
         </div>

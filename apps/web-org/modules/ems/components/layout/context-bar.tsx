@@ -4,24 +4,39 @@ import React from 'react';
 import { Button } from '@smarteam/ui';
 import { useAuth } from '../../hooks/use-auth';
 import { useMyTeams } from '../../hooks/use-teams';
+import { useScreenTab } from '../../hooks/use-screen-tab';
 import { workspaceTitle } from '../../services/authorization.policy';
 
-/** The breadcrumb name of each admin module; a module missing here showed as "Files Vault". */
+/** The breadcrumb name of each admin module: the same word as its menu item. */
 const ORGANIZATION_MODULE_LABELS: Record<string, string> = {
   employees: 'Employees',
   onboarding: 'Onboarding',
-  'time-off': 'Leave Operations',
+  'time-off': 'Leave',
   attendance: 'Attendance',
-  timesheet: 'Time Logs',
-  teams: 'Teams & Squads',
+  timesheet: 'Timesheet',
+  teams: 'Teams',
   projects: 'Projects',
   payroll: 'Payroll',
   shifts: 'Shifts',
   holidays: 'Holidays',
   approvals: 'Approvals',
-  files: 'Files Vault',
+  files: 'Files',
   reports: 'Reports',
 };
+
+/** The Organization screen's sections, as its tab bar names them. */
+const ORGANIZATION_SECTIONS: Record<string, string> = {
+  overview: 'Overview',
+  people: 'People',
+  departments: 'Departments',
+  lists: 'Lists',
+  reporting: 'Reporting',
+  branches: 'Branches',
+  access: 'Access',
+  profile: 'Profile',
+};
+
+const SECTION_IDS = Object.keys(ORGANIZATION_SECTIONS);
 
 interface ContextBarProps {
   activeSpace: string;
@@ -35,32 +50,32 @@ interface ContextBarProps {
 export function ContextBar({
   activeSpace,
   activeModule,
-  attendanceViewMode,
-  orgActiveTab,
   onNavigateSpace,
   onNavigateModule,
 }: ContextBarProps) {
   const { persona, workspaceContext } = useAuth();
   const { primaryTeam } = useMyTeams();
+  // The Organization screen's section, read from the URL it keeps it in, so the path matches.
+  const [orgSection] = useScreenTab('orgSection', SECTION_IDS, 'overview');
 
   const getModuleLabel = (mod: string) => {
     switch (mod) {
       case 'home':
         return 'Overview';
       case 'attendance':
-        return `Attendance (${attendanceViewMode === 'timeline' ? 'Timeline' : attendanceViewMode === 'table' ? 'Table View' : 'Calendar'})`;
+        return 'Attendance';
       case 'timesheet':
-        return 'Timesheet & Time Tracker';
+        return 'Timesheet';
       case 'time-off':
-        return 'Time Off & Leave Balances';
+        return 'Leave';
       case 'projects':
-        return 'Projects & Work Allocations';
+        return 'Projects';
       case 'payroll':
-        return 'Payroll & Payslips';
+        return 'Payroll';
       case 'approvals':
-        return 'Managerial Approvals';
+        return 'Approvals';
       case 'files':
-        return 'Files & Documents Vault';
+        return 'Files';
       default:
         return mod.charAt(0).toUpperCase() + mod.slice(1);
     }
@@ -110,7 +125,7 @@ export function ContextBar({
           <>
             <span className="text-muted-foreground/50">/</span>
             <span className="text-foreground font-semibold truncate">
-              {primaryTeam ? primaryTeam.name : 'Assigned Squads'}
+              {primaryTeam ? primaryTeam.name : 'My team'}
             </span>
           </>
         )}
@@ -122,7 +137,7 @@ export function ContextBar({
             <span className="text-foreground font-semibold truncate">
               {activeModule && activeModule !== 'home'
                 ? (ORGANIZATION_MODULE_LABELS[activeModule] ?? activeModule)
-                : orgActiveTab || 'Overview'}
+                : (ORGANIZATION_SECTIONS[orgSection] ?? 'Overview')}
             </span>
           </>
         )}

@@ -132,6 +132,7 @@ export function AssignEmployeeModal({
           <Input
             id="assignment-search"
             onChange={(event) => setQuery(event.target.value)}
+            aria-label="Search teams and projects"
             placeholder="Search teams and projects"
             value={query}
           />

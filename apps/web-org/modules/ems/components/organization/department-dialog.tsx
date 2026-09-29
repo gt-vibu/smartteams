@@ -155,6 +155,7 @@ export function DepartmentDialog({
               <Input
                 id="department-search"
                 onChange={(event) => setSearch(event.target.value)}
+                aria-label="Search by name or number"
                 placeholder="Search by name or number"
                 value={search}
               />

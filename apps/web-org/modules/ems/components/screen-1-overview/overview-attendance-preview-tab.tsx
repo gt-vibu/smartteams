@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { formatDate } from '@smarteam/contracts';
 import React from 'react';
 import { useAttendance } from '../../hooks/use-attendance';
+import { statusLabel } from '../../lib/status-label';
 
 export function OverviewAttendancePreviewTab() {
   const { days: records } = useAttendance();
@@ -65,22 +66,28 @@ export function OverviewAttendancePreviewTab() {
               <TableRow key={r.id} className="hover:bg-muted/40 transition-colors">
                 <TableCell
                   data-cell="primary"
-                  className="py-2.5 px-4 font-mono font-semibold text-foreground"
+                  className="py-2.5 px-4 tabular-nums font-semibold text-foreground"
                 >
                   {formatDate(r.workDate)}
                 </TableCell>
                 <TableCell data-label="Day" className="py-2.5 px-3 text-muted-foreground">
                   {r.dayOfWeek}
                 </TableCell>
-                <TableCell data-label="First in" className="py-2.5 px-3 font-mono text-foreground">
+                <TableCell
+                  data-label="First in"
+                  className="py-2.5 px-3 tabular-nums text-foreground"
+                >
                   {r.firstInTime || '—'}
                 </TableCell>
-                <TableCell data-label="Last out" className="py-2.5 px-3 font-mono text-foreground">
+                <TableCell
+                  data-label="Last out"
+                  className="py-2.5 px-3 tabular-nums text-foreground"
+                >
                   {r.lastOutTime || '—'}
                 </TableCell>
                 <TableCell
                   data-label="Payable hours"
-                  className="py-2.5 px-3 font-bold text-foreground font-mono"
+                  className="py-2.5 px-3 font-bold text-foreground tabular-nums"
                 >
                   {r.workedLabel}
                 </TableCell>
@@ -100,7 +107,7 @@ export function OverviewAttendancePreviewTab() {
                             : 'bg-muted text-muted-foreground border-border'
                     }`}
                   >
-                    {r.dayStatus}
+                    {statusLabel(r.dayStatus)}
                   </span>
                 </TableCell>
               </TableRow>

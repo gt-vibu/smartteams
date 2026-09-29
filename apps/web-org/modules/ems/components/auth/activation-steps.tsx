@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import type { AccessCodePreview } from '@smarteam/contracts';
 import { Button, Input } from '@smarteam/ui';
+import { PASSWORD_MIN_LENGTH, passwordProblem } from '@smarteam/contracts';
 
 const FIELD =
   'w-full rounded-lg border border-input bg-input-surface px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none';
@@ -82,9 +83,10 @@ export function CredentialsStep({
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
 
-  const tooShort = password.length > 0 && password.length < 12;
+  const tooShort = password.length > 0 && passwordProblem(password) !== null;
   const mismatched = confirm.length > 0 && confirm !== password;
-  const ready = email.trim().length > 0 && password.length >= 12 && confirm === password;
+  const ready =
+    email.trim().length > 0 && passwordProblem(password) === null && confirm === password;
 
   return (
     <form
@@ -137,7 +139,8 @@ export function CredentialsStep({
         <p
           className={`mt-1.5 text-[11px] ${tooShort ? 'text-destructive' : 'text-muted-foreground'}`}
         >
-          At least 12 characters.
+          {(password && passwordProblem(password)) ||
+            `At least ${PASSWORD_MIN_LENGTH} characters, and not a common password.`}
         </p>
       </div>
 

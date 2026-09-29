@@ -16,18 +16,20 @@ import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   EmployeePayrollPolicyDto,
   PayrollListQueryDto,
-  PayrollPaymentDto,
-  PayrollPolicyDto,
   PayrollPreviewDto,
   SalaryProfilePreviewDto,
-  SalaryAdvanceDecisionDto,
   SalaryAdvanceDto,
   SalaryProfileDto,
-  StatutoryRuleDto,
 } from './payroll.dto';
 import { PayrollPolicyService } from './payroll-policy.service';
 import { PayrollPreviewService } from './payroll-preview.service';
 
+import {
+  NativePayrollPaymentDto,
+  NativePayrollPolicyDto,
+  NativeSalaryAdvanceDecisionDto,
+  NativeStatutoryRuleDto,
+} from './payroll-native.dto';
 @Controller('v1/organizations/:organizationId/payroll')
 @UseGuards(NativeJwtGuard)
 export class PayrollPolicyController {
@@ -48,7 +50,7 @@ export class PayrollPolicyController {
 
   @Put('policy') savePolicy(
     @Param('organizationId') organizationId: string,
-    @Body() body: PayrollPolicyDto,
+    @Body() body: NativePayrollPolicyDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -77,7 +79,7 @@ export class PayrollPolicyController {
 
   @Post('statutory-rules') saveStatutoryRule(
     @Param('organizationId') organizationId: string,
-    @Body() body: StatutoryRuleDto,
+    @Body() body: NativeStatutoryRuleDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -186,7 +188,7 @@ export class PayrollPolicyController {
   @Post('advances/:advanceId/decision') decideAdvance(
     @Param('organizationId') organizationId: string,
     @Param('advanceId') advanceId: string,
-    @Body() body: SalaryAdvanceDecisionDto,
+    @Body() body: NativeSalaryAdvanceDecisionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -211,7 +213,7 @@ export class PayrollPolicyController {
   @Post('payments/:lineItemId/paid') markPaid(
     @Param('organizationId') organizationId: string,
     @Param('lineItemId') lineItemId: string,
-    @Body() body: PayrollPaymentDto,
+    @Body() body: NativePayrollPaymentDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

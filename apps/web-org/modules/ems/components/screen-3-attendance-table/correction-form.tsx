@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button, Input, Label, Textarea } from '@smarteam/ui';
-import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
+import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH, LIMITS } from '@smarteam/contracts';
 
 /** `HH:mm` of an instant in the viewer's own time, as a time input holds it. */
 const clock = (iso: string | undefined) => {
@@ -67,7 +67,11 @@ export function CorrectionForm({
       setTimeout(onDone, 1000);
     } catch (caught) {
       // The form stays as it was, so the request can be corrected and sent again.
-      setError(caught instanceof Error ? caught.message : 'The correction could not be submitted.');
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'The regularization request could not be submitted.',
+      );
     } finally {
       setSaving(false);
     }
@@ -114,7 +118,8 @@ export function CorrectionForm({
         </p>
       )}
       <Textarea
-        aria-label="Reason for the correction"
+        maxLength={LIMITS.reason}
+        aria-label="Reason for regularization"
         className="bg-muted/40 focus:bg-card"
         onChange={(event) => setReason(event.target.value)}
         placeholder={`Why it should change (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`}
@@ -132,7 +137,7 @@ export function CorrectionForm({
         onClick={() => void submit()}
         type="button"
       >
-        {saving ? 'Submitting…' : 'Submit Correction Request'}
+        {saving ? 'Submitting…' : 'Submit regularization request'}
       </Button>
     </div>
   );

@@ -32,7 +32,7 @@ export function ProjectHoursCard() {
 
   return (
     <div className="lg:col-span-7 bg-card rounded-[6px] border border-border p-5 shadow-xs space-y-4">
-      <h4 className="text-xs font-bold text-foreground">Project Hours Distribution</h4>
+      <h4 className="text-xs font-bold text-foreground">Project hours</h4>
       {rows.length === 0 ? (
         <p className="text-xs text-muted-foreground">
           {loading ? 'Loading…' : 'No time logged on this timesheet yet.'}

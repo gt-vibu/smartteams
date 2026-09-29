@@ -164,7 +164,7 @@ export function CompensationHeaderCard({
             <span>Annual CTC</span>
             <TrendingUp className="h-3.5 w-3.5 text-primary/70" />
           </div>
-          <div className="mt-1 font-mono text-base sm:text-lg font-bold tracking-tight text-foreground truncate">
+          <div className="mt-1 tabular-nums text-base sm:text-lg font-bold tracking-tight text-foreground truncate">
             {formatMoney(annualCtc)}
           </div>
           <p className="mt-0.5 text-[10px] text-muted-foreground truncate">
@@ -178,7 +178,7 @@ export function CompensationHeaderCard({
             <span>Monthly CTC</span>
             <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
           </div>
-          <div className="mt-1 font-mono text-base sm:text-lg font-bold text-foreground truncate">
+          <div className="mt-1 tabular-nums text-base sm:text-lg font-bold text-foreground truncate">
             {formatMoney(monthlyCtc)}
           </div>
           <p className="mt-0.5 text-[10px] text-muted-foreground truncate">
@@ -192,7 +192,7 @@ export function CompensationHeaderCard({
             <span>Monthly Gross</span>
             <DollarSign className="h-3.5 w-3.5 text-muted-foreground/70" />
           </div>
-          <div className="mt-1 font-mono text-base sm:text-lg font-bold text-foreground truncate">
+          <div className="mt-1 tabular-nums text-base sm:text-lg font-bold text-foreground truncate">
             {formatMoney(monthlyGross)}
           </div>
           <p className="mt-0.5 text-[10px] text-muted-foreground truncate">Basic + Allowances</p>
@@ -204,7 +204,7 @@ export function CompensationHeaderCard({
             <span>Net Take-Home (Est.)</span>
             <Wallet className="h-3.5 w-3.5 text-emerald-500/70" />
           </div>
-          <div className="mt-1 font-mono text-base sm:text-lg font-bold text-foreground truncate">
+          <div className="mt-1 tabular-nums text-base sm:text-lg font-bold text-foreground truncate">
             {formatMoney(monthlyNetPay)}
           </div>
           <p className="mt-0.5 text-[10px] text-muted-foreground truncate">

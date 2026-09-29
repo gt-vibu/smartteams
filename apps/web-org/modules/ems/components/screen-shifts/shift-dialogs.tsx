@@ -21,6 +21,7 @@ import type { Shift } from '@smarteam/contracts';
 import type { ShiftsState } from '../../hooks/use-shifts';
 import { useEmployees } from '../../hooks/use-workforce';
 import { activeByName } from '../../lib/pickable';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 
 const WEEKDAYS = [
   { value: 1, label: 'Mon' },
@@ -49,6 +50,7 @@ export function ShiftDialog({
   const [startsAt, setStartsAt] = useState('09:00');
   const [endsAt, setEndsAt] = useState('18:00');
   const [breakMinutes, setBreakMinutes] = useState('60');
+  const [problem, setProblem] = useState('');
 
   useEffect(() => {
     if (!open) return;
@@ -57,11 +59,16 @@ export function ShiftDialog({
     setStartsAt(shift ? shift.startsAt.slice(0, 5) : '09:00');
     setEndsAt(shift ? shift.endsAt.slice(0, 5) : '18:00');
     setBreakMinutes(String(shift?.breakMinutes ?? 60));
+    setProblem('');
   }, [open, shift]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!name.trim() || daysOfWeek.length === 0) return;
+    if (!name.trim() || daysOfWeek.length === 0) {
+      setProblem(!name.trim() ? 'Enter a shift name.' : 'Choose at least one working day.');
+      return;
+    }
+    setProblem('');
     // A shift ending before it starts runs past midnight; the backend needs that stated.
     const crossesMidnight = endsAt <= startsAt;
     const input = {
@@ -87,6 +94,8 @@ export function ShiftDialog({
                 Name
               </Label>
               <Input
+                maxLength={LIMITS.title}
+                problem={textProblem(name, 'Shift name', LIMITS.title, 2)}
                 disabled={shifts.saving}
                 id="shift-name"
                 onChange={(event) => setName(event.target.value)}
@@ -152,6 +161,9 @@ export function ShiftDialog({
                 Break (min)
               </Label>
               <Input
+                min={0}
+                max={720}
+                step={1}
                 disabled={shifts.saving}
                 id="shift-break"
                 inputMode="numeric"
@@ -168,9 +180,9 @@ export function ShiftDialog({
             </p>
           )}
 
-          {shifts.saveError && (
+          {(problem || shifts.saveError) && (
             <p className="text-xs text-destructive" role="alert">
-              {shifts.saveError}
+              {problem || shifts.saveError}
             </p>
           )}
 
@@ -184,7 +196,7 @@ export function ShiftDialog({
               Cancel
             </Button>
             <Button disabled={shifts.saving} type="submit">
-              {shifts.saving ? 'Saving...' : 'Save'}
+              {shifts.saving ? 'Saving…' : 'Save'}
             </Button>
           </div>
         </form>
@@ -329,12 +341,13 @@ export function RetireShiftDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-md">
-        <DialogTitle>Retire {shift?.name ?? 'shift'}</DialogTitle>
+        <DialogTitle>Deactivate {shift?.name ?? 'shift'}</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <Label className="block" htmlFor="retire-reason">
             Reason
           </Label>
           <Textarea
+            maxLength={LIMITS.reason}
             disabled={shifts.saving}
             id="retire-reason"
             onChange={(event) => setReason(event.target.value)}
@@ -355,7 +368,7 @@ export function RetireShiftDialog({
               Cancel
             </Button>
             <Button disabled={shifts.saving || reason.trim().length < 2} type="submit">
-              {shifts.saving ? 'Retiring...' : 'Retire'}
+              {shifts.saving ? 'Deactivating…' : 'Deactivate'}
             </Button>
           </div>
         </form>

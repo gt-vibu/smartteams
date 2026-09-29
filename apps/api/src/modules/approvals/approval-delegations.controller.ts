@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
-import { IsDateString, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { IsCalendarDate, daysFromToday, yearsFromToday } from '../../common/validation/field-rules';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { ApprovalDelegationsService } from './approval-delegations.service';
@@ -9,8 +10,10 @@ export class ApprovalDelegationDto {
   @IsUUID() delegateEmployeeId!: string;
   /** Administrators only: the person away, when setting cover up for someone else. */
   @IsOptional() @IsUUID() delegatorEmployeeId?: string;
-  @IsDateString() startsOn!: string;
-  @IsDateString() endsOn!: string;
+  @IsCalendarDate('Start date', { earliest: daysFromToday(-1), latest: yearsFromToday(1) })
+  startsOn!: string;
+  @IsCalendarDate('End date', { earliest: daysFromToday(-1), latest: yearsFromToday(1) })
+  endsOn!: string;
   @IsOptional() @IsString() @MaxLength(200) reason?: string;
 }
 

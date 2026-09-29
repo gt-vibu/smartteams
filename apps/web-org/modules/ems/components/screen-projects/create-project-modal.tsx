@@ -19,6 +19,7 @@ import {
 } from '@smarteam/ui';
 import type { CreateProjectInput } from '../../repositories/teams-projects.repository';
 import { EmployeeCombobox } from '../common/employee-combobox';
+import { LIMITS, codeProblem, textProblem } from '@smarteam/contracts';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -136,6 +137,8 @@ export function CreateProjectModal({
                 Code (optional)
               </Label>
               <Input
+                maxLength={LIMITS.code}
+                problem={codeProblem(code, 'Project code', LIMITS.code)}
                 disabled={saving}
                 id="project-code"
                 onChange={(event) => setCode(event.target.value)}
@@ -148,6 +151,8 @@ export function CreateProjectModal({
                 Name
               </Label>
               <Input
+                maxLength={LIMITS.title}
+                problem={textProblem(name, 'Project name', LIMITS.title, 2)}
                 disabled={saving}
                 id="project-name"
                 onChange={(event) => setName(event.target.value)}
@@ -162,6 +167,7 @@ export function CreateProjectModal({
               Description
             </Label>
             <Textarea
+              maxLength={LIMITS.note}
               disabled={saving}
               id="project-description"
               onChange={(event) => setDescription(event.target.value)}

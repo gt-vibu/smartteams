@@ -134,7 +134,10 @@ export function TeamDetailDrawer({
         employees={directory.employees}
         // The lead leads the team; offering them as a member too is a choice that means nothing.
         excludeIds={[
-          ...team.activeMembers.map((member) => member.employeeId),
+          // Someone leaving or gone can be added again; only a current member is left out.
+          ...team.activeMembers
+            .filter((member) => !member.until)
+            .map((member) => member.employeeId),
           ...(team.team.teamLeadEmployeeId ? [team.team.teamLeadEmployeeId] : []),
         ]}
         nameOf={(id) => {

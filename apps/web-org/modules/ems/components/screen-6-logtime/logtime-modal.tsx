@@ -21,6 +21,7 @@ import { QuickAddJobDialog } from './quick-add-job-dialog';
 import { QuickAddProjectDialog } from './quick-add-project-dialog';
 import { LogTimeHoursField, normalizeTimeInput, type HoursMode } from './logtime-hours-field';
 import { localDateKey } from '../../lib/local-date';
+import { LIMITS } from '@smarteam/contracts';
 
 interface LogTimeModalProps {
   isOpen: boolean;
@@ -116,7 +117,7 @@ export function LogTimeModal({
       return;
     }
     if (!jobName.trim()) {
-      setError('Select a Job Name.');
+      setError('Select a job.');
       return;
     }
 
@@ -183,7 +184,7 @@ export function LogTimeModal({
           {/* Header */}
           <DialogHeader className="shrink-0 flex flex-row items-center justify-between border-b border-border/80 px-6 py-3 bg-muted/20">
             <DialogTitle className="text-base font-semibold text-foreground tracking-tight">
-              Log Time
+              Log time
             </DialogTitle>
           </DialogHeader>
 
@@ -192,7 +193,7 @@ export function LogTimeModal({
             {/* Project Name */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
               <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
-                Project Name
+                Project
               </Label>
               <div className="flex items-center gap-2 sm:col-span-3">
                 <Select
@@ -237,7 +238,7 @@ export function LogTimeModal({
             {/* Job Name */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
               <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
-                Job Name <span className="text-destructive font-bold">*</span>
+                Job <span className="text-destructive font-bold">*</span>
               </Label>
               <div className="flex items-center gap-2 sm:col-span-3">
                 <Select
@@ -276,10 +277,11 @@ export function LogTimeModal({
                 htmlFor="log-work-item"
                 className="text-foreground/80 font-medium sm:col-span-1 text-xs"
               >
-                Work Item
+                Work item
               </Label>
               <div className="sm:col-span-3">
                 <Input
+                  maxLength={LIMITS.title}
                   id="log-work-item"
                   placeholder=""
                   value={workItem}
@@ -320,6 +322,7 @@ export function LogTimeModal({
               </Label>
               <div className="sm:col-span-3">
                 <Textarea
+                  maxLength={LIMITS.note}
                   id="log-description"
                   placeholder=""
                   value={description}
@@ -346,7 +349,7 @@ export function LogTimeModal({
             {/* Billable Status */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
               <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
-                Billable Status <span className="text-destructive font-bold">*</span>
+                Billable <span className="text-destructive font-bold">*</span>
               </Label>
               <div className="sm:col-span-3">
                 <Select
@@ -370,15 +373,7 @@ export function LogTimeModal({
           </div>
 
           {/* Bottom Actions - Aligned bottom-left with safe-area padding so it never submerges on mobile */}
-          <div className="shrink-0 flex items-center justify-start gap-2.5 border-t border-border/80 bg-muted/30 px-5 sm:px-8 py-3 pb-[max(1.25rem,calc(0.75rem+env(safe-area-inset-bottom)))]">
-            <Button
-              disabled={saving}
-              onClick={() => void handleSubmit()}
-              type="button"
-              className="px-5 font-semibold text-xs h-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs cursor-pointer"
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </Button>
+          <div className="shrink-0 flex items-center justify-end gap-2.5 border-t border-border/80 bg-muted/30 px-5 sm:px-8 py-3 pb-[max(1.25rem,calc(0.75rem+env(safe-area-inset-bottom)))]">
             <Button
               disabled={saving}
               onClick={onClose}
@@ -387,6 +382,14 @@ export function LogTimeModal({
               className="px-5 text-xs h-8 border-border bg-card hover:bg-muted text-foreground cursor-pointer"
             >
               Cancel
+            </Button>
+            <Button
+              disabled={saving}
+              onClick={() => void handleSubmit()}
+              type="button"
+              className="px-5 font-semibold text-xs h-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs cursor-pointer"
+            >
+              {saving ? 'Saving…' : 'Save'}
             </Button>
           </div>
         </DialogContent>

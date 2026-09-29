@@ -5,6 +5,7 @@ import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@sm
 import { useSession } from '../../hooks/auth-context';
 import { apiRequest } from '../../lib/api-client';
 import { orgPath } from '../../repositories/api-helpers';
+import { LIMITS } from '@smarteam/contracts';
 
 /**
  * Takes someone off the company: they can no longer sign in, and payroll stops including them.
@@ -75,6 +76,7 @@ export function RemoveEmployeeDialog({
               Reason
             </Label>
             <Textarea
+              maxLength={LIMITS.reason}
               disabled={saving}
               id="remove-reason"
               onChange={(event) => setReason(event.target.value)}

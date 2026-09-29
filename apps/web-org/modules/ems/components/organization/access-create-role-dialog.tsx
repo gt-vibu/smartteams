@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { groupPermissionCatalogue } from '@smarteam/contracts';
+import { groupPermissionCatalogue, LIMITS, textProblem } from '@smarteam/contracts';
 import { Button, Checkbox, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 
 const GROUPS = groupPermissionCatalogue();
@@ -69,6 +69,8 @@ export function AccessCreateRoleDialog({
           <div className="space-y-1.5">
             <Label htmlFor="role-name">Name</Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Role name', LIMITS.title, 2)}
               autoFocus
               id="role-name"
               onChange={(event) => setName(event.target.value)}

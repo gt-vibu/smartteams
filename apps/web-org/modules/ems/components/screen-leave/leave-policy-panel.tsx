@@ -77,7 +77,7 @@ export function LeavePolicyPanel({
             type="button"
             variant="outline"
           >
-            New type
+            Add leave type
           </Button>
         )}
       </header>

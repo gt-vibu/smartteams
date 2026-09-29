@@ -143,7 +143,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
               </span>
               <div className="w-full min-w-0 sm:w-40">
                 <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                  <option value="ALL">All Statuses</option>
+                  <option value="ALL">All statuses</option>
                   <option value="present">Present</option>
                   <option value="holiday">Holiday</option>
                   <option value="holiday-checkin">Worked on holiday</option>
@@ -158,7 +158,8 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search table..."
+                aria-label="Search attendance"
+                placeholder="Search table…"
                 className="w-full min-w-0 sm:w-48"
               />
               {(statusFilter !== 'ALL' || searchQuery) && (

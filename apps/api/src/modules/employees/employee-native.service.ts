@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   assertEmployeeNumberFree,
   assertLoginEmailFree,
+  assertPhoneFree,
   assertWorkEmailFree,
   nextOrganizationEmployeeNumber,
   normalizeEmail,
@@ -97,6 +98,7 @@ export class EmployeeNativeService {
     return this.database.run(context, async (tx) => {
       // Every check runs before anything is written, so a refusal leaves no half-made employee.
       await assertWorkEmailFree(tx, context.organizationId, workEmail);
+      await assertPhoneFree(tx, context.organizationId, input.phone);
       if (input.createLogin) await assertLoginEmailFree(tx, context.organizationId, workEmail);
       if (input.primaryBranchId) {
         const branch = await tx.branch.findFirst({
@@ -295,6 +297,8 @@ export class EmployeeNativeService {
       const workEmail = input.workEmail === undefined ? undefined : normalizeEmail(input.workEmail);
       if (workEmail !== undefined)
         await assertWorkEmailFree(tx, context.organizationId, workEmail, employeeId);
+      if (input.phone !== undefined)
+        await assertPhoneFree(tx, context.organizationId, input.phone, employeeId);
       for (const field of ['firstName', 'lastName'] as const)
         if (input[field] !== undefined && !input[field].trim())
           throw new ConflictError('The first and last name cannot be empty.');

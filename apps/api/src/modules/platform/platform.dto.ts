@@ -1,9 +1,11 @@
-import { IsDateString, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import { IsCode, IsText } from '../../common/validation/field-rules';
 import { IsEnum, ValidateIf } from 'class-validator';
 import { ProjectStatus } from '../../generated/prisma/enums';
 export class TeamDto {
-  @IsString() name!: string;
-  @IsOptional() @IsString() description?: string;
+  @IsText('Team name', LIMITS.title, 2) name!: string;
+  @IsOptional() @IsText('Description', LIMITS.note, 0) description?: string;
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsUUID() teamLeadEmployeeId?: string;
 }
@@ -17,21 +19,21 @@ export class UpdateTeamMemberDto {
   @IsOptional() @IsString() @MaxLength(80) teamRole?: string;
 }
 export class UpdateTeamDto {
-  @IsOptional() @IsString() name?: string;
-  @IsOptional() @IsString() description?: string;
+  @IsOptional() @IsText('Team name', LIMITS.title, 2) name?: string;
+  @IsOptional() @IsText('Description', LIMITS.note, 0) description?: string;
   @IsOptional() @IsUUID() branchId?: string;
   /** `null` removes the lead. */
   @IsOptional() @ValidateIf((_, value) => value !== null) @IsUUID() teamLeadEmployeeId?:
     string | null;
 }
 export class TeamDeactivationDto {
-  @IsString() @MinLength(2) reason!: string;
+  @IsText('Reason', LIMITS.reason, 2) reason!: string;
 }
 export class ProjectDto {
   /** Left out to have one generated (PRJ-001 …). */
-  @IsOptional() @IsString() code?: string;
-  @IsString() name!: string;
-  @IsOptional() @IsString() description?: string;
+  @IsOptional() @IsCode('Project code') code?: string;
+  @IsText('Project name', LIMITS.title, 2) name!: string;
+  @IsOptional() @IsText('Description', LIMITS.note, 0) description?: string;
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsDateString() startDate?: string;
   @IsOptional() @IsDateString() endDate?: string;
@@ -39,14 +41,14 @@ export class ProjectDto {
 }
 export class ProjectMemberDto {
   @IsUUID() employeeId!: string;
-  @IsOptional() @IsString() projectRole?: string;
+  @IsOptional() @IsText('Project role', LIMITS.label) projectRole?: string;
   @IsDateString() startsOn!: string;
   @IsOptional() @IsDateString() endsOn?: string;
 }
 export class UpdateProjectDto {
-  @IsOptional() @IsString() code?: string;
-  @IsOptional() @IsString() name?: string;
-  @IsOptional() @IsString() description?: string;
+  @IsOptional() @IsCode('Project code') code?: string;
+  @IsOptional() @IsText('Project name', LIMITS.title, 2) name?: string;
+  @IsOptional() @IsText('Description', LIMITS.note, 0) description?: string;
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional() @IsDateString() startDate?: string;
   @IsOptional() @IsDateString() endDate?: string;
@@ -56,7 +58,7 @@ export class UpdateProjectDto {
     string | null;
 }
 export class ProjectDeactivationDto {
-  @IsString() @MinLength(2) reason!: string;
+  @IsText('Reason', LIMITS.reason, 2) reason!: string;
 }
 
 /** Soft-closes a team membership by setting `leftAt`. */
@@ -71,5 +73,5 @@ export class EndProjectMemberDto {
 
 /** What may change on a project assignment without rewriting history: the role. */
 export class UpdateProjectMemberDto {
-  @IsOptional() @IsString() projectRole?: string;
+  @IsOptional() @IsText('Project role', LIMITS.label) projectRole?: string;
 }

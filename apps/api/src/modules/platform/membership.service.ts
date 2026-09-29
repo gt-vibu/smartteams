@@ -22,6 +22,8 @@ import { ensureEntry } from './picklist-catalog';
  * conflict — re-joining a team on or before the day the previous membership ended — would be
  * answered with a 500 instead of a 409 the caller can act on.
  */
+const DAY_MS = 86_400_000;
+
 function rethrowMembershipOverlap(caught: unknown): never {
   // The constraint name reaches us in the message for a raw driver error and in `meta` for a
   // known Prisma error, so both are searched rather than assuming one shape.
@@ -63,6 +65,37 @@ export class MembershipService {
       if (team.status === 'ARCHIVED') throw new ConflictError('This team is archived.');
       assertCanBeAssigned(employee);
       const teamRole = await ensureEntry(tx, context, 'team-roles', input.teamRole);
+      const joinedAt = dateOnly(input.joinedAt);
+      // Someone who left on (or the day before) the new start is simply back: their last
+      // membership reopens, rather than the database refusing a new one that touches it.
+      const touching = await tx.teamMember.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          teamId,
+          employeeId: input.employeeId,
+          leftAt: { gte: new Date(joinedAt.getTime() - DAY_MS) },
+          joinedAt: { lte: joinedAt },
+        },
+        orderBy: { joinedAt: 'desc' },
+      });
+      if (touching) {
+        const reopened = await tx.teamMember.update({
+          where: { id: touching.id },
+          data: { leftAt: null, ...(input.teamRole !== undefined ? { teamRole } : {}) },
+        });
+        await this.audit.record(
+          context,
+          {
+            entityType: 'TEAM_MEMBER',
+            entityId: reopened.id,
+            action: 'TEAM_MEMBER_READDED',
+            beforeState: jsonSnapshot(touching),
+            afterState: jsonSnapshot(reopened),
+          },
+          tx,
+        );
+        return reopened;
+      }
       const member = await tx.teamMember
         .create({
           data: {
@@ -70,7 +103,7 @@ export class MembershipService {
             teamId,
             employeeId: input.employeeId,
             teamRole,
-            joinedAt: dateOnly(input.joinedAt),
+            joinedAt,
           },
         })
         .catch(rethrowMembershipOverlap);
@@ -197,10 +230,34 @@ export class MembershipService {
           OR: [{ endsOn: null }, { endsOn: { gte: start } }],
         },
       });
-      if (overlap)
+      // An open-ended assignment is a current one; one with an end date is ending or ended, and
+      // adding the person again reopens it.
+      if (overlap && overlap.endsOn === null)
         throw new ConflictError(
           `${employee.firstName} ${employee.lastName} is already on ${project.name}.`,
         );
+      if (overlap) {
+        const role = await ensureEntry(tx, context, 'project-roles', input.projectRole);
+        const reopened = await tx.projectMember.update({
+          where: { id: overlap.id },
+          data: {
+            endsOn: end ?? null,
+            ...(input.projectRole !== undefined ? { projectRole: role } : {}),
+          },
+        });
+        await this.audit.record(
+          context,
+          {
+            entityType: 'PROJECT_MEMBER',
+            entityId: reopened.id,
+            action: 'PROJECT_MEMBER_READDED',
+            beforeState: jsonSnapshot(overlap),
+            afterState: jsonSnapshot(reopened),
+          },
+          tx,
+        );
+        return reopened;
+      }
       const member = await tx.projectMember
         .create({
           data: {

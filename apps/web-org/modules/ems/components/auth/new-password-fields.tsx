@@ -2,13 +2,12 @@
 
 import React, { useState } from 'react';
 import { Button, Input, Label } from '@smarteam/ui';
+import { PASSWORD_MIN_LENGTH, passwordProblem } from '@smarteam/contracts';
 
-/** The server's rule, repeated here only to tell the person before they submit. */
-export const PASSWORD_MIN_LENGTH = 12;
-
+/** The server's rule (from the contracts), checked here to tell the person before they submit. */
 export function newPasswordProblem(password: string, confirmation: string): string | null {
-  if (password.length < PASSWORD_MIN_LENGTH)
-    return `Use at least ${PASSWORD_MIN_LENGTH} characters.`;
+  const problem = passwordProblem(password);
+  if (problem) return problem;
   if (password !== confirmation) return 'The two passwords do not match.';
   return null;
 }
@@ -36,6 +35,8 @@ export function NewPasswordFields({
 }) {
   const [visible, setVisible] = useState(false);
   const longEnough = password.length >= PASSWORD_MIN_LENGTH;
+  // Beyond length: a common password, or one character repeated, is refused too.
+  const problem = password.length > 0 ? passwordProblem(password) : null;
   const mismatch = confirmation.length > 0 && confirmation !== password;
 
   return (
@@ -65,18 +66,20 @@ export function NewPasswordFields({
         />
         <p
           className={`text-[11px] ${
-            longEnough
+            longEnough && !problem
               ? 'text-success-foreground font-medium'
               : password.length > 0
                 ? 'text-amber-600 dark:text-amber-400 font-medium'
                 : 'text-muted-foreground'
           }`}
         >
-          {longEnough
-            ? '✓ At least 12 characters.'
-            : password.length > 0
-              ? `At least 12 characters (${password.length}/${PASSWORD_MIN_LENGTH} characters entered — need ${PASSWORD_MIN_LENGTH - password.length} more)`
-              : `At least ${PASSWORD_MIN_LENGTH} characters. A short phrase works well.`}
+          {longEnough && !problem
+            ? `✓ At least ${PASSWORD_MIN_LENGTH} characters, and not a common password.`
+            : longEnough
+              ? problem
+              : password.length > 0
+                ? `At least ${PASSWORD_MIN_LENGTH} characters (${PASSWORD_MIN_LENGTH - password.length} more).`
+                : `At least ${PASSWORD_MIN_LENGTH} characters. A short phrase works well.`}
         </p>
       </div>
       <div className="space-y-1.5">

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
-import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
+import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH, LIMITS } from '@smarteam/contracts';
 import type { CalendarDayItem } from '../../types/calendar.types';
 import { MissingCheckOutForm } from '../common/missing-check-out-form';
 import { HolidayConflictSection } from '../common/holiday-conflict-section';
@@ -53,7 +53,11 @@ export function CalendarDetailDrawer({
       await onSubmitCorrection(recordId, reason);
       setSubmitted(true);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'The correction could not be submitted.');
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'The regularization request could not be submitted.',
+      );
     } finally {
       setSaving(false);
     }
@@ -200,10 +204,10 @@ export function CalendarDetailDrawer({
             {day.dayStatus === 'PRESENT' && !(day.openCheckInAt && onSubmitMissingCheckOut) && (
               <div className="pt-2 border-t border-border">
                 <div className="text-xs font-bold text-foreground mb-1.5">
-                  Correct an existing punch
+                  Regularize attendance
                 </div>
                 <p className="text-[11px] text-muted-foreground mb-2.5">
-                  Submit an attendance correction request for your reporting manager to review.
+                  Ask for this day to be regularized. Your approver reviews the request.
                 </p>
                 {submitted ? (
                   <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded font-medium">
@@ -212,6 +216,7 @@ export function CalendarDetailDrawer({
                 ) : (
                   <div className="space-y-2.5">
                     <Textarea
+                      maxLength={LIMITS.reason}
                       rows={3}
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
@@ -238,7 +243,7 @@ export function CalendarDetailDrawer({
                       onClick={() => void handleSubmit()}
                       className="w-full"
                     >
-                      {saving ? 'Submitting…' : 'Submit Correction Request'}
+                      {saving ? 'Submitting…' : 'Submit regularization request'}
                     </Button>
                   </div>
                 )}

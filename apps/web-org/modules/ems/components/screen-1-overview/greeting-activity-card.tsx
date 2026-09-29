@@ -5,6 +5,7 @@ import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
 import { formatWorkMinutes, formatDate } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
+import { greetingFor } from '../../utils/formatters';
 
 export function GreetingActivityCard() {
   // Hooks first, unconditionally: an account can gain an employee record while this is mounted
@@ -31,7 +32,7 @@ export function GreetingActivityCard() {
               smarteam
             </div>
             <h2 className="!text-sm !font-bold !text-foreground !m-0">
-              Good Afternoon {employee.firstName} {employee.lastName}
+              {greetingFor(new Date())}, {employee.firstName}
             </h2>
             <p className="text-xs text-muted-foreground font-medium mt-0.5">
               Have a productive day!

@@ -109,8 +109,16 @@ ok(
 );
 
 console.log('\nediting a type');
-const edited = await org('PATCH', `/leave/types/${fixed.payload?.id}`, {
+const clash = await org('PATCH', `/leave/types/${fixed.payload?.id}`, {
   name: 'Earned Leave',
+  paid: true,
+  accrualType: 'FIXED_ANNUAL',
+  annualAllowance: 15,
+  requiresAttachment: false,
+});
+ok('renaming it to a name another type has is refused', clash.status === 409, status(clash));
+const edited = await org('PATCH', `/leave/types/${fixed.payload?.id}`, {
+  name: 'Annual Leave',
   paid: true,
   accrualType: 'FIXED_ANNUAL',
   annualAllowance: 15,

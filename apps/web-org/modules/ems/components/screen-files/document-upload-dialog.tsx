@@ -104,7 +104,7 @@ export function DocumentUploadDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-md">
-        <DialogTitle>Upload a document</DialogTitle>
+        <DialogTitle>Upload file</DialogTitle>
         <div className="mt-4 space-y-4">
           <fieldset className="space-y-2">
             <legend className="mb-1 text-xs font-semibold text-foreground">Who is it for?</legend>

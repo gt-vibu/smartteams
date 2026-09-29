@@ -1,9 +1,12 @@
 import type { ConfigService } from '@nestjs/config';
 import type { Prisma } from '../../generated/prisma/client';
 import { ConflictError } from '../../common/errors/domain-error';
+import { splitPhone } from '@smarteam/contracts';
 import {
+  decryptEmployeeSecret,
   encryptEmployeeSecret,
   fingerprintEmployeeSecret,
+  fingerprintsOfEmployeeSecret,
   isValidAadhaar,
   normalizeAadhaar,
 } from './employee-sensitive-data';
@@ -11,8 +14,8 @@ import {
 type Tx = Prisma.TransactionClient;
 
 /**
- * The rules that make an employee record identifiable: one employee number, one work email and
- * one Aadhaar number per person in an organization. Each is checked here with a message that
+ * The rules that make an employee record identifiable: one employee number, one work email, one
+ * phone number, one Aadhaar number and one PAN per person in an organization. Each is checked here with a message that
  * names the clash, and each is also held by a database index for requests that race.
  */
 
@@ -125,7 +128,12 @@ export async function saveAadhaar(
   // by the unique index, which reads as a database error and says nothing about who holds it.
   await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`${organizationId}:aadhaar:${hash}`}, 0))`;
   const clash = await tx.employeePersonalProfile.findFirst({
-    where: { organizationId, aadhaarNumberHash: hash, employeeId: { not: employeeId } },
+    // Under every key in use, so a number stored before a key change is still found.
+    where: {
+      organizationId,
+      aadhaarNumberHash: { in: fingerprintsOfEmployeeSecret(config, aadhaar) },
+      employeeId: { not: employeeId },
+    },
     select: { employee: { select: { firstName: true, lastName: true, employeeNumber: true } } },
   });
   if (clash)
@@ -141,4 +149,80 @@ export async function saveAadhaar(
     create: { organizationId, employeeId, ...data },
     update: data,
   });
+}
+
+/** A phone number as its calling code and digits, so "+91 98765 43210" and "9876543210" match. */
+function phoneKey(value: string) {
+  const { country, digits } = splitPhone(value);
+  return digits ? `${country}${digits}` : '';
+}
+
+/**
+ * Refuses a phone number another current employee already has. Someone who has left is not
+ * counted: numbers are reissued, and a former colleague's old number is not a clash.
+ */
+export async function assertPhoneFree(
+  tx: Tx,
+  organizationId: string,
+  phone: string | null | undefined,
+  exceptEmployeeId?: string,
+) {
+  const key = phone ? phoneKey(phone) : '';
+  if (!key) return;
+  await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`${organizationId}:phone:${key}`}, 0))`;
+  // Narrowed in the database by the last six digits with spaces and dashes removed, as numbers
+  // are stored formatted ("+91 90000 11111"); the full comparison is made on what comes back.
+  const tail = splitPhone(phone ?? '').digits.slice(-6);
+  const candidates = await tx.$queryRaw<
+    Array<{
+      id: string;
+      phone: string;
+      firstName: string;
+      lastName: string;
+      employeeNumber: string;
+    }>
+  >`SELECT id, phone, first_name AS "firstName", last_name AS "lastName", employee_number AS "employeeNumber"
+      FROM employees
+     WHERE organization_id = ${organizationId}::uuid
+       AND phone IS NOT NULL
+       AND status <> 'TERMINATED'
+       AND right(regexp_replace(phone, '[^0-9]', '', 'g'), 6) = ${tail}
+       AND (${exceptEmployeeId ?? null}::uuid IS NULL OR id <> ${exceptEmployeeId ?? null}::uuid)`;
+  const clash = candidates.find((employee) => employee.phone && phoneKey(employee.phone) === key);
+  if (clash)
+    throw new ConflictError(
+      `This phone number already belongs to ${clash.firstName} ${clash.lastName} (${clash.employeeNumber}).`,
+    );
+}
+
+/**
+ * Refuses a PAN already recorded for another employee. PANs are stored encrypted with no
+ * fingerprint, so the organization's are read back and compared; a lock keeps two saves of the
+ * same PAN from passing together.
+ */
+export async function assertPanFree(
+  tx: Tx,
+  config: ConfigService,
+  organizationId: string,
+  employeeId: string,
+  pan: string,
+) {
+  const wanted = pan.trim().toUpperCase();
+  if (!wanted) return;
+  await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`${organizationId}:pan`}, 0))`;
+  const profiles = await tx.employeePersonalProfile.findMany({
+    where: { organizationId, employeeId: { not: employeeId }, panNumberEncrypted: { not: null } },
+    select: {
+      panNumberEncrypted: true,
+      employee: { select: { firstName: true, lastName: true, employeeNumber: true } },
+    },
+  });
+  const clash = profiles.find(
+    (profile) =>
+      decryptEmployeeSecret(config, profile.panNumberEncrypted)?.toUpperCase() === wanted,
+  );
+  if (clash)
+    throw new ConflictError(
+      `This PAN is already recorded for ${clash.employee.firstName} ${clash.employee.lastName} (${clash.employee.employeeNumber}).`,
+    );
 }

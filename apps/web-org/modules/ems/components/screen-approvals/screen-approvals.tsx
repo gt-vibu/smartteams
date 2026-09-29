@@ -32,12 +32,12 @@ export function ScreenApprovals() {
   // Only the tabs this person can use in this workspace. Someone's own workspace has their queue
   // and their cover; routing policies, and cover for others, belong to the admin workspace.
   const views: Array<{ id: View; label: string }> = [
-    { id: 'queue', label: `Awaiting me${inbox.items.length ? ` (${inbox.items.length})` : ''}` },
+    { id: 'queue', label: `My approvals${inbox.items.length ? ` (${inbox.items.length})` : ''}` },
     ...(!admin || hasPermission('approval-policies.write')
-      ? [{ id: 'cover' as const, label: 'Away cover' }]
+      ? [{ id: 'cover' as const, label: 'Delegation' }]
       : []),
     ...(admin && hasPermission('approval-policies.read')
-      ? [{ id: 'policies' as const, label: 'Routing policies' }]
+      ? [{ id: 'policies' as const, label: 'Approval workflows' }]
       : []),
   ];
   const [chosen, setView] = useState<View>('queue');
@@ -45,16 +45,7 @@ export function ScreenApprovals() {
 
   return (
     <PageShell>
-      <ScreenHeader
-        description={
-          admin
-            ? 'Decisions routed to you, and the policies that route them.'
-            : 'Requests waiting for your decision, and cover while you are away.'
-        }
-        icon={CheckCircle2}
-        title="Approvals"
-        tone="success"
-      />
+      <ScreenHeader icon={CheckCircle2} title="Approvals" tone="success" />
       <div className="flex items-center gap-4 overflow-x-auto border-b border-border pb-2">
         {views.map((entry) => (
           <Button

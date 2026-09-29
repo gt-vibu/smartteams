@@ -165,6 +165,7 @@ function FieldEditor({
         <DatePicker disabled={busy} id={id} onChange={onChange} value={value} />
       ) : (
         <Input
+          maxLength={500}
           disabled={busy}
           id={id}
           inputMode={field.fieldType === 'NUMBER' ? 'decimal' : undefined}

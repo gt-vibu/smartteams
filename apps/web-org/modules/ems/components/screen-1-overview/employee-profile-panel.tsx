@@ -127,7 +127,7 @@ export function EmployeeProfilePanel() {
           </div>
 
           {/* Timestamp-derived live timer or completed day duration */}
-          <div className="text-xl font-bold font-mono tracking-wider text-slate-800 dark:text-white">
+          <div className="text-xl font-bold tabular-nums tracking-wider text-slate-800 dark:text-white">
             {isMounted
               ? `${timerDisplay.hrs} : ${timerDisplay.mins} : ${timerDisplay.secs}`
               : '00 : 00 : 00'}
@@ -156,7 +156,7 @@ export function EmployeeProfilePanel() {
               className={`w-full py-1.5 px-3 rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
                 isCheckedIn
                   ? 'bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
-                  : 'bg-slate-900 hover:bg-slate-800 text-white font-bold'
+                  : 'bg-primary hover:bg-primary/90 text-primary-foreground font-bold'
               }`}
             >
               {saving

@@ -4,7 +4,6 @@ import { Button } from '@smarteam/ui';
 
 import React from 'react';
 import { useAuth } from '../../hooks/use-auth';
-import { APPROVAL_DECISION_PERMISSIONS } from '../../services/authorization.policy';
 
 interface SubNavTabsProps {
   activeTab: string;
@@ -12,12 +11,14 @@ interface SubNavTabsProps {
 }
 
 /**
- * Whether the Approvals tab belongs on Home: only for a line manager with explicit authority to
- * decide something. One rule for the laptop and phone strips, so they cannot disagree.
+ * Whether the Approvals tab belongs on Home: the same rule as the navigation's Approvals, so the
+ * two can never disagree. That is someone who approves as themselves (a manager, a named approver,
+ * someone covering); an HR or admin role holds approve permissions but decides from its own
+ * workspace, and a permission check here showed them Approvals in their employee workspace.
  */
 export function useIsManagerApprover(): boolean {
-  const { hasExplicitPermission } = useAuth();
-  return APPROVAL_DECISION_PERMISSIONS.some((permission) => hasExplicitPermission(permission));
+  const { canAccessModule } = useAuth();
+  return canAccessModule('approvals');
 }
 
 export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {

@@ -3,6 +3,7 @@
 import React from 'react';
 import { Badge } from '@smarteam/ui';
 import type { ProjectView } from '../../services/team-directory';
+import { statusLabel } from '../../lib/status-label';
 
 /** Project roster presentation: who is on each project, without any percentage. */
 
@@ -22,7 +23,7 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
             {[view.project.code, view.branchName].filter(Boolean).join(' · ')}
           </p>
         </div>
-        <Badge variant="outline">{view.project.status ?? 'UNKNOWN'}</Badge>
+        <Badge variant="outline">{statusLabel(view.project.status)}</Badge>
       </div>
 
       {view.project.description && (
@@ -81,11 +82,11 @@ export function ProjectTable({
                 data-label="Status"
                 className="px-4 py-2.5 text-muted-foreground"
               >
-                {view.project.status ?? '--'}
+                {statusLabel(view.project.status)}
               </td>
               <td
                 data-label="Allocated"
-                className="px-4 py-2.5 font-mono font-bold text-foreground"
+                className="px-4 py-2.5 tabular-nums font-bold text-foreground"
               >
                 {view.activeMembers.length} {view.activeMembers.length === 1 ? 'member' : 'members'}
               </td>

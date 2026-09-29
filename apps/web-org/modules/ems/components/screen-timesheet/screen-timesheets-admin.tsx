@@ -96,13 +96,6 @@ export function ScreenTimesheetsAdmin() {
       header: 'Status',
       accessorKey: 'status',
       sortable: true,
-      filterable: true,
-      filterOptions: [
-        { label: 'Submitted', value: 'SUBMITTED' },
-        { label: 'Approved', value: 'APPROVED' },
-        { label: 'Rejected', value: 'REJECTED' },
-        { label: 'Draft', value: 'DRAFT' },
-      ],
       cell: (row) => <StatusPill status={row.status} />,
     },
   ];
@@ -267,7 +260,7 @@ function Kpi({
       <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
         {label}
       </div>
-      <div className={`mt-0.5 font-mono text-xl font-bold tabular-nums ${tone}`}>
+      <div className={`mt-0.5 text-xl font-bold tabular-nums ${tone}`}>
         {value}
         {suffix}
       </div>

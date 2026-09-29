@@ -75,6 +75,7 @@ export function ScreenTeams() {
             <Input
               className="w-40 sm:w-52"
               onChange={(event) => setSearch(event.target.value)}
+              aria-label="Search teams"
               placeholder="Search teams"
               type="text"
               value={search}

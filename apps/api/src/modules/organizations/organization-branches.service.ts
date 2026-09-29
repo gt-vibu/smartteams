@@ -11,6 +11,7 @@ import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 import { branchDto, runScoped } from './organization-shared';
 import { primaryBranchOf } from './organization-primary-branch';
+import { pinCodeProblem } from '@smarteam/contracts';
 
 /**
  * Branches: the places a tenant operates from.
@@ -71,7 +72,8 @@ export class OrganizationBranchesService {
           ...(timezone !== undefined ? { timezone } : {}),
           externalId: input.externalId,
           source: 'NATIVE',
-          address: input.address === undefined ? undefined : jsonSnapshot(input.address),
+          address:
+            input.address === undefined ? undefined : jsonSnapshot(checkedAddress(input.address)),
         },
       });
       // A new branch offers every leave type the company has. A type is requestable only where it
@@ -167,7 +169,8 @@ export class OrganizationBranchesService {
         data: {
           name: input.name?.trim(),
           code: input.code?.trim().toUpperCase(),
-          address: input.address === undefined ? undefined : jsonSnapshot(input.address),
+          address:
+            input.address === undefined ? undefined : jsonSnapshot(checkedAddress(input.address)),
           ...(timezone !== undefined ? { timezone } : {}),
         },
       });
@@ -216,7 +219,9 @@ export class OrganizationBranchesService {
       });
       if (!branch) throw new NotFoundError('Branch');
       if (branch.status !== 'ACTIVE')
-        throw new ConflictError(`${branch.name} is not active, so it cannot be the main branch.`);
+        throw new ConflictError(
+          `${branch.name} is not active, so it cannot be the primary branch.`,
+        );
       const before = await primaryBranchOf(tx, context.organizationId);
       await tx.organizationSettings.upsert({
         where: { organizationId: context.organizationId },
@@ -260,7 +265,7 @@ export class OrganizationBranchesService {
         });
         if (primary?.id === before.id && others > 0)
           throw new ConflictError(
-            `${before.name} is the main branch. Make another branch the main one before closing it.`,
+            `${before.name} is the primary branch. Set another branch as primary before deactivating it.`,
           );
         await assertBranchCanClose(tx, context.organizationId, before, today);
       }
@@ -325,4 +330,18 @@ function checkedTimezone(value: string | undefined): string | null | undefined {
     throw new ConflictError(`${zone} is not a timezone. Use a name like Asia/Kolkata.`);
   }
   return zone;
+}
+
+/**
+ * A branch address, with its PIN code held to the Indian format when the address is in India (or
+ * names no country). Other countries' postal codes are kept as written.
+ */
+function checkedAddress(address: Record<string, unknown>) {
+  const pin = typeof address.postalCode === 'string' ? address.postalCode.trim() : '';
+  const country = typeof address.country === 'string' ? address.country.trim() : '';
+  if (pin && (!country || /^india$/i.test(country))) {
+    const problem = pinCodeProblem(pin);
+    if (problem) throw new ConflictError(problem);
+  }
+  return address;
 }

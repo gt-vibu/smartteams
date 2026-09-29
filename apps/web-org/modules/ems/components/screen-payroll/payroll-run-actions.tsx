@@ -16,7 +16,12 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
-import { employeeDisplayName, isCalculationStale, type PayrollRun } from '@smarteam/contracts';
+import {
+  employeeDisplayName,
+  isCalculationStale,
+  type PayrollRun,
+  LIMITS,
+} from '@smarteam/contracts';
 import { useEmployees } from '../../hooks/use-workforce';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
 
@@ -103,6 +108,7 @@ export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: Payr
               Reason
             </Label>
             <Textarea
+              maxLength={LIMITS.reason}
               disabled={admin.saving}
               id="run-action-comment"
               onChange={(event) => setComment(event.target.value)}
@@ -164,7 +170,7 @@ export function CreatePayrollRunDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-md">
-        <DialogTitle>Start a payroll run</DialogTitle>
+        <DialogTitle>Create pay run</DialogTitle>
         <form className="mt-4 space-y-4" onSubmit={submit}>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -289,6 +295,8 @@ export function AddAdjustmentDialog({
               Amount
             </Label>
             <Input
+              min={0.01}
+              max={LIMITS.amount}
               disabled={admin.saving}
               id="adjustment-amount"
               inputMode="decimal"
@@ -302,6 +310,7 @@ export function AddAdjustmentDialog({
               What it is for
             </Label>
             <Input
+              maxLength={LIMITS.reason}
               disabled={admin.saving}
               id="adjustment-description"
               onChange={(event) => setDescription(event.target.value)}

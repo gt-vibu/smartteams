@@ -14,6 +14,8 @@ import { OnboardEmployeeDialog } from './onboard-employee-dialog';
 import { OnboardingOutcome } from './onboarding-outcome';
 import { OnboardingSuccessDialog } from './onboarding-success-dialog';
 import { PageShell } from '../layout/page-shell';
+import { statusLabel } from '../../lib/status-label';
+import { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 
 /**
  * Employee onboarding.
@@ -26,6 +28,14 @@ import { PageShell } from '../layout/page-shell';
  */
 export function ScreenOnboarding() {
   const employees = useEmployees();
+  const directory = useEmployeeDirectory();
+  const jobTitles = useMemo(
+    () =>
+      new Map(
+        directory.entries.flatMap((entry) => (entry.jobTitle ? [[entry.id, entry.jobTitle]] : [])),
+      ),
+    [directory.entries],
+  );
   const organization = useOrganization();
   const roles = useRoles();
   const onboarding = useEmployeeOnboarding();
@@ -54,7 +64,6 @@ export function ScreenOnboarding() {
             </Button>
           )
         }
-        description="Bring a new employee into your organization."
         icon={UserPlus}
         title="Onboarding"
         tone="primary"
@@ -109,6 +118,7 @@ export function ScreenOnboarding() {
         employeeRoleId={employeeRoleId}
         roles={roles.roles.map((role) => ({ id: role.id, name: role.name }))}
         employees={employees.data ?? []}
+        jobTitles={jobTitles}
         // Nothing was saved, so the reason belongs in the form, where it can be corrected at once.
         error={
           onboarding.result?.failure && !onboarding.result.employee
@@ -163,7 +173,7 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Employee</th>
-            <th className="px-4 py-2.5 font-bold">Number</th>
+            <th className="px-4 py-2.5 font-bold">Employee ID</th>
             <th className="px-4 py-2.5 font-bold">Joined</th>
             <th className="px-4 py-2.5 font-bold">Status</th>
           </tr>
@@ -196,7 +206,7 @@ function RecentJoiners({ employees }: { employees: ReturnType<typeof useEmployee
                 data-label="Status"
                 className="px-4 py-2.5 text-muted-foreground"
               >
-                {employee.status.toLowerCase()}
+                {statusLabel(employee.status)}
               </td>
             </tr>
           ))}

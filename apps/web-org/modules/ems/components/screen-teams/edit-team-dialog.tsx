@@ -17,6 +17,7 @@ import {
   Textarea,
 } from '@smarteam/ui';
 import { EmployeeCombobox } from '../common/employee-combobox';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
@@ -105,6 +106,8 @@ export function EditTeamDialog({
               Name
             </Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Team name', LIMITS.title, 2)}
               disabled={saving}
               id="edit-team-name"
               onChange={(event) => setName(event.target.value)}
@@ -117,6 +120,7 @@ export function EditTeamDialog({
               Description
             </Label>
             <Textarea
+              maxLength={LIMITS.note}
               disabled={saving}
               id="edit-team-description"
               onChange={(event) => setDescription(event.target.value)}

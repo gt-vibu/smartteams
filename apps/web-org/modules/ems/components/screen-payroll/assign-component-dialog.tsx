@@ -22,6 +22,7 @@ import {
   NewComponentFields,
   type NewComponentDraft,
 } from './new-component-fields';
+import { LIMITS } from '@smarteam/contracts';
 
 const NEW = '__new__';
 const today = () => new Date().toLocaleDateString('en-CA');
@@ -132,6 +133,8 @@ export function AssignComponentDialog({
               {isPercentage ? 'Percentage of Basic (%)' : 'Monthly amount (₹)'}
             </Label>
             <Input
+              min={0}
+              max={isPercentage ? 100 : LIMITS.amount}
               disabled={compensation.saving || !ready}
               id="assignment-value"
               inputMode="decimal"

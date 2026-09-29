@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button, DatePicker, Label, Textarea, TimePicker } from '@smarteam/ui';
-import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
+import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH, LIMITS } from '@smarteam/contracts';
 import { localDateKey } from '../../hooks/use-attendance';
 
 interface MissingCheckOutFormProps {
@@ -109,6 +109,7 @@ export function MissingCheckOutForm({
         </p>
       )}
       <Textarea
+        maxLength={LIMITS.reason}
         rows={3}
         aria-label="Reason"
         value={reason}

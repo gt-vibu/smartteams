@@ -4,14 +4,13 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   CreateJobTypeDto,
-  ManualEntryDto,
   QuickCreateProjectDto,
   TimesheetDecisionDto,
-  TimesheetPeriodDto,
   TimesheetQueryDto,
 } from './timesheets.dto';
 import { TimesheetsService } from './timesheets.service';
 
+import { NativeManualEntryDto, NativeTimesheetPeriodDto } from './timesheets-native.dto';
 @Controller('v1/organizations/:organizationId/timesheets')
 @UseGuards(NativeJwtGuard)
 export class TimesheetsController {
@@ -56,7 +55,7 @@ export class TimesheetsController {
   }
   @Post('entries') addEntryDirect(
     @Param('organizationId') organizationId: string,
-    @Body() body: ManualEntryDto,
+    @Body() body: NativeManualEntryDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -65,7 +64,7 @@ export class TimesheetsController {
   }
   @Post('periods') period(
     @Param('organizationId') organizationId: string,
-    @Body() body: TimesheetPeriodDto,
+    @Body() body: NativeTimesheetPeriodDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -84,7 +83,7 @@ export class TimesheetsController {
   @Post(':timesheetId/entries') entry(
     @Param('organizationId') organizationId: string,
     @Param('timesheetId') timesheetId: string,
-    @Body() body: ManualEntryDto,
+    @Body() body: NativeManualEntryDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

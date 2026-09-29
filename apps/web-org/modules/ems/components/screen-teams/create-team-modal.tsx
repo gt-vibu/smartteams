@@ -19,6 +19,7 @@ import {
 import { activeByName } from '../../lib/pickable';
 import { EmployeeCombobox } from '../common/employee-combobox';
 import { EmployeePicker } from '../common/employee-picker';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 
 interface CreateTeamModalProps {
   isOpen: boolean;
@@ -128,6 +129,8 @@ export function CreateTeamModal({
               Team name
             </Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Team name', LIMITS.title, 2)}
               disabled={saving}
               id="team-name"
               onChange={(event) => setName(event.target.value)}
@@ -141,6 +144,7 @@ export function CreateTeamModal({
               Description
             </Label>
             <Textarea
+              maxLength={LIMITS.note}
               disabled={saving}
               id="team-description"
               onChange={(event) => setDescription(event.target.value)}

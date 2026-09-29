@@ -178,7 +178,7 @@ export function StandardDataTable<T>({
                       }}
                     >
                       <option value="ALL">
-                        All {typeof col.header === 'string' ? col.header : col.id}
+                        All {pluralLower(typeof col.header === 'string' ? col.header : col.id)}
                       </option>
                       {options.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -491,4 +491,10 @@ export function StandardDataTable<T>({
       />
     </div>
   );
+}
+
+/** "Status" → "statuses", "Shift" → "shifts": how a filter's "All …" option reads. */
+function pluralLower(word: string) {
+  const lower = word.toLowerCase();
+  return lower.endsWith('s') ? `${lower}es` : `${lower}s`;
 }

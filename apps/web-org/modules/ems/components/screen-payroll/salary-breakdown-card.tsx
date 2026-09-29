@@ -23,11 +23,11 @@ function Section({ title, rows, sign = '' }: { title: string; rows: Row[]; sign?
       {rows.map((row) => (
         <tr key={`${title}-${row.code}`}>
           <td className="px-4 py-2 text-foreground">{row.name}</td>
-          <td className="px-3 py-2 text-right font-mono tabular-nums">
+          <td className="px-3 py-2 text-right tabular-nums">
             {sign}
             {formatMoney(row.amount)}
           </td>
-          <td className="px-4 py-2 text-right font-mono tabular-nums text-muted-foreground">
+          <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">
             {sign}
             {formatMoney(row.amount * 12)}
           </td>
@@ -41,8 +41,8 @@ function Total({ label, amount, strong }: { label: string; amount: number; stron
   return (
     <tr className={strong ? 'bg-primary/5 font-bold' : 'font-semibold'}>
       <td className="px-4 py-2 text-foreground">{label}</td>
-      <td className="px-3 py-2 text-right font-mono tabular-nums">{formatMoney(amount)}</td>
-      <td className="px-4 py-2 text-right font-mono tabular-nums">{formatMoney(amount * 12)}</td>
+      <td className="px-3 py-2 text-right tabular-nums">{formatMoney(amount)}</td>
+      <td className="px-4 py-2 text-right tabular-nums">{formatMoney(amount * 12)}</td>
     </tr>
   );
 }

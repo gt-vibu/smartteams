@@ -1,3 +1,4 @@
+import { dateProblem } from '@smarteam/contracts';
 import { Injectable } from '@nestjs/common';
 import type { Prisma } from '../../generated/prisma/client';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
@@ -237,10 +238,13 @@ function cleanOptions(input: FieldInput) {
 }
 
 function invalid(field: { label: string; fieldType: string; options: string[] }, raw: string) {
-  if (field.fieldType === 'NUMBER' && !Number.isFinite(Number(raw)))
-    return `${field.label} must be a number.`;
-  if (field.fieldType === 'DATE' && !/^\d{4}-\d{2}-\d{2}$/.test(raw))
-    return `${field.label} must be a date.`;
+  // Plain numerals only: JavaScript also reads "1e5", "0x1F" and "  12" as numbers.
+  if (field.fieldType === 'NUMBER' && !/^-?\d{1,15}(\.\d{1,4})?$/.test(raw))
+    return `${field.label} must be a number, written with digits only.`;
+  if (field.fieldType === 'DATE') {
+    const problem = dateProblem(raw, field.label, { earliest: '1900-01-01', latest: '2100-12-31' });
+    if (problem) return problem;
+  }
   if (field.fieldType === 'SELECT' && !field.options.includes(raw))
     return `${field.label} must be one of: ${field.options.join(', ')}.`;
   if (raw.length > 500) return `${field.label} is too long.`;

@@ -18,6 +18,7 @@ import {
 import { isPaid, PayrollRunBreakdown } from './payroll-run-breakdown';
 import { PayrollRunExports } from './payroll-run-exports';
 import { PayrollRunReview } from './payroll-run-review';
+import { statusLabel } from '../../lib/status-label';
 
 /**
  * Payroll runs for the organisation.
@@ -60,7 +61,7 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
         <span />
         {admin.can.write && (
           <Button onClick={() => setCreating(true)} size="sm" type="button">
-            Start a run
+            Create pay run
           </Button>
         )}
       </div>
@@ -103,7 +104,7 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
         <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
           <p className="text-sm font-bold text-foreground">No payroll runs yet</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Start a run for a period to calculate pay for that month.
+            Create a pay run for a month to calculate pay for it.
           </p>
         </div>
       )}
@@ -139,7 +140,7 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge variant={statusTone(run)}>
-                    {isCalculationStale(run) ? 'needs recalculation' : run.status.toLowerCase()}
+                    {isCalculationStale(run) ? 'Needs recalculation' : statusLabel(run.status)}
                   </Badge>
                   {admin.can.adjust && (run.status === 'DRAFT' || run.status === 'CALCULATED') && (
                     <Button
@@ -177,7 +178,7 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
                       <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                         {tile.label}
                       </dt>
-                      <dd className="mt-0.5 font-mono text-xs font-bold text-foreground">
+                      <dd className="mt-0.5 tabular-nums text-xs font-bold text-foreground">
                         {tile.value}
                       </dd>
                     </div>

@@ -69,7 +69,7 @@ export function EmsLeftRail({
           type="button"
           onClick={() => onSelectModule('files')}
           className="p-1.5 hover:text-white hover:bg-sidebar-accent/20 dark:hover:bg-sidebar-accent/20 rounded transition-colors cursor-pointer"
-          title="Files & Documents"
+          title="Files"
           aria-label="Files and documents"
         >
           <svg

@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { EMPLOYMENT_TYPE_OPTIONS } from '@smarteam/contracts';
+import {
+  EMPLOYMENT_TYPE_OPTIONS,
+  LIMITS,
+  codeProblem,
+  personNameProblem,
+} from '@smarteam/contracts';
 import { Button, Dialog, DialogContent, DialogTitle, Input, Label, Select } from '@smarteam/ui';
 
 /**
@@ -74,6 +79,8 @@ export function AccessSelfEnrollDialog({
           <div className="space-y-1.5">
             <Label htmlFor="self-number">Employee number</Label>
             <Input
+              maxLength={LIMITS.employeeNumber}
+              problem={codeProblem(employeeNumber, 'Employee ID', LIMITS.employeeNumber)}
               autoFocus
               id="self-number"
               onChange={(event) => setEmployeeNumber(event.target.value)}
@@ -86,6 +93,8 @@ export function AccessSelfEnrollDialog({
             <div className="space-y-1.5">
               <Label htmlFor="self-first">First name</Label>
               <Input
+                maxLength={LIMITS.personName}
+                problem={personNameProblem(firstName, 'First name')}
                 id="self-first"
                 onChange={(event) => setFirstName(event.target.value)}
                 value={firstName}
@@ -94,6 +103,8 @@ export function AccessSelfEnrollDialog({
             <div className="space-y-1.5">
               <Label htmlFor="self-last">Last name</Label>
               <Input
+                maxLength={LIMITS.personName}
+                problem={personNameProblem(lastName, 'Last name')}
                 id="self-last"
                 onChange={(event) => setLastName(event.target.value)}
                 value={lastName}

@@ -7,7 +7,7 @@ import { navIcons } from './navigation-icons';
  */
 export const employeeNavItems: NavItem[] = [
   { id: 'home', label: 'Home', icon: navIcons.home },
-  { id: 'time-off', label: 'Time Off', icon: navIcons.timeOff },
+  { id: 'time-off', label: 'Leave', icon: navIcons.timeOff },
   { id: 'holidays', label: 'Holidays', icon: navIcons.holidays },
   { id: 'timesheet', label: 'Timesheet', icon: navIcons.timesheet },
   { id: 'attendance', label: 'Attendance', icon: navIcons.attendance },

@@ -57,9 +57,10 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   const [activeTopTab, setActiveTopTab] = useScreenTab(TOP_TAB_KEY, TOP_TABS, 'Overview');
   const [requestedSubTab, setActiveSubTab] = useScreenTab(SUB_TAB_KEY, SUB_TABS, subFallback);
   // A link or a remembered tab can name a preview this person may not read; it opens on the
-  // default instead of on a refusal. Approvals is guarded the same way by its own tab.
+  // default instead of on a refusal.
   const { canAccessModule } = useAuth();
   const previewModule: Partial<Record<(typeof SUB_TABS)[number], string>> = {
+    Approvals: 'approvals',
     Leave: 'time-off',
     Attendance: 'attendance',
     'Time Logs': 'timesheet',
@@ -121,9 +122,9 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
       <HeroBanner activeTab={activeTopTab} onSelectTab={handleSelectTopTab} />
 
       {activeTopTab === 'Calendar' ? (
-        <PageShell>
-          <Screen4Calendar />
-        </PageShell>
+        // The calendar lays out its own page; a second shell around it doubled the margins and
+        // left its month bar out of line with the grid.
+        <Screen4Calendar embedded />
       ) : (
         <PageShell className="relative z-20 -mt-16" gap="none">
           <div className="grid grid-cols-12 gap-6 items-start">

@@ -214,6 +214,12 @@ export function OpenPeriodDialog({
             </>
           )}
 
+          {periodStart.length === 10 && periodEnd.length === 10 && periodEnd < periodStart && (
+            <p className="text-[11px] font-semibold text-destructive" role="alert">
+              The end date must be on or after the start date.
+            </p>
+          )}
+
           {saveError && (
             <p className="text-[11px] font-semibold text-destructive" role="alert">
               {saveError}

@@ -98,9 +98,9 @@ export function ScreenHolidays() {
   const mandatoryGroupCount = activeGroups.filter((g) => !g.isOptional).length;
 
   const tabs = [
-    { id: 'ALL', label: 'All Holidays', count: holidayGroups.length },
-    { id: 'OPTIONAL', label: 'Optional Pool', count: optionalGroupCount },
-    { id: 'SELECTIONS', label: 'Employee Selections', count: holidays.selections.length },
+    { id: 'ALL', label: 'All holidays', count: holidayGroups.length },
+    { id: 'OPTIONAL', label: 'Restricted holidays', count: optionalGroupCount },
+    { id: 'SELECTIONS', label: 'Employee choices', count: holidays.selections.length },
   ];
 
   const displayedGroups =
@@ -117,6 +117,9 @@ export function ScreenHolidays() {
         />
         <div className="flex items-center gap-2 self-end sm:self-auto">
           <Input
+            min={2000}
+            max={2100}
+            step={1}
             aria-label="Year"
             className="w-24"
             inputMode="numeric"
@@ -133,11 +136,10 @@ export function ScreenHolidays() {
                 variant="outline"
               >
                 <Settings2 className="mr-1.5 h-3.5 w-3.5" />
-                Allowance ({holidays.settings.optionalHolidayAllowance}d
+                Restricted holidays allowed: {holidays.settings.optionalHolidayAllowance}
                 {holidays.employeePolicies.length > 0
-                  ? ` · ${holidays.employeePolicies.length} override${holidays.employeePolicies.length === 1 ? '' : 's'}`
+                  ? ` · ${holidays.employeePolicies.length} exception${holidays.employeePolicies.length === 1 ? '' : 's'}`
                   : ''}
-                )
               </Button>
               <Button onClick={() => setCreating(true)} size="sm" type="button">
                 Add holiday
@@ -216,11 +218,11 @@ export function ScreenHolidays() {
                 <thead className="border-b border-border bg-table-header">
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 py-2.5 font-bold">Date Range</th>
-                    <th className="px-4 py-2.5 font-bold">Holiday Plan</th>
+                    <th className="px-4 py-2.5 font-bold">Holiday</th>
                     <th className="px-4 py-2.5 font-bold">Type</th>
                     <th className="px-4 py-2.5 font-bold">Scope</th>
                     <th className="px-4 py-2.5 font-bold">Status</th>
-                    <th className="px-4 py-2.5 font-bold">Employee Selections</th>
+                    <th className="px-4 py-2.5 font-bold">Employee choices</th>
                     <th className="px-4 py-2.5 text-right font-bold">Actions</th>
                   </tr>
                 </thead>
@@ -276,7 +278,7 @@ export function ScreenHolidays() {
                               variant="outline"
                               className="border-amber-400/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-medium"
                             >
-                              Optional Pool
+                              Restricted
                             </Badge>
                           ) : (
                             <Badge variant="secondary" className="font-medium">
@@ -297,7 +299,7 @@ export function ScreenHolidays() {
                         {/* Status */}
                         <td data-cell="status" data-label="Status" className="px-4 py-3">
                           <Badge variant={group.isActive ? 'success' : 'secondary'}>
-                            {group.isActive ? 'Active' : 'Retired'}
+                            {group.isActive ? 'Active' : 'Inactive'}
                           </Badge>
                         </td>
 
@@ -340,7 +342,7 @@ export function ScreenHolidays() {
                                 variant="outline"
                                 className="h-7 text-xs"
                               >
-                                Rename
+                                Edit
                               </Button>
                               <Button
                                 onClick={() => setRetiringGroup(group)}
@@ -349,7 +351,7 @@ export function ScreenHolidays() {
                                 variant="ghost"
                                 className="h-7 text-xs text-destructive hover:bg-destructive/10"
                               >
-                                Retire
+                                Deactivate
                               </Button>
                             </div>
                           )}

@@ -8,8 +8,10 @@ import {
   entitlementOf,
   type Employee,
   type LeaveRequest,
+  LIMITS,
 } from '@smarteam/contracts';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
+import { statusLabel } from '../../lib/status-label';
 
 /**
  * One leave request in full: who asked, for which type and dates, how many days it costs, what
@@ -74,7 +76,7 @@ export function LeaveRequestDialog({
                   : 'outline'
             }
           >
-            {request.status}
+            {statusLabel(request.status)}
           </Badge>
         </DialogTitle>
 
@@ -104,6 +106,7 @@ export function LeaveRequestDialog({
           {decidable && (
             <div className="space-y-2 rounded-md border border-border p-3">
               <Input
+                maxLength={LIMITS.reason}
                 aria-label="Decision comment"
                 disabled={busy}
                 onChange={(event) => setComment(event.target.value)}

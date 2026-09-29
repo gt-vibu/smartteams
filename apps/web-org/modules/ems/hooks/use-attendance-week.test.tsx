@@ -65,7 +65,7 @@ describe('a day with no check-out', () => {
       />,
     );
     expect(screen.getByText('No check-out')).toBeInTheDocument();
-    expect(screen.getByText(/request a correction/i)).toBeInTheDocument();
-    expect(screen.queryByText('00:00 Hrs worked')).not.toBeInTheDocument();
+    expect(screen.getByText(/request regularization/i)).toBeInTheDocument();
+    expect(screen.queryByText('Not worked')).not.toBeInTheDocument();
   });
 });

@@ -14,6 +14,8 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import { IsCalendarDate, IsNumberBetween, IsText } from '../../common/validation/field-rules';
 
 export class LeaveTypeDto {
   @IsString() code!: string;
@@ -60,16 +62,16 @@ export class LeaveDecisionDto {
 }
 
 export class LeaveCancelDto {
-  @IsString() @MinLength(3) reason!: string;
+  @IsText('Reason', LIMITS.reason, 3) reason!: string;
 }
 
 export class LeaveAdjustmentDto {
   @IsUUID() employeeId!: string;
   @IsUUID() leaveTypeId!: string;
-  @IsNumber() amount!: number;
-  @IsString() @MinLength(5) reason!: string;
-  @IsDateString() periodStart!: string;
-  @IsDateString() periodEnd!: string;
+  @IsNumberBetween('Days', -366, 366) amount!: number;
+  @IsText('Reason', LIMITS.reason, 5) reason!: string;
+  @IsCalendarDate('Period start') periodStart!: string;
+  @IsCalendarDate('Period end') periodEnd!: string;
 }
 
 /** Filters for the leave request list. Mirrors what the federation surface already accepts. */

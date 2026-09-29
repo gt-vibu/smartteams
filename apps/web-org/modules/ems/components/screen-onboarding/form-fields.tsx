@@ -15,7 +15,13 @@ export function Fieldset({ children, legend }: { children: React.ReactNode; lege
   );
 }
 
-/** A labelled field; `required` adds the red asterisk. */
+/**
+ * A labelled field; `required` adds the red asterisk.
+ *
+ * The label wraps its control, which is what ties the two together: a screen reader names the box
+ * by it and a click on the words focuses the box. They were siblings, so every field here was
+ * announced as an unnamed text box.
+ */
 export function Field({
   children,
   label,
@@ -27,11 +33,17 @@ export function Field({
 }) {
   return (
     <div>
-      <Label className="mb-1 block">
-        {label}
-        {required && <span className="ml-0.5 text-destructive">*</span>}
+      <Label className="block">
+        <span className="mb-1 block">
+          {label}
+          {required && (
+            <span aria-hidden="true" className="ml-0.5 text-destructive">
+              *
+            </span>
+          )}
+        </span>
+        <span className="block font-normal">{children}</span>
       </Label>
-      {children}
     </div>
   );
 }

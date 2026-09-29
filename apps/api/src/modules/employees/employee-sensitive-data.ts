@@ -4,32 +4,39 @@ import type { ConfigService } from '@nestjs/config';
 let warned = false;
 
 /**
- * The key Aadhaar and PAN are encrypted with. `INTEGRATION_CREDENTIALS_ENCRYPTION_KEY` (32+
- * characters) should be set. It was read here but documented nowhere, so environments ran without
- * it and every save of an Aadhaar or PAN failed. Without it, a key is derived from `JWT_SECRET`
- * so the feature works, and a warning says the dedicated key should be set: rotating `JWT_SECRET`
- * would otherwise make stored numbers unreadable.
+ * The keys Aadhaar, PAN and account numbers are protected with, newest first.
+ *
+ * `INTEGRATION_CREDENTIALS_ENCRYPTION_KEY` (32+ characters) is the dedicated key. Environments
+ * that ran without it used one derived from `JWT_SECRET`, and everything they stored is under that
+ * key. Both are kept: new values use the first, and reading tries each in turn. Without this,
+ * setting the dedicated key made every number already stored unreadable, and let an Aadhaar
+ * already on file be recorded a second time because its fingerprint no longer matched.
  */
-function employeeDataKey(config: ConfigService): string {
+function employeeDataKeys(config: ConfigService): string[] {
+  const keys: string[] = [];
   const configured =
     config.get<string>('app.credentialsEncryptionKey') ??
     config.get<string>('INTEGRATION_CREDENTIALS_ENCRYPTION_KEY');
-  if (configured && configured.length >= 32) return configured;
+  if (configured && configured.length >= 32) keys.push(configured);
   const secret = config.get<string>('JWT_SECRET');
-  if (!secret) throw new Error('Employee sensitive-data encryption key is not configured.');
-  if (!warned) {
+  if (secret)
+    keys.push(
+      Buffer.from(hkdfSync('sha256', secret, 'smarteam-employee-data', 'aes-256-gcm', 32))
+        .toString('base64url')
+        .slice(0, 32),
+    );
+  if (!keys.length) throw new Error('Employee sensitive-data encryption key is not configured.');
+  if (keys.length === 1 && !configured && !warned) {
     warned = true;
     console.warn(
-      'INTEGRATION_CREDENTIALS_ENCRYPTION_KEY is not set; employee Aadhaar/PAN are encrypted with a key derived from JWT_SECRET. Set a dedicated 32+ character key.',
+      'INTEGRATION_CREDENTIALS_ENCRYPTION_KEY is not set; employee Aadhaar/PAN are encrypted with a key derived from JWT_SECRET. Set a dedicated 32+ character key; values already stored stay readable.',
     );
   }
-  return Buffer.from(hkdfSync('sha256', secret, 'smarteam-employee-data', 'aes-256-gcm', 32))
-    .toString('base64url')
-    .slice(0, 32);
+  return [...new Set(keys)];
 }
 
 export function encryptEmployeeSecret(config: ConfigService, value: string) {
-  const key = employeeDataKey(config);
+  const key = employeeDataKeys(config)[0]!;
   const iv = randomBytes(12);
   const cipher = createCipheriv('aes-256-gcm', Buffer.from(key.slice(0, 32)), iv);
   const encrypted = Buffer.concat([cipher.update(value, 'utf8'), cipher.final()]);
@@ -38,20 +45,28 @@ export function encryptEmployeeSecret(config: ConfigService, value: string) {
 
 export function decryptEmployeeSecret(config: ConfigService, value: string | null) {
   if (!value) return null;
-  const key = employeeDataKey(config);
   const [version, ivText, tagText, encryptedText] = value.split('.');
   if (version !== 'v1' || !ivText || !tagText || !encryptedText)
     throw new Error('Employee sensitive data is invalid.');
-  const decipher = createDecipheriv(
-    'aes-256-gcm',
-    Buffer.from(key.slice(0, 32)),
-    Buffer.from(ivText, 'base64url'),
-  );
-  decipher.setAuthTag(Buffer.from(tagText, 'base64url'));
-  return Buffer.concat([
-    decipher.update(Buffer.from(encryptedText, 'base64url')),
-    decipher.final(),
-  ]).toString('utf8');
+  let failure: unknown;
+  // Each key in turn: a value stored before the dedicated key was set is under the older one.
+  for (const key of employeeDataKeys(config)) {
+    try {
+      const decipher = createDecipheriv(
+        'aes-256-gcm',
+        Buffer.from(key.slice(0, 32)),
+        Buffer.from(ivText, 'base64url'),
+      );
+      decipher.setAuthTag(Buffer.from(tagText, 'base64url'));
+      return Buffer.concat([
+        decipher.update(Buffer.from(encryptedText, 'base64url')),
+        decipher.final(),
+      ]).toString('utf8');
+    } catch (error) {
+      failure = error;
+    }
+  }
+  throw failure instanceof Error ? failure : new Error('Employee sensitive data is unreadable.');
 }
 
 export function maskEmployeeSecret(value: string | null) {
@@ -64,10 +79,17 @@ export function maskEmployeeSecret(value: string | null) {
 /**
  * A keyed fingerprint of a secret, for uniqueness without storing it readably. Encryption is
  * randomised (a new IV each time), so two encryptions of one Aadhaar never match; this does.
+ * This is the fingerprint stored with a new value.
  */
 export function fingerprintEmployeeSecret(config: ConfigService, value: string) {
-  const key = employeeDataKey(config);
-  return createHmac('sha256', key).update(`aadhaar:${value}`).digest('hex');
+  return fingerprintsOfEmployeeSecret(config, value)[0]!;
+}
+
+/** The value's fingerprint under every key in use, to find it however long ago it was stored. */
+export function fingerprintsOfEmployeeSecret(config: ConfigService, value: string) {
+  return employeeDataKeys(config).map((key) =>
+    createHmac('sha256', key).update(`aadhaar:${value}`).digest('hex'),
+  );
 }
 
 // Verhoeff tables, as UIDAI uses for the Aadhaar check digit.

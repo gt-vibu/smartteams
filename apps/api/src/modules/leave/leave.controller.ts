@@ -18,16 +18,18 @@ import {
   LeaveBalanceQueryDto,
   LeaveCalendarQueryDto,
   LeaveCancelDto,
-  LeaveDecisionDto,
-  LeaveRequestDto,
   LeaveRequestQueryDto,
   LeavePolicyAssignmentDto,
-  LeaveTypeDto,
-  LeaveTypeUpdateDto,
 } from './leave.dto';
 import { LeaveService } from './leave.service';
 import { LeaveCalendarService } from './leave-calendar.service';
 
+import {
+  NativeLeaveDecisionDto,
+  NativeLeaveRequestDto,
+  NativeLeaveTypeDto,
+  NativeLeaveTypeUpdateDto,
+} from './leave-native.dto';
 @Controller('v1/organizations/:organizationId/leave')
 @UseGuards(NativeJwtGuard)
 export class LeaveController {
@@ -99,7 +101,7 @@ export class LeaveController {
   }
   @Post('types') createType(
     @Param('organizationId') organizationId: string,
-    @Body() body: LeaveTypeDto,
+    @Body() body: NativeLeaveTypeDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -109,7 +111,7 @@ export class LeaveController {
   @Patch('types/:typeId') updateType(
     @Param('organizationId') organizationId: string,
     @Param('typeId', ParseUUIDPipe) typeId: string,
-    @Body() body: LeaveTypeUpdateDto,
+    @Body() body: NativeLeaveTypeUpdateDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -137,7 +139,7 @@ export class LeaveController {
   }
   @Post('requests') request(
     @Param('organizationId') organizationId: string,
-    @Body() body: LeaveRequestDto,
+    @Body() body: NativeLeaveRequestDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -147,7 +149,7 @@ export class LeaveController {
   @Post('requests/:requestId/decision') decision(
     @Param('organizationId') organizationId: string,
     @Param('requestId') requestId: string,
-    @Body() body: LeaveDecisionDto,
+    @Body() body: NativeLeaveDecisionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

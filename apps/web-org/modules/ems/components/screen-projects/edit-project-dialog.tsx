@@ -17,6 +17,7 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
@@ -114,6 +115,8 @@ export function EditProjectDialog({
               Name
             </Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Project name', LIMITS.title, 2)}
               disabled={saving}
               id="edit-project-name"
               onChange={(event) => setName(event.target.value)}
@@ -126,6 +129,7 @@ export function EditProjectDialog({
               Description
             </Label>
             <Textarea
+              maxLength={LIMITS.note}
               disabled={saving}
               id="edit-project-description"
               onChange={(event) => setDescription(event.target.value)}

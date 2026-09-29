@@ -1,3 +1,4 @@
+import { formatDate } from '@smarteam/contracts';
 /**
  * Centralized Formatter Utilities for Smarteam EMS
  */
@@ -18,14 +19,7 @@ export function formatDateRange(startDate: string, endDate: string): string {
 }
 
 export function formatDateLabel(dateValue: string): string {
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return '';
-
-  return date.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  return formatDate(dateValue);
 }
 
 export function formatDateRangeFromValues(values: string[]): string {
@@ -50,4 +44,11 @@ export function formatBytes(bytes: number, decimals = 1): string {
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+/** "Good morning" until noon, "Good afternoon" until five, then "Good evening". */
+export function greetingFor(now: Date): string {
+  const hour = now.getHours();
+  if (hour < 12) return 'Good morning';
+  return hour < 17 ? 'Good afternoon' : 'Good evening';
 }

@@ -76,6 +76,7 @@ export function ScreenProjects() {
             <Input
               className="w-40 sm:w-52"
               onChange={(event) => setSearch(event.target.value)}
+              aria-label="Search projects"
               placeholder="Search projects"
               type="text"
               value={search}

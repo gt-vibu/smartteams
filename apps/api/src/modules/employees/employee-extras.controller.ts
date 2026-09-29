@@ -17,14 +17,15 @@ import {
   IsBoolean,
   IsDateString,
   IsIn,
-  IsInt,
   IsObject,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
   ValidateIf,
+  ArrayMaxSize,
 } from 'class-validator';
+import { IsWholeNumber } from '../../common/validation/field-rules';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { EmployeeCustomFieldsService, type FieldType } from './employee-custom-fields.service';
@@ -33,10 +34,15 @@ import { EmployeeMilestonesService } from './employee-milestones.service';
 export class CustomFieldDto {
   @IsString() @MinLength(1) @MaxLength(60) label!: string;
   @IsIn(['TEXT', 'NUMBER', 'DATE', 'SELECT']) fieldType!: FieldType;
-  @IsOptional() @IsArray() @IsString({ each: true }) options?: string[];
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(50, { message: 'A choice field can have at most 50 options.' })
+  @IsString({ each: true })
+  @MaxLength(60, { each: true, message: 'Each option can be at most 60 characters.' })
+  options?: string[];
   @IsOptional() @IsBoolean() required?: boolean;
   @IsOptional() @IsBoolean() employeeEditable?: boolean;
-  @IsOptional() @IsInt() sortOrder?: number;
+  @IsOptional() @IsWholeNumber('Order', 0, 1000) sortOrder?: number;
   @IsOptional() @IsBoolean() isActive?: boolean;
 }
 

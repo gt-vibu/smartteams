@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import { Button, useFocusTrap } from '@smarteam/ui';
 import { entryNotes, type TimesheetEntry, formatDate } from '@smarteam/contracts';
 import type { TimesheetAuditRow } from './timesheet-audit-row';
+import { statusLabel } from '../../lib/status-label';
 
 /**
  * The inspection panel for one timesheet.
@@ -132,7 +133,7 @@ function EntryCard({ entry }: { entry: TimesheetEntry }) {
             : ''}
         </span>
       </div>
-      {clock && <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">{clock}</p>}
+      {clock && <p className="mt-0.5 tabular-nums text-[10px] text-muted-foreground">{clock}</p>}
       {facts.length > 0 && (
         <p className="mt-1 text-[11px] font-medium text-foreground">{facts.join(' · ')}</p>
       )}
@@ -163,5 +164,9 @@ export function StatusPill({ status }: { status: string }) {
         : status === 'SUBMITTED'
           ? 'bg-amber-500/10 text-amber-600 dark:text-amber-500'
           : 'bg-muted text-muted-foreground';
-  return <span className={`rounded px-2 py-0.5 text-[10px] font-bold ${tone}`}>{status}</span>;
+  return (
+    <span className={`rounded px-2 py-0.5 text-[10px] font-bold ${tone}`}>
+      {statusLabel(status)}
+    </span>
+  );
 }

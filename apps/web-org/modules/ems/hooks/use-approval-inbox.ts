@@ -8,6 +8,7 @@ import {
   type HolidayReviewInboxItem,
   type HolidayReviewOutcome,
   formatDate,
+  formatDateTime,
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { leaveRepository } from '../repositories/leave.repository';
@@ -160,14 +161,7 @@ export function useApprovalInbox() {
       // The approver has to see the time they are being asked to accept, not only the reason.
       const requestedCheckOut = correction.afterSnapshot?.missingCheckOut?.occurredAt;
       const autoClosed = Boolean(correction.afterSnapshot?.missingCheckOut?.autoClosed);
-      const when = requestedCheckOut
-        ? new Date(requestedCheckOut).toLocaleString(undefined, {
-            day: 'numeric',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit',
-          })
-        : '';
+      const when = requestedCheckOut ? formatDateTime(requestedCheckOut) : '';
       return {
         id: correction.id,
         domain: 'ATTENDANCE_CORRECTION' as const,
@@ -177,7 +171,7 @@ export function useApprovalInbox() {
           ? 'Day closed with no check-out'
           : requestedCheckOut
             ? 'Missing check-out'
-            : 'Attendance correction',
+            : 'Attendance regularization',
         detail: requestedCheckOut
           ? `${autoClosed ? 'Proposed check-out' : 'Check-out'} at ${when} · ${correction.reason ?? ''}`
           : [
