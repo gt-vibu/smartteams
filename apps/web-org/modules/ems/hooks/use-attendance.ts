@@ -22,6 +22,7 @@ import { useMinuteClock } from './use-minute-clock';
 import { useWorkWeek } from './use-work-week';
 import { useShiftHistory } from './use-shift-history';
 import { localDateKey } from '../lib/local-date';
+import { captureAttendanceLocation } from '../services/attendance-location';
 
 // Attendance is recorded in the employee's own day; kept exported here for existing importers.
 export { localDateKey };
@@ -177,11 +178,21 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const punch = useCallback(
     (direction: 'IN' | 'OUT') =>
       run(async () => {
+        // Read effective branch/employee rules on the action too, rather than relying
+        // on settings loaded before an administrator changed the attendance policy.
+        const preferences = await attendanceRepository.getPreferences(organizationId!);
+        const required = preferences.requireGps || preferences.geofenceMode === 'REQUIRED';
+        const location = required
+          ? await captureAttendanceLocation()
+          : preferences.geofenceMode === 'FLAG_ONLY'
+            ? await captureAttendanceLocation().catch(() => undefined)
+            : undefined;
         const now = new Date();
         const input = {
           employeeId: employeeId!,
           occurredAt: now.toISOString(),
           workDate: localDateKey(now),
+          ...location,
         };
         const reply =
           direction === 'IN'

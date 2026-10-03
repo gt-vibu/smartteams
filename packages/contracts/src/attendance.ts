@@ -101,6 +101,7 @@ export const attendanceCorrectionPageSchema = z.object({
 });
 
 export const attendancePreferencesSchema = z.object({
+  requireGps: z.boolean().optional().default(false),
   id: z.string().optional(),
   organizationId: z.string().optional(),
   geofenceMode: z.string().nullable(),

@@ -471,7 +471,6 @@ export type EmployeeReference = Prisma.EmployeeReferenceModel
  * Model EmployeeHolidayPolicy
  * *
  *  * Per-employee optional holiday policy override.
- *  *
  *  * When present, `allowanceOverride` takes precedence over `OrganizationSettings.optionalHolidayAllowance`.
  *  * When `restrictedHolidayIds` is non-empty, only those holiday IDs are available in the employee's
  *  * optional pool; otherwise the full org/branch pool applies.

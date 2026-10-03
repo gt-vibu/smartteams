@@ -1,17 +1,19 @@
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsArray,
+  IsInt,
   IsDateString,
   IsEnum,
   IsNumber,
   IsObject,
   IsOptional,
-  IsArray,
   IsString,
   IsUUID,
   Max,
   Min,
   MinLength,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import {
@@ -97,9 +99,18 @@ export class FederatedPayComponentAssignmentDto {
   @IsOptional() @IsDateString() effectiveTo?: string;
 }
 
+export class PayrollPolicyComponentDto {
+  @IsUUID() payComponentId!: string;
+  @IsOptional() @IsNumber() @Min(0) amount?: number;
+  @IsOptional() @IsNumber() @Min(0) @Max(100) percentage?: number;
+  @IsOptional() @IsObject() formulaParameters?: Record<string, unknown>;
+  @IsOptional() @IsInt() @Min(0) @Max(32767) displayOrder?: number;
+}
+
 export class PayrollPolicyDto {
+  @IsOptional() @IsBoolean() isDefault?: boolean;
   @IsOptional() @IsUUID() id?: string;
-  @IsOptional() @IsString() name?: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(120) name?: string;
   @IsDateString() effectiveFrom!: string;
   @IsOptional() @IsDateString() effectiveTo?: string;
   @IsBoolean() salarySlipDefault!: boolean;
@@ -120,15 +131,8 @@ export class PayrollPolicyDto {
   components?: PayrollPolicyComponentDto[];
 }
 
-export class PayrollPolicyComponentDto {
-  @IsUUID() payComponentId!: string;
-  @IsOptional() @IsNumber() @Min(0) amount?: number;
-  @IsOptional() @IsNumber() @Min(0) @Max(100) percentage?: number;
-  @IsOptional() @IsObject() formulaParameters?: Record<string, unknown>;
-  @IsOptional() @IsNumber() @Min(0) displayOrder?: number;
-}
-
 export class EmployeePayrollPolicyDto {
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsUUID() employeeId!: string;
   @IsDateString() effectiveFrom!: string;
   @IsOptional() @IsDateString() effectiveTo?: string;
@@ -137,11 +141,11 @@ export class EmployeePayrollPolicyDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
-  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 
 export class SalaryProfileDto {
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsUUID() employeeId!: string;
   @IsNumber() @Min(0) grossSalary!: number;
   @IsEnum(['SALARY', 'HOURLY', 'DAILY', 'PER_SHIFT']) payType!:
@@ -155,7 +159,6 @@ export class SalaryProfileDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
-  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 
@@ -206,6 +209,7 @@ export class PayrollPaymentDto {
 }
 
 export class FederatedEmployeePayrollPolicyDto {
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsString() externalEmployeeId!: string;
   @IsDateString() effectiveFrom!: string;
   @IsOptional() @IsDateString() effectiveTo?: string;
@@ -214,11 +218,11 @@ export class FederatedEmployeePayrollPolicyDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
-  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 
 export class FederatedSalaryProfileDto {
+  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsString() externalEmployeeId!: string;
   @IsNumber() @Min(0) grossSalary!: number;
   @IsEnum(['SALARY', 'HOURLY', 'DAILY', 'PER_SHIFT']) payType!:
@@ -232,7 +236,6 @@ export class FederatedSalaryProfileDto {
   @IsBoolean() pfEnabled!: boolean;
   @IsBoolean() esiEnabled!: boolean;
   @IsBoolean() ptEnabled!: boolean;
-  @IsOptional() @IsUUID() payrollPolicyId?: string;
   @IsOptional() @IsString() statutoryJurisdiction?: string;
 }
 

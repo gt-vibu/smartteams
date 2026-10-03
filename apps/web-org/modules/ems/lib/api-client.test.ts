@@ -29,6 +29,23 @@ afterEach(() => {
 });
 
 describe('apiRequest session refresh', () => {
+  it.each(['check-ins', 'check-outs'])(
+    'explains geofence rejection for %s without refreshing the session',
+    async (direction) => {
+      const fetchSpy = mockFetch(() => response(403, { code: 'OUTSIDE_GEOFENCE' }));
+      await expect(
+        apiRequest(`/v1/organizations/o/attendance/${direction}`, { method: 'POST', body: {} }),
+      ).rejects.toThrow('inside an allowed attendance location');
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it('keeps authorization errors generic outside the attendance location rejection', async () => {
+    mockFetch(() => response(403, { code: 'FORBIDDEN', detail: 'Internal permission details' }));
+    await expect(
+      apiRequest('/v1/organizations/o/attendance/check-ins', { method: 'POST', body: {} }),
+    ).rejects.toThrow('You are not authorized');
+  });
   it('refreshes and replays a request that expired mid-session', async () => {
     let employeeCalls = 0;
     const fetchSpy = mockFetch((url) => {

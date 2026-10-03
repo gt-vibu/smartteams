@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 program_files="${ProgramFiles:-${ProgramW6432:-}}"
 
 if command -v cygpath >/dev/null 2>&1; then
@@ -16,6 +18,13 @@ run_pnpm() {
     pnpm_version=$(sed -n 's/.*"packageManager"[[:space:]]*:[[:space:]]*"pnpm@\([^"]*\)".*/\1/p' package.json | head -n 1)
     pnpm_root="$(cygpath -u "$LOCALAPPDATA")/node/corepack/v1/pnpm"
     node_bin="$(cygpath -u "$program_files")/nodejs/node.exe"
+    if [ ! -f "$node_bin" ]; then
+      node_bin="$(command -v node 2>/dev/null || true)"
+    fi
+    if [ -z "$node_bin" ] || [ ! -f "$node_bin" ]; then
+      echo "pre-commit: Node.js was not found. Install Node.js or add it to PATH." >&2
+      return 127
+    fi
     for pnpm_entry in "$pnpm_root/$pnpm_version/bin/pnpm.cjs" "$pnpm_root/$pnpm_version/bin/pnpm.mjs"; do
       if [ -f "$pnpm_entry" ]; then
         if [ -z "${PNPM_HOOK_SHIM_DIR:-}" ]; then

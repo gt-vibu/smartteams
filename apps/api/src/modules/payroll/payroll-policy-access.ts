@@ -80,23 +80,40 @@ export async function findPolicy(
   tx: TenantTransaction,
   organizationId: string,
   effectiveDate: Date,
-  policyId?: string,
+  payrollPolicyId?: string | null,
+  assignmentEffectiveFrom?: Date,
 ) {
-  const where = {
-    organizationId,
-    ...(policyId ? { id: policyId } : {}),
-    effectiveFrom: { lte: effectiveDate },
-    OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
-  } satisfies Prisma.PayrollPolicyWhereInput;
-  if (!policyId) {
-    const standard = await tx.payrollPolicy.findFirst({
-      where: { ...where, name: 'Standard payroll' },
-      orderBy: { effectiveFrom: 'desc' },
+  if (payrollPolicyId) {
+    const selected = await tx.payrollPolicy.findFirst({
+      where: { organizationId, id: payrollPolicyId },
+      include: {
+        components: { include: { payComponent: true }, orderBy: { displayOrder: 'asc' } },
+      },
     });
-    if (standard) return standard;
+    if (!selected) throw new ConflictError('The assigned payroll policy is unavailable');
+    // Default is an organization-wide, effective-dated rule. Selecting it must not
+    // freeze an employee onto the initial baseline when a newer default takes effect.
+    if (!selected.isDefault) {
+      const selectedDate =
+        assignmentEffectiveFrom && assignmentEffectiveFrom > effectiveDate
+          ? assignmentEffectiveFrom
+          : effectiveDate;
+      if (
+        selected.effectiveFrom > selectedDate ||
+        (selected.effectiveTo && selected.effectiveTo < selectedDate)
+      )
+        throw new ConflictError('The assigned payroll policy is not effective for this period');
+      return selected;
+    }
   }
   return tx.payrollPolicy.findFirst({
-    where,
-    orderBy: [{ effectiveFrom: 'desc' }, { name: 'asc' }],
+    where: {
+      organizationId,
+      isDefault: true,
+      effectiveFrom: { lte: effectiveDate },
+      OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
+    },
+    orderBy: { effectiveFrom: 'desc' },
+    include: { components: { include: { payComponent: true }, orderBy: { displayOrder: 'asc' } } },
   });
 }

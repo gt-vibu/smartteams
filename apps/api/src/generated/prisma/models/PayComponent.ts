@@ -301,6 +301,7 @@ export type PayComponentOrderByWithRelationInput = {
 export type PayComponentWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   organizationId_code?: Prisma.PayComponentOrganizationIdCodeCompoundUniqueInput
+  organizationId_id?: Prisma.PayComponentOrganizationIdIdCompoundUniqueInput
   AND?: Prisma.PayComponentWhereInput | Prisma.PayComponentWhereInput[]
   OR?: Prisma.PayComponentWhereInput[]
   NOT?: Prisma.PayComponentWhereInput | Prisma.PayComponentWhereInput[]
@@ -320,7 +321,7 @@ export type PayComponentWhereUniqueInput = Prisma.AtLeast<{
   employeeAssignments?: Prisma.EmployeePayComponentListRelationFilter
   payrollComponents?: Prisma.PayrollLineItemComponentListRelationFilter
   policyAssignments?: Prisma.PayrollPolicyComponentListRelationFilter
-}, "id" | "organizationId_code">
+}, "id" | "organizationId_code" | "organizationId_id">
 
 export type PayComponentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -503,6 +504,11 @@ export type PayComponentOrderByRelationAggregateInput = {
 export type PayComponentOrganizationIdCodeCompoundUniqueInput = {
   organizationId: string
   code: string
+}
+
+export type PayComponentOrganizationIdIdCompoundUniqueInput = {
+  organizationId: string
+  id: string
 }
 
 export type PayComponentCountOrderByAggregateInput = {

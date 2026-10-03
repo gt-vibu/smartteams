@@ -9,6 +9,7 @@ import type { DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
 
 export type PolicyInput = {
+  isDefault?: boolean;
   id?: string;
   name?: string;
   effectiveFrom: string;
@@ -36,6 +37,7 @@ export type PolicyComponentInput = {
 };
 
 export type EmployeePolicyInput = {
+  payrollPolicyId?: string;
   employeeId: string;
   effectiveFrom: string;
   effectiveTo?: string;
@@ -45,7 +47,6 @@ export type EmployeePolicyInput = {
   esiEnabled: boolean;
   ptEnabled: boolean;
   statutoryJurisdiction?: string;
-  payrollPolicyId?: string;
 };
 
 export type SalaryProfileInput = EmployeePolicyInput & {
@@ -93,7 +94,6 @@ export type PaymentInput = {
 
 export function toPolicyData(input: PolicyInput, effectiveTo: Date | null) {
   return {
-    name: input.name?.trim() || 'Standard payroll',
     effectiveTo,
     salarySlipDefault: input.salarySlipDefault,
     payrollEnabledDefault: input.payrollEnabledDefault,
@@ -111,6 +111,7 @@ export function toPolicyData(input: PolicyInput, effectiveTo: Date | null) {
 
 export function toEmployeePolicyData(input: EmployeePolicyInput, effectiveTo: Date | null) {
   return {
+    payrollPolicyId: input.payrollEnabled ? input.payrollPolicyId : null,
     effectiveTo,
     payrollEnabled: input.payrollEnabled,
     salarySlipMode: input.salarySlipMode,

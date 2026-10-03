@@ -19,6 +19,7 @@ import {
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
 
 import { saveEmployeePolicyInTransaction, statutoryName } from './payroll-policy-shared';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
 
 /**
  * An employee's salary profile: what they are paid, and what the breakdown looks like.
@@ -131,6 +132,7 @@ export class PayrollSalaryProfileService {
         pfEnabled: input.pfEnabled,
         esiEnabled: input.esiEnabled,
         ptEnabled: input.ptEnabled,
+        payrollPolicyId: input.payrollPolicyId,
         statutoryJurisdiction: input.statutoryJurisdiction,
       });
       await this.audit.record(
@@ -210,8 +212,6 @@ export class PayrollSalaryProfileService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const policy =
-        (await findPolicy(tx, context.organizationId, new Date())) ?? DEFAULT_PAYROLL_POLICY;
       const compensation =
         employee.compensations[0] ??
         // Nothing in force yet: show the salary saved to start later, rather than none at all.
@@ -221,10 +221,25 @@ export class PayrollSalaryProfileService {
           orderBy: { effectiveFrom: 'asc' },
         }));
       const employeePolicy = employee.payrollPolicies[0] ?? null;
+      const policy =
+        (await findPolicy(
+          tx,
+          context.organizationId,
+          effectiveDate,
+          employeePolicy?.payrollPolicyId,
+        )) ?? DEFAULT_PAYROLL_POLICY;
+      const organizationPolicy = employeePolicy?.payrollPolicyId
+        ? ((await findPolicy(tx, context.organizationId, effectiveDate)) ?? DEFAULT_PAYROLL_POLICY)
+        : policy;
+      const components = effectivePolicyComponents(
+        policyComponentDefaults(policy),
+        employee.payComponents,
+      );
       const gross =
         whatIf?.grossSalary !== undefined
           ? new Prisma.Decimal(whatIf.grossSalary)
           : (compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0));
+
       const structure = calculateSalaryStructure(gross, policy);
       const statutoryJurisdiction =
         employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
@@ -254,7 +269,7 @@ export class PayrollSalaryProfileService {
         .map((rule) =>
           calculateStatutoryDeduction(structure, rule, policy.roundingMode, structure),
         );
-      const assignedComponents = employee.payComponents.map((assignment) => ({
+      const assignedComponents = components.map((assignment) => ({
         code: assignment.payComponent.code,
         name: assignment.payComponent.name,
         componentType: assignment.payComponent.componentType,
@@ -351,7 +366,8 @@ export class PayrollSalaryProfileService {
         employeeId,
         compensation,
         employeePolicy,
-        organizationPolicy: policy,
+        organizationPolicy,
+        assignedPolicy: policy,
         structure,
         statutory,
         salaryBreakdown: {
@@ -363,7 +379,21 @@ export class PayrollSalaryProfileService {
           totalEmployerBenefits,
           netPay: structure.gross.minus(totalDeductions),
         },
-        components: employee.payComponents,
+        components: components.map((component) => ({
+          ...component,
+          effectiveFrom:
+            'effectiveFrom' in component
+              ? component.effectiveFrom
+              : 'effectiveFrom' in policy
+                ? policy.effectiveFrom
+                : effectiveDate,
+          effectiveTo:
+            'effectiveTo' in component
+              ? component.effectiveTo
+              : 'effectiveTo' in policy
+                ? policy.effectiveTo
+                : null,
+        })),
       };
     });
   }

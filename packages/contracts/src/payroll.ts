@@ -119,6 +119,8 @@ export type EmployeePayComponent = z.infer<typeof employeePayComponentSchema>;
 
 export const payrollPolicySchema = z.object({
   id: z.string().uuid().optional(),
+  name: z.string().optional(),
+  isDefault: z.boolean().optional(),
   effectiveFrom: z.string().optional(),
   effectiveTo: z.string().nullable().optional(),
   payrollDayBasis: z.number(),
@@ -148,6 +150,7 @@ export const salaryProfileSchema = z.object({
     .nullable(),
   employeePolicy: z
     .object({
+      payrollPolicyId: z.string().uuid().nullable().optional(),
       payrollEnabled: z.boolean(),
       salarySlipMode: z.string(),
       pfEnabled: z.boolean(),
@@ -157,6 +160,7 @@ export const salaryProfileSchema = z.object({
     })
     .nullable(),
   organizationPolicy: payrollPolicySchema.optional(),
+  assignedPolicy: payrollPolicySchema.optional(),
   structure: z.object({
     gross: money,
     base: money,

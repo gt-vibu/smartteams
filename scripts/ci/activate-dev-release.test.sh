@@ -33,17 +33,22 @@ case "$1" in
   *) : ;;
 esac'
 stub curl '[ -f "$HEALTHY_FILE" ]'
-stub aws 'printf "DATABASE_URL=postgresql://u:p@db/x\nCORS_ORIGINS=https://example.test\n"'
+stub aws 'printf "DATABASE_URL=postgresql://runtime:p@db/x\nDATABASE_MIGRATION_URL=postgresql://owner:p@db/x\nCORS_ORIGINS=https://example.test\n"'
 stub install 'args=(); while [ $# -gt 0 ]; do case "$1" in -o|-g|-m) shift 2 ;; -d) shift ;; *) args+=("$1"); shift ;; esac; done; mkdir -p "${args[@]}"'
 stub chown ':'
 stub runuser 'while [ "$1" != "--" ]; do shift; done; shift; exec "$@"'
 export PATH="$STUBS:$PATH"
 
 ROOT="$WORK/deploy"
-release() { # stage an incoming api release with a stub prisma that "migrates"
-  mkdir -p "$ROOT/incoming/$1/api/node_modules/.bin"
-  printf '#!/usr/bin/env bash\nexit 0\n' > "$ROOT/incoming/$1/api/node_modules/.bin/prisma"
-  chmod +x "$ROOT/incoming/$1/api/node_modules/.bin/prisma"
+release() { # Real Node env-file parsing, with a harmless Prisma entry-point fixture.
+  mkdir -p "$ROOT/incoming/$1/api/node_modules/prisma/build"
+  printf '%s\n' \
+    'const fs = require("node:fs");' \
+    'if (process.env.DATABASE_MIGRATION_URL !== "postgresql://owner:p@db/x") process.exit(1);' \
+    'if (process.env.DATABASE_URL !== "postgresql://runtime:p@db/x") process.exit(1);' \
+    'if (process.argv.slice(2).join(" ") !== "migrate deploy --config prisma.config.ts") process.exit(1);' \
+    'fs.writeFileSync("migration-owner-verified", "ok");' \
+    > "$ROOT/incoming/$1/api/node_modules/prisma/build/index.js"
 }
 activate() { bash "$SCRIPT" "$ROOT" "$1" secret-id ap-south-1 "$(id -un)" api; }
 running() { cut -f2 "$PM2_STATE"; }
@@ -55,6 +60,8 @@ echo "a healthy first release"
 release r1; touch "$HEALTHY_FILE"
 activate r1 > "$WORK/out1" 2>&1 || true
 check "r1 is running" 'running | grep -q "/releases/r1/api/start.sh"'
+check "migration receives the schema-owner URL from the protected env file" \
+  '[ -f "$ROOT/releases/r1/api/migration-owner-verified" ]'
 check "the API waits for in-flight payroll on stop (kill timeout >= 120s)" \
   'grep -E "pm2 start .*releases/r1/api/start.sh" "$PM2_LOG" | grep -Eq -- "--kill-timeout (1[2-9][0-9]{4}|[2-9][0-9]{5})"'
 

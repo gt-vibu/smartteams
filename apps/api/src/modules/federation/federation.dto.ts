@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsEmail,
+  IsBoolean,
   IsArray,
   IsDateString,
   IsInt,
@@ -135,6 +136,7 @@ export class FederatedWorkLocationDto {
   @IsNumber() @Min(1) radiusMeters!: number;
 }
 export class FederatedPreferencesDto {
+  @IsOptional() @IsBoolean() requireGps?: boolean | null;
   @IsOptional() @IsIn(['DISABLED', 'FLAG_ONLY', 'REQUIRED']) geofenceMode?:
     'DISABLED' | 'FLAG_ONLY' | 'REQUIRED';
   @IsOptional() @IsIn(['DISABLED', 'OPTIONAL', 'REQUIRED']) biometricVerificationMode?:

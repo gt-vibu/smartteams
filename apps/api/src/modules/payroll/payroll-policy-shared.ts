@@ -47,6 +47,22 @@ export async function saveEmployeePolicyInTransaction(
       },
     },
   });
+  const payrollPolicyId = input.payrollEnabled
+    ? (input.payrollPolicyId ?? existing?.payrollPolicyId ?? undefined)
+    : undefined;
+  if (payrollPolicyId) {
+    const selected = await tx.payrollPolicy.findFirst({
+      where: {
+        id: payrollPolicyId,
+        organizationId: context.organizationId,
+        effectiveFrom: { lte: effectiveFrom },
+        OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
+      },
+      select: { id: true },
+    });
+    if (!selected)
+      throw new ConflictError('Selected payroll policy is unavailable for the effective date');
+  }
   const overlap = await tx.employeePayrollPolicy.findFirst({
     where: {
       organizationId: context.organizationId,
@@ -60,14 +76,14 @@ export async function saveEmployeePolicyInTransaction(
   return existing
     ? tx.employeePayrollPolicy.update({
         where: { id: existing.id },
-        data: toEmployeePolicyData(input, effectiveTo),
+        data: toEmployeePolicyData({ ...input, payrollPolicyId }, effectiveTo),
       })
     : tx.employeePayrollPolicy.create({
         data: {
           organizationId: context.organizationId,
           employeeId: input.employeeId,
           effectiveFrom,
-          ...toEmployeePolicyData(input, effectiveTo),
+          ...toEmployeePolicyData({ ...input, payrollPolicyId }, effectiveTo),
         },
       });
 }

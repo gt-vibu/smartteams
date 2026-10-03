@@ -31,6 +31,7 @@ import { readOvertimeRates } from './payroll-overtime-rates';
 import { chunked, groupBy } from './payroll-bulk';
 import { findPolicy } from './payroll-policy-access';
 import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
 
 /**
  * Running the calculation for a whole payroll run.
@@ -244,6 +245,20 @@ export class PayrollCalculationService {
           payrollEnabledDefault: true,
           components: [],
         };
+        const assignedPolicyIds = [
+          ...new Set(
+            employees
+              .map((employee) => employee.payrollPolicies[0]?.payrollPolicyId)
+              .filter((id): id is string => Boolean(id)),
+          ),
+        ];
+        const assignedPolicies = assignedPolicyIds.length
+          ? await tx.payrollPolicy.findMany({
+              where: { organizationId: context.organizationId, id: { in: assignedPolicyIds } },
+              include: { components: { include: { payComponent: true } } },
+            })
+          : [];
+        const assignedPoliciesById = new Map(assignedPolicies.map((entry) => [entry.id, entry]));
         const statutoryRules = await tx.payrollStatutoryRule.findMany({
           where: {
             organizationId: context.organizationId,
@@ -351,7 +366,25 @@ export class PayrollCalculationService {
         const snapshot = employees
           .map((employee) => {
             const employeePolicy = employee.payrollPolicies[0] ?? null;
-            const selectedPolicy = employeePolicy?.payrollPolicy ?? policy;
+            const assignedPolicy = employeePolicy?.payrollPolicyId
+              ? assignedPoliciesById.get(employeePolicy.payrollPolicyId)
+              : policy;
+            if (!assignedPolicy)
+              throw new ConflictError('The assigned payroll policy is unavailable');
+            const selectedPolicy =
+              'isDefault' in assignedPolicy && assignedPolicy.isDefault ? policy : assignedPolicy;
+            const selectedDate =
+              employeePolicy && employeePolicy.effectiveFrom > run.periodStart
+                ? employeePolicy.effectiveFrom
+                : run.periodStart;
+            if (
+              'effectiveFrom' in selectedPolicy &&
+              (selectedPolicy.effectiveFrom > selectedDate ||
+                (selectedPolicy.effectiveTo && selectedPolicy.effectiveTo < selectedDate))
+            )
+              throw new ConflictError(
+                'The assigned payroll policy is not effective for this period',
+              );
             if (!(employeePolicy?.payrollEnabled ?? selectedPolicy.payrollEnabledDefault))
               return null;
             // Nobody is paid for a period they were not employed in, and someone with nothing to
@@ -365,31 +398,20 @@ export class PayrollCalculationService {
             if (
               !employee.compensations[0] &&
               employee.payComponents.length === 0 &&
-              !(employeePolicy?.payrollPolicy?.components.length ?? 0) &&
+              !policyComponentDefaults(selectedPolicy).length &&
               !adjustmentsByEmployee.get(employee.id)?.length
             )
               return null;
-            const employeeComponentIds = new Set(
-              employee.payComponents.map((assignment) => assignment.payComponentId),
-            );
-            const components = [
-              ...(employeePolicy?.payrollPolicy?.components ?? [])
-                .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId))
-                .map((assignment) => ({
-                  id: assignment.id,
-                  componentId: assignment.payComponentId,
-                  amount: assignment.amount,
-                  percentage: assignment.percentage,
-                  component: assignment.payComponent,
-                })),
-              ...employee.payComponents.map((assignment) => ({
-                id: assignment.id,
-                componentId: assignment.payComponentId,
-                amount: assignment.amount,
-                percentage: assignment.percentage,
-                component: assignment.payComponent,
-              })),
-            ];
+            const components = effectivePolicyComponents(
+              policyComponentDefaults(selectedPolicy),
+              employee.payComponents,
+            ).map((assignment) => ({
+              id: assignment.id,
+              componentId: assignment.payComponentId,
+              amount: assignment.amount,
+              percentage: assignment.percentage,
+              component: assignment.payComponent,
+            }));
             return {
               employeeId: employee.id,
               compensation: employee.compensations[0] ?? null,

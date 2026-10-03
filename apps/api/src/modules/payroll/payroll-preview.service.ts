@@ -22,6 +22,7 @@ import { dateOnly, type PreviewInput } from './payroll-policy.types';
 import { employeeScope, findPolicy, resolveEmployeeId } from './payroll-policy-access';
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
 import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
 
 @Injectable()
 export class PayrollPreviewService {
@@ -84,9 +85,13 @@ export class PayrollPreviewService {
       if (!compensation) throw new ConflictError('Employee has no salary profile for this period');
       const employeePolicy = employee.payrollPolicies[0];
       const policy =
-        employeePolicy?.payrollPolicy ??
-        (await findPolicy(tx, context.organizationId, periodStart)) ??
-        DEFAULT_PAYROLL_POLICY;
+        (await findPolicy(
+          tx,
+          context.organizationId,
+          periodStart,
+          employeePolicy?.payrollPolicyId,
+          employeePolicy?.effectiveFrom,
+        )) ?? DEFAULT_PAYROLL_POLICY;
       if (!(employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault))
         throw new ConflictError('Payroll is disabled for this employee');
       const gross = compensation.grossSalary ?? compensation.baseAmount;
@@ -234,25 +239,15 @@ export class PayrollPreviewService {
         baseMinimum: new Prisma.Decimal(policy.baseMinimum),
         hraPercentage: new Prisma.Decimal(policy.hraPercentage),
       };
-      const employeeComponentIds = new Set(
-        employee.payComponents.map((assignment) => assignment.payComponentId),
-      );
-      const components = [
-        ...(employeePolicy?.payrollPolicy?.components ?? [])
-          .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId))
-          .map((assignment) => ({
-            componentId: assignment.payComponentId,
-            amount: assignment.amount,
-            percentage: assignment.percentage,
-            component: assignment.payComponent,
-          })),
-        ...employee.payComponents.map((assignment) => ({
-          componentId: assignment.payComponentId,
-          amount: assignment.amount,
-          percentage: assignment.percentage,
-          component: assignment.payComponent,
-        })),
-      ];
+      const components = effectivePolicyComponents(
+        policyComponentDefaults(policy),
+        employee.payComponents,
+      ).map((assignment) => ({
+        componentId: assignment.payComponentId,
+        amount: assignment.amount,
+        percentage: assignment.percentage,
+        component: assignment.payComponent,
+      }));
       const item = {
         employeeId,
         compensation,

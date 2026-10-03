@@ -691,7 +691,6 @@ export type EmployeePayrollPolicyCreateWithoutPayrollPolicyInput = {
 
 export type EmployeePayrollPolicyUncheckedCreateWithoutPayrollPolicyInput = {
   id?: string
-  organizationId: string
   employeeId: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
@@ -875,7 +874,6 @@ export type EmployeePayrollPolicyUpdateManyWithWhereWithoutEmployeeInput = {
 
 export type EmployeePayrollPolicyCreateManyPayrollPolicyInput = {
   id?: string
-  organizationId: string
   employeeId: string
   effectiveFrom: Date | string
   effectiveTo?: Date | string | null
@@ -909,7 +907,6 @@ export type EmployeePayrollPolicyUpdateWithoutPayrollPolicyInput = {
 
 export type EmployeePayrollPolicyUncheckedUpdateWithoutPayrollPolicyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -926,7 +923,6 @@ export type EmployeePayrollPolicyUncheckedUpdateWithoutPayrollPolicyInput = {
 
 export type EmployeePayrollPolicyUncheckedUpdateManyWithoutPayrollPolicyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   employeeId?: Prisma.StringFieldUpdateOperationsInput | string
   effectiveFrom?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   effectiveTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null

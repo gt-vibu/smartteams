@@ -85,6 +85,9 @@ export function toPunchDto(punch: {
   distanceFromLocationMeters: unknown;
   biometricVerified: boolean;
   webauthnCredentialId: string | null;
+  latitude?: unknown;
+  longitude?: unknown;
+  accuracyMeters?: unknown;
 }) {
   return {
     id: punch.id,
@@ -97,6 +100,9 @@ export function toPunchDto(punch: {
     distanceFromLocationMeters: punch.distanceFromLocationMeters,
     biometricVerified: punch.biometricVerified,
     webauthnCredentialId: punch.webauthnCredentialId,
+    latitude: punch.latitude,
+    longitude: punch.longitude,
+    accuracyMeters: punch.accuracyMeters,
   };
 }
 
@@ -111,6 +117,7 @@ export function attendanceCaptureMode(value: unknown) {
 export function toPreferencesDto(value: {
   id?: string;
   organizationId?: string;
+  requireGps?: boolean | null;
   geofenceMode: GeofenceMode | null;
   biometricVerificationMode: BiometricVerificationMode | null;
   geofenceOwnerSource: string;
@@ -128,6 +135,7 @@ export function toPreferencesDto(value: {
   return {
     id: value.id,
     organizationId: value.organizationId,
+    requireGps: value.requireGps ?? false,
     geofenceMode: value.geofenceMode,
     biometricVerificationMode: value.biometricVerificationMode,
     attendanceSessionMode: mode,

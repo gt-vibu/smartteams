@@ -137,6 +137,7 @@ export class WorkLocationDto {
 }
 
 export class AttendancePreferencesDto {
+  @IsOptional() @IsBoolean() requireGps?: boolean | null;
   @IsOptional() @IsEnum(['DISABLED', 'FLAG_ONLY', 'REQUIRED']) geofenceMode?:
     'DISABLED' | 'FLAG_ONLY' | 'REQUIRED';
   @IsOptional() @IsEnum(['DISABLED', 'OPTIONAL', 'REQUIRED']) biometricVerificationMode?:

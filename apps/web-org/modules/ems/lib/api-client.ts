@@ -172,7 +172,15 @@ function errorMessage(payload: unknown, status: number, path: string): string {
     return isRefreshable(path)
       ? 'Your session has ended. Please sign in again.'
       : 'Invalid email or password.';
-  if (status === 403) return 'You are not authorized to perform this action.';
+  if (status === 403) {
+    if (
+      isRecord(payload) &&
+      payload.code === 'OUTSIDE_GEOFENCE' &&
+      /\/attendance\/check-(ins|outs)$/.test(path)
+    )
+      return 'You must be inside an allowed attendance location to check in or check out.';
+    return 'You are not authorized to perform this action.';
+  }
   if (status === 429) return 'Too many attempts. Please wait a moment and try again.';
   if (isRecord(payload)) {
     const detail = payload.detail ?? payload.message;

@@ -7,11 +7,16 @@ import {
 } from '../../generated/prisma/enums';
 import { Prisma } from '../../generated/prisma/client';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
-import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import {
+  ConflictError,
+  ForbiddenDomainError,
+  NotFoundError,
+} from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
-import { type WorkLocationInput } from './attendance-location.service';
+import { type AttendanceTransaction, type WorkLocationInput } from './attendance-location.service';
 import { assertSettingOwnership, toPreferencesDto } from './attendance-shared';
+import { canActForAllEmployees } from '../employees/employee-scope';
 
 /**
  * Per-branch attendance settings: how punches may be captured and what the day boundaries are.
@@ -31,6 +36,7 @@ export class AttendancePreferencesService {
     context: DomainContext,
     input: {
       branchId?: string;
+      requireGps?: boolean | null;
       geofenceMode?: GeofenceMode;
       biometricVerificationMode?: BiometricVerificationMode;
       attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
@@ -41,8 +47,16 @@ export class AttendancePreferencesService {
     },
   ) {
     requirePermission(context, 'attendance.preferences.write');
+    if (context.branchId && input.branchId && input.branchId !== context.branchId)
+      throw new ForbiddenDomainError('Attendance preferences are restricted to the active branch');
+    input = { ...input, branchId: input.branchId ?? context.branchId };
+    if (input.requireGps === null && !input.branchId)
+      throw new ConflictError(
+        'Organization GPS capture must be enabled or disabled; only a branch may inherit',
+      );
     if (
       input.geofenceMode === undefined &&
+      input.requireGps === undefined &&
       input.biometricVerificationMode === undefined &&
       input.workLocations === undefined &&
       input.attendanceSessionMode === undefined &&
@@ -63,7 +77,9 @@ export class AttendancePreferencesService {
         if (!branch) throw new NotFoundError('Branch');
         assertSettingOwnership(
           context,
-          input.geofenceMode !== undefined || input.workLocations !== undefined,
+          input.geofenceMode !== undefined ||
+            input.workLocations !== undefined ||
+            input.requireGps !== undefined,
           branch.geofenceOwnerSource,
           branch.geofenceOwnerClientId,
           'geofence',
@@ -79,6 +95,7 @@ export class AttendancePreferencesService {
           where: { id: branch.id },
           data: {
             geofenceMode: input.geofenceMode,
+            requireGps: input.requireGps,
             biometricVerificationMode: input.biometricVerificationMode,
           },
         });
@@ -99,14 +116,16 @@ export class AttendancePreferencesService {
           },
           tx,
         );
-        return toPreferencesDto(updated);
+        return this.readPreferences(tx, context.organizationId, branch.id, true);
       }
       const settings = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
       });
       assertSettingOwnership(
         context,
-        input.geofenceMode !== undefined || input.workLocations !== undefined,
+        input.geofenceMode !== undefined ||
+          input.workLocations !== undefined ||
+          input.requireGps !== undefined,
         settings.geofenceOwnerSource,
         settings.geofenceOwnerClientId,
         'geofence',
@@ -132,6 +151,7 @@ export class AttendancePreferencesService {
         where: { organizationId: context.organizationId },
         data: {
           geofenceMode: input.geofenceMode,
+          requireGps: input.requireGps ?? undefined,
           biometricVerificationMode: input.biometricVerificationMode,
           autoCheckOutMode: input.autoCheckOutMode,
           ...(input.autoCheckOutAt ? { autoCheckOutAt: timeOnly(input.autoCheckOutAt) } : {}),
@@ -150,42 +170,95 @@ export class AttendancePreferencesService {
         },
         tx,
       );
-      return toPreferencesDto(updated);
+      return this.readPreferences(tx, context.organizationId, undefined, true);
     });
   }
 
   async getPreferences(context: DomainContext, branchId?: string) {
     requirePermission(context, 'attendance.preferences.read');
+    if (context.branchId && branchId && branchId !== context.branchId)
+      throw new ForbiddenDomainError('Attendance preferences are restricted to the active branch');
     return this.database.run(context, async (tx) => {
-      if (branchId) {
-        const branch = await tx.branch.findFirst({
-          where: { id: branchId, organizationId: context.organizationId },
-          select: {
-            id: true,
-            geofenceMode: true,
-            biometricVerificationMode: true,
-            geofenceOwnerSource: true,
-            biometricOwnerSource: true,
-          },
-        });
-        if (!branch) throw new NotFoundError('Branch');
-        return toPreferencesDto(branch);
-      }
-      const settings = await tx.organizationSettings.findUniqueOrThrow({
-        where: { organizationId: context.organizationId },
-        select: {
-          organizationId: true,
-          geofenceMode: true,
-          biometricVerificationMode: true,
-          geofenceOwnerSource: true,
-          biometricOwnerSource: true,
-          metadata: true,
-          autoCheckOutMode: true,
-          autoCheckOutAt: true,
-        },
-      });
-      return toPreferencesDto(settings);
+      const self = !canActForAllEmployees(context, 'attendance.read.all')
+        ? await tx.employee.findFirst({
+            where: {
+              organizationId: context.organizationId,
+              userId: context.actor.userId,
+              status: 'ACTIVE',
+            },
+            select: {
+              primaryBranchId: true,
+              geofenceMode: true,
+              branchAssignments: {
+                where: {
+                  startsOn: { lte: new Date() },
+                  OR: [{ endsOn: null }, { endsOn: { gte: new Date() } }],
+                },
+                orderBy: { startsOn: 'desc' },
+                select: { branchId: true, isPrimary: true },
+              },
+            },
+          })
+        : null;
+      const effectiveBranchId =
+        branchId ??
+        context.branchId ??
+        self?.primaryBranchId ??
+        self?.branchAssignments.find((assignment) => assignment.isPrimary)?.branchId;
+      const preferences = await this.readPreferences(tx, context.organizationId, effectiveBranchId);
+      return self?.geofenceMode ? { ...preferences, geofenceMode: self.geofenceMode } : preferences;
     });
+  }
+
+  private async readPreferences(
+    tx: AttendanceTransaction,
+    organizationId: string,
+    branchId?: string,
+    validateLocations = false,
+  ) {
+    const settings = await tx.organizationSettings.findUniqueOrThrow({ where: { organizationId } });
+    const branch = branchId
+      ? await tx.branch.findFirst({ where: { id: branchId, organizationId } })
+      : null;
+    if (branchId && !branch) throw new NotFoundError('Branch');
+    const workLocations = await tx.workLocation.findMany({
+      where: {
+        organizationId,
+        isActive: true,
+        ...(branchId ? { OR: [{ branchId }, { branchId: null }] } : { branchId: null }),
+      },
+      orderBy: { name: 'asc' },
+    });
+    if (
+      validateLocations &&
+      (branch?.geofenceMode ?? settings.geofenceMode) === GeofenceMode.REQUIRED &&
+      !workLocations.length
+    )
+      throw new ConflictError(
+        'Configure an active attendance location before enabling geofence enforcement',
+      );
+    return {
+      ...toPreferencesDto(
+        branch
+          ? {
+              ...branch,
+              requireGps: branch.requireGps ?? settings.requireGps,
+              geofenceMode: branch.geofenceMode ?? settings.geofenceMode,
+              biometricVerificationMode:
+                branch.biometricVerificationMode ?? settings.biometricVerificationMode,
+              metadata: settings.metadata,
+            }
+          : settings,
+      ),
+      workLocations: workLocations.map((location) => ({
+        id: location.id,
+        branchId: location.branchId,
+        name: location.name,
+        latitude: Number(location.latitude),
+        longitude: Number(location.longitude),
+        radiusMeters: Number(location.radiusMeters),
+      })),
+    };
   }
 
   /**
