@@ -502,20 +502,28 @@ export class FederationPayrollController {
     @Body() body: PayrollActionDto,
     @Req() request: FederationRequest,
   ) {
-    const target = action.toUpperCase();
-    if (!isPayrollStatus(target)) throw new ConflictError('Unsupported payroll action');
-    return this.payroll.advance(
-      await this.support.context(
-        request,
-        organizationId,
-        payrollScope(target),
-        undefined,
-        body.comment,
-      ),
-      runId,
-      target,
+    // The route uses imperative action names, while the state machine uses past-tense
+    // statuses (calculate → CALCULATED, approve → APPROVED, etc.).
+    const targetByAction: Record<string, PayrollRunStatus> = {
+      calculate: 'CALCULATED',
+      approve: 'APPROVED',
+      release: 'RELEASED',
+      lock: 'LOCKED',
+    };
+    const target = targetByAction[action.toLowerCase()];
+    if (!target || !isPayrollStatus(target)) throw new ConflictError('Unsupported payroll action');
+    const context = await this.support.context(
+      request,
+      organizationId,
+      payrollScope(target),
+      undefined,
       body.comment,
     );
+    // Calculation is a business operation: it snapshots compensation and attendance,
+    // creates the run's payroll lines, and then marks the run CALCULATED. It must not use
+    // the generic state transition, which is reserved for approval, release, and locking.
+    if (target === 'CALCULATED') return this.payroll.calculate(context, runId);
+    return this.payroll.advance(context, runId, target, body.comment);
   }
 
   @Post('federation/payroll/adjustments')

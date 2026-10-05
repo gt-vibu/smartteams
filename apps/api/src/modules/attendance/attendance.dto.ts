@@ -22,6 +22,7 @@ import { AttendanceDayStatus } from '../../generated/prisma/enums';
 import {
   ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
   ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+  ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH,
 } from '@smarteam/contracts';
 export class PunchDto {
   @IsUUID() employeeId!: string;
@@ -61,8 +62,8 @@ export class AttendancePreferencesQueryDto {
 }
 
 export class AttendanceCorrectionDto {
-  // The same constants the drawer disables its submit button on, so the form cannot accept a
-  // reason this DTO will reject.
+  // The drawer and DTO share the same minimum. The service also trims and rejects whitespace-only
+  // reasons, which cannot satisfy the drawer's trimmed length check.
   @IsString()
   @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
   @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
@@ -116,7 +117,7 @@ export class HolidayConflictQueryDto {
 /** The employee's explanation of a check-in on their optional holiday. */
 export class HolidayReviewRequestDto {
   @IsString()
-  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MinLength(ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH)
   @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
   reason!: string;
   @IsOptional() @IsString() @MaxLength(500) comment?: string;

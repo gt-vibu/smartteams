@@ -117,7 +117,7 @@ export function CorrectionForm({
         aria-label="Reason for the correction"
         className="bg-muted/40 focus:bg-card"
         onChange={(event) => setReason(event.target.value)}
-        placeholder={`Why it should change (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`}
+        placeholder="Why should this attendance record change?"
         rows={3}
         value={reason}
       />

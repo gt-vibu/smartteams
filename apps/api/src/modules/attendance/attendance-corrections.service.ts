@@ -33,6 +33,7 @@ import {
   type PunchLike,
 } from './attendance-missing-checkout';
 import { expectedDayOn } from './attendance-shift-day';
+import { assertCorrectionIsNotFuture } from './attendance-correction-future';
 
 /** The employee's first punch after this day's open check-in, on any day. */
 async function nextPunchAfterOpenCheckIn(
@@ -92,6 +93,19 @@ export class AttendanceCorrectionsService {
       // request. Without this an employee holding `attendance.corrections.write` — which every
       // seeded employee holds — could raise a correction against a colleague's day.
       await assertMayActForEmployee(tx, context, record.employeeId, 'attendance.read.all');
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      const afterSnapshot = snapshotRecord(input.afterSnapshot ?? record) ?? {};
+      assertCorrectionIsNotFuture(
+        record.workDate,
+        [
+          snapshotDate(afterSnapshot.correctedCheckIn, 'check-in'),
+          snapshotDate(afterSnapshot.correctedCheckOut, 'check-out'),
+        ],
+        organization.timezone,
+      );
       return createAttendanceCorrection(
         tx,
         this.audit,
@@ -130,6 +144,15 @@ export class AttendanceCorrectionsService {
         throw new ConflictError('An attendance request requires a check-in time');
       if (correctedCheckOut && correctedCheckOut < correctedCheckIn)
         throw new ConflictError('Attendance check-out must be after check-in');
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      assertCorrectionIsNotFuture(
+        date,
+        [correctedCheckIn, correctedCheckOut],
+        organization.timezone,
+      );
 
       const record = await tx.attendanceRecord.upsert({
         where: { employeeId_workDate: { employeeId, workDate: date } },
