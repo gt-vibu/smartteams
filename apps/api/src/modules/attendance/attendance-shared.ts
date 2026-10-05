@@ -34,17 +34,24 @@ export function assertSettingOwnership(
 ) {
   if (!requested) return;
   if (context.accessMode === 'PLATFORM') return;
-  const clientId = context.actor.clientId;
-  if (clientId) {
-    if (ownerSource !== 'FEDERATED' || ownerClientId !== clientId)
+  if (context.accessMode === 'FEDERATION') {
+    const clientId = context.actor.clientId;
+    if (!clientId)
       throw new ForbiddenDomainError(
-        `Federation ownership has not been granted for ${setting} attendance settings`,
+        `Federation client identity is missing for ${setting} attendance settings`,
+      );
+    // A federation scope is the explicit grant to manage this setting. NATIVE is the
+    // unclaimed default; the first authorized federation write claims it. Once claimed,
+    // only that same client may continue to update it.
+    if (ownerSource === 'FEDERATED' && ownerClientId !== clientId)
+      throw new ForbiddenDomainError(
+        `${setting} attendance settings are owned by a different federation client`,
       );
     return;
   }
   if (ownerSource === 'FEDERATED')
     throw new ForbiddenDomainError(
-      `Native writes cannot modify federated-owned ${setting} attendance settings`,
+      `Native writes cannot modify ${setting} attendance settings owned by a federation client`,
     );
 }
 

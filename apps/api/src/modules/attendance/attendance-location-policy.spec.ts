@@ -49,9 +49,9 @@ function setup() {
     standardDayMinutes: 480,
     metadata: {},
     geofenceOwnerSource: 'NATIVE',
-    geofenceOwnerClientId: null,
+    geofenceOwnerClientId: null as string | null,
     biometricOwnerSource: 'NATIVE',
-    biometricOwnerClientId: null,
+    biometricOwnerClientId: null as string | null,
   };
   const branch = {
     id: 'branch',
@@ -60,9 +60,9 @@ function setup() {
     geofenceMode: null as string | null,
     biometricVerificationMode: null,
     geofenceOwnerSource: 'NATIVE',
-    geofenceOwnerClientId: null,
+    geofenceOwnerClientId: null as string | null,
     biometricOwnerSource: 'NATIVE',
-    biometricOwnerClientId: null,
+    biometricOwnerClientId: null as string | null,
   };
   const circles: Array<Record<string, unknown>> = [];
   const punches: Array<Record<string, unknown>> = [];
@@ -90,10 +90,32 @@ function setup() {
     organization: { findUniqueOrThrow: jest.fn().mockResolvedValue({ timezone: 'Asia/Kolkata' }) },
     organizationSettings: {
       findUniqueOrThrow: jest.fn().mockResolvedValue(settings),
+      updateMany: jest.fn(
+        ({ where, data }: WriteData & { where: { OR?: Record<string, unknown>[] } }) => {
+          const allowed = where.OR?.some((condition) =>
+            Object.entries(condition).every(
+              ([key, value]) => settings[key as keyof typeof settings] === value,
+            ),
+          );
+          if (allowed) applyDefinedData(settings, data);
+          return Promise.resolve({ count: allowed ? 1 : 0 });
+        },
+      ),
       update: jest.fn(({ data }: WriteData) => Promise.resolve(applyDefinedData(settings, data))),
     },
     branch: {
       findFirst: jest.fn().mockResolvedValue(branch),
+      updateMany: jest.fn(
+        ({ where, data }: WriteData & { where: { OR?: Record<string, unknown>[] } }) => {
+          const allowed = where.OR?.some((condition) =>
+            Object.entries(condition).every(
+              ([key, value]) => branch[key as keyof typeof branch] === value,
+            ),
+          );
+          if (allowed) applyDefinedData(branch, data);
+          return Promise.resolve({ count: allowed ? 1 : 0 });
+        },
+      ),
       update: jest.fn(({ data }: WriteData) => Promise.resolve(applyDefinedData(branch, data))),
     },
     workLocation: {
@@ -462,12 +484,73 @@ describe('attendance location preference roundtrip', () => {
     expect(tx.branch.update).not.toHaveBeenCalled();
   });
 
-  it('applies geofence ownership protection to GPS settings', async () => {
+  it('lets an authorized federation client claim native-default geofence settings on first write', async () => {
+    const { preferences, branch, tx } = setup();
+    const federationContext = context({
+      accessMode: 'FEDERATION',
+      actor: { type: 'FEDERATION_CLIENT', clientId: 'partner' },
+    });
+    await preferences.updatePreferences(federationContext, {
+      branchId: 'branch',
+      requireGps: true,
+      geofenceMode: 'REQUIRED',
+      workLocations: [
+        { name: 'Office branch', latitude: 12.97, longitude: 77.59, radiusMeters: 100 },
+      ],
+    });
+    expect(tx.branch.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: 'branch',
+        OR: [
+          { geofenceOwnerSource: 'NATIVE' },
+          { geofenceOwnerSource: 'FEDERATED', geofenceOwnerClientId: 'partner' },
+        ],
+      },
+      data: { geofenceOwnerSource: 'FEDERATED', geofenceOwnerClientId: 'partner' },
+    });
+    expect(branch.geofenceOwnerSource).toBe('FEDERATED');
+    expect(branch.geofenceOwnerClientId).toBe('partner');
+  });
+
+  it('rejects a competing ownership claim that wins between the read and the atomic claim', async () => {
+    const { preferences, tx } = setup();
+    tx.branch.updateMany.mockResolvedValue({ count: 0 });
+    await expect(
+      preferences.updatePreferences(
+        context({
+          accessMode: 'FEDERATION',
+          actor: { type: 'FEDERATION_CLIENT', clientId: 'partner' },
+        }),
+        { branchId: 'branch', requireGps: true },
+      ),
+    ).rejects.toThrow('owned by a different federation client');
+    expect(tx.branch.update).not.toHaveBeenCalled();
+    expect(tx.workLocation.upsert).not.toHaveBeenCalled();
+  });
+
+  it('prevents a different federation client from taking geofence settings after they are claimed', async () => {
     const { preferences, branch, tx } = setup();
     branch.geofenceOwnerSource = 'FEDERATED';
+    branch.geofenceOwnerClientId = 'existing-owner';
+    await expect(
+      preferences.updatePreferences(
+        context({
+          accessMode: 'FEDERATION',
+          actor: { type: 'FEDERATION_CLIENT', clientId: 'other-client' },
+        }),
+        { branchId: 'branch', requireGps: true },
+      ),
+    ).rejects.toThrow('owned by a different federation client');
+    expect(tx.branch.update).not.toHaveBeenCalled();
+  });
+
+  it('continues to prevent native writes to federation-owned geofence settings', async () => {
+    const { preferences, branch, tx } = setup();
+    branch.geofenceOwnerSource = 'FEDERATED';
+    branch.geofenceOwnerClientId = 'partner';
     await expect(
       preferences.updatePreferences(context(), { branchId: 'branch', requireGps: true }),
-    ).rejects.toThrow('federated-owned');
+    ).rejects.toThrow('owned by a federation client');
     expect(tx.branch.update).not.toHaveBeenCalled();
   });
 });

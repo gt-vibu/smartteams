@@ -91,6 +91,49 @@ export class AttendancePreferencesService {
           branch.biometricOwnerClientId,
           'biometric',
         );
+        if (context.accessMode === 'FEDERATION') {
+          const clientId = context.actor.clientId;
+          if (!clientId)
+            throw new ForbiddenDomainError(
+              'Federation client identity is required to claim attendance settings',
+            );
+          if (
+            input.geofenceMode !== undefined ||
+            input.requireGps !== undefined ||
+            input.workLocations !== undefined
+          ) {
+            const claim = await tx.branch.updateMany({
+              where: {
+                id: branch.id,
+                OR: [
+                  { geofenceOwnerSource: 'NATIVE' },
+                  { geofenceOwnerSource: 'FEDERATED', geofenceOwnerClientId: clientId },
+                ],
+              },
+              data: { geofenceOwnerSource: 'FEDERATED', geofenceOwnerClientId: clientId },
+            });
+            if (claim.count !== 1)
+              throw new ForbiddenDomainError(
+                'Geofence attendance settings are owned by a different federation client',
+              );
+          }
+          if (input.biometricVerificationMode !== undefined) {
+            const claim = await tx.branch.updateMany({
+              where: {
+                id: branch.id,
+                OR: [
+                  { biometricOwnerSource: 'NATIVE' },
+                  { biometricOwnerSource: 'FEDERATED', biometricOwnerClientId: clientId },
+                ],
+              },
+              data: { biometricOwnerSource: 'FEDERATED', biometricOwnerClientId: clientId },
+            });
+            if (claim.count !== 1)
+              throw new ForbiddenDomainError(
+                'Biometric attendance settings are owned by a different federation client',
+              );
+          }
+        }
         const updated = await tx.branch.update({
           where: { id: branch.id },
           data: {
@@ -137,6 +180,49 @@ export class AttendancePreferencesService {
         settings.biometricOwnerClientId,
         'biometric',
       );
+      if (context.accessMode === 'FEDERATION') {
+        const clientId = context.actor.clientId;
+        if (!clientId)
+          throw new ForbiddenDomainError(
+            'Federation client identity is required to claim attendance settings',
+          );
+        if (
+          input.geofenceMode !== undefined ||
+          input.requireGps !== undefined ||
+          input.workLocations !== undefined
+        ) {
+          const claim = await tx.organizationSettings.updateMany({
+            where: {
+              organizationId: context.organizationId,
+              OR: [
+                { geofenceOwnerSource: 'NATIVE' },
+                { geofenceOwnerSource: 'FEDERATED', geofenceOwnerClientId: clientId },
+              ],
+            },
+            data: { geofenceOwnerSource: 'FEDERATED', geofenceOwnerClientId: clientId },
+          });
+          if (claim.count !== 1)
+            throw new ForbiddenDomainError(
+              'Geofence attendance settings are owned by a different federation client',
+            );
+        }
+        if (input.biometricVerificationMode !== undefined) {
+          const claim = await tx.organizationSettings.updateMany({
+            where: {
+              organizationId: context.organizationId,
+              OR: [
+                { biometricOwnerSource: 'NATIVE' },
+                { biometricOwnerSource: 'FEDERATED', biometricOwnerClientId: clientId },
+              ],
+            },
+            data: { biometricOwnerSource: 'FEDERATED', biometricOwnerClientId: clientId },
+          });
+          if (claim.count !== 1)
+            throw new ForbiddenDomainError(
+              'Biometric attendance settings are owned by a different federation client',
+            );
+        }
+      }
 
       const existingMeta =
         settings.metadata && typeof settings.metadata === 'object'
