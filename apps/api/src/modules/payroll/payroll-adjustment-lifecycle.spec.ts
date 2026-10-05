@@ -63,7 +63,10 @@ function setup(run: Partial<RunRow> = {}) {
       findMany: jest.fn().mockResolvedValue([]),
     },
     payrollApproval: { create: jest.fn() },
-    payrollLineItem: { deleteMany: jest.fn().mockResolvedValue({ count: 0 }) },
+    payrollLineItem: {
+      count: jest.fn().mockResolvedValue(1),
+      deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+    },
     payrollLineItemComponent: { deleteMany: jest.fn().mockResolvedValue({ count: 0 }) },
     payrollPayment: { deleteMany: jest.fn().mockResolvedValue({ count: 0 }) },
     salaryAdvanceRecovery: {
@@ -159,18 +162,25 @@ describe('payroll adjustment lifecycle', () => {
     ).resolves.toMatchObject({ status: 'APPROVED' });
   });
 
-  /**
-   * A line item is held by its component rows under `onDelete: Restrict`. Recalculation has to
-   * clear those first, or every employee with an assigned pay component makes it fail.
-   */
-  it('clears line-item components before deleting the line items it replaces', async () => {
+  it('refuses to approve an empty payroll run', async () => {
+    const { tx, service } = setup({ status: 'CALCULATED', calculationStaleAt: null });
+    tx.payrollLineItem.count.mockResolvedValue(0);
+
+    await expect(
+      service.advance(context(['payroll.runs.approve']), RUN, 'APPROVED', 'Approved for release'),
+    ).rejects.toThrow('This payroll run has no employee pay lines');
+    expect(tx.payrollRun.update).not.toHaveBeenCalled();
+  });
+
+  it('does not remove existing payroll lines if no eligible employees can be calculated', async () => {
     const { tx, service } = setup({ status: 'CALCULATED', calculationStaleAt: new Date() });
 
-    await service.calculate(context(['payroll.runs.calculate']), RUN);
-
-    const componentOrder = tx.payrollLineItemComponent.deleteMany.mock.invocationCallOrder[0];
-    const lineItemOrder = tx.payrollLineItem.deleteMany.mock.invocationCallOrder[0];
-    expect(componentOrder).toBeLessThan(lineItemOrder ?? Infinity);
+    await expect(service.calculate(context(['payroll.runs.calculate']), RUN)).rejects.toThrow(
+      'No eligible employees were found for this payroll period',
+    );
+    expect(tx.payrollPayment.deleteMany).not.toHaveBeenCalled();
+    expect(tx.payrollLineItemComponent.deleteMany).not.toHaveBeenCalled();
+    expect(tx.payrollLineItem.deleteMany).not.toHaveBeenCalled();
   });
 
   it('refuses to recalculate a calculated run that is not stale', async () => {

@@ -258,6 +258,15 @@ export class PayrollRunsService {
         throw new ConflictError(
           'Payroll inputs changed after this run was calculated; calculate it again before approving or releasing it',
         );
+      if (target === PayrollRunStatus.APPROVED || target === PayrollRunStatus.RELEASED) {
+        const lineCount = await tx.payrollLineItem.count({
+          where: { organizationId: context.organizationId, payrollRunId: run.id },
+        });
+        if (lineCount === 0)
+          throw new ConflictError(
+            'This payroll run has no employee pay lines. Calculate a run with eligible employees before approving or releasing it.',
+          );
+      }
       const updated = await tx.payrollRun.update({
         where: { id: run.id },
         data: {

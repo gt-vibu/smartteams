@@ -242,6 +242,7 @@ export class PayrollAdvancesService {
       };
       const include = {
         payrollRun: { select: { periodStart: true, periodEnd: true, status: true } },
+        employee: { select: { firstName: true, lastName: true, employeeNumber: true } },
       };
       if (!page)
         return tx.payrollPayment.findMany({ where, include, orderBy: { createdAt: 'desc' } });

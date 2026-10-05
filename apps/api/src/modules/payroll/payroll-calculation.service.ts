@@ -492,6 +492,16 @@ export class PayrollCalculationService {
             };
           })
           .filter((item): item is NonNullable<typeof item> => item !== null);
+        // Validate the output before clearing existing rows on a recalculation. The surrounding
+        // transaction would roll back on error, but keeping the guard ahead of writes makes the
+        // empty-run invariant explicit and avoids needless database churn.
+        const rows = snapshot.map((item) =>
+          buildPayrollLineRows(context.organizationId, run.id, item, settings.standardDayMinutes),
+        );
+        if (rows.length === 0)
+          throw new ConflictError(
+            'No eligible employees were found for this payroll period. Check that employees are active, payroll is enabled, and salary or pay components are effective during the period.',
+          );
         const inputSnapshotHash = hash(snapshot);
         await tx.payrollPayment.deleteMany({ where: { payrollRunId: run.id } });
         // Component rows hold the line item under `onDelete: Restrict`, so they go first. This only
@@ -508,9 +518,6 @@ export class PayrollCalculationService {
         // number of set-based statements. The loop this replaces issued two to four round trips per
         // employee while holding the write transaction open, which is what put a ceiling on how large
         // a tenant could be paid at all.
-        const rows = snapshot.map((item) =>
-          buildPayrollLineRows(context.organizationId, run.id, item, settings.standardDayMinutes),
-        );
         const lines = rows.map((row) => row.result);
 
         for (const batch of chunked(
