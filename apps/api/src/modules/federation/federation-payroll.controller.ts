@@ -122,6 +122,27 @@ export class FederationPayrollController {
     );
   }
 
+  @Put('federation/payroll/statutory-rules/:ruleId')
+  @UseGuards(FederationAuthGuard)
+  async updateStatutoryRule(
+    @Headers('x-organization-id') organizationId: string,
+    @Param('ruleId') ruleId: string,
+    @Body() body: StatutoryRuleDto,
+    @Req() request: FederationRequest,
+  ) {
+    return this.payrollPolicy.saveStatutoryRule(
+      await this.support.context(
+        request,
+        organizationId,
+        'payroll.policy.write',
+        undefined,
+        `Update statutory rule ${ruleId}`,
+      ),
+      body,
+      ruleId,
+    );
+  }
+
   @Delete('federation/payroll/statutory-rules/:ruleId')
   @UseGuards(FederationAuthGuard)
   async deleteStatutoryRule(

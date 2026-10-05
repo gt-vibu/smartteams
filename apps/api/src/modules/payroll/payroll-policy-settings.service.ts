@@ -198,62 +198,6 @@ export class PayrollPolicySettingsService {
             })),
           });
       }
-      if (policy.statutoryJurisdiction) {
-        const ruleCount = await tx.payrollStatutoryRule.count({
-          where: {
-            organizationId: context.organizationId,
-            jurisdiction: policy.statutoryJurisdiction,
-          },
-        });
-        if (ruleCount === 0) {
-          await tx.payrollStatutoryRule.createMany({
-            data: [
-              {
-                organizationId: context.organizationId,
-                schemeCode: 'EPF',
-                jurisdiction: policy.statutoryJurisdiction,
-                effectiveFrom,
-                employeeRate: 12,
-                employerRate: 12,
-                wageCeiling: 15000,
-                employeeThreshold: null,
-                flatAmount: null,
-              },
-              {
-                organizationId: context.organizationId,
-                schemeCode: 'ESIC',
-                jurisdiction: policy.statutoryJurisdiction,
-                effectiveFrom,
-                employeeRate: 0.75,
-                employerRate: 3.25,
-                wageCeiling: 21000,
-                employeeThreshold: 21000,
-                flatAmount: null,
-              },
-              {
-                organizationId: context.organizationId,
-                schemeCode: 'PT',
-                jurisdiction: policy.statutoryJurisdiction,
-                effectiveFrom,
-                employeeRate: null,
-                employerRate: null,
-                wageCeiling: null,
-                employeeThreshold: 25000,
-                flatAmount: 200,
-                metadata: {
-                  source:
-                    'Karnataka Professional Tax notification (effective April 1, 2025; Feb is ₹300)',
-                  slabs: [
-                    { min: 0, max: 24999.99, amount: 0 },
-                    { min: 25000, max: null, amount: 200, monthOverrides: { '2': 300 } },
-                  ],
-                },
-              },
-            ],
-            skipDuplicates: true,
-          });
-        }
-      }
       // `payrollDayBasis`, the base and HRA percentages and the rounding mode all feed
       // `computePayrollLine`, so a calculated run inside this policy's effective window is no
       // longer derived from the policy it claims. Scoped to that window rather than to all time.

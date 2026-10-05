@@ -155,6 +155,22 @@ export function validateStatutoryRule(input: StatutoryRuleInput) {
   }
   if (input.metadata !== undefined && !isStatutoryMetadata(input.metadata))
     throw new ConflictError('Statutory rule metadata must contain valid slabs');
+  const scheme = input.schemeCode.trim().toUpperCase();
+  if (!['PF', 'EPF', 'ESI', 'ESIC', 'PT', 'PROFESSIONAL_TAX'].includes(scheme))
+    throw new ConflictError('Choose EPF, ESI, or Professional Tax as the statutory rule');
+  if (['PF', 'EPF', 'ESI', 'ESIC'].includes(scheme)) {
+    if (input.employeeRate === undefined || input.employerRate === undefined)
+      throw new ConflictError('Enter both employee and employer contribution rates');
+    if (input.employeeRate > 100 || input.employerRate > 100)
+      throw new ConflictError('Contribution rates cannot exceed 100%');
+  }
+  if (
+    ['PT', 'PROFESSIONAL_TAX'].includes(scheme) &&
+    input.flatAmount === undefined &&
+    input.employeeRate === undefined &&
+    !(input.metadata && Array.isArray(input.metadata.slabs) && input.metadata.slabs.length > 0)
+  )
+    throw new ConflictError('Enter a Professional Tax rate, flat amount, or slab schedule');
 }
 
 function isStatutoryMetadata(metadata: Record<string, unknown>) {

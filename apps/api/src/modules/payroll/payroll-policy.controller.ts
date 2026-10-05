@@ -90,6 +90,17 @@ export class PayrollPolicyController {
       .then((context) => this.payroll.saveStatutoryRule(context, body));
   }
 
+  @Put('statutory-rules/:ruleId') updateStatutoryRule(
+    @Param('organizationId') organizationId: string,
+    @Param('ruleId') ruleId: string,
+    @Body() body: StatutoryRuleDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, `Update statutory rule ${ruleId}`)
+      .then((context) => this.payroll.saveStatutoryRule(context, body, ruleId));
+  }
+
   @Delete('statutory-rules/:ruleId') deleteStatutoryRule(
     @Param('organizationId') organizationId: string,
     @Param('ruleId') ruleId: string,

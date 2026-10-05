@@ -9,7 +9,7 @@ import {
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
 import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
-import { withNationalStatutoryRules } from './payroll-national-statutory';
+import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { attachApprovedEncashments } from './payroll-encashments';
 import { lateHalfDays, lateMarks } from '../attendance/attendance-late';
@@ -262,8 +262,10 @@ export class PayrollCalculationService {
         const statutoryRules = await tx.payrollStatutoryRule.findMany({
           where: {
             organizationId: context.organizationId,
+            // Use the rule in force on the payroll period end. A period that crosses an
+            // effective-date boundary must not apply both the old and new contribution rates.
             effectiveFrom: { lte: run.periodEnd },
-            OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+            OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodEnd } }],
           },
           orderBy: { effectiveFrom: 'desc' },
         });
@@ -368,11 +370,28 @@ export class PayrollCalculationService {
             const employeePolicy = employee.payrollPolicies[0] ?? null;
             const assignedPolicy = employeePolicy?.payrollPolicyId
               ? assignedPoliciesById.get(employeePolicy.payrollPolicyId)
-              : policy;
+              : {
+                  ...policy,
+                  ...DEFAULT_PAYROLL_POLICY,
+                  id: 'gross-salary-only',
+                  isDefault: false,
+                  basePercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.basePercentage),
+                  baseMinimum: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.baseMinimum),
+                  hraPercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.hraPercentage),
+                  statutoryJurisdiction:
+                    employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction,
+                  components: [],
+                };
             if (!assignedPolicy)
               throw new ConflictError('The assigned payroll policy is unavailable');
             const selectedPolicy =
-              'isDefault' in assignedPolicy && assignedPolicy.isDefault ? policy : assignedPolicy;
+              employeePolicy?.payrollPolicyId &&
+              'isDefault' in assignedPolicy &&
+              assignedPolicy.isDefault
+                ? policy
+                : assignedPolicy;
+            const statutoryJurisdiction =
+              employeePolicy?.statutoryJurisdiction ?? selectedPolicy.statutoryJurisdiction;
             const selectedDate =
               employeePolicy && employeePolicy.effectiveFrom > run.periodStart
                 ? employeePolicy.effectiveFrom
@@ -414,15 +433,12 @@ export class PayrollCalculationService {
             }));
             return {
               employeeId: employee.id,
+              periodMonth: run.periodEnd.getUTCMonth() + 1,
               compensation: employee.compensations[0] ?? null,
               employeePolicy,
               policy: selectedPolicy,
-              statutoryRules: withNationalStatutoryRules(
-                statutoryRules.filter(
-                  (rule) =>
-                    !selectedPolicy.statutoryJurisdiction ||
-                    rule.jurisdiction === selectedPolicy.statutoryJurisdiction,
-                ),
+              statutoryRules: statutoryRules.filter((rule) =>
+                Boolean(statutoryJurisdiction && rule.jurisdiction === statutoryJurisdiction),
               ),
               components,
               timesheet: sumTimesheets(timesheetsByEmployee.get(employee.id) ?? empty),

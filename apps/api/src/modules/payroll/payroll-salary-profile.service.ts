@@ -3,11 +3,14 @@ import { Prisma } from '../../generated/prisma/client';
 import { PayComponentType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
-import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from './payroll-staleness';
-import { calculateSalaryStructure, calculateStatutoryDeduction } from './payroll-salary-structure';
+import {
+  assertStatutoryRulesConfigured,
+  calculateSalaryStructure,
+  calculateStatutoryDeduction,
+} from './payroll-salary-structure';
 import { calculateComponent } from './payroll-calculation';
 import { dateOnly, type SalaryProfileInput } from './payroll-policy.types';
 import {
@@ -221,16 +224,16 @@ export class PayrollSalaryProfileService {
           orderBy: { effectiveFrom: 'asc' },
         }));
       const employeePolicy = employee.payrollPolicies[0] ?? null;
-      const policy =
-        (await findPolicy(
-          tx,
-          context.organizationId,
-          effectiveDate,
-          employeePolicy?.payrollPolicyId,
-        )) ?? DEFAULT_PAYROLL_POLICY;
-      const organizationPolicy = employeePolicy?.payrollPolicyId
-        ? ((await findPolicy(tx, context.organizationId, effectiveDate)) ?? DEFAULT_PAYROLL_POLICY)
-        : policy;
+      const organizationPolicy =
+        (await findPolicy(tx, context.organizationId, effectiveDate)) ?? DEFAULT_PAYROLL_POLICY;
+      const policy = employeePolicy?.payrollPolicyId
+        ? ((await findPolicy(
+            tx,
+            context.organizationId,
+            effectiveDate,
+            employeePolicy.payrollPolicyId,
+          )) ?? DEFAULT_PAYROLL_POLICY)
+        : DEFAULT_PAYROLL_POLICY;
       const components = effectivePolicyComponents(
         policyComponentDefaults(policy),
         employee.payComponents,
@@ -242,7 +245,7 @@ export class PayrollSalaryProfileService {
 
       const structure = calculateSalaryStructure(gross, policy);
       const statutoryJurisdiction =
-        employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
+        employeePolicy?.statutoryJurisdiction ?? organizationPolicy.statutoryJurisdiction;
       const rules = statutoryJurisdiction
         ? await tx.payrollStatutoryRule.findMany({
             where: {
@@ -259,15 +262,23 @@ export class PayrollSalaryProfileService {
         esi: whatIf?.esiEnabled ?? employeePolicy?.esiEnabled ?? policy.esiDefault,
         pt: whatIf?.ptEnabled ?? employeePolicy?.ptEnabled ?? policy.ptDefault,
       };
-      const statutory = withNationalStatutoryRules(rules)
+      assertStatutoryRulesConfigured(enabled, rules);
+      const statutory = rules
         .filter(
           (rule) =>
             (enabled.pf && ['PF', 'EPF'].includes(rule.schemeCode.toUpperCase())) ||
-            (enabled.esi && rule.schemeCode.toUpperCase() === 'ESIC') ||
+            (enabled.esi && ['ESI', 'ESIC'].includes(rule.schemeCode.toUpperCase())) ||
             (enabled.pt && ['PT', 'PROFESSIONAL_TAX'].includes(rule.schemeCode.toUpperCase())),
         )
         .map((rule) =>
-          calculateStatutoryDeduction(structure, rule, policy.roundingMode, structure),
+          calculateStatutoryDeduction(
+            structure,
+            rule,
+            policy.roundingMode,
+            structure,
+            undefined,
+            effectiveDate.getUTCMonth() + 1,
+          ),
         );
       const assignedComponents = components.map((assignment) => ({
         code: assignment.payComponent.code,

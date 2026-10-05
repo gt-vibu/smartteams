@@ -11,6 +11,7 @@ import { calculateComponent } from './payroll-calculation';
 import { NO_OVERTIME_DAYS, overtimePay, type OvertimeDayMinutes } from './payroll-overtime-split';
 import {
   allocateAdvanceRecovery,
+  assertStatutoryRulesConfigured,
   calculateSalaryStructure,
   calculateStatutoryDeduction,
   prorateSalaryStructure,
@@ -34,6 +35,8 @@ import {
  */
 export type PayrollLineInput = {
   employeeId: string;
+  /** Calendar month used for jurisdiction-specific monthly rules (for example PT). */
+  periodMonth?: number;
   compensation: {
     baseAmount: Prisma.Decimal;
     grossSalary: Prisma.Decimal | null;
@@ -198,12 +201,13 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
     esi: item.employeePolicy?.esiEnabled ?? item.policy.esiDefault,
     pt: item.employeePolicy?.ptEnabled ?? item.policy.ptDefault,
   };
+  assertStatutoryRulesConfigured(enabled, item.statutoryRules);
   const statutory = item.statutoryRules
     .filter((rule) => {
       const code = rule.schemeCode.toUpperCase();
       return (
         (enabled.pf && ['PF', 'EPF'].includes(code)) ||
-        (enabled.esi && code === 'ESIC') ||
+        (enabled.esi && ['ESI', 'ESIC'].includes(code)) ||
         (enabled.pt && ['PT', 'PROFESSIONAL_TAX'].includes(code))
       );
     })
@@ -213,6 +217,8 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
         rule,
         item.policy.roundingMode,
         monthlyStructure,
+        undefined,
+        item.periodMonth,
       ),
     );
   const statutoryDeduction = statutory.reduce(

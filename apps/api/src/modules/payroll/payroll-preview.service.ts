@@ -4,7 +4,6 @@ import { SalarySlipMode } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
-import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { calculateSalaryStructure } from './payroll-salary-structure';
 import {
@@ -53,7 +52,7 @@ export class PayrollPreviewService {
           compensations: {
             where: {
               effectiveFrom: { lte: periodEnd },
-              OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodStart } }],
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodEnd } }],
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
@@ -84,14 +83,17 @@ export class PayrollPreviewService {
       const compensation = employee.compensations[0];
       if (!compensation) throw new ConflictError('Employee has no salary profile for this period');
       const employeePolicy = employee.payrollPolicies[0];
-      const policy =
-        (await findPolicy(
-          tx,
-          context.organizationId,
-          periodStart,
-          employeePolicy?.payrollPolicyId,
-          employeePolicy?.effectiveFrom,
-        )) ?? DEFAULT_PAYROLL_POLICY;
+      const organizationPolicy =
+        (await findPolicy(tx, context.organizationId, periodStart)) ?? DEFAULT_PAYROLL_POLICY;
+      const policy = employeePolicy?.payrollPolicyId
+        ? ((await findPolicy(
+            tx,
+            context.organizationId,
+            periodStart,
+            employeePolicy.payrollPolicyId,
+            employeePolicy.effectiveFrom,
+          )) ?? DEFAULT_PAYROLL_POLICY)
+        : DEFAULT_PAYROLL_POLICY;
       if (!(employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault))
         throw new ConflictError('Payroll is disabled for this employee');
       const gross = compensation.grossSalary ?? compensation.baseAmount;
@@ -200,7 +202,8 @@ export class PayrollPreviewService {
         employee.dateOfLeaving,
       );
 
-      const jurisdiction = employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
+      const jurisdiction =
+        employeePolicy?.statutoryJurisdiction ?? organizationPolicy.statutoryJurisdiction;
       const advanceCutoff = endOfDay(periodEnd);
       const { recoveryMonths } = await readAdvanceRules(tx, context.organizationId);
       const [rules, advances, adjustments] = await Promise.all([
@@ -250,10 +253,11 @@ export class PayrollPreviewService {
       }));
       const item = {
         employeeId,
+        periodMonth: periodEnd.getUTCMonth() + 1,
         compensation,
         employeePolicy: employeePolicy ?? null,
         policy: enginePolicy,
-        statutoryRules: withNationalStatutoryRules(rules),
+        statutoryRules: rules,
         components,
         timesheet: sumTimesheets(approvedTimesheets),
         overtimeDays: sumOvertimeByDayType(attendanceRecords),
