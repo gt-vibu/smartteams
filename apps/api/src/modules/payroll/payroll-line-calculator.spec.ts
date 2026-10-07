@@ -70,4 +70,19 @@ describe('payroll line statutory rules', () => {
       new Prisma.Decimal(0),
     );
   });
+
+  it('prorates monthly salary only for unpaid days already established for the period', () => {
+    const result = computePayrollLine(
+      {
+        ...item(10, 40_000),
+        employeePolicy: { ...item(10, 40_000).employeePolicy!, ptEnabled: false },
+        unemployedDays: 3,
+        attendance: { absentDays: 1, halfDays: 0 },
+      },
+      480,
+    );
+
+    expect(result.payableDays).toBe(26);
+    expect(result.gross).toEqual(new Prisma.Decimal('34666.67'));
+  });
 });

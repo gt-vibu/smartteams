@@ -19,6 +19,7 @@ import { OutboxService } from '../federation/outbox.service';
 import {
   countWorkingDays,
   hash,
+  payrollPeriodCutoffs,
   summarizeAttendance,
   summarizeLeave,
   sumTimesheets,
@@ -334,12 +335,13 @@ export class PayrollCalculationService {
         // of a billion pairs; grouping first makes the cost of assembling the run proportional to
         // the data rather than to the product of the data.
         const attendanceByEmployee = groupBy(attendanceRecords, (record) => record.employeeId);
+        const { measuredEnd, absenceEnd } = payrollPeriodCutoffs(run.periodStart, run.periodEnd);
         // Late check-ins cost half a day for every so many, when the organization counts them.
         const lateByEmployee = new Map<string, number>();
-        if (settings.lateMarksPerHalfDay > 0)
+        if (settings.lateMarksPerHalfDay > 0 && absenceEnd)
           for (const mark of await lateMarks(tx, context.organizationId, {
             from: run.periodStart,
-            to: run.periodEnd,
+            to: absenceEnd,
           }))
             lateByEmployee.set(mark.employeeId, (lateByEmployee.get(mark.employeeId) ?? 0) + 1);
         const leavesByEmployee = groupBy(approvedLeaves, (leave) => leave.employeeId);
@@ -447,7 +449,7 @@ export class PayrollCalculationService {
               leave: summarizeLeave(
                 leavesByEmployee.get(employee.id) ?? empty,
                 run.periodStart,
-                run.periodEnd,
+                measuredEnd,
               ),
               // With the working-day calendar, so a working day with no attendance at all is an
               // absence. Without it only days explicitly marked ABSENT were, and someone who never
@@ -455,13 +457,15 @@ export class PayrollCalculationService {
               attendance: withLateHalfDays(
                 lateHalfDays(lateByEmployee.get(employee.id) ?? 0, settings.lateMarksPerHalfDay),
                 summarizeAttendance(
-                  attendanceByEmployee.get(employee.id) ?? empty,
+                  (attendanceByEmployee.get(employee.id) ?? empty).filter(
+                    (record) => absenceEnd !== null && record.workDate <= absenceEnd,
+                  ),
                   // The company can turn this off; then only days marked ABSENT cost pay.
-                  !unmarkedDaysAreAbsent(settings.metadata)
+                  !unmarkedDaysAreAbsent(settings.metadata) || absenceEnd === null
                     ? undefined
                     : {
                         periodStart: run.periodStart,
-                        periodEnd: run.periodEnd,
+                        periodEnd: absenceEnd,
                         workWeekDays: settings.workWeekDays,
                         holidays,
                         branchId: employee.primaryBranchId,

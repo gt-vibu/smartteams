@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AccessMode, PayrollRunStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
-import { ConflictError } from '../../common/errors/domain-error';
+import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-error';
 import { mergeSalaryComponents } from './payroll-component-rules';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import {
@@ -143,8 +143,11 @@ export class PayrollPayslipsService {
       const canReadAll =
         context.permissions.has('*') || context.permissions.has('payroll.ledger.read.all');
       let employeeId = requestedEmployeeId;
-      if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll)
-        return { entries: [], nextCursor: undefined };
+      if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll) {
+        throw new ForbiddenDomainError(
+          'Federation clients need payroll.ledger.read.all to read payroll ledger entries for all employees',
+        );
+      }
       if (!canReadAll && !requestedEmployeeId) {
         const employee = await tx.employee.findFirst({
           where: {

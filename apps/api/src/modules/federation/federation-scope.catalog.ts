@@ -56,6 +56,7 @@ export const FEDERATION_GRANTABLE_SCOPES = [
   'payroll.runs.release',
   'payroll.runs.lock',
   'payroll.ledger.read',
+  'payroll.ledger.read.all',
   'payroll.calendars.write',
   'payroll.adjustments.write',
   'payroll.compliance.read',

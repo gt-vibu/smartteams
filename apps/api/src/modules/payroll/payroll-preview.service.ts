@@ -8,6 +8,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { calculateSalaryStructure } from './payroll-salary-structure';
 import {
   countWorkingDays,
+  payrollPeriodCutoffs,
   summarizeAttendance,
   summarizeLeave,
   sumTimesheets,
@@ -98,8 +99,7 @@ export class PayrollPreviewService {
         throw new ConflictError('Payroll is disabled for this employee');
       const gross = compensation.grossSalary ?? compensation.baseAmount;
       const monthlyStructure = calculateSalaryStructure(gross, policy);
-      const today = dateOnly(new Date().toISOString());
-      const measuredEnd = today < periodEnd ? today : periodEnd;
+      const { measuredEnd, absenceEnd } = payrollPeriodCutoffs(periodStart, periodEnd);
       const [settings, holidays, employeeHolidaySelections, approvedTimesheets] = await Promise.all(
         [
           tx.organizationSettings.findUniqueOrThrow({
@@ -171,11 +171,9 @@ export class PayrollPreviewService {
           },
         }),
       ]);
-      // Absences are counted up to yesterday: today can still be checked into.
-      const absenceEnd = new Date(Math.min(measuredEnd.getTime(), today.getTime() - 86_400_000));
       const attendance = summarizeAttendance(
-        attendanceRecords,
-        !unmarkedDaysAreAbsent(settings.metadata)
+        attendanceRecords.filter((record) => absenceEnd !== null && record.workDate <= absenceEnd),
+        !unmarkedDaysAreAbsent(settings.metadata) || absenceEnd === null
           ? undefined
           : {
               periodStart,

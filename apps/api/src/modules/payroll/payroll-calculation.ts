@@ -17,6 +17,20 @@ export function dateOnly(value: string) {
   return date;
 }
 
+/**
+ * Payroll may be calculated before a period closes. Only completed dates can incur absence
+ * deductions; today's attendance is still in progress, and dates after today have not happened.
+ * Leave is measured through today because an approved leave scheduled for today is known.
+ */
+export function payrollPeriodCutoffs(periodStart: Date, periodEnd: Date, now = new Date()) {
+  const today = dateOnly(now.toISOString());
+  const measuredEnd = today < periodEnd ? today : periodEnd;
+  const yesterday = new Date(today);
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  const absenceEnd = yesterday < periodEnd ? yesterday : periodEnd;
+  return { measuredEnd, absenceEnd: absenceEnd < periodStart ? null : absenceEnd };
+}
+
 export function hash(value: unknown) {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
