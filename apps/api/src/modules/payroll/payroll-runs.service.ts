@@ -58,22 +58,42 @@ export class PayrollRunsService {
       const periodEnd = dateOnly(input.periodEnd);
       if (periodEnd < periodStart)
         throw new ConflictError('Payroll period end must not precede its start');
+      const existingRun = await tx.payrollRun.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          periodStart,
+          periodEnd,
+          status: { not: PayrollRunStatus.VOIDED },
+        },
+        select: { id: true },
+      });
+      if (existingRun)
+        throw new ConflictError(
+          'A payroll run already exists for this period. Continue the existing run instead of creating a duplicate.',
+        );
       const organization = await tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
         include: { settings: true },
       });
-      const run = await tx.payrollRun.create({
-        data: {
-          organizationId: context.organizationId,
-          periodStart,
-          periodEnd,
-          payFrequency:
-            input.payFrequency ?? organization.settings?.payrollFrequency ?? PayFrequency.MONTHLY,
-          currencyCode: organization.currencyCode,
-          calculationVersion: 'v1-deterministic',
-          inputSnapshotHash: emptyHash(),
-        },
-      });
+      const run = await tx.payrollRun
+        .create({
+          data: {
+            organizationId: context.organizationId,
+            periodStart,
+            periodEnd,
+            payFrequency:
+              input.payFrequency ?? organization.settings?.payrollFrequency ?? PayFrequency.MONTHLY,
+            currencyCode: organization.currencyCode,
+            calculationVersion: 'v1-deterministic',
+            inputSnapshotHash: emptyHash(),
+          },
+        })
+        .catch((error: unknown) => {
+          // The partial unique index is the final guard against concurrent create requests.
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')
+            throw new ConflictError('A payroll run already exists for this period');
+          throw error;
+        });
       await this.audit.record(
         context,
         {
