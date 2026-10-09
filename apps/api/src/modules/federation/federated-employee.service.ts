@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { EmployeeOnboardingDetails } from '@smarteam/contracts';
 import type { Prisma } from '../../generated/prisma/client';
 import { EmployeeStatus, EmploymentType } from '../../generated/prisma/enums';
 import {
@@ -233,7 +234,9 @@ export class FederatedEmployeeService {
     externalId: string,
     clientId: string,
     input: {
-      employeeNumber: string;
+      personalDetails?: EmployeeOnboardingDetails;
+      employeeNumber?: string;
+      employeeNumberPrefix?: string;
       firstName: string;
       middleName?: string | null;
       lastName: string;

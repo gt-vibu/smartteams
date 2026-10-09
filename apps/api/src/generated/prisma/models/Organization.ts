@@ -28,10 +28,12 @@ export type AggregateOrganization = {
 
 export type OrganizationAvgAggregateOutputType = {
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationSumAggregateOutputType = {
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationMinAggregateOutputType = {
@@ -48,6 +50,7 @@ export type OrganizationMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationMaxAggregateOutputType = {
@@ -64,6 +67,7 @@ export type OrganizationMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationCountAggregateOutputType = {
@@ -80,16 +84,19 @@ export type OrganizationCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   version: number
+  employeeNumberSequence: number
   _all: number
 }
 
 
 export type OrganizationAvgAggregateInputType = {
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationSumAggregateInputType = {
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationMinAggregateInputType = {
@@ -106,6 +113,7 @@ export type OrganizationMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationMaxAggregateInputType = {
@@ -122,6 +130,7 @@ export type OrganizationMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationCountAggregateInputType = {
@@ -138,6 +147,7 @@ export type OrganizationCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   version?: true
+  employeeNumberSequence?: true
   _all?: true
 }
 
@@ -241,6 +251,7 @@ export type OrganizationGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   version: number
+  employeeNumberSequence: number
   _count: OrganizationCountAggregateOutputType | null
   _avg: OrganizationAvgAggregateOutputType | null
   _sum: OrganizationSumAggregateOutputType | null
@@ -280,6 +291,7 @@ export type OrganizationWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   version?: Prisma.IntFilter<"Organization"> | number
+  employeeNumberSequence?: Prisma.IntFilter<"Organization"> | number
   settings?: Prisma.XOR<Prisma.OrganizationSettingsNullableScalarRelationFilter, Prisma.OrganizationSettingsWhereInput> | null
   payrollPolicies?: Prisma.PayrollPolicyListRelationFilter
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentListRelationFilter
@@ -378,6 +390,7 @@ export type OrganizationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
   settings?: Prisma.OrganizationSettingsOrderByWithRelationInput
   payrollPolicies?: Prisma.PayrollPolicyOrderByRelationAggregateInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentOrderByRelationAggregateInput
@@ -480,6 +493,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   version?: Prisma.IntFilter<"Organization"> | number
+  employeeNumberSequence?: Prisma.IntFilter<"Organization"> | number
   settings?: Prisma.XOR<Prisma.OrganizationSettingsNullableScalarRelationFilter, Prisma.OrganizationSettingsWhereInput> | null
   payrollPolicies?: Prisma.PayrollPolicyListRelationFilter
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentListRelationFilter
@@ -578,6 +592,7 @@ export type OrganizationOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
   _count?: Prisma.OrganizationCountOrderByAggregateInput
   _avg?: Prisma.OrganizationAvgOrderByAggregateInput
   _max?: Prisma.OrganizationMaxOrderByAggregateInput
@@ -602,6 +617,7 @@ export type OrganizationScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
   version?: Prisma.IntWithAggregatesFilter<"Organization"> | number
+  employeeNumberSequence?: Prisma.IntWithAggregatesFilter<"Organization"> | number
 }
 
 export type OrganizationCreateInput = {
@@ -618,6 +634,7 @@ export type OrganizationCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -716,6 +733,7 @@ export type OrganizationUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -814,6 +832,7 @@ export type OrganizationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -912,6 +931,7 @@ export type OrganizationUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1010,6 +1030,7 @@ export type OrganizationCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
 }
 
 export type OrganizationUpdateManyMutationInput = {
@@ -1026,6 +1047,7 @@ export type OrganizationUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrganizationUncheckedUpdateManyInput = {
@@ -1042,6 +1064,7 @@ export type OrganizationUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrganizationScalarRelationFilter = {
@@ -1073,10 +1096,12 @@ export type OrganizationCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationAvgOrderByAggregateInput = {
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationMaxOrderByAggregateInput = {
@@ -1093,6 +1118,7 @@ export type OrganizationMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationMinOrderByAggregateInput = {
@@ -1109,10 +1135,12 @@ export type OrganizationMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationSumOrderByAggregateInput = {
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationCreateNestedOneWithoutApprovalDelegationsInput = {
@@ -2293,6 +2321,7 @@ export type OrganizationCreateWithoutApprovalDelegationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -2390,6 +2419,7 @@ export type OrganizationUncheckedCreateWithoutApprovalDelegationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2503,6 +2533,7 @@ export type OrganizationUpdateWithoutApprovalDelegationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -2600,6 +2631,7 @@ export type OrganizationUncheckedUpdateWithoutApprovalDelegationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -2697,6 +2729,7 @@ export type OrganizationCreateWithoutIdempotencyRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -2794,6 +2827,7 @@ export type OrganizationUncheckedCreateWithoutIdempotencyRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2907,6 +2941,7 @@ export type OrganizationUpdateWithoutIdempotencyRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -3004,6 +3039,7 @@ export type OrganizationUncheckedUpdateWithoutIdempotencyRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3101,6 +3137,7 @@ export type OrganizationCreateWithoutRequestRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -3198,6 +3235,7 @@ export type OrganizationUncheckedCreateWithoutRequestRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3311,6 +3349,7 @@ export type OrganizationUpdateWithoutRequestRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -3408,6 +3447,7 @@ export type OrganizationUncheckedUpdateWithoutRequestRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3505,6 +3545,7 @@ export type OrganizationCreateWithoutWebhookSubscriptionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -3602,6 +3643,7 @@ export type OrganizationUncheckedCreateWithoutWebhookSubscriptionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3715,6 +3757,7 @@ export type OrganizationUpdateWithoutWebhookSubscriptionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -3812,6 +3855,7 @@ export type OrganizationUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3909,6 +3953,7 @@ export type OrganizationCreateWithoutOutboxEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -4006,6 +4051,7 @@ export type OrganizationUncheckedCreateWithoutOutboxEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -4119,6 +4165,7 @@ export type OrganizationUpdateWithoutOutboxEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -4216,6 +4263,7 @@ export type OrganizationUncheckedUpdateWithoutOutboxEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4313,6 +4361,7 @@ export type OrganizationCreateWithoutWebhookDeliveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -4410,6 +4459,7 @@ export type OrganizationUncheckedCreateWithoutWebhookDeliveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -4523,6 +4573,7 @@ export type OrganizationUpdateWithoutWebhookDeliveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -4620,6 +4671,7 @@ export type OrganizationUncheckedUpdateWithoutWebhookDeliveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4717,6 +4769,7 @@ export type OrganizationCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -4814,6 +4867,7 @@ export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -4927,6 +4981,7 @@ export type OrganizationUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -5024,6 +5079,7 @@ export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5121,6 +5177,7 @@ export type OrganizationCreateWithoutResignationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -5218,6 +5275,7 @@ export type OrganizationUncheckedCreateWithoutResignationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5331,6 +5389,7 @@ export type OrganizationUpdateWithoutResignationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -5428,6 +5487,7 @@ export type OrganizationUncheckedUpdateWithoutResignationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5525,6 +5585,7 @@ export type OrganizationCreateWithoutHomeFederationClientsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -5622,6 +5683,7 @@ export type OrganizationUncheckedCreateWithoutHomeFederationClientsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5735,6 +5797,7 @@ export type OrganizationUpdateWithoutHomeFederationClientsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -5832,6 +5895,7 @@ export type OrganizationUncheckedUpdateWithoutHomeFederationClientsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5929,6 +5993,7 @@ export type OrganizationCreateWithoutFederationGrantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -6026,6 +6091,7 @@ export type OrganizationUncheckedCreateWithoutFederationGrantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6139,6 +6205,7 @@ export type OrganizationUpdateWithoutFederationGrantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -6236,6 +6303,7 @@ export type OrganizationUncheckedUpdateWithoutFederationGrantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6333,6 +6401,7 @@ export type OrganizationCreateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -6430,6 +6499,7 @@ export type OrganizationUncheckedCreateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6543,6 +6613,7 @@ export type OrganizationUpdateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -6640,6 +6711,7 @@ export type OrganizationUncheckedUpdateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6737,6 +6809,7 @@ export type OrganizationCreateWithoutExternalIdMappingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -6834,6 +6907,7 @@ export type OrganizationUncheckedCreateWithoutExternalIdMappingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6947,6 +7021,7 @@ export type OrganizationUpdateWithoutExternalIdMappingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -7044,6 +7119,7 @@ export type OrganizationUncheckedUpdateWithoutExternalIdMappingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7141,6 +7217,7 @@ export type OrganizationCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -7238,6 +7315,7 @@ export type OrganizationUncheckedCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7351,6 +7429,7 @@ export type OrganizationUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -7448,6 +7527,7 @@ export type OrganizationUncheckedUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7545,6 +7625,7 @@ export type OrganizationCreateWithoutCompOffCreditsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -7642,6 +7723,7 @@ export type OrganizationUncheckedCreateWithoutCompOffCreditsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7755,6 +7837,7 @@ export type OrganizationUpdateWithoutCompOffCreditsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -7852,6 +7935,7 @@ export type OrganizationUncheckedUpdateWithoutCompOffCreditsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7949,6 +8033,7 @@ export type OrganizationCreateWithoutLeaveEncashmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -8046,6 +8131,7 @@ export type OrganizationUncheckedCreateWithoutLeaveEncashmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8159,6 +8245,7 @@ export type OrganizationUpdateWithoutLeaveEncashmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -8256,6 +8343,7 @@ export type OrganizationUncheckedUpdateWithoutLeaveEncashmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8353,6 +8441,7 @@ export type OrganizationCreateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -8450,6 +8539,7 @@ export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8563,6 +8653,7 @@ export type OrganizationUpdateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -8660,6 +8751,7 @@ export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8757,6 +8849,7 @@ export type OrganizationCreateWithoutInvitationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -8854,6 +8947,7 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8967,6 +9061,7 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -9064,6 +9159,7 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9161,6 +9257,7 @@ export type OrganizationCreateWithoutEmployeeAccessCodesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -9258,6 +9355,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeAccessCodesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9371,6 +9469,7 @@ export type OrganizationUpdateWithoutEmployeeAccessCodesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -9468,6 +9567,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeAccessCodesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9565,6 +9665,7 @@ export type OrganizationCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -9662,6 +9763,7 @@ export type OrganizationUncheckedCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9775,6 +9877,7 @@ export type OrganizationUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -9872,6 +9975,7 @@ export type OrganizationUncheckedUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9969,6 +10073,7 @@ export type OrganizationCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -10066,6 +10171,7 @@ export type OrganizationUncheckedCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10179,6 +10285,7 @@ export type OrganizationUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -10276,6 +10383,7 @@ export type OrganizationUncheckedUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10373,6 +10481,7 @@ export type OrganizationCreateWithoutNotificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -10470,6 +10579,7 @@ export type OrganizationUncheckedCreateWithoutNotificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10583,6 +10693,7 @@ export type OrganizationUpdateWithoutNotificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -10680,6 +10791,7 @@ export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10777,6 +10889,7 @@ export type OrganizationCreateWithoutAttendanceRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -10874,6 +10987,7 @@ export type OrganizationUncheckedCreateWithoutAttendanceRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10987,6 +11101,7 @@ export type OrganizationUpdateWithoutAttendanceRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -11084,6 +11199,7 @@ export type OrganizationUncheckedUpdateWithoutAttendanceRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11181,6 +11297,7 @@ export type OrganizationCreateWithoutAttendancePunchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -11278,6 +11395,7 @@ export type OrganizationUncheckedCreateWithoutAttendancePunchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11391,6 +11509,7 @@ export type OrganizationUpdateWithoutAttendancePunchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -11488,6 +11607,7 @@ export type OrganizationUncheckedUpdateWithoutAttendancePunchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11585,6 +11705,7 @@ export type OrganizationCreateWithoutAttendanceCorrectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -11682,6 +11803,7 @@ export type OrganizationUncheckedCreateWithoutAttendanceCorrectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11795,6 +11917,7 @@ export type OrganizationUpdateWithoutAttendanceCorrectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -11892,6 +12015,7 @@ export type OrganizationUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11989,6 +12113,7 @@ export type OrganizationCreateWithoutAttendanceApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -12086,6 +12211,7 @@ export type OrganizationUncheckedCreateWithoutAttendanceApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12199,6 +12325,7 @@ export type OrganizationUpdateWithoutAttendanceApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -12296,6 +12423,7 @@ export type OrganizationUncheckedUpdateWithoutAttendanceApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12393,6 +12521,7 @@ export type OrganizationCreateWithoutHolidaysInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -12490,6 +12619,7 @@ export type OrganizationUncheckedCreateWithoutHolidaysInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12603,6 +12733,7 @@ export type OrganizationUpdateWithoutHolidaysInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -12700,6 +12831,7 @@ export type OrganizationUncheckedUpdateWithoutHolidaysInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12797,6 +12929,7 @@ export type OrganizationCreateWithoutHolidaySelectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -12894,6 +13027,7 @@ export type OrganizationUncheckedCreateWithoutHolidaySelectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13007,6 +13141,7 @@ export type OrganizationUpdateWithoutHolidaySelectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -13104,6 +13239,7 @@ export type OrganizationUncheckedUpdateWithoutHolidaySelectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13201,6 +13337,7 @@ export type OrganizationCreateWithoutLeaveTypesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -13298,6 +13435,7 @@ export type OrganizationUncheckedCreateWithoutLeaveTypesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13411,6 +13549,7 @@ export type OrganizationUpdateWithoutLeaveTypesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -13508,6 +13647,7 @@ export type OrganizationUncheckedUpdateWithoutLeaveTypesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13605,6 +13745,7 @@ export type OrganizationCreateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -13702,6 +13843,7 @@ export type OrganizationUncheckedCreateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13815,6 +13957,7 @@ export type OrganizationUpdateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -13912,6 +14055,7 @@ export type OrganizationUncheckedUpdateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14009,6 +14153,7 @@ export type OrganizationCreateWithoutLeaveBalancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -14106,6 +14251,7 @@ export type OrganizationUncheckedCreateWithoutLeaveBalancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14219,6 +14365,7 @@ export type OrganizationUpdateWithoutLeaveBalancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -14316,6 +14463,7 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14413,6 +14561,7 @@ export type OrganizationCreateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -14510,6 +14659,7 @@ export type OrganizationUncheckedCreateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14623,6 +14773,7 @@ export type OrganizationUpdateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -14720,6 +14871,7 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14817,6 +14969,7 @@ export type OrganizationCreateWithoutLeaveRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -14914,6 +15067,7 @@ export type OrganizationUncheckedCreateWithoutLeaveRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15027,6 +15181,7 @@ export type OrganizationUpdateWithoutLeaveRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -15124,6 +15279,7 @@ export type OrganizationUncheckedUpdateWithoutLeaveRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15221,6 +15377,7 @@ export type OrganizationCreateWithoutLeaveApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -15318,6 +15475,7 @@ export type OrganizationUncheckedCreateWithoutLeaveApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15431,6 +15589,7 @@ export type OrganizationUpdateWithoutLeaveApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -15528,6 +15687,7 @@ export type OrganizationUncheckedUpdateWithoutLeaveApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15625,6 +15785,7 @@ export type OrganizationCreateWithoutShiftsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -15722,6 +15883,7 @@ export type OrganizationUncheckedCreateWithoutShiftsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15835,6 +15997,7 @@ export type OrganizationUpdateWithoutShiftsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -15932,6 +16095,7 @@ export type OrganizationUncheckedUpdateWithoutShiftsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16029,6 +16193,7 @@ export type OrganizationCreateWithoutShiftAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -16126,6 +16291,7 @@ export type OrganizationUncheckedCreateWithoutShiftAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16239,6 +16405,7 @@ export type OrganizationUpdateWithoutShiftAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -16336,6 +16503,7 @@ export type OrganizationUncheckedUpdateWithoutShiftAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16433,6 +16601,7 @@ export type OrganizationCreateWithoutTimesheetPeriodsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -16530,6 +16699,7 @@ export type OrganizationUncheckedCreateWithoutTimesheetPeriodsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16643,6 +16813,7 @@ export type OrganizationUpdateWithoutTimesheetPeriodsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -16740,6 +16911,7 @@ export type OrganizationUncheckedUpdateWithoutTimesheetPeriodsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16837,6 +17009,7 @@ export type OrganizationCreateWithoutTimesheetsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -16934,6 +17107,7 @@ export type OrganizationUncheckedCreateWithoutTimesheetsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17047,6 +17221,7 @@ export type OrganizationUpdateWithoutTimesheetsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -17144,6 +17319,7 @@ export type OrganizationUncheckedUpdateWithoutTimesheetsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17241,6 +17417,7 @@ export type OrganizationCreateWithoutTimesheetEntriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -17338,6 +17515,7 @@ export type OrganizationUncheckedCreateWithoutTimesheetEntriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17451,6 +17629,7 @@ export type OrganizationUpdateWithoutTimesheetEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -17548,6 +17727,7 @@ export type OrganizationUncheckedUpdateWithoutTimesheetEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17645,6 +17825,7 @@ export type OrganizationCreateWithoutTimesheetApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -17742,6 +17923,7 @@ export type OrganizationUncheckedCreateWithoutTimesheetApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17855,6 +18037,7 @@ export type OrganizationUpdateWithoutTimesheetApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -17952,6 +18135,7 @@ export type OrganizationUncheckedUpdateWithoutTimesheetApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18049,6 +18233,7 @@ export type OrganizationCreateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -18146,6 +18331,7 @@ export type OrganizationUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18259,6 +18445,7 @@ export type OrganizationUpdateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -18356,6 +18543,7 @@ export type OrganizationUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18453,6 +18641,7 @@ export type OrganizationCreateWithoutPayrollRunsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -18550,6 +18739,7 @@ export type OrganizationUncheckedCreateWithoutPayrollRunsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18663,6 +18853,7 @@ export type OrganizationUpdateWithoutPayrollRunsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -18760,6 +18951,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollRunsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18857,6 +19049,7 @@ export type OrganizationCreateWithoutPayrollPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
@@ -18954,6 +19147,7 @@ export type OrganizationUncheckedCreateWithoutPayrollPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19067,6 +19261,7 @@ export type OrganizationUpdateWithoutPayrollPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
@@ -19164,6 +19359,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19261,6 +19457,7 @@ export type OrganizationCreateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
@@ -19358,6 +19555,7 @@ export type OrganizationUncheckedCreateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19471,6 +19669,7 @@ export type OrganizationUpdateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
@@ -19568,6 +19767,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19665,6 +19865,7 @@ export type OrganizationCreateWithoutStatutoryRulesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -19762,6 +19963,7 @@ export type OrganizationUncheckedCreateWithoutStatutoryRulesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19875,6 +20077,7 @@ export type OrganizationUpdateWithoutStatutoryRulesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -19972,6 +20175,7 @@ export type OrganizationUncheckedUpdateWithoutStatutoryRulesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20069,6 +20273,7 @@ export type OrganizationCreateWithoutPayrollLineItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -20166,6 +20371,7 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20279,6 +20485,7 @@ export type OrganizationUpdateWithoutPayrollLineItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -20376,6 +20583,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20473,6 +20681,7 @@ export type OrganizationCreateWithoutSalaryAdvancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -20570,6 +20779,7 @@ export type OrganizationUncheckedCreateWithoutSalaryAdvancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20683,6 +20893,7 @@ export type OrganizationUpdateWithoutSalaryAdvancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -20780,6 +20991,7 @@ export type OrganizationUncheckedUpdateWithoutSalaryAdvancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20877,6 +21089,7 @@ export type OrganizationCreateWithoutAdvanceRecoveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -20974,6 +21187,7 @@ export type OrganizationUncheckedCreateWithoutAdvanceRecoveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21087,6 +21301,7 @@ export type OrganizationUpdateWithoutAdvanceRecoveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -21184,6 +21399,7 @@ export type OrganizationUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21281,6 +21497,7 @@ export type OrganizationCreateWithoutPayrollPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -21378,6 +21595,7 @@ export type OrganizationUncheckedCreateWithoutPayrollPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21491,6 +21709,7 @@ export type OrganizationUpdateWithoutPayrollPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -21588,6 +21807,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21685,6 +21905,7 @@ export type OrganizationCreateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -21782,6 +22003,7 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21895,6 +22117,7 @@ export type OrganizationUpdateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -21992,6 +22215,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22089,6 +22313,7 @@ export type OrganizationCreateWithoutPayrollAdjustmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -22186,6 +22411,7 @@ export type OrganizationUncheckedCreateWithoutPayrollAdjustmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22299,6 +22525,7 @@ export type OrganizationUpdateWithoutPayrollAdjustmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -22396,6 +22623,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22493,6 +22721,7 @@ export type OrganizationCreateWithoutPayrollApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -22590,6 +22819,7 @@ export type OrganizationUncheckedCreateWithoutPayrollApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22703,6 +22933,7 @@ export type OrganizationUpdateWithoutPayrollApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -22800,6 +23031,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22897,6 +23129,7 @@ export type OrganizationCreateWithoutPayslipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -22994,6 +23227,7 @@ export type OrganizationUncheckedCreateWithoutPayslipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23107,6 +23341,7 @@ export type OrganizationUpdateWithoutPayslipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -23204,6 +23439,7 @@ export type OrganizationUncheckedUpdateWithoutPayslipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23301,6 +23537,7 @@ export type OrganizationCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -23398,6 +23635,7 @@ export type OrganizationUncheckedCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23511,6 +23749,7 @@ export type OrganizationUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -23608,6 +23847,7 @@ export type OrganizationUncheckedUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23705,6 +23945,7 @@ export type OrganizationCreateWithoutUserRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -23802,6 +24043,7 @@ export type OrganizationUncheckedCreateWithoutUserRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23915,6 +24157,7 @@ export type OrganizationUpdateWithoutUserRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -24012,6 +24255,7 @@ export type OrganizationUncheckedUpdateWithoutUserRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24109,6 +24353,7 @@ export type OrganizationCreateWithoutSettingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
@@ -24206,6 +24451,7 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24319,6 +24565,7 @@ export type OrganizationUpdateWithoutSettingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
@@ -24416,6 +24663,7 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24513,6 +24761,7 @@ export type OrganizationCreateWithoutPayrollCalendarsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -24610,6 +24859,7 @@ export type OrganizationUncheckedCreateWithoutPayrollCalendarsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24723,6 +24973,7 @@ export type OrganizationUpdateWithoutPayrollCalendarsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -24820,6 +25071,7 @@ export type OrganizationUncheckedUpdateWithoutPayrollCalendarsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24917,6 +25169,7 @@ export type OrganizationCreateWithoutApprovalPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -25014,6 +25267,7 @@ export type OrganizationUncheckedCreateWithoutApprovalPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25127,6 +25381,7 @@ export type OrganizationUpdateWithoutApprovalPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -25224,6 +25479,7 @@ export type OrganizationUncheckedUpdateWithoutApprovalPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25321,6 +25577,7 @@ export type OrganizationCreateWithoutApprovalPolicyStepsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -25418,6 +25675,7 @@ export type OrganizationUncheckedCreateWithoutApprovalPolicyStepsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25531,6 +25789,7 @@ export type OrganizationUpdateWithoutApprovalPolicyStepsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -25628,6 +25887,7 @@ export type OrganizationUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25725,6 +25985,7 @@ export type OrganizationCreateWithoutBranchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -25822,6 +26083,7 @@ export type OrganizationUncheckedCreateWithoutBranchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25935,6 +26197,7 @@ export type OrganizationUpdateWithoutBranchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -26032,6 +26295,7 @@ export type OrganizationUncheckedUpdateWithoutBranchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26129,6 +26393,7 @@ export type OrganizationCreateWithoutWorkLocationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -26226,6 +26491,7 @@ export type OrganizationUncheckedCreateWithoutWorkLocationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26339,6 +26605,7 @@ export type OrganizationUpdateWithoutWorkLocationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -26436,6 +26703,7 @@ export type OrganizationUncheckedUpdateWithoutWorkLocationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26533,6 +26801,7 @@ export type OrganizationCreateWithoutSourceChangesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -26630,6 +26899,7 @@ export type OrganizationUncheckedCreateWithoutSourceChangesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26743,6 +27013,7 @@ export type OrganizationUpdateWithoutSourceChangesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -26840,6 +27111,7 @@ export type OrganizationUncheckedUpdateWithoutSourceChangesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26937,6 +27209,7 @@ export type OrganizationCreateWithoutWebauthnCredentialsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -27034,6 +27307,7 @@ export type OrganizationUncheckedCreateWithoutWebauthnCredentialsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27147,6 +27421,7 @@ export type OrganizationUpdateWithoutWebauthnCredentialsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -27244,6 +27519,7 @@ export type OrganizationUncheckedUpdateWithoutWebauthnCredentialsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27341,6 +27617,7 @@ export type OrganizationCreateWithoutWebauthnChallengesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -27438,6 +27715,7 @@ export type OrganizationUncheckedCreateWithoutWebauthnChallengesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27551,6 +27829,7 @@ export type OrganizationUpdateWithoutWebauthnChallengesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -27648,6 +27927,7 @@ export type OrganizationUncheckedUpdateWithoutWebauthnChallengesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27745,6 +28025,7 @@ export type OrganizationCreateWithoutEmployeesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -27842,6 +28123,7 @@ export type OrganizationUncheckedCreateWithoutEmployeesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27955,6 +28237,7 @@ export type OrganizationUpdateWithoutEmployeesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -28052,6 +28335,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28149,6 +28433,7 @@ export type OrganizationCreateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -28246,6 +28531,7 @@ export type OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28359,6 +28645,7 @@ export type OrganizationUpdateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -28456,6 +28743,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28553,6 +28841,7 @@ export type OrganizationCreateWithoutEmployeeBankAccountsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -28650,6 +28939,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28763,6 +29053,7 @@ export type OrganizationUpdateWithoutEmployeeBankAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -28860,6 +29151,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28957,6 +29249,7 @@ export type OrganizationCreateWithoutEmployeeReferencesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -29054,6 +29347,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeReferencesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29167,6 +29461,7 @@ export type OrganizationUpdateWithoutEmployeeReferencesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -29264,6 +29559,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeReferencesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29361,6 +29657,7 @@ export type OrganizationCreateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -29458,6 +29755,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29571,6 +29869,7 @@ export type OrganizationUpdateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -29668,6 +29967,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29765,6 +30065,7 @@ export type OrganizationCreateWithoutEmergencyContactsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -29862,6 +30163,7 @@ export type OrganizationUncheckedCreateWithoutEmergencyContactsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29975,6 +30277,7 @@ export type OrganizationUpdateWithoutEmergencyContactsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -30072,6 +30375,7 @@ export type OrganizationUncheckedUpdateWithoutEmergencyContactsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30169,6 +30473,7 @@ export type OrganizationCreateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -30266,6 +30571,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30379,6 +30685,7 @@ export type OrganizationUpdateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -30476,6 +30783,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30573,6 +30881,7 @@ export type OrganizationCreateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -30670,6 +30979,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30783,6 +31093,7 @@ export type OrganizationUpdateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -30880,6 +31191,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30977,6 +31289,7 @@ export type OrganizationCreateWithoutEmploymentRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -31074,6 +31387,7 @@ export type OrganizationUncheckedCreateWithoutEmploymentRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31187,6 +31501,7 @@ export type OrganizationUpdateWithoutEmploymentRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -31284,6 +31599,7 @@ export type OrganizationUncheckedUpdateWithoutEmploymentRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31381,6 +31697,7 @@ export type OrganizationCreateWithoutCompensationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -31478,6 +31795,7 @@ export type OrganizationUncheckedCreateWithoutCompensationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31591,6 +31909,7 @@ export type OrganizationUpdateWithoutCompensationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -31688,6 +32007,7 @@ export type OrganizationUncheckedUpdateWithoutCompensationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31785,6 +32105,7 @@ export type OrganizationCreateWithoutEmployeePayrollPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -31882,6 +32203,7 @@ export type OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31995,6 +32317,7 @@ export type OrganizationUpdateWithoutEmployeePayrollPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -32092,6 +32415,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32189,6 +32513,7 @@ export type OrganizationCreateWithoutEmployeeStatutoryProfilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -32286,6 +32611,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32399,6 +32725,7 @@ export type OrganizationUpdateWithoutEmployeeStatutoryProfilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -32496,6 +32823,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32593,6 +32921,7 @@ export type OrganizationCreateWithoutEmployeeStatutoryRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -32690,6 +33019,7 @@ export type OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32803,6 +33133,7 @@ export type OrganizationUpdateWithoutEmployeeStatutoryRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -32900,6 +33231,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32997,6 +33329,7 @@ export type OrganizationCreateWithoutPayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -33094,6 +33427,7 @@ export type OrganizationUncheckedCreateWithoutPayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33207,6 +33541,7 @@ export type OrganizationUpdateWithoutPayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -33304,6 +33639,7 @@ export type OrganizationUncheckedUpdateWithoutPayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33401,6 +33737,7 @@ export type OrganizationCreateWithoutEmployeePayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -33498,6 +33835,7 @@ export type OrganizationUncheckedCreateWithoutEmployeePayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33611,6 +33949,7 @@ export type OrganizationUpdateWithoutEmployeePayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -33708,6 +34047,7 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33805,6 +34145,7 @@ export type OrganizationCreateWithoutTeamsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -33902,6 +34243,7 @@ export type OrganizationUncheckedCreateWithoutTeamsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34015,6 +34357,7 @@ export type OrganizationUpdateWithoutTeamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -34112,6 +34455,7 @@ export type OrganizationUncheckedUpdateWithoutTeamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34209,6 +34553,7 @@ export type OrganizationCreateWithoutTeamMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -34306,6 +34651,7 @@ export type OrganizationUncheckedCreateWithoutTeamMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34419,6 +34765,7 @@ export type OrganizationUpdateWithoutTeamMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -34516,6 +34863,7 @@ export type OrganizationUncheckedUpdateWithoutTeamMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34613,6 +34961,7 @@ export type OrganizationCreateWithoutProjectsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -34710,6 +35059,7 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34823,6 +35173,7 @@ export type OrganizationUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -34920,6 +35271,7 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -35017,6 +35369,7 @@ export type OrganizationCreateWithoutProjectMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
@@ -35114,6 +35467,7 @@ export type OrganizationUncheckedCreateWithoutProjectMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35227,6 +35581,7 @@ export type OrganizationUpdateWithoutProjectMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
@@ -35324,6 +35679,7 @@ export type OrganizationUncheckedUpdateWithoutProjectMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36172,6 +36528,7 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   payrollPolicies?: boolean | Prisma.Organization$payrollPoliciesArgs<ExtArgs>
   payrollPolicyComponents?: boolean | Prisma.Organization$payrollPolicyComponentsArgs<ExtArgs>
@@ -36271,6 +36628,7 @@ export type OrganizationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -36287,6 +36645,7 @@ export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectScalar = {
@@ -36303,9 +36662,10 @@ export type OrganizationSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
 }
 
-export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "source" | "externalId" | "status" | "timezone" | "currencyCode" | "locale" | "deactivatedAt" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["organization"]>
+export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "source" | "externalId" | "status" | "timezone" | "currencyCode" | "locale" | "deactivatedAt" | "createdAt" | "updatedAt" | "version" | "employeeNumberSequence", ExtArgs["result"]["organization"]>
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   payrollPolicies?: boolean | Prisma.Organization$payrollPoliciesArgs<ExtArgs>
@@ -36494,6 +36854,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     createdAt: Date
     updatedAt: Date
     version: number
+    employeeNumberSequence: number
   }, ExtArgs["result"]["organization"]>
   composites: {}
 }
@@ -37012,6 +37373,7 @@ export interface OrganizationFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Organization", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Organization", 'DateTime'>
   readonly version: Prisma.FieldRef<"Organization", 'Int'>
+  readonly employeeNumberSequence: Prisma.FieldRef<"Organization", 'Int'>
 }
     
 

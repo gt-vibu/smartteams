@@ -17,9 +17,43 @@ export const tenantProvisioningRequestSchema = z.object({
   status: z.enum(['ACTIVE', 'SUSPENDED']).default('ACTIVE'),
 });
 
+const onboardingText = z.string().trim().min(1);
+const onboardingName = onboardingText
+  .max(120)
+  .regex(/^[\p{L}\p{M}\p{Join_Control} .'’-]+$/u)
+  .refine((value) => /\p{L}/u.test(value));
+const onboardingPhone = z.string().regex(/^\d{10,15}$/);
+export const employeeOnboardingDetailsSchema = z.object({
+  fatherName: onboardingName,
+  motherName: onboardingName,
+  spouseName: onboardingName,
+  aadhaarNumber: z.string().regex(/^\d{12}$/),
+  panNumber: z.string().regex(/^[A-Z]{5}\d{4}[A-Z]$/),
+  presentAddress: onboardingText.max(500),
+  permanentAddress: onboardingText.max(500),
+  bankName: onboardingText.max(160),
+  bankAccountNumber: z.string().regex(/^\d{9,18}$/),
+  ifscCode: z.string().regex(/^[A-Z]{4}0[A-Z0-9]{6}$/),
+  bankAccountName: onboardingName,
+  familyReferenceName: onboardingName.min(2),
+  familyReferenceContact: onboardingPhone,
+  referenceName2: onboardingName.min(2),
+  referenceContact2: onboardingPhone,
+});
+export type EmployeeOnboardingDetails = z.infer<typeof employeeOnboardingDetailsSchema>;
+
 export const employeeSyncRequestSchema = z.object({
+  personalDetails: employeeOnboardingDetailsSchema.optional(),
   externalId: externalIdSchema.optional(),
-  employeeNumber: z.string().trim().min(1).max(100),
+  employeeNumber: z.string().trim().min(1).max(100).optional(),
+  employeeNumberPrefix: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .min(1)
+    .max(16)
+    .regex(/^[A-Z0-9]+(?:-[A-Z0-9]+)*$/)
+    .optional(),
   firstName: z.string().trim().min(1).max(100),
   middleName: z.string().trim().max(100).optional(),
   lastName: z.string().trim().min(1).max(100),

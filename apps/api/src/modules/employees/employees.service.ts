@@ -36,7 +36,13 @@ export class EmployeesService {
     config: ConfigService,
   ) {
     this.federationAccess = new EmployeeFederationAccessService(database, audit, sessions);
-    this.federationSync = new EmployeeFederationSyncService(database, audit, outbox, sessions);
+    this.federationSync = new EmployeeFederationSyncService(
+      database,
+      audit,
+      outbox,
+      sessions,
+      records,
+    );
     this.native = new EmployeeNativeService(database, audit, outbox, sessions, config);
   }
 

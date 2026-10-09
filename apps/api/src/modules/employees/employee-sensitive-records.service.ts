@@ -60,9 +60,10 @@ export class EmployeeSensitiveRecordsService {
      * another employee. Federation calls without this and keeps the behaviour it has always had.
      */
     options: { enforceIdentityRules?: boolean } = {},
+    transaction?: Prisma.TransactionClient,
   ) {
     requirePermission(context, 'employees.personal_details.write');
-    return this.database.run(context, async (tx) => {
+    const save = async (tx: Prisma.TransactionClient) => {
       await this.assertEmployee(tx, context.organizationId, employeeId);
       if (options.enforceIdentityRules && input.aadhaarNumber?.trim()) {
         await saveAadhaar(tx, this.config, context.organizationId, employeeId, input.aadhaarNumber);
@@ -124,7 +125,8 @@ export class EmployeeSensitiveRecordsService {
         aadhaarNumberEncrypted: undefined,
         panNumberEncrypted: undefined,
       };
-    });
+    };
+    return transaction ? save(transaction) : this.database.run(context, save);
   }
 
   async listBankAccounts(context: DomainContext, employeeId: string) {
@@ -206,9 +208,10 @@ export class EmployeeSensitiveRecordsService {
       accountHolderName?: string | null;
       effectiveFrom?: string;
     },
+    transaction?: Prisma.TransactionClient,
   ) {
     requirePermission(context, 'employees.bank_details.write');
-    return this.database.run(context, async (tx) => {
+    const save = async (tx: Prisma.TransactionClient) => {
       await this.assertEmployee(tx, context.organizationId, employeeId);
       const existing = await tx.employeeBankAccount.findFirst({
         where: { organizationId: context.organizationId, employeeId, isPrimary: true },
@@ -249,7 +252,8 @@ export class EmployeeSensitiveRecordsService {
         tx,
       );
       return { ...account, accountNumber: '[stored]', accountNumberEncrypted: undefined };
-    });
+    };
+    return transaction ? save(transaction) : this.database.run(context, save);
   }
 
   async listReferences(context: DomainContext, employeeId: string) {
@@ -301,9 +305,10 @@ export class EmployeeSensitiveRecordsService {
       referenceType?: string;
       sortOrder?: number;
     }>,
+    transaction?: Prisma.TransactionClient,
   ) {
     requirePermission(context, 'employees.personal_details.write');
-    return this.database.run(context, async (tx) => {
+    const save = async (tx: Prisma.TransactionClient) => {
       await this.assertEmployee(tx, context.organizationId, employeeId);
       const existing = await tx.employeeReference.findMany({
         where: { organizationId: context.organizationId, employeeId },
@@ -352,7 +357,8 @@ export class EmployeeSensitiveRecordsService {
         tx,
       );
       return saved;
-    });
+    };
+    return transaction ? save(transaction) : this.database.run(context, save);
   }
 
   private async assertEmployee(

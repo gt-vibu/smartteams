@@ -1,6 +1,8 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import type { EmployeeOnboardingDetails } from '@smarteam/contracts';
 import {
   IsEmail,
+  IsObject,
   IsBoolean,
   IsArray,
   IsDateString,
@@ -12,6 +14,7 @@ import {
   IsUUID,
   Max,
   MaxLength,
+  Matches,
   Min,
   MinLength,
   ValidateNested,
@@ -41,8 +44,19 @@ export class ProvisionBranchDto {
 }
 
 export class FederatedEmployeeDto {
+  @IsOptional()
+  @IsObject()
+  personalDetails?: EmployeeOnboardingDetails;
   @IsOptional() @IsString() externalId?: string;
-  @IsString() employeeNumber!: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(100) employeeNumber?: string;
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
+  @IsString()
+  @MaxLength(16)
+  @Matches(/^[A-Z0-9]+(?:-[A-Z0-9]+)*$/)
+  employeeNumberPrefix?: string;
   @IsString() firstName!: string;
   @IsOptional() @IsString() middleName?: string | null;
   @IsString() lastName!: string;
