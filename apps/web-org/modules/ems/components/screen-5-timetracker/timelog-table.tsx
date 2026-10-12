@@ -64,6 +64,9 @@ export function TimeLogTable({ logs, onSelectLog }: TimeLogTableProps) {
       searchPlaceholder="Search timelogs by job or project..."
       onRowClick={onSelectLog}
       initialRowsPerPage={10}
+      mobileFilterSheet
+      responsivePagination
+      resetPageOnSort
     />
   );
 }

@@ -234,10 +234,12 @@ export class EmployeeNativeService {
       }
       const employees = await tx.employee.findMany({
         where: employeeListWhere(context, filters),
-        // Paging needs a total order, and (lastName, firstName) is not unique — two people with
-        // the same name would make the cursor ambiguous and could skip or repeat a row. Id is
-        // the tiebreaker and the cursor.
-        orderBy: filters.order === 'recent' ? [{ dateOfJoining: 'desc' }, { id: 'asc' }] : [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
+        // Match the directory's displayed first-name A–Z order. Id is the unique tiebreaker
+        // required for stable cursor paging when names are duplicated.
+        orderBy:
+          filters.order === 'recent'
+            ? [{ dateOfJoining: 'desc' }, { id: 'asc' }]
+            : [{ firstName: 'asc' }, { lastName: 'asc' }, { id: 'asc' }],
         ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
         take: limit + 1,
       });

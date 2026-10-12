@@ -460,6 +460,9 @@ export function ScreenTimesheetsAdmin() {
             searchable={false}
             showColumnVisibilityToggle={false}
             compact
+            mobileFilterSheet
+            responsivePagination
+            resetPageOnSort
           />
         )}
 

@@ -25,9 +25,10 @@ export function WorkforceEmployeePicker({
   const [cursor, setCursor] = useState<string | null>(null);
   const [chosen, setChosen] = useState<{ id: string; name: string } | null>(null);
   useEffect(() => setCursor(null), [search]);
+  const searchKey = JSON.stringify([session?.organizationId, search]);
   const resource = useAsyncResource(
-    async () =>
-      workforcePeopleSchema.parse(
+    async () => {
+      const result = workforcePeopleSchema.parse(
         await apiRequest(
           orgPath(
             session!.organizationId,
@@ -35,10 +36,30 @@ export function WorkforceEmployeePicker({
           ),
           { method: 'GET' },
         ),
-      ),
+      );
+      return { ...result, searchKey: open ? searchKey : null };
+    },
     [session?.organizationId, search, cursor],
     { enabled: open && Boolean(session?.organizationId) },
   );
+  const [loaded, setLoaded] = useState<{
+    key: string;
+    items: NonNullable<typeof resource.data>['items'];
+  }>({ key: searchKey, items: [] });
+  const accumulated = loaded.key === searchKey ? loaded.items : [];
+  useEffect(() => {
+    const result = resource.data;
+    if (!open || !result || result.searchKey !== searchKey) return;
+    setLoaded((previous) => {
+      const existing = previous.key === searchKey ? previous.items : [];
+      const seen = new Set(existing.map((person) => person.id));
+      return {
+        key: searchKey,
+        items: [...existing, ...result.items.filter((person) => !seen.has(person.id))],
+      };
+    });
+  }, [open, resource.data, searchKey]);
+  const people = open ? accumulated : (resource.data?.items ?? []);
   return (
     <div
       className="space-y-2"
@@ -81,8 +102,17 @@ export function WorkforceEmployeePicker({
               {resource.error}
             </p>
           )}
-          <ul className="max-h-48 overflow-y-auto">
-            {resource.data?.items.map((person) => (
+          <ul
+            className="max-h-48 overscroll-contain overflow-y-auto"
+            onScroll={(event) => {
+              const list = event.currentTarget;
+              const nearBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 48;
+              if (nearBottom && resource.data?.nextCursor && !resource.loading) {
+                setCursor(resource.data.nextCursor);
+              }
+            }}
+          >
+            {people.map((person) => (
               <li key={person.id}>
                 <Button
                   type="button"
@@ -100,24 +130,14 @@ export function WorkforceEmployeePicker({
                 </Button>
               </li>
             ))}
+            {resource.loading && people.length > 0 && (
+              <li className="p-2 text-center text-xs text-muted-foreground" role="status">
+                Loading more employees…
+              </li>
+            )}
           </ul>
-          {!resource.loading && !resource.data?.items.length && (
+          {!resource.loading && !people.length && (
             <p className="text-xs">No matching active employees.</p>
-          )}
-          {resource.data?.nextCursor && (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => setCursor(resource.data!.nextCursor)}
-            >
-              Next 50
-            </Button>
-          )}
-          {cursor && (
-            <Button type="button" size="sm" variant="outline" onClick={() => setCursor(null)}>
-              First page
-            </Button>
           )}
         </div>
       )}

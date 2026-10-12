@@ -5,7 +5,6 @@ import { LoadingIndicator, Button, Popover, PopoverContent, PopoverTrigger } fro
 import { employeeDisplayName } from '@smarteam/contracts';
 import { Check, ChevronDown, Search } from 'lucide-react';
 import { useEmployeeSearch } from '../../hooks/use-employee-search';
-import { CursorPageControls } from './cursor-page-controls';
 import { activeByName } from '../../lib/pickable';
 
 type Person = Parameters<typeof employeeDisplayName>[0] & {
@@ -50,19 +49,22 @@ export function EmployeeCombobox<T extends Person>({
 
   const remote = useEmployeeSearch(query, open && !disabled, value ? [value] : []);
   const source: readonly Person[] = remote.remote ? remote.employees : employees;
-  const chosen = [...remote.selectedEmployees, ...source, ...employees].find((employee) => employee.id === value);
+  const chosen = [...remote.selectedEmployees, ...source, ...employees].find(
+    (employee) => employee.id === value,
+  );
   const options = useMemo(() => {
     const excluded = new Set(excludeIds);
     const term = query.trim().toLowerCase();
     const people = activeByName(source.filter((employee) => !excluded.has(employee.id)));
-    const matches = term && !remote.remote
-      ? people.filter(
-          (employee) =>
-            employeeDisplayName(employee).toLowerCase().includes(term) ||
-            (employee.employeeNumber ?? '').toLowerCase().includes(term) ||
-            (employee.workEmail ?? '').toLowerCase().includes(term),
-        )
-      : people;
+    const matches =
+      term && !remote.remote
+        ? people.filter(
+            (employee) =>
+              employeeDisplayName(employee).toLowerCase().includes(term) ||
+              (employee.employeeNumber ?? '').toLowerCase().includes(term) ||
+              (employee.workEmail ?? '').toLowerCase().includes(term),
+          )
+        : people;
     return [
       ...(noneLabel && !term ? [{ id: '', label: noneLabel, detail: '' }] : []),
       ...matches.map((employee) => ({
@@ -149,8 +151,23 @@ export function EmployeeCombobox<T extends Person>({
             value={query}
           />
         </div>
-        <ul className="max-h-64 overflow-y-auto py-1" id={listId} role="listbox">
-          {remote.loading ? <li role="none" className="px-3 py-2 text-xs"><LoadingIndicator variant="inline" label="Loading employees" /></li> : options.length === 0 ? (
+        <ul
+          className="max-h-64 overflow-y-auto overscroll-contain py-1"
+          id={listId}
+          onScroll={(event) => {
+            const list = event.currentTarget;
+            const nearBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 48;
+            if (nearBottom && remote.nextCursor && !remote.loadingMore) {
+              remote.paging.next(remote.nextCursor);
+            }
+          }}
+          role="listbox"
+        >
+          {remote.loading && options.length === 0 ? (
+            <li role="none" className="px-3 py-2 text-xs">
+              <LoadingIndicator variant="inline" label="Loading employees" />
+            </li>
+          ) : options.length === 0 ? (
             <li className="px-3 py-2 text-xs text-muted-foreground">No one matches.</li>
           ) : (
             options.map((option, index) => (
@@ -179,9 +196,20 @@ export function EmployeeCombobox<T extends Person>({
               </li>
             ))
           )}
+          {remote.loadingMore && options.length > 0 && (
+            <li role="none" className="px-3 py-2 text-center text-xs text-muted-foreground">
+              Loading more employees…
+            </li>
+          )}
         </ul>
-        {remote.error && <p role="alert" className="px-3 py-2 text-xs text-destructive">{remote.error} <Button size="sm" variant="outline" onClick={() => void remote.refetch()}>Try again</Button></p>}
-        {remote.remote && <CursorPageControls page={remote.paging.page} count={source.length} nextCursor={remote.nextCursor} busy={remote.loading} previous={remote.paging.previous} next={remote.paging.next} />}
+        {remote.error && (
+          <p role="alert" className="px-3 py-2 text-xs text-destructive">
+            {remote.error}{' '}
+            <Button size="sm" variant="outline" onClick={() => void remote.refetch()}>
+              Try again
+            </Button>
+          </p>
+        )}
       </PopoverContent>
     </Popover>
   );

@@ -82,9 +82,10 @@ export function BulkWorkforcePanel({
     ...(roleId ? { roleId } : {}),
     ...(term ? { search: term } : {}),
   };
+  const peopleKey = JSON.stringify([org, current, branchId, departmentId, roleId, term]);
   const people = useAsyncResource(
-    async () =>
-      workforcePeopleSchema.parse(
+    async () => {
+      const result = workforcePeopleSchema.parse(
         await apiRequest(
           orgPath(
             org!,
@@ -92,13 +93,32 @@ export function BulkWorkforcePanel({
           ),
           { method: 'GET' },
         ),
-      ),
-    [org, branchId, departmentId, roleId, term, cursor],
+      );
+      return { ...result, peopleKey };
+    },
+    [org, current, branchId, departmentId, roleId, term, cursor],
     {
       enabled:
         open && Boolean(org) && current !== 'LEAVE_POLICY' && hasPermission('employees.read.all'),
     },
   );
+  const [loadedPeople, setLoadedPeople] = useState<{
+    key: string;
+    items: NonNullable<typeof people.data>['items'];
+  }>({ key: peopleKey, items: [] });
+  const visiblePeople = loadedPeople.key === peopleKey ? loadedPeople.items : [];
+  useEffect(() => {
+    const result = people.data;
+    if (!result || result.peopleKey !== peopleKey) return;
+    setLoadedPeople((previous) => {
+      const existing = previous.key === peopleKey ? previous.items : [];
+      const seen = new Set(existing.map((person) => person.id));
+      return {
+        key: peopleKey,
+        items: [...existing, ...result.items.filter((person) => !seen.has(person.id))],
+      };
+    });
+  }, [people.data, peopleKey]);
   if (!hasPermission('employees.read.all') || !allowed.length || !current) return null;
   const makeInput = (): WorkforceInput => ({
     operation: current,
@@ -312,14 +332,11 @@ export function BulkWorkforcePanel({
                   disabled={locked || people.loading}
                   onClick={() =>
                     setSelected((previous) => [
-                      ...new Set([
-                        ...previous,
-                        ...(people.data?.items.map((item) => item.id) ?? []),
-                      ]),
+                      ...new Set([...previous, ...visiblePeople.map((item) => item.id)]),
                     ])
                   }
                 >
-                  Select this page
+                  Select loaded employees
                 </Button>
                 {selected.length > 0 && (
                   <Button
@@ -332,8 +349,17 @@ export function BulkWorkforcePanel({
                     Clear selection
                   </Button>
                 )}
-                <ul className="max-h-56 overflow-y-auto rounded border border-border">
-                  {people.data?.items.map((person) => (
+                <ul
+                  className="max-h-56 overscroll-contain overflow-y-auto rounded border border-border"
+                  onScroll={(event) => {
+                    const list = event.currentTarget;
+                    const nearBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 48;
+                    if (nearBottom && people.data?.nextCursor && !people.loading) {
+                      setCursor(people.data.nextCursor);
+                    }
+                  }}
+                >
+                  {visiblePeople.map((person) => (
                     <li key={person.id}>
                       <label className="flex gap-2 p-2 text-xs">
                         <Checkbox
@@ -355,31 +381,12 @@ export function BulkWorkforcePanel({
                       </label>
                     </li>
                   ))}
+                  {people.loading && visiblePeople.length > 0 && (
+                    <li className="p-2 text-center text-xs text-muted-foreground" role="status">
+                      Loading more employees…
+                    </li>
+                  )}
                 </ul>
-                <div className="flex gap-2">
-                  {cursor && (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={locked}
-                      onClick={() => setCursor(null)}
-                    >
-                      First page
-                    </Button>
-                  )}
-                  {people.data?.nextCursor && (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={locked}
-                      onClick={() => setCursor(people.data!.nextCursor)}
-                    >
-                      Next 50 employees
-                    </Button>
-                  )}
-                </div>
               </>
             )}
           </div>

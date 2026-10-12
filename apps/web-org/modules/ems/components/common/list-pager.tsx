@@ -32,11 +32,14 @@ export function ListPager({
   const to = Math.min(total, (page + 1) * PAGE_SIZE);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2.5">
-      <p className="text-[11px] text-muted-foreground">
+    <nav
+      aria-label="List pages"
+      className="flex w-full flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p role="status" className="text-[11px] text-muted-foreground">
         {from}–{to} of {total} {noun}
       </p>
-      <div className="flex items-center gap-2">
+      <div className="flex w-full items-center justify-between gap-2 sm:w-auto">
         <Button
           aria-label="Previous page"
           disabled={page === 0}
@@ -61,6 +64,6 @@ export function ListPager({
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
-    </div>
+    </nav>
   );
 }

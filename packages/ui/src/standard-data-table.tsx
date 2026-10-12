@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Checkbox, Input } from './form';
 import { Button } from './button';
 import { Select } from './select';
@@ -35,6 +35,12 @@ export interface StandardDataTableProps<T> {
   showColumnVisibilityToggle?: boolean;
   defaultSort?: { columnId: string; direction: 'asc' | 'desc' };
   pagination?: boolean;
+  /** Enables the phone filter sheet for HR tables. Off by default for shared consumers. */
+  mobileFilterSheet?: boolean;
+  /** Prevents the mobile pagination controls from crowding the final row. */
+  responsivePagination?: boolean;
+  /** Reset to page one after sort/search changes. Off by default for compatibility. */
+  resetPageOnSort?: boolean;
 }
 
 export function StandardDataTable<T>({
@@ -56,7 +62,19 @@ export function StandardDataTable<T>({
   showColumnVisibilityToggle = true,
   defaultSort,
   pagination = true,
+  mobileFilterSheet = false,
+  responsivePagination = false,
+  resetPageOnSort = false,
 }: StandardDataTableProps<T>) {
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  React.useEffect(() => {
+    if (!mobileFiltersOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileFiltersOpen(false);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [mobileFiltersOpen]);
   const {
     searchQuery,
     setSearchQuery,
@@ -88,6 +106,38 @@ export function StandardDataTable<T>({
     searchFields,
     initialRowsPerPage,
     defaultSort,
+    resetPageOnSort,
+  });
+  const filterIds = Object.keys(resolvedFilterOptions);
+  const activeColumnFilterCount = Object.values(columnFilters).filter(
+    (value) => value && value !== 'ALL',
+  ).length;
+  const filterControls = filterIds.map((colId) => {
+    const col = initialColumns.find((column) => column.id === colId);
+    if (!col) return null;
+    const options = resolvedFilterOptions[colId] || [];
+    const currentVal = columnFilters[colId] || 'ALL';
+    const label = typeof col.header === 'string' ? col.header : col.id;
+
+    return (
+      <div key={colId} className={mobileFilterSheet ? 'w-full sm:w-40' : 'w-40'}>
+        <Select
+          aria-label={`Filter by ${label}`}
+          value={currentVal}
+          onChange={(event) => {
+            setColumnFilters((previous) => ({ ...previous, [colId]: event.target.value }));
+            setCurrentPage(1);
+          }}
+        >
+          <option value="ALL">All {pluralLower(label)}</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </div>
+    );
   });
 
   return (
@@ -156,7 +206,10 @@ export function StandardDataTable<T>({
                     <button
                       type="button"
                       aria-label="Clear search"
-                      onClick={() => setSearchQuery('')}
+                      onClick={() => {
+                        setSearchQuery('');
+                        if (resetPageOnSort) setCurrentPage(1);
+                      }}
                       className="absolute inset-y-0 right-0 pr-2 flex items-center text-muted-foreground hover:text-foreground"
                     >
                       <svg
@@ -177,34 +230,18 @@ export function StandardDataTable<T>({
                 </div>
               )}
 
-              {/* Column Filter Dropdowns */}
-              {Object.keys(resolvedFilterOptions).map((colId) => {
-                const col = initialColumns.find((c) => c.id === colId);
-                if (!col) return null;
-                const options = resolvedFilterOptions[colId] || [];
-                const currentVal = columnFilters[colId] || 'ALL';
-
-                return (
-                  <div key={colId} className="w-40">
-                    <Select
-                      value={currentVal}
-                      onChange={(e) => {
-                        setColumnFilters((prev) => ({ ...prev, [colId]: e.target.value }));
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <option value="ALL">
-                        All {pluralLower(typeof col.header === 'string' ? col.header : col.id)}
-                      </option>
-                      {options.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                );
-              })}
+              {/* Desktop filters stay beside the search. Phones open them in a compact sheet. */}
+              {filterIds.length > 0 && (
+                <div
+                  className={
+                    mobileFilterSheet
+                      ? 'hidden flex-wrap items-center gap-2.5 sm:flex'
+                      : 'flex flex-wrap items-center gap-2.5'
+                  }
+                >
+                  {filterControls}
+                </div>
+              )}
 
               {/* Active Filter Clear Button */}
               {hasActiveFilters && (
@@ -230,6 +267,19 @@ export function StandardDataTable<T>({
                 </button>
               )}
             </div>
+
+            {mobileFilterSheet && filterIds.length > 0 && (
+              <Button
+                aria-expanded={mobileFiltersOpen}
+                className="shrink-0 gap-2 sm:hidden"
+                onClick={() => setMobileFiltersOpen(true)}
+                size="sm"
+                type="button"
+                variant={activeColumnFilterCount ? 'secondary' : 'outline'}
+              >
+                Filters{activeColumnFilterCount ? ` · ${activeColumnFilterCount}` : ''}
+              </Button>
+            )}
 
             {/* Column Visibility Menu Button */}
             {showColumnVisibilityToggle && (
@@ -306,6 +356,50 @@ export function StandardDataTable<T>({
               </div>
             )}
           </div>
+
+          {mobileFilterSheet && mobileFiltersOpen && (
+            <div className="sm:hidden">
+              <button
+                aria-label="Close table filters"
+                className="fixed inset-0 z-40 cursor-default bg-slate-950/25"
+                onClick={() => setMobileFiltersOpen(false)}
+                tabIndex={-1}
+                type="button"
+              />
+              <section
+                aria-label="Table filters"
+                className="fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 flex max-h-[min(64dvh,34rem)] flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-2xl"
+              >
+                <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground">Filters</h3>
+                    <p className="text-xs text-muted-foreground">Results update as you choose</p>
+                  </div>
+                  <Button
+                    onClick={() => setMobileFiltersOpen(false)}
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                  >
+                    Done
+                  </Button>
+                </div>
+                <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto overscroll-contain p-4">
+                  {filterControls}
+                </div>
+                <div className="flex shrink-0 items-center justify-between border-t border-border bg-card px-4 py-3">
+                  <span className="text-xs text-muted-foreground">
+                    {activeColumnFilterCount
+                      ? `${activeColumnFilterCount} active`
+                      : 'No filters selected'}
+                  </span>
+                  <Button onClick={handleResetFilters} size="sm" type="button" variant="outline">
+                    Clear all
+                  </Button>
+                </div>
+              </section>
+            </div>
+          )}
         </div>
       )}
 
@@ -503,6 +597,7 @@ export function StandardDataTable<T>({
           pageSize={pageSize}
           rowsPerPageOptions={rowsPerPageOptions}
           onPageChange={setCurrentPage}
+          responsiveMobile={responsivePagination}
           onPageSizeChange={(nextPageSize) => {
             setPageSize(nextPageSize);
             setCurrentPage(1);

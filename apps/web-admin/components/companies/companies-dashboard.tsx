@@ -166,18 +166,19 @@ export function CompaniesDashboard() {
       </Card>
       <nav
         aria-label="Company pages"
-        className="flex flex-wrap items-center justify-between gap-2 text-xs"
+        className="flex w-full flex-col gap-3 border-t border-border px-3 py-3 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-4"
       >
-        <span role="status">
+        <span role="status" className="text-muted-foreground sm:flex-1">
           Page {page + 1} of {pages} · {filteredCompanies.length} companies
           {refreshing ? ' · Refreshing…' : ''}
         </span>
-        <div className="flex gap-2">
+        <div className="flex w-full gap-2 sm:w-auto">
           <Button
             size="sm"
             variant="outline"
             disabled={loading || page === 0}
             onClick={() => setPage(page - 1)}
+            className="min-h-10 flex-1 whitespace-nowrap sm:flex-none"
           >
             Previous companies
           </Button>
@@ -186,6 +187,7 @@ export function CompaniesDashboard() {
             variant="outline"
             disabled={loading || page + 1 === pages}
             onClick={() => setPage(page + 1)}
+            className="min-h-10 flex-1 whitespace-nowrap sm:flex-none"
           >
             Next companies
           </Button>

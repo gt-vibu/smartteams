@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { OrganizationState } from '../../hooks/use-organization';
 import { useSession } from '../../hooks/auth-context';
 import { filesRepository } from '../../repositories/files.repository';
@@ -61,7 +61,11 @@ export function OrgProfilePanel({ organization: state }: { organization: Organiz
   }
   if (state.loading) {
     return (
-      <LoadingIndicator variant="panel" label="Loading organization" className="py-10 text-center text-xs text-muted-foreground" />
+      <LoadingIndicator
+        variant="panel"
+        label="Loading organization"
+        className="py-10 text-center text-xs text-muted-foreground"
+      />
     );
   }
   if (state.error || !organization) {
@@ -112,11 +116,16 @@ function ProfileForm({
     setUploading(kind);
     try {
       const ticket = await filesRepository.beginUpload(session.organizationId, {
-        purpose: 'ORGANIZATION_BRANDING', originalName: file.name, contentType: file.type, byteSize: file.size,
+        purpose: 'ORGANIZATION_BRANDING',
+        originalName: file.name,
+        contentType: file.type,
+        byteSize: file.size,
       });
       await filesRepository.putBytes(ticket.uploadUrl, file);
       const stored = await filesRepository.completeUpload(session.organizationId, ticket.fileId);
-      await state.updateOrganization(kind === 'logo' ? { logoFileId: stored.id } : { coverFileId: stored.id });
+      await state.updateOrganization(
+        kind === 'logo' ? { logoFileId: stored.id } : { coverFileId: stored.id },
+      );
     } catch (error) {
       setImageError(error instanceof Error ? error.message : 'The image could not be uploaded.');
     } finally {
@@ -156,10 +165,28 @@ function ProfileForm({
     <div className="space-y-4">
       <form className="space-y-3 rounded-lg border border-border bg-card p-4" onSubmit={submit}>
         <div className="grid gap-3 sm:grid-cols-2">
-          <BrandAssetPicker label="Company logo" imageUrl={organization.logoUrl} kind="logo" busy={uploading === 'logo'} disabled={state.saving || !state.can.updateOrganization} onPick={(file) => void uploadBrandImage('logo', file)} />
-          <BrandAssetPicker label="Organization banner" imageUrl={organization.coverUrl} kind="cover" busy={uploading === 'cover'} disabled={state.saving || !state.can.updateOrganization} onPick={(file) => void uploadBrandImage('cover', file)} />
+          <BrandAssetPicker
+            label="Company logo"
+            imageUrl={organization.logoUrl}
+            kind="logo"
+            busy={uploading === 'logo'}
+            disabled={state.saving || !state.can.updateOrganization}
+            onPick={(file) => void uploadBrandImage('logo', file)}
+          />
+          <BrandAssetPicker
+            label="Organization banner"
+            imageUrl={organization.coverUrl}
+            kind="cover"
+            busy={uploading === 'cover'}
+            disabled={state.saving || !state.can.updateOrganization}
+            onPick={(file) => void uploadBrandImage('cover', file)}
+          />
         </div>
-        {imageError && <p role="alert" className="text-xs text-destructive">{imageError}</p>}
+        {imageError && (
+          <p role="alert" className="text-xs text-destructive">
+            {imageError}
+          </p>
+        )}
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="sm:col-span-2">
             <Label className="mb-1 block" htmlFor="org-name">
@@ -256,19 +283,66 @@ function ProfileForm({
 }
 
 function BrandAssetPicker({
-  label, imageUrl, kind, busy, disabled, onPick,
+  label,
+  imageUrl,
+  kind,
+  busy,
+  disabled,
+  onPick,
 }: {
-  label: string; imageUrl?: string | null; kind: 'logo' | 'cover'; busy: boolean; disabled: boolean; onPick: (file?: File) => void;
+  label: string;
+  imageUrl?: string | null;
+  kind: 'logo' | 'cover';
+  busy: boolean;
+  disabled: boolean;
+  onPick: (file?: File) => void;
 }) {
-  return <label className="block cursor-pointer rounded-lg border border-border p-3 transition hover:border-primary/40">
-    <span className="mb-2 block text-xs font-semibold text-foreground">{label}</span>
-    <span className={`relative flex overflow-hidden rounded-md bg-muted ${kind === 'logo' ? 'h-20 w-20 items-center justify-center' : 'h-20 w-full items-center justify-center'}`}>
-      {imageUrl ? <img src={imageUrl} alt={`${label} preview`} className={`h-full w-full ${kind === 'logo' ? 'object-contain' : 'object-cover'}`} /> : <span className="text-xs text-muted-foreground">No image added</span>}
-      {busy && <span className="absolute inset-0 grid place-items-center bg-background/75 text-xs">Uploading…</span>}
-    </span>
-    <span className="mt-2 block text-xs text-primary">{busy ? 'Uploading' : imageUrl ? 'Change image' : 'Add image'}</span>
-    <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled || busy} onChange={(event) => { onPick(event.currentTarget.files?.[0]); event.currentTarget.value = ''; }} />
-  </label>;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="rounded-lg border border-border p-3 transition hover:border-primary/40">
+      <span className="mb-2 block text-xs font-semibold text-foreground">{label}</span>
+      <span
+        className={`relative flex overflow-hidden rounded-md bg-muted ${kind === 'logo' ? 'h-20 w-20 items-center justify-center' : 'h-20 w-full items-center justify-center'}`}
+      >
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={`${label} preview`}
+            className={`h-full w-full ${kind === 'logo' ? 'object-contain' : 'object-cover'}`}
+          />
+        ) : (
+          <span className="text-xs text-muted-foreground">No image added</span>
+        )}
+        {busy && (
+          <span className="absolute inset-0 grid place-items-center bg-background/75 text-xs">
+            Uploading…
+          </span>
+        )}
+      </span>
+      <Button
+        aria-label={`${imageUrl ? 'Change' : 'Add'} ${label.toLowerCase()} image`}
+        className="mt-2 min-h-10 px-0 text-sm text-primary"
+        disabled={disabled || busy}
+        onClick={() => inputRef.current?.click()}
+        type="button"
+        variant="ghost"
+      >
+        {busy ? 'Uploading…' : imageUrl ? 'Change image' : 'Add image'}
+      </Button>
+      <input
+        accept="image/jpeg,image/png,image/webp"
+        className="sr-only"
+        disabled={disabled || busy}
+        onChange={(event) => {
+          onPick(event.currentTarget.files?.[0]);
+          event.currentTarget.value = '';
+        }}
+        ref={inputRef}
+        type="file"
+      />
+    </div>
+  );
 }
 
 export function Unavailable({

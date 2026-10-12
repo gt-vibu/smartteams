@@ -20,19 +20,20 @@ export function CursorPageControls({
   return (
     <nav
       aria-label="Record pages"
-      className="flex flex-wrap items-center justify-between gap-2 text-xs"
+      className="mt-3 flex w-full flex-col items-stretch gap-3 border-t border-border px-3 py-3 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-4"
     >
-      <span role="status" className="text-muted-foreground">
+      <span role="status" className="text-muted-foreground sm:flex-1">
         Page {page} · {count} records{nextCursor ? ' · more available' : ''}
         {busy ? ' · Updating…' : ''}
       </span>
-      <div className="flex gap-2">
+      <div className="flex w-full gap-2 sm:w-auto">
         <Button
           type="button"
           variant="outline"
           size="sm"
           disabled={busy || page === 1}
           onClick={previous}
+          className="min-h-10 flex-1 whitespace-nowrap sm:flex-none"
         >
           Previous page
         </Button>
@@ -44,6 +45,7 @@ export function CursorPageControls({
           onClick={() => {
             if (nextCursor) next(nextCursor);
           }}
+          className="min-h-10 flex-1 whitespace-nowrap sm:flex-none"
         >
           Next page
         </Button>

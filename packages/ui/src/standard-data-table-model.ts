@@ -41,6 +41,7 @@ export interface StandardDataTableModelOptions<T> {
   searchFields?: (keyof T | ((row: T) => string))[];
   initialRowsPerPage?: number;
   defaultSort?: { columnId: string; direction: 'asc' | 'desc' } | undefined;
+  resetPageOnSort?: boolean;
 }
 
 export function useStandardDataTable<T>({
@@ -49,6 +50,7 @@ export function useStandardDataTable<T>({
   searchFields,
   initialRowsPerPage = 10,
   defaultSort,
+  resetPageOnSort = false,
 }: StandardDataTableModelOptions<T>) {
   const [searchQuery, setSearchQuery] = useState('');
   const [settledSearchQuery, setSettledSearchQuery] = useState('');
@@ -133,8 +135,10 @@ export function useStandardDataTable<T>({
     totalPages,
     currentPage: validCurrentPage,
     setCurrentPage,
-    handleSortToggle: (columnId: string) =>
-      setSortState((previous) => nextSortState(previous, columnId)),
+    handleSortToggle: (columnId: string) => {
+      setSortState((previous) => nextSortState(previous, columnId));
+      if (resetPageOnSort) setCurrentPage(1);
+    },
     handlePinToggle: (columnId: string) =>
       setColumnPins((previous) => nextPinState(previous, columnId)),
     handleResetFilters: () => {

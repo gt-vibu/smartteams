@@ -5,7 +5,6 @@ import { LoadingIndicator, Button, Input } from '@smarteam/ui';
 import { employeeDisplayName } from '@smarteam/contracts';
 import { Search } from 'lucide-react';
 import { useEmployeeSearch } from '../../hooks/use-employee-search';
-import { CursorPageControls } from './cursor-page-controls';
 import { activeByName } from '../../lib/pickable';
 
 type Person = Parameters<typeof employeeDisplayName>[0] & {
@@ -36,7 +35,7 @@ export function EmployeePicker<T extends Person>({
   disabled?: boolean;
 }) {
   const [query, setQuery] = useState('');
-  const [requestedPage, setPage] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(50);
   const remote = useEmployeeSearch(query, !disabled, selected);
   const source: readonly Person[] = remote.remote ? remote.employees : employees;
   const candidates = useMemo(() => {
@@ -44,15 +43,14 @@ export function EmployeePicker<T extends Person>({
     const term = query.trim().toLowerCase();
     return activeByName(source.filter((e) => !excluded.has(e.id))).filter(
       (e) =>
-        remote.remote || !term ||
+        remote.remote ||
+        !term ||
         employeeDisplayName(e).toLowerCase().includes(term) ||
         (e.employeeNumber ?? '').toLowerCase().includes(term) ||
         (e.workEmail ?? '').toLowerCase().includes(term),
     );
   }, [source, excludeIds, query, remote.remote]);
-  const pages = Math.max(1, Math.ceil(candidates.length / 50));
-  const page = Math.min(requestedPage, pages - 1);
-  const visible = candidates.slice(page * 50, (page + 1) * 50);
+  const visible = remote.remote ? candidates : candidates.slice(0, visibleCount);
 
   const toggle = (id: string) => {
     if (!multiple) return onChange([id]);
@@ -70,7 +68,7 @@ export function EmployeePicker<T extends Person>({
           disabled={disabled}
           onChange={(event) => {
             setQuery(event.target.value);
-            setPage(0);
+            setVisibleCount(50);
           }}
           placeholder="Search by name, ID or email"
           value={query}
@@ -79,10 +77,24 @@ export function EmployeePicker<T extends Person>({
       <ul
         aria-label="Employee choices"
         aria-multiselectable={multiple}
-        className="max-h-56 space-y-1 overflow-y-auto rounded-md border border-border p-1"
+        className="max-h-56 space-y-1 overflow-y-auto overscroll-contain rounded-md border border-border p-1"
+        onScroll={(event) => {
+          const list = event.currentTarget;
+          const nearBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 48;
+          if (!nearBottom) return;
+          if (remote.remote && remote.nextCursor && !remote.loadingMore) {
+            remote.paging.next(remote.nextCursor);
+          } else if (!remote.remote && visible.length < candidates.length) {
+            setVisibleCount((count) => count + 50);
+          }
+        }}
         role="listbox"
       >
-        {remote.loading ? <li role="none" className="p-2 text-xs"><LoadingIndicator variant="inline" label="Loading employees" /></li> : candidates.length === 0 ? (
+        {remote.loading && visible.length === 0 ? (
+          <li role="none" className="p-2 text-xs">
+            <LoadingIndicator variant="inline" label="Loading employees" />
+          </li>
+        ) : candidates.length === 0 ? (
           <li className="px-2 py-3 text-center text-xs text-muted-foreground">
             {query ? 'No one matches.' : 'Everyone is already here.'}
           </li>
@@ -139,39 +151,20 @@ export function EmployeePicker<T extends Person>({
             );
           })
         )}
+        {remote.loadingMore && visible.length > 0 && (
+          <li role="none" className="p-2 text-center text-xs text-muted-foreground">
+            Loading more employees…
+          </li>
+        )}
       </ul>
-      {!remote.remote && pages > 1 && (
-        <nav
-          aria-label="Employee choice pages"
-          className="flex flex-wrap items-center justify-between gap-2 text-xs"
-        >
-          <span role="status">
-            Page {page + 1} of {pages} · {candidates.length} matches
-          </span>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              disabled={disabled || page === 0}
-              onClick={() => setPage(page - 1)}
-            >
-              Previous employees
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              disabled={disabled || page + 1 === pages}
-              onClick={() => setPage(page + 1)}
-            >
-              Next employees
-            </Button>
-          </div>
-        </nav>
+      {remote.error && (
+        <p role="alert" className="text-xs text-destructive">
+          {remote.error}{' '}
+          <Button size="sm" variant="outline" onClick={() => void remote.refetch()}>
+            Try again
+          </Button>
+        </p>
       )}
-      {remote.error && <p role="alert" className="text-xs text-destructive">{remote.error} <Button size="sm" variant="outline" onClick={() => void remote.refetch()}>Try again</Button></p>}
-      {remote.remote && <CursorPageControls page={remote.paging.page} count={source.length} nextCursor={remote.nextCursor} busy={remote.loading} previous={remote.paging.previous} next={remote.paging.next} />}
       {multiple && selected.length > 0 && (
         <p className="text-[11px] text-muted-foreground">{selected.length} selected</p>
       )}

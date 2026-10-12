@@ -177,7 +177,7 @@ export class EmployeeDetailService {
         orderBy:
           filters.order === 'recent'
             ? [{ dateOfJoining: 'desc' }, { id: 'asc' }]
-            : [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
+            : [{ firstName: 'asc' }, { lastName: 'asc' }, { id: 'asc' }],
         ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
         take: limit + 1,
       });

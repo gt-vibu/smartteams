@@ -1,6 +1,6 @@
 'use client';
 import { approverSearchSchema } from '@smarteam/contracts';
-import { Button, Popover, PopoverContent, PopoverTrigger } from '@smarteam/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@smarteam/ui';
 import { Check, ChevronDown, Search } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from 'react';
 import { useSession } from '../../hooks/auth-context';
@@ -30,23 +30,46 @@ export function ApproverPicker({
   const [activeIndex, setActiveIndex] = useState(0);
   const [selected, setSelected] = useState<{ id: string; label: string } | null>(null);
   useEffect(() => setCursor(null), [term]);
+  const searchKey = JSON.stringify([session?.organizationId, term]);
   const resource = useAsyncResource(
     async () => {
       const query = new URLSearchParams(open ? { search: term } : { userId: value });
       if (open && cursor) query.set('cursor', cursor);
-      return approverSearchSchema.parse(
+      const result = approverSearchSchema.parse(
         await apiRequest(
           orgPath(session!.organizationId, `/approval-policies/approver-search?${query}`),
           { method: 'GET' },
         ),
       );
+      return { ...result, searchKey: open ? searchKey : null };
     },
     [session?.organizationId, open, term, cursor, value],
     {
       enabled: Boolean(session?.organizationId) && (open ? term === search.trim() : Boolean(value)),
     },
   );
-  const person = resource.data?.items.find((row) => row.userId === value);
+  const [loaded, setLoaded] = useState<{
+    key: string;
+    items: NonNullable<typeof resource.data>['items'];
+  }>({
+    key: searchKey,
+    items: [],
+  });
+  const accumulated = loaded.key === searchKey ? loaded.items : [];
+  useEffect(() => {
+    const result = resource.data;
+    if (!open || !result || result.searchKey !== searchKey) return;
+    setLoaded((previous) => {
+      const existing = previous.key === searchKey ? previous.items : [];
+      const seen = new Set(existing.map((person) => person.userId));
+      return {
+        key: searchKey,
+        items: [...existing, ...result.items.filter((person) => !seen.has(person.userId))],
+      };
+    });
+  }, [open, resource.data, searchKey]);
+  const people = open ? accumulated : (resource.data?.items ?? []);
+  const person = !open ? resource.data?.items.find((row) => row.userId === value) : undefined;
   const caption =
     selected?.id === value
       ? selected.label
@@ -55,7 +78,6 @@ export function ApproverPicker({
         : value
           ? 'Selected approver'
           : 'Choose a person';
-  const people = resource.data?.items ?? [];
 
   const choose = (row: (typeof people)[number]) => {
     setSelected({ id: row.userId, label: `${row.name} · ${row.employeeNumber}` });
@@ -134,8 +156,19 @@ export function ApproverPicker({
             value={search}
           />
         </div>
-        <ul className="max-h-64 overflow-y-auto py-1" id={listId} role="listbox">
-          {resource.loading && (
+        <ul
+          className="max-h-64 overscroll-contain overflow-y-auto py-1"
+          id={listId}
+          onScroll={(event) => {
+            const list = event.currentTarget;
+            const nearBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 48;
+            if (nearBottom && resource.data?.nextCursor && !resource.loading) {
+              setCursor(resource.data.nextCursor);
+            }
+          }}
+          role="listbox"
+        >
+          {resource.loading && people.length === 0 && (
             <li className="px-3 py-2 text-xs text-muted-foreground" role="status">
               Searching…
             </li>
@@ -148,8 +181,7 @@ export function ApproverPicker({
           {!resource.loading && !resource.error && people.length === 0 && (
             <li className="px-3 py-2 text-xs text-muted-foreground">No active approvers match.</li>
           )}
-          {!resource.loading &&
-            !resource.error &&
+          {!resource.error &&
             people.map((row, index) => (
               <li
                 aria-selected={row.userId === value}
@@ -174,35 +206,12 @@ export function ApproverPicker({
                 )}
               </li>
             ))}
+          {resource.loading && people.length > 0 && (
+            <li className="px-3 py-2 text-center text-xs text-muted-foreground" role="status">
+              Loading more approvers…
+            </li>
+          )}
         </ul>
-        {(cursor || resource.data?.nextCursor) && (
-          <div className="flex items-center justify-between gap-2 border-t border-border p-2">
-            {cursor ? (
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                disabled={resource.loading}
-                onClick={() => setCursor(null)}
-              >
-                First page
-              </Button>
-            ) : (
-              <span />
-            )}
-            {resource.data?.nextCursor && (
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                disabled={resource.loading}
-                onClick={() => setCursor(resource.data!.nextCursor)}
-              >
-                Next 50
-              </Button>
-            )}
-          </div>
-        )}
       </PopoverContent>
     </Popover>
   );

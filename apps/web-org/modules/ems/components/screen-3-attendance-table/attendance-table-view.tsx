@@ -309,6 +309,9 @@ function AttendanceDesktopTable({ rows, onSelectRow }: AttendanceTableViewProps)
       searchPlaceholder="Search attendance records by date, status, shift..."
       onRowClick={onSelectRow}
       initialRowsPerPage={10}
+      mobileFilterSheet
+      responsivePagination
+      resetPageOnSort
     />
   );
 }

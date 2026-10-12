@@ -18,7 +18,19 @@ import {
   formatDate,
   hasPermission,
 } from '@smarteam/contracts';
-import { BookmarkPlus, IdCard, Search, SlidersHorizontal, Trash2, X, Plus, Users, Building2, UserRoundX, UserRoundCheck } from 'lucide-react';
+import {
+  BookmarkPlus,
+  IdCard,
+  Search,
+  SlidersHorizontal,
+  Trash2,
+  X,
+  Plus,
+  Users,
+  Building2,
+  UserRoundX,
+  UserRoundCheck,
+} from 'lucide-react';
 import { useSession } from '../../hooks/auth-context';
 import { ResignationsPanel } from './resignations-panel';
 import { ProbationPanel } from './probation-panel';
@@ -105,7 +117,9 @@ export function ScreenEmployees({
   const [savingView, setSavingView] = useState(false);
   const [activeSavedViewId, setActiveSavedViewId] = useState<string | null>(null);
   // Current staff and those who have left are separate lists, as in any HR system.
-  const [view, setView] = useScreenTab<'current' | 'managers' | 'unassigned' | 'no-login' | 'former' | 'exits' | 'probation' | 'fields'>(
+  const [view, setView] = useScreenTab<
+    'current' | 'managers' | 'unassigned' | 'no-login' | 'former' | 'exits' | 'probation' | 'fields'
+  >(
     'people',
     ['current', 'managers', 'unassigned', 'no-login', 'former', 'exits', 'probation', 'fields'],
     'current',
@@ -127,7 +141,11 @@ export function ScreenEmployees({
       order,
       reportingManager: view === 'unassigned' ? 'ROOT' : selectedManager || undefined,
     },
-    (view === 'current' || view === 'managers' || view === 'unassigned' || view === 'no-login' || view === 'former') &&
+    (view === 'current' ||
+      view === 'managers' ||
+      view === 'unassigned' ||
+      view === 'no-login' ||
+      view === 'former') &&
       (managerFilter !== 'manager' || Boolean(managerEmployeeId)),
   );
   const [exportError, setExportError] = useState('');
@@ -140,12 +158,21 @@ export function ScreenEmployees({
       setSavedViews(readSavedViews(employeeSession.organizationId));
   }, [employeeSession?.organizationId]);
 
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setFiltersOpen(false);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [filtersOpen]);
+
   const departments = directory.summary?.departments.map((entry) => entry.name) ?? [];
   const rows = directory.entries;
   const formerCount = directory.summary?.former ?? 0;
   const activeCount = directory.summary?.active ?? 0;
   const organizationHasNoEmployees =
-    directory.summary !== undefined && activeCount === 0 && formerCount === 0;
+    directory.summary !== null && activeCount === 0 && formerCount === 0;
   const activeFilterCount = [
     query.trim().length > 0,
     department !== ALL,
@@ -252,8 +279,14 @@ export function ScreenEmployees({
             [
               ['current', 'Current employees'],
               ['managers', 'Managers'],
-              ['unassigned', `No manager${directory.summary?.withoutManager ? ` (${directory.summary.withoutManager})` : ''}`],
-              ['no-login', `No login${directory.summary?.withoutLogin ? ` (${directory.summary.withoutLogin})` : ''}`],
+              [
+                'unassigned',
+                `No manager${directory.summary?.withoutManager ? ` (${directory.summary.withoutManager})` : ''}`,
+              ],
+              [
+                'no-login',
+                `No login${directory.summary?.withoutLogin ? ` (${directory.summary.withoutLogin})` : ''}`,
+              ],
               ['former', `Former employees${formerCount ? ` (${formerCount})` : ''}`],
               ...(canImport
                 ? ([
@@ -284,7 +317,11 @@ export function ScreenEmployees({
           ))}
         </div>
 
-        {(view === 'current' || view === 'managers' || view === 'unassigned' || view === 'no-login' || view === 'former') && (
+        {(view === 'current' ||
+          view === 'managers' ||
+          view === 'unassigned' ||
+          view === 'no-login' ||
+          view === 'former') && (
           <>
             <div className="flex flex-wrap items-center gap-2">
               <div className="relative min-w-[220px] flex-1">
@@ -304,7 +341,10 @@ export function ScreenEmployees({
               <Button
                 aria-expanded={filtersOpen}
                 className="gap-1.5"
-                onClick={() => setFiltersOpen((open) => !open)}
+                onClick={() => {
+                  setSavingView(false);
+                  setFiltersOpen((open) => !open);
+                }}
                 size="sm"
                 type="button"
                 variant={filtersOpen || activeFilterCount > 0 ? 'secondary' : 'outline'}
@@ -315,7 +355,10 @@ export function ScreenEmployees({
               <Button
                 className="gap-1.5"
                 disabled={savedViews.length >= SAVED_VIEW_LIMIT}
-                onClick={() => setSavingView((saving) => !saving)}
+                onClick={() => {
+                  setFiltersOpen(false);
+                  setSavingView((saving) => !saving);
+                }}
                 size="sm"
                 type="button"
                 variant="outline"
@@ -405,122 +448,223 @@ export function ScreenEmployees({
             )}
 
             {filtersOpen && (
-              <section
-                aria-label="Employee filters"
-                className="grid grid-cols-1 gap-3 rounded-lg border border-border bg-card p-3 sm:grid-cols-2 xl:grid-cols-4"
-              >
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-medium text-muted-foreground">
-                    Department
-                  </label>
-                  <SelectMenu
-                    onValueChange={(value) => {
-                      setDepartment(value);
-                      setActiveSavedViewId(null);
-                    }}
-                    value={department}
-                  >
-                    <SelectTrigger aria-label="Department">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={ALL}>All departments</SelectItem>
-                      {departments.map((name) => (
-                        <SelectItem key={name} value={name}>
-                          {name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </SelectMenu>
-                </div>
-                <div className="space-y-1.5">
-                  <label
-                    className="text-[11px] font-medium text-muted-foreground"
-                    htmlFor="employee-joined-from"
-                  >
-                    Joined on or after
-                  </label>
-                  <Input
-                    id="employee-joined-from"
-                    onChange={(event) => {
-                      setJoinedFrom(event.target.value);
-                      setActiveSavedViewId(null);
-                    }}
-                    type="date"
-                    value={joinedFrom}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-medium text-muted-foreground">Sort by</label>
-                  <SelectMenu
-                    onValueChange={(value) => {
-                      setOrder(value as 'name' | 'recent');
-                      setActiveSavedViewId(null);
-                    }}
-                    value={order}
-                  >
-                    <SelectTrigger aria-label="Sort employees">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="name">Name, A to Z</SelectItem>
-                      <SelectItem value="recent">Recently joined</SelectItem>
-                    </SelectContent>
-                  </SelectMenu>
-                </div>
-                {view !== 'unassigned' && view !== 'no-login' && <div className="space-y-1.5">
-                  <label className="text-[11px] font-medium text-muted-foreground">Reporting manager</label>
-                  <SelectMenu
-                    onValueChange={(value) => {
-                      setManagerFilter(value as ManagerFilter);
-                      if (value !== 'manager') setManagerEmployeeId('');
-                      setActiveSavedViewId(null);
-                    }}
-                    value={managerFilter}
-                  >
-                    <SelectTrigger aria-label="Manager filter">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any">Any manager</SelectItem>
-                      <SelectItem value="unassigned">No manager assigned</SelectItem>
-                      <SelectItem value="manager">Specific manager</SelectItem>
-                    </SelectContent>
-                  </SelectMenu>
-                  {managerFilter === 'manager' && (
-                    <EmployeeCombobox
-                      employees={[] as EmployeeDirectoryEntry[]}
-                      value={managerEmployeeId}
-                      onChange={(employeeId) => {
-                        setManagerEmployeeId(employeeId);
-                        setActiveSavedViewId(null);
-                      }}
-                      placeholder="Choose manager"
-                    />
-                  )}
-                </div>}
-              </section>
+              <>
+                <button
+                  aria-label="Close employee filters"
+                  className="fixed inset-0 z-40 cursor-default bg-slate-950/25 sm:hidden"
+                  onClick={() => setFiltersOpen(false)}
+                  tabIndex={-1}
+                  type="button"
+                />
+                <section
+                  aria-label="Employee filters"
+                  className="fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 flex max-h-[min(64dvh,34rem)] flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-2xl sm:static sm:grid sm:max-h-none sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:rounded-lg sm:p-3 sm:shadow-none xl:grid-cols-4"
+                >
+                  <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3 sm:hidden">
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">Filters</h3>
+                      <p className="text-xs text-muted-foreground">Results update as you choose</p>
+                    </div>
+                    <Button
+                      aria-label="Done with filters"
+                      onClick={() => setFiltersOpen(false)}
+                      size="sm"
+                      type="button"
+                      variant="ghost"
+                    >
+                      Done
+                    </Button>
+                  </div>
+                  <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-y-auto overscroll-contain p-4 sm:contents sm:overflow-visible sm:p-0">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-medium text-muted-foreground">
+                        Department
+                      </label>
+                      <SelectMenu
+                        onValueChange={(value) => {
+                          setDepartment(value);
+                          setActiveSavedViewId(null);
+                        }}
+                        value={department}
+                      >
+                        <SelectTrigger aria-label="Department">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ALL}>All departments</SelectItem>
+                          {departments.map((name) => (
+                            <SelectItem key={name} value={name}>
+                              {name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </SelectMenu>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label
+                        className="text-[11px] font-medium text-muted-foreground"
+                        htmlFor="employee-joined-from"
+                      >
+                        Joined on or after
+                      </label>
+                      <Input
+                        id="employee-joined-from"
+                        onChange={(event) => {
+                          setJoinedFrom(event.target.value);
+                          setActiveSavedViewId(null);
+                        }}
+                        type="date"
+                        value={joinedFrom}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-medium text-muted-foreground">
+                        Sort by
+                      </label>
+                      <SelectMenu
+                        onValueChange={(value) => {
+                          setOrder(value as 'name' | 'recent');
+                          setActiveSavedViewId(null);
+                        }}
+                        value={order}
+                      >
+                        <SelectTrigger aria-label="Sort employees">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="name">Name, A to Z</SelectItem>
+                          <SelectItem value="recent">Recently joined</SelectItem>
+                        </SelectContent>
+                      </SelectMenu>
+                    </div>
+                    {view !== 'unassigned' && view !== 'no-login' && (
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-medium text-muted-foreground">
+                          Reporting manager
+                        </label>
+                        <SelectMenu
+                          onValueChange={(value) => {
+                            setManagerFilter(value as ManagerFilter);
+                            if (value !== 'manager') setManagerEmployeeId('');
+                            setActiveSavedViewId(null);
+                          }}
+                          value={managerFilter}
+                        >
+                          <SelectTrigger aria-label="Manager filter">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="any">Any manager</SelectItem>
+                            <SelectItem value="unassigned">No manager assigned</SelectItem>
+                            <SelectItem value="manager">Specific manager</SelectItem>
+                          </SelectContent>
+                        </SelectMenu>
+                        {managerFilter === 'manager' && (
+                          <EmployeeCombobox
+                            employees={[] as EmployeeDirectoryEntry[]}
+                            value={managerEmployeeId}
+                            onChange={(employeeId) => {
+                              setManagerEmployeeId(employeeId);
+                              setActiveSavedViewId(null);
+                            }}
+                            placeholder="Choose manager"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex shrink-0 items-center justify-between border-t border-border bg-card px-4 py-3 sm:hidden">
+                    <span className="text-xs text-muted-foreground">
+                      {activeFilterCount ? `${activeFilterCount} active` : 'No filters selected'}
+                    </span>
+                    <Button onClick={resetFilters} size="sm" type="button" variant="outline">
+                      Clear all
+                    </Button>
+                  </div>
+                </section>
+              </>
             )}
           </>
         )}
       </div>
 
-      {(view === 'current' || view === 'managers' || view === 'unassigned' || view === 'no-login' || view === 'former') && (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Employee directory summary">
+      {(view === 'current' ||
+        view === 'managers' ||
+        view === 'unassigned' ||
+        view === 'no-login' ||
+        view === 'former') && (
+        <div
+          className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+          aria-label="Employee directory summary"
+        >
           {[
-            { label: 'Active employees', value: directory.summary?.active, icon: Users, selected: view === 'current', onClick: () => { resetFilters(); setView('current'); } },
-            { label: 'Managers', value: directory.summary?.managers, icon: UserRoundCheck, selected: view === 'managers', onClick: () => { resetFilters(); setView('managers'); } },
-            { label: 'Former employees', value: directory.summary?.former, icon: UserRoundX, selected: view === 'former', onClick: () => { resetFilters(); setView('former'); } },
-            { label: 'Departments', value: directory.summary?.departments.length, icon: Building2, selected: false, onClick: () => onNavigateModule?.('org-setup', 'departments') },
+            {
+              label: 'Active employees',
+              value: directory.summary?.active,
+              icon: Users,
+              selected: view === 'current',
+              onClick: () => {
+                resetFilters();
+                setView('current');
+              },
+            },
+            {
+              label: 'Managers',
+              value: directory.summary?.managers,
+              icon: UserRoundCheck,
+              selected: view === 'managers',
+              onClick: () => {
+                resetFilters();
+                setView('managers');
+              },
+            },
+            {
+              label: 'Former employees',
+              value: directory.summary?.former,
+              icon: UserRoundX,
+              selected: view === 'former',
+              onClick: () => {
+                resetFilters();
+                setView('former');
+              },
+            },
+            {
+              label: 'Departments',
+              value: directory.summary?.departments.length,
+              icon: Building2,
+              selected: false,
+              onClick: () => onNavigateModule?.('org-setup', 'departments'),
+            },
           ].map(({ label, value, icon: Icon, selected, onClick }) => (
-            <button aria-pressed={selected} className={`flex min-h-20 items-center gap-3 rounded-xl border bg-card p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${selected ? 'border-primary/50 ring-1 ring-primary/25' : 'border-border'}`} key={label} onClick={onClick} type="button">
-              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-emerald-50 text-primary"><Icon className="size-4" /></span>
-              <span className="min-w-0"><b className="block tabular-nums text-lg leading-tight">{directory.summaryLoading && value === undefined ? '—' : (value ?? 0).toLocaleString()}</b><span className="mt-1 block truncate text-[11px] text-muted-foreground">{label}</span></span>
+            <button
+              aria-pressed={selected}
+              className={`flex min-h-20 items-center gap-3 rounded-xl border bg-card p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${selected ? 'border-primary/50 ring-1 ring-primary/25' : 'border-border'}`}
+              key={label}
+              onClick={onClick}
+              type="button"
+            >
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-emerald-50 text-primary">
+                <Icon className="size-4" />
+              </span>
+              <span className="min-w-0">
+                <b className="block tabular-nums text-lg leading-tight">
+                  {directory.summaryLoading && value === undefined
+                    ? '—'
+                    : (value ?? 0).toLocaleString()}
+                </b>
+                <span className="mt-1 block truncate text-[11px] text-muted-foreground">
+                  {label}
+                </span>
+              </span>
             </button>
           ))}
         </div>
       )}
-      {directory.refreshing && <p className="text-[11px] text-muted-foreground" role="status">Updating employees…</p>}
+      {directory.refreshing && (
+        <p className="text-[11px] text-muted-foreground" role="status">
+          Updating employees…
+        </p>
+      )}
 
       {view === 'exits' ? (
         <ResignationsPanel />
@@ -535,7 +679,11 @@ export function ScreenEmployees({
               Choose a reporting manager to see their direct reports.
             </p>
           ) : directory.loading ? (
-            <LoadingIndicator variant="panel" label="Loading employees" className="py-8 text-center text-xs text-muted-foreground" />
+            <LoadingIndicator
+              variant="panel"
+              label="Loading employees"
+              className="py-8 text-center text-xs text-muted-foreground"
+            />
           ) : directory.error ? (
             <p
               className="rounded-lg border border-border bg-card p-8 text-center text-xs text-destructive"
@@ -556,9 +704,9 @@ export function ScreenEmployees({
                         ? 'Everyone has a reporting manager'
                         : view === 'no-login'
                           ? 'Everyone has account access'
-                    : activeCount === 0
-                      ? 'No active employees'
-                      : 'No matching employees'}
+                          : activeCount === 0
+                            ? 'No active employees'
+                            : 'No matching employees'}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 {organizationHasNoEmployees
@@ -572,88 +720,90 @@ export function ScreenEmployees({
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-border bg-card">
-              <table className="stack-table w-full min-w-[760px] text-left text-xs">
-                <thead className="border-b border-border bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-2.5 font-bold">Name</th>
-                    <th className="px-4 py-2.5 font-bold">Employee ID</th>
-                    <th className="px-4 py-2.5 font-bold">Department</th>
-                    <th className="px-4 py-2.5 font-bold">Type</th>
-                    <th className="px-4 py-2.5 font-bold">Joined</th>
-                    <th className="px-4 py-2.5 font-bold">Login</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((entry) => (
-                    <tr
-                      className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
-                      key={entry.id}
-                      onClick={() => setSelectedId(entry.id)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault();
-                          setSelectedId(entry.id);
-                        }
-                      }}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      <td className="px-4 py-2.5" data-cell="primary">
-                        <div className="flex items-center gap-2.5">
-                          <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
-                          <div className="min-w-0">
-                            <div className="truncate font-semibold text-foreground">
-                              {employeeDisplayName(entry)}
-                            </div>
-                            {entry.jobTitle && (
-                              <div className="truncate text-[11px] text-muted-foreground">
-                                {entry.jobTitle}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td
-                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
-                        data-bare=""
-                        data-label="Employee ID"
-                      >
-                        {entry.employeeNumber}
-                      </td>
-                      <td
-                        className="px-4 py-2.5 text-muted-foreground"
-                        data-bare=""
-                        data-label="Department"
-                      >
-                        {entry.department ?? '—'}
-                      </td>
-                      <td
-                        className="px-4 py-2.5 text-muted-foreground"
-                        data-bare=""
-                        data-label="Type"
-                      >
-                        {employmentTypeLabel(entry.employmentType)}
-                      </td>
-                      <td
-                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
-                        data-label="Joined"
-                      >
-                        {formatDate(entry.dateOfJoining) || '—'}
-                      </td>
-                      <td className="px-4 py-2.5" data-bare="" data-label="Login">
-                        {entry.hasUserAccount ? (
-                          <span className="text-emerald-700 dark:text-emerald-400">
-                            Can sign in
-                          </span>
-                        ) : (
-                          <span className="text-amber-700 dark:text-amber-400">No login</span>
-                        )}
-                      </td>
+            <div className="min-w-0 rounded-lg border border-border bg-card">
+              <div className="overflow-x-auto">
+                <table className="stack-table w-full min-w-[760px] text-left text-xs">
+                  <thead className="border-b border-border bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                      <th className="px-4 py-2.5 font-bold">Name</th>
+                      <th className="px-4 py-2.5 font-bold">Employee ID</th>
+                      <th className="px-4 py-2.5 font-bold">Department</th>
+                      <th className="px-4 py-2.5 font-bold">Type</th>
+                      <th className="px-4 py-2.5 font-bold">Joined</th>
+                      <th className="px-4 py-2.5 font-bold">Login</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {rows.map((entry) => (
+                      <tr
+                        className="cursor-pointer border-b border-border last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                        key={entry.id}
+                        onClick={() => setSelectedId(entry.id)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            setSelectedId(entry.id);
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <td className="px-4 py-2.5" data-cell="primary">
+                          <div className="flex items-center gap-2.5">
+                            <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
+                            <div className="min-w-0">
+                              <div className="truncate font-semibold text-foreground">
+                                {employeeDisplayName(entry)}
+                              </div>
+                              {entry.jobTitle && (
+                                <div className="truncate text-[11px] text-muted-foreground">
+                                  {entry.jobTitle}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td
+                          className="px-4 py-2.5 tabular-nums text-muted-foreground"
+                          data-bare=""
+                          data-label="Employee ID"
+                        >
+                          {entry.employeeNumber}
+                        </td>
+                        <td
+                          className="px-4 py-2.5 text-muted-foreground"
+                          data-bare=""
+                          data-label="Department"
+                        >
+                          {entry.department ?? '—'}
+                        </td>
+                        <td
+                          className="px-4 py-2.5 text-muted-foreground"
+                          data-bare=""
+                          data-label="Type"
+                        >
+                          {employmentTypeLabel(entry.employmentType)}
+                        </td>
+                        <td
+                          className="px-4 py-2.5 tabular-nums text-muted-foreground"
+                          data-label="Joined"
+                        >
+                          {formatDate(entry.dateOfJoining) || '—'}
+                        </td>
+                        <td className="px-4 py-2.5" data-bare="" data-label="Login">
+                          {entry.hasUserAccount ? (
+                            <span className="text-emerald-700 dark:text-emerald-400">
+                              Can sign in
+                            </span>
+                          ) : (
+                            <span className="text-amber-700 dark:text-amber-400">No login</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <CursorPageControls
                 page={directory.paging.page}
                 count={rows.length}
