@@ -24,6 +24,8 @@ export type OrganizationUpdate = {
   name?: string;
   timezone?: string;
   currencyCode?: string;
+  logoFileId?: string | null;
+  coverFileId?: string | null;
 };
 
 export type BranchInput = {
@@ -64,10 +66,14 @@ export const organizationRepository = {
   },
 
   /** Name, timezone and currency are the only fields the API accepts. */
-  async update(organizationId: string, input: OrganizationUpdate): Promise<Organization> {
+  async update(organizationId: string, input: OrganizationUpdate, version: number): Promise<Organization> {
     return expectShape(
       parseOrganization(
-        await apiRequest(orgPath(organizationId), { method: 'PATCH', body: input }),
+        await apiRequest(orgPath(organizationId), {
+          method: 'PATCH',
+          body: input,
+          headers: { 'if-match-version': String(version) },
+        }),
       ),
       'organization',
     );

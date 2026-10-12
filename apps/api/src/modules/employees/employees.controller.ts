@@ -68,6 +68,14 @@ export class EmployeesController {
    * The directory projection. Declared before `:employeeId` so the literal path is not captured
    * as an employee id.
    */
+  @Get('summary') summary(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId)
+      .then((context) => this.employeeDetail.summary(context));
+  }
+
   @Get('directory') directory(
     @Param('organizationId') organizationId: string,
     @Query() query: EmployeeListQueryDto,

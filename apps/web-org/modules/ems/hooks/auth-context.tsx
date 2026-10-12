@@ -251,3 +251,6 @@ export function useSession(): SessionState {
   if (!value) throw new Error('useSession must be used within an AuthProvider');
   return value;
 }
+
+/** Optional access for reusable controls that also support supplied options outside the app. */
+export function useOptionalSession() { return useContext(AuthContext); }

@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
+import { ConflictError } from '../../common/errors/domain-error';
+import { MetricsService } from '../../common/metrics/metrics.service';
 import { Prisma } from '../../generated/prisma/client';
 import {
   PayrollRoundingMode,
   PayrollRunStatus,
   TimesheetStatus,
 } from '../../generated/prisma/enums';
-import { requirePermission, type DomainContext } from '../../common/context/domain-context';
-import { ConflictError } from '../../common/errors/domain-error';
-import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
-import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
-import { attachApprovedEncashments } from './payroll-encashments';
 import { lateHalfDays, lateMarks } from '../attendance/attendance-late';
+import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
-import { MetricsService } from '../../common/metrics/metrics.service';
 import { OutboxService } from '../federation/outbox.service';
+import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
+import { chunked, groupBy } from './payroll-bulk';
 import {
   countWorkingDays,
   hash,
@@ -24,13 +24,14 @@ import {
   sumTimesheets,
   unemployedDays,
 } from './payroll-calculation';
-import { endOfDay } from './payroll-shared';
+import { loadPayrollCalculationInputs } from './payroll-calculation-inputs';
+import { attachApprovedEncashments } from './payroll-encashments';
 import { buildPayrollLineRows } from './payroll-line-calculator';
-import { sumOvertimeByDayType } from './payroll-overtime-split';
+import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { readOvertimeRates } from './payroll-overtime-rates';
-import { chunked, groupBy } from './payroll-bulk';
+import { sumOvertimeByDayType } from './payroll-overtime-split';
 import { findPolicy } from './payroll-policy-access';
-import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
+import { endOfDay } from './payroll-shared';
 
 /**
  * Running the calculation for a whole payroll run.
@@ -93,7 +94,9 @@ export class PayrollCalculationService {
         // A calculated run is recalculable only while it is marked stale: an input changed after the
         // figures were produced, so the figures have to catch up before anyone can approve them.
         const recalculable =
-          run?.status === PayrollRunStatus.CALCULATED && run.calculationStaleAt !== null;
+          (run?.status === PayrollRunStatus.CALCULATED ||
+            run?.status === PayrollRunStatus.APPROVED) &&
+          run.calculationStaleAt !== null;
         if (!run || !(run.status === PayrollRunStatus.DRAFT || recalculable))
           throw new ConflictError(
             'Only a draft payroll run, or a calculated run with pending changes, can be calculated',
@@ -120,98 +123,7 @@ export class PayrollCalculationService {
           employeeHolidaySelections,
           approvedLeaves,
           attendanceRecords,
-        ] = await Promise.all([
-          tx.employee.findMany({
-            where: { organizationId: context.organizationId, status: 'ACTIVE' },
-            orderBy: { id: 'asc' },
-            include: {
-              compensations: {
-                where: {
-                  effectiveFrom: { lte: run.periodEnd },
-                  OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
-                },
-                orderBy: { effectiveFrom: 'desc' },
-                take: 1,
-              },
-              payrollPolicies: {
-                where: {
-                  effectiveFrom: { lte: run.periodEnd },
-                  OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
-                },
-                orderBy: { effectiveFrom: 'desc' },
-                take: 1,
-                include: {
-                  payrollPolicy: {
-                    include: { components: { include: { payComponent: true } } },
-                  },
-                },
-              },
-              payComponents: {
-                where: {
-                  effectiveFrom: { lte: run.periodEnd },
-                  OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
-                },
-                include: { payComponent: true },
-                orderBy: { effectiveFrom: 'desc' },
-              },
-            },
-          }),
-          tx.organizationSettings.findUniqueOrThrow({
-            where: { organizationId: context.organizationId },
-          }),
-          tx.holiday.findMany({
-            where: {
-              organizationId: context.organizationId,
-              isActive: true,
-              holidayDate: { gte: run.periodStart, lte: run.periodEnd },
-            },
-            select: { holidayDate: true, branchId: true, isOptional: true },
-          }),
-          tx.employeeHolidaySelection.findMany({
-            where: {
-              organizationId: context.organizationId,
-              status: 'CONFIRMED',
-              holiday: {
-                isActive: true,
-                isOptional: true,
-                holidayDate: { gte: run.periodStart, lte: run.periodEnd },
-              },
-            },
-            select: {
-              employeeId: true,
-              holiday: { select: { holidayDate: true } },
-            },
-          }),
-          tx.leaveRequest.findMany({
-            where: {
-              organizationId: context.organizationId,
-              status: 'APPROVED',
-              startDate: { lte: run.periodEnd },
-              endDate: { gte: run.periodStart },
-            },
-            select: {
-              employeeId: true,
-              branchId: true,
-              startDate: true,
-              endDate: true,
-              requestedDays: true,
-              leaveType: { select: { paid: true } },
-            },
-          }),
-          tx.attendanceRecord.findMany({
-            where: {
-              organizationId: context.organizationId,
-              workDate: { gte: run.periodStart, lte: run.periodEnd },
-            },
-            select: {
-              employeeId: true,
-              workDate: true,
-              dayStatus: true,
-              overtimeMinutes: true,
-              overtimeDayType: true,
-            },
-          }),
-        ]);
+        ] = await loadPayrollCalculationInputs(tx, context, run);
         const timesheets = await tx.timesheet.findMany({
           where: {
             organizationId: context.organizationId,
@@ -235,6 +147,7 @@ export class PayrollCalculationService {
           basePercentage: new Prisma.Decimal(50),
           baseMinimum: new Prisma.Decimal(15000),
           hraPercentage: new Prisma.Decimal(40),
+          defaultGrossSalary: null,
           roundingMode: PayrollRoundingMode.HALF_UP,
           pfDefault: false,
           esiDefault: false,
@@ -245,13 +158,13 @@ export class PayrollCalculationService {
           components: [],
         };
         const statutoryRules = await tx.payrollStatutoryRule.findMany({
-          where: {
-            organizationId: context.organizationId,
-            effectiveFrom: { lte: run.periodEnd },
-            OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
-          },
-          orderBy: { effectiveFrom: 'desc' },
-        });
+            where: {
+              organizationId: context.organizationId,
+              effectiveFrom: { lte: run.periodEnd },
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+            },
+            orderBy: { effectiveFrom: 'desc' },
+          });
         const calendar = await tx.payrollCalendar.findFirst({
           where: {
             organizationId: context.organizationId,
@@ -351,7 +264,9 @@ export class PayrollCalculationService {
         const snapshot = employees
           .map((employee) => {
             const employeePolicy = employee.payrollPolicies[0] ?? null;
-            const selectedPolicy = employeePolicy?.payrollPolicy ?? policy;
+            const selectedPolicy = employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
+              ? employeePolicy.payrollPolicy ?? policy
+              : policy;
             if (!(employeePolicy?.payrollEnabled ?? selectedPolicy.payrollEnabledDefault))
               return null;
             // Nobody is paid for a period they were not employed in, and someone with nothing to
@@ -363,9 +278,9 @@ export class PayrollCalculationService {
             )
               return null;
             if (
-              !employee.compensations[0] &&
+              !employee.compensations[0] && selectedPolicy.defaultGrossSalary == null &&
               employee.payComponents.length === 0 &&
-              !(employeePolicy?.payrollPolicy?.components.length ?? 0) &&
+              !(selectedPolicy.components?.length ?? 0) &&
               !adjustmentsByEmployee.get(employee.id)?.length
             )
               return null;
@@ -373,7 +288,7 @@ export class PayrollCalculationService {
               employee.payComponents.map((assignment) => assignment.payComponentId),
             );
             const components = [
-              ...(employeePolicy?.payrollPolicy?.components ?? [])
+              ...((selectedPolicy).components ?? [])
                 .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId))
                 .map((assignment) => ({
                   id: assignment.id,
@@ -392,8 +307,16 @@ export class PayrollCalculationService {
             ];
             return {
               employeeId: employee.id,
-              compensation: employee.compensations[0] ?? null,
+              compensation: employee.compensations[0] ?? (selectedPolicy.defaultGrossSalary == null ? null : {
+                grossSalary: selectedPolicy.defaultGrossSalary,
+                baseAmount: selectedPolicy.defaultGrossSalary,
+                overtimeMultiplier: new Prisma.Decimal(1),
+              }),
               employeePolicy,
+              assignmentSource: employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
+                ? 'INDIVIDUAL_OVERRIDE'
+                : 'ORGANIZATION_DEFAULT',
+              assignmentRuleId: null,
               policy: selectedPolicy,
               statutoryRules: withNationalStatutoryRules(
                 statutoryRules.filter(
@@ -401,6 +324,7 @@ export class PayrollCalculationService {
                     !selectedPolicy.statutoryJurisdiction ||
                     rule.jurisdiction === selectedPolicy.statutoryJurisdiction,
                 ),
+                run.periodStart,
               ),
               components,
               timesheet: sumTimesheets(timesheetsByEmployee.get(employee.id) ?? empty),
@@ -425,6 +349,7 @@ export class PayrollCalculationService {
                         periodStart: run.periodStart,
                         periodEnd: run.periodEnd,
                         workWeekDays: settings.workWeekDays,
+                        shifts: employee.shifts,
                         holidays,
                         branchId: employee.primaryBranchId,
                         leaves: leavesByEmployee.get(employee.id) ?? empty,

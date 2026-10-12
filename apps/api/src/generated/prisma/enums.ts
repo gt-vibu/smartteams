@@ -578,7 +578,8 @@ export const FilePurpose = {
   PAYSLIP: 'PAYSLIP',
   PAYROLL_EXPORT: 'PAYROLL_EXPORT',
   IMPORT: 'IMPORT',
-  OTHER: 'OTHER'
+  OTHER: 'OTHER',
+  ORGANIZATION_BRANDING: 'ORGANIZATION_BRANDING'
 } as const
 
 export type FilePurpose = (typeof FilePurpose)[keyof typeof FilePurpose]

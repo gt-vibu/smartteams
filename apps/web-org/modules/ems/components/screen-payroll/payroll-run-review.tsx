@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@smarteam/ui';
+import { LoadingIndicator, Button } from '@smarteam/ui';
 import { formatMoney } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
@@ -38,7 +38,7 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
     { enabled: open && Boolean(organizationId) },
   );
   const data = review.data;
-  const unpaid = data ? data.items.filter((item) => item.gross <= 0 && item.net <= 0).length : 0;
+  const noNetPay = data ? data.items.filter((item) => item.net <= 0).length : 0;
 
   return (
     <div className="border-t border-border">
@@ -57,9 +57,7 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
         </Button>
       </div>
       {open && review.loading && (
-        <p className="px-4 pb-3 text-[11px] text-muted-foreground" role="status">
-          Loading the run’s figures…
-        </p>
+        <LoadingIndicator variant="inline" label="Loading the run’s figures" className="px-4 pb-3 text-[11px] text-muted-foreground" />
       )}
       {open && review.error && (
         <p className="px-4 pb-3 text-[11px] text-destructive" role="alert">
@@ -71,8 +69,8 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
           <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-4">
             {[
               {
-                label: 'Employees paid',
-                value: `${data.items.length - unpaid} of ${data.items.length}`,
+                label: 'Employees with net pay',
+                value: `${data.items.length - noNetPay} of ${data.items.length}`,
               },
               { label: 'Gross', value: formatMoney(data.totals.gross) },
               { label: 'Deductions', value: formatMoney(data.totals.deductions) },
@@ -104,9 +102,9 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
                     <td className="px-4 py-2">
                       <span className="font-medium text-foreground">{item.name}</span>{' '}
                       <span className="text-muted-foreground">{item.employeeNumber}</span>
-                      {item.gross <= 0 && item.net <= 0 && (
+                      {item.net <= 0 && (
                         <span className="ml-2 text-[10px] text-muted-foreground">
-                          nothing to pay
+                          no net pay
                         </span>
                       )}
                     </td>

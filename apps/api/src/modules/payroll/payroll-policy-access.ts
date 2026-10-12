@@ -91,12 +91,14 @@ export async function findPolicy(
   if (!policyId) {
     const standard = await tx.payrollPolicy.findFirst({
       where: { ...where, name: 'Standard payroll' },
+      include: { components: { include: { payComponent: true }, orderBy: { displayOrder: 'asc' } } },
       orderBy: { effectiveFrom: 'desc' },
     });
     if (standard) return standard;
   }
   return tx.payrollPolicy.findFirst({
     where,
+    include: { components: { include: { payComponent: true }, orderBy: { displayOrder: 'asc' } } },
     orderBy: [{ effectiveFrom: 'desc' }, { name: 'asc' }],
   });
 }

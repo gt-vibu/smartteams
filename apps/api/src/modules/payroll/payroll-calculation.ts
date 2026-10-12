@@ -1,3 +1,4 @@
+export { summarizeAttendance } from './payroll-attendance-summary';
 import { createHash } from 'node:crypto';
 import { Prisma } from '../../generated/prisma/client';
 import { PayComponentCalculationType, PayrollRunStatus } from '../../generated/prisma/enums';
@@ -103,6 +104,8 @@ export function sumTimesheets(entries: Array<{ regularMinutes: number; overtimeM
 export function summarizeLeave(
   requests: Array<{
     requestedDays: Prisma.Decimal;
+    session?: string;
+    chargedDates?: Prisma.JsonValue | null;
     startDate?: Date;
     endDate?: Date;
     leaveType: { paid: boolean };
@@ -124,6 +127,8 @@ export function summarizeLeave(
 function proratedLeaveDays(
   request: {
     requestedDays: Prisma.Decimal;
+    session?: string;
+    chargedDates?: Prisma.JsonValue | null;
     startDate?: Date;
     endDate?: Date;
   },
@@ -132,6 +137,14 @@ function proratedLeaveDays(
 ) {
   const requestedDays = Number(request.requestedDays);
   if (!periodStart || !periodEnd || !request.startDate || !request.endDate) return requestedDays;
+  if (Array.isArray(request.chargedDates)) {
+    const from = periodStart.toISOString().slice(0, 10),
+      to = periodEnd.toISOString().slice(0, 10);
+    return (
+      request.chargedDates.filter((date) => typeof date === 'string' && date >= from && date <= to)
+        .length * (request.session && request.session !== 'FULL_DAY' ? 0.5 : 1)
+    );
+  }
   const start = Math.max(request.startDate.getTime(), periodStart.getTime());
   const end = Math.min(request.endDate.getTime(), periodEnd.getTime());
   if (end < start) return 0;
@@ -141,82 +154,6 @@ function proratedLeaveDays(
   return requestedRangeDays > 0
     ? (requestedDays * overlappingRangeDays) / requestedRangeDays
     : requestedDays;
-}
-
-export function summarizeAttendance(
-  records: Array<{ dayStatus: string; workDate?: Date }>,
-  options?: {
-    periodStart: Date;
-    periodEnd: Date;
-    workWeekDays: number[];
-    holidays: Array<{ holidayDate: Date; branchId: string | null; isOptional?: boolean }>;
-    branchId: string | null;
-    leaves: Array<{ startDate: Date; endDate: Date }>;
-    /** Optional holidays this employee chose; the rest of the optional list are working days. */
-    employeeSelectedDates?: readonly string[];
-    /** Days outside employment are priced as unemployed days, so they are not also absences. */
-    dateOfJoining?: Date | null;
-    dateOfLeaving?: Date | null;
-  },
-) {
-  const summary = records.reduce(
-    (summary, record) => {
-      if (record.dayStatus === 'ABSENT') summary.absentDays += 1;
-      if (record.dayStatus === 'HALF_DAY') summary.halfDays += 1;
-      return summary;
-    },
-    { absentDays: 0, halfDays: 0 },
-  );
-  if (!options) return summary;
-
-  const recordedDates = new Set(
-    records
-      .map((record) => record.workDate?.toISOString().slice(0, 10))
-      .filter((value): value is string => Boolean(value)),
-  );
-  const holidayDates = new Set(
-    options.holidays
-      .filter(
-        (holiday) =>
-          (holiday.branchId === null || holiday.branchId === options.branchId) &&
-          !holiday.isOptional,
-      )
-      .map((holiday) => holiday.holidayDate.toISOString().slice(0, 10)),
-  );
-  for (const date of options.employeeSelectedDates ?? []) holidayDates.add(date);
-  const joined = options.dateOfJoining?.toISOString().slice(0, 10);
-  const left = options.dateOfLeaving?.toISOString().slice(0, 10);
-  const leaveDates = new Set<string>();
-  for (const leave of options.leaves) {
-    const start = new Date(Math.max(leave.startDate.getTime(), options.periodStart.getTime()));
-    const end = new Date(Math.min(leave.endDate.getTime(), options.periodEnd.getTime()));
-    for (const date = start; date <= end; date.setUTCDate(date.getUTCDate() + 1))
-      leaveDates.add(date.toISOString().slice(0, 10));
-  }
-  for (const record of records) {
-    const dateKey = record.workDate?.toISOString().slice(0, 10);
-    if (!dateKey || !leaveDates.has(dateKey)) continue;
-    if (record.dayStatus === 'ABSENT') summary.absentDays -= 1;
-    if (record.dayStatus === 'HALF_DAY') summary.halfDays -= 1;
-  }
-  for (
-    const date = new Date(options.periodStart);
-    date <= options.periodEnd;
-    date.setUTCDate(date.getUTCDate() + 1)
-  ) {
-    const dateKey = date.toISOString().slice(0, 10);
-    const weekday = date.getUTCDay() === 0 ? 7 : date.getUTCDay();
-    if (
-      options.workWeekDays.includes(weekday) &&
-      !holidayDates.has(dateKey) &&
-      !recordedDates.has(dateKey) &&
-      !leaveDates.has(dateKey) &&
-      (!joined || dateKey >= joined) &&
-      (!left || dateKey <= left)
-    )
-      summary.absentDays += 1;
-  }
-  return summary;
 }
 
 export function calculateComponent(

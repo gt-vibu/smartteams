@@ -477,22 +477,6 @@ export type ApprovalDelegationOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type ApprovalDelegationCreateNestedManyWithoutDelegatorInput = {
   create?: Prisma.XOR<Prisma.ApprovalDelegationCreateWithoutDelegatorInput, Prisma.ApprovalDelegationUncheckedCreateWithoutDelegatorInput> | Prisma.ApprovalDelegationCreateWithoutDelegatorInput[] | Prisma.ApprovalDelegationUncheckedCreateWithoutDelegatorInput[]
   connectOrCreate?: Prisma.ApprovalDelegationCreateOrConnectWithoutDelegatorInput | Prisma.ApprovalDelegationCreateOrConnectWithoutDelegatorInput[]

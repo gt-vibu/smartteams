@@ -59,6 +59,9 @@
 .stack-table {
   min-width: 0;
 }
+.leave-request-table .leave-date-range-end {
+  display: none;
+}
 
 /*
  * The card layout, for any table under 860px. Every selector past `.stack-table` is wrapped in
@@ -167,6 +170,9 @@
   .stack-table :where(tr[data-row='group'] td[colspan]:last-child) {
     text-align: right;
   }
+  .stack-table.leave-request-table :where(tr[data-row='group'] td[colspan]:last-child) {
+    text-align: left;
+  }
   .stack-table :where(td[data-cell='actions']:not(.hidden)) {
     order: 1;
     flex-basis: 100%;
@@ -185,6 +191,15 @@
   }
   .stack-table :where(tr:has(> td[data-cell='select']) td[data-cell='primary']) {
     padding-right: 2rem;
+  }
+}
+
+@container (max-width: 719.98px) {
+  .stack-table.leave-request-table td.leave-date-range-end-desktop {
+    display: none;
+  }
+  .stack-table.leave-request-table .leave-date-range-end {
+    display: inline;
   }
 }
 
@@ -212,36 +227,5 @@
 @media (max-width: 767.98px) {
   :root {
     --ems-context-bar-height: 0px;
-  }
-}
-
-/*
- * While someone is typing, the section bar gets out of the way.
- *
- * The layout resizes to sit above the on-screen keyboard (`interactiveWidget: 'resizes-content'`
- * in the root layout), so a bar fixed to the bottom rode up with it and sat directly on top of the
- * field being typed into — on the Timesheet screen it covered most of what was left. Only fields
- * that raise a keyboard count; a checkbox or a button taking focus changes nothing.
- */
-@media (max-width: 767px) {
-  body:has(
-      :is(
-        input:not(
-          [type='checkbox'],
-          [type='radio'],
-          [type='button'],
-          [type='submit'],
-          [type='reset'],
-          [type='range'],
-          [type='file'],
-          [type='color']
-        ),
-        textarea,
-        select,
-        [contenteditable='true']
-      ):focus
-    )
-    [data-mobile-bottom-nav] {
-    display: none;
   }
 }

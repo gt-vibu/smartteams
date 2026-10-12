@@ -1,37 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Building2 } from 'lucide-react';
-import { Button } from '@smarteam/ui';
+import { Button, Input } from '@smarteam/ui';
 import { useOrganization } from '../../hooks/use-organization';
+import { CursorPageControls } from '../common/cursor-page-controls';
 import { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useScreenTab } from '../../hooks/use-screen-tab';
 import { useMediaQuery, WIDE_LAYOUT_QUERY } from '../../hooks/use-media-query';
 import { BotanicalCover } from '../layout/botanical-cover';
-import { OrgProfilePanel } from './org-profile-panel';
-import { OrgBranchesPanel } from './org-branches-panel';
-import { OrgShortcuts } from './org-shortcuts';
 import { OrgIdentityRail } from './org-identity-rail';
-import { OrgDepartmentsPanel } from './org-departments-panel';
-import { OrgListsPanel } from './org-lists-panel';
 import { OrgPeoplePanel } from './org-people-panel';
-import { OrgAccessPanel } from './org-access-panel';
 import { useAuth } from '../../hooks/use-auth';
 import { hasPermission } from '@smarteam/contracts';
 import { permittedTabs } from '../../lib/permitted-tabs';
 import { PageBleed, PageShell } from '../layout/page-shell';
+import { OnboardingReadinessPanel } from '../screen-onboarding/onboarding-readiness-panel';
+import { OrganizationDashboard } from './organization-dashboard';
 
-const TABS = [
-  'overview',
-  'people',
-  'departments',
-  'lists',
-  'reporting',
-  'branches',
-  'access',
-  'profile',
-] as const;
+const TABS = ['overview', 'readiness', 'people', 'reporting'] as const;
 
 type Tab = (typeof TABS)[number];
 
@@ -51,55 +39,30 @@ type Tab = (typeof TABS)[number];
 export function OrganizationWorkspace({
   onNavigateModule,
 }: {
-  onNavigateModule?: (module: string) => void;
+  onNavigateModule?: (module: string, view?: string) => void;
 }) {
   const organization = useOrganization();
-  const directory = useEmployeeDirectory();
   const holidays = useHolidays();
   const { persona } = useAuth();
   const [requestedTab, setTab] = useScreenTab<Tab>('orgSection', TABS, 'overview');
+  const [peopleSearch, setPeopleSearch] = useState('');
+  const directory = useEmployeeDirectory({ search: peopleSearch }, requestedTab === 'people');
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
-  // Absent rather than disabled for a caller who can read neither members nor roles — an
-  // organization with nothing behind the tab is not worth a click that only reports "forbidden".
-  const canSeeAccess =
-    hasPermission(persona.permissions, 'members.read') ||
-    hasPermission(persona.permissions, 'rbac.read');
-
   const may = (permission: string) => hasPermission(persona.permissions, permission);
   // Headcount: the people who work here now, not every record ever kept.
-  const activeCount = directory.entries.filter((entry) => entry.status === 'ACTIVE').length;
-  const activeBranches = organization.branches.filter(
-    (branch) => branch.status !== 'DEACTIVATED',
-  ).length;
+  const activeCount = directory.summary?.active ?? 0;
   // Each tab is offered only to someone its API would answer; a remembered tab that has since
   // become unavailable falls back to Overview rather than opening onto a refusal.
   const { tabs, active } = permittedTabs<Tab, { id: Tab; label: string; allowed: boolean }>(
     [
       { id: 'overview', label: 'Overview', allowed: true },
+      { id: 'readiness', label: 'Employee readiness', allowed: may('employees.read.all') },
       {
         id: 'people',
-        label: `People${activeCount ? ` (${activeCount})` : ''}`,
+        label: `People${activeCount && !directory.error ? ` (${activeCount})` : ''}`,
         allowed: may('employees.read.all'),
       },
-      {
-        id: 'departments',
-        label: 'Departments',
-        allowed: may('employees.read.all') || may('employees.write'),
-      },
-      // The lists are managed by whoever may write what they feed.
-      {
-        id: 'lists',
-        label: 'Lists',
-        allowed: may('employees.write') || may('projects.write') || may('teams.write'),
-      },
       { id: 'reporting', label: 'Reporting', allowed: may('employees.read.all') },
-      {
-        id: 'branches',
-        label: `Branches${activeBranches ? ` (${activeBranches})` : ''}`,
-        allowed: may('branches.read'),
-      },
-      { id: 'access', label: 'Access', allowed: canSeeAccess },
-      { id: 'profile', label: 'Profile', allowed: true },
     ],
     requestedTab,
   );
@@ -117,6 +80,7 @@ export function OrganizationWorkspace({
         previously a hand-kept `-mx-4 sm:-mx-6` that matched the screen's own gutter but not the
         shell's, so the header and the content it sat above were aligned to different columns.
       */}
+      {tab !== 'overview' && (
       <PageBleed className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-background/95 pt-4 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <span
@@ -149,42 +113,81 @@ export function OrganizationWorkspace({
           </select>
         </label>
 
-        <div className="mt-3 hidden items-center gap-4 lg:flex">
-          {tabs.map((entry) => (
-            <Button
-              className={`shrink-0 rounded-none border-b-2 pb-2 text-xs font-semibold ${
-                tab === entry.id
-                  ? 'border-foreground font-bold text-foreground'
-                  : 'border-transparent text-muted-foreground'
-              }`}
-              key={entry.id}
-              onClick={() => setTab(entry.id)}
-              size="sm"
-              type="button"
-              variant="ghost"
-            >
-              {entry.label}
-            </Button>
-          ))}
-        </div>
+        <nav
+          aria-label="Organization sections"
+          className="-mx-4 mt-3 hidden border-y border-border bg-muted/25 sm:-mx-6 lg:-mx-8 lg:block"
+        >
+          <div
+            className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8"
+            role="tablist"
+          >
+            {tabs.map((entry) => (
+              <Button
+                aria-selected={tab === entry.id}
+                className={`h-11 shrink-0 whitespace-nowrap rounded-none border-b-2 px-3 text-xs font-semibold ${
+                  tab === entry.id
+                    ? 'border-primary bg-background/70 font-bold text-foreground'
+                    : 'border-transparent text-muted-foreground hover:bg-background/50 hover:text-foreground'
+                }`}
+                key={entry.id}
+                onClick={() => setTab(entry.id)}
+                role="tab"
+                size="sm"
+                type="button"
+                variant="ghost"
+              >
+                {entry.label}
+              </Button>
+            ))}
+          </div>
+        </nav>
       </PageBleed>
+      )}
 
-      {showIdentity && (
+      {showIdentity && tab !== 'overview' && (
         <div className="mt-4 overflow-hidden rounded-xl border border-border">
           <BotanicalCover heightClass="h-24 sm:h-32" />
         </div>
       )}
 
+      {tab === 'overview' ? (
+        <div className="pt-2">
+          <OrganizationDashboard
+            directory={directory}
+            holidays={holidays}
+            organization={organization}
+            onNavigateModule={onNavigateModule}
+          />
+        </div>
+      ) : (
+      <>
       {/* The rail is part of the shell; only the panel beside it belongs to the active tab. */}
       <div className={`relative z-10 grid gap-4 lg:grid-cols-3 ${showIdentity ? '-mt-8' : 'mt-4'}`}>
         {showIdentity && (
-          <OrgIdentityRail directory={directory} holidays={holidays} organization={organization} />
+          <OrgIdentityRail
+            directory={directory}
+            holidays={holidays}
+            organization={organization}
+            onNavigateModule={onNavigateModule}
+            onNavigateTab={(next) =>
+              next === 'org-setup' ? onNavigateModule?.('org-setup') : setTab(next as Tab)
+            }
+          />
         )}
 
         {/* Only the organization's card overlaps the cover. The tab's own content — its heading,
             tabs and action buttons — starts below it, so nothing sits on the decoration. */}
         <div className={`lg:col-span-2 ${showIdentity ? 'lg:pt-12' : ''}`}>
-          {tab === 'overview' && <OrgShortcuts onNavigateModule={onNavigateModule} />}
+          {tab === 'people' && (
+            <Input
+              aria-label="Search organization people"
+              maxLength={100}
+              placeholder="Search employee name or ID"
+              value={peopleSearch}
+              onChange={(event) => setPeopleSearch(event.target.value)}
+            />
+          )}
+          {tab === 'readiness' && <OnboardingReadinessPanel />}
           {tab === 'people' && (
             <OrgPeoplePanel
               directory={directory}
@@ -192,8 +195,6 @@ export function OrganizationWorkspace({
               view="directory"
             />
           )}
-          {tab === 'departments' && <OrgDepartmentsPanel />}
-          {tab === 'lists' && <OrgListsPanel />}
           {tab === 'reporting' && (
             <OrgPeoplePanel
               directory={directory}
@@ -201,11 +202,20 @@ export function OrganizationWorkspace({
               view="reporting"
             />
           )}
-          {tab === 'branches' && <OrgBranchesPanel organization={organization} />}
-          {tab === 'access' && <OrgAccessPanel />}
-          {tab === 'profile' && <OrgProfilePanel organization={organization} />}
+          {tab === 'people' && (
+            <CursorPageControls
+              page={directory.paging.page}
+              count={directory.entries.length}
+              nextCursor={directory.nextCursor}
+              busy={directory.loading || directory.refreshing}
+              previous={directory.paging.previous}
+              next={directory.paging.next}
+            />
+          )}
         </div>
       </div>
+      </>
+      )}
     </PageShell>
   );
 }

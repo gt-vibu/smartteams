@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import type { AttendancePunchType } from '../../generated/prisma/enums';
 import type { DomainContext } from '../../common/context/domain-context';
+import type { AttendancePunchType } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import type { InboxPagination } from '../approvals/approval-inbox-page';
 import { AuditService } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
-import { AttendanceLocationService } from './attendance-location.service';
+import { AttendanceAutoCheckOutService } from './attendance-auto-checkout.service';
 import { AttendanceCorrectionListsService } from './attendance-correction-lists.service';
 import { AttendanceCorrectionsService } from './attendance-corrections.service';
 import { AttendanceHolidayReviewService } from './attendance-holiday-review.service';
+import { AttendanceLocationService } from './attendance-location.service';
 import { AttendancePreferencesService } from './attendance-preferences.service';
 import { AttendancePunchService, type PunchInput } from './attendance-punch.service';
-import { AttendanceAutoCheckOutService } from './attendance-auto-checkout.service';
 
 export type { PunchInput };
 
@@ -78,8 +79,12 @@ export class AttendanceService {
     return this.corrections.decideCorrection(...args);
   }
 
-  listPendingCorrectionApprovals(context: DomainContext, approverUserId: string) {
-    return this.correctionLists.listPendingCorrectionApprovals(context, approverUserId);
+  listPendingCorrectionApprovals(
+    context: DomainContext,
+    approverUserId: string,
+    pagination?: InboxPagination,
+  ) {
+    return this.correctionLists.listPendingCorrectionApprovals(context, approverUserId, pagination);
   }
 
   listCorrectionRequests(

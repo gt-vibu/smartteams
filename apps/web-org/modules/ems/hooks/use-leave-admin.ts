@@ -10,18 +10,23 @@ import {
   type LeaveType,
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
-import { leaveRepository, type LeaveTypeInput } from '../repositories/leave.repository';
-import { workforceRepository } from '../repositories/workforce.repository';
+import {
+  leaveRepository,
+  type LeaveAdminSummary,
+  type LeaveTypeInput,
+} from '../repositories/leave.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
 import { useDataChanged } from '../lib/data-events';
+import { useCursorPages } from './use-cursor-pages';
 
 type Loaded = {
   types: LeaveType[];
   requests: LeaveRequest[];
   inbox: LeaveInboxEntry[];
   balances: LeaveBalance[];
-  employees: Employee[];
+  nextCursor?: string;
+  summary?: LeaveAdminSummary;
 };
 
 /**
@@ -39,7 +44,12 @@ export const leaveAdminBusyKey = {
   adjust: (employeeId: string, leaveTypeId: string) => `adjust:${employeeId}:${leaveTypeId}`,
 } as const;
 
-export function useLeaveAdmin() {
+export function useLeaveAdmin(
+  status = 'ALL',
+  section = 'requests',
+  search = '',
+  filters: { employeeId?: string; departmentId?: string; from?: string; to?: string } = {},
+) {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const permissions = useMemo(() => persona?.permissions ?? [], [persona]);
@@ -50,24 +60,79 @@ export function useLeaveAdmin() {
   const canWriteTypes = hasPermission(permissions, 'leave.types.write');
   const canReadBalances = hasPermission(permissions, 'leave.balances.read');
   const canAdjust = hasPermission(permissions, 'leave.balances.adjust');
-  const canReadEmployees = hasPermission(permissions, 'employees.read');
+  const paging = useCursorPages(
+    JSON.stringify([
+      organizationId,
+      status,
+      search,
+      section,
+      filters.employeeId,
+      filters.departmentId,
+      filters.from,
+      filters.to,
+    ]),
+  );
 
   const resource = useAsyncResource<Loaded>(
     async () => {
-      const [types, requests, inbox, balances, employees] = await Promise.all([
+      const [types, requests, inbox, balances, summary] = await Promise.all([
         canReadTypes ? leaveRepository.listTypes(organizationId!) : Promise.resolve([]),
-        canReadRequests
-          ? leaveRepository.listRequests(organizationId!, { limit: 200 })
-          : Promise.resolve([]),
+        canReadRequests && section === 'requests'
+          ? leaveRepository.listRequestPage(organizationId!, {
+              status: status === 'ALL' ? undefined : status,
+              search: search || undefined,
+              employeeId: filters.employeeId || undefined,
+              departmentId: filters.departmentId || undefined,
+              from: filters.from || undefined,
+              to: filters.to || undefined,
+              cursor: paging.cursor,
+              limit: 10,
+            })
+          : Promise.resolve({ requests: [] as LeaveRequest[], nextCursor: undefined }),
         // The inbox is personal to the approver; without decide rights it is simply empty.
-        canDecide ? leaveRepository.requestInbox(organizationId!) : Promise.resolve([]),
-        canReadBalances ? leaveRepository.listBalances(organizationId!) : Promise.resolve([]),
-        canReadEmployees ? workforceRepository.listEmployees(organizationId!) : Promise.resolve([]),
+        canDecide && section === 'requests'
+          ? leaveRepository.requestInbox(organizationId!)
+          : Promise.resolve([]),
+        canReadBalances && section === 'balances'
+          ? leaveRepository.listBalancePage(organizationId!, {
+              search,
+              cursor: paging.cursor,
+              limit: 10,
+            })
+          : Promise.resolve({ balances: [] as LeaveBalance[], nextCursor: undefined }),
+        hasPermission(permissions, 'leave.requests.read.all') && section === 'requests'
+          ? leaveRepository.adminSummary(organizationId!)
+          : Promise.resolve(undefined),
       ]);
-      return { types, requests, inbox, balances, employees };
+      return {
+        types,
+        requests: requests.requests,
+        nextCursor: section === 'balances' ? balances.nextCursor : requests.nextCursor,
+        inbox,
+        balances: balances.balances,
+        summary,
+      };
     },
-    [organizationId, canReadTypes, canReadRequests, canDecide, canReadBalances, canReadEmployees],
-    { enabled: Boolean(organizationId) && (canReadRequests || canReadTypes) },
+    [
+      organizationId,
+      status,
+      section,
+      search,
+      paging.cursor,
+      canReadTypes,
+      canReadRequests,
+      canDecide,
+      canReadBalances,
+      filters.departmentId,
+      filters.employeeId,
+      filters.from,
+      filters.to,
+      permissions,
+    ],
+    {
+      enabled: Boolean(organizationId) && (canReadRequests || canReadTypes || canReadBalances),
+      preservePreviousDataKey: organizationId ? `${organizationId}:${section}` : null,
+    },
   );
 
   // A new request, announced by a notification, joins the queue without a reload.
@@ -159,11 +224,16 @@ export function useLeaveAdmin() {
   );
 
   return {
+    organizationId,
+    canReadBalances,
+    paging,
+    nextCursor: resource.data?.nextCursor,
     types: resource.data?.types ?? [],
     requests: resource.data?.requests ?? [],
     inbox: resource.data?.inbox ?? [],
     balances: resource.data?.balances ?? [],
-    employees: resource.data?.employees ?? [],
+    summary: resource.data?.summary,
+    employees: [] as Employee[],
     loading: resource.loading,
     refreshing: resource.refreshing,
     error: resource.error,

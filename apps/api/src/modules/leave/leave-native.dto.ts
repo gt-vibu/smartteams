@@ -1,6 +1,6 @@
 import { OmitType } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
 import { LIMITS } from '@smarteam/contracts';
+import { IsEnum, IsOptional } from 'class-validator';
 import {
   IsCalendarDate,
   IsCode,
@@ -20,6 +20,13 @@ import { LeaveDecisionDto, LeaveRequestDto, LeaveTypeDto } from './leave.dto';
 /** A leave year has at most 366 days; no allowance, carry-over or encashment can exceed it. */
 const YEAR = 366;
 
+export class LeaveDateAvailabilityDto {
+  @IsCalendarDate('From date', { earliest: yearsFromToday(-2), latest: yearsFromToday(2) })
+  from!: string;
+  @IsCalendarDate('To date', { earliest: yearsFromToday(-2), latest: yearsFromToday(2) })
+  to!: string;
+}
+
 export class NativeLeaveTypeDto extends LeaveTypeDto {}
 withRules(NativeLeaveTypeDto, {
   code: [IsCode('Code')],
@@ -34,7 +41,10 @@ withRules(NativeLeaveTypeDto, {
 /** Editing a leave type: everything but its code, which is fixed once created. */
 export class NativeLeaveTypeUpdateDto extends OmitType(NativeLeaveTypeDto, ['code'] as const) {}
 
-export class NativeLeaveRequestDto extends LeaveRequestDto {}
+export class NativeLeaveRequestDto extends LeaveRequestDto {
+  @IsOptional() @IsEnum(['FULL_DAY', 'FIRST_HALF', 'SECOND_HALF']) session?:
+    'FULL_DAY' | 'FIRST_HALF' | 'SECOND_HALF';
+}
 withRules(NativeLeaveRequestDto, {
   // Leave is applied for within two years either side of today, never for 1900 or 2999.
   startDate: [
@@ -48,5 +58,5 @@ withRules(NativeLeaveRequestDto, {
 
 export class NativeLeaveDecisionDto extends LeaveDecisionDto {}
 withRules(NativeLeaveDecisionDto, {
-  comment: [IsText('Comment', LIMITS.reason, 2)],
+  comment: [IsOptional(), IsText('Comment', LIMITS.reason, 2)],
 });

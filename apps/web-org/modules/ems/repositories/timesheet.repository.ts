@@ -3,6 +3,7 @@ import {
   parseProject,
   parseTimesheetEntryResult,
   parseTimesheetList,
+  parseTimesheetPage,
   type JobType,
   type Project,
   type Timesheet,
@@ -42,6 +43,11 @@ export type ManualEntryInput = {
 };
 
 export const timesheetRepository = {
+  async listPage(organizationId: string, filters: { employeeId?: string; periodId?: string; status?: string; departmentId?: string; from?: string; to?: string; search?: string; cursor?: string; limit?: number } = {}) {
+    const page = parseTimesheetPage(await apiRequest(`${base(organizationId)}/admin-page${queryString(filters)}`, { method: 'GET' }));
+    if (!page) throw new Error('The timesheet page response was not valid.');
+    return page;
+  },
   async list(
     organizationId: string,
     filters: { employeeId?: string; periodId?: string } = {},
@@ -143,16 +149,16 @@ export const timesheetRepository = {
     });
   },
 
-  /** The API requires a comment of at least two characters and audits it. */
+  /** Approves directly, or rejects with an audited comment. */
   async decide(
     organizationId: string,
     timesheetId: string,
     status: 'APPROVED' | 'REJECTED',
-    comment: string,
+    comment?: string,
   ): Promise<unknown> {
     return apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/decision`, {
       method: 'POST',
-      body: { status, comment },
+      body: { status, ...(comment?.trim() ? { comment: comment.trim() } : {}) },
     });
   },
 };

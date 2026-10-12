@@ -1,18 +1,19 @@
 'use client';
 
 import { formatDate } from '@smarteam/contracts';
-import React, { useState, useMemo } from 'react';
-import { Button, Select, Input } from '@smarteam/ui';
-import { AttendanceToolbar } from '../screen-2-attendance/attendance-toolbar';
-import { AttendanceTableView } from './attendance-table-view';
-import type { CorrectionTimes } from './correction-form';
-import { AttendanceDetailDrawer } from './attendance-detail-drawer';
-import { AttendanceSummaryFooter } from '../screen-2-attendance/attendance-summary-footer';
+import { Button, Input, Select } from '@smarteam/ui';
+import { useMemo, useState } from 'react';
 import { useAttendance } from '../../hooks/use-attendance';
 import { useAttendanceWeek } from '../../hooks/use-attendance-week';
 import { attendanceSummaryStats } from '../../services/attendance-view';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { PageShell } from '../layout/page-shell';
+import { AttendanceSummaryFooter } from '../screen-2-attendance/attendance-summary-footer';
+import { AttendanceToolbar } from '../screen-2-attendance/attendance-toolbar';
+import { AttendanceDetailDrawer } from './attendance-detail-drawer';
+import { AttendanceTableView } from './attendance-table-view';
+import type { CorrectionTimes } from './correction-form';
+import { useDebouncedValue } from '../../hooks/use-debounced-value';
 
 interface Screen3TableProps {
   onToggleView?: (view: 'timeline' | 'table' | 'calendar') => void;
@@ -30,6 +31,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
   const [selectedRow, setSelectedRow] = useState<AttendanceTableRow | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const settledSearch = useDebouncedValue(searchQuery.trim());
   const [isFilterActive, setIsFilterActive] = useState<boolean>(false);
 
   // Map attendance records to AttendanceTableRow
@@ -55,19 +57,32 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
         // A check-in on an approved optional holiday reads by its review state, not "Present".
         status: r.holidayConflict
           ? `${r.holidayConflict.holidayName} · ${r.holidayConflict.label}`
-          : r.dayStatus === 'PRESENT'
+          : r.workedMinutes > 0 || r.dayStatus === 'PRESENT'
             ? 'Present'
-            : r.dayStatus,
+            : r.dayStatus === 'HALF_DAY'
+              ? 'Half day'
+              : r.dayStatus === 'LEAVE' || r.dayStatus === 'ON_LEAVE'
+                ? 'On leave'
+                : r.dayStatus === 'HOLIDAY' || r.holidayName
+                  ? 'Holiday'
+                  : r.isWeekend
+                    ? 'Weekly off'
+                    : 'Absent',
         statusType: r.holidayConflict
           ? 'holiday-checkin'
-          : r.workedMinutes > 0
+          : r.workedMinutes > 0 || r.dayStatus === 'PRESENT'
             ? 'present'
-            : r.isWeekend
-              ? 'weekend'
-              : 'empty',
+            : r.dayStatus === 'HALF_DAY'
+              ? 'half-day'
+              : r.dayStatus === 'LEAVE' || r.dayStatus === 'ON_LEAVE'
+                ? 'leave'
+                : r.dayStatus === 'HOLIDAY' || r.holidayName
+                  ? 'holiday'
+                  : r.isWeekend
+                    ? 'weekend'
+                    : 'absent',
         ...(r.holidayConflict ? { holidayConflict: r.holidayConflict } : {}),
-        // Shift assignment is not wired, so the row states that rather than naming a shift.
-        shift: r.shiftName ?? 'Not recorded',
+        shift: r.shiftName ?? 'General Shift',
         canRegularize: canRequestCorrection && r.correctionStatus !== 'PENDING',
         // A past day that ended on a check-in: the drawer offers to add the missing check-out.
         openCheckInAt:
@@ -91,8 +106,8 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
       if (statusFilter !== 'ALL' && row.statusType !== statusFilter) {
         return false;
       }
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
+      if (settledSearch) {
+        const q = settledSearch.toLowerCase();
         return (
           row.date.toLowerCase().includes(q) ||
           row.status.toLowerCase().includes(q) ||
@@ -101,7 +116,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
       }
       return true;
     });
-  }, [rows, statusFilter, searchQuery]);
+  }, [rows, statusFilter, settledSearch]);
 
   const stats = attendanceSummaryStats(records);
 
@@ -125,6 +140,8 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
           dateRange={week.label}
           onPrevDate={week.previous}
           onNextDate={week.next}
+          dateWindow={week.window}
+          onSelectRange={week.selectRange}
           viewMode="table"
           onChangeViewMode={onToggleView}
           onFilterToggle={() => setIsFilterActive(!isFilterActive)}
@@ -147,7 +164,7 @@ export function Screen3Table({ onToggleView }: Screen3TableProps) {
                   <option value="present">Present</option>
                   <option value="holiday">Holiday</option>
                   <option value="holiday-checkin">Worked on holiday</option>
-                  <option value="weekend">Weekend</option>
+                  <option value="weekend">Weekly off</option>
                   <option value="empty">Missed / Empty</option>
                 </Select>
               </div>

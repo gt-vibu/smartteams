@@ -19,8 +19,7 @@ import { holidayConflictsRepository } from '../repositories/holiday-conflicts.re
 import { holidayConflictsByRecord } from '../services/holiday-conflict-view';
 import { announceHolidayCheckIn, emitDataChanged, useDataChanged } from '../lib/data-events';
 import { useMinuteClock } from './use-minute-clock';
-import { useWorkWeek } from './use-work-week';
-import { useShiftHistory } from './use-shift-history';
+import { useWorkingSchedule } from './use-working-schedule';
 import { localDateKey } from '../lib/local-date';
 
 // Attendance is recorded in the employee's own day; kept exported here for existing importers.
@@ -75,7 +74,10 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
       return page.records;
     },
     [organizationId, employeeId, from, to],
-    { enabled: Boolean(organizationId && employeeId) && canRead },
+    {
+      enabled: Boolean(organizationId && employeeId) && canRead,
+      preservePreviousDataKey: organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
+    },
   );
 
   const records = useMemo(() => resource.data ?? [], [resource.data]);
@@ -85,7 +87,10 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const conflictsResource = useAsyncResource<HolidayConflict[]>(
     () => holidayConflictsRepository.list(organizationId!, { from, to }),
     [organizationId, employeeId, from, to],
-    { enabled: Boolean(organizationId && employeeId) && canRead },
+    {
+      enabled: Boolean(organizationId && employeeId) && canRead,
+      preservePreviousDataKey: organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
+    },
   );
   const holidayConflicts = useMemo(
     () => holidayConflictsByRecord(conflictsResource.data ?? []),
@@ -107,7 +112,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
 
   const todayKey = localDateKey();
   const now = useMinuteClock();
-  const { workWeekDays } = useWorkWeek();
+  const { workWeekDays, isWeeklyOffOn, shiftOnDate } = useWorkingSchedule(employeeId);
   const todayRecord = useMemo(
     () => records.find((record) => workDateKey(record) === todayKey) ?? null,
     [records, todayKey],
@@ -249,6 +254,27 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     [employeeId, organizationId, resource],
   );
 
+  /** Requests attendance for a missing day; the record remains pending until approval. */
+  const requestCorrectionForDate = useCallback(
+    async (workDate: string, reason: string, correctedCheckIn: string, correctedCheckOut?: string) => {
+      if (!organizationId || !employeeId)
+        throw new Error('This account has no employee record, so attendance cannot be recorded.');
+      try {
+        await attendanceRepository.requestCorrectionForDate(organizationId, {
+          employeeId,
+          workDate,
+          reason,
+          correctedCheckIn,
+          ...(correctedCheckOut ? { correctedCheckOut } : {}),
+        });
+        emitDataChanged('approvals');
+      } finally {
+        await resource.refetch();
+      }
+    },
+    [employeeId, organizationId, resource],
+  );
+
   /** Explains a check-in on an approved optional holiday; rejects with the API's reason. */
   const explainHolidayCheckIn = useCallback(
     async (attendanceId: string, reason: string, comment?: string) => {
@@ -267,13 +293,12 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   );
 
   // Presentation shape the screens render, derived from the same records.
-  const shiftOn = useShiftHistory(employeeId);
   const days: AttendanceDayView[] = useMemo(
     () =>
       toAttendanceDayViews(records, todayKey, [], holidayConflicts, now, workWeekDays).map(
-        (day) => ({ ...day, shiftName: shiftOn(day.workDate) }),
+        (day) => ({ ...day, shiftName: shiftOnDate(day.workDate)?.name ?? null, isWeekend: isWeeklyOffOn(day.workDate) }),
       ),
-    [records, todayKey, holidayConflicts, now, workWeekDays, shiftOn],
+    [records, todayKey, holidayConflicts, now, workWeekDays, shiftOnDate, isWeeklyOffOn],
   );
 
   return {
@@ -296,6 +321,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     checkIn,
     checkOut,
     requestCorrection,
+    requestCorrectionForDate,
     requestMissingCheckOut,
     explainHolidayCheckIn,
     canRead,

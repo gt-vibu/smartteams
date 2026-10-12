@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
 import { formatDate } from '@smarteam/contracts';
+import { useCallback, useMemo } from 'react';
+import { leaveExtrasRepository } from '../repositories/leave-extras.repository';
 import { useSession } from './auth-context';
 import { useAsyncResource } from './use-async-resource';
-import { leaveExtrasRepository } from '../repositories/leave-extras.repository';
 
 export type LeaveExtraInboxItem = {
   id: string;
@@ -68,16 +68,23 @@ export function useLeaveExtrasInbox() {
   }, [compOffs, encashments]);
 
   const decide = useCallback(
-    (item: { id: string; domain: 'COMP_OFF' | 'ENCASHMENT' }, approve: boolean, comment: string) =>
-      item.domain === 'COMP_OFF'
-        ? leaveExtrasRepository.decideCompOff(organizationId!, item.id, { approve, comment })
-        : leaveExtrasRepository.decideEncashment(organizationId!, item.id, { approve, comment }),
+    (
+      item: { id: string; domain: 'COMP_OFF' | 'ENCASHMENT' },
+      approve: boolean,
+      comment?: string,
+    ) => {
+      const input = { approve, ...(comment?.trim() ? { comment: comment.trim() } : {}) };
+      return item.domain === 'COMP_OFF'
+        ? leaveExtrasRepository.decideCompOff(organizationId!, item.id, input)
+        : leaveExtrasRepository.decideEncashment(organizationId!, item.id, input);
+    },
     [organizationId],
   );
 
   return {
     items,
     loading: compOffs.loading || encashments.loading,
+    error: compOffs.error ?? encashments.error,
     refetch,
     decide,
   };

@@ -197,6 +197,33 @@ export const PERMISSION_CATALOGUE: PermissionCatalogueEntry[] = [
   { key: 'shifts.write', label: 'Manage shifts', module: 'Shifts' },
 ];
 
+/** Safe self-service access every employee needs, including managers and custom profiles. */
+export const EMPLOYEE_BASELINE_PERMISSION_KEYS = [
+  'organizations.read',
+  'employees.read',
+  'attendance.read',
+  'attendance.write',
+  'attendance.corrections.write',
+  'attendance.preferences.read',
+  'leave.types.read',
+  'leave.requests.read',
+  'leave.requests.write',
+  'leave.balances.read',
+  'timesheets.read',
+  'timesheets.write',
+  'timesheets.submit',
+  'payroll.payslips.read',
+  'payroll.employee-profile.read',
+  'payroll.preview.read',
+  'payroll.advances.read',
+  'payroll.advances.request',
+  'files.read',
+  'files.write',
+  'teams.read',
+  'projects.read',
+  'shifts.read',
+] as const;
+
 export const PERMISSION_KEYS = new Set(PERMISSION_CATALOGUE.map((entry) => entry.key));
 
 /** The catalogue grouped by module, in catalogue order, for a grouped picker UI. */

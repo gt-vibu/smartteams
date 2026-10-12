@@ -1,4 +1,5 @@
 import {
+  leavePreviewSchema,
   parseLeaveAssignmentList,
   parseLeaveBalanceList,
   parseLeaveInbox,
@@ -8,6 +9,7 @@ import {
   type LeaveAssignment,
   type LeaveBalance,
   type LeaveInboxEntry,
+  type LeavePreview,
   type LeaveRequest,
   type LeaveType,
 } from '@smarteam/contracts';
@@ -32,6 +34,8 @@ export type CreateLeaveRequestInput = {
   endDate: string;
   reason?: string;
   branchId?: string;
+  attachmentIds?: string[];
+  session?: 'FULL_DAY' | 'FIRST_HALF' | 'SECOND_HALF';
 };
 
 export type LeaveTypeInput = {
@@ -65,7 +69,34 @@ export type LeaveCalendarEntry = {
   isYou: boolean;
 };
 
+export type LeaveAdminSummary = {
+  pending: number;
+  approvedThisMonth: number;
+  employeesOnLeaveToday: number;
+  approvedDaysTouchingMonth: number;
+  month: string;
+  asOf: string;
+};
+
 export const leaveRepository = {
+  async adminSummary(organizationId: string): Promise<LeaveAdminSummary> {
+    return (await apiRequest(`${orgPath(organizationId, '/leave')}/requests/summary`, {
+      method: 'GET',
+    })) as LeaveAdminSummary;
+  },
+  async dateAvailability(
+    organizationId: string,
+    from: string,
+    to: string,
+  ): Promise<{
+    leaveYearStartMonth: number;
+    dates: Array<{ date: string; reason: string | null }>;
+  }> {
+    return (await apiRequest(`${orgPath(organizationId, '/leave')}/requests/date-availability`, {
+      method: 'POST',
+      body: { from, to },
+    })) as { leaveYearStartMonth: number; dates: Array<{ date: string; reason: string | null }> };
+  },
   /** Who is off between two dates, among the people the caller works with. */
   async calendar(organizationId: string, from: string, to: string): Promise<LeaveCalendarEntry[]> {
     const payload = (await apiRequest(
@@ -93,6 +124,21 @@ export const leaveRepository = {
     );
   },
 
+  async listBalancePage(
+    organizationId: string,
+    filters: { search?: string; cursor?: string; limit?: number } = {},
+  ) {
+    const payload = await apiRequest(
+      `${orgPath(organizationId, '/leave')}/balances/page${queryString(filters)}`,
+      { method: 'GET' },
+    );
+    const envelope = payload as { nextCursor?: string };
+    return {
+      balances: expectShape(parseLeaveBalanceList(payload), 'leave balance page'),
+      nextCursor: envelope.nextCursor,
+    };
+  },
+
   async listBalances(organizationId: string, employeeId?: string): Promise<LeaveBalance[]> {
     return expectShape(
       parseLeaveBalanceList(
@@ -109,25 +155,71 @@ export const leaveRepository = {
 
   async listRequests(
     organizationId: string,
-    filters: { employeeId?: string; limit?: number } = {},
+    filters: { employeeId?: string; limit?: number; status?: string; search?: string; departmentId?: string; from?: string; to?: string } = {},
   ): Promise<LeaveRequest[]> {
+    const requests: LeaveRequest[] = [];
+    const seen = new Set<string>();
+    let cursor: string | undefined;
+    do {
+      const page = expectShape(
+        parseLeaveRequestPage(
+          await apiRequest(
+            `${orgPath(organizationId, '/leave')}/requests${queryString({ ...filters, cursor })}`,
+            {
+              method: 'GET',
+            },
+          ),
+        ),
+        'leave request list',
+      );
+      requests.push(...page.requests);
+      // Explicit limits are for previews; the employee's full history follows every page.
+      if (filters.limit) return requests;
+      cursor = page.nextCursor;
+      if (cursor && seen.has(cursor))
+        throw new Error('Leave history paging did not advance. Try again.');
+      if (cursor) seen.add(cursor);
+    } while (cursor);
+    return requests;
+  },
+
+  async listRequestPage(
+    organizationId: string,
+    filters: { cursor?: string; status?: string; search?: string; employeeId?: string; departmentId?: string; from?: string; to?: string; limit?: number } = {},
+  ) {
     return expectShape(
       parseLeaveRequestPage(
         await apiRequest(`${orgPath(organizationId, '/leave')}/requests${queryString(filters)}`, {
           method: 'GET',
         }),
       ),
-      'leave request list',
-    ).requests;
+      'leave request page',
+    );
   },
 
   /** Requests awaiting the signed-in user's decision. */
   async requestInbox(organizationId: string): Promise<LeaveInboxEntry[]> {
-    return expectShape(
-      parseLeaveInbox(
-        await apiRequest(`${orgPath(organizationId, '/leave')}/requests/inbox`, { method: 'GET' }),
-      ),
-      'leave approval inbox',
+    const items: LeaveInboxEntry[] = [];
+    let cursor: string | undefined;
+    do {
+      const payload = (await apiRequest(
+        `${orgPath(organizationId, '/leave')}/requests/inbox${queryString({ cursor, limit: 100 })}`,
+        { method: 'GET' },
+      )) as { requests: unknown[]; nextCursor?: string };
+      items.push(...expectShape(parseLeaveInbox(payload), 'leave approval inbox'));
+      if (payload.nextCursor === cursor && cursor)
+        throw new Error('Approval paging did not advance.');
+      cursor = payload.nextCursor;
+    } while (cursor);
+    return items;
+  },
+
+  async preview(organizationId: string, input: CreateLeaveRequestInput): Promise<LeavePreview> {
+    return leavePreviewSchema.parse(
+      await apiRequest(`${orgPath(organizationId, '/leave')}/requests/preview`, {
+        method: 'POST',
+        body: input,
+      }),
     );
   },
 
@@ -146,16 +238,16 @@ export const leaveRepository = {
     );
   },
 
-  /** The API requires a comment of at least two characters and audits it. */
+  /** Approves directly, or rejects with an audited comment. */
   async decide(
     organizationId: string,
     requestId: string,
     status: 'APPROVED' | 'REJECTED',
-    comment: string,
+    comment?: string,
   ): Promise<unknown> {
     return apiRequest(
       `${orgPath(organizationId, '/leave')}/requests/${encodeURIComponent(requestId)}/decision`,
-      { method: 'POST', body: { status, comment } },
+      { method: 'POST', body: { status, ...(comment?.trim() ? { comment: comment.trim() } : {}) } },
     );
   },
 

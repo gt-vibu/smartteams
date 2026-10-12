@@ -1,22 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Input,
-  Label,
-  SelectContent,
-  SelectItem,
-  SelectMenu,
-  SelectTrigger,
-  SelectValue,
-} from '@smarteam/ui';
-import { employeeDisplayName, type Department, type Employee } from '@smarteam/contracts';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
+import { type Department, type Employee } from '@smarteam/contracts';
 import type { DepartmentsState } from '../../hooks/use-departments';
-import { activeByName } from '../../lib/pickable';
+import { EmployeePicker } from '../common/employee-picker';
+import { EmployeeCombobox } from '../common/employee-combobox';
 
 const NO_HEAD = '__none__';
 
@@ -48,7 +37,7 @@ export function DepartmentDialog({
   const [prefix, setPrefix] = useState('');
   const [headId, setHeadId] = useState(NO_HEAD);
   const [memberIds, setMemberIds] = useState<string[]>([]);
-  const [search, setSearch] = useState('');
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -56,26 +45,12 @@ export function DepartmentDialog({
     setPrefix(department?.employeeNumberPrefix ?? '');
     setHeadId(department?.head?.id ?? NO_HEAD);
     setMemberIds(department?.members.map((member) => member.id) ?? []);
-    setSearch('');
     departments.clearError();
     // Reset only when the dialog opens or targets another department.
   }, [open, department?.id]);
 
   const cleanPrefix = prefix.trim().toUpperCase();
   const prefixValid = cleanPrefix === '' || /^[A-Z0-9]{1,6}$/.test(cleanPrefix);
-  const query = search.trim().toLowerCase();
-  const listed = employees.filter(
-    (employee) =>
-      !query ||
-      employeeDisplayName(employee).toLowerCase().includes(query) ||
-      employee.employeeNumber.toLowerCase().includes(query),
-  );
-
-  const toggle = (id: string) =>
-    setMemberIds((current) =>
-      current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
-    );
-
   const submit = async () => {
     if (!name.trim() || !prefixValid) return;
     const id = await departments.save(department?.id ?? null, {
@@ -92,8 +67,21 @@ export function DepartmentDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-lg">
-        <DialogTitle>{department ? `Edit ${department.name}` : 'New department'}</DialogTitle>
+      <DialogContent
+        className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-lg"
+        onOpenAutoFocus={(event) => {
+          if (!department) return;
+          event.preventDefault();
+          titleRef.current?.focus();
+        }}
+      >
+        <DialogTitle
+          className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 bg-card px-5 pt-5 pb-3"
+          ref={titleRef}
+          tabIndex={department ? -1 : undefined}
+        >
+          {department ? `Edit ${department.name}` : 'New department'}
+        </DialogTitle>
         <div className="mt-4 space-y-4">
           <div>
             <Label className="mb-1 block" htmlFor="department-name">
@@ -132,19 +120,13 @@ export function DepartmentDialog({
           </div>
           <div>
             <Label className="mb-1 block">Department head</Label>
-            <SelectMenu onValueChange={setHeadId} value={headId}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NO_HEAD}>No head yet</SelectItem>
-                {activeByName(employees).map((employee) => (
-                  <SelectItem key={employee.id} value={employee.id}>
-                    {employeeDisplayName(employee)} · {employee.employeeNumber}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </SelectMenu>
+            <EmployeeCombobox
+              employees={employees}
+              value={headId === NO_HEAD ? '' : headId}
+              onChange={(id) => setHeadId(id || NO_HEAD)}
+              noneLabel="No head"
+              disabled={departments.saving}
+            />
           </div>
 
           {showMembers && (
@@ -152,31 +134,12 @@ export function DepartmentDialog({
               <Label className="mb-1 block" htmlFor="department-search">
                 Employees ({memberIds.length} selected)
               </Label>
-              <Input
-                id="department-search"
-                onChange={(event) => setSearch(event.target.value)}
-                aria-label="Search by name or number"
-                placeholder="Search by name or number"
-                value={search}
+              <EmployeePicker
+                employees={employees}
+                selected={memberIds}
+                onChange={setMemberIds}
+                disabled={departments.saving}
               />
-              <ul className="mt-2 max-h-52 divide-y divide-border/60 overflow-y-auto rounded-md border border-border">
-                {listed.map((employee) => (
-                  <li key={employee.id}>
-                    <label className="flex cursor-pointer items-center gap-2 px-3 py-2 text-xs">
-                      <input
-                        checked={memberIds.includes(employee.id)}
-                        onChange={() => toggle(employee.id)}
-                        type="checkbox"
-                      />
-                      <span className="text-foreground">{employeeDisplayName(employee)}</span>
-                      <span className="text-muted-foreground">{employee.employeeNumber}</span>
-                    </label>
-                  </li>
-                ))}
-                {listed.length === 0 && (
-                  <li className="px-3 py-3 text-xs text-muted-foreground">No employees match.</li>
-                )}
-              </ul>
               <p className="mt-1 text-[11px] text-muted-foreground">
                 Someone already in another department moves here. The head is added automatically.
               </p>
@@ -188,7 +151,7 @@ export function DepartmentDialog({
               {departments.saveError}
             </p>
           )}
-          <div className="flex justify-end gap-2">
+          <div className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 flex justify-end gap-2 bg-card px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <Button onClick={() => onOpenChange(false)} type="button" variant="outline">
               Cancel
             </Button>

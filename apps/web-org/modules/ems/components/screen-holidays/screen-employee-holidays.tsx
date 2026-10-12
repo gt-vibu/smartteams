@@ -52,6 +52,7 @@ export function ScreenEmployeeHolidays() {
   const currentYearNum = Number.parseInt(employeeHolidays.year, 10) || new Date().getFullYear();
 
   const [typeFilter, setTypeFilter] = useState<'ALL' | 'PUBLIC' | 'OPTIONAL'>('ALL');
+  const [monthFilter, setMonthFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'REQUIRED' | 'AVAILABLE' | 'SELECTED'>(
     'ALL',
   );
@@ -119,10 +120,11 @@ export function ScreenEmployeeHolidays() {
       if (statusFilter === 'REQUIRED' && item.statusLabel !== 'Required') return false;
       if (statusFilter === 'AVAILABLE' && item.statusLabel !== 'Available') return false;
       if (statusFilter === 'SELECTED' && item.statusLabel !== 'Selected') return false;
+      if (monthFilter !== 'ALL' && item.holidayDate.slice(5, 7) !== monthFilter) return false;
 
       return true;
     });
-  }, [unifiedHolidays, typeFilter, statusFilter]);
+  }, [unifiedHolidays, typeFilter, statusFilter, monthFilter]);
 
   const handleConfirmApply = async () => {
     if (!holidayToApply) return;
@@ -136,11 +138,22 @@ export function ScreenEmployeeHolidays() {
     <div className="flex w-full flex-col">
       {/* Context Top Header */}
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6 py-3">
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="text-sm font-bold text-foreground">Holiday calendar</h2>
-          </div>
-          <div className="flex items-center gap-2 self-end sm:self-auto">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-sm font-bold text-foreground">Holiday calendar</h2>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <Select
+              aria-label="Filter holidays by month"
+              value={monthFilter}
+              onChange={(event) => setMonthFilter(event.target.value)}
+              className="h-8 w-28 text-xs"
+            >
+              <option value="ALL">All months</option>
+              {Array.from({ length: 12 }, (_, index) => (
+                <option key={index + 1} value={String(index + 1).padStart(2, '0')}>
+                  {new Date(2020, index, 1).toLocaleDateString('en', { month: 'long' })}
+                </option>
+              ))}
+            </Select>
             <Button
               size="sm"
               variant="outline"
@@ -219,7 +232,7 @@ export function ScreenEmployeeHolidays() {
 
           {/* Compact Filter Bar */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
               <Select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}

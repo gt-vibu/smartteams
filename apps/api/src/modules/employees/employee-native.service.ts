@@ -1,3 +1,4 @@
+import { employeeListWhere, type EmployeeListFilters } from './employee-list-filters';
 import { takeEmployeeNumber } from './departments.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -216,7 +217,7 @@ export class EmployeeNativeService {
    * export, not a name list.
    */
 
-  async list(context: DomainContext, filters: { limit?: number; cursor?: string } = {}) {
+  async list(context: DomainContext, filters: EmployeeListFilters = {}) {
     requirePermission(context, 'employees.read');
     // Capped server-side rather than trusted from the query: an unbounded read here loads every
     // employee row into memory and holds the RLS transaction open for the whole serialisation.
@@ -227,16 +228,16 @@ export class EmployeeNativeService {
         // A user with no employee record of their own sees an empty directory, not everyone's.
         if (!selfEmployeeId) return { items: [], nextCursor: undefined };
         const self = await tx.employee.findFirst({
-          where: { id: selfEmployeeId, organizationId: context.organizationId },
+          where: { AND: [employeeListWhere(context, filters), { id: selfEmployeeId }] },
         });
         return { items: self ? [directoryRow(self)] : [], nextCursor: undefined };
       }
       const employees = await tx.employee.findMany({
-        where: { organizationId: context.organizationId },
+        where: employeeListWhere(context, filters),
         // Paging needs a total order, and (lastName, firstName) is not unique — two people with
         // the same name would make the cursor ambiguous and could skip or repeat a row. Id is
         // the tiebreaker and the cursor.
-        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
+        orderBy: filters.order === 'recent' ? [{ dateOfJoining: 'desc' }, { id: 'asc' }] : [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
         ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
         take: limit + 1,
       });

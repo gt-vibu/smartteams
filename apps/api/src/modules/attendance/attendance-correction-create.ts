@@ -1,10 +1,11 @@
-import type { Prisma } from '../../generated/prisma/client';
 import type { DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
+import type { Prisma } from '../../generated/prisma/client';
+import { assertResolvableApprovers } from '../approvals/approval-authorization';
 import type { AuditService } from '../audit/audit.service';
 import { jsonSnapshot } from '../audit/audit.service';
-import { assertResolvableApprovers } from '../approvals/approval-authorization';
 import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
+import { shouldAutoApproveCorrection } from './attendance-automation';
 
 /** The fields of an attendance record a correction is routed and snapshotted from. */
 export type CorrectableRecord = {
@@ -29,6 +30,7 @@ export async function createAttendanceCorrection(
   record: CorrectableRecord,
   reason: string,
   afterSnapshot: unknown,
+  automaticallyDecide?: (id: string, reason: string) => Promise<unknown>,
 ) {
   const activePolicies = await tx.approvalPolicy.findMany({
     where: {
@@ -49,14 +51,27 @@ export async function createAttendanceCorrection(
   const correctionBranchId = record.branchId ?? context.branchId;
   if (!correctionBranchId)
     throw new ConflictError('An outlet is required to resolve attendance approvers');
-  await assertResolvableApprovers(
-    tx,
-    context.organizationId,
-    correctionBranchId,
-    record.employee.manager?.userId,
-    record.employee.userId,
-    policy.steps,
-  );
+  const automaticallyApproved =
+    Boolean(automaticallyDecide) &&
+    context.accessMode === 'NATIVE' &&
+    (await shouldAutoApproveCorrection(
+      tx,
+      context.organizationId,
+      record.id,
+      policy.automation,
+      afterSnapshot,
+    ));
+  if (!automaticallyApproved)
+    await assertResolvableApprovers(
+      tx,
+      context.organizationId,
+      correctionBranchId,
+      record.employee.manager?.userId,
+      record.employee.userId,
+      policy.steps,
+    );
+  if (context.accessMode === 'NATIVE')
+    await tx.$queryRaw`SELECT run.id FROM payroll_runs run JOIN attendance_records record ON record.id = ${record.id}::uuid AND record.organization_id = run.organization_id WHERE run.organization_id = ${context.organizationId}::uuid AND run.period_start <= record.work_date AND run.period_end >= record.work_date FOR UPDATE OF run`;
   const correction = await tx.attendanceCorrection.create({
     data: {
       organizationId: context.organizationId,
@@ -81,6 +96,13 @@ export async function createAttendanceCorrection(
     },
     tx,
   );
+  if (automaticallyApproved && automaticallyDecide) {
+    await automaticallyDecide(
+      correction.id,
+      `Automatically approved — ${policy.name} (${policy.id})`,
+    );
+    return { ...correction, status: 'APPROVED' as const };
+  }
   const firstStep = policy.steps[0];
   const day = await tx.attendanceRecord.findUnique({
     where: { id: record.id },

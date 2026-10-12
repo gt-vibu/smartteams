@@ -1,24 +1,25 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
 import {
+  formatDate,
   formatDateRange,
+  formatDateTime,
   hasPermission,
   type HolidayReviewDecision,
   type HolidayReviewInboxItem,
   type HolidayReviewOutcome,
-  formatDate,
-  formatDateTime,
 } from '@smarteam/contracts';
-import { useSession } from './auth-context';
-import { leaveRepository } from '../repositories/leave.repository';
-import { attendanceRepository } from '../repositories/attendance.repository';
-import { useAsyncResource } from './use-async-resource';
-import { useMutationRunner } from './use-mutation-runner';
-import { holidayConflictsRepository } from '../repositories/holiday-conflicts.repository';
+import { useCallback, useMemo } from 'react';
 import { emitDataChanged, useDataChanged } from '../lib/data-events';
-import { useLeaveExtrasInbox } from './use-leave-extras-inbox';
+import { attendanceRepository } from '../repositories/attendance.repository';
+import { holidayConflictsRepository } from '../repositories/holiday-conflicts.repository';
+import { leaveRepository } from '../repositories/leave.repository';
+import { useSession } from './auth-context';
 import { useAdvanceInbox } from './use-advance-inbox';
+import { useApprovalBatch } from './use-approval-batch';
+import { useAsyncResource } from './use-async-resource';
+import { useLeaveExtrasInbox } from './use-leave-extras-inbox';
+import { useMutationRunner } from './use-mutation-runner';
 
 /**
  * Everything awaiting the signed-in user's decision, across the domains that have an inbox.
@@ -51,6 +52,13 @@ export type ApprovalInboxItem = {
   proposedCheckOut?: string;
   /** Whether the end-of-day close raised it rather than the employee. */
   autoClosed?: boolean;
+  /** Requests that create the first punches for an absent day need one-at-a-time review. */
+  requiresIndividualReview?: boolean;
+  currentStep?: { stepNumber: number; approverType: string };
+  warningReason?: string | null;
+  beforeSnapshot?: unknown;
+  afterSnapshot?: unknown;
+  attachments?: Array<{ id: string; name: string; contentType: string; byteSize: string }>;
 };
 
 const clockTime = (iso: string) =>
@@ -72,6 +80,7 @@ export function useApprovalInbox() {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const permissions = useMemo(() => persona?.permissions ?? [], [persona]);
+  const batch = useApprovalBatch(organizationId, session?.user.id ?? null);
 
   const canReadLeave = hasPermission(permissions, 'leave.requests.read');
   const canDecideLeave = hasPermission(permissions, 'leave.requests.decide');
@@ -118,12 +127,15 @@ export function useApprovalInbox() {
         id: string;
         employeeId: string;
         employee?: RequesterSummary | null;
+        attachments?: ApprovalInboxItem['attachments'];
         leaveType?: { name: string; paid: boolean } | null;
         requestedDays?: number | string | null;
         startDate?: string;
         endDate?: string;
         reason?: string | null;
         submittedAt?: string | null;
+        currentStep?: { stepNumber: number; approverType: string };
+        warningReason?: string | null;
       };
       // What an approver decides on: who, which leave, how long, when and why.
       const days = request.requestedDays == null ? null : Number(request.requestedDays);
@@ -142,6 +154,9 @@ export function useApprovalInbox() {
             : '--'
         }${request.reason ? ` · ${request.reason}` : ''}`,
         submittedAt: request.submittedAt ?? null,
+        currentStep: request.currentStep,
+        warningReason: request.warningReason,
+        attachments: request.attachments,
       };
     });
     const attendanceItems = (attendance.data ?? []).map((entry) => {
@@ -150,18 +165,40 @@ export function useApprovalInbox() {
         employeeId?: string;
         employee?: RequesterSummary | null;
         reason?: string | null;
+        warningReason?: string | null;
         requestedAt?: string;
         createdAt?: string;
+        currentStep?: { stepNumber: number; approverType: string };
+        beforeSnapshot?: unknown;
         afterSnapshot?: {
           missingCheckOut?: { occurredAt?: string; autoClosed?: boolean };
           correctedCheckIn?: string;
           correctedCheckOut?: string;
+          missingAttendanceDay?: boolean;
+          isNonWorkingDay?: boolean;
+          nonWorkingDayReason?: string;
+          nonWorkingDayDetail?: string;
         } | null;
       };
       // The approver has to see the time they are being asked to accept, not only the reason.
       const requestedCheckOut = correction.afterSnapshot?.missingCheckOut?.occurredAt;
       const autoClosed = Boolean(correction.afterSnapshot?.missingCheckOut?.autoClosed);
+      const before =
+        correction.beforeSnapshot && typeof correction.beforeSnapshot === 'object'
+          ? (correction.beforeSnapshot as { punches?: unknown; dayStatus?: unknown })
+          : null;
+      const legacyMissingAttendanceDay =
+        correction.afterSnapshot?.correctedCheckIn != null &&
+        Array.isArray(before?.punches) &&
+        before.punches.length === 0 &&
+        before.dayStatus === 'ABSENT';
       const when = requestedCheckOut ? formatDateTime(requestedCheckOut) : '';
+      const warning =
+        correction.warningReason ||
+        (correction.afterSnapshot?.isNonWorkingDay
+          ? correction.afterSnapshot.nonWorkingDayDetail ||
+            correction.afterSnapshot.nonWorkingDayReason
+          : null);
       return {
         id: correction.id,
         domain: 'ATTENDANCE_CORRECTION' as const,
@@ -171,10 +208,13 @@ export function useApprovalInbox() {
           ? 'Day closed with no check-out'
           : requestedCheckOut
             ? 'Missing check-out'
-            : 'Attendance regularization',
+            : warning
+              ? `Attendance regularization · ${warning}`
+              : 'Attendance regularization',
         detail: requestedCheckOut
-          ? `${autoClosed ? 'Proposed check-out' : 'Check-out'} at ${when} · ${correction.reason ?? ''}`
+          ? `${autoClosed ? 'Proposed check-out' : 'Check-out'} at ${when}${warning ? ` · [${warning}]` : ''} · ${correction.reason ?? ''}`
           : [
+              warning && `[${warning}]`,
               // The times asked for, so the approver sees what approving changes.
               correction.afterSnapshot?.correctedCheckIn &&
                 `Check-in to ${clockTime(correction.afterSnapshot.correctedCheckIn)}`,
@@ -187,6 +227,12 @@ export function useApprovalInbox() {
         submittedAt: correction.requestedAt ?? correction.createdAt ?? null,
         ...(requestedCheckOut ? { proposedCheckOut: requestedCheckOut } : {}),
         autoClosed,
+        requiresIndividualReview:
+          correction.afterSnapshot?.missingAttendanceDay === true || legacyMissingAttendanceDay,
+        currentStep: correction.currentStep,
+        warningReason: warning,
+        beforeSnapshot: correction.beforeSnapshot,
+        afterSnapshot: correction.afterSnapshot,
       };
     });
     const holidayItems = (holidayReviews.data ?? []).map((review) => ({
@@ -240,7 +286,7 @@ export function useApprovalInbox() {
     async (
       item: ApprovalInboxItem,
       status: 'APPROVED' | 'REJECTED',
-      comment: string,
+      comment?: string,
       checkOutAt?: string,
     ) => {
       const ok = await run(
@@ -271,6 +317,7 @@ export function useApprovalInbox() {
   );
 
   return {
+    batch,
     items,
     loading:
       leave.loading ||
@@ -278,7 +325,8 @@ export function useApprovalInbox() {
       holidayReviews.loading ||
       extras.loading ||
       advances.loading,
-    error: leave.error ?? attendance.error ?? holidayReviews.error,
+    error:
+      leave.error ?? attendance.error ?? holidayReviews.error ?? extras.error ?? advances.error,
     leaveForbidden: leave.forbidden || !canReadLeave,
     attendanceForbidden: attendance.forbidden || !canReadAttendance,
     refetch: refetchAll,
@@ -297,4 +345,6 @@ export function useApprovalInbox() {
   };
 }
 
-export type ApprovalInboxState = ReturnType<typeof useApprovalInbox>;
+export type ApprovalInboxState = Omit<ReturnType<typeof useApprovalInbox>, 'batch'> & {
+  batch?: ReturnType<typeof useApprovalBatch>;
+};

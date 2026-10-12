@@ -39,10 +39,28 @@ export class EmployeeBranchesService {
     return this.database.run(context, async (tx) => {
       const employee = await tx.employee.findFirst({
         where: { id: employeeId, organizationId: context.organizationId },
-        select: { id: true },
+        select: {
+          id: true,
+          primaryBranchId: true,
+          dateOfJoining: true,
+          firstName: true,
+          lastName: true,
+          status: true,
+        },
       });
       if (!employee) throw new NotFoundError('Employee');
-      return this.view(tx, context.organizationId, employeeId);
+      const today = await organizationToday(tx, context.organizationId);
+      if (employee.primaryBranchId) {
+        await ensurePrimaryRow(
+          tx,
+          context.organizationId,
+          employee,
+          today,
+          context.accessMode,
+          false,
+        );
+      }
+      return this.view(tx, context.organizationId, employeeId, today);
     });
   }
 

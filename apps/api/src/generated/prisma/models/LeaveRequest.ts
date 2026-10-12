@@ -46,6 +46,7 @@ export type LeaveRequestMinAggregateOutputType = {
   startDate: Date | null
   endDate: Date | null
   requestedDays: runtime.Decimal | null
+  session: string | null
   reason: string | null
   status: $Enums.LeaveRequestStatus | null
   sourceAccessMode: $Enums.AccessMode | null
@@ -68,6 +69,7 @@ export type LeaveRequestMaxAggregateOutputType = {
   startDate: Date | null
   endDate: Date | null
   requestedDays: runtime.Decimal | null
+  session: string | null
   reason: string | null
   status: $Enums.LeaveRequestStatus | null
   sourceAccessMode: $Enums.AccessMode | null
@@ -90,6 +92,9 @@ export type LeaveRequestCountAggregateOutputType = {
   startDate: number
   endDate: number
   requestedDays: number
+  session: number
+  cancellation: number
+  chargedDates: number
   reason: number
   status: number
   sourceAccessMode: number
@@ -124,6 +129,7 @@ export type LeaveRequestMinAggregateInputType = {
   startDate?: true
   endDate?: true
   requestedDays?: true
+  session?: true
   reason?: true
   status?: true
   sourceAccessMode?: true
@@ -146,6 +152,7 @@ export type LeaveRequestMaxAggregateInputType = {
   startDate?: true
   endDate?: true
   requestedDays?: true
+  session?: true
   reason?: true
   status?: true
   sourceAccessMode?: true
@@ -168,6 +175,9 @@ export type LeaveRequestCountAggregateInputType = {
   startDate?: true
   endDate?: true
   requestedDays?: true
+  session?: true
+  cancellation?: true
+  chargedDates?: true
   reason?: true
   status?: true
   sourceAccessMode?: true
@@ -277,6 +287,9 @@ export type LeaveRequestGroupByOutputType = {
   startDate: Date
   endDate: Date
   requestedDays: runtime.Decimal
+  session: string
+  cancellation: runtime.JsonValue | null
+  chargedDates: runtime.JsonValue | null
   reason: string | null
   status: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -322,6 +335,9 @@ export type LeaveRequestWhereInput = {
   startDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   endDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   requestedDays?: Prisma.DecimalFilter<"LeaveRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFilter<"LeaveRequest"> | string
+  cancellation?: Prisma.JsonNullableFilter<"LeaveRequest">
+  chargedDates?: Prisma.JsonNullableFilter<"LeaveRequest">
   reason?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFilter<"LeaveRequest"> | $Enums.AccessMode
@@ -352,6 +368,9 @@ export type LeaveRequestOrderByWithRelationInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   requestedDays?: Prisma.SortOrder
+  session?: Prisma.SortOrder
+  cancellation?: Prisma.SortOrderInput | Prisma.SortOrder
+  chargedDates?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   sourceAccessMode?: Prisma.SortOrder
@@ -386,6 +405,9 @@ export type LeaveRequestWhereUniqueInput = Prisma.AtLeast<{
   startDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   endDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   requestedDays?: Prisma.DecimalFilter<"LeaveRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFilter<"LeaveRequest"> | string
+  cancellation?: Prisma.JsonNullableFilter<"LeaveRequest">
+  chargedDates?: Prisma.JsonNullableFilter<"LeaveRequest">
   reason?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFilter<"LeaveRequest"> | $Enums.AccessMode
@@ -416,6 +438,9 @@ export type LeaveRequestOrderByWithAggregationInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   requestedDays?: Prisma.SortOrder
+  session?: Prisma.SortOrder
+  cancellation?: Prisma.SortOrderInput | Prisma.SortOrder
+  chargedDates?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   sourceAccessMode?: Prisma.SortOrder
@@ -446,6 +471,9 @@ export type LeaveRequestScalarWhereWithAggregatesInput = {
   startDate?: Prisma.DateTimeWithAggregatesFilter<"LeaveRequest"> | Date | string
   endDate?: Prisma.DateTimeWithAggregatesFilter<"LeaveRequest"> | Date | string
   requestedDays?: Prisma.DecimalWithAggregatesFilter<"LeaveRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringWithAggregatesFilter<"LeaveRequest"> | string
+  cancellation?: Prisma.JsonNullableWithAggregatesFilter<"LeaveRequest">
+  chargedDates?: Prisma.JsonNullableWithAggregatesFilter<"LeaveRequest">
   reason?: Prisma.StringNullableWithAggregatesFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusWithAggregatesFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeWithAggregatesFilter<"LeaveRequest"> | $Enums.AccessMode
@@ -463,6 +491,9 @@ export type LeaveRequestCreateInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -493,6 +524,9 @@ export type LeaveRequestUncheckedCreateInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -513,6 +547,9 @@ export type LeaveRequestUpdateInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -543,6 +580,9 @@ export type LeaveRequestUncheckedUpdateInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -568,6 +608,9 @@ export type LeaveRequestCreateManyInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -585,6 +628,9 @@ export type LeaveRequestUpdateManyMutationInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -607,6 +653,9 @@ export type LeaveRequestUncheckedUpdateManyInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -617,6 +666,11 @@ export type LeaveRequestUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type LeaveRequestScalarRelationFilter = {
+  is?: Prisma.LeaveRequestWhereInput
+  isNot?: Prisma.LeaveRequestWhereInput
 }
 
 export type LeaveRequestNullableScalarRelationFilter = {
@@ -649,6 +703,9 @@ export type LeaveRequestCountOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   requestedDays?: Prisma.SortOrder
+  session?: Prisma.SortOrder
+  cancellation?: Prisma.SortOrder
+  chargedDates?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   status?: Prisma.SortOrder
   sourceAccessMode?: Prisma.SortOrder
@@ -676,6 +733,7 @@ export type LeaveRequestMaxOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   requestedDays?: Prisma.SortOrder
+  session?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   status?: Prisma.SortOrder
   sourceAccessMode?: Prisma.SortOrder
@@ -698,6 +756,7 @@ export type LeaveRequestMinOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   requestedDays?: Prisma.SortOrder
+  session?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   status?: Prisma.SortOrder
   sourceAccessMode?: Prisma.SortOrder
@@ -715,9 +774,18 @@ export type LeaveRequestSumOrderByAggregateInput = {
   version?: Prisma.SortOrder
 }
 
-export type LeaveRequestScalarRelationFilter = {
-  is?: Prisma.LeaveRequestWhereInput
-  isNot?: Prisma.LeaveRequestWhereInput
+export type LeaveRequestCreateNestedOneWithoutApprovalsInput = {
+  create?: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.LeaveRequestCreateOrConnectWithoutApprovalsInput
+  connect?: Prisma.LeaveRequestWhereUniqueInput
+}
+
+export type LeaveRequestUpdateOneRequiredWithoutApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.LeaveRequestCreateOrConnectWithoutApprovalsInput
+  upsert?: Prisma.LeaveRequestUpsertWithoutApprovalsInput
+  connect?: Prisma.LeaveRequestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveRequestUpdateToOneWithWhereWithoutApprovalsInput, Prisma.LeaveRequestUpdateWithoutApprovalsInput>, Prisma.LeaveRequestUncheckedUpdateWithoutApprovalsInput>
 }
 
 export type LeaveRequestCreateNestedOneWithoutFilesInput = {
@@ -796,20 +864,6 @@ export type LeaveRequestUpdateOneWithoutBalanceTransactionsNestedInput = {
 
 export type EnumLeaveRequestStatusFieldUpdateOperationsInput = {
   set?: $Enums.LeaveRequestStatus
-}
-
-export type LeaveRequestCreateNestedOneWithoutApprovalsInput = {
-  create?: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
-  connectOrCreate?: Prisma.LeaveRequestCreateOrConnectWithoutApprovalsInput
-  connect?: Prisma.LeaveRequestWhereUniqueInput
-}
-
-export type LeaveRequestUpdateOneRequiredWithoutApprovalsNestedInput = {
-  create?: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
-  connectOrCreate?: Prisma.LeaveRequestCreateOrConnectWithoutApprovalsInput
-  upsert?: Prisma.LeaveRequestUpsertWithoutApprovalsInput
-  connect?: Prisma.LeaveRequestWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveRequestUpdateToOneWithWhereWithoutApprovalsInput, Prisma.LeaveRequestUpdateWithoutApprovalsInput>, Prisma.LeaveRequestUncheckedUpdateWithoutApprovalsInput>
 }
 
 export type LeaveRequestCreateNestedManyWithoutOrganizationInput = {
@@ -980,11 +1034,138 @@ export type LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput = {
   deleteMany?: Prisma.LeaveRequestScalarWhereInput | Prisma.LeaveRequestScalarWhereInput[]
 }
 
+export type LeaveRequestCreateWithoutApprovalsInput = {
+  id?: string
+  startDate: Date | string
+  endDate: Date | string
+  requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: string | null
+  status?: $Enums.LeaveRequestStatus
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  decidedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveRequestsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutLeaveRequestsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutLeaveRequestsInput
+  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutRequestsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutLeaveRequestsInput
+  balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+}
+
+export type LeaveRequestUncheckedCreateWithoutApprovalsInput = {
+  id?: string
+  organizationId: string
+  employeeId: string
+  branchId?: string | null
+  leaveTypeId: string
+  approvalPolicyId?: string | null
+  startDate: Date | string
+  endDate: Date | string
+  requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: string | null
+  status?: $Enums.LeaveRequestStatus
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  decidedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+}
+
+export type LeaveRequestCreateOrConnectWithoutApprovalsInput = {
+  where: Prisma.LeaveRequestWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
+}
+
+export type LeaveRequestUpsertWithoutApprovalsInput = {
+  update: Prisma.XOR<Prisma.LeaveRequestUpdateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedUpdateWithoutApprovalsInput>
+  create: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
+  where?: Prisma.LeaveRequestWhereInput
+}
+
+export type LeaveRequestUpdateToOneWithWhereWithoutApprovalsInput = {
+  where?: Prisma.LeaveRequestWhereInput
+  data: Prisma.XOR<Prisma.LeaveRequestUpdateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedUpdateWithoutApprovalsInput>
+}
+
+export type LeaveRequestUpdateWithoutApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveRequestsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutLeaveRequestsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutLeaveRequestsNestedInput
+  leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutRequestsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutLeaveRequestsNestedInput
+  balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+}
+
+export type LeaveRequestUncheckedUpdateWithoutApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+}
+
 export type LeaveRequestCreateWithoutFilesInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1014,6 +1195,9 @@ export type LeaveRequestUncheckedCreateWithoutFilesInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1049,6 +1233,9 @@ export type LeaveRequestUpdateWithoutFilesInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1078,6 +1265,9 @@ export type LeaveRequestUncheckedUpdateWithoutFilesInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1097,6 +1287,9 @@ export type LeaveRequestCreateWithoutLeaveTypeInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1125,6 +1318,9 @@ export type LeaveRequestUncheckedCreateWithoutLeaveTypeInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1179,6 +1375,9 @@ export type LeaveRequestScalarWhereInput = {
   startDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   endDate?: Prisma.DateTimeFilter<"LeaveRequest"> | Date | string
   requestedDays?: Prisma.DecimalFilter<"LeaveRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFilter<"LeaveRequest"> | string
+  cancellation?: Prisma.JsonNullableFilter<"LeaveRequest">
+  chargedDates?: Prisma.JsonNullableFilter<"LeaveRequest">
   reason?: Prisma.StringNullableFilter<"LeaveRequest"> | string | null
   status?: Prisma.EnumLeaveRequestStatusFilter<"LeaveRequest"> | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFilter<"LeaveRequest"> | $Enums.AccessMode
@@ -1196,6 +1395,9 @@ export type LeaveRequestCreateWithoutBalanceTransactionsInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1225,6 +1427,9 @@ export type LeaveRequestUncheckedCreateWithoutBalanceTransactionsInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1260,6 +1465,9 @@ export type LeaveRequestUpdateWithoutBalanceTransactionsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1289,6 +1497,9 @@ export type LeaveRequestUncheckedUpdateWithoutBalanceTransactionsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1303,123 +1514,14 @@ export type LeaveRequestUncheckedUpdateWithoutBalanceTransactionsInput = {
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
-export type LeaveRequestCreateWithoutApprovalsInput = {
-  id?: string
-  startDate: Date | string
-  endDate: Date | string
-  requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
-  reason?: string | null
-  status?: $Enums.LeaveRequestStatus
-  sourceAccessMode: $Enums.AccessMode
-  externalId?: string | null
-  submittedAt?: Date | string | null
-  decidedAt?: Date | string | null
-  cancelledAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveRequestsInput
-  employee: Prisma.EmployeeCreateNestedOneWithoutLeaveRequestsInput
-  branch?: Prisma.BranchCreateNestedOneWithoutLeaveRequestsInput
-  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutRequestsInput
-  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutLeaveRequestsInput
-  balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
-  files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
-}
-
-export type LeaveRequestUncheckedCreateWithoutApprovalsInput = {
-  id?: string
-  organizationId: string
-  employeeId: string
-  branchId?: string | null
-  leaveTypeId: string
-  approvalPolicyId?: string | null
-  startDate: Date | string
-  endDate: Date | string
-  requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
-  reason?: string | null
-  status?: $Enums.LeaveRequestStatus
-  sourceAccessMode: $Enums.AccessMode
-  externalId?: string | null
-  submittedAt?: Date | string | null
-  decidedAt?: Date | string | null
-  cancelledAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
-  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
-}
-
-export type LeaveRequestCreateOrConnectWithoutApprovalsInput = {
-  where: Prisma.LeaveRequestWhereUniqueInput
-  create: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
-}
-
-export type LeaveRequestUpsertWithoutApprovalsInput = {
-  update: Prisma.XOR<Prisma.LeaveRequestUpdateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedUpdateWithoutApprovalsInput>
-  create: Prisma.XOR<Prisma.LeaveRequestCreateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedCreateWithoutApprovalsInput>
-  where?: Prisma.LeaveRequestWhereInput
-}
-
-export type LeaveRequestUpdateToOneWithWhereWithoutApprovalsInput = {
-  where?: Prisma.LeaveRequestWhereInput
-  data: Prisma.XOR<Prisma.LeaveRequestUpdateWithoutApprovalsInput, Prisma.LeaveRequestUncheckedUpdateWithoutApprovalsInput>
-}
-
-export type LeaveRequestUpdateWithoutApprovalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
-  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveRequestsNestedInput
-  employee?: Prisma.EmployeeUpdateOneRequiredWithoutLeaveRequestsNestedInput
-  branch?: Prisma.BranchUpdateOneWithoutLeaveRequestsNestedInput
-  leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutRequestsNestedInput
-  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutLeaveRequestsNestedInput
-  balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
-  files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
-}
-
-export type LeaveRequestUncheckedUpdateWithoutApprovalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
-  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
-  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
-  files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
-}
-
 export type LeaveRequestCreateWithoutOrganizationInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1448,6 +1550,9 @@ export type LeaveRequestUncheckedCreateWithoutOrganizationInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1494,6 +1599,9 @@ export type LeaveRequestCreateWithoutApprovalPolicyInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1522,6 +1630,9 @@ export type LeaveRequestUncheckedCreateWithoutApprovalPolicyInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1568,6 +1679,9 @@ export type LeaveRequestCreateWithoutBranchInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1596,6 +1710,9 @@ export type LeaveRequestUncheckedCreateWithoutBranchInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1642,6 +1759,9 @@ export type LeaveRequestCreateWithoutEmployeeInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1670,6 +1790,9 @@ export type LeaveRequestUncheckedCreateWithoutEmployeeInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1720,6 +1843,9 @@ export type LeaveRequestCreateManyLeaveTypeInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1737,6 +1863,9 @@ export type LeaveRequestUpdateWithoutLeaveTypeInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1765,6 +1894,9 @@ export type LeaveRequestUncheckedUpdateWithoutLeaveTypeInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1789,6 +1921,9 @@ export type LeaveRequestUncheckedUpdateManyWithoutLeaveTypeInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1810,6 +1945,9 @@ export type LeaveRequestCreateManyOrganizationInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1827,6 +1965,9 @@ export type LeaveRequestUpdateWithoutOrganizationInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1855,6 +1996,9 @@ export type LeaveRequestUncheckedUpdateWithoutOrganizationInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1879,6 +2023,9 @@ export type LeaveRequestUncheckedUpdateManyWithoutOrganizationInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1900,6 +2047,9 @@ export type LeaveRequestCreateManyApprovalPolicyInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -1917,6 +2067,9 @@ export type LeaveRequestUpdateWithoutApprovalPolicyInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1945,6 +2098,9 @@ export type LeaveRequestUncheckedUpdateWithoutApprovalPolicyInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1969,6 +2125,9 @@ export type LeaveRequestUncheckedUpdateManyWithoutApprovalPolicyInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -1990,6 +2149,9 @@ export type LeaveRequestCreateManyBranchInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -2007,6 +2169,9 @@ export type LeaveRequestUpdateWithoutBranchInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -2035,6 +2200,9 @@ export type LeaveRequestUncheckedUpdateWithoutBranchInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -2059,6 +2227,9 @@ export type LeaveRequestUncheckedUpdateManyWithoutBranchInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -2080,6 +2251,9 @@ export type LeaveRequestCreateManyEmployeeInput = {
   startDate: Date | string
   endDate: Date | string
   requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: string | null
   status?: $Enums.LeaveRequestStatus
   sourceAccessMode: $Enums.AccessMode
@@ -2097,6 +2271,9 @@ export type LeaveRequestUpdateWithoutEmployeeInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -2125,6 +2302,9 @@ export type LeaveRequestUncheckedUpdateWithoutEmployeeInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -2149,6 +2329,9 @@ export type LeaveRequestUncheckedUpdateManyWithoutEmployeeInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
   sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
@@ -2220,6 +2403,9 @@ export type LeaveRequestSelect<ExtArgs extends runtime.Types.Extensions.Internal
   startDate?: boolean
   endDate?: boolean
   requestedDays?: boolean
+  session?: boolean
+  cancellation?: boolean
+  chargedDates?: boolean
   reason?: boolean
   status?: boolean
   sourceAccessMode?: boolean
@@ -2251,6 +2437,9 @@ export type LeaveRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   startDate?: boolean
   endDate?: boolean
   requestedDays?: boolean
+  session?: boolean
+  cancellation?: boolean
+  chargedDates?: boolean
   reason?: boolean
   status?: boolean
   sourceAccessMode?: boolean
@@ -2278,6 +2467,9 @@ export type LeaveRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   startDate?: boolean
   endDate?: boolean
   requestedDays?: boolean
+  session?: boolean
+  cancellation?: boolean
+  chargedDates?: boolean
   reason?: boolean
   status?: boolean
   sourceAccessMode?: boolean
@@ -2305,6 +2497,9 @@ export type LeaveRequestSelectScalar = {
   startDate?: boolean
   endDate?: boolean
   requestedDays?: boolean
+  session?: boolean
+  cancellation?: boolean
+  chargedDates?: boolean
   reason?: boolean
   status?: boolean
   sourceAccessMode?: boolean
@@ -2317,7 +2512,7 @@ export type LeaveRequestSelectScalar = {
   version?: boolean
 }
 
-export type LeaveRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "branchId" | "leaveTypeId" | "approvalPolicyId" | "startDate" | "endDate" | "requestedDays" | "reason" | "status" | "sourceAccessMode" | "externalId" | "submittedAt" | "decidedAt" | "cancelledAt" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["leaveRequest"]>
+export type LeaveRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "employeeId" | "branchId" | "leaveTypeId" | "approvalPolicyId" | "startDate" | "endDate" | "requestedDays" | "session" | "cancellation" | "chargedDates" | "reason" | "status" | "sourceAccessMode" | "externalId" | "submittedAt" | "decidedAt" | "cancelledAt" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["leaveRequest"]>
 export type LeaveRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
@@ -2366,6 +2561,9 @@ export type $LeaveRequestPayload<ExtArgs extends runtime.Types.Extensions.Intern
     startDate: Date
     endDate: Date
     requestedDays: runtime.Decimal
+    session: string
+    cancellation: runtime.JsonValue | null
+    chargedDates: runtime.JsonValue | null
     reason: string | null
     status: $Enums.LeaveRequestStatus
     sourceAccessMode: $Enums.AccessMode
@@ -2816,6 +3014,9 @@ export interface LeaveRequestFieldRefs {
   readonly startDate: Prisma.FieldRef<"LeaveRequest", 'DateTime'>
   readonly endDate: Prisma.FieldRef<"LeaveRequest", 'DateTime'>
   readonly requestedDays: Prisma.FieldRef<"LeaveRequest", 'Decimal'>
+  readonly session: Prisma.FieldRef<"LeaveRequest", 'String'>
+  readonly cancellation: Prisma.FieldRef<"LeaveRequest", 'Json'>
+  readonly chargedDates: Prisma.FieldRef<"LeaveRequest", 'Json'>
   readonly reason: Prisma.FieldRef<"LeaveRequest", 'String'>
   readonly status: Prisma.FieldRef<"LeaveRequest", 'LeaveRequestStatus'>
   readonly sourceAccessMode: Prisma.FieldRef<"LeaveRequest", 'AccessMode'>

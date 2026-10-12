@@ -1,3 +1,4 @@
+import { NotificationDigestService } from './notification-digest.service';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { NotificationsController } from './notifications.controller';
@@ -12,6 +13,7 @@ import { QueueModule } from '../../infrastructure/queue/queue.module';
   imports: [AuthModule, QueueModule],
   controllers: [NotificationsController],
   providers: [
+    NotificationDigestService,
     NotificationsService,
     NotificationMailService,
     NotificationMailProcessor,

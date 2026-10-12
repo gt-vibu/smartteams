@@ -56,7 +56,13 @@ export class RbacService {
       },
       async (tx) => {
         const membership = await tx.userOrganization.findFirst({
-          where: { userId, organizationId, status: 'ACTIVE' },
+          where: {
+            userId,
+            organizationId,
+            status: 'ACTIVE',
+            user: { isActive: true },
+            organization: { status: 'ACTIVE' },
+          },
           select: { id: true },
         });
         if (!membership) return { own: [], delegated: [], routed: [] };

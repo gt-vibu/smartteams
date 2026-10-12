@@ -7,7 +7,7 @@ import { orgPath } from '../repositories/api-helpers';
 import { useSession } from './auth-context';
 import { useAsyncResource } from './use-async-resource';
 
-export type PicklistKind = 'project-roles' | 'job-titles' | 'team-roles';
+export type PicklistKind = 'job-titles' | 'team-roles';
 export type PicklistEntry = {
   name: string;
   standard: boolean;
@@ -20,7 +20,6 @@ export const PICKLIST_META: Record<
   PicklistKind,
   { label: string; singular: string; writePermission: string }
 > = {
-  'project-roles': { label: 'Project roles', singular: 'role', writePermission: 'projects.write' },
   'job-titles': { label: 'Job titles', singular: 'title', writePermission: 'employees.write' },
   'team-roles': { label: 'Team roles', singular: 'role', writePermission: 'teams.write' },
 };
@@ -49,8 +48,8 @@ function parseEntries(value: unknown): PicklistEntry[] {
 }
 
 /**
- * One of the organization's reference lists (project roles, job titles, team roles): the standard
- * entries and the company's own, with how often each is used. Every change is saved on the server
+ * One of the organization's reference lists (job titles or team roles): the standard entries and
+ * the company's own, with how often each is used. Every change is saved on the server
  * and the list is read again, so what is shown is what is stored.
  */
 export function usePicklist(kind: PicklistKind) {

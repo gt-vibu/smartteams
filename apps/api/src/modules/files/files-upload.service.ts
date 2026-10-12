@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { FileAccessScope, FilePurpose, FileStatus } from '../../generated/prisma/enums';
-import type { DomainContext } from '../../common/context/domain-context';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import {
   ConflictError,
   ForbiddenDomainError,
@@ -29,6 +29,7 @@ const ORGANIZATION_PURPOSES: ReadonlySet<FilePurpose> = new Set([
   FilePurpose.PAYSLIP,
   FilePurpose.PAYROLL_EXPORT,
   FilePurpose.IMPORT,
+  FilePurpose.ORGANIZATION_BRANDING,
 ]);
 
 @Injectable()
@@ -63,15 +64,19 @@ export class FilesUploadService {
       allowDownload?: boolean;
     },
   ) {
-    requireFilePermission(context, 'write');
-    const sharedScope =
+    const branding = input.purpose === FilePurpose.ORGANIZATION_BRANDING;
+    if (branding) requirePermission(context, 'organizations.update');
+    else requireFilePermission(context, 'write');
+    const sharedScope = branding ||
       access?.scope === 'ORGANIZATION' || access?.scope === 'TEAM' || access?.scope === 'PROJECT';
     // `files.write` is a self-service permission. It used to accept any employee id and any
     // purpose, so an employee could attach documents to a colleague's record or leave request, and
     // file payroll documents under anyone's name.
     const breadth = canActForAllEmployees(context, FILES_BREADTH);
-    if (!breadth && ORGANIZATION_PURPOSES.has(input.purpose))
+    if (!breadth && ORGANIZATION_PURPOSES.has(input.purpose) && !branding)
       throw new ForbiddenDomainError('Only file administrators may upload this kind of file');
+    if (branding && (input.employeeId || input.leaveRequestId || !input.contentType.startsWith('image/')))
+      throw new ConflictError('Organization branding must be an organization image');
     const rule = limits[input.purpose];
     if (
       !rule.types.includes(input.contentType) ||
@@ -167,7 +172,7 @@ export class FilesUploadService {
           contentType: input.contentType,
           byteSize: BigInt(input.byteSize),
           checksumSha256: input.checksumSha256,
-          accessScope:
+          accessScope: branding ? FileAccessScope.ORGANIZATION :
             access?.scope ??
             (employeeId || leaveRequest?.employeeId
               ? FileAccessScope.EMPLOYEE
@@ -245,7 +250,8 @@ export class FilesUploadService {
     employeeId?: string,
     purpose?: FilePurpose | FilePurpose[],
   ) {
-    requireFilePermission(context, 'write');
+    const hasFileWrite = context.permissions.has('files.write') || context.permissions.has('*');
+    if (!hasFileWrite) requirePermission(context, 'organizations.update');
     const file = await this.database.run(context, (tx) =>
       tx.fileObject.findFirst({
         where: {
@@ -263,6 +269,8 @@ export class FilesUploadService {
       }),
     );
     if (!file) throw new NotFoundError('Pending file');
+    if (file.purpose === FilePurpose.ORGANIZATION_BRANDING) requirePermission(context, 'organizations.update');
+    else requireFilePermission(context, 'write');
     // Already completed by an earlier call. Nothing to verify and nothing to write.
     if (file.status === FileStatus.AVAILABLE)
       return { ...toFileDto(file), versionId: file.currentVersionId };

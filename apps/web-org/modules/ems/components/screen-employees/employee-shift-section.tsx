@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Input, Label } from '@smarteam/ui';
+import { LoadingIndicator, Button, Input, Label } from '@smarteam/ui';
 import { formatDate, hasPermission, formatDateRange } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
@@ -72,9 +72,7 @@ export function EmployeeShiftSection({
         )}
       </div>
       {history.loading ? (
-        <p className="text-muted-foreground" role="status">
-          Loading…
-        </p>
+        <LoadingIndicator variant="inline" label="Preparing content" className="text-muted-foreground" />
       ) : current ? (
         <p>
           <span className="font-semibold text-foreground">{current.shift.name}</span>

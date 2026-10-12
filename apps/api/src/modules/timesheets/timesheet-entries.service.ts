@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { TimesheetEntrySource, TimesheetStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
+import { TimesheetEntrySource, TimesheetStatus } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertMayActForEmployee } from '../employees/employee-scope';
 
 import { toProjectDto } from '../platform/workforce-mappers';
+import { WorkingDayService } from '../shifts/working-day.service';
 import {
   dateOnly,
   decodeEntry,
-  encodeEntryDescription,
   DEFAULT_JOB_TYPES,
   derivePeriodBounds,
+  encodeEntryDescription,
 } from './timesheet-shared';
 import type { ManualEntryDto } from './timesheets.dto';
 
@@ -26,10 +27,14 @@ const MINUTES_PER_DAY = 24 * 60;
  */
 @Injectable()
 export class TimesheetEntriesService {
+  private readonly workingDays: WorkingDayService;
+
   constructor(
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
-  ) {}
+  ) {
+    this.workingDays = new WorkingDayService(database);
+  }
 
   async listJobTypes(context: DomainContext) {
     requirePermission(context, 'timesheets.read');
@@ -297,6 +302,26 @@ export class TimesheetEntriesService {
           throw new ConflictError(
             `${day(workDateObj)} is outside this timesheet (${day(period.periodStart)} to ${day(period.periodEnd)}).`,
           );
+
+        const dayEval = await this.workingDays.evaluateDay(
+          tx,
+          context.organizationId,
+          timesheet.employeeId,
+          workDateObj,
+        );
+        if (dayEval.reason === 'BEFORE_JOINING' || dayEval.reason === 'AFTER_LEAVING') {
+          throw new ConflictError(
+            dayEval.detail ?? 'Time cannot be logged outside employment period.',
+          );
+        }
+        if (!dayEval.isWorkingDay) {
+          const explanation = (input.description ?? '').trim();
+          if (explanation.length < 2) {
+            throw new ConflictError(
+              `Logging time on a non-working day (${dayEval.detail || dayEval.reason}) requires an explanation in the description.`,
+            );
+          }
+        }
       }
       // Minutes are the caller's own figure, and approved sheets are what hourly pay is computed
       // from. Nothing bounded them: one entry of 100,000 minutes on a single day was accepted. A

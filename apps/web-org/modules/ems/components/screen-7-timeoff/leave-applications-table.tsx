@@ -18,6 +18,28 @@ function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' 
   return 'outline';
 }
 
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+function leaveMonthLabel(value: string) {
+  const match = /^(\d{4})-(\d{2})-\d{2}/.exec(value);
+  if (!match) return 'Date unavailable';
+  const monthIndex = Number(match[2]) - 1;
+  return `${MONTH_NAMES[monthIndex] ?? 'Date unavailable'} ${match[1]}`;
+}
+
 export function LeaveApplicationsTable({
   requests,
   typesById,
@@ -34,6 +56,7 @@ export function LeaveApplicationsTable({
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
+  const monthLabels = requests.map((request) => leaveMonthLabel(request.startDate));
 
   const submitCancel = async (requestId: string) => {
     // The API requires at least three characters and writes the reason to the audit trail.
@@ -51,7 +74,7 @@ export function LeaveApplicationsTable({
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="stack-table w-full min-w-[720px] text-left text-xs">
+      <table className="leave-request-table stack-table w-full min-w-[720px] text-left text-xs">
         <thead className="border-b border-border bg-table-header">
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-semibold">Type</th>
@@ -63,11 +86,21 @@ export function LeaveApplicationsTable({
           </tr>
         </thead>
         <tbody>
-          {requests.map((request) => {
+          {requests.map((request, index) => {
+            const monthLabel = monthLabels[index] ?? 'Date unavailable';
+            const firstInMonth = monthLabel !== monthLabels[index - 1];
             const type = typesById.get(request.leaveTypeId);
-            const cancellable = canWrite && isCancellable(request);
+            const cancellable =
+              canWrite && isCancellable(request) && request.cancellation?.status !== 'PENDING';
             return (
               <React.Fragment key={request.id}>
+                {firstInMonth && (
+                  <tr className="border-b border-border bg-muted/40" data-row="group">
+                    <td className="px-4 py-2 font-semibold text-foreground" colSpan={6}>
+                      {monthLabel}
+                    </td>
+                  </tr>
+                )}
                 <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
                   <td data-cell="primary" className="px-4 py-2.5">
                     <span className="font-semibold text-foreground">{type?.name ?? 'Leave'}</span>
@@ -81,15 +114,17 @@ export function LeaveApplicationsTable({
                     )}
                   </td>
                   <td
-                    data-bare=""
-                    data-label="From"
-                    className="px-4 py-2.5 whitespace-nowrap text-muted-foreground"
+                    data-label="Dates"
+                    className="leave-date-range-start px-4 py-2.5 whitespace-nowrap text-muted-foreground"
                   >
                     {formatDate(request.startDate)}
+                    {request.startDate !== request.endDate && (
+                      <span className="leave-date-range-end"> – {formatDate(request.endDate)}</span>
+                    )}
                   </td>
                   <td
-                    data-label="to"
-                    className="px-4 py-2.5 whitespace-nowrap text-muted-foreground"
+                    data-label="To"
+                    className="leave-date-range-end-desktop px-4 py-2.5 whitespace-nowrap text-muted-foreground"
                   >
                     {formatDate(request.endDate)}
                   </td>
@@ -98,10 +133,17 @@ export function LeaveApplicationsTable({
                     className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
                   >
                     {request.requestedDays}
+                    {request.session && request.session !== 'FULL_DAY'
+                      ? request.session === 'FIRST_HALF'
+                        ? ' · first half'
+                        : ' · second half'
+                      : ''}
                   </td>
                   <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                     <Badge variant={statusVariant(request.status)}>
-                      {statusLabel(request.status)}
+                      {request.cancellation?.status === 'PENDING'
+                        ? 'Cancellation awaiting HR'
+                        : statusLabel(request.status)}
                     </Badge>
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">
@@ -116,7 +158,7 @@ export function LeaveApplicationsTable({
                         type="button"
                         variant="outline"
                       >
-                        Cancel
+                        {request.status === 'APPROVED' ? 'Request cancellation' : 'Withdraw'}
                       </Button>
                     )}
                   </td>
@@ -142,7 +184,7 @@ export function LeaveApplicationsTable({
                           type="button"
                           variant="destructive"
                         >
-                          {saving ? 'Cancelling...' : 'Confirm cancellation'}
+                          {saving ? 'Submitting...' : 'Submit cancellation'}
                         </Button>
                         <Button
                           disabled={saving}

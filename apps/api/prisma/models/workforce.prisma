@@ -97,22 +97,22 @@ model Employee {
 }
 
 model EmployeePersonalProfile {
-  id                     String   @id @default(uuid()) @db.Uuid
-  organizationId         String   @map("organization_id") @db.Uuid
-  employeeId             String   @unique @map("employee_id") @db.Uuid
-  fatherName             String?  @map("father_name")
-  motherName             String?  @map("mother_name")
-  spouseName             String?  @map("spouse_name")
-  aadhaarNumberEncrypted String?  @map("aadhaar_number_encrypted")
+  id                     String       @id @default(uuid()) @db.Uuid
+  organizationId         String       @map("organization_id") @db.Uuid
+  employeeId             String       @unique @map("employee_id") @db.Uuid
+  fatherName             String?      @map("father_name")
+  motherName             String?      @map("mother_name")
+  spouseName             String?      @map("spouse_name")
+  aadhaarNumberEncrypted String?      @map("aadhaar_number_encrypted")
   /// Keyed fingerprint of the Aadhaar number, so one number cannot be on two employees.
-  aadhaarNumberHash      String?  @map("aadhaar_number_hash")
-  panNumberEncrypted     String?  @map("pan_number_encrypted")
-  presentAddress         String?  @map("present_address")
-  permanentAddress       String?  @map("permanent_address")
-  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt              DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  aadhaarNumberHash      String?      @map("aadhaar_number_hash")
+  panNumberEncrypted     String?      @map("pan_number_encrypted")
+  presentAddress         String?      @map("present_address")
+  permanentAddress       String?      @map("permanent_address")
+  createdAt              DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization           Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee               Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
   @@unique([organizationId, aadhaarNumberHash])
   @@index([organizationId])
@@ -161,7 +161,6 @@ model EmployeeReference {
 
 /**
  * Per-employee optional holiday policy override.
- *
  * When present, `allowanceOverride` takes precedence over `OrganizationSettings.optionalHolidayAllowance`.
  * When `restrictedHolidayIds` is non-empty, only those holiday IDs are available in the employee's
  * optional pool; otherwise the full org/branch pool applies.
@@ -286,79 +285,6 @@ model EmployeeCompensation {
   @@map("employee_compensation")
 }
 
-model EmployeePayrollPolicy {
-  id                    String         @id @default(uuid()) @db.Uuid
-  organizationId        String         @map("organization_id") @db.Uuid
-  employeeId            String         @map("employee_id") @db.Uuid
-  payrollPolicyId       String?        @map("payroll_policy_id") @db.Uuid
-  effectiveFrom         DateTime       @map("effective_from") @db.Date
-  effectiveTo           DateTime?      @map("effective_to") @db.Date
-  payrollEnabled        Boolean        @default(true) @map("payroll_enabled")
-  salarySlipMode        SalarySlipMode @default(ENABLED) @map("salary_slip_mode")
-  pfEnabled             Boolean        @default(false) @map("pf_enabled")
-  esiEnabled            Boolean        @default(false) @map("esi_enabled")
-  ptEnabled             Boolean        @default(false) @map("pt_enabled")
-  statutoryJurisdiction String?        @map("statutory_jurisdiction")
-  metadata              Json           @default("{}")
-  createdAt             DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt             DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-  payrollPolicy PayrollPolicy? @relation(fields: [payrollPolicyId], references: [id], onDelete: Restrict)
-
-  @@unique([organizationId, employeeId, effectiveFrom])
-  @@index([organizationId, employeeId, effectiveFrom])
-  @@map("employee_payroll_policies")
-}
-
-model EmployeeStatutoryProfile {
-  id                 String    @id @default(uuid()) @db.Uuid
-  organizationId     String    @map("organization_id") @db.Uuid
-  employeeId         String    @map("employee_id") @db.Uuid
-  schemeCode         String    @map("scheme_code")
-  registrationNumber String?   @map("registration_number")
-  effectiveFrom      DateTime  @map("effective_from") @db.Date
-  effectiveTo        DateTime? @map("effective_to") @db.Date
-  employeeRate       Decimal?  @map("employee_rate") @db.Decimal(8, 4)
-  employerRate       Decimal?  @map("employer_rate") @db.Decimal(8, 4)
-  metadata           Json      @default("{}")
-  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-
-  @@unique([organizationId, employeeId, schemeCode, effectiveFrom])
-  @@map("employee_statutory_profiles")
-}
-
-model EmployeeStatutoryRecord {
-  id              String                 @id @default(uuid()) @db.Uuid
-  organizationId  String                 @map("organization_id") @db.Uuid
-  employeeId      String                 @map("employee_id") @db.Uuid
-  schemeCode      String                 @map("scheme_code")
-  periodStart     DateTime               @map("period_start") @db.Date
-  periodEnd       DateTime               @map("period_end") @db.Date
-  status          ComplianceRecordStatus @default(DRAFT)
-  employeeAmount  Decimal?               @map("employee_amount") @db.Decimal(14, 2)
-  employerAmount  Decimal?               @map("employer_amount") @db.Decimal(14, 2)
-  dueDate         DateTime?              @map("due_date") @db.Date
-  submittedAt     DateTime?              @map("submitted_at") @db.Timestamptz(6)
-  filingReference String?                @map("filing_reference")
-  metadata        Json                   @default("{}")
-  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
-  version         Int                    @default(1)
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-
-  @@unique([organizationId, employeeId, schemeCode, periodStart, periodEnd])
-  @@index([organizationId, schemeCode, periodStart, status])
-  @@map("employee_statutory_records")
-}
-
 model PayComponent {
   id                String                      @id @default(uuid()) @db.Uuid
   organizationId    String                      @map("organization_id") @db.Uuid
@@ -451,18 +377,18 @@ model TeamMember {
 }
 
 model Project {
-  id             String        @id @default(uuid()) @db.Uuid
-  organizationId String        @map("organization_id") @db.Uuid
-  branchId       String?       @map("branch_id") @db.Uuid
-  code           String
-  name           String
-  description    String?
-  status         ProjectStatus @default(PLANNED)
-  startDate      DateTime?     @map("start_date") @db.Date
-  endDate        DateTime?     @map("end_date") @db.Date
-  projectLeadEmployeeId String? @map("project_lead_employee_id") @db.Uuid
-  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id                    String        @id @default(uuid()) @db.Uuid
+  organizationId        String        @map("organization_id") @db.Uuid
+  branchId              String?       @map("branch_id") @db.Uuid
+  code                  String
+  name                  String
+  description           String?
+  status                ProjectStatus @default(PLANNED)
+  startDate             DateTime?     @map("start_date") @db.Date
+  endDate               DateTime?     @map("end_date") @db.Date
+  projectLeadEmployeeId String?       @map("project_lead_employee_id") @db.Uuid
+  createdAt             DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   branch       Branch?         @relation(fields: [branchId], references: [id], onDelete: Restrict)
@@ -501,14 +427,14 @@ model ProjectMember {
 /// `employeeNumberPrefix` gives new joiners numbers in a series (TE1, TE2, ...);
 /// `nextEmployeeNumber` is the counter behind it, advanced atomically as numbers are handed out.
 model Department {
-  id                   String    @id @default(uuid()) @db.Uuid
-  organizationId       String    @map("organization_id") @db.Uuid
+  id                   String   @id @default(uuid()) @db.Uuid
+  organizationId       String   @map("organization_id") @db.Uuid
   name                 String
-  employeeNumberPrefix String?   @map("employee_number_prefix")
-  nextEmployeeNumber   Int       @default(1) @map("next_employee_number")
-  headEmployeeId       String?   @map("head_employee_id") @db.Uuid
-  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  employeeNumberPrefix String?  @map("employee_number_prefix")
+  nextEmployeeNumber   Int      @default(1) @map("next_employee_number")
+  headEmployeeId       String?  @map("head_employee_id") @db.Uuid
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   head    Employee?  @relation("DepartmentHead", fields: [headEmployeeId], references: [id], onDelete: SetNull)
   members Employee[] @relation("DepartmentMembers")

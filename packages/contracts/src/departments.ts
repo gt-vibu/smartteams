@@ -16,6 +16,8 @@ export const departmentSchema = z.object({
   nextEmployeeNumber: z.string().nullable(),
   head: departmentPersonSchema.nullable(),
   members: z.array(departmentPersonSchema),
+  /** Tenant-scoped total; `members` is a bounded preview for large organizations. */
+  memberCount: z.number().int().nonnegative().optional(),
 });
 
 export type Department = z.infer<typeof departmentSchema>;

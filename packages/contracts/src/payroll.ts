@@ -119,12 +119,14 @@ export type EmployeePayComponent = z.infer<typeof employeePayComponentSchema>;
 
 export const payrollPolicySchema = z.object({
   id: z.string().uuid().optional(),
+  name: z.string().optional(),
   effectiveFrom: z.string().optional(),
   effectiveTo: z.string().nullable().optional(),
   payrollDayBasis: z.number(),
   basePercentage: money,
   baseMinimum: money,
   hraPercentage: money,
+  defaultGrossSalary: money.nullable().optional(),
   roundingMode: z.string(),
   pfDefault: z.boolean(),
   esiDefault: z.boolean(),
@@ -136,6 +138,19 @@ export const payrollPolicySchema = z.object({
 
 export const salaryProfileSchema = z.object({
   employeeId: z.string().uuid(),
+  employeeDetails: z.object({
+    firstName: z.string(),
+    middleName: z.string().nullable().optional(),
+    lastName: z.string(),
+    employeeNumber: z.string(),
+    workEmail: z.string().nullable().optional(),
+    employmentType: z.string().nullable().optional(),
+    jobTitle: z.string().nullable().optional(),
+    department: z.string().nullable().optional(),
+    dateOfJoining: z.string().nullable().optional(),
+    branchName: z.string().nullable().optional(),
+  }).optional(),
+  organizationName: z.string().nullable().optional(),
   compensation: z
     .object({
       grossSalary: money.nullable().optional(),
@@ -154,8 +169,14 @@ export const salaryProfileSchema = z.object({
       esiEnabled: z.boolean(),
       ptEnabled: z.boolean(),
       statutoryJurisdiction: z.string().nullable().optional(),
+      assignmentSource: z.string().optional(),
+      assignmentRuleId: z.string().uuid().nullable().optional(),
+      payrollPolicyId: z.string().uuid().nullable().optional(),
     })
     .nullable(),
+  assignmentSource: z.string().optional(),
+  assignmentRuleId: z.string().uuid().nullable().optional(),
+  assignmentRuleName: z.string().nullable().optional(),
   organizationPolicy: payrollPolicySchema.optional(),
   structure: z.object({
     gross: money,
@@ -225,8 +246,27 @@ export const statutoryRuleSchema = z.object({
   flatAmount: money.nullable().optional(),
 });
 
+export const payrollAssignmentRuleSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  payrollPolicyId: z.string().uuid(),
+  criteria: z.object({
+    departmentIds: z.array(z.string()).optional(),
+    branchIds: z.array(z.string()).optional(),
+    employmentTypes: z.array(z.string()).optional(),
+    jobTitles: z.array(z.string()).optional(),
+    gradeValues: z.array(z.string()).optional(),
+  }),
+  priority: z.number(),
+  effectiveFrom: z.string(),
+  effectiveTo: z.string().nullable().optional(),
+  enabled: z.boolean(),
+  payrollPolicy: z.object({ id: z.string().uuid(), name: z.string() }).optional(),
+});
+
 export type PayrollPolicy = z.infer<typeof payrollPolicySchema>;
 export type StatutoryRule = z.infer<typeof statutoryRuleSchema>;
+export type PayrollAssignmentRule = z.infer<typeof payrollAssignmentRuleSchema>;
 
 export type PayrollRunStatus = z.infer<typeof payrollRunStatusSchema>;
 export type PayrollRun = z.infer<typeof payrollRunSchema>;
@@ -266,6 +306,18 @@ export function parsePayComponent(payload: unknown): PayComponentDefinition | nu
 }
 
 export const parseStatutoryRuleList = (payload: unknown) => parseList(statutoryRuleSchema, payload);
+export const parsePayrollAssignmentRuleList = (payload: unknown) => parseList(payrollAssignmentRuleSchema, payload);
+export const parsePayrollPolicyList = (payload: unknown) => parseList(payrollPolicySchema, payload);
+
+export function parseStatutoryRule(payload: unknown): StatutoryRule | null {
+  const result = statutoryRuleSchema.safeParse(payload);
+  return result.success ? result.data : null;
+}
+
+export function parsePayrollAssignmentRule(payload: unknown): PayrollAssignmentRule | null {
+  const result = payrollAssignmentRuleSchema.safeParse(payload);
+  return result.success ? result.data : null;
+}
 
 /**
  * What overtime pays, as multiples of the ordinary hourly rate. `standard` is the default for a

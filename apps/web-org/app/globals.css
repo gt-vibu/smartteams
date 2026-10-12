@@ -66,10 +66,12 @@
   --table-header-foreground: oklch(0.36 0.025 155);
 
   --ring: var(--smarteam-primary);
-  --sidebar: oklch(0.345 0.062 158);
+  /* Deep forest rail like the reference system; the brighter emerald remains reserved for
+     primary actions and active states so navigation and actions are easy to distinguish. */
+  --sidebar: oklch(0.265 0.065 158);
   --sidebar-foreground: oklch(0.955 0.016 120);
-  --sidebar-border: oklch(0.43 0.055 158);
-  --sidebar-accent: oklch(0.72 0.13 145);
+  --sidebar-border: oklch(0.36 0.055 158);
+  --sidebar-accent: oklch(0.58 0.12 153);
   --radius: 0.75rem;
 }
 
@@ -135,9 +137,22 @@ body {
   max-width: 100vw;
   background: var(--paper);
   color: var(--ink);
-  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  font-family:
+    Inter, 'Aptos', 'Avenir Next', 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  font-optical-sizing: auto;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* The app shell locks the viewport; public sign-in needs normal page scrolling on phones when
+   the credential form is taller than the available screen. */
+html:has(.auth-login-page),
+html:has(.auth-login-page) body {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Custom Scrollbar Utilities */
@@ -147,6 +162,30 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Overlay-style thumb: the gutter stays the same width, so showing the thumb never shifts content. */
+.scrollbar-auto-hide {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  scrollbar-gutter: stable;
+}
+.scrollbar-auto-hide.is-scrolling {
+  scrollbar-color: color-mix(in oklab, currentColor 38%, transparent) transparent;
+}
+.scrollbar-auto-hide::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scrollbar-auto-hide::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  background-clip: padding-box;
+}
+.scrollbar-auto-hide.is-scrolling::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, currentColor 38%, transparent);
+  background-clip: padding-box;
 }
 
 a {

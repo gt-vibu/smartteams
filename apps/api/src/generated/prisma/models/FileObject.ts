@@ -381,6 +381,8 @@ export type FileObjectWhereInput = {
   team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   shares?: Prisma.FileShareListRelationFilter
+  organizationLogo?: Prisma.OrganizationListRelationFilter
+  organizationCover?: Prisma.OrganizationListRelationFilter
 }
 
 export type FileObjectOrderByWithRelationInput = {
@@ -418,6 +420,8 @@ export type FileObjectOrderByWithRelationInput = {
   team?: Prisma.TeamOrderByWithRelationInput
   project?: Prisma.ProjectOrderByWithRelationInput
   shares?: Prisma.FileShareOrderByRelationAggregateInput
+  organizationLogo?: Prisma.OrganizationOrderByRelationAggregateInput
+  organizationCover?: Prisma.OrganizationOrderByRelationAggregateInput
 }
 
 export type FileObjectWhereUniqueInput = Prisma.AtLeast<{
@@ -459,6 +463,8 @@ export type FileObjectWhereUniqueInput = Prisma.AtLeast<{
   team?: Prisma.XOR<Prisma.TeamNullableScalarRelationFilter, Prisma.TeamWhereInput> | null
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   shares?: Prisma.FileShareListRelationFilter
+  organizationLogo?: Prisma.OrganizationListRelationFilter
+  organizationCover?: Prisma.OrganizationListRelationFilter
 }, "id" | "bucket_objectKey">
 
 export type FileObjectOrderByWithAggregationInput = {
@@ -554,6 +560,8 @@ export type FileObjectCreateInput = {
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateInput = {
@@ -585,6 +593,8 @@ export type FileObjectUncheckedCreateInput = {
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUpdateInput = {
@@ -616,6 +626,8 @@ export type FileObjectUpdateInput = {
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateInput = {
@@ -647,6 +659,8 @@ export type FileObjectUncheckedUpdateInput = {
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectCreateManyInput = {
@@ -997,6 +1011,18 @@ export type FileObjectCreateNestedManyWithoutOrganizationInput = {
   connect?: Prisma.FileObjectWhereUniqueInput | Prisma.FileObjectWhereUniqueInput[]
 }
 
+export type FileObjectCreateNestedOneWithoutOrganizationLogoInput = {
+  create?: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationLogoInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationLogoInput>
+  connectOrCreate?: Prisma.FileObjectCreateOrConnectWithoutOrganizationLogoInput
+  connect?: Prisma.FileObjectWhereUniqueInput
+}
+
+export type FileObjectCreateNestedOneWithoutOrganizationCoverInput = {
+  create?: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationCoverInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationCoverInput>
+  connectOrCreate?: Prisma.FileObjectCreateOrConnectWithoutOrganizationCoverInput
+  connect?: Prisma.FileObjectWhereUniqueInput
+}
+
 export type FileObjectUncheckedCreateNestedManyWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationInput> | Prisma.FileObjectCreateWithoutOrganizationInput[] | Prisma.FileObjectUncheckedCreateWithoutOrganizationInput[]
   connectOrCreate?: Prisma.FileObjectCreateOrConnectWithoutOrganizationInput | Prisma.FileObjectCreateOrConnectWithoutOrganizationInput[]
@@ -1016,6 +1042,26 @@ export type FileObjectUpdateManyWithoutOrganizationNestedInput = {
   update?: Prisma.FileObjectUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.FileObjectUpdateWithWhereUniqueWithoutOrganizationInput[]
   updateMany?: Prisma.FileObjectUpdateManyWithWhereWithoutOrganizationInput | Prisma.FileObjectUpdateManyWithWhereWithoutOrganizationInput[]
   deleteMany?: Prisma.FileObjectScalarWhereInput | Prisma.FileObjectScalarWhereInput[]
+}
+
+export type FileObjectUpdateOneWithoutOrganizationLogoNestedInput = {
+  create?: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationLogoInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationLogoInput>
+  connectOrCreate?: Prisma.FileObjectCreateOrConnectWithoutOrganizationLogoInput
+  upsert?: Prisma.FileObjectUpsertWithoutOrganizationLogoInput
+  disconnect?: Prisma.FileObjectWhereInput | boolean
+  delete?: Prisma.FileObjectWhereInput | boolean
+  connect?: Prisma.FileObjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FileObjectUpdateToOneWithWhereWithoutOrganizationLogoInput, Prisma.FileObjectUpdateWithoutOrganizationLogoInput>, Prisma.FileObjectUncheckedUpdateWithoutOrganizationLogoInput>
+}
+
+export type FileObjectUpdateOneWithoutOrganizationCoverNestedInput = {
+  create?: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationCoverInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationCoverInput>
+  connectOrCreate?: Prisma.FileObjectCreateOrConnectWithoutOrganizationCoverInput
+  upsert?: Prisma.FileObjectUpsertWithoutOrganizationCoverInput
+  disconnect?: Prisma.FileObjectWhereInput | boolean
+  delete?: Prisma.FileObjectWhereInput | boolean
+  connect?: Prisma.FileObjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FileObjectUpdateToOneWithWhereWithoutOrganizationCoverInput, Prisma.FileObjectUpdateWithoutOrganizationCoverInput>, Prisma.FileObjectUncheckedUpdateWithoutOrganizationCoverInput>
 }
 
 export type FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput = {
@@ -1186,6 +1232,8 @@ export type FileObjectCreateWithoutSharesInput = {
   payslip?: Prisma.PayslipCreateNestedOneWithoutFileObjectInput
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutSharesInput = {
@@ -1216,6 +1264,8 @@ export type FileObjectUncheckedCreateWithoutSharesInput = {
   deletedAt?: Date | string | null
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutSharesInput = {
@@ -1262,6 +1312,8 @@ export type FileObjectUpdateWithoutSharesInput = {
   payslip?: Prisma.PayslipUpdateOneWithoutFileObjectNestedInput
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutSharesInput = {
@@ -1292,6 +1344,8 @@ export type FileObjectUncheckedUpdateWithoutSharesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectCreateWithoutVersionsInput = {
@@ -1322,6 +1376,8 @@ export type FileObjectCreateWithoutVersionsInput = {
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutVersionsInput = {
@@ -1352,6 +1408,8 @@ export type FileObjectUncheckedCreateWithoutVersionsInput = {
   deletedAt?: Date | string | null
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutVersionsInput = {
@@ -1398,6 +1456,8 @@ export type FileObjectUpdateWithoutVersionsInput = {
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutVersionsInput = {
@@ -1428,6 +1488,8 @@ export type FileObjectUncheckedUpdateWithoutVersionsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectCreateWithoutUploadedByInput = {
@@ -1458,6 +1520,8 @@ export type FileObjectCreateWithoutUploadedByInput = {
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutUploadedByInput = {
@@ -1488,6 +1552,8 @@ export type FileObjectUncheckedCreateWithoutUploadedByInput = {
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutUploadedByInput = {
@@ -1575,6 +1641,8 @@ export type FileObjectCreateWithoutLeaveRequestInput = {
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutLeaveRequestInput = {
@@ -1605,6 +1673,8 @@ export type FileObjectUncheckedCreateWithoutLeaveRequestInput = {
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutLeaveRequestInput = {
@@ -1661,6 +1731,8 @@ export type FileObjectCreateWithoutPayslipInput = {
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutPayslipInput = {
@@ -1691,6 +1763,8 @@ export type FileObjectUncheckedCreateWithoutPayslipInput = {
   deletedAt?: Date | string | null
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutPayslipInput = {
@@ -1737,6 +1811,8 @@ export type FileObjectUpdateWithoutPayslipInput = {
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutPayslipInput = {
@@ -1767,6 +1843,8 @@ export type FileObjectUncheckedUpdateWithoutPayslipInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectCreateWithoutOrganizationInput = {
@@ -1797,6 +1875,8 @@ export type FileObjectCreateWithoutOrganizationInput = {
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutOrganizationInput = {
@@ -1827,6 +1907,8 @@ export type FileObjectUncheckedCreateWithoutOrganizationInput = {
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutOrganizationInput = {
@@ -1837,6 +1919,144 @@ export type FileObjectCreateOrConnectWithoutOrganizationInput = {
 export type FileObjectCreateManyOrganizationInputEnvelope = {
   data: Prisma.FileObjectCreateManyOrganizationInput | Prisma.FileObjectCreateManyOrganizationInput[]
   skipDuplicates?: boolean
+}
+
+export type FileObjectCreateWithoutOrganizationLogoInput = {
+  id?: string
+  purpose: $Enums.FilePurpose
+  status?: $Enums.FileStatus
+  bucket: string
+  objectKey: string
+  originalName: string
+  contentType: string
+  byteSize: bigint | number
+  checksumSha256?: string | null
+  kmsKeyId?: string | null
+  currentVersionId?: string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: $Enums.FileAccessScope
+  allowDownload?: boolean
+  expiresOn?: Date | string | null
+  expiryNotifiedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutFilesInput
+  uploadedBy?: Prisma.UserCreateNestedOneWithoutUploadedFilesInput
+  employee?: Prisma.EmployeeCreateNestedOneWithoutFilesInput
+  leaveRequest?: Prisma.LeaveRequestCreateNestedOneWithoutFilesInput
+  versions?: Prisma.FileObjectVersionCreateNestedManyWithoutFileObjectInput
+  payslip?: Prisma.PayslipCreateNestedOneWithoutFileObjectInput
+  team?: Prisma.TeamCreateNestedOneWithoutFilesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
+  shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
+}
+
+export type FileObjectUncheckedCreateWithoutOrganizationLogoInput = {
+  id?: string
+  organizationId: string
+  uploadedByUserId?: string | null
+  employeeId?: string | null
+  leaveRequestId?: string | null
+  purpose: $Enums.FilePurpose
+  status?: $Enums.FileStatus
+  bucket: string
+  objectKey: string
+  originalName: string
+  contentType: string
+  byteSize: bigint | number
+  checksumSha256?: string | null
+  kmsKeyId?: string | null
+  currentVersionId?: string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: $Enums.FileAccessScope
+  teamId?: string | null
+  projectId?: string | null
+  allowDownload?: boolean
+  expiresOn?: Date | string | null
+  expiryNotifiedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
+  payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
+  shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
+}
+
+export type FileObjectCreateOrConnectWithoutOrganizationLogoInput = {
+  where: Prisma.FileObjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationLogoInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationLogoInput>
+}
+
+export type FileObjectCreateWithoutOrganizationCoverInput = {
+  id?: string
+  purpose: $Enums.FilePurpose
+  status?: $Enums.FileStatus
+  bucket: string
+  objectKey: string
+  originalName: string
+  contentType: string
+  byteSize: bigint | number
+  checksumSha256?: string | null
+  kmsKeyId?: string | null
+  currentVersionId?: string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: $Enums.FileAccessScope
+  allowDownload?: boolean
+  expiresOn?: Date | string | null
+  expiryNotifiedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  organization: Prisma.OrganizationCreateNestedOneWithoutFilesInput
+  uploadedBy?: Prisma.UserCreateNestedOneWithoutUploadedFilesInput
+  employee?: Prisma.EmployeeCreateNestedOneWithoutFilesInput
+  leaveRequest?: Prisma.LeaveRequestCreateNestedOneWithoutFilesInput
+  versions?: Prisma.FileObjectVersionCreateNestedManyWithoutFileObjectInput
+  payslip?: Prisma.PayslipCreateNestedOneWithoutFileObjectInput
+  team?: Prisma.TeamCreateNestedOneWithoutFilesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
+  shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+}
+
+export type FileObjectUncheckedCreateWithoutOrganizationCoverInput = {
+  id?: string
+  organizationId: string
+  uploadedByUserId?: string | null
+  employeeId?: string | null
+  leaveRequestId?: string | null
+  purpose: $Enums.FilePurpose
+  status?: $Enums.FileStatus
+  bucket: string
+  objectKey: string
+  originalName: string
+  contentType: string
+  byteSize: bigint | number
+  checksumSha256?: string | null
+  kmsKeyId?: string | null
+  currentVersionId?: string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: $Enums.FileAccessScope
+  teamId?: string | null
+  projectId?: string | null
+  allowDownload?: boolean
+  expiresOn?: Date | string | null
+  expiryNotifiedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
+  payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
+  shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+}
+
+export type FileObjectCreateOrConnectWithoutOrganizationCoverInput = {
+  where: Prisma.FileObjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationCoverInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationCoverInput>
 }
 
 export type FileObjectUpsertWithWhereUniqueWithoutOrganizationInput = {
@@ -1853,6 +2073,156 @@ export type FileObjectUpdateWithWhereUniqueWithoutOrganizationInput = {
 export type FileObjectUpdateManyWithWhereWithoutOrganizationInput = {
   where: Prisma.FileObjectScalarWhereInput
   data: Prisma.XOR<Prisma.FileObjectUpdateManyMutationInput, Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationInput>
+}
+
+export type FileObjectUpsertWithoutOrganizationLogoInput = {
+  update: Prisma.XOR<Prisma.FileObjectUpdateWithoutOrganizationLogoInput, Prisma.FileObjectUncheckedUpdateWithoutOrganizationLogoInput>
+  create: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationLogoInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationLogoInput>
+  where?: Prisma.FileObjectWhereInput
+}
+
+export type FileObjectUpdateToOneWithWhereWithoutOrganizationLogoInput = {
+  where?: Prisma.FileObjectWhereInput
+  data: Prisma.XOR<Prisma.FileObjectUpdateWithoutOrganizationLogoInput, Prisma.FileObjectUncheckedUpdateWithoutOrganizationLogoInput>
+}
+
+export type FileObjectUpdateWithoutOrganizationLogoInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.EnumFilePurposeFieldUpdateOperationsInput | $Enums.FilePurpose
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  objectKey?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  checksumSha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kmsKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: Prisma.EnumFileAccessScopeFieldUpdateOperationsInput | $Enums.FileAccessScope
+  allowDownload?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  expiresOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiryNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutFilesNestedInput
+  uploadedBy?: Prisma.UserUpdateOneWithoutUploadedFilesNestedInput
+  employee?: Prisma.EmployeeUpdateOneWithoutFilesNestedInput
+  leaveRequest?: Prisma.LeaveRequestUpdateOneWithoutFilesNestedInput
+  versions?: Prisma.FileObjectVersionUpdateManyWithoutFileObjectNestedInput
+  payslip?: Prisma.PayslipUpdateOneWithoutFileObjectNestedInput
+  team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
+  shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
+}
+
+export type FileObjectUncheckedUpdateWithoutOrganizationLogoInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  uploadedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaveRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purpose?: Prisma.EnumFilePurposeFieldUpdateOperationsInput | $Enums.FilePurpose
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  objectKey?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  checksumSha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kmsKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: Prisma.EnumFileAccessScopeFieldUpdateOperationsInput | $Enums.FileAccessScope
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowDownload?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  expiresOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiryNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
+  payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
+  shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
+}
+
+export type FileObjectUpsertWithoutOrganizationCoverInput = {
+  update: Prisma.XOR<Prisma.FileObjectUpdateWithoutOrganizationCoverInput, Prisma.FileObjectUncheckedUpdateWithoutOrganizationCoverInput>
+  create: Prisma.XOR<Prisma.FileObjectCreateWithoutOrganizationCoverInput, Prisma.FileObjectUncheckedCreateWithoutOrganizationCoverInput>
+  where?: Prisma.FileObjectWhereInput
+}
+
+export type FileObjectUpdateToOneWithWhereWithoutOrganizationCoverInput = {
+  where?: Prisma.FileObjectWhereInput
+  data: Prisma.XOR<Prisma.FileObjectUpdateWithoutOrganizationCoverInput, Prisma.FileObjectUncheckedUpdateWithoutOrganizationCoverInput>
+}
+
+export type FileObjectUpdateWithoutOrganizationCoverInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.EnumFilePurposeFieldUpdateOperationsInput | $Enums.FilePurpose
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  objectKey?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  checksumSha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kmsKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: Prisma.EnumFileAccessScopeFieldUpdateOperationsInput | $Enums.FileAccessScope
+  allowDownload?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  expiresOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiryNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutFilesNestedInput
+  uploadedBy?: Prisma.UserUpdateOneWithoutUploadedFilesNestedInput
+  employee?: Prisma.EmployeeUpdateOneWithoutFilesNestedInput
+  leaveRequest?: Prisma.LeaveRequestUpdateOneWithoutFilesNestedInput
+  versions?: Prisma.FileObjectVersionUpdateManyWithoutFileObjectNestedInput
+  payslip?: Prisma.PayslipUpdateOneWithoutFileObjectNestedInput
+  team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
+  shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+}
+
+export type FileObjectUncheckedUpdateWithoutOrganizationCoverInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  uploadedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaveRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purpose?: Prisma.EnumFilePurposeFieldUpdateOperationsInput | $Enums.FilePurpose
+  status?: Prisma.EnumFileStatusFieldUpdateOperationsInput | $Enums.FileStatus
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  objectKey?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  checksumSha256?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kmsKeyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  accessScope?: Prisma.EnumFileAccessScopeFieldUpdateOperationsInput | $Enums.FileAccessScope
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowDownload?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  expiresOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiryNotifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
+  payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
+  shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
 }
 
 export type FileObjectCreateWithoutEmployeeInput = {
@@ -1883,6 +2253,8 @@ export type FileObjectCreateWithoutEmployeeInput = {
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutEmployeeInput = {
@@ -1913,6 +2285,8 @@ export type FileObjectUncheckedCreateWithoutEmployeeInput = {
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutEmployeeInput = {
@@ -1969,6 +2343,8 @@ export type FileObjectCreateWithoutTeamInput = {
   payslip?: Prisma.PayslipCreateNestedOneWithoutFileObjectInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutTeamInput = {
@@ -1999,6 +2375,8 @@ export type FileObjectUncheckedCreateWithoutTeamInput = {
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutTeamInput = {
@@ -2055,6 +2433,8 @@ export type FileObjectCreateWithoutProjectInput = {
   payslip?: Prisma.PayslipCreateNestedOneWithoutFileObjectInput
   team?: Prisma.TeamCreateNestedOneWithoutFilesInput
   shares?: Prisma.FileShareCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectUncheckedCreateWithoutProjectInput = {
@@ -2085,6 +2465,8 @@ export type FileObjectUncheckedCreateWithoutProjectInput = {
   versions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutFileObjectInput
   payslip?: Prisma.PayslipUncheckedCreateNestedOneWithoutFileObjectInput
   shares?: Prisma.FileShareUncheckedCreateNestedManyWithoutFileObjectInput
+  organizationLogo?: Prisma.OrganizationUncheckedCreateNestedManyWithoutLogoFileInput
+  organizationCover?: Prisma.OrganizationUncheckedCreateNestedManyWithoutCoverFileInput
 }
 
 export type FileObjectCreateOrConnectWithoutProjectInput = {
@@ -2168,6 +2550,8 @@ export type FileObjectUpdateWithoutUploadedByInput = {
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutUploadedByInput = {
@@ -2198,6 +2582,8 @@ export type FileObjectUncheckedUpdateWithoutUploadedByInput = {
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateManyWithoutUploadedByInput = {
@@ -2282,6 +2668,8 @@ export type FileObjectUpdateWithoutLeaveRequestInput = {
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutLeaveRequestInput = {
@@ -2312,6 +2700,8 @@ export type FileObjectUncheckedUpdateWithoutLeaveRequestInput = {
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateManyWithoutLeaveRequestInput = {
@@ -2396,6 +2786,8 @@ export type FileObjectUpdateWithoutOrganizationInput = {
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutOrganizationInput = {
@@ -2426,6 +2818,8 @@ export type FileObjectUncheckedUpdateWithoutOrganizationInput = {
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateManyWithoutOrganizationInput = {
@@ -2510,6 +2904,8 @@ export type FileObjectUpdateWithoutEmployeeInput = {
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutEmployeeInput = {
@@ -2540,6 +2936,8 @@ export type FileObjectUncheckedUpdateWithoutEmployeeInput = {
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateManyWithoutEmployeeInput = {
@@ -2624,6 +3022,8 @@ export type FileObjectUpdateWithoutTeamInput = {
   payslip?: Prisma.PayslipUpdateOneWithoutFileObjectNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutTeamInput = {
@@ -2654,6 +3054,8 @@ export type FileObjectUncheckedUpdateWithoutTeamInput = {
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateManyWithoutTeamInput = {
@@ -2738,6 +3140,8 @@ export type FileObjectUpdateWithoutProjectInput = {
   payslip?: Prisma.PayslipUpdateOneWithoutFileObjectNestedInput
   team?: Prisma.TeamUpdateOneWithoutFilesNestedInput
   shares?: Prisma.FileShareUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateWithoutProjectInput = {
@@ -2768,6 +3172,8 @@ export type FileObjectUncheckedUpdateWithoutProjectInput = {
   versions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutFileObjectNestedInput
   payslip?: Prisma.PayslipUncheckedUpdateOneWithoutFileObjectNestedInput
   shares?: Prisma.FileShareUncheckedUpdateManyWithoutFileObjectNestedInput
+  organizationLogo?: Prisma.OrganizationUncheckedUpdateManyWithoutLogoFileNestedInput
+  organizationCover?: Prisma.OrganizationUncheckedUpdateManyWithoutCoverFileNestedInput
 }
 
 export type FileObjectUncheckedUpdateManyWithoutProjectInput = {
@@ -2805,11 +3211,15 @@ export type FileObjectUncheckedUpdateManyWithoutProjectInput = {
 export type FileObjectCountOutputType = {
   versions: number
   shares: number
+  organizationLogo: number
+  organizationCover: number
 }
 
 export type FileObjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   versions?: boolean | FileObjectCountOutputTypeCountVersionsArgs
   shares?: boolean | FileObjectCountOutputTypeCountSharesArgs
+  organizationLogo?: boolean | FileObjectCountOutputTypeCountOrganizationLogoArgs
+  organizationCover?: boolean | FileObjectCountOutputTypeCountOrganizationCoverArgs
 }
 
 /**
@@ -2834,6 +3244,20 @@ export type FileObjectCountOutputTypeCountVersionsArgs<ExtArgs extends runtime.T
  */
 export type FileObjectCountOutputTypeCountSharesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FileShareWhereInput
+}
+
+/**
+ * FileObjectCountOutputType without action
+ */
+export type FileObjectCountOutputTypeCountOrganizationLogoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationWhereInput
+}
+
+/**
+ * FileObjectCountOutputType without action
+ */
+export type FileObjectCountOutputTypeCountOrganizationCoverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrganizationWhereInput
 }
 
 
@@ -2872,6 +3296,8 @@ export type FileObjectSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   team?: boolean | Prisma.FileObject$teamArgs<ExtArgs>
   project?: boolean | Prisma.FileObject$projectArgs<ExtArgs>
   shares?: boolean | Prisma.FileObject$sharesArgs<ExtArgs>
+  organizationLogo?: boolean | Prisma.FileObject$organizationLogoArgs<ExtArgs>
+  organizationCover?: boolean | Prisma.FileObject$organizationCoverArgs<ExtArgs>
   _count?: boolean | Prisma.FileObjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fileObject"]>
 
@@ -2982,6 +3408,8 @@ export type FileObjectInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   team?: boolean | Prisma.FileObject$teamArgs<ExtArgs>
   project?: boolean | Prisma.FileObject$projectArgs<ExtArgs>
   shares?: boolean | Prisma.FileObject$sharesArgs<ExtArgs>
+  organizationLogo?: boolean | Prisma.FileObject$organizationLogoArgs<ExtArgs>
+  organizationCover?: boolean | Prisma.FileObject$organizationCoverArgs<ExtArgs>
   _count?: boolean | Prisma.FileObjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FileObjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3013,6 +3441,8 @@ export type $FileObjectPayload<ExtArgs extends runtime.Types.Extensions.Internal
     team: Prisma.$TeamPayload<ExtArgs> | null
     project: Prisma.$ProjectPayload<ExtArgs> | null
     shares: Prisma.$FileSharePayload<ExtArgs>[]
+    organizationLogo: Prisma.$OrganizationPayload<ExtArgs>[]
+    organizationCover: Prisma.$OrganizationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3461,6 +3891,8 @@ export interface Prisma__FileObjectClient<T, Null = never, ExtArgs extends runti
   team<T extends Prisma.FileObject$teamArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileObject$teamArgs<ExtArgs>>): Prisma.Prisma__TeamClient<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   project<T extends Prisma.FileObject$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileObject$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   shares<T extends Prisma.FileObject$sharesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileObject$sharesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizationLogo<T extends Prisma.FileObject$organizationLogoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileObject$organizationLogoArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizationCover<T extends Prisma.FileObject$organizationCoverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileObject$organizationCoverArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4075,6 +4507,54 @@ export type FileObject$sharesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.FileShareScalarFieldEnum | Prisma.FileShareScalarFieldEnum[]
+}
+
+/**
+ * FileObject.organizationLogo
+ */
+export type FileObject$organizationLogoArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Organization
+   */
+  select?: Prisma.OrganizationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Organization
+   */
+  omit?: Prisma.OrganizationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationInclude<ExtArgs> | null
+  where?: Prisma.OrganizationWhereInput
+  orderBy?: Prisma.OrganizationOrderByWithRelationInput | Prisma.OrganizationOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationScalarFieldEnum | Prisma.OrganizationScalarFieldEnum[]
+}
+
+/**
+ * FileObject.organizationCover
+ */
+export type FileObject$organizationCoverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Organization
+   */
+  select?: Prisma.OrganizationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Organization
+   */
+  omit?: Prisma.OrganizationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizationInclude<ExtArgs> | null
+  where?: Prisma.OrganizationWhereInput
+  orderBy?: Prisma.OrganizationOrderByWithRelationInput | Prisma.OrganizationOrderByWithRelationInput[]
+  cursor?: Prisma.OrganizationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrganizationScalarFieldEnum | Prisma.OrganizationScalarFieldEnum[]
 }
 
 /**

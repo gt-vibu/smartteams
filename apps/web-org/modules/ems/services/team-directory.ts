@@ -15,8 +15,8 @@ import {
  * names from the branch list — both real API data. Nothing is invented for an id that has no
  * match: the row says the employee is no longer in the directory rather than guessing a name.
  *
- * Job titles are deliberately absent here. They live on employment records, one request per
- * employee, which a roster view cannot issue; the employee drawer shows them instead.
+ * Project members reuse the employee's current job title, so there is one source of truth for a
+ * person's professional role across their profile and project assignments.
  */
 
 export type MemberView = {
@@ -28,7 +28,7 @@ export type MemberView = {
   initials: string;
   since: string;
   until: string | null;
-  /** The member's role: the team role on a team, the project role on a project. */
+  /** Team responsibility for teams, or the employee's job title for project assignments. */
   role: string | null;
 };
 
@@ -40,9 +40,7 @@ export type TeamView = {
   pastMembers: MemberView[];
 };
 
-export type ProjectMemberView = MemberView & {
-  projectRole: string | null;
-};
+export type ProjectMemberView = MemberView;
 
 export type ProjectView = {
   project: Project;
@@ -95,10 +93,7 @@ function memberView(
     initials: employee ? initialsOf(displayName) : '?',
     since,
     until,
-    role:
-      ('teamRole' in member ? member.teamRole : null) ??
-      ('projectRole' in member ? member.projectRole : null) ??
-      null,
+    role: 'teamRole' in member ? (member.teamRole ?? null) : (member.employee?.jobTitle ?? null),
   };
 }
 
@@ -152,10 +147,7 @@ function projectMemberView(
   member: ProjectMember,
   employees: Map<string, Employee>,
 ): ProjectMemberView {
-  return {
-    ...memberView(member, member.startsOn, member.endsOn ?? null, employees),
-    projectRole: member.projectRole ?? null,
-  };
+  return memberView(member, member.startsOn, member.endsOn ?? null, employees);
 }
 
 export function toProjectView(

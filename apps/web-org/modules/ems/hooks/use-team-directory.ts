@@ -42,7 +42,6 @@ export function useTeamDirectory() {
 
   const canRead = hasPermission(permissions, 'teams.read');
   const canWrite = hasPermission(permissions, 'teams.write');
-  const canReadEmployees = hasPermission(permissions, 'employees.read');
   const canReadBranches = hasPermission(permissions, 'branches.read');
   // Without this the API answers with the caller's own rows only, so there is no "all" view.
   const canReadAll = hasPermission(permissions, 'teams.read.all');
@@ -53,14 +52,14 @@ export function useTeamDirectory() {
         workforceRepository.listTeams(organizationId!),
         // Names come from the employee directory; without permission the roster still renders,
         // showing membership without the people's names rather than inventing them.
-        canReadEmployees ? workforceRepository.listEmployees(organizationId!) : Promise.resolve([]),
+        Promise.resolve([] as Employee[]),
         canReadBranches
           ? workforceRepository.listBranches(organizationId!).catch(() => [] as Branch[])
           : Promise.resolve([] as Branch[]),
       ]);
       return { teams, employees, branches };
     },
-    [organizationId, canReadEmployees, canReadBranches],
+    [organizationId, canReadBranches],
     { enabled: Boolean(organizationId) && canRead },
   );
 
@@ -77,15 +76,8 @@ export function useTeamDirectory() {
   const createTeam = useCallback(
     (input: CreateTeamInput, memberEmployeeIds: readonly string[]) =>
       run(async () => {
-        const team = await teamsProjectsRepository.createTeam(organizationId!, input);
-        for (const id of memberEmployeeIds) {
-          await membershipRepository.addTeamMember(organizationId!, team.id, {
-            employeeId: id,
-            joinedAt: today(),
-          });
-        }
-        return team;
-      }, 'The team could not be created.'),
+        return teamsProjectsRepository.createTeam(organizationId!, { ...input, memberEmployeeIds: [...memberEmployeeIds] });
+      }, 'The team could not be created.', 'Team created.'),
     [organizationId, run],
   );
 

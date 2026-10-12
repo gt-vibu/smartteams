@@ -1,7 +1,11 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
-import { hasPermission, type AttendancePreferences } from '@smarteam/contracts';
+import {
+  hasPermission,
+  type AttendancePreferences,
+  type MissedCheckOutPolicy,
+} from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { attendanceRepository } from '../repositories/attendance.repository';
 import { useAsyncResource } from './use-async-resource';
@@ -40,6 +44,7 @@ export function useAttendancePreferences(branchId?: string) {
       attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
       autoCheckOutMode?: 'DISABLED' | 'REVIEW_REQUIRED';
       autoCheckOutAt?: string;
+      missedCheckOutPolicy?: MissedCheckOutPolicy;
     }) => {
       if (!organizationId) return false;
       setSaving(true);

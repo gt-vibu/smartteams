@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import type { OrganizationMember, RoleWithPermissions } from '@smarteam/contracts';
-import { Button } from '@smarteam/ui';
+import { LoadingIndicator, Button } from '@smarteam/ui';
 import { useAccessControl } from '../../hooks/use-access-control';
 import { Unavailable } from './org-profile-panel';
 import { AccessAddMemberDialog } from './access-add-member-dialog';
@@ -30,6 +30,7 @@ export function OrgAccessPanel() {
   const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
   const [enrollingSelf, setEnrollingSelf] = useState(false);
   const { persona } = useSession();
+  const profileCount = access.roles.length;
 
   if (!access.canReadMembers && !access.canReadRoles) {
     return (
@@ -68,7 +69,7 @@ export function OrgAccessPanel() {
             type="button"
             variant="ghost"
           >
-            Roles{access.roles.length ? ` (${access.roles.length})` : ''}
+            Access profiles{profileCount ? ` (${profileCount})` : ''}
           </Button>
         </div>
 
@@ -90,11 +91,17 @@ export function OrgAccessPanel() {
           )}
           {view === 'roles' && access.canManageAccess && (
             <Button onClick={() => setCreatingRole(true)} size="sm" type="button">
-              Create role
+              Create access profile
             </Button>
           )}
         </div>
       </div>
+
+      <p className="text-[11px] text-muted-foreground">
+        Access profiles control organization permissions. Employee provides baseline self-service
+        access; Manager adds approval access, HR Admin supports people operations, and Organization
+        Admin has full access. Job titles and team or project responsibilities remain separate.
+      </p>
 
       {access.lastTemporaryPassword && (
         <div className="flex items-start justify-between gap-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-xs dark:border-amber-800 dark:bg-amber-950/40">
@@ -128,9 +135,7 @@ export function OrgAccessPanel() {
       )}
 
       {access.loading ? (
-        <p className="py-8 text-center text-xs text-muted-foreground" role="status">
-          Loading...
-        </p>
+        <LoadingIndicator variant="panel" label="Preparing content" className="py-8 text-center text-xs text-muted-foreground" />
       ) : view === 'people' ? (
         <PeopleTable
           canManage={access.canManageAccess}
@@ -146,6 +151,7 @@ export function OrgAccessPanel() {
             setEditingRoleId(role.id);
           }}
           roles={access.roles}
+          members={access.canReadMembers ? access.members : null}
         />
       )}
 
@@ -285,20 +291,23 @@ function RolesTable({
   canManage,
   onEdit,
   roles,
+  members,
 }: {
   canRead: boolean;
   canManage: boolean;
   onEdit: (role: RoleWithPermissions) => void;
   roles: RoleWithPermissions[];
+  members: OrganizationMember[] | null;
 }) {
   if (!canRead)
     return <Unavailable detail="You do not have permission to view roles." title="Not available" />;
-  if (roles.length === 0)
+  const visibleRoles = roles;
+  if (visibleRoles.length === 0)
     return <Unavailable detail="No roles exist yet." title="Nothing here yet" />;
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      {roles.map((role) => (
+      {visibleRoles.map((role) => (
         <section className="rounded-xl border border-border bg-card p-4" key={role.id}>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-xs font-bold text-foreground">{role.name}</h3>
@@ -320,6 +329,11 @@ function RolesTable({
               {role.code === 'ORG_ADMIN'
                 ? 'Full access to everything'
                 : `${role.permissions.length} permission${role.permissions.length === 1 ? '' : 's'}`}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              {members === null
+                ? 'Assigned users unavailable'
+                : `${members.filter((member) => member.roles.some((assigned) => assigned.id === role.id)).length} assigned`}
             </p>
             {/* The administrator role holds everything and is the way back from any mistake, so
                 it is never edited; the API refuses it too. */}

@@ -195,8 +195,17 @@ export function attendanceSummaryStats(views: readonly AttendanceDayView[]) {
     // A half day counts as half.
     presentDays: views
       .filter(present)
-      .reduce((sum, view) => sum + (view.dayStatus === 'HALF_DAY' ? 0.5 : 1), 0),
-    leaveDays: views.filter((view) => ['LEAVE', 'ON_LEAVE'].includes(view.dayStatus)).length,
+      .reduce(
+        (sum, view) =>
+          sum +
+          Math.min(view.dayStatus === 'HALF_DAY' ? 0.5 : 1, 1 - (view.record.leaveUnits ?? 0)),
+        0,
+      ),
+    leaveDays: views.reduce(
+      (sum, view) =>
+        sum + (view.record.leaveUnits ?? (['LEAVE', 'ON_LEAVE'].includes(view.dayStatus) ? 1 : 0)),
+      0,
+    ),
     workedMinutes: views.reduce((sum, view) => sum + (view.workedMinutes || 0), 0),
     holidayDays: views.filter(
       (view) => view.dayStatus === 'HOLIDAY' || view.holidayConflict?.state === 'HOLIDAY_KEPT',

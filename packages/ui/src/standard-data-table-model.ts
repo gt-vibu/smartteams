@@ -7,7 +7,7 @@
  *
  * The component's public props are unchanged; this split is internal.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   applyColumnFilters,
   clampPage,
@@ -51,11 +51,17 @@ export function useStandardDataTable<T>({
   defaultSort,
 }: StandardDataTableModelOptions<T>) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [settledSearchQuery, setSettledSearchQuery] = useState('');
   const [columnFilters, setColumnFilters] = useState<Record<string, string>>({});
   const [sortState, setSortState] = useState<SortState>(defaultSort ?? null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialRowsPerPage);
   const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSettledSearchQuery(searchQuery), 300);
+    return () => window.clearTimeout(timer);
+  }, [searchQuery]);
 
   const [columnPins, setColumnPins] = useState<ColumnPins>(() => {
     const pins: ColumnPins = {};
@@ -77,11 +83,11 @@ export function useStandardDataTable<T>({
   const filteredData = useMemo(
     () =>
       applyColumnFilters(
-        searchRows(data, initialColumns, searchQuery, searchFields),
+        searchRows(data, initialColumns, settledSearchQuery, searchFields),
         initialColumns,
         columnFilters,
       ),
-    [data, initialColumns, searchQuery, searchFields, columnFilters],
+    [data, initialColumns, settledSearchQuery, searchFields, columnFilters],
   );
 
   const sortedData = useMemo(
@@ -140,4 +146,10 @@ export function useStandardDataTable<T>({
     hasActiveFilters: hasActiveFilters(searchQuery, columnFilters),
     displayColumns,
   };
+}
+
+/** "Status" → "statuses", "Shift" → "shifts": how a filter's "All …" option reads. */
+export function pluralLower(word: string) {
+  const lower = word.toLowerCase();
+  return lower.endsWith('s') ? `${lower}es` : `${lower}s`;
 }

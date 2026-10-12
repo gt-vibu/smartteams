@@ -192,14 +192,18 @@ enum AttendancePunchSource {
   IMPORT
 }
 
-/** What a one-time password token is for. */
+/**
+ * What a one-time password token is for.
+ */
 enum PasswordTokenPurpose {
   RESET_LINK
   SETUP_LINK
   RESET_CODE
 }
 
-/** Whether a day with no check-out is closed automatically, and how. */
+/**
+ * Whether a day with no check-out is closed automatically, and how.
+ */
 enum AutoCheckOutMode {
   DISABLED
   REVIEW_REQUIRED
@@ -400,6 +404,7 @@ enum FilePurpose {
   PAYROLL_EXPORT
   IMPORT
   OTHER
+  ORGANIZATION_BRANDING
 }
 
 /// PERSONAL: the employee's own private file. Nobody else, whatever their role, unless the

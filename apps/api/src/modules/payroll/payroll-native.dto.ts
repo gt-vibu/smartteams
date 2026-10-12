@@ -1,6 +1,6 @@
 import { OmitType } from '@nestjs/swagger';
-import { IsOptional, IsUUID } from 'class-validator';
 import { LIMITS } from '@smarteam/contracts';
+import { IsBoolean, IsInt, IsObject, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
 import {
   IsAmount,
   IsCalendarDate,
@@ -81,7 +81,7 @@ withRules(NativePayrollPolicyDto, {
 export class NativeSalaryAdvanceDecisionDto extends SalaryAdvanceDecisionDto {}
 withRules(NativeSalaryAdvanceDecisionDto, {
   approvedAmount: [IsOptional(), IsAmount('Approved amount', LIMITS.amount, 0.01)],
-  comment: [IsText('Comment', LIMITS.reason, 3)],
+  comment: [IsOptional(), IsText('Comment', LIMITS.reason, 2)],
 });
 
 export class NativeStatutoryRuleDto extends StatutoryRuleDto {}
@@ -94,4 +94,18 @@ withRules(NativeStatutoryRuleDto, {
   wageCeiling: [IsOptional(), IsAmount('Wage ceiling')],
   employeeThreshold: [IsOptional(), IsAmount('Wage threshold')],
   flatAmount: [IsOptional(), IsAmount('Flat amount')],
+});
+
+export class NativePayrollAssignmentRuleDto {
+  @IsOptional() @IsUUID() id?: string;
+  @IsString() name!: string;
+  @IsUUID() payrollPolicyId!: string;
+  @IsObject() criteria!: Record<string, unknown>;
+  @IsInt() @Min(1) @Max(10000) priority!: number;
+  @IsCalendarDate('Effective date', PERIOD) effectiveFrom!: string;
+  @IsOptional() @IsCalendarDate('End date', PERIOD) effectiveTo?: string;
+  @IsBoolean() enabled!: boolean;
+}
+withRules(NativePayrollAssignmentRuleDto, {
+  name: [IsText('Rule name', LIMITS.title, 2)],
 });

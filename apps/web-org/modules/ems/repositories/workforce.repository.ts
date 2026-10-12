@@ -338,7 +338,6 @@ export type AddTeamMemberInput = { employeeId: string; joinedAt: string; teamRol
 
 export type AddProjectMemberInput = {
   employeeId: string;
-  projectRole?: string;
   startsOn: string;
   endsOn?: string;
 };
@@ -373,19 +372,6 @@ export const membershipRepository = {
     return apiRequest(
       `${orgPath(organizationId)}/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}`,
       { method: 'PATCH', body: { teamRole } },
-    );
-  },
-
-  /** A current member's role on the project, from the Project Roles list. */
-  updateProjectMember(
-    organizationId: string,
-    projectId: string,
-    memberId: string,
-    projectRole: string,
-  ) {
-    return apiRequest(
-      `${orgPath(organizationId)}/projects/${encodeURIComponent(projectId)}/members/${encodeURIComponent(memberId)}`,
-      { method: 'PATCH', body: { projectRole } },
     );
   },
 

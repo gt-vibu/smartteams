@@ -5,7 +5,7 @@ import { useEmployee } from './use-employee';
 import { useEmployeeHolidays } from './use-employee-holidays';
 import { useHolidays } from './use-holidays';
 import { useLeave } from './use-leave';
-import { useWorkWeek } from './use-work-week';
+import { useWorkingSchedule } from './use-working-schedule';
 import { localDateKey } from '../lib/local-date';
 import { approvedLeaveByDate } from '../services/leave-calendar';
 import { resolveDayStatus, type ResolvedDayStatus } from '../services/day-status';
@@ -25,7 +25,7 @@ export function useDayContext() {
   const employeeHolidays = useEmployeeHolidays();
   const leave = useLeave();
   const { employee } = useEmployee();
-  const { isWeeklyOff, unmarkedDaysAreAbsent } = useWorkWeek();
+  const { isWeeklyOffOn, unmarkedDaysAreAbsent, ready } = useWorkingSchedule(employee?.id ?? null);
   const todayKey = localDateKey();
   const joinedOn = employee?.joinedDate ?? null;
 
@@ -73,12 +73,12 @@ export function useDayContext() {
         workedMinutes: record?.workedMinutes ?? 0,
         leaveName: leaveByDate.get(dateKey) ?? null,
         holidayName: holidayByDate.get(dateKey)?.name ?? null,
-        isWeeklyOff: isWeeklyOff(new Date(`${dateKey}T00:00:00`)),
-        unmarkedDaysAreAbsent,
+        isWeeklyOff: ready && isWeeklyOffOn(dateKey),
+        unmarkedDaysAreAbsent: ready && unmarkedDaysAreAbsent,
         joinedOn,
       }),
-    [todayKey, leaveByDate, holidayByDate, isWeeklyOff, unmarkedDaysAreAbsent, joinedOn],
+    [todayKey, leaveByDate, holidayByDate, isWeeklyOffOn, unmarkedDaysAreAbsent, joinedOn, ready],
   );
 
-  return { todayKey, holidayByDate, leaveByDate, isWeeklyOff, resolve };
+  return { todayKey, holidayByDate, leaveByDate, isWeeklyOffOn, resolve };
 }

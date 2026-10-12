@@ -25,6 +25,7 @@ export type ApprovalPolicyInput = {
   code: string;
   name: string;
   isDefault?: boolean;
+  automation?: Record<string, unknown>;
   steps: Array<
     Pick<ApprovalStep, 'stepNumber' | 'approverType'> &
       Partial<Pick<ApprovalStep, 'roleId' | 'approverUserId'>>

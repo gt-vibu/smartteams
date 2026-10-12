@@ -49,6 +49,11 @@ export class PayrollPreviewService {
           ...employeeScope(context),
         },
         include: {
+          employmentRecords: {
+            where: { effectiveFrom: { lte: periodEnd }, OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodStart } }] },
+            orderBy: { effectiveFrom: 'desc' },
+            take: 1,
+          },
           compensations: {
             where: {
               effectiveFrom: { lte: periodEnd },
@@ -80,13 +85,16 @@ export class PayrollPreviewService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const compensation = employee.compensations[0];
-      if (!compensation) throw new ConflictError('Employee has no salary profile for this period');
       const employeePolicy = employee.payrollPolicies[0];
-      const policy =
-        employeePolicy?.payrollPolicy ??
-        (await findPolicy(tx, context.organizationId, periodStart)) ??
-        DEFAULT_PAYROLL_POLICY;
+      const policy = employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
+        ? employeePolicy.payrollPolicy ?? DEFAULT_PAYROLL_POLICY
+        : (await findPolicy(tx, context.organizationId, periodStart)) ?? DEFAULT_PAYROLL_POLICY;
+      const compensation = employee.compensations[0] ?? (policy.defaultGrossSalary == null ? null : {
+        grossSalary: policy.defaultGrossSalary,
+        baseAmount: policy.defaultGrossSalary,
+        overtimeMultiplier: new Prisma.Decimal(1),
+      });
+      if (!compensation) throw new ConflictError('Employee has no salary profile or organization default salary for this period');
       if (!(employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault))
         throw new ConflictError('Payroll is disabled for this employee');
       const gross = compensation.grossSalary ?? compensation.baseAmount;
@@ -237,8 +245,11 @@ export class PayrollPreviewService {
       const employeeComponentIds = new Set(
         employee.payComponents.map((assignment) => assignment.payComponentId),
       );
+      const policyComponents = (
+        'components' in policy && Array.isArray(policy.components) ? policy.components : []
+      ) as typeof employee.payComponents;
       const components = [
-        ...(employeePolicy?.payrollPolicy?.components ?? [])
+        ...policyComponents
           .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId))
           .map((assignment) => ({
             componentId: assignment.payComponentId,
@@ -257,8 +268,12 @@ export class PayrollPreviewService {
         employeeId,
         compensation,
         employeePolicy: employeePolicy ?? null,
+        assignmentSource: employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
+          ? 'INDIVIDUAL_OVERRIDE'
+          : 'ORGANIZATION_DEFAULT',
+        assignmentRuleId: null,
         policy: enginePolicy,
-        statutoryRules: withNationalStatutoryRules(rules),
+        statutoryRules: withNationalStatutoryRules(rules, periodStart),
         components,
         timesheet: sumTimesheets(approvedTimesheets),
         overtimeDays: sumOvertimeByDayType(attendanceRecords),
@@ -317,6 +332,8 @@ export class PayrollPreviewService {
 
       return {
         employeeId,
+        assignmentSource: item.assignmentSource,
+        assignmentRuleId: item.assignmentRuleId,
         periodStart: input.periodStart,
         periodEnd: input.periodEnd,
         payableDays,

@@ -1,3 +1,4 @@
+import { PayrollReadinessController } from './payroll-readiness.controller';
 import { Module } from '@nestjs/common';
 import { PayrollReportsController } from './payroll-reports.controller';
 import { PayrollReportsService } from './payroll-reports.service';
@@ -18,6 +19,7 @@ import {
 
 @Module({
   controllers: [
+    PayrollReadinessController,
     PayrollController,
     PayrollPolicyController,
     PayrollOvertimeRatesController,

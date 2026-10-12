@@ -40,7 +40,7 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
           : day.dayStatus === 'HOLIDAY'
             ? (day.holidayName ?? 'Holiday')
             : isWeekend
-              ? 'Weekend'
+              ? 'Weekly off'
               : '';
   const dot = conflict
     ? conflict.tone === 'attention'
@@ -135,7 +135,7 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
         )}
 
         {isWeekend && (
-          <div className="pl-0.5 text-[9.5px] font-medium text-amber-700/80">Weekend</div>
+          <div className="pl-0.5 text-[9.5px] font-medium text-amber-700/80">Weekly off</div>
         )}
       </div>
 

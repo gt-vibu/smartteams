@@ -63,10 +63,10 @@ export function useOrganization() {
   const updateOrganization = useCallback(
     (input: OrganizationUpdate) =>
       run(
-        () => organizationRepository.update(organizationId!, input),
+        () => organizationRepository.update(organizationId!, input, organizationResource.data?.version ?? 1),
         'The organization could not be updated.',
       ),
-    [organizationId, run],
+    [organizationId, organizationResource.data?.version, run],
   );
 
   const createBranch = useCallback(

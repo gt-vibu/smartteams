@@ -1,4 +1,5 @@
 import { OmitType } from '@nestjs/swagger';
+import { LIMITS } from '@smarteam/contracts';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -14,7 +15,6 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { LIMITS } from '@smarteam/contracts';
 import { IsCalendarDate, IsNumberBetween, IsText } from '../../common/validation/field-rules';
 
 export class LeaveTypeDto {
@@ -57,7 +57,7 @@ export class LeaveRequestDto {
 
 export class LeaveDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
-  @IsString() @MinLength(2) comment!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
   @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
 }
 
@@ -76,13 +76,22 @@ export class LeaveAdjustmentDto {
 
 /** Filters for the leave request list. Mirrors what the federation surface already accepts. */
 export class LeaveRequestQueryDto {
+  @IsOptional() @IsString() @MaxLength(100) search?: string;
+  @IsOptional() @IsEnum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']) status?:
+    'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
   @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsUUID() departmentId?: string;
+  @IsOptional() @IsDateString() from?: string;
+  @IsOptional() @IsDateString() to?: string;
   @IsOptional() @IsString() @MaxLength(256) cursor?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
 }
 
 /** Selects whose balances to read; omitted means every employee the caller may see. */
 export class LeaveBalanceQueryDto {
+  @IsOptional() @IsString() @MaxLength(100) search?: string;
+  @IsOptional() @IsUUID() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(200) limit?: number;
   @IsOptional() @IsUUID() employeeId?: string;
 }
 

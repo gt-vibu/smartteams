@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge, Button, Icon } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button, Icon } from '@smarteam/ui';
 import { employmentTypeLabel, hasPermission, formatDate } from '@smarteam/contracts';
 import { ChevronLeft } from 'lucide-react';
 import { useEmployeeDetail } from '../../hooks/use-employee-detail';
@@ -78,9 +78,7 @@ export function EmployeeProfile({
       </button>
 
       {detail.loading && (
-        <p className="text-xs text-muted-foreground" role="status">
-          Loading employee…
-        </p>
+        <LoadingIndicator variant="inline" label="Loading employee" className="text-xs text-muted-foreground" />
       )}
       {!detail.loading && (detail.forbidden || detail.error) && (
         <p

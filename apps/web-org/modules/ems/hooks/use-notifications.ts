@@ -154,7 +154,23 @@ function useNotificationFeed() {
     [organizationId],
   );
 
+  const setDelivery = async (delivery: 'IMMEDIATE' | 'DAILY_DIGEST') => {
+    if (!organizationId || prefs.data?.email == null) return;
+    setError(null);
+    try {
+      await notificationsRepository.setEmail(
+        organizationId,
+        emailOverride ?? prefs.data.email,
+        delivery,
+      );
+      await prefs.refetch();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not save delivery settings.');
+    }
+  };
   return {
+    delivery: prefs.data?.delivery ?? 'IMMEDIATE',
+    setDelivery,
     /** Null until known, so the switch is not shown in a state the person never chose. */
     emailEnabled: emailOverride ?? prefs.data?.email ?? null,
     setEmail,

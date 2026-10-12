@@ -17,7 +17,8 @@ const d = (value: number) => new Prisma.Decimal(value);
  * before the company sets its state. Only Professional Tax, whose slabs differ by state, waits
  * for that.
  *
- *  - EPF (EPF & MP Act, 1952): 12% employee and 12% employer on Basic, up to a ₹15,000 wage ceiling.
+ *  - EPF (Social Security Code, 2020): 12% employee and 12% employer on Basic, up to a
+ *    ₹25,000 mandatory coverage wage ceiling from 17 September 2026 (₹15,000 before that date).
  *  - ESI (ESI Act, 1948): 0.75% employee and 3.25% employer on gross, while gross is ₹21,000 or less.
  *
  * A rule the company has saved for the scheme always wins over these.
@@ -27,10 +28,10 @@ export const NATIONAL_STATUTORY_RULES: readonly Rule[] = [
     schemeCode: 'EPF',
     employeeRate: d(12),
     employerRate: d(12),
-    wageCeiling: d(15_000),
+    wageCeiling: d(25_000),
     employeeThreshold: null,
     flatAmount: null,
-    metadata: { source: 'EPF & MP Act, 1952 (national default)' },
+    metadata: { source: 'Social Security Code, 2020; Gazette S.O. 5109(E)' },
   },
   {
     schemeCode: 'ESIC',
@@ -49,7 +50,17 @@ const family = (code: string) => {
 };
 
 /** The company's rules, plus the national PF and ESI rules for any scheme it has not saved. */
-export function withNationalStatutoryRules<T extends Rule>(rules: readonly T[]): Array<T | Rule> {
+export function withNationalStatutoryRules<T extends Rule>(
+  rules: readonly T[],
+  effectiveDate: Date | string = new Date(),
+): Array<T | Rule> {
   const present = new Set(rules.map((rule) => family(rule.schemeCode)));
-  return [...rules, ...NATIONAL_STATUTORY_RULES.filter((rule) => !present.has(rule.schemeCode))];
+  const date = typeof effectiveDate === 'string' ? new Date(effectiveDate) : effectiveDate;
+  const epfCeiling = date < new Date('2026-09-17T00:00:00.000Z') ? d(15_000) : d(25_000);
+  return [
+    ...rules,
+    ...NATIONAL_STATUTORY_RULES.filter((rule) => !present.has(rule.schemeCode)).map((rule) =>
+      rule.schemeCode === 'EPF' ? { ...rule, wageCeiling: epfCeiling } : rule,
+    ),
+  ];
 }

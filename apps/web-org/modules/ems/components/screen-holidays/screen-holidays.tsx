@@ -2,15 +2,16 @@
 
 import React, { useMemo, useState } from 'react';
 import { formatDate, formatDateRange } from '@smarteam/contracts';
-import { CalendarDays, Settings2, Users } from 'lucide-react';
+import { CalendarDays, Layers3, Plus, Settings2, Users } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
-import { Badge, Button, Input, SegmentedTabs } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button, Dialog, DialogContent, DialogTitle, Input, SegmentedTabs } from '@smarteam/ui';
 import { useHolidays } from '../../hooks/use-holidays';
 import {
   HolidayDialog,
   RetireHolidayDialog,
   AllowanceDialog,
   HolidaySelectionsDialog,
+  HolidayBulkQuickAddDialog,
   type HolidayAdminGroup,
 } from './holiday-dialogs';
 import { EmployeeSelectionsTable } from './employee-selections-table';
@@ -25,7 +26,7 @@ import { PageShell } from '../layout/page-shell';
 export function ScreenHolidays() {
   const holidays = useHolidays();
   const [editingGroup, setEditingGroup] = useState<HolidayAdminGroup | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [creationMode, setCreationMode] = useState<'choose' | 'single' | 'multiple' | null>(null);
   const [retiringGroup, setRetiringGroup] = useState<HolidayAdminGroup | null>(null);
   const [inspectingGroup, setInspectingGroup] = useState<HolidayAdminGroup | null>(null);
   const [configuringAllowance, setConfiguringAllowance] = useState(false);
@@ -141,8 +142,8 @@ export function ScreenHolidays() {
                   ? ` · ${holidays.employeePolicies.length} exception${holidays.employeePolicies.length === 1 ? '' : 's'}`
                   : ''}
               </Button>
-              <Button onClick={() => setCreating(true)} size="sm" type="button">
-                Add holiday
+              <Button onClick={() => setCreationMode('choose')} size="sm" type="button">
+                <Plus className="mr-1.5 size-3.5" /> Add holiday
               </Button>
             </>
           )}
@@ -169,9 +170,7 @@ export function ScreenHolidays() {
       </div>
 
       {holidays.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading holidays...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading holidays" className="py-10 text-center text-xs text-muted-foreground" />
       )}
 
       {!holidays.loading && holidays.error && (
@@ -374,16 +373,50 @@ export function ScreenHolidays() {
       )}
 
       {/* Holiday Dialog for adding or renaming grouped plans */}
+      <Dialog
+        open={creationMode === 'choose'}
+        onOpenChange={(open) => !open && setCreationMode(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>Add holidays</DialogTitle>
+          <p className="text-xs text-muted-foreground">Choose how you want to enter holidays.</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <button
+              className="rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => setCreationMode('single')}
+              type="button"
+            >
+              <CalendarDays className="mb-3 size-5 text-primary" />
+              <span className="block text-sm font-semibold">Add one</span>
+              <span className="mt-1 block text-xs text-muted-foreground">Enter one holiday or a date range.</span>
+            </button>
+            <button
+              className="rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => setCreationMode('multiple')}
+              type="button"
+            >
+              <Layers3 className="mb-3 size-5 text-primary" />
+              <span className="block text-sm font-semibold">Quick add multiple</span>
+              <span className="mt-1 block text-xs text-muted-foreground">Enter several names and dates together.</span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <HolidayDialog
         holidayGroup={editingGroup}
         holidays={holidays}
         onOpenChange={(open) => {
           if (!open) {
-            setCreating(false);
+          setCreationMode(null);
             setEditingGroup(null);
           }
         }}
-        open={creating || editingGroup !== null}
+        open={creationMode === 'single' || editingGroup !== null}
+      />
+      <HolidayBulkQuickAddDialog
+        holidays={holidays}
+        onOpenChange={(open) => !open && setCreationMode(null)}
+        open={creationMode === 'multiple'}
       />
 
       {/* Retire Holiday Dialog */}

@@ -1,16 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Badge,
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Input,
   Label,
-  Textarea,
 } from '@smarteam/ui';
+import { MoreHorizontal } from 'lucide-react';
 import type { Branch } from '@smarteam/contracts';
 import type { OrganizationState } from '../../hooks/use-organization';
 import { Unavailable } from './org-profile-panel';
@@ -37,14 +41,17 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
-          Branches scope employees, attendance and shift assignment.
-        </p>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border/70 bg-card/70 px-4 py-3">
+        <div className="min-w-0">
+          <h2 className="text-sm font-semibold text-foreground">Branches</h2>
+          <p className="mt-0.5 max-w-[60ch] text-[13px] leading-5 text-muted-foreground">
+            Set the locations employees belong to and use for attendance and shifts.
+          </p>
+        </div>
         {state.can.writeBranches && (
-          <Button onClick={() => setCreating(true)} size="sm" type="button">
-            New branch
+          <Button onClick={() => setCreating(true)} type="button">
+            Add branch
           </Button>
         )}
       </div>
@@ -59,9 +66,15 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
       )}
 
       {state.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading branches...
-        </p>
+        <div
+          aria-label="Loading branches"
+          className="space-y-2 rounded-xl border border-border bg-card p-4"
+          role="status"
+        >
+          {[0, 1, 2].map((row) => (
+            <div className="h-10 animate-pulse rounded-md bg-muted/80" key={row} />
+          ))}
+        </div>
       )}
 
       {!state.loading && !state.error && state.branches.length === 0 && (
@@ -75,13 +88,13 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
 
       {!state.loading && !state.error && state.branches.length > 0 && (
         <div className="overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="stack-table w-full min-w-[640px] text-left text-xs">
+          <table className="stack-table w-full min-w-[640px] text-left text-[13px]">
             <thead className="border-b border-border bg-table-header">
-              <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                <th className="px-4 py-2.5 font-bold">Branch</th>
-                <th className="px-4 py-2.5 font-bold">Code</th>
-                <th className="px-4 py-2.5 font-bold">Status</th>
-                <th className="px-4 py-2.5 text-right font-bold">Actions</th>
+              <tr className="text-[11px] font-semibold tracking-wide text-muted-foreground">
+                <th className="px-4 py-3">Branch</th>
+                <th className="px-4 py-3">Code</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -91,10 +104,10 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                 const isPrimary = choosing && branch.id === state.primaryBranchId;
                 return (
                   <tr
-                    className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
+                    className="border-b border-border/80 transition-colors last:border-0 hover:bg-muted/40"
                     key={branch.id}
                   >
-                    <td data-cell="primary" className="px-4 py-2.5 font-semibold text-foreground">
+                    <td data-cell="primary" className="px-4 py-3 font-medium text-foreground">
                       {branch.name}
                       {isPrimary && (
                         <Badge className="ml-2" variant="sky">
@@ -102,18 +115,17 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                         </Badge>
                       )}
                     </td>
-                    <td data-label="Code" className="px-4 py-2.5 font-mono text-muted-foreground">
+                    <td data-label="Code" className="px-4 py-3 font-mono text-muted-foreground">
                       {branch.code}
                     </td>
-                    <td data-cell="status" data-label="Status" className="px-4 py-2.5">
+                    <td data-cell="status" data-label="Status" className="px-4 py-3">
                       <Badge variant={branch.status === 'DEACTIVATED' ? 'secondary' : 'success'}>
                         {branch.status === 'DEACTIVATED' ? 'Inactive' : 'Active'}
                       </Badge>
                     </td>
-                    <td data-cell="actions" className="px-4 py-2.5 text-right">
-                      {/* One row, in the same order on every branch. */}
+                    <td data-cell="actions" className="px-4 py-3 text-right">
                       {branch.status !== 'DEACTIVATED' && (
-                        <div className="flex flex-wrap justify-end gap-2">
+                        <div className="flex items-center justify-end gap-2">
                           <Button
                             onClick={() => setSettings(branch)}
                             size="sm"
@@ -132,27 +144,38 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                               >
                                 Edit
                               </Button>
-                              {choosing && !isPrimary && (
-                                <Button
-                                  disabled={state.saving}
-                                  onClick={() => void state.setPrimaryBranch(branch.id)}
-                                  size="sm"
-                                  type="button"
-                                  variant="outline"
-                                >
-                                  Set as primary
-                                </Button>
-                              )}
-                              {/* The primary branch hands that role on before it can be deactivated. */}
-                              {!isPrimary && (
-                                <Button
-                                  onClick={() => setRetiring(branch)}
-                                  size="sm"
-                                  type="button"
-                                  variant="ghost"
-                                >
-                                  Deactivate
-                                </Button>
+                              {((choosing && !isPrimary) || !isPrimary) && (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      aria-label={`More actions for ${branch.name}`}
+                                      className="size-8 px-0"
+                                      size="icon"
+                                      type="button"
+                                      variant="ghost"
+                                    >
+                                      <MoreHorizontal aria-hidden="true" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    {choosing && !isPrimary && (
+                                      <DropdownMenuItem
+                                        disabled={state.saving}
+                                        onSelect={() => void state.setPrimaryBranch(branch.id)}
+                                      >
+                                        Set as primary location
+                                      </DropdownMenuItem>
+                                    )}
+                                    {!isPrimary && (
+                                      <DropdownMenuItem
+                                        className="text-destructive focus:text-destructive"
+                                        onSelect={() => setRetiring(branch)}
+                                      >
+                                        Deactivate branch
+                                      </DropdownMenuItem>
+                                    )}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               )}
                             </>
                           )}
@@ -175,7 +198,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
         />
       )}
 
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-xs leading-5 text-muted-foreground">
         Open a branch's Settings to see how many current employees are based there.
         {activeCount > 1 &&
           ' New employees are placed in the primary branch unless you choose another.'}
@@ -216,6 +239,7 @@ function BranchDialog({
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [problem, setProblem] = useState('');
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -242,8 +266,17 @@ function BranchDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-w-md">
-        <DialogTitle>{branch ? 'Edit branch' : 'New branch'}</DialogTitle>
+      <DialogContent
+        className="sm:max-w-md"
+        onOpenAutoFocus={(event) => {
+          if (!branch) return;
+          event.preventDefault();
+          titleRef.current?.focus();
+        }}
+      >
+        <DialogTitle ref={titleRef} tabIndex={branch ? -1 : undefined}>
+          {branch ? 'Edit branch' : 'New branch'}
+        </DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <div>
             <Label className="mb-1 block" htmlFor="branch-name">
@@ -306,14 +339,11 @@ function RetireBranchDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [reason, setReason] = useState('');
-
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!branch || reason.trim().length < 2) return;
-    const ok = await state.retireBranch(branch.id, reason.trim());
+    if (!branch) return;
+    const ok = await state.retireBranch(branch.id, 'Branch deactivated');
     if (ok) {
-      setReason('');
       onOpenChange(false);
     }
   };
@@ -323,16 +353,6 @@ function RetireBranchDialog({
       <DialogContent className="sm:max-w-md">
         <DialogTitle>Deactivate {branch?.name ?? 'branch'}</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
-          <Label className="block" htmlFor="branch-retire-reason">
-            Reason
-          </Label>
-          <Textarea
-            maxLength={LIMITS.reason}
-            disabled={state.saving}
-            id="branch-retire-reason"
-            onChange={(event) => setReason(event.target.value)}
-            value={reason}
-          />
           {state.saveError && (
             <p className="text-xs text-destructive" role="alert">
               {state.saveError}
@@ -347,7 +367,7 @@ function RetireBranchDialog({
             >
               Cancel
             </Button>
-            <Button disabled={state.saving || reason.trim().length < 2} type="submit">
+            <Button disabled={state.saving} type="submit">
               {state.saving ? 'Deactivating…' : 'Deactivate'}
             </Button>
           </div>

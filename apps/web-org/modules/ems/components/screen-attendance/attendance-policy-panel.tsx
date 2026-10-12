@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+  LoadingIndicator,
   Badge,
   Button,
   Label,
@@ -67,9 +68,7 @@ export function AttendancePolicyPanel() {
 
       <div className="space-y-4 p-4">
         {policy.loading && (
-          <p className="text-xs text-muted-foreground" role="status">
-            Loading policy...
-          </p>
+          <LoadingIndicator variant="inline" label="Loading policy" className="text-xs text-muted-foreground" />
         )}
 
         {!policy.loading && policy.error && (

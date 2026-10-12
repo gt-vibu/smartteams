@@ -12,7 +12,7 @@ export type OvertimeDayType = 'WORKING_DAY' | 'WEEKLY_OFF' | 'HOLIDAY';
  * - A day their shift does not run (a weekly off): likewise, weekly-off overtime.
  * - A day their shift runs: the shift's full span, start to end. Punches do not record breaks, so
  *   time on site includes the break and is compared with a span that includes it too.
- * - No shift that day: the organization's standard day, as before shifts were counted.
+ * - No shift that day: the organization's working week and standard day.
  */
 export async function expectedDayOn(
   tx: TenantTransaction,
@@ -48,8 +48,7 @@ export async function expectedDayOn(
         employeeId,
         startsOn: { lte: workDate },
         OR: [{ endsOn: null }, { endsOn: { gte: workDate } }],
-        shift: { isActive: true },
-      },
+        },
       orderBy: { startsOn: 'desc' },
       select: {
         shift: {
@@ -59,7 +58,15 @@ export async function expectedDayOn(
     }),
   ]);
   if (holiday || chosen) return { minutes: 0, dayType: 'HOLIDAY' };
-  if (!assignment) return { minutes: standardDayMinutes, dayType: 'WORKING_DAY' };
+  if (!assignment) {
+    const settings = await tx.organizationSettings.findUniqueOrThrow({
+      where: { organizationId }, select: { workWeekDays: true },
+    });
+    const working = settings.workWeekDays.includes(workDate.getUTCDay() || 7);
+    return working
+      ? { minutes: standardDayMinutes, dayType: 'WORKING_DAY' }
+      : { minutes: 0, dayType: 'WEEKLY_OFF' };
+  }
   const minutes = shiftMinutesOn(assignment.shift, workDate);
   return { minutes, dayType: minutes === 0 ? 'WEEKLY_OFF' : 'WORKING_DAY' };
 }

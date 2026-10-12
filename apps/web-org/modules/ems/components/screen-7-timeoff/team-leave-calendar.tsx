@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { Badge, Button } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button } from '@smarteam/ui';
 import { formatDateRange } from '@smarteam/contracts';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSession } from '../../hooks/auth-context';
@@ -106,9 +106,7 @@ export function TeamLeaveCalendar() {
       )}
 
       {calendar.loading ? (
-        <p className="py-6 text-center text-xs text-muted-foreground" role="status">
-          Loading the calendar…
-        </p>
+        <LoadingIndicator variant="panel" label="Loading the calendar" className="py-6 text-center text-xs text-muted-foreground" />
       ) : calendar.error ? (
         <p
           className="rounded-lg border border-border bg-card px-4 py-3 text-xs text-destructive"

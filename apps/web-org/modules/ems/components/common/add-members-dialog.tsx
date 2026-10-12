@@ -36,8 +36,8 @@ export function AddMembersDialog<T extends Person>({
   employees: readonly T[];
   /** Current members, who are not offered again. */
   excludeIds: readonly string[];
-  roleKind: PicklistKind;
-  roleLabel: string;
+  roleKind?: PicklistKind;
+  roleLabel?: string;
   /** Adds one person; resolves to true when the API accepted it. */
   onAdd: (employeeId: string, role: string) => Promise<boolean>;
   nameOf: (employeeId: string) => string;
@@ -45,20 +45,34 @@ export function AddMembersDialog<T extends Person>({
   const [selected, setSelected] = useState<string[]>([]);
   const [role, setRole] = useState('');
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [added, setAdded] = useState(0);
   const [failed, setFailed] = useState<string[]>([]);
 
   const reset = () => {
     setSelected([]);
     setRole('');
     setFailed([]);
+    setError('');
+    setAdded(0);
   };
 
   const submit = async () => {
     if (selected.length === 0 || busy) return;
     setBusy(true);
     const refused: string[] = [];
-    for (const employeeId of selected) {
-      if (!(await onAdd(employeeId, role))) refused.push(employeeId);
+    try {
+      for (const employeeId of selected) {
+        try {
+          if (!(await onAdd(employeeId, role))) refused.push(employeeId);
+          else setAdded((value) => value + 1);
+        } catch (caught) {
+          refused.push(employeeId);
+          setError(caught instanceof Error ? caught.message : 'The member could not be added.');
+        }
+      }
+    } finally {
+      setBusy(false);
     }
     setBusy(false);
     if (refused.length === 0) {
@@ -73,7 +87,7 @@ export function AddMembersDialog<T extends Person>({
   return (
     <Dialog
       onOpenChange={(next) => {
-        if (!next) {
+        if (!next && !busy) {
           reset();
           onClose();
         }
@@ -90,20 +104,25 @@ export function AddMembersDialog<T extends Person>({
             onChange={setSelected}
             selected={selected}
           />
-          <div>
-            <Label className="mb-1 block">{roleLabel}</Label>
-            <PicklistSelect
-              addLabel="+ Add a role"
-              disabled={busy}
-              kind={roleKind}
-              noneLabel="No role"
-              onChange={setRole}
-              value={role}
-            />
-          </div>
+          {roleKind && roleLabel && (
+            <div>
+              <Label className="mb-1 block">{roleLabel}</Label>
+              <PicklistSelect
+                addLabel="+ Add a role"
+                disabled={busy}
+                kind={roleKind}
+                noneLabel="No role"
+                onChange={setRole}
+                value={role}
+              />
+            </div>
+          )}
           {failed.length > 0 && (
             <p className="text-xs text-destructive" role="alert">
-              Not added: {failed.map(nameOf).join(', ')}. The reason is shown on the page behind.
+              {added} added. {failed.length} could not be added:{' '}
+              {failed.map((id) => (nameOf(id) === 'Someone' ? id : nameOf(id))).join(', ')}.{' '}
+              {error ||
+                'Review their current membership and employment status, then retry. Successful additions are excluded.'}
             </p>
           )}
           <div className="flex justify-end gap-2">

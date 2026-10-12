@@ -1,8 +1,8 @@
 'use client';
 
+import type { EmployeeDetail } from '@smarteam/contracts';
 import { formatDate } from '@smarteam/contracts';
 import { Badge } from '@smarteam/ui';
-import type { EmployeeDetail } from '@smarteam/contracts';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
 
 /**
@@ -39,7 +39,19 @@ export function EmployeeTeamsSection({ memberships }: { memberships: TeamMembers
               className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2"
               key={m.team.id}
             >
-              <span className="truncate text-xs font-semibold text-foreground">{m.team.name}</span>
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-xs font-semibold text-foreground">
+                  {m.team.name}
+                </span>
+                {m.isLead && (
+                  <Badge
+                    className="border-amber-500/20 bg-amber-500/10 text-[10px] text-amber-600 dark:text-amber-400"
+                    variant="outline"
+                  >
+                    Lead
+                  </Badge>
+                )}
+              </div>
               <Badge className="text-[10px]" variant="outline">
                 Active
               </Badge>
@@ -82,6 +94,14 @@ export function EmployeeProjectsSection({ memberships }: { memberships: ProjectM
                 <span className="truncate text-xs font-semibold text-foreground">
                   {m.project.name}
                 </span>
+                {m.isLead && (
+                  <Badge
+                    className="border-amber-500/20 bg-amber-500/10 text-[10px] text-amber-600 dark:text-amber-400"
+                    variant="outline"
+                  >
+                    Lead
+                  </Badge>
+                )}
               </div>
             </div>
           ))}

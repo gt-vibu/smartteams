@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
+import { LoadingIndicator, Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
 import type { DocumentSection, StoredDocument } from '@smarteam/contracts';
 import { FolderOpen, Upload } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
@@ -82,6 +82,7 @@ export function ScreenFiles() {
           )
         }
         icon={FolderOpen}
+        description={workspace === 'ADMIN' ? 'Manage organization, employee, team and project documents.' : 'Find your personal, shared and company documents.'}
         title="Files"
         tone="neutral"
       />
@@ -124,9 +125,7 @@ export function ScreenFiles() {
           )}
 
           {documents.loading ? (
-            <p className="py-8 text-center text-xs text-muted-foreground" role="status">
-              Loading documents…
-            </p>
+            <LoadingIndicator variant="panel" label="Loading documents" className="py-8 text-center text-xs text-muted-foreground" />
           ) : documents.listError ? (
             <div className="rounded-lg border border-border bg-card p-8 text-center" role="alert">
               <p className="text-sm font-bold text-foreground">Could not load documents</p>

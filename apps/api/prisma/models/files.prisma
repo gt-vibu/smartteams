@@ -40,6 +40,8 @@ model FileObject {
   team         Team?               @relation(fields: [teamId], references: [id], onDelete: SetNull)
   project      Project?            @relation(fields: [projectId], references: [id], onDelete: SetNull)
   shares       FileShare[]
+  organizationLogo Organization[] @relation("OrganizationLogo")
+  organizationCover Organization[] @relation("OrganizationCover")
 
   @@unique([bucket, objectKey])
   @@index([organizationId, purpose, createdAt])

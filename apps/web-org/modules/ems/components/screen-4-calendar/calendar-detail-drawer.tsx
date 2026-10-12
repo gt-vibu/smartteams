@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Textarea, TimePicker, useFocusTrap } from '@smarteam/ui';
 import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH, LIMITS } from '@smarteam/contracts';
 import type { CalendarDayItem } from '../../types/calendar.types';
 import { MissingCheckOutForm } from '../common/missing-check-out-form';
@@ -17,6 +17,13 @@ interface CalendarDetailDrawerProps {
    * record of it.
    */
   onSubmitCorrection?: (recordId: string, reason: string) => Promise<unknown>;
+  /** Requests a missing attendance day using the employee's stated actual punch times. */
+  onSubmitMissingDay?: (
+    workDate: string,
+    reason: string,
+    checkInAt: string,
+    checkOutAt?: string,
+  ) => Promise<unknown>;
   /** Asks for a missing check-out to be added; same resolve/reject contract as above. */
   onSubmitMissingCheckOut?: (
     recordId: string,
@@ -32,6 +39,7 @@ export function CalendarDetailDrawer({
   isOpen,
   onClose,
   onSubmitCorrection,
+  onSubmitMissingDay,
   onSubmitMissingCheckOut,
   onExplainHolidayCheckIn,
 }: CalendarDetailDrawerProps) {
@@ -39,12 +47,49 @@ export function CalendarDetailDrawer({
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [missingCheckIn, setMissingCheckIn] = useState('');
+  const [missingCheckOut, setMissingCheckOut] = useState('');
+  const [activeForm, setActiveForm] = useState<'regularization' | 'missing-checkout' | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   useFocusTrap(isOpen, panelRef, onClose);
+
+  useEffect(() => {
+    setReason('');
+    setSubmitted(false);
+    setSaving(false);
+    setError(null);
+    setMissingCheckIn('');
+    setMissingCheckOut('');
+    setActiveForm(null);
+  }, [day?.date, isOpen]);
 
   if (!isOpen || !day) return null;
 
   const recordId = day.attendanceRecordId;
+  const handleMissingDay = async () => {
+    if (!onSubmitMissingDay || saving || !missingCheckIn) return;
+    const checkInAt = new Date(`${day.date}T${missingCheckIn}:00`);
+    const checkOutAt = missingCheckOut ? new Date(`${day.date}T${missingCheckOut}:00`) : null;
+    if (checkOutAt && checkOutAt <= checkInAt) {
+      setError('Check-out must be later than check-in.');
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await onSubmitMissingDay(
+        day.date,
+        reason,
+        checkInAt.toISOString(),
+        checkOutAt?.toISOString(),
+      );
+      setSubmitted(true);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'The regularization request could not be submitted.');
+    } finally {
+      setSaving(false);
+    }
+  };
   const handleSubmit = async () => {
     if (!onSubmitCorrection || !recordId || saving) return;
     setSaving(true);
@@ -184,19 +229,61 @@ export function CalendarDetailDrawer({
               />
             )}
 
+            {/* A missed check-in has no row yet. Submit a date-based correction; the API creates
+                an absent placeholder and only changes attendance after an approver accepts. */}
+            {day.dayStatus === 'ABSENT' && onSubmitMissingDay && (
+              <div className="pt-2 border-t border-border">
+                <div className="text-xs font-bold text-foreground mb-1.5">Request attendance regularization</div>
+                {submitted ? (
+                  <div className="rounded border border-emerald-200 bg-emerald-50 p-3 text-xs font-medium text-emerald-800">
+                    Sent for approval. Attendance will be updated after your admin accepts the request.
+                  </div>
+                ) : activeForm !== 'regularization' ? (
+                  <Button type="button" onClick={() => setActiveForm('regularization')} className="w-full">
+                    Request regularization
+                  </Button>
+                ) : (
+                  <div className="space-y-2.5">
+                    <p className="text-[11px] text-muted-foreground">Enter the actual times you worked. Your admin must approve this request before the attendance record changes.</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label htmlFor="regularization-check-in" className="mb-1 block text-[11px]">Actual check-in *</label>
+                        <TimePicker id="regularization-check-in" value={missingCheckIn} onChange={setMissingCheckIn} disabled={saving} />
+                      </div>
+                      <div>
+                        <label htmlFor="regularization-check-out" className="mb-1 block text-[11px]">Actual check-out</label>
+                        <TimePicker id="regularization-check-out" value={missingCheckOut} onChange={setMissingCheckOut} disabled={saving} />
+                      </div>
+                    </div>
+                    <Textarea maxLength={LIMITS.reason} rows={3} value={reason} onChange={(e) => setReason(e.target.value)} placeholder={`Reason (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`} disabled={saving} />
+                    {error && <p role="alert" className="text-[11px] font-medium text-destructive">{error}</p>}
+                    <Button type="button" disabled={saving || !missingCheckIn || reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} onClick={() => void handleMissingDay()} className="w-full">
+                      {saving ? 'Submitting…' : 'Submit regularization request'}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* A day that ended on a check-in gets its check-out added instead. */}
             {day.openCheckInAt && day.attendanceRecordId && onSubmitMissingCheckOut && (
               <div className="pt-2 border-t border-border">
                 <div className="text-xs font-bold text-foreground mb-1.5">
                   Add missing check-out
                 </div>
-                <MissingCheckOutForm
-                  key={day.attendanceRecordId}
-                  checkInAt={day.openCheckInAt}
-                  onSubmit={(checkOutAt, missingReason) =>
-                    onSubmitMissingCheckOut(day.attendanceRecordId!, checkOutAt, missingReason)
-                  }
-                />
+                {activeForm !== 'missing-checkout' ? (
+                  <Button type="button" onClick={() => setActiveForm('missing-checkout')} className="w-full">
+                    Request correction
+                  </Button>
+                ) : (
+                  <MissingCheckOutForm
+                    key={day.attendanceRecordId}
+                    checkInAt={day.openCheckInAt}
+                    onSubmit={(checkOutAt, missingReason) =>
+                      onSubmitMissingCheckOut(day.attendanceRecordId!, checkOutAt, missingReason)
+                    }
+                  />
+                )}
               </div>
             )}
 
@@ -213,6 +300,10 @@ export function CalendarDetailDrawer({
                   <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded font-medium">
                     ✓ Regularization request submitted successfully.
                   </div>
+                ) : activeForm !== 'regularization' ? (
+                  <Button type="button" onClick={() => setActiveForm('regularization')} className="w-full">
+                    Request correction
+                  </Button>
                 ) : (
                   <div className="space-y-2.5">
                     <Textarea

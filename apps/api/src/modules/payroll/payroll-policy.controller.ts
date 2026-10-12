@@ -29,6 +29,7 @@ import {
   NativePayrollPolicyDto,
   NativeSalaryAdvanceDecisionDto,
   NativeStatutoryRuleDto,
+  NativePayrollAssignmentRuleDto,
 } from './payroll-native.dto';
 @Controller('v1/organizations/:organizationId/payroll')
 @UseGuards(NativeJwtGuard)
@@ -65,6 +66,25 @@ export class PayrollPolicyController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.payroll.listPolicies(context));
+  }
+
+  @Get('assignment-rules') assignmentRules(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.payroll.listAssignmentRules(context),
+    );
+  }
+
+  @Post('assignment-rules') saveAssignmentRule(
+    @Param('organizationId') organizationId: string,
+    @Body() body: NativePayrollAssignmentRuleDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId, undefined, body.name).then((context) =>
+      this.payroll.saveAssignmentRule(context, body),
+    );
   }
 
   @Get('statutory-rules') statutoryRules(

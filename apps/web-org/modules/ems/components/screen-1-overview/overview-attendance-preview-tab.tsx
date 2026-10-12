@@ -5,14 +5,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { formatDate } from '@smarteam/contracts';
 import React from 'react';
 import { useAttendance } from '../../hooks/use-attendance';
+import { attendanceSummaryStats } from '../../services/attendance-view';
 import { statusLabel } from '../../lib/status-label';
 
 export function OverviewAttendancePreviewTab() {
   const { days: records } = useAttendance();
 
   const totalWorkingDays = records.length;
-  const presentDays = records.filter((r) => r.dayStatus === 'PRESENT').length;
-  const leaveDays = records.filter((r) => r.dayStatus === 'LEAVE').length;
+  const { presentDays, leaveDays } = attendanceSummaryStats(records);
   const holidayDays = records.filter((r) => r.dayStatus === 'HOLIDAY').length;
 
   return (

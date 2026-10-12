@@ -18,12 +18,37 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model AttendanceApproval
+ * 
+ */
+export type AttendanceApproval = Prisma.AttendanceApprovalModel
+/**
+ * Model LeaveApproval
+ * 
+ */
+export type LeaveApproval = Prisma.LeaveApprovalModel
+/**
  * Model ApprovalDelegation
  * Someone away hands their approvals to a colleague for a span of days. Once the colleague accepts
  * (or at once, when an administrator sets it up), the delegate may decide whatever the delegator
  * could while it runs; the delegator keeps that right too.
  */
 export type ApprovalDelegation = Prisma.ApprovalDelegationModel
+/**
+ * Model EmployeePayrollPolicy
+ * 
+ */
+export type EmployeePayrollPolicy = Prisma.EmployeePayrollPolicyModel
+/**
+ * Model EmployeeStatutoryProfile
+ * 
+ */
+export type EmployeeStatutoryProfile = Prisma.EmployeeStatutoryProfileModel
+/**
+ * Model EmployeeStatutoryRecord
+ * 
+ */
+export type EmployeeStatutoryRecord = Prisma.EmployeeStatutoryRecordModel
 /**
  * Model FederationIdempotencyRecord
  * 
@@ -162,12 +187,10 @@ export type UserInvitation = Prisma.UserInvitationModel
  * Model EmployeeAccessCode
  * *
  *  * A one-time code that lets an employee activate their own Smarteam login.
- *  *
  *  * Distinct from `UserInvitation`, which is addressed to an email and delivered by email. This is
  *  * addressed to an *employee record*: an administrator hands the code over out of band, and the
  *  * employee chooses their own email and password when they redeem it. That is why there is no
  *  * email column here — at the time the code is issued, nobody has decided what it will be.
- *  *
  *  * The code is a bootstrap credential, never a permanent one. Only its digest is stored, it is
  *  * single-use (`activatedAt`), short-lived (`expiresAt`), revocable (`revokedAt`), and it is
  *  * pinned to exactly one organization and one employee. It carries no authority of its own: the
@@ -232,11 +255,6 @@ export type AttendancePunch = Prisma.AttendancePunchModel
  */
 export type AttendanceCorrection = Prisma.AttendanceCorrectionModel
 /**
- * Model AttendanceApproval
- * 
- */
-export type AttendanceApproval = Prisma.AttendanceApprovalModel
-/**
  * Model Holiday
  * 
  */
@@ -271,11 +289,6 @@ export type LeaveBalanceTransaction = Prisma.LeaveBalanceTransactionModel
  * 
  */
 export type LeaveRequest = Prisma.LeaveRequestModel
-/**
- * Model LeaveApproval
- * 
- */
-export type LeaveApproval = Prisma.LeaveApprovalModel
 /**
  * Model Shift
  * 
@@ -327,6 +340,12 @@ export type PayrollRun = Prisma.PayrollRunModel
  * 
  */
 export type PayrollPolicy = Prisma.PayrollPolicyModel
+/**
+ * Model PayrollPolicyAssignmentRule
+ * Determines which reusable payroll policy applies when an employee has no individual override.
+ * `criteria` supports departmentIds, branchIds, employmentTypes, jobTitles, and gradeValues.
+ */
+export type PayrollPolicyAssignmentRule = Prisma.PayrollPolicyAssignmentRuleModel
 /**
  * Model PayrollPolicyComponent
  * 
@@ -403,6 +422,11 @@ export type UserRole = Prisma.UserRoleModel
  */
 export type Organization = Prisma.OrganizationModel
 /**
+ * Model WorkflowDraft
+ * 
+ */
+export type WorkflowDraft = Prisma.WorkflowDraftModel
+/**
  * Model OrganizationSettings
  * 
  */
@@ -471,7 +495,6 @@ export type EmployeeReference = Prisma.EmployeeReferenceModel
  * Model EmployeeHolidayPolicy
  * *
  *  * Per-employee optional holiday policy override.
- *  *
  *  * When present, `allowanceOverride` takes precedence over `OrganizationSettings.optionalHolidayAllowance`.
  *  * When `restrictedHolidayIds` is non-empty, only those holiday IDs are available in the employee's
  *  * optional pool; otherwise the full org/branch pool applies.
@@ -502,21 +525,6 @@ export type EmployeeEmploymentRecord = Prisma.EmployeeEmploymentRecordModel
  * 
  */
 export type EmployeeCompensation = Prisma.EmployeeCompensationModel
-/**
- * Model EmployeePayrollPolicy
- * 
- */
-export type EmployeePayrollPolicy = Prisma.EmployeePayrollPolicyModel
-/**
- * Model EmployeeStatutoryProfile
- * 
- */
-export type EmployeeStatutoryProfile = Prisma.EmployeeStatutoryProfileModel
-/**
- * Model EmployeeStatutoryRecord
- * 
- */
-export type EmployeeStatutoryRecord = Prisma.EmployeeStatutoryRecordModel
 /**
  * Model PayComponent
  * 

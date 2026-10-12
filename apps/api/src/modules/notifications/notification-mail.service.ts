@@ -57,7 +57,16 @@ export class NotificationMailService {
     ).replace(/\/+$/, '');
     return this.database.run(context, async (tx) => {
       const pending = await tx.notification.findMany({
-        where: { organizationId: context.organizationId, emailedAt: null },
+        where: {
+          organizationId: context.organizationId,
+          emailedAt: null,
+          OR: [
+            { recipient: { notificationDelivery: 'IMMEDIATE' } },
+            { kind: { in: ['APPROVAL_ESCALATED', 'PAYROLL_RELEASED'] } },
+            { recipient: { emailNotifications: false } },
+            { recipient: { isActive: false } },
+          ],
+        },
         orderBy: { createdAt: 'asc' },
         take: BATCH,
         include: {

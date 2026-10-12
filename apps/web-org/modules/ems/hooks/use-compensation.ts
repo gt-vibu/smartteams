@@ -15,10 +15,9 @@ import { useMutationRunner } from './use-mutation-runner';
  * Compensation configuration: the organisation's pay-component catalogue, and one employee's
  * salary profile with the components assigned to them.
  *
- * The screen this feeds replaced a builder that modelled "salary structures" — named templates
- * targeted at roles and departments, each with its own statutory switches. No such entity exists
- * in this backend. Compensation is: an organisation payroll policy, a gross salary per employee,
- * and effective-dated component assignments. The hook exposes exactly those.
+ * The screen this feeds combines the tenant payroll defaults with employee salary records and
+ * effective-dated component assignments. Role-wise allotment writes reviewed employee records;
+ * individual records take precedence over the organization default.
  */
 export function useCompensation() {
   const { session, persona } = useSession();
@@ -121,6 +120,7 @@ export function useCompensation() {
       pfEnabled: boolean;
       esiEnabled: boolean;
       ptEnabled: boolean;
+      payrollPolicyId?: string;
     }) =>
       run(
         () =>

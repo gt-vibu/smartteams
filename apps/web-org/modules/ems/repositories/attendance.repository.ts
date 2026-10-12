@@ -35,8 +35,11 @@ export const attendanceRepository = {
   async list(
     organizationId: string,
     filters: {
+      search?: string;
       employeeId?: string;
       branchId?: string;
+      departmentId?: string;
+      dayStatus?: string;
       from?: string;
       to?: string;
       cursor?: string;
@@ -97,6 +100,30 @@ export const attendanceRepository = {
     );
   },
 
+  async requestCorrectionForDate(
+    organizationId: string,
+    input: {
+      employeeId: string;
+      workDate: string;
+      reason: string;
+      correctedCheckIn: string;
+      correctedCheckOut?: string;
+    },
+  ): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/attendance')}/corrections/date`, {
+      method: 'POST',
+      body: {
+        employeeId: input.employeeId,
+        workDate: input.workDate,
+        reason: input.reason,
+        afterSnapshot: {
+          correctedCheckIn: input.correctedCheckIn,
+          ...(input.correctedCheckOut ? { correctedCheckOut: input.correctedCheckOut } : {}),
+        },
+      },
+    });
+  },
+
   /**
    * Decides a correction. `checkOutAt` approves a different time than the one asked for — the real
    * time an employee left, where the automatic close proposed the end of the day.
@@ -105,13 +132,26 @@ export const attendanceRepository = {
     organizationId: string,
     correctionId: string,
     status: 'APPROVED' | 'REJECTED',
-    comment: string,
+    comment?: string,
     checkOutAt?: string,
   ): Promise<unknown> {
     return apiRequest(
       `${orgPath(organizationId, '/attendance')}/${encodeURIComponent(correctionId)}/decision`,
-      { method: 'POST', body: { status, comment, ...(checkOutAt ? { checkOutAt } : {}) } },
+      {
+        method: 'POST',
+        body: {
+          status,
+          ...(comment?.trim() ? { comment: comment.trim() } : {}),
+          ...(checkOutAt ? { checkOutAt } : {}),
+        },
+      },
     );
+  },
+
+  async listCorrectionPage(organizationId: string, filters: { search?: string; status?: string; cursor?: string; limit?: number } = {}) {
+    return expectShape(parseAttendanceCorrectionPage(await apiRequest(
+      `${orgPath(organizationId, '/attendance')}/corrections${queryString(filters)}`, { method: 'GET' },
+    )), 'attendance correction page');
   },
 
   async listCorrections(
@@ -133,14 +173,22 @@ export const attendanceRepository = {
 
   /** Corrections awaiting the signed-in user's decision. */
   async correctionInbox(organizationId: string): Promise<AttendanceCorrection[]> {
-    return expectShape(
-      parseAttendanceCorrectionPage(
-        await apiRequest(`${orgPath(organizationId, '/attendance')}/corrections/inbox`, {
-          method: 'GET',
-        }),
-      ),
-      'attendance approval inbox',
-    ).corrections;
+    const items: AttendanceCorrection[] = [];
+    let cursor: string | undefined;
+    do {
+      const payload = (await apiRequest(
+        `${orgPath(organizationId, '/attendance')}/corrections/inbox${queryString({ cursor, limit: 100 })}`,
+        { method: 'GET' },
+      )) as { corrections: unknown[]; nextCursor?: string };
+      items.push(
+        ...expectShape(parseAttendanceCorrectionPage(payload), 'attendance approval inbox')
+          .corrections,
+      );
+      if (payload.nextCursor === cursor && cursor)
+        throw new Error('Approval paging did not advance.');
+      cursor = payload.nextCursor;
+    } while (cursor);
+    return items;
   },
 
   async getPreferences(organizationId: string, branchId?: string): Promise<AttendancePreferences> {

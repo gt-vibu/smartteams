@@ -1,3 +1,5 @@
+import { employeeDirectorySummary } from './employee-directory-summary';
+import { employeeListWhere, type EmployeeListFilters } from './employee-list-filters';
 import { Injectable } from '@nestjs/common';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { NotFoundError } from '../../common/errors/domain-error';
@@ -23,6 +25,11 @@ import { assertMayReadEmployee, canReadAllEmployees, findSelfEmployeeId } from '
 @Injectable()
 export class EmployeeDetailService {
   constructor(private readonly database: TenantDatabaseService) {}
+
+  summary(context: DomainContext) {
+    requirePermission(context, 'employees.read');
+    return this.database.run(context, (tx) => employeeDirectorySummary(tx, context));
+  }
 
   async detail(context: DomainContext, employeeId: string) {
     requirePermission(context, 'employees.read');
@@ -135,7 +142,7 @@ export class EmployeeDetailService {
    *
    * Self-scoped like every other employee read — an ordinary employee sees only themselves here.
    */
-  async directory(context: DomainContext, filters: { limit?: number; cursor?: string } = {}) {
+  async directory(context: DomainContext, filters: EmployeeListFilters = {}) {
     requirePermission(context, 'employees.read');
     const limit = Math.min(Math.max(filters.limit ?? 200, 1), 200);
     return this.database.run(context, async (tx) => {
@@ -145,8 +152,10 @@ export class EmployeeDetailService {
 
       const employees = await tx.employee.findMany({
         where: {
-          organizationId: context.organizationId,
-          ...(selfEmployeeId ? { id: selfEmployeeId } : {}),
+          AND: [
+            employeeListWhere(context, filters),
+            ...(selfEmployeeId ? [{ id: selfEmployeeId }] : []),
+          ],
         },
         select: {
           id: true,
@@ -163,8 +172,12 @@ export class EmployeeDetailService {
           departmentId: true,
           managerEmployeeId: true,
           userId: true,
+          _count: { select: { reports: true } },
         },
-        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
+        orderBy:
+          filters.order === 'recent'
+            ? [{ dateOfJoining: 'desc' }, { id: 'asc' }]
+            : [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
         ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
         take: limit + 1,
       });
@@ -216,6 +229,7 @@ export class EmployeeDetailService {
           departmentId: employee.departmentId,
           /** Whether a login is attached. The user id itself is never exposed. */
           hasUserAccount: employee.userId !== null,
+          directReportsCount: employee._count.reports,
         })),
         nextCursor: hasNextPage ? page.at(-1)?.id : undefined,
       };

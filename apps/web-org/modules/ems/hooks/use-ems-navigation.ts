@@ -7,6 +7,7 @@ export type EmsSpace = 'My Space' | 'Team' | 'Organization';
 export type EmsModule =
   | 'home'
   | 'onboarding'
+  | 'org-setup'
   | 'employees'
   | 'attendance'
   | 'timesheet'
@@ -32,6 +33,7 @@ export interface EmsNavState {
 const VALID_MODULES: EmsModule[] = [
   'home',
   'onboarding',
+  'org-setup',
   'employees',
   'attendance',
   'timesheet',
@@ -170,7 +172,7 @@ export function useEmsNavigation() {
   );
 
   const navigateToModule = useCallback(
-    (moduleName: string, subView?: AttendanceViewMode) => {
+    (moduleName: string, subView?: string) => {
       let normalizedModule: EmsModule = 'home';
       if (moduleName === 'leave' || moduleName === 'time-off') normalizedModule = 'time-off';
       else if (VALID_MODULES.includes(moduleName as EmsModule))
@@ -182,8 +184,21 @@ export function useEmsNavigation() {
         // change the URL and nothing on screen.
         ...(navState.space === 'Team' ? { space: 'My Space' as const } : {}),
         module: normalizedModule,
-        ...(subView ? { attendanceView: subView } : {}),
+        ...(normalizedModule === 'attendance' && (subView === 'timeline' || subView === 'table' || subView === 'calendar')
+          ? { attendanceView: subView }
+          : {}),
       });
+      // Workspace view filters use their own URL keys. Carry a requested sub-view through the
+      // module hop so dashboard summaries open the matching list, not its unfiltered default.
+      const targetKey = normalizedModule === 'employees' ? 'people'
+        : normalizedModule === 'org-setup' ? 'setup'
+        : null;
+      if (targetKey && subView && typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        params.set(targetKey, subView);
+        const query = params.toString();
+        window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+      }
     },
     [pushNavState, navState.space],
   );

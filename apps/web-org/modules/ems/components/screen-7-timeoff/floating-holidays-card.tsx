@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { formatDate } from '@smarteam/contracts';
 import { Calendar, CheckCircle2, CheckSquare, Sparkles, XCircle } from 'lucide-react';
-import { Badge, Button } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button } from '@smarteam/ui';
 import type { Holiday, EmployeeHolidaySelection } from '@smarteam/contracts';
 import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
 import {
@@ -101,9 +101,7 @@ export function OptionalHolidaysCard() {
   if (loading) {
     return (
       <div className="rounded-xl border border-border bg-card p-5">
-        <p className="py-4 text-center text-xs text-muted-foreground" role="status">
-          Loading optional holiday allowance...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading optional holiday allowance" className="py-4 text-center text-xs text-muted-foreground" />
       </div>
     );
   }

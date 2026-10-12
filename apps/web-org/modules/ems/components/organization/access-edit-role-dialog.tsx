@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { groupPermissionCatalogue, type RoleWithPermissions } from '@smarteam/contracts';
-import { Button, Checkbox, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
+import { Button, Checkbox, Dialog, DialogContent, DialogTitle } from '@smarteam/ui';
 
 const GROUPS = groupPermissionCatalogue();
 
@@ -12,8 +12,8 @@ const GROUPS = groupPermissionCatalogue();
  * The picker is the same catalogue the create dialog offers — only permissions the API enforces —
  * checked as the role has them now. A permission the signed-in user does not hold is shown but
  * cannot be toggled, because the API would refuse granting or removing it; showing it disabled says
- * why the box will not move instead of letting a save fail. Nothing changes until Save, and the
- * reason is recorded with the change.
+ * why the box will not move instead of letting a save fail. Nothing changes until Save; the
+ * permission diff is captured in the audit history.
  */
 export function AccessEditRoleDialog({
   role,
@@ -35,13 +35,11 @@ export function AccessEditRoleDialog({
     [role],
   );
   const [selected, setSelected] = useState<Set<string>>(original);
-  const [reason, setReason] = useState('');
   const isAdministrator = ownPermissions.includes('*');
 
   // A different role, or the same one reloaded after a save, starts from what the server holds.
   useEffect(() => {
     setSelected(new Set(original));
-    setReason('');
   }, [original]);
 
   const added = [...selected].filter((key) => !original.has(key));
@@ -50,8 +48,11 @@ export function AccessEditRoleDialog({
   const canToggle = (key: string) => isAdministrator || ownPermissions.includes(key);
 
   const save = async () => {
-    if (!role || changed === 0 || reason.trim().length < 3) return;
-    const ok = await onSave(role.id, { permissionKeys: [...selected], reason: reason.trim() });
+    if (!role || changed === 0) return;
+    const ok = await onSave(role.id, {
+      permissionKeys: [...selected],
+      reason: 'Role permissions updated',
+    });
     if (ok) onClose();
   };
 
@@ -110,18 +111,6 @@ export function AccessEditRoleDialog({
           ))}
         </div>
 
-        <div className="space-y-1.5 border-t border-border px-5 py-3">
-          <Label htmlFor="role-change-reason">Reason for the change</Label>
-          <Input
-            disabled={saving}
-            id="role-change-reason"
-            maxLength={500}
-            onChange={(event) => setReason(event.target.value)}
-            placeholder="e.g. Managers now approve timesheets"
-            value={reason}
-          />
-        </div>
-
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-4">
           <p className="text-[11px] text-muted-foreground" role="status">
             {saveError ? (
@@ -136,11 +125,7 @@ export function AccessEditRoleDialog({
             <Button disabled={saving} onClick={onClose} type="button" variant="outline">
               Cancel
             </Button>
-            <Button
-              disabled={saving || changed === 0 || reason.trim().length < 3}
-              onClick={() => void save()}
-              type="button"
-            >
+            <Button disabled={saving || changed === 0} onClick={() => void save()} type="button">
               {saving ? 'Saving...' : 'Save permissions'}
             </Button>
           </div>

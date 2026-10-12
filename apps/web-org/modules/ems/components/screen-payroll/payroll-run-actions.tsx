@@ -1,28 +1,9 @@
 'use client';
+import { EmployeeCombobox } from '../common/employee-combobox';
 
+import { isCalculationStale, LIMITS, type PayrollRun } from '@smarteam/contracts';
+import { Button, DatePicker, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 import React, { useState } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DatePicker,
-  Input,
-  Label,
-  SelectContent,
-  SelectItem,
-  SelectMenu,
-  SelectTrigger,
-  SelectValue,
-  Textarea,
-} from '@smarteam/ui';
-import {
-  employeeDisplayName,
-  isCalculationStale,
-  type PayrollRun,
-  LIMITS,
-} from '@smarteam/contracts';
-import { useEmployees } from '../../hooks/use-workforce';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
 
 /**
@@ -37,15 +18,13 @@ import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
  * must not present an action the server will reject.
  */
 export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: PayrollAdminState }) {
-  const [comment, setComment] = useState('');
   const [pending, setPending] = useState<'APPROVED' | 'RELEASED' | 'LOCKED' | null>(null);
   const stale = isCalculationStale(run);
 
   const confirm = async () => {
     if (!pending) return;
-    const ok = await admin.advanceRun(run.id, pending, comment.trim());
+    const ok = await admin.advanceRun(run.id, pending, `Payroll run ${pending.toLowerCase()}`);
     if (ok) {
-      setComment('');
       setPending(null);
     }
   };
@@ -72,7 +51,7 @@ export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: Payr
           Approve
         </Button>
       )}
-      {run.status === 'APPROVED' && admin.can.release && (
+      {run.status === 'APPROVED' && !stale && admin.can.release && (
         <Button
           disabled={admin.saving}
           onClick={() => setPending('RELEASED')}
@@ -100,20 +79,7 @@ export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: Payr
             {pending === 'RELEASED' ? 'Release' : pending === 'LOCKED' ? 'Lock' : 'Approve'} this
             payroll run
           </DialogTitle>
-          <p className="mt-1 text-xs text-muted-foreground">
-            The reason is recorded against the run in the audit trail.
-          </p>
           <div className="mt-4 space-y-3">
-            <Label className="block" htmlFor="run-action-comment">
-              Reason
-            </Label>
-            <Textarea
-              maxLength={LIMITS.reason}
-              disabled={admin.saving}
-              id="run-action-comment"
-              onChange={(event) => setComment(event.target.value)}
-              value={comment}
-            />
             {admin.saveError && (
               <p className="text-xs text-destructive" role="alert">
                 {admin.saveError}
@@ -128,11 +94,7 @@ export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: Payr
               >
                 Cancel
               </Button>
-              <Button
-                disabled={admin.saving || comment.trim().length < 3}
-                onClick={() => void confirm()}
-                type="button"
-              >
+              <Button disabled={admin.saving} onClick={() => void confirm()} type="button">
                 {admin.saving ? 'Working...' : 'Confirm'}
               </Button>
             </div>
@@ -236,8 +198,6 @@ export function AddAdjustmentDialog({
 }) {
   const [employeeId, setEmployeeId] = useState('');
   // Chosen by name: the field used to ask for the internal id, which nobody can type.
-  const employees = useEmployees();
-  const active = (employees.data ?? []).filter((employee) => employee.status === 'ACTIVE');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
 
@@ -275,20 +235,12 @@ export function AddAdjustmentDialog({
             <Label className="mb-1 block" htmlFor="adjustment-employee">
               Employee
             </Label>
-            <SelectMenu disabled={admin.saving} onValueChange={setEmployeeId} value={employeeId}>
-              <SelectTrigger id="adjustment-employee">
-                <SelectValue
-                  placeholder={employees.loading ? 'Loading people…' : 'Choose a person'}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {active.map((employee) => (
-                  <SelectItem key={employee.id} value={employee.id}>
-                    {employeeDisplayName(employee)} · {employee.employeeNumber}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </SelectMenu>
+            <EmployeeCombobox
+              employees={[]}
+              value={employeeId}
+              onChange={setEmployeeId}
+              disabled={admin.saving}
+            />
           </div>
           <div>
             <Label className="mb-1 block" htmlFor="adjustment-amount">

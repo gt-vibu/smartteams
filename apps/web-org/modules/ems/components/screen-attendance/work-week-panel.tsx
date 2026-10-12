@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Button } from '@smarteam/ui';
+import { Button, LoadingIndicator } from '@smarteam/ui';
 import { useWorkWeek } from '../../hooks/use-work-week';
 
 const DAYS = [
-  { day: 1, label: 'Mon' },
-  { day: 2, label: 'Tue' },
-  { day: 3, label: 'Wed' },
-  { day: 4, label: 'Thu' },
-  { day: 5, label: 'Fri' },
-  { day: 6, label: 'Sat' },
-  { day: 7, label: 'Sun' },
+  { day: 1, label: 'Monday' },
+  { day: 2, label: 'Tuesday' },
+  { day: 3, label: 'Wednesday' },
+  { day: 4, label: 'Thursday' },
+  { day: 5, label: 'Friday' },
+  { day: 6, label: 'Saturday' },
+  { day: 7, label: 'Sunday' },
 ];
 
 /**
@@ -24,7 +24,8 @@ export function WorkWeekPanel() {
   const [selected, setSelected] = useState<number[]>(week.workWeekDays);
   const [absent, setAbsent] = useState(week.unmarkedDaysAreAbsent);
   const [saved, setSaved] = useState(false);
-  useEffect(() => setSelected(week.workWeekDays), [week.workWeekDays]);
+  const savedDaysKey = week.workWeekDays.join(',');
+  useEffect(() => setSelected(savedDaysKey.split(',').map(Number)), [savedDaysKey]);
   useEffect(() => setAbsent(week.unmarkedDaysAreAbsent), [week.unmarkedDaysAreAbsent]);
 
   const toggle = (day: number) => {
@@ -37,13 +38,26 @@ export function WorkWeekPanel() {
     [...selected].sort().join() !== [...week.workWeekDays].sort().join() ||
     absent !== week.unmarkedDaysAreAbsent;
 
+  if (week.loading) return <LoadingIndicator label="Loading working days" />;
+  if (week.error || !week.ready) return (
+    <section className="rounded-lg border border-border bg-card p-4 space-y-3">
+      <p className="text-xs text-destructive" role="alert">{week.error || 'Working days are unavailable.'}</p>
+      <Button onClick={() => void week.refetch()} size="sm" type="button" variant="outline">Retry</Button>
+    </section>
+  );
+
   return (
     <section className="rounded-lg border border-border bg-card p-4 space-y-3">
       <div>
         <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">Working days</h3>
         <p className="mt-0.5 text-[11px] text-muted-foreground">
           Unticked days are weekly offs. Payroll counts a working day with no attendance or leave as
-          an absence, and leave requests are charged only for working days.
+          an absence, and leave requests are charged only for working days. Select Saturday or Sunday
+          whenever your organization works those days.
+        </p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          This is the recurring organization schedule. Employees with an assigned shift follow that
+          shift&apos;s working days. Holidays and approved leave still apply.
         </p>
       </div>
       <div className="flex flex-wrap gap-2" role="group" aria-label="Working days">
@@ -67,6 +81,7 @@ export function WorkWeekPanel() {
           );
         })}
       </div>
+      {selected.length === 0 && <p className="text-xs text-destructive" role="alert">Select at least one working day.</p>}
       <label className="flex items-start gap-2 text-xs text-foreground">
         <input
           checked={absent}
@@ -93,7 +108,7 @@ export function WorkWeekPanel() {
       )}
       {saved && !changed && (
         <p className="text-xs text-muted-foreground" role="status">
-          Working days saved.
+          Working days saved. Calendars and attendance now follow this schedule.
         </p>
       )}
       {week.canWrite && (

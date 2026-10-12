@@ -50,7 +50,7 @@ export function RotationDialog({
   onPlanned: () => void;
 }) {
   const { session } = useSession();
-  const employees = useEmployees();
+  const employees = useEmployees({ enabled: false });
   const [people, setPeople] = useState<string[]>([]);
   const [order, setOrder] = useState<string[]>([]);
   const [weeks, setWeeks] = useState(2);

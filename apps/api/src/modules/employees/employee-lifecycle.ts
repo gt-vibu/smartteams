@@ -34,4 +34,22 @@ export async function endCurrentRelationships(
     where: { ...scope, OR: [{ endsOn: null }, { endsOn: { gt: lastDay } }] },
     data: { endsOn: lastDay },
   });
+
+  // An inactive/exited employee does not remain an active department member or leader.
+  await tx.employee.update({
+    where: { id: employeeId },
+    data: { departmentId: null },
+  });
+  await tx.department.updateMany({
+    where: { organizationId, headEmployeeId: employeeId },
+    data: { headEmployeeId: null },
+  });
+  await tx.team.updateMany({
+    where: { organizationId, teamLeadEmployeeId: employeeId },
+    data: { teamLeadEmployeeId: null },
+  });
+  await tx.project.updateMany({
+    where: { organizationId, projectLeadEmployeeId: employeeId },
+    data: { projectLeadEmployeeId: null },
+  });
 }

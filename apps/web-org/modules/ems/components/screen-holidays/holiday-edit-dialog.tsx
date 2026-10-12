@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { formatDate, formatDateRange, LIMITS, textProblem } from '@smarteam/contracts';
 import { Button, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 import type { Holiday } from '@smarteam/contracts';
@@ -27,6 +27,7 @@ export function HolidayDialog({
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isOptional, setIsOptional] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   const activeTargetGroup =
     holidayGroup ??
@@ -101,8 +102,17 @@ export function HolidayDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-w-md">
-        <DialogTitle>{isEditing ? 'Edit holiday' : 'Add holiday'}</DialogTitle>
+      <DialogContent
+        className="sm:max-w-md"
+        onOpenAutoFocus={(event) => {
+          if (!isEditing) return;
+          event.preventDefault();
+          titleRef.current?.focus();
+        }}
+      >
+        <DialogTitle ref={titleRef} tabIndex={isEditing ? -1 : undefined}>
+          {isEditing ? 'Edit holiday' : 'Add holiday'}
+        </DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <div>
             <Label className="mb-1 block" htmlFor="holiday-name">
@@ -111,7 +121,7 @@ export function HolidayDialog({
             <Input
               maxLength={LIMITS.title}
               problem={textProblem(name, 'Holiday name', LIMITS.title, 2)}
-              autoFocus
+              autoFocus={!isEditing}
               disabled={holidays.saving}
               id="holiday-name"
               onChange={(event) => setName(event.target.value)}
@@ -184,15 +194,19 @@ export function HolidayDialog({
             </div>
           )}
 
-          <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer select-none">
-            <input
-              checked={isOptional}
+          <div className="space-y-1">
+            <Label className="block" htmlFor="holiday-type">Holiday type</Label>
+            <select
+              className="h-9 w-full rounded-md border border-input bg-card px-3 text-xs text-foreground shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               disabled={holidays.saving}
-              onChange={(event) => setIsOptional(event.target.checked)}
-              type="checkbox"
-            />
-            Optional holiday (adds to the optional pool)
-          </label>
+              id="holiday-type"
+              onChange={(event) => setIsOptional(event.target.value === 'optional')}
+              value={isOptional ? 'optional' : 'compulsory'}
+            >
+              <option value="compulsory">Compulsory · public holiday</option>
+              <option value="optional">Optional · restricted pool</option>
+            </select>
+          </div>
 
           {holidays.saveError && (
             <p className="text-xs text-destructive" role="alert">

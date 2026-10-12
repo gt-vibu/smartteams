@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { IsDateString, IsEnum, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import type { Response } from 'express';
 import type { Request } from 'express';
-import { IsDateString } from 'class-validator';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { ReportsService } from './reports.service';
@@ -8,6 +9,19 @@ import { ReportsService } from './reports.service';
 export class ReportSpanDto {
   @IsDateString() from!: string;
   @IsDateString() to!: string;
+}
+
+export class ReportDateDto {
+  @IsDateString() date!: string;
+}
+
+export class ReportExportQueryDto {
+  @IsDateString() from!: string;
+  @IsDateString() to!: string;
+  @IsOptional() @IsUUID() employeeId?: string;
+  @IsOptional() @IsUUID() departmentId?: string;
+  @IsOptional() @IsString() @MaxLength(100) search?: string;
+  @IsOptional() @IsEnum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED', 'DRAFT', 'SUBMITTED']) status?: string;
 }
 
 type Authed = Request & { user: NativeRequestUser };
@@ -36,6 +50,15 @@ export class ReportsController {
       .then((context) => this.reports.attendance(context, span.from, span.to));
   }
 
+  @Get('attendance-summary') attendanceSummary(
+    @Param('organizationId') org: string,
+    @Query() query: ReportDateDto,
+    @Req() request: Authed,
+  ) {
+    return this.contexts.native(request.user.userId, org)
+      .then((context) => this.reports.attendanceSummary(context, query.date));
+  }
+
   @Get('leave') leave(
     @Param('organizationId') org: string,
     @Query() span: ReportSpanDto,
@@ -54,5 +77,37 @@ export class ReportsController {
     return this.contexts
       .native(request.user.userId, org)
       .then((context) => this.reports.projectHours(context, span.from, span.to));
+  }
+
+  @Get('non-working-days') nonWorkingDays(
+    @Param('organizationId') org: string,
+    @Query() span: ReportSpanDto,
+    @Req() request: Authed,
+  ) {
+    return this.contexts
+      .native(request.user.userId, org)
+      .then((context) => this.reports.nonWorkingDaysAudit(context, span.from, span.to));
+  }
+
+  @Get('leave/export') exportLeave(
+    @Param('organizationId') org: string,
+    @Query() query: ReportExportQueryDto,
+    @Req() request: Authed,
+    @Res() response: Response,
+  ) {
+    return this.contexts.native(request.user.userId, org).then((context) =>
+      this.reports.exportLeaveCsv(context, query, response),
+    );
+  }
+
+  @Get('timesheets/export') exportTimesheets(
+    @Param('organizationId') org: string,
+    @Query() query: ReportExportQueryDto,
+    @Req() request: Authed,
+    @Res() response: Response,
+  ) {
+    return this.contexts.native(request.user.userId, org).then((context) =>
+      this.reports.exportTimesheetsCsv(context, query, response),
+    );
   }
 }

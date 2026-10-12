@@ -34,21 +34,15 @@ export function AccessAddMemberDialog({
 }) {
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [reason, setReason] = useState('');
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const reset = () => {
     setEmail('');
     setDisplayName('');
-    setReason('');
     setSelected(new Set());
   };
 
-  const canSubmit =
-    email.trim().length > 3 &&
-    displayName.trim().length >= 2 &&
-    reason.trim().length >= 3 &&
-    selected.size > 0;
+  const canSubmit = email.trim().length > 3 && displayName.trim().length >= 2 && selected.size > 0;
 
   const handleAdd = async () => {
     if (!canSubmit) return;
@@ -56,7 +50,7 @@ export function AccessAddMemberDialog({
       email: email.trim(),
       displayName: displayName.trim(),
       roleIds: [...selected],
-      reason: reason.trim(),
+      reason: 'Member added through organization access settings',
     });
     if (ok) {
       reset();
@@ -105,7 +99,7 @@ export function AccessAddMemberDialog({
           </div>
 
           <div className="space-y-1.5">
-            <Label>Roles</Label>
+            <Label>Access profiles</Label>
             <div className="space-y-0.5 rounded-md border border-border p-2">
               {roles.map((role) => (
                 <label
@@ -127,17 +121,6 @@ export function AccessAddMemberDialog({
                 </label>
               ))}
             </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="member-reason">Reason</Label>
-            <Input
-              maxLength={LIMITS.reason}
-              id="member-reason"
-              onChange={(event) => setReason(event.target.value)}
-              placeholder="Why is this person being added?"
-              value={reason}
-            />
           </div>
         </div>
 

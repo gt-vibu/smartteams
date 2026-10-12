@@ -1,10 +1,16 @@
 'use client';
 
 import React from 'react';
+import { Checkbox, Input } from './form';
+import { Button } from './button';
 import { Select } from './select';
-import { Checkbox } from './form';
+import {
+  displayValue,
+  pluralLower,
+  useStandardDataTable,
+  type ColumnDef,
+} from './standard-data-table-model';
 import { StandardDataTablePagination } from './standard-data-table-pagination';
-import { displayValue, useStandardDataTable, type ColumnDef } from './standard-data-table-model';
 
 // Re-exported so every existing `import { ColumnDef } from '@smarteam/ui'` keeps working: the
 // split is internal, and the component's public surface is unchanged.
@@ -28,6 +34,7 @@ export interface StandardDataTableProps<T> {
   compact?: boolean;
   showColumnVisibilityToggle?: boolean;
   defaultSort?: { columnId: string; direction: 'asc' | 'desc' };
+  pagination?: boolean;
 }
 
 export function StandardDataTable<T>({
@@ -48,6 +55,7 @@ export function StandardDataTable<T>({
   compact = false,
   showColumnVisibilityToggle = true,
   defaultSort,
+  pagination = true,
 }: StandardDataTableProps<T>) {
   const {
     searchQuery,
@@ -84,7 +92,7 @@ export function StandardDataTable<T>({
 
   return (
     <div
-      className={`w-full flex flex-col bg-card rounded-[6px] border border-border shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden ${className}`}
+      className={`flex w-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm ${className}`}
     >
       {/* ─── Top Control Toolbar ─────────────────────────────────────────── */}
       {(title ||
@@ -92,13 +100,21 @@ export function StandardDataTable<T>({
         Object.keys(resolvedFilterOptions).length > 0 ||
         actions ||
         showColumnVisibilityToggle) && (
-        <div className="p-3.5 sm:p-4 border-b border-border bg-muted/40 space-y-3">
+        <div className="space-y-3 border-b border-border bg-muted/30 p-4 sm:p-5">
           {/* Header row with Title & Custom Actions */}
           {(title || actions) && (
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                {title && <h3 className="text-sm font-bold text-foreground">{title}</h3>}
-                {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+                {title && (
+                  <h3 className="text-base font-semibold tracking-tight text-foreground">
+                    {title}
+                  </h3>
+                )}
+                {subtitle && (
+                  <p className="mt-1 max-w-[60ch] text-[13px] leading-5 text-muted-foreground">
+                    {subtitle}
+                  </p>
+                )}
               </div>
               {actions && <div className="flex items-center gap-2">{actions}</div>}
             </div>
@@ -125,7 +141,7 @@ export function StandardDataTable<T>({
                       />
                     </svg>
                   </span>
-                  <input
+                  <Input
                     type="text"
                     aria-label={searchPlaceholder}
                     value={searchQuery}
@@ -134,7 +150,7 @@ export function StandardDataTable<T>({
                       setCurrentPage(1);
                     }}
                     placeholder={searchPlaceholder}
-                    className="w-full pl-8 pr-7 py-1.5 text-xs bg-card border border-border rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all"
+                    className="h-10 w-full pl-9 pr-8 text-[13px] shadow-none"
                   />
                   {searchQuery && (
                     <button
@@ -195,7 +211,7 @@ export function StandardDataTable<T>({
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:opacity-80 bg-primary/10 hover:bg-primary/15 border border-primary/25 rounded-md px-2.5 py-1.5 transition-colors cursor-pointer"
+                  className="inline-flex h-9 items-center gap-1 rounded-md border border-primary/20 bg-primary/5 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
                 >
                   <svg
                     className="w-3 h-3"
@@ -218,12 +234,14 @@ export function StandardDataTable<T>({
             {/* Column Visibility Menu Button */}
             {showColumnVisibilityToggle && (
               <div className="relative">
-                <button
+                <Button
                   type="button"
                   aria-expanded={isColumnMenuOpen}
                   aria-haspopup="menu"
                   onClick={() => setIsColumnMenuOpen(!isColumnMenuOpen)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground bg-card hover:bg-muted/50 border border-border rounded-md px-3 py-1.5 cursor-pointer shadow-2xs transition-colors"
+                  className="h-9 shadow-none"
+                  size="sm"
+                  variant="outline"
                 >
                   <svg
                     className="w-3.5 h-3.5 text-muted-foreground"
@@ -239,12 +257,12 @@ export function StandardDataTable<T>({
                     />
                   </svg>
                   Columns
-                </button>
+                </Button>
 
                 {isColumnMenuOpen && (
-                  <div className="absolute right-0 mt-1 w-52 bg-card border border-border rounded-lg shadow-xl z-30 p-2 text-xs space-y-1">
-                    <div className="font-bold text-muted-foreground text-[10px] uppercase tracking-wider px-2 py-1 border-b border-border">
-                      Toggle Columns & Pin
+                  <div className="absolute right-0 z-30 mt-1 w-56 space-y-1 rounded-xl border border-border bg-card p-2 text-[13px] shadow-lg">
+                    <div className="border-b border-border px-2 py-2 text-xs font-semibold text-muted-foreground">
+                      Table columns
                     </div>
                     <div className="max-h-60 overflow-y-auto space-y-1 py-1">
                       {initialColumns.map((col) => {
@@ -293,10 +311,10 @@ export function StandardDataTable<T>({
 
       {/* ─── Main Scrollable Table Area ───────────────────────────────────── */}
       <div className="w-full overflow-x-auto relative">
-        <table className="w-full text-left text-xs border-collapse">
+        <table className="w-full border-collapse text-left text-[13px]">
           {/* Sticky Table Header */}
           <thead className="sticky top-0 z-20">
-            <tr className="bg-table-header border-b border-border backdrop-blur-xs text-[11px] font-semibold text-table-header-foreground uppercase tracking-wider shadow-2xs">
+            <tr className="border-b border-border bg-table-header text-[11px] font-semibold tracking-wide text-table-header-foreground">
               {displayColumns.map((col) => {
                 const isSortable = col.sortable !== false;
                 const isSorted = sortState?.columnId === col.id;
@@ -317,7 +335,7 @@ export function StandardDataTable<T>({
                   <th
                     key={col.id}
                     style={{ width: col.width }}
-                    className={`${compact ? 'py-2 px-3' : 'py-3 px-4'} ${
+                    className={`${compact ? 'py-2.5 px-3' : 'py-3.5 px-4'} ${
                       col.align === 'center'
                         ? 'text-center'
                         : col.align === 'right'
@@ -396,7 +414,7 @@ export function StandardDataTable<T>({
           </thead>
 
           {/* Table Body */}
-          <tbody className="divide-y divide-border text-foreground">
+          <tbody className="divide-y divide-border text-[13px] text-foreground">
             {paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={displayColumns.length} className="py-12 px-4 text-center">
@@ -457,7 +475,7 @@ export function StandardDataTable<T>({
                       return (
                         <td
                           key={col.id}
-                          className={`${compact ? 'py-2 px-3' : 'py-3 px-4'} ${
+                          className={`${compact ? 'py-2.5 px-3' : 'py-3.5 px-4'} ${
                             col.align === 'center'
                               ? 'text-center'
                               : col.align === 'right'
@@ -477,24 +495,20 @@ export function StandardDataTable<T>({
         </table>
       </div>
 
-      <StandardDataTablePagination
-        totalItems={totalItems}
-        currentPage={validCurrentPage}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        rowsPerPageOptions={rowsPerPageOptions}
-        onPageChange={setCurrentPage}
-        onPageSizeChange={(nextPageSize) => {
-          setPageSize(nextPageSize);
-          setCurrentPage(1);
-        }}
-      />
+      {pagination && (
+        <StandardDataTablePagination
+          totalItems={totalItems}
+          currentPage={validCurrentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          rowsPerPageOptions={rowsPerPageOptions}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(nextPageSize) => {
+            setPageSize(nextPageSize);
+            setCurrentPage(1);
+          }}
+        />
+      )}
     </div>
   );
-}
-
-/** "Status" → "statuses", "Shift" → "shifts": how a filter's "All …" option reads. */
-function pluralLower(word: string) {
-  const lower = word.toLowerCase();
-  return lower.endsWith('s') ? `${lower}es` : `${lower}s`;
 }

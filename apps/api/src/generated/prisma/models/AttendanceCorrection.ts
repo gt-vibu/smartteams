@@ -425,6 +425,11 @@ export type AttendanceCorrectionUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type AttendanceCorrectionScalarRelationFilter = {
+  is?: Prisma.AttendanceCorrectionWhereInput
+  isNot?: Prisma.AttendanceCorrectionWhereInput
+}
+
 export type AttendanceCorrectionListRelationFilter = {
   every?: Prisma.AttendanceCorrectionWhereInput
   some?: Prisma.AttendanceCorrectionWhereInput
@@ -476,9 +481,18 @@ export type AttendanceCorrectionMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
-export type AttendanceCorrectionScalarRelationFilter = {
-  is?: Prisma.AttendanceCorrectionWhereInput
-  isNot?: Prisma.AttendanceCorrectionWhereInput
+export type AttendanceCorrectionCreateNestedOneWithoutApprovalsInput = {
+  create?: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.AttendanceCorrectionCreateOrConnectWithoutApprovalsInput
+  connect?: Prisma.AttendanceCorrectionWhereUniqueInput
+}
+
+export type AttendanceCorrectionUpdateOneRequiredWithoutApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.AttendanceCorrectionCreateOrConnectWithoutApprovalsInput
+  upsert?: Prisma.AttendanceCorrectionUpsertWithoutApprovalsInput
+  connect?: Prisma.AttendanceCorrectionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AttendanceCorrectionUpdateToOneWithWhereWithoutApprovalsInput, Prisma.AttendanceCorrectionUpdateWithoutApprovalsInput>, Prisma.AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput>
 }
 
 export type AttendanceCorrectionCreateNestedManyWithoutRequestedByClientInput = {
@@ -649,20 +663,6 @@ export type AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchNestedI
   deleteMany?: Prisma.AttendanceCorrectionScalarWhereInput | Prisma.AttendanceCorrectionScalarWhereInput[]
 }
 
-export type AttendanceCorrectionCreateNestedOneWithoutApprovalsInput = {
-  create?: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
-  connectOrCreate?: Prisma.AttendanceCorrectionCreateOrConnectWithoutApprovalsInput
-  connect?: Prisma.AttendanceCorrectionWhereUniqueInput
-}
-
-export type AttendanceCorrectionUpdateOneRequiredWithoutApprovalsNestedInput = {
-  create?: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
-  connectOrCreate?: Prisma.AttendanceCorrectionCreateOrConnectWithoutApprovalsInput
-  upsert?: Prisma.AttendanceCorrectionUpsertWithoutApprovalsInput
-  connect?: Prisma.AttendanceCorrectionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AttendanceCorrectionUpdateToOneWithWhereWithoutApprovalsInput, Prisma.AttendanceCorrectionUpdateWithoutApprovalsInput>, Prisma.AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput>
-}
-
 export type AttendanceCorrectionCreateNestedManyWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutOrganizationInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutOrganizationInput> | Prisma.AttendanceCorrectionCreateWithoutOrganizationInput[] | Prisma.AttendanceCorrectionUncheckedCreateWithoutOrganizationInput[]
   connectOrCreate?: Prisma.AttendanceCorrectionCreateOrConnectWithoutOrganizationInput | Prisma.AttendanceCorrectionCreateOrConnectWithoutOrganizationInput[]
@@ -745,6 +745,82 @@ export type AttendanceCorrectionUncheckedUpdateManyWithoutApprovalPolicyNestedIn
   update?: Prisma.AttendanceCorrectionUpdateWithWhereUniqueWithoutApprovalPolicyInput | Prisma.AttendanceCorrectionUpdateWithWhereUniqueWithoutApprovalPolicyInput[]
   updateMany?: Prisma.AttendanceCorrectionUpdateManyWithWhereWithoutApprovalPolicyInput | Prisma.AttendanceCorrectionUpdateManyWithWhereWithoutApprovalPolicyInput[]
   deleteMany?: Prisma.AttendanceCorrectionScalarWhereInput | Prisma.AttendanceCorrectionScalarWhereInput[]
+}
+
+export type AttendanceCorrectionCreateWithoutApprovalsInput = {
+  id?: string
+  reason: string
+  beforeSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  afterSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status: $Enums.ApprovalStatus
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutAttendanceCorrectionsInput
+  attendanceRecord: Prisma.AttendanceRecordCreateNestedOneWithoutCorrectionsInput
+  attendancePunch?: Prisma.AttendancePunchCreateNestedOneWithoutCorrectionsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutAttendanceCorrectionsInput
+  requestedByUser?: Prisma.UserCreateNestedOneWithoutRequestedAttendanceCorrectionsInput
+  requestedByClient?: Prisma.FederationClientCreateNestedOneWithoutAttendanceCorrectionsInput
+}
+
+export type AttendanceCorrectionUncheckedCreateWithoutApprovalsInput = {
+  id?: string
+  organizationId: string
+  attendanceRecordId: string
+  attendancePunchId?: string | null
+  approvalPolicyId?: string | null
+  requestedByUserId?: string | null
+  requestedByClientId?: string | null
+  reason: string
+  beforeSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  afterSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status: $Enums.ApprovalStatus
+  createdAt?: Date | string
+}
+
+export type AttendanceCorrectionCreateOrConnectWithoutApprovalsInput = {
+  where: Prisma.AttendanceCorrectionWhereUniqueInput
+  create: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
+}
+
+export type AttendanceCorrectionUpsertWithoutApprovalsInput = {
+  update: Prisma.XOR<Prisma.AttendanceCorrectionUpdateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput>
+  create: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
+  where?: Prisma.AttendanceCorrectionWhereInput
+}
+
+export type AttendanceCorrectionUpdateToOneWithWhereWithoutApprovalsInput = {
+  where?: Prisma.AttendanceCorrectionWhereInput
+  data: Prisma.XOR<Prisma.AttendanceCorrectionUpdateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput>
+}
+
+export type AttendanceCorrectionUpdateWithoutApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  beforeSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  afterSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendanceCorrectionsNestedInput
+  attendanceRecord?: Prisma.AttendanceRecordUpdateOneRequiredWithoutCorrectionsNestedInput
+  attendancePunch?: Prisma.AttendancePunchUpdateOneWithoutCorrectionsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutAttendanceCorrectionsNestedInput
+  requestedByUser?: Prisma.UserUpdateOneWithoutRequestedAttendanceCorrectionsNestedInput
+  requestedByClient?: Prisma.FederationClientUpdateOneWithoutAttendanceCorrectionsNestedInput
+}
+
+export type AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendanceRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  attendancePunchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requestedByClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  beforeSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  afterSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AttendanceCorrectionCreateWithoutRequestedByClientInput = {
@@ -987,82 +1063,6 @@ export type AttendanceCorrectionUpdateWithWhereUniqueWithoutAttendancePunchInput
 export type AttendanceCorrectionUpdateManyWithWhereWithoutAttendancePunchInput = {
   where: Prisma.AttendanceCorrectionScalarWhereInput
   data: Prisma.XOR<Prisma.AttendanceCorrectionUpdateManyMutationInput, Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutAttendancePunchInput>
-}
-
-export type AttendanceCorrectionCreateWithoutApprovalsInput = {
-  id?: string
-  reason: string
-  beforeSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  afterSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status: $Enums.ApprovalStatus
-  createdAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutAttendanceCorrectionsInput
-  attendanceRecord: Prisma.AttendanceRecordCreateNestedOneWithoutCorrectionsInput
-  attendancePunch?: Prisma.AttendancePunchCreateNestedOneWithoutCorrectionsInput
-  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutAttendanceCorrectionsInput
-  requestedByUser?: Prisma.UserCreateNestedOneWithoutRequestedAttendanceCorrectionsInput
-  requestedByClient?: Prisma.FederationClientCreateNestedOneWithoutAttendanceCorrectionsInput
-}
-
-export type AttendanceCorrectionUncheckedCreateWithoutApprovalsInput = {
-  id?: string
-  organizationId: string
-  attendanceRecordId: string
-  attendancePunchId?: string | null
-  approvalPolicyId?: string | null
-  requestedByUserId?: string | null
-  requestedByClientId?: string | null
-  reason: string
-  beforeSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  afterSnapshot: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status: $Enums.ApprovalStatus
-  createdAt?: Date | string
-}
-
-export type AttendanceCorrectionCreateOrConnectWithoutApprovalsInput = {
-  where: Prisma.AttendanceCorrectionWhereUniqueInput
-  create: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
-}
-
-export type AttendanceCorrectionUpsertWithoutApprovalsInput = {
-  update: Prisma.XOR<Prisma.AttendanceCorrectionUpdateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput>
-  create: Prisma.XOR<Prisma.AttendanceCorrectionCreateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedCreateWithoutApprovalsInput>
-  where?: Prisma.AttendanceCorrectionWhereInput
-}
-
-export type AttendanceCorrectionUpdateToOneWithWhereWithoutApprovalsInput = {
-  where?: Prisma.AttendanceCorrectionWhereInput
-  data: Prisma.XOR<Prisma.AttendanceCorrectionUpdateWithoutApprovalsInput, Prisma.AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput>
-}
-
-export type AttendanceCorrectionUpdateWithoutApprovalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.StringFieldUpdateOperationsInput | string
-  beforeSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  afterSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendanceCorrectionsNestedInput
-  attendanceRecord?: Prisma.AttendanceRecordUpdateOneRequiredWithoutCorrectionsNestedInput
-  attendancePunch?: Prisma.AttendancePunchUpdateOneWithoutCorrectionsNestedInput
-  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutAttendanceCorrectionsNestedInput
-  requestedByUser?: Prisma.UserUpdateOneWithoutRequestedAttendanceCorrectionsNestedInput
-  requestedByClient?: Prisma.FederationClientUpdateOneWithoutAttendanceCorrectionsNestedInput
-}
-
-export type AttendanceCorrectionUncheckedUpdateWithoutApprovalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  attendanceRecordId?: Prisma.StringFieldUpdateOperationsInput | string
-  attendancePunchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestedByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestedByClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.StringFieldUpdateOperationsInput | string
-  beforeSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  afterSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AttendanceCorrectionCreateWithoutOrganizationInput = {

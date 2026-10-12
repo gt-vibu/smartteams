@@ -39,6 +39,7 @@ export type LeaveApprovalMinAggregateOutputType = {
   organizationId: string | null
   leaveRequestId: string | null
   approverUserId: string | null
+  decisionActor: string | null
   approvalPolicyStepId: string | null
   stepNumber: number | null
   status: $Enums.ApprovalStatus | null
@@ -52,6 +53,7 @@ export type LeaveApprovalMaxAggregateOutputType = {
   organizationId: string | null
   leaveRequestId: string | null
   approverUserId: string | null
+  decisionActor: string | null
   approvalPolicyStepId: string | null
   stepNumber: number | null
   status: $Enums.ApprovalStatus | null
@@ -65,6 +67,7 @@ export type LeaveApprovalCountAggregateOutputType = {
   organizationId: number
   leaveRequestId: number
   approverUserId: number
+  decisionActor: number
   approvalPolicyStepId: number
   stepNumber: number
   status: number
@@ -88,6 +91,7 @@ export type LeaveApprovalMinAggregateInputType = {
   organizationId?: true
   leaveRequestId?: true
   approverUserId?: true
+  decisionActor?: true
   approvalPolicyStepId?: true
   stepNumber?: true
   status?: true
@@ -101,6 +105,7 @@ export type LeaveApprovalMaxAggregateInputType = {
   organizationId?: true
   leaveRequestId?: true
   approverUserId?: true
+  decisionActor?: true
   approvalPolicyStepId?: true
   stepNumber?: true
   status?: true
@@ -114,6 +119,7 @@ export type LeaveApprovalCountAggregateInputType = {
   organizationId?: true
   leaveRequestId?: true
   approverUserId?: true
+  decisionActor?: true
   approvalPolicyStepId?: true
   stepNumber?: true
   status?: true
@@ -213,7 +219,8 @@ export type LeaveApprovalGroupByOutputType = {
   id: string
   organizationId: string
   leaveRequestId: string
-  approverUserId: string
+  approverUserId: string | null
+  decisionActor: string
   approvalPolicyStepId: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -249,7 +256,8 @@ export type LeaveApprovalWhereInput = {
   id?: Prisma.UuidFilter<"LeaveApproval"> | string
   organizationId?: Prisma.UuidFilter<"LeaveApproval"> | string
   leaveRequestId?: Prisma.UuidFilter<"LeaveApproval"> | string
-  approverUserId?: Prisma.UuidFilter<"LeaveApproval"> | string
+  approverUserId?: Prisma.UuidNullableFilter<"LeaveApproval"> | string | null
+  decisionActor?: Prisma.StringFilter<"LeaveApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableFilter<"LeaveApproval"> | string | null
   stepNumber?: Prisma.IntFilter<"LeaveApproval"> | number
   status?: Prisma.EnumApprovalStatusFilter<"LeaveApproval"> | $Enums.ApprovalStatus
@@ -258,7 +266,7 @@ export type LeaveApprovalWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"LeaveApproval"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   leaveRequest?: Prisma.XOR<Prisma.LeaveRequestScalarRelationFilter, Prisma.LeaveRequestWhereInput>
-  approver?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  approver?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   approvalPolicyStep?: Prisma.XOR<Prisma.ApprovalPolicyStepNullableScalarRelationFilter, Prisma.ApprovalPolicyStepWhereInput> | null
 }
 
@@ -266,7 +274,8 @@ export type LeaveApprovalOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   leaveRequestId?: Prisma.SortOrder
-  approverUserId?: Prisma.SortOrder
+  approverUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrderInput | Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -287,7 +296,8 @@ export type LeaveApprovalWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.LeaveApprovalWhereInput | Prisma.LeaveApprovalWhereInput[]
   organizationId?: Prisma.UuidFilter<"LeaveApproval"> | string
   leaveRequestId?: Prisma.UuidFilter<"LeaveApproval"> | string
-  approverUserId?: Prisma.UuidFilter<"LeaveApproval"> | string
+  approverUserId?: Prisma.UuidNullableFilter<"LeaveApproval"> | string | null
+  decisionActor?: Prisma.StringFilter<"LeaveApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableFilter<"LeaveApproval"> | string | null
   stepNumber?: Prisma.IntFilter<"LeaveApproval"> | number
   status?: Prisma.EnumApprovalStatusFilter<"LeaveApproval"> | $Enums.ApprovalStatus
@@ -296,7 +306,7 @@ export type LeaveApprovalWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"LeaveApproval"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   leaveRequest?: Prisma.XOR<Prisma.LeaveRequestScalarRelationFilter, Prisma.LeaveRequestWhereInput>
-  approver?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  approver?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   approvalPolicyStep?: Prisma.XOR<Prisma.ApprovalPolicyStepNullableScalarRelationFilter, Prisma.ApprovalPolicyStepWhereInput> | null
 }, "id" | "leaveRequestId_stepNumber">
 
@@ -304,7 +314,8 @@ export type LeaveApprovalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   leaveRequestId?: Prisma.SortOrder
-  approverUserId?: Prisma.SortOrder
+  approverUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrderInput | Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -325,7 +336,8 @@ export type LeaveApprovalScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"LeaveApproval"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"LeaveApproval"> | string
   leaveRequestId?: Prisma.UuidWithAggregatesFilter<"LeaveApproval"> | string
-  approverUserId?: Prisma.UuidWithAggregatesFilter<"LeaveApproval"> | string
+  approverUserId?: Prisma.UuidNullableWithAggregatesFilter<"LeaveApproval"> | string | null
+  decisionActor?: Prisma.StringWithAggregatesFilter<"LeaveApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableWithAggregatesFilter<"LeaveApproval"> | string | null
   stepNumber?: Prisma.IntWithAggregatesFilter<"LeaveApproval"> | number
   status?: Prisma.EnumApprovalStatusWithAggregatesFilter<"LeaveApproval"> | $Enums.ApprovalStatus
@@ -336,6 +348,7 @@ export type LeaveApprovalScalarWhereWithAggregatesInput = {
 
 export type LeaveApprovalCreateInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -343,7 +356,7 @@ export type LeaveApprovalCreateInput = {
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveApprovalsInput
   leaveRequest: Prisma.LeaveRequestCreateNestedOneWithoutApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepCreateNestedOneWithoutLeaveApprovalsInput
 }
 
@@ -351,7 +364,8 @@ export type LeaveApprovalUncheckedCreateInput = {
   id?: string
   organizationId: string
   leaveRequestId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -362,6 +376,7 @@ export type LeaveApprovalUncheckedCreateInput = {
 
 export type LeaveApprovalUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -369,7 +384,7 @@ export type LeaveApprovalUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveApprovalsNestedInput
   leaveRequest?: Prisma.LeaveRequestUpdateOneRequiredWithoutApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutLeaveApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutLeaveApprovalsNestedInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepUpdateOneWithoutLeaveApprovalsNestedInput
 }
 
@@ -377,7 +392,8 @@ export type LeaveApprovalUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -390,7 +406,8 @@ export type LeaveApprovalCreateManyInput = {
   id?: string
   organizationId: string
   leaveRequestId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -401,6 +418,7 @@ export type LeaveApprovalCreateManyInput = {
 
 export type LeaveApprovalUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -412,23 +430,14 @@ export type LeaveApprovalUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type LeaveApprovalListRelationFilter = {
-  every?: Prisma.LeaveApprovalWhereInput
-  some?: Prisma.LeaveApprovalWhereInput
-  none?: Prisma.LeaveApprovalWhereInput
-}
-
-export type LeaveApprovalOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
 }
 
 export type LeaveApprovalLeaveRequestIdStepNumberCompoundUniqueInput = {
@@ -441,6 +450,7 @@ export type LeaveApprovalCountOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   leaveRequestId?: Prisma.SortOrder
   approverUserId?: Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -458,6 +468,7 @@ export type LeaveApprovalMaxOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   leaveRequestId?: Prisma.SortOrder
   approverUserId?: Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -471,6 +482,7 @@ export type LeaveApprovalMinOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   leaveRequestId?: Prisma.SortOrder
   approverUserId?: Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -481,6 +493,20 @@ export type LeaveApprovalMinOrderByAggregateInput = {
 
 export type LeaveApprovalSumOrderByAggregateInput = {
   stepNumber?: Prisma.SortOrder
+}
+
+export type LeaveApprovalListRelationFilter = {
+  every?: Prisma.LeaveApprovalWhereInput
+  some?: Prisma.LeaveApprovalWhereInput
+  none?: Prisma.LeaveApprovalWhereInput
+}
+
+export type LeaveApprovalOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type LeaveApprovalCreateNestedManyWithoutApproverInput = {
@@ -653,6 +679,7 @@ export type LeaveApprovalUncheckedUpdateManyWithoutApprovalPolicyStepNestedInput
 
 export type LeaveApprovalCreateWithoutApproverInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -667,6 +694,7 @@ export type LeaveApprovalUncheckedCreateWithoutApproverInput = {
   id?: string
   organizationId: string
   leaveRequestId: string
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -708,7 +736,8 @@ export type LeaveApprovalScalarWhereInput = {
   id?: Prisma.UuidFilter<"LeaveApproval"> | string
   organizationId?: Prisma.UuidFilter<"LeaveApproval"> | string
   leaveRequestId?: Prisma.UuidFilter<"LeaveApproval"> | string
-  approverUserId?: Prisma.UuidFilter<"LeaveApproval"> | string
+  approverUserId?: Prisma.UuidNullableFilter<"LeaveApproval"> | string | null
+  decisionActor?: Prisma.StringFilter<"LeaveApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableFilter<"LeaveApproval"> | string | null
   stepNumber?: Prisma.IntFilter<"LeaveApproval"> | number
   status?: Prisma.EnumApprovalStatusFilter<"LeaveApproval"> | $Enums.ApprovalStatus
@@ -719,20 +748,22 @@ export type LeaveApprovalScalarWhereInput = {
 
 export type LeaveApprovalCreateWithoutLeaveRequestInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
   decidedAt?: Date | string | null
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepCreateNestedOneWithoutLeaveApprovalsInput
 }
 
 export type LeaveApprovalUncheckedCreateWithoutLeaveRequestInput = {
   id?: string
   organizationId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -769,20 +800,22 @@ export type LeaveApprovalUpdateManyWithWhereWithoutLeaveRequestInput = {
 
 export type LeaveApprovalCreateWithoutOrganizationInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
   decidedAt?: Date | string | null
   createdAt?: Date | string
   leaveRequest: Prisma.LeaveRequestCreateNestedOneWithoutApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepCreateNestedOneWithoutLeaveApprovalsInput
 }
 
 export type LeaveApprovalUncheckedCreateWithoutOrganizationInput = {
   id?: string
   leaveRequestId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -819,6 +852,7 @@ export type LeaveApprovalUpdateManyWithWhereWithoutOrganizationInput = {
 
 export type LeaveApprovalCreateWithoutApprovalPolicyStepInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -826,14 +860,15 @@ export type LeaveApprovalCreateWithoutApprovalPolicyStepInput = {
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutLeaveApprovalsInput
   leaveRequest: Prisma.LeaveRequestCreateNestedOneWithoutApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutLeaveApprovalsInput
 }
 
 export type LeaveApprovalUncheckedCreateWithoutApprovalPolicyStepInput = {
   id?: string
   organizationId: string
   leaveRequestId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -871,6 +906,7 @@ export type LeaveApprovalCreateManyApproverInput = {
   id?: string
   organizationId: string
   leaveRequestId: string
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -881,6 +917,7 @@ export type LeaveApprovalCreateManyApproverInput = {
 
 export type LeaveApprovalUpdateWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -895,6 +932,7 @@ export type LeaveApprovalUncheckedUpdateWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -907,6 +945,7 @@ export type LeaveApprovalUncheckedUpdateManyWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -918,7 +957,8 @@ export type LeaveApprovalUncheckedUpdateManyWithoutApproverInput = {
 export type LeaveApprovalCreateManyLeaveRequestInput = {
   id?: string
   organizationId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -929,20 +969,22 @@ export type LeaveApprovalCreateManyLeaveRequestInput = {
 
 export type LeaveApprovalUpdateWithoutLeaveRequestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutLeaveApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutLeaveApprovalsNestedInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepUpdateOneWithoutLeaveApprovalsNestedInput
 }
 
 export type LeaveApprovalUncheckedUpdateWithoutLeaveRequestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -954,7 +996,8 @@ export type LeaveApprovalUncheckedUpdateWithoutLeaveRequestInput = {
 export type LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -966,7 +1009,8 @@ export type LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestInput = {
 export type LeaveApprovalCreateManyOrganizationInput = {
   id?: string
   leaveRequestId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -977,20 +1021,22 @@ export type LeaveApprovalCreateManyOrganizationInput = {
 
 export type LeaveApprovalUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveRequest?: Prisma.LeaveRequestUpdateOneRequiredWithoutApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutLeaveApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutLeaveApprovalsNestedInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepUpdateOneWithoutLeaveApprovalsNestedInput
 }
 
 export type LeaveApprovalUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -1002,7 +1048,8 @@ export type LeaveApprovalUncheckedUpdateWithoutOrganizationInput = {
 export type LeaveApprovalUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -1015,7 +1062,8 @@ export type LeaveApprovalCreateManyApprovalPolicyStepInput = {
   id?: string
   organizationId: string
   leaveRequestId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -1025,6 +1073,7 @@ export type LeaveApprovalCreateManyApprovalPolicyStepInput = {
 
 export type LeaveApprovalUpdateWithoutApprovalPolicyStepInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1032,14 +1081,15 @@ export type LeaveApprovalUpdateWithoutApprovalPolicyStepInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveApprovalsNestedInput
   leaveRequest?: Prisma.LeaveRequestUpdateOneRequiredWithoutApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutLeaveApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutLeaveApprovalsNestedInput
 }
 
 export type LeaveApprovalUncheckedUpdateWithoutApprovalPolicyStepInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1051,7 +1101,8 @@ export type LeaveApprovalUncheckedUpdateManyWithoutApprovalPolicyStepInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   leaveRequestId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1066,6 +1117,7 @@ export type LeaveApprovalSelect<ExtArgs extends runtime.Types.Extensions.Interna
   organizationId?: boolean
   leaveRequestId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1074,7 +1126,7 @@ export type LeaveApprovalSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   leaveRequest?: boolean | Prisma.LeaveRequestDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.LeaveApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs>
 }, ExtArgs["result"]["leaveApproval"]>
 
@@ -1083,6 +1135,7 @@ export type LeaveApprovalSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   organizationId?: boolean
   leaveRequestId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1091,7 +1144,7 @@ export type LeaveApprovalSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   leaveRequest?: boolean | Prisma.LeaveRequestDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.LeaveApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs>
 }, ExtArgs["result"]["leaveApproval"]>
 
@@ -1100,6 +1153,7 @@ export type LeaveApprovalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   organizationId?: boolean
   leaveRequestId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1108,7 +1162,7 @@ export type LeaveApprovalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   leaveRequest?: boolean | Prisma.LeaveRequestDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.LeaveApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs>
 }, ExtArgs["result"]["leaveApproval"]>
 
@@ -1117,6 +1171,7 @@ export type LeaveApprovalSelectScalar = {
   organizationId?: boolean
   leaveRequestId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1125,23 +1180,23 @@ export type LeaveApprovalSelectScalar = {
   createdAt?: boolean
 }
 
-export type LeaveApprovalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "leaveRequestId" | "approverUserId" | "approvalPolicyStepId" | "stepNumber" | "status" | "comment" | "decidedAt" | "createdAt", ExtArgs["result"]["leaveApproval"]>
+export type LeaveApprovalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "leaveRequestId" | "approverUserId" | "decisionActor" | "approvalPolicyStepId" | "stepNumber" | "status" | "comment" | "decidedAt" | "createdAt", ExtArgs["result"]["leaveApproval"]>
 export type LeaveApprovalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   leaveRequest?: boolean | Prisma.LeaveRequestDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.LeaveApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs>
 }
 export type LeaveApprovalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   leaveRequest?: boolean | Prisma.LeaveRequestDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.LeaveApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs>
 }
 export type LeaveApprovalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   leaveRequest?: boolean | Prisma.LeaveRequestDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.LeaveApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs>
 }
 
@@ -1150,14 +1205,15 @@ export type $LeaveApprovalPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
     leaveRequest: Prisma.$LeaveRequestPayload<ExtArgs>
-    approver: Prisma.$UserPayload<ExtArgs>
+    approver: Prisma.$UserPayload<ExtArgs> | null
     approvalPolicyStep: Prisma.$ApprovalPolicyStepPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
     leaveRequestId: string
-    approverUserId: string
+    approverUserId: string | null
+    decisionActor: string
     approvalPolicyStepId: string | null
     stepNumber: number
     status: $Enums.ApprovalStatus
@@ -1560,7 +1616,7 @@ export interface Prisma__LeaveApprovalClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   leaveRequest<T extends Prisma.LeaveRequestDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveRequestDefaultArgs<ExtArgs>>): Prisma.Prisma__LeaveRequestClient<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  approver<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  approver<T extends Prisma.LeaveApproval$approverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveApproval$approverArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   approvalPolicyStep<T extends Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveApproval$approvalPolicyStepArgs<ExtArgs>>): Prisma.Prisma__ApprovalPolicyStepClient<runtime.Types.Result.GetResult<Prisma.$ApprovalPolicyStepPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1595,6 +1651,7 @@ export interface LeaveApprovalFieldRefs {
   readonly organizationId: Prisma.FieldRef<"LeaveApproval", 'String'>
   readonly leaveRequestId: Prisma.FieldRef<"LeaveApproval", 'String'>
   readonly approverUserId: Prisma.FieldRef<"LeaveApproval", 'String'>
+  readonly decisionActor: Prisma.FieldRef<"LeaveApproval", 'String'>
   readonly approvalPolicyStepId: Prisma.FieldRef<"LeaveApproval", 'String'>
   readonly stepNumber: Prisma.FieldRef<"LeaveApproval", 'Int'>
   readonly status: Prisma.FieldRef<"LeaveApproval", 'ApprovalStatus'>
@@ -1999,6 +2056,25 @@ export type LeaveApprovalDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many LeaveApprovals to delete.
    */
   limit?: number
+}
+
+/**
+ * LeaveApproval.approver
+ */
+export type LeaveApproval$approverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

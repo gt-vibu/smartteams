@@ -17,6 +17,7 @@ import { OverviewTimesheetPreviewTab } from './overview-timesheet-preview-tab';
 import { OverviewCompact, type CompactSection } from './overview-compact';
 import { Screen4Calendar } from '../screen-4-calendar/screen-4-calendar';
 import { PageShell } from '../layout/page-shell';
+import { compactSectionUrl } from './compact-navigation';
 
 const TOP_TABS = ['Overview', 'Dashboard', 'Calendar'] as const;
 
@@ -48,13 +49,16 @@ interface Screen1OverviewProps {
 
 export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
-  // Home opens on Activities beside the profile on a laptop, and on the profile itself on a phone,
-  // where the two cannot share the screen.
+  // Desktop keeps the activity feed beside the profile. Phones open on the employee profile.
   const subFallback = isWide ? 'Activities' : 'Profile';
 
   // Two independent levels, each its own history entry: moving through the sub-tabs and then
   // pressing Back returns to the previous sub-tab rather than leaving the screen.
-  const [activeTopTab, setActiveTopTab] = useScreenTab(TOP_TAB_KEY, TOP_TABS, 'Overview');
+  const [activeTopTab, setActiveTopTab] = useScreenTab(
+    TOP_TAB_KEY,
+    TOP_TABS,
+    'Overview',
+  );
   const [requestedSubTab, setActiveSubTab] = useScreenTab(SUB_TAB_KEY, SUB_TABS, subFallback);
   // A link or a remembered tab can name a preview this person may not read; it opens on the
   // default instead of on a refusal.
@@ -70,22 +74,17 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   const activeSubTab =
     requiredModule && !canAccessModule(requiredModule) ? subFallback : requestedSubTab;
 
-  /**
-   * The phone strip mixes the two levels — Dashboard is a top tab, Activities a sub-tab — so one
-   * tap can change both parameters. Two setter calls would push two history entries and Back
-   * would stop on a state nobody chose; this writes both at once and lets the tab hooks re-read
-   * the URL through the same `popstate` they already listen for.
-   */
+  /** Write the compact home tab as a single history entry. */
   const selectCompactSection = useCallback(
     (section: CompactSection) => {
-      const params = new URLSearchParams(window.location.search);
-      const top = section === 'Dashboard' || section === 'Calendar' ? section : 'Overview';
-      if (top === 'Overview') params.delete(TOP_TAB_KEY);
-      else params.set(TOP_TAB_KEY, top);
-      if (top === 'Overview' && section !== subFallback) params.set(SUB_TAB_KEY, section);
-      else params.delete(SUB_TAB_KEY);
-      const query = params.toString();
-      window.history.pushState(null, '', query ? `?${query}` : window.location.pathname);
+      // Compact sections live under Overview. Persist Overview explicitly because the mobile
+      // fallback is itself Overview; deleting the key would fall back to Dashboard and make
+      // “My week” appear to do nothing.
+      window.history.pushState(
+        null,
+        '',
+        compactSectionUrl(section, window.location.search, window.location.pathname, subFallback),
+      );
       window.dispatchEvent(new PopStateEvent('popstate'));
       scrollCanvasToTop();
     },
@@ -93,12 +92,9 @@ export function Screen1Overview({ onNavigateModule }: Screen1OverviewProps) {
   );
 
   if (!isWide) {
-    const section: CompactSection =
-      activeTopTab !== 'Overview'
-        ? activeTopTab
-        : activeSubTab === 'Time Logs'
-          ? 'Timesheets'
-          : activeSubTab;
+    // Ignore legacy desktop overviewTab=Dashboard links on phones. The compact home has only
+    // Profile and My week tabs; selecting either always normalizes the URL to Overview.
+    const section: CompactSection = activeSubTab === 'Time Logs' ? 'Timesheets' : activeSubTab;
     return (
       <OverviewCompact
         section={section}

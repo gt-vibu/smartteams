@@ -1,4 +1,6 @@
 import {
+  ArrayMaxSize,
+  IsInt,
   IsArray,
   IsBoolean,
   IsDateString,
@@ -14,7 +16,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { LIMITS } from '@smarteam/contracts';
 import {
   IsAadhaar,
@@ -174,8 +176,21 @@ export class UserLinkDto {
  * so a large value is clamped rather than refused.
  */
 export class EmployeeListQueryDto {
-  @IsOptional() @Type(() => Number) @IsNumber() @Min(1) @Max(200) limit?: number;
+  @IsOptional() @IsCalendarDate('Joined from') joinedFrom?: string;
+  @IsOptional() @IsEnum(['name', 'recent']) order?: 'name' | 'recent';
+  @IsOptional() @IsString() @MaxLength(100) search?: string;
+  @IsOptional() @IsEnum(['ACTIVE', 'INACTIVE']) status?: 'ACTIVE' | 'INACTIVE';
+  @IsOptional() @IsString() @MaxLength(120) department?: string;
+  @IsOptional() @Transform(({ value }) => (Array.isArray(value) ? value : [value]) as unknown[]) @IsArray() @ArrayMaxSize(200) @IsUUID('4', { each: true }) ids?: string[];
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(200) limit?: number;
   @IsOptional() @IsUUID() cursor?: string;
+  /** `ROOT` selects employees without a recorded manager; a UUID selects that manager's reports. */
+  @IsOptional() @Matches(/^(ROOT|[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i)
+  reportingManager?: string;
+  @IsOptional() @Transform(({ value }) => value === true || value === 'true') @IsBoolean()
+  hasDirectReports?: boolean;
+  @IsOptional() @Transform(({ value }) => value === true || value === 'true') @IsBoolean()
+  hasLogin?: boolean;
 }
 
 /**

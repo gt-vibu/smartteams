@@ -1,4 +1,5 @@
 'use client';
+import { EmployeeCombobox } from '../common/employee-combobox';
 
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -13,11 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import { employeeDisplayName } from '@smarteam/contracts';
 import type { DocumentsState } from '../../hooks/use-documents';
-import { useEmployees, useTeams } from '../../hooks/use-workforce';
+import { useTeams } from '../../hooks/use-workforce';
 import { authRepository } from '../../repositories/auth.repository';
-import { activeByName } from '../../lib/pickable';
 
 type Audience = 'PERSONAL' | 'EMPLOYEE_SELF' | 'EMPLOYEE' | 'TEAM' | 'ORGANIZATION';
 
@@ -48,7 +47,6 @@ export function DocumentUploadDialog({
   adminWorkspace: boolean;
 }) {
   const { can } = documents;
-  const employees = useEmployees();
   const teams = useTeams();
   // An employee may share only with a team they are on or lead; the server checks the same.
   const myEmployeeId = authRepository.getAuthSession()?.employeeId ?? null;
@@ -104,7 +102,9 @@ export function DocumentUploadDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-md">
-        <DialogTitle>Upload file</DialogTitle>
+        <DialogTitle className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 bg-card px-5 pt-5 pb-3">
+          Upload file
+        </DialogTitle>
         <div className="mt-4 space-y-4">
           <fieldset className="space-y-2">
             <legend className="mb-1 text-xs font-semibold text-foreground">Who is it for?</legend>
@@ -135,18 +135,12 @@ export function DocumentUploadDialog({
           {audience === 'EMPLOYEE' && (
             <div>
               <Label className="mb-1 block">Employee</Label>
-              <SelectMenu onValueChange={setEmployeeId} value={employeeId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose an employee" />
-                </SelectTrigger>
-                <SelectContent>
-                  {activeByName(employees.data ?? []).map((employee) => (
-                    <SelectItem key={employee.id} value={employee.id}>
-                      {employeeDisplayName(employee)} · {employee.employeeNumber}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
+              <EmployeeCombobox
+                employees={[]}
+                value={employeeId}
+                onChange={setEmployeeId}
+                disabled={documents.busy}
+              />
             </div>
           )}
 
@@ -199,7 +193,7 @@ export function DocumentUploadDialog({
             </p>
           )}
 
-          <div className="flex justify-end gap-2">
+          <div className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 flex justify-end gap-2 bg-card px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <Button onClick={() => onOpenChange(false)} type="button" variant="outline">
               Cancel
             </Button>

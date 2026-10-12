@@ -36,7 +36,7 @@ function StatusBadge({ row }: { row: AttendanceTableRow }) {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/70">
         <span className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
-        Weekend, Present
+        Weekly off, Present
       </span>
     );
   }
@@ -52,7 +52,7 @@ function StatusBadge({ row }: { row: AttendanceTableRow }) {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700">
         <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0" />
-        Weekend
+        Weekly off
       </span>
     );
   }
@@ -263,8 +263,8 @@ function AttendanceDesktopTable({ rows, onSelectRow }: AttendanceTableViewProps)
       filterable: true,
       filterOptions: [
         { label: 'Present', value: 'Present' },
-        { label: 'Weekend, Present', value: 'Weekend, Present' },
-        { label: 'Weekend', value: 'Weekend' },
+        { label: 'Weekly off, Present', value: 'Weekly off, Present' },
+        { label: 'Weekly off', value: 'Weekly off' },
         { label: 'Holiday', value: 'Holiday' },
       ],
       cell: (row) => <StatusBadge row={row} />,

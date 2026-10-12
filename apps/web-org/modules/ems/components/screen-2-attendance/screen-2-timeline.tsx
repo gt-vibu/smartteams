@@ -1,5 +1,7 @@
 'use client';
 
+import { LoadingIndicator } from '@smarteam/ui';
+
 import { formatDate } from '@smarteam/contracts';
 import React, { useState, useMemo } from 'react';
 import { AttendanceToolbar } from './attendance-toolbar';
@@ -195,6 +197,8 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
           dateRange={week.label}
           onPrevDate={week.previous}
           onNextDate={week.next}
+          dateWindow={week.window}
+          onSelectRange={week.selectRange}
           viewMode="timeline"
           onChangeViewMode={onToggleView}
         />
@@ -207,12 +211,7 @@ export function Screen2Timeline({ onToggleView }: Screen2TimelineProps) {
 
         {/* Until the week has loaded, say so: an empty grid over "0 Days" read as no attendance. */}
         {loading && records.length === 0 ? (
-          <p
-            className="rounded-lg border border-border bg-card py-10 text-center text-xs text-muted-foreground"
-            role="status"
-          >
-            Loading attendance…
-          </p>
+          <LoadingIndicator variant="panel" label="Loading attendance" className="rounded-lg border border-border bg-card py-10 text-center text-xs text-muted-foreground" />
         ) : (
           <>
             {/* Main Timeline Card */}

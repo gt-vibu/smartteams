@@ -10,6 +10,7 @@ import { EMPLOYEE_DOCUMENT_TYPES, type EmployeeDocumentType } from './file.const
  */
 
 export const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> = {
+  ORGANIZATION_BRANDING: { maxBytes: 8_000_000, types: ['image/jpeg', 'image/png', 'image/webp'] },
   PROFILE_IMAGE: { maxBytes: 5_000_000, types: ['image/jpeg', 'image/png', 'image/webp'] },
   RESUME: {
     maxBytes: 15_000_000,
@@ -42,6 +43,7 @@ export const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> 
       'application/pdf',
       'image/jpeg',
       'image/png',
+      'image/webp',
       'text/plain',
       'text/csv',
       'application/msword',

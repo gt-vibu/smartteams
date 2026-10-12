@@ -145,7 +145,7 @@ function TimelineRow({
                   : day.status === 'HOLIDAY'
                     ? (day.holidayName ?? 'Holiday')
                     : day.status === 'WEEKEND'
-                      ? 'Weekend'
+                      ? 'Weekly off'
                       : day.status === 'ABSENT'
                         ? 'Absent'
                         : day.status === 'UPCOMING'
@@ -225,7 +225,7 @@ function TimelineRow({
             line="bg-amber-200 dark:bg-amber-900"
             pill="border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200"
           >
-            Weekend
+            Weekly off
           </TrackPill>
         )}
 

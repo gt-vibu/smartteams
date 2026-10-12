@@ -102,7 +102,14 @@ export function PayrollStructurePanel({
     <div className="space-y-4">
       {/* Header bar with download options */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span />
+        <div className="text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">{profile.organizationPolicy?.name ?? 'Salary structure'}</span>
+          <span className="mx-1.5">·</span>
+          {profile.assignmentSource === 'INDIVIDUAL_OVERRIDE'
+            ? 'Individual salary override'
+            : 'Organization default for all employees'}
+          {profile.compensation?.effectiveFrom && <span className="ml-1.5">· Effective {profile.compensation.effectiveFrom.slice(0, 10)}</span>}
+        </div>
         <div className="flex items-center gap-2">
           <Button
             size="sm"

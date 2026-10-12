@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Badge, Button, Input } from '@smarteam/ui';
 import {
   dateKey,
   employeeDisplayName,
+  LIMITS,
   type Employee,
   type LeaveRequest,
-  LIMITS,
 } from '@smarteam/contracts';
+import { Badge, Button, Input } from '@smarteam/ui';
+import React, { useState } from 'react';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
-import { LeaveRequestDialog } from './leave-request-dialog';
 import { statusLabel } from '../../lib/status-label';
+import { LeaveRequestDialog } from './leave-request-dialog';
 
 function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
   if (status === 'REJECTED') return 'destructive';
@@ -25,8 +25,7 @@ function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' 
  * `listRequests` and `decide` both existed on the API from the start, but no screen surfaced the
  * queue — a request could be filed and then never be seen or decided from inside the app.
  *
- * A decision needs a comment: the API rejects anything under two characters and writes it to the
- * audit trail, so the field is required here rather than sent as an empty string.
+ * Approval is immediate; rejection asks for a reason recorded in the audit trail.
  */
 export function LeaveRequestQueue({
   admin,
@@ -47,12 +46,16 @@ export function LeaveRequestQueue({
   const inboxIds = new Set(admin.inbox.map((entry) => entry.id));
 
   const decide = async (requestId: string, status: 'APPROVED' | 'REJECTED') => {
-    if (comment.trim().length < 2) {
-      setError('A comment is required, and is recorded in the audit trail.');
+    if (status === 'REJECTED' && comment.trim().length < 2) {
+      setError('A reason is required to reject the request.');
       return;
     }
     setError('');
-    const decided = await admin.decide(requestId, status, comment.trim());
+    const decided = await admin.decide(
+      requestId,
+      status,
+      status === 'REJECTED' ? comment.trim() : '',
+    );
     if (decided) {
       setActiveId(null);
       setComment('');
@@ -89,6 +92,7 @@ export function LeaveRequestQueue({
             const employee = employeesById.get(request.employeeId);
             const type = typesById.get(request.leaveTypeId);
             const mine = inboxIds.has(request.id);
+            const busy = admin.isBusy(leaveAdminBusyKey.decide(request.id));
             return (
               <React.Fragment key={request.id}>
                 <tr
@@ -106,10 +110,12 @@ export function LeaveRequestQueue({
                 >
                   <td data-cell="primary" className="px-4 py-2.5">
                     <span className="block font-semibold text-foreground">
-                      {employee ? employeeDisplayName(employee) : 'Not in the directory'}
+                      {employee
+                        ? employeeDisplayName(employee)
+                        : (request.employeeName ?? 'Employee')}
                     </span>
                     <span className="text-[10px] text-muted-foreground">
-                      {employee?.employeeNumber ?? '--'}
+                      {employee?.employeeNumber ?? request.employeeNumber ?? '--'}
                     </span>
                   </td>
                   <td data-label="Type" className="px-4 py-2.5 text-foreground">
@@ -137,21 +143,35 @@ export function LeaveRequestQueue({
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">
                     {request.status === 'PENDING' && admin.canDecide && activeId !== request.id && (
-                      <Button
-                        disabled={!mine}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setActiveId(request.id);
-                          setComment('');
-                          setError('');
-                        }}
-                        size="sm"
-                        title={mine ? undefined : 'This request is not awaiting your decision.'}
-                        type="button"
-                        variant="outline"
-                      >
-                        Decide
-                      </Button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          disabled={!mine || busy}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void decide(request.id, 'APPROVED');
+                          }}
+                          size="sm"
+                          title={mine ? undefined : 'This request is not awaiting your decision.'}
+                          type="button"
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          disabled={!mine || busy}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setActiveId(request.id);
+                            setComment('');
+                            setError('');
+                          }}
+                          size="sm"
+                          title={mine ? undefined : 'This request is not awaiting your decision.'}
+                          type="button"
+                          variant="outline"
+                        >
+                          Reject
+                        </Button>
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -165,21 +185,13 @@ export function LeaveRequestQueue({
                       <div className="flex flex-wrap items-center gap-2">
                         <Input
                           maxLength={LIMITS.reason}
-                          aria-label="Decision comment"
+                          aria-label="Reason for rejection"
                           className="max-w-sm"
                           disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onChange={(event) => setComment(event.target.value)}
-                          placeholder="Comment (recorded in the audit trail)"
+                          placeholder="Reason for rejection (required)"
                           value={comment}
                         />
-                        <Button
-                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
-                          onClick={() => void decide(request.id, 'APPROVED')}
-                          size="sm"
-                          type="button"
-                        >
-                          Approve
-                        </Button>
                         <Button
                           disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onClick={() => void decide(request.id, 'REJECTED')}
@@ -187,11 +199,15 @@ export function LeaveRequestQueue({
                           type="button"
                           variant="destructive"
                         >
-                          Reject
+                          Confirm rejection
                         </Button>
                         <Button
                           disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
-                          onClick={() => setActiveId(null)}
+                          onClick={() => {
+                            setActiveId(null);
+                            setComment('');
+                            setError('');
+                          }}
                           size="sm"
                           type="button"
                           variant="outline"

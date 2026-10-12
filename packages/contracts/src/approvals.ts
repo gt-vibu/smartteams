@@ -18,12 +18,50 @@ export const approvalDomainSchema = z.enum([
 
 export const approverTypeSchema = z.enum(['ROLE', 'USER', 'MANAGER', 'EMPLOYEE']);
 
+export const approvalAutomationSchema = z.object({
+  mode: z.enum(['MANUAL', 'AUTOMATIC', 'CONDITIONAL']).default('MANUAL'),
+  branchIds: z.array(z.string().uuid()).max(100).default([]),
+  leaveTypeIds: z.array(z.string().uuid()).max(100).default([]),
+  effectiveOn: z.string().date().optional(),
+  maxLeaveDays: z.number().int().min(1).max(366).optional(),
+  minNoticeDays: z.number().int().min(0).max(365).optional(),
+  maxCorrectionAgeDays: z.number().int().min(0).max(90).optional(),
+  maxChangedMinutes: z.number().int().min(0).max(120).optional(),
+  maxCorrectionsPerMonth: z.number().int().min(1).max(31).optional(),
+});
+export type ApprovalAutomation = z.infer<typeof approvalAutomationSchema>;
+
+export const approvalAutomationPreviewSchema = z.object({
+  processed: z.number(),
+  eligible: z.number(),
+  manual: z.number(),
+  nextCursor: z.string().nullable(),
+  examples: z.array(z.object({ id: z.string(), eligible: z.boolean(), reason: z.string() })),
+});
+export type ApprovalAutomationPreviewResult = z.infer<typeof approvalAutomationPreviewSchema>;
+
+export const approvalExceptionsSchema = z.object({
+  checked: z.number(),
+  nextCursor: z.string().nullable(),
+  items: z.array(
+    z.object({
+      id: z.string(),
+      domain: z.enum(['LEAVE', 'ATTENDANCE_CORRECTION']),
+      requester: z.string(),
+      stepNumber: z.number(),
+      reason: z.string(),
+    }),
+  ),
+});
+export type ApprovalException = z.infer<typeof approvalExceptionsSchema>['items'][number];
+
 export const approvalStepSchema = z.object({
   id: z.string().uuid().optional(),
   stepNumber: z.number(),
   approverType: approverTypeSchema,
   roleId: z.string().uuid().nullable().optional(),
   approverUserId: z.string().uuid().nullable().optional(),
+  approverName: z.string().optional(),
   required: z.boolean().optional(),
 });
 
@@ -36,6 +74,7 @@ export const approvalPolicySchema = z.object({
   isDefault: z.boolean(),
   isActive: z.boolean(),
   steps: z.array(approvalStepSchema),
+  automation: approvalAutomationSchema.optional(),
 });
 
 export type ApprovalDomain = z.infer<typeof approvalDomainSchema>;

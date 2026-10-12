@@ -7,8 +7,7 @@ import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from './payroll-staleness';
-import { calculateSalaryStructure, calculateStatutoryDeduction } from './payroll-salary-structure';
-import { calculateComponent } from './payroll-calculation';
+import { computePayrollLine } from './payroll-line-calculator';
 import { dateOnly, type SalaryProfileInput } from './payroll-policy.types';
 import {
   employeeScope,
@@ -132,6 +131,7 @@ export class PayrollSalaryProfileService {
         esiEnabled: input.esiEnabled,
         ptEnabled: input.ptEnabled,
         statutoryJurisdiction: input.statutoryJurisdiction,
+        payrollPolicyId: input.payrollPolicyId,
       });
       await this.audit.record(
         context,
@@ -169,11 +169,12 @@ export class PayrollSalaryProfileService {
         false,
         'payroll.employee-profile.read.all',
       );
+      if (!employeeId) throw new NotFoundError('Employee');
       // "Today" where the organization is. In UTC, a salary saved from India early in the morning
       // to start that day was still in the future, so the screen went on showing no salary.
       const organization = await tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
-        select: { timezone: true },
+        select: { timezone: true, name: true },
       });
       const effectiveDate = dateOnly(localDateIn(organization.timezone));
       const employee = await tx.employee.findFirst({
@@ -183,6 +184,13 @@ export class PayrollSalaryProfileService {
           ...employeeScope(context),
         },
         include: {
+          department: { select: { name: true } },
+          primaryBranch: { select: { name: true } },
+          employmentRecords: {
+            where: { effectiveFrom: { lte: effectiveDate }, OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }] },
+            orderBy: { effectiveFrom: 'desc' },
+            take: 1,
+          },
           compensations: {
             where: {
               effectiveFrom: { lte: effectiveDate },
@@ -198,6 +206,7 @@ export class PayrollSalaryProfileService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: { payrollPolicy: { include: { components: { include: { payComponent: true } } } } },
           },
           payComponents: {
             where: {
@@ -210,8 +219,10 @@ export class PayrollSalaryProfileService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const policy =
-        (await findPolicy(tx, context.organizationId, new Date())) ?? DEFAULT_PAYROLL_POLICY;
+      const employeePolicy = employee.payrollPolicies[0] ?? null;
+      const policy = employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
+        ? employeePolicy.payrollPolicy ?? DEFAULT_PAYROLL_POLICY
+        : (await findPolicy(tx, context.organizationId, effectiveDate)) ?? DEFAULT_PAYROLL_POLICY;
       const compensation =
         employee.compensations[0] ??
         // Nothing in force yet: show the salary saved to start later, rather than none at all.
@@ -220,12 +231,10 @@ export class PayrollSalaryProfileService {
           where: { employeeId: employee.id, effectiveFrom: { gt: effectiveDate } },
           orderBy: { effectiveFrom: 'asc' },
         }));
-      const employeePolicy = employee.payrollPolicies[0] ?? null;
       const gross =
         whatIf?.grossSalary !== undefined
           ? new Prisma.Decimal(whatIf.grossSalary)
-          : (compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0));
-      const structure = calculateSalaryStructure(gross, policy);
+          : (compensation?.grossSalary ?? compensation?.baseAmount ?? policy.defaultGrossSalary ?? new Prisma.Decimal(0));
       const statutoryJurisdiction =
         employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
       const rules = statutoryJurisdiction
@@ -244,30 +253,72 @@ export class PayrollSalaryProfileService {
         esi: whatIf?.esiEnabled ?? employeePolicy?.esiEnabled ?? policy.esiDefault,
         pt: whatIf?.ptEnabled ?? employeePolicy?.ptEnabled ?? policy.ptDefault,
       };
-      const statutory = withNationalStatutoryRules(rules)
-        .filter(
-          (rule) =>
-            (enabled.pf && ['PF', 'EPF'].includes(rule.schemeCode.toUpperCase())) ||
-            (enabled.esi && rule.schemeCode.toUpperCase() === 'ESIC') ||
-            (enabled.pt && ['PT', 'PROFESSIONAL_TAX'].includes(rule.schemeCode.toUpperCase())),
-        )
-        .map((rule) =>
-          calculateStatutoryDeduction(structure, rule, policy.roundingMode, structure),
-        );
-      const assignedComponents = employee.payComponents.map((assignment) => ({
-        code: assignment.payComponent.code,
-        name: assignment.payComponent.name,
-        componentType: assignment.payComponent.componentType,
-        calculationType: assignment.payComponent.calculationType,
-        isTaxable: assignment.payComponent.isTaxable,
-        amount: calculateComponent(
-          {
+      const employeeComponentIds = new Set(employee.payComponents.map((assignment) => assignment.payComponentId));
+      const policyComponents = (employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
+        ? employeePolicy.payrollPolicy?.components ?? []
+        : ('components' in policy ? policy.components : [])) as NonNullable<NonNullable<typeof employeePolicy>['payrollPolicy']>['components'];
+      const componentAssignments = [
+        ...policyComponents
+          .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId)),
+        ...employee.payComponents,
+      ];
+      // Salary profile and payroll run use the same calculation engine. This screen models a
+      // complete month with no attendance exceptions, timesheet overtime, adjustments or advance
+      // recovery; the period preview/run supplies those period-specific inputs to that same engine.
+      const computed = computePayrollLine(
+        {
+          employeeId,
+          compensation: {
+            baseAmount: gross,
+            grossSalary: gross,
+            overtimeMultiplier: compensation?.overtimeMultiplier ?? new Prisma.Decimal(1),
+          },
+          employeePolicy: employeePolicy
+            ? {
+                payrollEnabled: employeePolicy.payrollEnabled,
+                pfEnabled: enabled.pf,
+                esiEnabled: enabled.esi,
+                ptEnabled: enabled.pt,
+                statutoryJurisdiction,
+              }
+            : null,
+          policy: {
+            payrollDayBasis: policy.payrollDayBasis,
+            basePercentage: new Prisma.Decimal(policy.basePercentage),
+            baseMinimum: new Prisma.Decimal(policy.baseMinimum),
+            hraPercentage: new Prisma.Decimal(policy.hraPercentage),
+            roundingMode: policy.roundingMode,
+            pfDefault: enabled.pf,
+            esiDefault: enabled.esi,
+            ptDefault: enabled.pt,
+            statutoryJurisdiction,
+          },
+          statutoryRules: withNationalStatutoryRules(rules, effectiveDate),
+          components: componentAssignments.map((assignment) => ({
+            componentId: assignment.payComponentId,
             amount: assignment.amount,
             percentage: assignment.percentage,
             component: assignment.payComponent,
-          },
-          structure.base,
-        ),
+          })),
+          timesheet: null,
+          leave: { paidDays: 0, unpaidDays: 0 },
+          attendance: { absentDays: 0, halfDays: 0 },
+          unemployedDays: 0,
+          periodWorkingDays: policy.payrollDayBasis,
+          adjustments: [],
+          advances: [],
+        },
+        1,
+      );
+      const structure = computed.monthlyStructure;
+      const statutory = computed.statutory;
+      const assignedComponents = computed.components.map(({ assignment, amount }) => ({
+        code: assignment.component.code,
+        name: assignment.component.name,
+        componentType: assignment.component.componentType,
+        calculationType: assignment.component.calculationType,
+        isTaxable: assignment.component.isTaxable,
+        amount,
       }));
       const extraEarnings = assignedComponents
         .filter(
@@ -295,10 +346,7 @@ export class PayrollSalaryProfileService {
           code: 'OTHER_ALLOWANCE',
           name: 'Other allowance',
           componentType: PayComponentType.EARNING,
-          amount: Prisma.Decimal.max(
-            new Prisma.Decimal(0),
-            structure.otherAllowance.minus(extraEarnings),
-          ),
+          amount: structure.otherAllowance.minus(extraEarnings),
           isTaxable: true,
         },
         ...assignedComponents.filter(
@@ -349,21 +397,37 @@ export class PayrollSalaryProfileService {
       );
       return {
         employeeId,
+        employeeDetails: {
+          firstName: employee.firstName,
+          middleName: employee.middleName,
+          lastName: employee.lastName,
+          employeeNumber: employee.employeeNumber,
+          workEmail: employee.workEmail,
+          employmentType: employee.employmentRecords[0]?.employmentType ?? employee.employmentType,
+          jobTitle: employee.employmentRecords[0]?.jobTitle ?? null,
+          department: employee.department?.name ?? employee.employmentRecords[0]?.department ?? null,
+          dateOfJoining: employee.dateOfJoining?.toISOString().slice(0, 10) ?? null,
+          branchName: employee.primaryBranch?.name ?? null,
+        },
+        organizationName: organization.name,
         compensation,
         employeePolicy,
         organizationPolicy: policy,
+        assignmentSource: employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE' ? 'INDIVIDUAL_OVERRIDE' : 'ORGANIZATION_DEFAULT',
+        assignmentRuleId: null,
+        assignmentRuleName: null,
         structure,
         statutory,
         salaryBreakdown: {
-          gross: structure.gross,
+          gross: computed.gross,
           earnings,
           deductions,
           employerBenefits,
           totalDeductions,
           totalEmployerBenefits,
-          netPay: structure.gross.minus(totalDeductions),
+          netPay: computed.net,
         },
-        components: employee.payComponents,
+        components: componentAssignments,
       };
     });
   }

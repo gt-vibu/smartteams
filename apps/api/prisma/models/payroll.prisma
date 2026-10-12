@@ -55,6 +55,8 @@ model PayrollPolicy {
   basePercentage        Decimal             @default(50) @map("base_percentage") @db.Decimal(8, 4)
   baseMinimum           Decimal             @default(15000) @map("base_minimum") @db.Decimal(14, 2)
   hraPercentage         Decimal             @default(40) @map("hra_percentage") @db.Decimal(8, 4)
+  /// Tenant-wide monthly gross salary used when an employee has no individual salary record.
+  defaultGrossSalary    Decimal?            @map("default_gross_salary") @db.Decimal(14, 2)
   pfDefault             Boolean             @default(false) @map("pf_default")
   esiDefault            Boolean             @default(false) @map("esi_default")
   ptDefault             Boolean             @default(false) @map("pt_default")
@@ -64,30 +66,55 @@ model PayrollPolicy {
   createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt             DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  components   PayrollPolicyComponent[]
-  employees    EmployeePayrollPolicy[]
+  organization    Organization                  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  components      PayrollPolicyComponent[]
+  employees       EmployeePayrollPolicy[]
+  assignmentRules PayrollPolicyAssignmentRule[]
 
   @@unique([organizationId, name, effectiveFrom])
   @@index([organizationId, effectiveFrom, effectiveTo])
   @@map("payroll_policies")
 }
 
-model PayrollPolicyComponent {
-  id               String    @id @default(uuid()) @db.Uuid
-  organizationId   String    @map("organization_id") @db.Uuid
-  payrollPolicyId  String    @map("payroll_policy_id") @db.Uuid
-  payComponentId   String    @map("pay_component_id") @db.Uuid
-  amount           Decimal?  @db.Decimal(14, 2)
-  percentage       Decimal?  @db.Decimal(8, 4)
-  formulaParameters Json      @default("{}") @map("formula_parameters")
-  displayOrder     Int       @default(0) @map("display_order") @db.SmallInt
-  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+/// Determines which reusable payroll policy applies when an employee has no individual override.
+/// `criteria` supports departmentIds, branchIds, employmentTypes, jobTitles, and gradeValues.
+model PayrollPolicyAssignmentRule {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String    @map("organization_id") @db.Uuid
+  payrollPolicyId String    @map("payroll_policy_id") @db.Uuid
+  name            String
+  criteria        Json      @default("{}")
+  priority        Int       @default(100)
+  effectiveFrom   DateTime  @map("effective_from") @db.Date
+  effectiveTo     DateTime? @map("effective_to") @db.Date
+  enabled         Boolean   @default(true)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  organization        Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollPolicy       PayrollPolicy           @relation(fields: [payrollPolicyId], references: [id], onDelete: Restrict)
+  employeeAssignments EmployeePayrollPolicy[]
+
+  @@index([organizationId, enabled, priority, effectiveFrom])
+  @@index([organizationId, payrollPolicyId])
+  @@map("payroll_policy_assignment_rules")
+}
+
+model PayrollPolicyComponent {
+  id                String   @id @default(uuid()) @db.Uuid
+  organizationId    String   @map("organization_id") @db.Uuid
+  payrollPolicyId   String   @map("payroll_policy_id") @db.Uuid
+  payComponentId    String   @map("pay_component_id") @db.Uuid
+  amount            Decimal? @db.Decimal(14, 2)
+  percentage        Decimal? @db.Decimal(8, 4)
+  formulaParameters Json     @default("{}") @map("formula_parameters")
+  displayOrder      Int      @default(0) @map("display_order") @db.SmallInt
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization  Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   payrollPolicy PayrollPolicy @relation(fields: [payrollPolicyId], references: [id], onDelete: Restrict)
-  payComponent  PayComponent @relation(fields: [payComponentId], references: [id], onDelete: Restrict)
+  payComponent  PayComponent  @relation(fields: [payComponentId], references: [id], onDelete: Restrict)
 
   @@unique([payrollPolicyId, payComponentId])
   @@index([organizationId, payrollPolicyId, displayOrder])

@@ -1,3 +1,5 @@
+import { approvalLocalDate, assertOpenPayrollPeriod } from '../approvals/approval-automation';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 import { Injectable } from '@nestjs/common';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
@@ -107,6 +109,36 @@ export class ShiftsService {
         include: { breakRules: { orderBy: { sequence: 'asc' } } },
       });
       if (!before) throw new NotFoundError('Shift');
+      const scheduleChanged =
+        (input.daysOfWeek !== undefined &&
+          JSON.stringify([...input.daysOfWeek].sort()) !==
+            JSON.stringify([...before.daysOfWeek].sort())) ||
+        (input.startsAt !== undefined &&
+          timeOnly(input.startsAt).getTime() !== before.startsAt.getTime()) ||
+        (input.endsAt !== undefined &&
+          timeOnly(input.endsAt).getTime() !== before.endsAt.getTime()) ||
+        (input.crossesMidnight !== undefined && input.crossesMidnight !== before.crossesMidnight) ||
+        (input.breakMinutes !== undefined && input.breakMinutes !== before.breakMinutes) ||
+        (input.branchId !== undefined && input.branchId !== before.branchId) ||
+        (input.breakRules !== undefined &&
+          JSON.stringify(input.breakRules) !==
+            JSON.stringify(
+              before.breakRules.map(({ name, durationMinutes, isPaid, sequence }) => ({
+                name,
+                durationMinutes,
+                isPaid,
+                sequence,
+              })),
+            ));
+      if (
+        scheduleChanged &&
+        (await tx.employeeShiftAssignment.count({
+          where: { organizationId: context.organizationId, shiftId },
+        }))
+      )
+        throw new ConflictError(
+          'This shift has employee assignments. Copy the schedule and publish new assignments from an effective date to preserve attendance history.',
+        );
       if (
         input.branchId !== undefined &&
         input.branchId &&
@@ -163,13 +195,22 @@ export class ShiftsService {
         },
       });
       if (!before) throw new NotFoundError('Shift');
+      const today = new Date(`${await approvalLocalDate(tx, context.organizationId)}T00:00:00Z`);
+      if (
+        await tx.employeeShiftAssignment.count({
+          where: {
+            organizationId: context.organizationId,
+            shiftId,
+            OR: [{ endsOn: null }, { endsOn: { gte: today } }],
+          },
+        })
+      )
+        throw new ConflictError(
+          'This shift has current or future assignments. Publish a replacement or end those assignments before deactivating it.',
+        );
       const updated = await tx.shift.update({
         where: { id: before.id },
         data: { isActive: false },
-      });
-      await tx.employeeShiftAssignment.updateMany({
-        where: { organizationId: context.organizationId, shiftId: before.id, endsOn: null },
-        data: { endsOn: new Date() },
       });
       await this.audit.record(
         { ...context, reason },
@@ -258,6 +299,13 @@ export class ShiftsService {
         },
       });
       if (overlap) throw new ConflictError('Employee shift assignments must not overlap');
+      if (context.accessMode === 'NATIVE')
+        await assertOpenPayrollPeriod(
+          tx,
+          context.organizationId,
+          start,
+          end ?? new Date('9999-12-31'),
+        );
       const assignment = await tx.employeeShiftAssignment.create({
         data: {
           organizationId: context.organizationId,
@@ -288,6 +336,8 @@ export class ShiftsService {
         },
         tx,
       );
+      if (context.accessMode === 'NATIVE')
+        await markPayrollStale(tx, context.organizationId, start, end ?? new Date('9999-12-31'));
       await this.outbox.append(
         context,
         {

@@ -6,8 +6,10 @@ export const adminNavItems: NavItem[] = [
   { id: 'home', label: 'Overview', icon: navIcons.building },
   { id: 'employees', label: 'Employees', icon: navIcons.employees },
   { id: 'onboarding', label: 'Onboarding', icon: navIcons.onboarding },
+  { id: 'org-setup', label: 'Organization setup', icon: navIcons.settings },
   { id: 'time-off', label: 'Leave', icon: navIcons.timeOff },
   { id: 'attendance', label: 'Attendance', icon: navIcons.attendance },
+  { id: 'shifts', label: 'Shifts', icon: navIcons.shifts },
   // The organization calendar. It used to be reachable only from an Overview shortcut, so an
   // administrator looking for it in the sidebar concluded the screen did not exist.
   { id: 'holidays', label: 'Holidays', icon: navIcons.holidays },

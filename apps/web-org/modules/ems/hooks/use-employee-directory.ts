@@ -3,29 +3,77 @@
 import { useMemo } from 'react';
 import { hasPermission, type EmployeeDirectoryEntry } from '@smarteam/contracts';
 import { useSession } from './auth-context';
-import { workforceRepository } from '../repositories/workforce.repository';
+import {
+  employeeReadRepository,
+  type EmployeeReadFilters,
+} from '../repositories/employee-read.repository';
+import { useCursorPages } from './use-cursor-pages';
+import { useDebouncedValue } from './use-debounced-value';
 import { useAsyncResource } from './use-async-resource';
 
 /**
  * The organization's people, with the reporting line and department attached.
  *
- * One request per page rather than one per employee: the department grouping and the reporting
- * tree below are both derived from the same fetched rows, so adding a view costs nothing extra.
+ * One bounded request per page rather than one per employee. The reporting view asks for a root
+ * level or one manager's direct reports, keeping each step bounded even across a large tenant.
  *
  * What the API returns is what the caller may see. An ordinary employee gets themselves, so these
  * views render a tree of one rather than an error — which is the correct answer for someone
  * without organization-wide read.
  */
-export function useEmployeeDirectory() {
+export function useEmployeeDirectory(filters: EmployeeReadFilters = {}, enabled = true) {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const permissions = useMemo(() => persona?.permissions ?? [], [persona]);
   const canRead = hasPermission(permissions, 'employees.read');
 
-  const resource = useAsyncResource(
-    () => workforceRepository.listDirectory(organizationId!),
+  const search = useDebouncedValue(filters.search?.trim() ?? '');
+  const paging = useCursorPages(
+    JSON.stringify([
+      organizationId,
+      search,
+      filters.status,
+      filters.department,
+      filters.reportingManager,
+      filters.joinedFrom,
+      filters.order,
+      filters.hasDirectReports,
+      filters.hasLogin,
+      filters.limit,
+    ]),
+  );
+  const summary = useAsyncResource(
+    () => employeeReadRepository.summary(organizationId!),
     [organizationId],
     { enabled: Boolean(organizationId) && canRead },
+  );
+  const resource = useAsyncResource(
+    () =>
+      employeeReadRepository.directoryPage(organizationId!, {
+        ...filters,
+        search,
+        limit: filters.limit ?? 10,
+        cursor: paging.cursor,
+      }),
+    [
+      organizationId,
+      search,
+      filters.status,
+      filters.department,
+      filters.reportingManager,
+      filters.joinedFrom,
+      filters.order,
+      filters.hasDirectReports,
+      filters.hasLogin,
+      filters.limit,
+      paging.cursor,
+    ],
+    {
+      enabled: enabled && Boolean(organizationId) && canRead,
+      preservePreviousDataKey: organizationId
+        ? `${organizationId}:${filters.status ?? 'all'}:${filters.reportingManager && filters.reportingManager !== 'ROOT' ? filters.reportingManager : 'all'}`
+        : null,
+    },
   );
 
   const entries = useMemo(() => resource.data?.entries ?? [], [resource.data]);
@@ -33,19 +81,23 @@ export function useEmployeeDirectory() {
   /** Departments, derived. `department` is free text on the employment record, not an entity. */
   const departments = useMemo(() => groupByDepartment(entries), [entries]);
 
-  /** The reporting tree, derived from `managerEmployeeId`. There is no second hierarchy table. */
-  const reportingTree = useMemo(() => buildTree(entries), [entries]);
-
   return {
     entries,
+    summary: summary.data,
+    summaryLoading: summary.loading,
+    summaryError: summary.error,
+    paging,
+    nextCursor: resource.data?.nextCursor,
+    refreshing: resource.refreshing,
     departments,
-    reportingTree,
     /** True when the page cap was reached, so a short list is never read as the whole company. */
-    truncated: resource.data?.truncated ?? false,
+    truncated: Boolean(resource.data?.nextCursor),
     loading: resource.loading,
     error: resource.error,
     forbidden: resource.forbidden || !canRead,
-    refetch: resource.refetch,
+    refetch: async () => {
+      await Promise.all([resource.refetch(), summary.refetch()]);
+    },
   };
 }
 
@@ -72,35 +124,4 @@ function groupByDepartment(entries: EmployeeDirectoryEntry[]): DepartmentGroup[]
       if (b.name === 'Unassigned') return -1;
       return a.name.localeCompare(b.name);
     });
-}
-
-export type ReportingNode = { employee: EmployeeDirectoryEntry; reports: ReportingNode[] };
-
-/**
- * Roots are the people whose manager is not in the fetched set — the actual top of the
- * organization, and also anyone whose manager fell outside a truncated page. Both belong at the
- * top level; the alternative is silently dropping them from the tree.
- */
-function buildTree(entries: EmployeeDirectoryEntry[]): ReportingNode[] {
-  const byId = new Map(entries.map((entry) => [entry.id, entry]));
-  const nodes = new Map<string, ReportingNode>(
-    entries.map((entry) => [entry.id, { employee: entry, reports: [] }]),
-  );
-
-  const roots: ReportingNode[] = [];
-  for (const entry of entries) {
-    const node = nodes.get(entry.id);
-    if (!node) continue;
-    const parent = entry.managerEmployeeId ? nodes.get(entry.managerEmployeeId) : undefined;
-    if (parent && byId.has(entry.managerEmployeeId!) && entry.managerEmployeeId !== entry.id)
-      parent.reports.push(node);
-    else roots.push(node);
-  }
-
-  const sort = (list: ReportingNode[]) => {
-    list.sort((a, b) => a.employee.lastName.localeCompare(b.employee.lastName));
-    for (const node of list) sort(node.reports);
-  };
-  sort(roots);
-  return roots;
 }

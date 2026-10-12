@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Branch, Project } from '@smarteam/contracts';
 import {
   Button,
@@ -61,6 +61,7 @@ export function EditProjectDialog({
   const [endDate, setEndDate] = useState('');
   const [error, setError] = useState('');
   const [nameClash, setNameClash] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -104,8 +105,18 @@ export function EditProjectDialog({
 
   return (
     <Dialog onOpenChange={(next) => !next && onClose()} open={open}>
-      <DialogContent className="max-w-lg gap-0 p-0">
-        <DialogTitle className="border-b border-border px-5 py-4 text-sm font-bold">
+      <DialogContent
+        className="max-w-lg gap-0 p-0"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          titleRef.current?.focus();
+        }}
+      >
+        <DialogTitle
+          className="border-b border-border px-5 py-4 text-sm font-bold"
+          ref={titleRef}
+          tabIndex={-1}
+        >
           Edit project &mdash; {project.code ?? project.name}
         </DialogTitle>
 

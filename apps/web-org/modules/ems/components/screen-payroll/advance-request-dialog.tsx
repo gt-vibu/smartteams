@@ -72,7 +72,9 @@ export function AdvanceRequestDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
-        <DialogTitle>Request a salary advance</DialogTitle>
+        <DialogTitle className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 bg-card px-5 pb-3 pt-5">
+          Request a salary advance
+        </DialogTitle>
 
         {!allowance ? (
           <p className="mt-4 text-xs text-muted-foreground" role="status">
@@ -203,7 +205,7 @@ export function AdvanceRequestDialog({
               </p>
             )}
 
-            <div className="flex flex-col-reverse gap-2 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 flex flex-col-reverse gap-2 border-t border-border bg-card px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-[11px] text-muted-foreground">
                 Goes to payroll for approval. You are told when it is decided.
               </p>

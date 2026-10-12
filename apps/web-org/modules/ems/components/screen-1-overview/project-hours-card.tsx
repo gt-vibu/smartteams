@@ -1,5 +1,7 @@
 'use client';
 
+import { LoadingIndicator } from '@smarteam/ui';
+
 import React from 'react';
 import { formatWorkMinutes } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
@@ -35,7 +37,7 @@ export function ProjectHoursCard() {
       <h4 className="text-xs font-bold text-foreground">Project hours</h4>
       {rows.length === 0 ? (
         <p className="text-xs text-muted-foreground">
-          {loading ? 'Loading…' : 'No time logged on this timesheet yet.'}
+          {loading ? <LoadingIndicator variant="inline" label="Loading project hours" /> : 'No time logged on this timesheet yet.'}
         </p>
       ) : (
         <div className="space-y-3 text-xs">

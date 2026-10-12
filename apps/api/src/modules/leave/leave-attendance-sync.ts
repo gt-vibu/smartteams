@@ -1,6 +1,6 @@
-import { AttendanceDayStatus } from '../../generated/prisma/enums';
 import type { DomainContext } from '../../common/context/domain-context';
 import type { Prisma } from '../../generated/prisma/client';
+import { AttendanceDayStatus } from '../../generated/prisma/enums';
 
 /**
  * Propagates an approved leave decision onto the attendance calendar.
@@ -49,10 +49,18 @@ export async function markLeaveDaysOnAttendance(
     branchId: string | null;
     startDate: Date;
     endDate: Date;
+    chargedDates?: Prisma.JsonValue | null;
   },
 ): Promise<number> {
   let written = 0;
-  for (const workDate of leaveDates(request.startDate, request.endDate)) {
+  const chargedDates = Array.isArray(request.chargedDates)
+    ? request.chargedDates
+        .filter(
+          (date): date is string => typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date),
+        )
+        .map((date) => new Date(`${date}T00:00:00Z`))
+    : leaveDates(request.startDate, request.endDate);
+  for (const workDate of chargedDates) {
     const existing = await tx.attendanceRecord.findUnique({
       where: { employeeId_workDate: { employeeId: request.employeeId, workDate } },
       select: { id: true, dayStatus: true, _count: { select: { punches: true } } },

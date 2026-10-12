@@ -1,5 +1,7 @@
 'use client';
 
+import { LoadingIndicator } from '@smarteam/ui';
+
 import { formatDate } from '@smarteam/contracts';
 import React from 'react';
 import {
@@ -42,10 +44,14 @@ export function OrgIdentityRail({
   directory,
   holidays,
   organization,
+  onNavigateTab,
+  onNavigateModule,
 }: {
   directory: ReturnType<typeof useEmployeeDirectory>;
   holidays: HolidaysState;
   organization: OrganizationState;
+  onNavigateTab?: (tab: string) => void;
+  onNavigateModule?: (module: string, view?: string) => void;
 }) {
   const today = localDateKey();
   const upcoming = holidays.holidays
@@ -54,16 +60,23 @@ export function OrgIdentityRail({
 
   const name = organization.organization?.name ?? 'Organization';
   const current = directory.entries.filter((entry) => entry.status === 'ACTIVE');
-  const active = current.length;
-  const former = directory.entries.length - active;
-  const withoutManager = current.filter((entry) => !entry.managerEmployeeId).length;
-  const withoutLogin = current.filter((entry) => !entry.hasUserAccount).length;
+  const active = directory.summary?.active ?? current.length;
+  const former = directory.summary?.former ?? directory.entries.length - current.length;
+  const withoutManager =
+    directory.summary?.withoutManager ?? current.filter((entry) => !entry.managerEmployeeId).length;
+  const withoutLogin =
+    directory.summary?.withoutLogin ?? current.filter((entry) => !entry.hasUserAccount).length;
   const activeBranches = organization.branches.filter(
     (branch) => branch.status !== 'DEACTIVATED',
   ).length;
 
-  const peopleState = directory.forbidden ? 'No permission' : null;
-  const peopleValue = (count: number) => (directory.loading ? null : String(count));
+  const peopleState = directory.forbidden
+    ? 'No permission'
+    : directory.summaryError
+      ? 'Could not load'
+      : null;
+  const peopleValue = (count: number) =>
+    directory.summaryLoading || peopleState ? null : `${count}`;
 
   return (
     <div className="space-y-4">
@@ -99,6 +112,7 @@ export function OrgIdentityRail({
             tone="primary"
             unavailable={peopleState}
             value={peopleValue(active)}
+            onClick={peopleState ? undefined : () => onNavigateTab?.('people')}
           />
           <MiniStat
             icon={CheckCircle2}
@@ -106,6 +120,7 @@ export function OrgIdentityRail({
             tone="neutral"
             unavailable={peopleState}
             value={peopleValue(former)}
+            onClick={peopleState ? undefined : () => onNavigateModule?.('employees', 'former')}
           />
           <MiniStat
             icon={Network}
@@ -113,6 +128,7 @@ export function OrgIdentityRail({
             tone="warning"
             unavailable={peopleState}
             value={peopleValue(withoutManager)}
+            onClick={peopleState ? undefined : () => onNavigateModule?.('employees', 'unassigned')}
           />
           <MiniStat
             icon={KeyRound}
@@ -120,6 +136,7 @@ export function OrgIdentityRail({
             tone="accent"
             unavailable={peopleState}
             value={peopleValue(withoutLogin)}
+            onClick={peopleState ? undefined : () => onNavigateModule?.('employees', 'no-login')}
           />
           <MiniStat
             icon={MapPin}
@@ -127,6 +144,9 @@ export function OrgIdentityRail({
             tone="neutral"
             unavailable={organization.branchesForbidden ? 'No permission' : null}
             value={organization.loading ? null : String(activeBranches)}
+            onClick={
+              organization.branchesForbidden ? undefined : () => onNavigateTab?.('org-setup')
+            }
           />
         </dl>
       </section>
@@ -141,9 +161,7 @@ export function OrgIdentityRail({
             You do not have permission to view the holiday calendar.
           </p>
         ) : holidays.loading ? (
-          <p className="mt-2 text-[11px] text-muted-foreground" role="status">
-            Loading...
-          </p>
+          <LoadingIndicator variant="inline" label="Preparing content" className="mt-2 text-[11px] text-muted-foreground" />
         ) : upcoming.length === 0 ? (
           <p className="mt-2 text-[11px] text-muted-foreground">
             No holidays are scheduled after today.
@@ -186,15 +204,17 @@ function MiniStat({
   tone,
   unavailable,
   value,
+  onClick,
 }: {
   icon: LucideIcon;
   label: string;
   tone: TileTone;
   unavailable: string | null;
   value: string | null;
+  onClick?: () => void;
 }) {
-  return (
-    <div className="flex items-center gap-2">
+  const content = (
+    <>
       <span
         aria-hidden="true"
         className={`grid h-7 w-7 shrink-0 place-items-center rounded-md ${TONES[tone]}`}
@@ -216,6 +236,15 @@ function MiniStat({
           {unavailable ?? value ?? '--'}
         </dd>
       </div>
-    </div>
+    </>
+  );
+  const className =
+    'flex min-w-0 items-center gap-2 rounded-md text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+  return onClick ? (
+    <button className={`${className} hover:bg-muted/40`} onClick={onClick} type="button">
+      {content}
+    </button>
+  ) : (
+    <div className={className}>{content}</div>
   );
 }

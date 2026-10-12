@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Button, Input } from '@smarteam/ui';
+import { LoadingIndicator, Button, Input } from '@smarteam/ui';
 import {
   DOCUMENT_REASON_LABEL,
   formatDate,
@@ -95,9 +95,7 @@ export function GroupFilesSection({
       )}
 
       {documents.loading ? (
-        <p className="text-xs text-muted-foreground" role="status">
-          Loading files…
-        </p>
+        <LoadingIndicator variant="inline" label="Loading files" className="text-xs text-muted-foreground" />
       ) : documents.documents.length === 0 ? (
         <p className="text-xs text-muted-foreground">
           {mayUpload

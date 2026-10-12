@@ -11,7 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request } from 'express';
-import { IsBoolean, IsBooleanString, IsNumberString, IsOptional, Matches } from 'class-validator';
+import {
+  IsEnum,
+  IsBoolean,
+  IsBooleanString,
+  IsNumberString,
+  IsOptional,
+  Matches,
+} from 'class-validator';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { NotificationsService } from './notifications.service';
@@ -23,6 +30,7 @@ export class NotificationQueryDto {
 
 export class NotificationPreferencesDto {
   @IsBoolean() email!: boolean;
+  @IsOptional() @IsEnum(['IMMEDIATE', 'DAILY_DIGEST']) delivery?: 'IMMEDIATE' | 'DAILY_DIGEST';
 }
 
 export class NotificationModuleDto {

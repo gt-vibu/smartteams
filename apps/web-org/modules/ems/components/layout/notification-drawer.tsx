@@ -47,8 +47,19 @@ function iconFor(kind: string) {
 
 export function NotificationDrawer({ isOpen, onClose, onSelectModule }: NotificationDrawerProps) {
   const { persona } = useAuth();
-  const { items, unread, loading, error, refetch, markRead, markAllRead, emailEnabled, setEmail } =
-    useNotifications();
+  const {
+    items,
+    unread,
+    loading,
+    error,
+    refetch,
+    markRead,
+    markAllRead,
+    emailEnabled,
+    setEmail,
+    delivery,
+    setDelivery,
+  } = useNotifications();
   // New first: a notification leaves this list once it is read — here, on its screen, or by
   // "Mark all read". Everything stays under All.
   const [filter, setFilter] = useState<'ALL' | 'UNREAD'>('UNREAD');
@@ -155,6 +166,25 @@ export function NotificationDrawer({ isOpen, onClose, onSelectModule }: Notifica
             ))}
           </div>
         )}
+        <label className="mt-3 block text-xs">
+          Email delivery
+          <select
+            aria-label="Notification email delivery"
+            className="mt-1 w-full rounded border border-border bg-background p-2"
+            value={delivery}
+            disabled={emailEnabled !== true}
+            onChange={(event) =>
+              void setDelivery(event.target.value as 'IMMEDIATE' | 'DAILY_DIGEST')
+            }
+          >
+            <option value="IMMEDIATE">Individual emails</option>
+            <option value="DAILY_DIGEST">Daily digest · after 8 AM organization time</option>
+          </select>
+          <span className="mt-1 block text-muted-foreground">
+            In-app notifications remain immediate. Escalations and payroll release notices are sent
+            immediately.
+          </span>
+        </label>
         {emailEnabled !== null && (
           <label className="mt-4 flex items-start gap-2 border-t border-border pt-3 text-xs text-foreground">
             <Checkbox

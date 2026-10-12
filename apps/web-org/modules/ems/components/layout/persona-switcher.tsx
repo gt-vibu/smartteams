@@ -1,6 +1,13 @@
 'use client';
 
-import { Button } from '@smarteam/ui';
+import {
+  Button,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@smarteam/ui';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/use-auth';
@@ -8,10 +15,15 @@ import { useSession } from '../../hooks/auth-context';
 import { useEmployeeDetail } from '../../hooks/use-employee-detail';
 import { ProfileEditDrawer } from '../profile/profile-edit-drawer';
 import { workspaceTitle } from '../../services/authorization.policy';
+import { OverviewProfileTab } from '../screen-1-overview/overview-profile-tab';
+import { MyResignationCard } from '../screen-1-overview/my-resignation-card';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from '../../hooks/use-theme';
 
 export function PersonaSwitcher() {
   const { persona, logout, workspaceContext } = useAuth();
   const { session } = useSession();
+  const { isDark, toggleTheme } = useTheme();
   // Job title and department live on the employment record, so they come from the employee
   // detail route. They were previously read from a fixture matched on the signed-in email.
   const detail = useEmployeeDetail(session?.employeeId ?? null);
@@ -19,6 +31,7 @@ export function PersonaSwitcher() {
   const department = detail.data?.department ?? null;
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
+  const [isProfileViewOpen, setIsProfileViewOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
@@ -139,7 +152,8 @@ export function PersonaSwitcher() {
                 />
               </svg>
               <span className="truncate">
-                {persona.branchName ?? (persona.branchId ? '' : 'No branch')}
+                {persona.branchName ||
+                  (persona.branchId ? 'Branch details unavailable' : 'No branch assigned')}
               </span>
             </div>
             <div className="px-3 py-2 flex items-center gap-2 text-[11px] text-muted-foreground">
@@ -186,7 +200,7 @@ export function PersonaSwitcher() {
               variant="ghost"
               onClick={() => {
                 setIsOpen(false);
-                setIsProfileDrawerOpen(true);
+                setIsProfileViewOpen(true);
               }}
               className="w-full flex items-center justify-start gap-2.5 rounded-[6px] px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all cursor-pointer"
             >
@@ -203,7 +217,18 @@ export function PersonaSwitcher() {
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              <span>Edit Profile</span>
+              <span>Profile</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="ghost"
+              aria-pressed={isDark}
+              onClick={toggleTheme}
+              className="w-full flex items-center justify-start gap-2.5 rounded-[6px] px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all cursor-pointer"
+            >
+              {isDark ? <Sun aria-hidden="true" className="h-4 w-4 text-muted-foreground" /> : <Moon aria-hidden="true" className="h-4 w-4 text-muted-foreground" />}
+              <span>{isDark ? 'Switch to light theme' : 'Switch to dark theme'}</span>
             </Button>
 
             <Button
@@ -237,8 +262,40 @@ export function PersonaSwitcher() {
       {/* Profile Edit Drawer */}
       <ProfileEditDrawer
         isOpen={isProfileDrawerOpen}
-        onClose={() => setIsProfileDrawerOpen(false)}
+        onClose={() => {
+          setIsProfileDrawerOpen(false);
+          setIsProfileViewOpen(true);
+        }}
       />
+
+      <Sheet open={isProfileViewOpen} onOpenChange={setIsProfileViewOpen}>
+        <SheetContent className="flex flex-col gap-0 overflow-y-auto bg-background p-0 sm:max-w-xl">
+          <SheetHeader className="sticky top-0 z-10 border-b border-border bg-background/95 px-5 py-4 text-left backdrop-blur">
+            <div className="flex items-center justify-between gap-3 pr-8">
+              <div>
+                <SheetTitle>Profile</SheetTitle>
+                <SheetDescription>Personal and work details for your account.</SheetDescription>
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    setIsProfileViewOpen(false);
+                    setIsProfileDrawerOpen(true);
+                  }}
+                >
+                  Edit
+                </Button>
+              </div>
+            </div>
+          </SheetHeader>
+          <div className="space-y-4 p-5">
+            <OverviewProfileTab />
+            <MyResignationCard />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

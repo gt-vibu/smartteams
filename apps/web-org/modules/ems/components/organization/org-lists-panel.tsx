@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge, Button, Input } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button, Input } from '@smarteam/ui';
 import {
   PICKLIST_META,
   usePicklist,
@@ -9,15 +9,24 @@ import {
   type PicklistKind,
 } from '../../hooks/use-picklist';
 
-const KINDS: PicklistKind[] = ['project-roles', 'job-titles', 'team-roles'];
+const KINDS: PicklistKind[] = ['job-titles', 'team-roles'];
+const SECTION_LABELS: Record<PicklistKind, string> = {
+  'job-titles': 'Job titles',
+  'team-roles': 'Team responsibilities',
+};
+const SECTION_HELP: Record<PicklistKind, string> = {
+  'job-titles':
+    'Job titles describe a person’s position. They do not grant access or change permissions.',
+  'team-roles':
+    'These responsibilities apply only to team membership, such as Team Lead or Team Member.',
+};
 
 /**
- * The organization's reference lists in one place: project roles, job titles and team roles.
- * Departments have their own tab. Status values (attendance, leave, timesheet, payroll) are fixed
- * by the system and are not listed here.
+ * Job architecture and scoped work responsibilities. Access profiles live in Access & Permissions;
+ * neither a job title nor a team/project responsibility grants organization-wide permissions.
  */
 export function OrgListsPanel() {
-  const [kind, setKind] = useState<PicklistKind>('project-roles');
+  const [kind, setKind] = useState<PicklistKind>('job-titles');
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -40,12 +49,18 @@ export function OrgListsPanel() {
               type="button"
               variant="ghost"
             >
-              {PICKLIST_META[id].label}
+              {SECTION_LABELS[id]}
             </Button>
           ))}
         </div>
       </div>
       <ListEditor key={kind} kind={kind} />
+      {kind === 'job-titles' && (
+        <p className="max-w-2xl text-xs text-muted-foreground">
+          Project assignments display each employee’s current job title. Update it on the employee’s
+          profile to keep the role consistent across projects.
+        </p>
+      )}
     </div>
   );
 }
@@ -65,6 +80,7 @@ function ListEditor({ kind }: { kind: PicklistKind }) {
 
   return (
     <section className="space-y-3">
+      <p className="max-w-2xl text-xs text-muted-foreground">{SECTION_HELP[kind]}</p>
       {list.canAdd && (
         <div className="flex flex-wrap gap-2">
           <Input
@@ -103,9 +119,7 @@ function ListEditor({ kind }: { kind: PicklistKind }) {
         </label>
       )}
       {list.loading ? (
-        <p className="text-xs text-muted-foreground" role="status">
-          Loading…
-        </p>
+        <LoadingIndicator variant="inline" label="Preparing content" className="text-xs text-muted-foreground" />
       ) : list.loadError ? (
         <p className="text-xs text-destructive" role="alert">
           {list.loadError}
@@ -161,7 +175,6 @@ function Row({
         {renaming ? (
           <div className="flex gap-2">
             <Input
-              autoFocus
               maxLength={80}
               onChange={(event) => setRenaming({ ...renaming, to: event.target.value })}
               value={renaming.to}

@@ -6,6 +6,15 @@ import { localDateKey } from './use-attendance';
 
 export type DateWindow = { from: string; to: string };
 
+function shiftWindow(window: DateWindow, by: number): DateWindow {
+  const shift = (key: string) => {
+    const date = new Date(`${key}T00:00:00.000Z`);
+    date.setUTCDate(date.getUTCDate() + by);
+    return date.toISOString().slice(0, 10);
+  };
+  return { from: shift(window.from), to: shift(window.to) };
+}
+
 /**
  * The Monday-to-Sunday week `weeksBack` weeks before the one containing `todayKey`.
  *
@@ -32,17 +41,36 @@ export function attendanceWeek(todayKey: string, weeksBack: number): DateWindow 
  */
 export function useAttendanceWeek() {
   const [weeksBack, setWeeksBack] = useState(0);
+  const [customWindow, setCustomWindow] = useState<DateWindow | null>(null);
   const todayKey = localDateKey();
-  const window = useMemo(() => attendanceWeek(todayKey, weeksBack), [todayKey, weeksBack]);
+  const window = useMemo(
+    () => customWindow ?? attendanceWeek(todayKey, weeksBack),
+    [customWindow, todayKey, weeksBack],
+  );
 
-  const previous = useCallback(() => setWeeksBack((current) => current + 1), []);
-  const next = useCallback(() => setWeeksBack((current) => Math.max(0, current - 1)), []);
+  const previous = useCallback(() => {
+    if (customWindow) setCustomWindow(shiftWindow(window, -7));
+    else setWeeksBack((current) => current + 1);
+  }, [customWindow, window]);
+  const next = useCallback(() => {
+    if (customWindow) setCustomWindow(shiftWindow(window, 7));
+    else setWeeksBack((current) => Math.max(0, current - 1));
+  }, [customWindow, window]);
+  const selectRange = useCallback((from: string, to: string) => {
+    if (!from) {
+      setCustomWindow(null);
+      setWeeksBack(0);
+      return;
+    }
+    setCustomWindow({ from, to: to || from });
+  }, []);
 
   return {
     window,
     label: formatDateRange(window.from, window.to),
     previous,
     /** Absent on the current week, which disables the arrow. */
-    next: weeksBack > 0 ? next : undefined,
+    next: customWindow ? (customWindow.to < todayKey ? next : undefined) : weeksBack > 0 ? next : undefined,
+    selectRange,
   };
 }

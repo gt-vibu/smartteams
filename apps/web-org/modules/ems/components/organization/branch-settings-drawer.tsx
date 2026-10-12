@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import {
+  LoadingIndicator,
   Button,
   Input,
   Label,
@@ -164,7 +165,7 @@ export function BranchSettingsDrawer({
         </SheetTitle>
 
         <div className="space-y-6 p-5 text-xs">
-          {overview.loading && <p role="status">Loading…</p>}
+          {overview.loading && <LoadingIndicator variant="inline" label="Preparing content" />}
           {overview.error && (
             <p className="text-destructive" role="alert">
               {overview.error}

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { formatDate, formatDateRange } from '@smarteam/contracts';
-import { Badge, Button } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button } from '@smarteam/ui';
 import type { BranchMembership } from '@smarteam/contracts';
 import { useBranchMemberships } from '../../hooks/use-branch-memberships';
 import { BranchChangeForm, type BranchChange } from './employee-branch-form';
@@ -71,9 +71,7 @@ export function EmployeeBranchesSection({
       </div>
 
       {state.loading ? (
-        <p className="text-muted-foreground" role="status">
-          Loading…
-        </p>
+        <LoadingIndicator variant="inline" label="Preparing content" className="text-muted-foreground" />
       ) : state.loadError ? (
         <p className="text-destructive" role="alert">
           {state.loadError}

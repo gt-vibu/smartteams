@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
+import { LoadingIndicator, Button, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 import type { AssignmentsState } from '../../hooks/use-assignments';
 import {
   buildChanges,
@@ -140,9 +140,7 @@ export function AssignEmployeeModal({
 
         <div className="sm:max-h-[70vh] space-y-6 overflow-y-auto p-5">
           {assignments.loading && (
-            <p className="text-xs text-muted-foreground" role="status">
-              Loading teams and projects...
-            </p>
+            <LoadingIndicator variant="inline" label="Loading teams and projects" className="text-xs text-muted-foreground" />
           )}
 
           {!assignments.loading && assignments.forbidden && (
@@ -175,8 +173,6 @@ export function AssignEmployeeModal({
                 disabled={assignments.saving}
                 draft={projectDraft}
                 memberships={visibleProjects}
-                onRole={setRole}
-                roles={roles}
                 onToggle={(projectId, checked) =>
                   setProjectDraft((prev) => ({
                     ...prev,

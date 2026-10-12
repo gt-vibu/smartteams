@@ -44,7 +44,9 @@ function MemberAvatars({ team }: { team: TeamView }) {
 export function TeamCard({ team, onClick }: { team: TeamView; onClick: () => void }) {
   return (
     <button
-      className="flex w-full flex-col gap-3 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/40"
+      aria-label={`Open ${team.team.name} team details`}
+      aria-haspopup="dialog"
+      className="group flex w-full cursor-pointer flex-col gap-3 rounded-lg border border-border bg-card p-4 text-left transition duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:translate-y-0"
       onClick={onClick}
       type="button"
     >
@@ -55,9 +57,12 @@ export function TeamCard({ team, onClick }: { team: TeamView; onClick: () => voi
             <p className="truncate text-xs text-muted-foreground">{team.branchName}</p>
           )}
         </div>
-        <Badge variant="outline">
-          {team.activeMembers.length} {team.activeMembers.length === 1 ? 'member' : 'members'}
-        </Badge>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Badge variant="outline">
+            {team.activeMembers.length} {team.activeMembers.length === 1 ? 'member' : 'members'}
+          </Badge>
+          <span aria-hidden="true" className="text-muted-foreground transition-transform group-hover:translate-x-0.5">›</span>
+        </div>
       </div>
 
       {team.team.description && (
@@ -66,9 +71,12 @@ export function TeamCard({ team, onClick }: { team: TeamView; onClick: () => voi
 
       <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
         <MemberAvatars team={team} />
-        <span className="truncate text-[11px] text-muted-foreground">
-          {team.lead ? `Lead: ${team.lead.displayName}` : 'No lead'}
-        </span>
+        <div className="flex min-w-0 flex-col items-end gap-1">
+          <span className="max-w-full truncate text-[11px] text-muted-foreground">
+            {team.lead ? `Lead: ${team.lead.displayName}` : 'No lead'}
+          </span>
+          <span className="text-[10px] font-semibold text-primary">View team →</span>
+        </div>
       </div>
     </button>
   );

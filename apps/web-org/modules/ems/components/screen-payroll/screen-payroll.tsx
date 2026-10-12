@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useScreenTab } from '../../hooks/use-screen-tab';
-import { Button } from '@smarteam/ui';
+import { LoadingIndicator, Button } from '@smarteam/ui';
 import { usePayroll } from '../../hooks/use-payroll';
 import { PayrollStructurePanel } from './payroll-structure-panel';
 import { PayrollPayslipsPanel } from './payroll-payslips-panel';
@@ -57,10 +57,14 @@ export function ScreenPayroll() {
 
   return (
     <PageShell>
-      <div className="flex items-center gap-4 border-b border-border pb-2">
+      <div
+        aria-label="Payroll sections"
+        className="flex min-w-0 items-center gap-4 overflow-x-auto border-b border-border pb-2"
+        role="group"
+      >
         {tabs.map((entry) => (
           <Button
-            className={`rounded-none pb-1 text-xs font-semibold ${
+            className={`shrink-0 whitespace-nowrap rounded-none pb-1 text-xs font-semibold ${
               tab === entry.id
                 ? 'border-b-2 border-foreground font-bold text-foreground'
                 : 'text-muted-foreground'
@@ -71,7 +75,10 @@ export function ScreenPayroll() {
             type="button"
             variant="ghost"
           >
-            {entry.label}
+            <span className="sm:hidden">
+              {entry.id === 'structure' ? 'Structure' : entry.id === 'payslips' ? 'Payslips' : 'Advances'}
+            </span>
+            <span className="hidden sm:inline">{entry.label}</span>
           </Button>
         ))}
       </div>
@@ -89,9 +96,7 @@ export function ScreenPayroll() {
       )}
 
       {!payroll.hasNoEmployeeRecord && payroll.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading payroll...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading payroll" className="py-10 text-center text-xs text-muted-foreground" />
       )}
 
       {!payroll.hasNoEmployeeRecord && !payroll.loading && payroll.error && (

@@ -1,8 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button, DatePicker, Input, Label } from '@smarteam/ui';
-import { type SalaryProfile, LIMITS } from '@smarteam/contracts';
+import {
+  Button,
+  DatePicker,
+  Input,
+  Label,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
+} from '@smarteam/ui';
+import { type SalaryProfile, type PayrollPolicy, LIMITS } from '@smarteam/contracts';
 import { Check, Save } from 'lucide-react';
 import type { CompensationState } from '../../hooks/use-compensation';
 import { useOvertimeRates } from '../../hooks/use-overtime-rates';
@@ -16,8 +26,12 @@ interface CompensationSalaryFormProps {
   onTogglePf: () => void;
   onTogglePt: () => void;
   onToggleEsi: () => void;
+  onConfigureStatutory?: () => void;
   /** Reports the salary as it is typed, so the figures beside it can preview it. */
   onGrossChange?: (value: string) => void;
+  policies?: PayrollPolicy[];
+  selectedPolicyId?: string;
+  onSelectedPolicyIdChange?: (value: string) => void;
 }
 
 const today = () => new Date().toLocaleDateString('en-CA');
@@ -71,7 +85,11 @@ export function CompensationSalaryForm({
   onTogglePf,
   onTogglePt,
   onToggleEsi,
+  onConfigureStatutory,
   onGrossChange,
+  policies = [],
+  selectedPolicyId = '',
+  onSelectedPolicyIdChange,
 }: CompensationSalaryFormProps) {
   const current = profile.compensation;
   const policy = profile.employeePolicy;
@@ -138,6 +156,7 @@ export function CompensationSalaryForm({
       pfEnabled,
       esiEnabled,
       ptEnabled,
+      ...(selectedPolicyId ? { payrollPolicyId: selectedPolicyId } : {}),
     });
   };
 
@@ -146,19 +165,39 @@ export function CompensationSalaryForm({
       className="w-full min-w-0 space-y-4 rounded-xl border border-border/70 bg-card p-4 shadow-2xs"
       onSubmit={submit}
     >
-      <div>
-        <h3 className="text-sm font-bold text-foreground">Salary</h3>
-        <p className="text-xs text-muted-foreground">
-          Enter the monthly gross, or the annual gross in lakh (LPA). Basic, HRA, PF, PT and CTC
-          below update as you type.
-        </p>
-      </div>
+      <h3 className="text-sm font-bold text-foreground">Salary</h3>
+
+      {onSelectedPolicyIdChange && (
+        <div className="space-y-1.5">
+          <Label htmlFor="salary-structure-assignment">Salary structure</Label>
+          <SelectMenu
+            value={selectedPolicyId || '__inherit__'}
+            onValueChange={(value) =>
+              onSelectedPolicyIdChange(value === '__inherit__' ? '' : value)
+            }
+          >
+            <SelectTrigger id="salary-structure-assignment">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__inherit__">Organization default</SelectItem>
+              {policies
+                .filter((item) => Boolean(item.id))
+                .map((item) => (
+                  <SelectItem key={item.id} value={item.id!}>
+                    {item.name ?? 'Salary structure'}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </SelectMenu>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div>
+        <div className="sm:col-span-2">
           <div className="mb-1 flex items-center justify-between gap-2">
             <Label className="text-xs font-semibold" htmlFor="gross-salary">
-              {unit === 'monthly' ? 'Monthly gross salary' : 'Annual gross (LPA)'}
+              Gross salary
             </Label>
             <div className="flex rounded-md border border-border p-0.5 text-[11px]" role="group">
               {(
@@ -228,8 +267,8 @@ export function CompensationSalaryForm({
           {valid && grossSalary > 0 && (
             <p className="mt-1 text-[11px] text-muted-foreground">
               {unit === 'monthly'
-                ? `₹${(grossSalary * 12).toLocaleString('en-IN')} a year (${Number(((grossSalary * 12) / 100_000).toFixed(2))} LPA)`
-                : `₹${grossSalary.toLocaleString('en-IN')} a month gross. CTC below adds the employer's PF and ESI.`}
+                ? `Annual gross ₹${(grossSalary * 12).toLocaleString('en-IN')}`
+                : `Monthly gross ₹${grossSalary.toLocaleString('en-IN')}`}
             </p>
           )}
         </div>
@@ -250,9 +289,6 @@ export function CompensationSalaryForm({
             type="number"
             value={overtimeInput}
           />
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Multiple of the hourly rate. Weekly offs and holidays can pay their own company rate.
-          </p>
         </div>
         <div>
           <Label className="mb-1 block text-xs font-semibold" htmlFor="salary-effective-from">
@@ -265,9 +301,6 @@ export function CompensationSalaryForm({
             onChange={setEffectiveFrom}
             value={effectiveFrom}
           />
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Earlier salaries stay on record for past payrolls.
-          </p>
         </div>
       </div>
 
@@ -283,6 +316,17 @@ export function CompensationSalaryForm({
             onClick={onTogglePt}
           />
         </div>
+        {onConfigureStatutory && compensation.can.savePolicy && (
+          <Button
+            className="mt-2 h-auto px-0 text-xs"
+            onClick={onConfigureStatutory}
+            size="sm"
+            type="button"
+            variant="link"
+          >
+            Configure contribution rates and caps
+          </Button>
+        )}
       </div>
 
       {compensation.saveError && (

@@ -1,30 +1,30 @@
+import {
+  ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
+  ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+  LIMITS,
+} from '@smarteam/contracts';
 import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
-  IsNumber,
   IsInt,
   IsISO8601,
-  Matches,
-  MaxLength,
-  IsOptional,
+  IsNumber,
   IsObject,
+  IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Max,
+  MaxLength,
   Min,
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { LIMITS } from '@smarteam/contracts';
 import { IsText, IsWholeNumber } from '../../common/validation/field-rules';
 import { AttendanceDayStatus } from '../../generated/prisma/enums';
-import {
-  ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
-  ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
-} from '@smarteam/contracts';
 export class PunchDto {
   @IsUUID() employeeId!: string;
   @IsDateString() occurredAt!: string;
@@ -41,8 +41,11 @@ export class PunchDto {
 }
 
 export class AttendanceQueryDto {
+  @IsOptional() @IsString() @MaxLength(100) search?: string;
   @IsOptional() @IsUUID() employeeId?: string;
   @IsOptional() @IsUUID() branchId?: string;
+  @IsOptional() @IsUUID() departmentId?: string;
+  @IsOptional() @IsEnum(AttendanceDayStatus) dayStatus?: AttendanceDayStatus;
   @IsOptional() @IsDateString() from?: string;
   @IsOptional() @IsDateString() to?: string;
   @IsOptional() @IsString() @MaxLength(256) cursor?: string;
@@ -51,6 +54,8 @@ export class AttendanceQueryDto {
 
 /** Filters for the correction request list. Mirrors what the federation surface already accepts. */
 export class AttendanceCorrectionQueryDto {
+  @IsOptional() @IsUUID() cursor?: string;
+  @IsOptional() @IsString() @MaxLength(100) search?: string;
   @IsOptional() @IsUUID() employeeId?: string;
   @IsOptional() @IsEnum(['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED']) status?:
     'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
@@ -95,7 +100,7 @@ export class MissingCheckOutCorrectionDto {
 
 export class AttendanceDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
-  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
   @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
   /**
    * Approve with a different check-out time than the one requested — the real time the employee
@@ -124,11 +129,11 @@ export class HolidayReviewRequestDto {
   @IsOptional() @IsString() @MaxLength(500) comment?: string;
 }
 
-/** A manager's decision on it, always with the reason for it. */
+/** A manager's decision on it, with an optional note or reason. */
 export class HolidayReviewDecisionDto {
   @IsEnum(['KEEP_HOLIDAY', 'CONVERT_TO_WORKING_DAY']) outcome!:
     'KEEP_HOLIDAY' | 'CONVERT_TO_WORKING_DAY';
-  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
 }
 
 export class WorkLocationDto {
@@ -152,6 +157,8 @@ export class AttendancePreferencesDto {
     message: 'autoCheckOutAt must be HH:MM',
   })
   autoCheckOutAt?: string;
+  /** Versioned policy stored in the tenant's organization settings. */
+  @IsOptional() @IsObject() missedCheckOutPolicy?: Record<string, unknown>;
   @IsOptional() @IsUUID() branchId?: string;
   @IsOptional()
   @IsArray()

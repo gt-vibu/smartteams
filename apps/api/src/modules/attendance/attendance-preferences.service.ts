@@ -6,12 +6,20 @@ import {
   BiometricVerificationMode,
 } from '../../generated/prisma/enums';
 import { Prisma } from '../../generated/prisma/client';
+import type { MissedCheckOutPolicy } from '@smarteam/contracts';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { type WorkLocationInput } from './attendance-location.service';
-import { assertSettingOwnership, toPreferencesDto } from './attendance-shared';
+import { assertSettingOwnership, toPreferencesDto, workDateInTimeZone } from './attendance-shared';
+import {
+  parseMissedCheckOutPolicy,
+  hasScheduledMissedCheckOutHistory,
+  hasScheduledMissedCheckOutPolicy,
+  readMissedCheckOutPolicy,
+  withMissedCheckOutPolicy,
+} from './attendance-missed-checkout-policy';
 
 /**
  * Per-branch attendance settings: how punches may be captured and what the day boundaries are.
@@ -38,6 +46,7 @@ export class AttendancePreferencesService {
       /** Organization-wide, so these are refused with a branch. */
       autoCheckOutMode?: AutoCheckOutMode;
       autoCheckOutAt?: string;
+      missedCheckOutPolicy?: Record<string, unknown>;
     },
   ) {
     requirePermission(context, 'attendance.preferences.write');
@@ -47,7 +56,8 @@ export class AttendancePreferencesService {
       input.workLocations === undefined &&
       input.attendanceSessionMode === undefined &&
       input.autoCheckOutMode === undefined &&
-      input.autoCheckOutAt === undefined
+      input.autoCheckOutAt === undefined &&
+      input.missedCheckOutPolicy === undefined
     )
       throw new ConflictError('At least one attendance preference must be supplied');
     if (
@@ -128,14 +138,66 @@ export class AttendancePreferencesService {
           ? { ...existingMeta, attendanceSessionMode: input.attendanceSessionMode }
           : existingMeta;
 
+      const currentMissedPolicy = readMissedCheckOutPolicy(
+        existingMeta,
+        settings.autoCheckOutMode,
+        settings.autoCheckOutAt,
+      );
+      const requestedMissedPolicy = input.missedCheckOutPolicy
+        ? parseMissedCheckOutPolicy(input.missedCheckOutPolicy)
+        : input.autoCheckOutMode !== undefined || input.autoCheckOutAt !== undefined
+          ? {
+              ...currentMissedPolicy,
+              ...(input.autoCheckOutMode !== undefined
+                ? {
+                    resolutionMethod:
+                      input.autoCheckOutMode === 'REVIEW_REQUIRED'
+                        ? ('PROVISIONAL_AUTO_CLOSE' as const)
+                        : ('LEAVE_OPEN' as const),
+                  }
+                : {}),
+              ...(input.autoCheckOutAt !== undefined
+                ? { configuredTime: input.autoCheckOutAt }
+                : {}),
+            }
+          : undefined;
+      const missedCheckOutPolicy: MissedCheckOutPolicy | undefined = requestedMissedPolicy
+        ? {
+            ...requestedMissedPolicy,
+            version: currentMissedPolicy.version + 1,
+            effectiveFrom: workDateInTimeZone(
+              new Date(),
+              (
+                await tx.organization.findUniqueOrThrow({
+                  where: { id: context.organizationId },
+                  select: { timezone: true },
+                })
+              ).timezone,
+            ),
+          }
+        : undefined;
+      const nextMeta = missedCheckOutPolicy
+        ? withMissedCheckOutPolicy(updatedMeta, missedCheckOutPolicy, currentMissedPolicy)
+        : updatedMeta;
+      const autoCheckOutMode = missedCheckOutPolicy
+        ? hasScheduledMissedCheckOutPolicy(missedCheckOutPolicy) ||
+          hasScheduledMissedCheckOutHistory(nextMeta)
+          ? AutoCheckOutMode.REVIEW_REQUIRED
+          : AutoCheckOutMode.DISABLED
+        : input.autoCheckOutMode;
+
       const updated = await tx.organizationSettings.update({
         where: { organizationId: context.organizationId },
         data: {
           geofenceMode: input.geofenceMode,
           biometricVerificationMode: input.biometricVerificationMode,
-          autoCheckOutMode: input.autoCheckOutMode,
-          ...(input.autoCheckOutAt ? { autoCheckOutAt: timeOnly(input.autoCheckOutAt) } : {}),
-          metadata: updatedMeta as Prisma.InputJsonValue,
+          autoCheckOutMode,
+          ...(missedCheckOutPolicy
+            ? { autoCheckOutAt: timeOnly(missedCheckOutPolicy.configuredTime) }
+            : input.autoCheckOutAt
+              ? { autoCheckOutAt: timeOnly(input.autoCheckOutAt) }
+              : {}),
+          metadata: nextMeta as Prisma.InputJsonValue,
         },
       });
       await this.locations.syncWorkLocations(tx, context.organizationId, null, input.workLocations);

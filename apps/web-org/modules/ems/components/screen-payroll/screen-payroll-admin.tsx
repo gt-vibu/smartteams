@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { BulkWorkforcePanel } from '../common/bulk-workforce-panel';
 import { Wallet } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
 import { useScreenTab } from '../../hooks/use-screen-tab';
@@ -51,7 +52,7 @@ export function ScreenPayrollAdmin() {
         label: 'Compensation',
         allowed: may('payroll.employee-profile.read.all') || may('payroll.components.read'),
       },
-      { id: 'STATUTORY', label: 'Statutory components', allowed: may('payroll.policy.read') },
+      { id: 'STATUTORY', label: 'Statutory & salary defaults', allowed: may('payroll.policy.read') },
     ],
     tab,
   );
@@ -59,10 +60,15 @@ export function ScreenPayrollAdmin() {
   return (
     <PageShell>
       <ScreenHeader icon={Wallet} title="Payroll" tone="warning" />
-      <div className="flex items-center gap-4 border-b border-border pb-2">
+      <BulkWorkforcePanel initialOperation="PAYROLL_POLICY" />
+      <div
+        aria-label="Payroll sections"
+        className="flex min-w-0 items-center gap-4 overflow-x-auto border-b border-border pb-2"
+        role="group"
+      >
         {tabs.map((entry) => (
           <Button
-            className={`rounded-none pb-1 text-xs font-semibold ${
+            className={`shrink-0 whitespace-nowrap rounded-none pb-1 text-xs font-semibold ${
               active === entry.id
                 ? 'border-b-2 border-foreground font-bold text-foreground'
                 : 'text-muted-foreground'
@@ -73,7 +79,16 @@ export function ScreenPayrollAdmin() {
             type="button"
             variant="ghost"
           >
-            {entry.label}
+            <span className="sm:hidden">
+              {entry.id === 'RUNS'
+                ? 'Runs'
+                : entry.id === 'EMPLOYEE_PAY'
+                  ? 'Salaries'
+                  : entry.id === 'COMPENSATION'
+                    ? 'Pay setup'
+                    : 'Statutory'}
+            </span>
+            <span className="hidden sm:inline">{entry.label}</span>
           </Button>
         ))}
       </div>
@@ -81,7 +96,9 @@ export function ScreenPayrollAdmin() {
       {active === 'RUNS' && <PayrollRunsPanel admin={admin} />}
       {active === 'EMPLOYEE_PAY' && <PayrollEmployeePayPanel admin={admin} />}
       {active === 'STATUTORY' && <ScreenPayrollLegalConfig />}
-      {active === 'COMPENSATION' && <ScreenCompensation />}
+      {active === 'COMPENSATION' && (
+        <ScreenCompensation onConfigureStatutory={() => setTab('STATUTORY')} />
+      )}
     </PageShell>
   );
 }

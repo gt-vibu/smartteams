@@ -20,7 +20,7 @@ import { CompanyDocumentsCard } from './company-documents-card';
 import { localDateKey } from '../../lib/local-date';
 
 /**
- * The Activities tab: what is happening around the employee this week.
+ * The employee's week: schedule, approved time, upcoming holidays and shared documents.
  *
  * Its own component so Home can place it in either layout — beside the profile on a laptop, as a
  * tab of its own on a phone — without the screen carrying every card's data derivation.

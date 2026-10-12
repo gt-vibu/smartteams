@@ -49,6 +49,7 @@ export const attendanceRecordSchema = z.object({
   dayStatus: z.string(),
   workedMinutes: z.number(),
   overtimeMinutes: z.number(),
+  leaveUnits: z.number().min(0).max(1).optional(),
   version: z.number(),
   employee: attendanceEmployeeSchema.optional(),
   punches: z.array(attendancePunchSchema).optional(),
@@ -73,6 +74,16 @@ export const attendanceCorrectionSchema = z.object({
   workDate: z.string().optional(),
   /** What the correction asks for; a missing check-out carries `missingCheckOut.occurredAt`. */
   afterSnapshot: z.unknown().optional(),
+  beforeSnapshot: z.unknown().optional(),
+  warningReason: z.string().nullable().optional(),
+  currentStep: z
+    .object({
+      stepNumber: z.number(),
+      approverType: z.string(),
+      roleId: z.string().nullable().optional(),
+      approverUserId: z.string().nullable().optional(),
+    })
+    .optional(),
   branchId: z.string().uuid().nullable().optional(),
   employee: attendanceEmployeeSchema.optional(),
   approvals: z
@@ -97,8 +108,41 @@ export const attendanceCorrectionSchema = z.object({
 });
 
 export const attendanceCorrectionPageSchema = z.object({
+  nextCursor: z.string().optional(),
   corrections: z.array(attendanceCorrectionSchema),
 });
+
+export const missedCheckOutPolicySchema = z
+  .object({
+    version: z.number().int().min(1).default(1),
+    effectiveFrom: z.string().date().default('1970-01-01'),
+    resolutionMethod: z.enum(['LEAVE_OPEN', 'EMPLOYEE_CORRECTION', 'PROVISIONAL_AUTO_CLOSE']),
+    correctionDeadline: z.enum(['SAME_DAY', 'NEXT_CALENDAR_DAY', 'BEFORE_PAYROLL_CUTOFF']),
+    deadlineFallback: z.enum(['KEEP_OPEN', 'ROUTE_TO_APPROVAL_POLICY']),
+    closeTimeSource: z.enum(['SHIFT_END', 'CONFIGURED_TIME']),
+    configuredTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+    employeeCorrectionsAllowed: z.boolean(),
+    payrollTreatment: z.literal('HOLD_UNRESOLVED').default('HOLD_UNRESOLVED'),
+  })
+  .refine(
+    (policy) =>
+      policy.resolutionMethod !== 'EMPLOYEE_CORRECTION' || policy.employeeCorrectionsAllowed,
+    { message: 'Employee correction mode requires employee correction requests to be enabled' },
+  );
+
+export type MissedCheckOutPolicy = z.infer<typeof missedCheckOutPolicySchema>;
+
+export const DEFAULT_MISSED_CHECK_OUT_POLICY: MissedCheckOutPolicy = {
+  version: 1,
+  effectiveFrom: '1970-01-01',
+  resolutionMethod: 'LEAVE_OPEN',
+  correctionDeadline: 'NEXT_CALENDAR_DAY',
+  deadlineFallback: 'ROUTE_TO_APPROVAL_POLICY',
+  closeTimeSource: 'CONFIGURED_TIME',
+  configuredTime: '23:59',
+  employeeCorrectionsAllowed: true,
+  payrollTreatment: 'HOLD_UNRESOLVED',
+};
 
 export const attendancePreferencesSchema = z.object({
   id: z.string().optional(),
@@ -111,6 +155,7 @@ export const attendancePreferencesSchema = z.object({
   /** Whether a day with no check-out is closed for review, and the local time it closes at. */
   autoCheckOutMode: z.enum(['DISABLED', 'REVIEW_REQUIRED']).nullable().optional(),
   autoCheckOutAt: z.string().nullable().optional(),
+  missedCheckOutPolicy: missedCheckOutPolicySchema.optional(),
 });
 
 export type AttendancePunch = z.infer<typeof attendancePunchSchema>;

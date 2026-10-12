@@ -33,6 +33,7 @@ export function Screen4Calendar({ onToggleView, embedded = false }: Screen4Calen
   const {
     days: records,
     requestCorrection,
+    requestCorrectionForDate,
     requestMissingCheckOut,
     explainHolidayCheckIn,
   } = useAttendance(30, monthWindow);
@@ -140,6 +141,12 @@ export function Screen4Calendar({ onToggleView, embedded = false }: Screen4Calen
   const handleSubmitCorrection = async (recordId: string, reason: string) => {
     await requestCorrection(recordId, reason);
   };
+  const handleSubmitMissingDay = async (
+    workDate: string,
+    reason: string,
+    checkInAt: string,
+    checkOutAt?: string,
+  ) => requestCorrectionForDate(workDate, reason, checkInAt, checkOutAt);
 
   return (
     <div className="w-full flex flex-col">
@@ -168,16 +175,31 @@ export function Screen4Calendar({ onToggleView, embedded = false }: Screen4Calen
 
       {/* 2. Scrollable content below toolbar */}
       <PageShell gap="tight">
+        <div aria-label="Calendar legend" className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-border bg-card px-3 py-2 text-[11px] text-muted-foreground">
+          {[
+            ['bg-emerald-500', 'Present'],
+            ['bg-rose-500', 'Absent'],
+            ['bg-violet-500', 'Approved leave'],
+            ['bg-cyan-500', 'Holiday'],
+            ['bg-amber-400', 'Weekly off'],
+          ].map(([color, label]) => (
+            <span className="inline-flex items-center gap-1.5" key={label}>
+              <span aria-hidden="true" className={`h-2 w-2 rounded-full ${color}`} />
+              {label}
+            </span>
+          ))}
+        </div>
         {/* Full Month 7-Column Calendar Grid */}
         <CalendarGrid days={calendarDays} onSelectDay={handleSelectDay} />
       </PageShell>
 
       {/* 3. Detail Slide-In Drawer */}
       <CalendarDetailDrawer
-        day={selectedDay}
+        day={calendarDays.find((day) => day.date === selectedDay?.date) ?? selectedDay}
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         onSubmitCorrection={handleSubmitCorrection}
+        onSubmitMissingDay={handleSubmitMissingDay}
         onSubmitMissingCheckOut={requestMissingCheckOut}
         onExplainHolidayCheckIn={explainHolidayCheckIn}
       />

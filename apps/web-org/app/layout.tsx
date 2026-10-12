@@ -3,8 +3,13 @@ import './globals.css';
 import './responsive.css';
 
 export const metadata: Metadata = {
-  description: 'Smarteam organization workspace',
-  title: 'Smarteam | Organization workspace',
+  description: 'People, time, and payroll in one clear workspace. Meet Smarteam.',
+  title: 'Smarteam — Work, made clearer',
+  openGraph: {
+    title: 'Smarteam — Work, made clearer',
+    description: 'People, time, and payroll in one clear workspace.',
+    type: 'website',
+  },
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',

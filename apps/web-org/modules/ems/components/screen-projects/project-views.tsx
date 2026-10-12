@@ -12,7 +12,9 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
 
   return (
     <button
-      className="flex w-full flex-col gap-3 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/40 cursor-pointer"
+      aria-label={`Open ${view.project.name} project details`}
+      aria-haspopup="dialog"
+      className="group flex w-full cursor-pointer flex-col gap-3 rounded-lg border border-border bg-card p-4 text-left transition duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:translate-y-0"
       onClick={onClick}
       type="button"
     >
@@ -23,7 +25,10 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
             {[view.project.code, view.branchName].filter(Boolean).join(' · ')}
           </p>
         </div>
-        <Badge variant="outline">{statusLabel(view.project.status)}</Badge>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Badge variant="outline">{statusLabel(view.project.status)}</Badge>
+          <span aria-hidden="true" className="text-muted-foreground transition-transform group-hover:translate-x-0.5">›</span>
+        </div>
       </div>
 
       {view.project.description && (
@@ -32,7 +37,7 @@ export function ProjectCard({ view, onClick }: { view: ProjectView; onClick: () 
 
       <p className="border-t border-border pt-3 text-[11px] text-muted-foreground">
         {view.lead ? `Lead: ${view.lead.displayName}` : 'No lead'} · {count}{' '}
-        {count === 1 ? 'member' : 'members'}
+        {count === 1 ? 'member' : 'members'} <span className="font-semibold text-primary">· View project →</span>
       </p>
     </button>
   );

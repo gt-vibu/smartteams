@@ -4,6 +4,7 @@ import type {
   BiometricVerificationMode,
 } from '../../generated/prisma/enums';
 import { wallClock } from './attendance-auto-checkout';
+import { readMissedCheckOutPolicy } from './attendance-missed-checkout-policy';
 import { AttendancePunchType, AttendanceDayStatus } from '../../generated/prisma/enums';
 import { type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-error';
@@ -118,6 +119,7 @@ export function toPreferencesDto(value: {
   metadata?: unknown;
   autoCheckOutMode?: AutoCheckOutMode;
   autoCheckOutAt?: Date;
+  missedCheckOutPolicy?: unknown;
 }) {
   const meta =
     value.metadata && typeof value.metadata === 'object'
@@ -134,6 +136,11 @@ export function toPreferencesDto(value: {
     // Organization-wide, so a branch's preferences carry neither.
     autoCheckOutMode: value.autoCheckOutMode ?? null,
     autoCheckOutAt: value.autoCheckOutAt ? wallClock(value.autoCheckOutAt) : null,
+    missedCheckOutPolicy: readMissedCheckOutPolicy(
+      value.metadata,
+      value.autoCheckOutMode,
+      value.autoCheckOutAt,
+    ),
     geofenceOwnerSource: value.geofenceOwnerSource,
     biometricOwnerSource: value.biometricOwnerSource,
   };

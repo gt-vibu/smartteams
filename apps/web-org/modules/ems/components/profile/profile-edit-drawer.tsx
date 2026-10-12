@@ -79,7 +79,10 @@ export function ProfileEditDrawer({ isOpen, onClose }: ProfileEditDrawerProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent className="flex flex-col p-0 sm:max-w-md bg-card">
+      <SheetContent
+        className="flex flex-col bg-card p-0 sm:max-w-md"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
         <div className="p-6 pb-4 border-b border-border">
           <SheetHeader>
             <SheetTitle className="text-base font-bold text-foreground">Edit Profile</SheetTitle>

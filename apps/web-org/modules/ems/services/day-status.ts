@@ -50,7 +50,7 @@ export function resolveDayStatus(day: DayFacts): ResolvedDayStatus {
     return 'PRESENT';
   if (day.leaveName || status === 'LEAVE' || status === 'ON_LEAVE') return 'LEAVE';
   if (day.holidayName || status === 'HOLIDAY') return 'HOLIDAY';
-  if (day.isWeeklyOff || status === 'WEEKEND') return 'WEEKEND';
+  if (day.isWeeklyOff) return 'WEEKEND';
   if (day.dateKey > day.todayKey) return 'UPCOMING';
   if (day.dateKey === day.todayKey) return 'TODAY';
   if (status === 'ABSENT') return 'ABSENT';
@@ -74,7 +74,7 @@ export function dayStatusLabel(
     case 'HOLIDAY':
       return names.holidayName ?? 'Holiday';
     case 'WEEKEND':
-      return 'Weekend';
+      return 'Weekly off';
     case 'ABSENT':
       return 'Absent';
     case 'TODAY':

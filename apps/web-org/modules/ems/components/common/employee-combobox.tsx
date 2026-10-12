@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useId, useMemo, useRef, useState } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@smarteam/ui';
+import { LoadingIndicator, Button, Popover, PopoverContent, PopoverTrigger } from '@smarteam/ui';
 import { employeeDisplayName } from '@smarteam/contracts';
 import { Check, ChevronDown, Search } from 'lucide-react';
+import { useEmployeeSearch } from '../../hooks/use-employee-search';
+import { CursorPageControls } from './cursor-page-controls';
 import { activeByName } from '../../lib/pickable';
 
 type Person = Parameters<typeof employeeDisplayName>[0] & {
@@ -46,12 +48,14 @@ export function EmployeeCombobox<T extends Person>({
   const listId = useId();
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const chosen = employees.find((employee) => employee.id === value);
+  const remote = useEmployeeSearch(query, open && !disabled, value ? [value] : []);
+  const source: readonly Person[] = remote.remote ? remote.employees : employees;
+  const chosen = [...remote.selectedEmployees, ...source, ...employees].find((employee) => employee.id === value);
   const options = useMemo(() => {
     const excluded = new Set(excludeIds);
     const term = query.trim().toLowerCase();
-    const people = activeByName(employees.filter((employee) => !excluded.has(employee.id)));
-    const matches = term
+    const people = activeByName(source.filter((employee) => !excluded.has(employee.id)));
+    const matches = term && !remote.remote
       ? people.filter(
           (employee) =>
             employeeDisplayName(employee).toLowerCase().includes(term) ||
@@ -67,7 +71,7 @@ export function EmployeeCombobox<T extends Person>({
         detail: employee.employeeNumber ?? '',
       })),
     ];
-  }, [employees, excludeIds, query, noneLabel]);
+  }, [source, excludeIds, query, noneLabel, remote.remote]);
 
   const pick = (employeeId: string) => {
     onChange(employeeId);
@@ -134,6 +138,7 @@ export function EmployeeCombobox<T extends Person>({
             aria-controls={listId}
             aria-label="Search employees"
             className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            maxLength={100}
             onChange={(event) => {
               setQuery(event.target.value);
               setCursor(0);
@@ -145,7 +150,7 @@ export function EmployeeCombobox<T extends Person>({
           />
         </div>
         <ul className="max-h-64 overflow-y-auto py-1" id={listId} role="listbox">
-          {options.length === 0 ? (
+          {remote.loading ? <li role="none" className="px-3 py-2 text-xs"><LoadingIndicator variant="inline" label="Loading employees" /></li> : options.length === 0 ? (
             <li className="px-3 py-2 text-xs text-muted-foreground">No one matches.</li>
           ) : (
             options.map((option, index) => (
@@ -175,6 +180,8 @@ export function EmployeeCombobox<T extends Person>({
             ))
           )}
         </ul>
+        {remote.error && <p role="alert" className="px-3 py-2 text-xs text-destructive">{remote.error} <Button size="sm" variant="outline" onClick={() => void remote.refetch()}>Try again</Button></p>}
+        {remote.remote && <CursorPageControls page={remote.paging.page} count={source.length} nextCursor={remote.nextCursor} busy={remote.loading} previous={remote.paging.previous} next={remote.paging.next} />}
       </PopoverContent>
     </Popover>
   );

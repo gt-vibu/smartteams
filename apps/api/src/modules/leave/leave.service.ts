@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import type { DomainContext } from '../../common/context/domain-context';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import type { InboxPagination } from '../approvals/approval-inbox-page';
 import { AuditService } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
 import { LeaveBalancesService } from './leave-balances.service';
 import { LeaveDecisionsService } from './leave-decisions.service';
+import { LeavePreviewService } from './leave-preview.service';
 import { LeaveRequestsService } from './leave-requests.service';
 import { LeaveTypesService } from './leave-types.service';
 
@@ -21,16 +23,21 @@ import { LeaveTypesService } from './leave-types.service';
  */
 @Injectable()
 export class LeaveService {
+  dateAvailability(context: DomainContext, from: string, to: string) {
+    return this.previewer.availability(context, from, to);
+  }
   private readonly balances: LeaveBalancesService;
   private readonly decisions: LeaveDecisionsService;
   private readonly requests: LeaveRequestsService;
   private readonly types: LeaveTypesService;
+  private readonly previewer: LeavePreviewService;
 
   constructor(database: TenantDatabaseService, audit: AuditService, outbox: OutboxService) {
     this.balances = new LeaveBalancesService(database, audit);
     this.decisions = new LeaveDecisionsService(database, audit);
     this.requests = new LeaveRequestsService(database, audit, outbox);
     this.types = new LeaveTypesService(database, audit);
+    this.previewer = new LeavePreviewService(database);
   }
 
   // --- leave types and branch assignment --------------------------------------------------
@@ -61,6 +68,10 @@ export class LeaveService {
 
   // --- balances ----------------------------------------------------------------------------
 
+  listBalancePage(...args: Parameters<LeaveBalancesService['listPage']>) {
+    return this.balances.listPage(...args);
+  }
+
   listBalances(context: DomainContext, requestedEmployeeId?: string) {
     return this.balances.listBalances(context, requestedEmployeeId);
   }
@@ -75,12 +86,24 @@ export class LeaveService {
     return this.requests.listRequests(...args);
   }
 
-  listPendingApprovals(context: DomainContext, approverUserId: string) {
-    return this.requests.listPendingApprovals(context, approverUserId);
+  adminSummary(context: DomainContext) {
+    return this.requests.adminSummary(context);
+  }
+
+  listPendingApprovals(
+    context: DomainContext,
+    approverUserId: string,
+    pagination?: InboxPagination,
+  ) {
+    return this.requests.listPendingApprovals(context, approverUserId, pagination);
   }
 
   createRequest(...args: Parameters<LeaveRequestsService['createRequest']>) {
     return this.requests.createRequest(...args);
+  }
+
+  previewRequest(...args: Parameters<LeavePreviewService['preview']>) {
+    return this.previewer.preview(...args);
   }
 
   // --- decisions ---------------------------------------------------------------------------

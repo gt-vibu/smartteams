@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
 import { formatMoney, hasPermission } from '@smarteam/contracts';
+import { useCallback, useMemo } from 'react';
+import { payrollRepository } from '../repositories/payroll.repository';
 import { useSession } from './auth-context';
 import { useAsyncResource } from './use-async-resource';
-import { payrollRepository } from '../repositories/payroll.repository';
 
 export type AdvanceInboxItem = {
   id: string;
@@ -53,7 +53,7 @@ export function useAdvanceInbox() {
   );
 
   const decide = useCallback(
-    (id: string, approve: boolean, comment: string) =>
+    (id: string, approve: boolean, comment?: string) =>
       payrollRepository.decideAdvance(organizationId!, id, {
         status: approve ? 'APPROVED' : 'REJECTED',
         comment,
@@ -61,5 +61,11 @@ export function useAdvanceInbox() {
     [organizationId],
   );
 
-  return { items, loading: resource.loading, refetch: resource.refetch, decide };
+  return {
+    items,
+    loading: resource.loading,
+    error: resource.error,
+    refetch: resource.refetch,
+    decide,
+  };
 }

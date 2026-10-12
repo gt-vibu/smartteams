@@ -1,4 +1,5 @@
 'use client';
+import { EmployeeCombobox } from '../common/employee-combobox';
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -9,18 +10,10 @@ import {
   DialogTitle,
   Input,
   Label,
-  SelectContent,
-  SelectItem,
-  SelectMenu,
-  SelectTrigger,
-  SelectValue,
-  Textarea,
   TimePicker,
 } from '@smarteam/ui';
 import type { Shift } from '@smarteam/contracts';
 import type { ShiftsState } from '../../hooks/use-shifts';
-import { useEmployees } from '../../hooks/use-workforce';
-import { activeByName } from '../../lib/pickable';
 import { LIMITS, textProblem } from '@smarteam/contracts';
 
 const WEEKDAYS = [
@@ -37,11 +30,13 @@ const WEEKDAYS = [
 export function ShiftDialog({
   shifts,
   shift,
+  template,
   open,
   onOpenChange,
 }: {
   shifts: ShiftsState;
   shift: Shift | null;
+  template?: Shift | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -54,13 +49,14 @@ export function ShiftDialog({
 
   useEffect(() => {
     if (!open) return;
-    setName(shift?.name ?? '');
-    setDaysOfWeek(shift?.daysOfWeek ?? [1, 2, 3, 4, 5]);
-    setStartsAt(shift ? shift.startsAt.slice(0, 5) : '09:00');
-    setEndsAt(shift ? shift.endsAt.slice(0, 5) : '18:00');
-    setBreakMinutes(String(shift?.breakMinutes ?? 60));
+    const source = shift ?? template;
+    setName(shift?.name ?? (template ? `${template.name} (new schedule)` : ''));
+    setDaysOfWeek(source?.daysOfWeek ?? [1, 2, 3, 4, 5]);
+    setStartsAt(source ? source.startsAt.slice(0, 5) : '09:00');
+    setEndsAt(source ? source.endsAt.slice(0, 5) : '18:00');
+    setBreakMinutes(String(source?.breakMinutes ?? 60));
     setProblem('');
-  }, [open, shift]);
+  }, [open, shift, template]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -73,6 +69,17 @@ export function ShiftDialog({
     const crossesMidnight = endsAt <= startsAt;
     const input = {
       name: name.trim(),
+      ...((shift ?? template)?.branchId ? { branchId: (shift ?? template)!.branchId! } : {}),
+      ...(template && !shift && template.breakRules
+        ? {
+            breakRules: template.breakRules.map(({ name, durationMinutes, isPaid, sequence }) => ({
+              name,
+              durationMinutes,
+              isPaid,
+              sequence,
+            })),
+          }
+        : {}),
       daysOfWeek: [...daysOfWeek].sort((a, b) => a - b),
       startsAt,
       endsAt,
@@ -217,7 +224,6 @@ export function AssignShiftDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const employees = useEmployees();
   const [employeeId, setEmployeeId] = useState('');
   const [startsOn, setStartsOn] = useState('');
   const [endsOn, setEndsOn] = useState('');
@@ -248,18 +254,12 @@ export function AssignShiftDialog({
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <div>
             <Label className="mb-1 block">Employee</Label>
-            <SelectMenu onValueChange={setEmployeeId} value={employeeId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose an employee" />
-              </SelectTrigger>
-              <SelectContent>
-                {activeByName(employees.data ?? []).map((employee) => (
-                  <SelectItem key={employee.id} value={employee.id}>
-                    {employee.firstName} {employee.lastName} · {employee.employeeNumber}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </SelectMenu>
+            <EmployeeCombobox
+              employees={[]}
+              value={employeeId}
+              onChange={setEmployeeId}
+              disabled={shifts.saving}
+            />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -314,7 +314,7 @@ export function AssignShiftDialog({
   );
 }
 
-/** Retires a shift. The reason is required by the API and recorded in the audit trail. */
+/** Retires a shift. The action and before/after state are recorded in the audit trail. */
 export function RetireShiftDialog({
   shifts,
   shift,
@@ -326,14 +326,11 @@ export function RetireShiftDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [reason, setReason] = useState('');
-
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!shift || reason.trim().length < 2) return;
-    const ok = await shifts.retireShift(shift.id, reason.trim());
+    if (!shift) return;
+    const ok = await shifts.retireShift(shift.id, 'Shift deactivated');
     if (ok) {
-      setReason('');
       onOpenChange(false);
     }
   };
@@ -343,16 +340,6 @@ export function RetireShiftDialog({
       <DialogContent className="sm:max-w-md">
         <DialogTitle>Deactivate {shift?.name ?? 'shift'}</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
-          <Label className="block" htmlFor="retire-reason">
-            Reason
-          </Label>
-          <Textarea
-            maxLength={LIMITS.reason}
-            disabled={shifts.saving}
-            id="retire-reason"
-            onChange={(event) => setReason(event.target.value)}
-            value={reason}
-          />
           {shifts.saveError && (
             <p className="text-xs text-destructive" role="alert">
               {shifts.saveError}
@@ -367,7 +354,7 @@ export function RetireShiftDialog({
             >
               Cancel
             </Button>
-            <Button disabled={shifts.saving || reason.trim().length < 2} type="submit">
+            <Button disabled={shifts.saving} type="submit">
               {shifts.saving ? 'Deactivating…' : 'Deactivate'}
             </Button>
           </div>

@@ -1,3 +1,5 @@
+import { assertOpenPayrollPeriod } from '../approvals/approval-automation';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 import { Injectable } from '@nestjs/common';
 import {
   requirePermission,
@@ -63,7 +65,6 @@ export class ShiftAssignmentsService {
           employeeId,
           startsOn: { lte: on },
           OR: [{ endsOn: null }, { endsOn: { gte: on } }],
-          shift: { isActive: true },
         },
         include: { shift: { include: { breakRules: { orderBy: { sequence: 'asc' } } } } },
         orderBy: { startsOn: 'desc' },
@@ -118,7 +119,7 @@ export class ShiftAssignmentsService {
         },
         include: {
           employee: { select: { id: true, firstName: true, lastName: true, employeeNumber: true } },
-          shift: { select: { id: true, name: true, code: true } },
+          shift: { select: { id: true, name: true, code: true, daysOfWeek: true } },
         },
         orderBy: [{ startsOn: 'desc' }, { id: 'desc' }],
         take: limit + 1,
@@ -175,10 +176,18 @@ export class ShiftAssignmentsService {
         throw new ConflictError(
           `This assignment already ends on ${key(before.endsOn)}; it can only be ended earlier`,
         );
+      const changedFrom = new Date(endsOn.getTime() + 86400000);
+      await assertOpenPayrollPeriod(
+        tx,
+        context.organizationId,
+        changedFrom,
+        before.endsOn ?? new Date('9999-12-31'),
+      );
       const updated = await tx.employeeShiftAssignment.update({
         where: { id: before.id },
         data: { endsOn },
       });
+      await markPayrollStale(tx, context.organizationId, changedFrom, before.endsOn ?? undefined);
       await this.audit.record(
         { ...context, reason: input.reason },
         {

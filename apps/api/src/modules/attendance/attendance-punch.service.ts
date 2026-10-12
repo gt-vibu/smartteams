@@ -1,4 +1,6 @@
+import { attendanceLeaveUnits } from './attendance-leave-units';
 import { Injectable } from '@nestjs/common';
+import { employeeNameSearch } from '../employees/employee-name-search';
 import { AttendanceLocationService } from './attendance-location.service';
 import {
   AttendancePunchType,
@@ -344,8 +346,11 @@ export class AttendancePunchService {
   async list(
     context: DomainContext,
     filters: {
+      search?: string;
       employeeId?: string;
       branchId?: string;
+      departmentId?: string;
+      dayStatus?: AttendanceDayStatus;
       from?: string;
       to?: string;
       cursor?: string;
@@ -367,14 +372,31 @@ export class AttendancePunchService {
       }
       const cursorId = filters.cursor ? decodeAttendanceCursor(filters.cursor) : undefined;
       const limit = Math.min(filters.limit ?? 100, 500);
+      if (context.branchId && filters.branchId && context.branchId !== filters.branchId)
+        throw new ConflictError('Choose a branch within your attendance access');
+      const search = employeeNameSearch(filters.search);
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      // Attendance records describe elapsed days. Do not return future leave placeholders as
+      // zero-minute attendance rows; approved leave remains visible in the leave/calendar views.
+      const today = workDateInTimeZone(new Date(), organization.timezone);
+      const throughDate = filters.to && filters.to < today ? filters.to : today;
+      if (filters.from && filters.from > throughDate)
+        return { records: [], nextCursor: undefined };
       const records = await tx.attendanceRecord.findMany({
         where: {
           organizationId: context.organizationId,
           employeeId,
-          branchId: context.branchId,
+          branchId: context.branchId ?? filters.branchId,
+          ...(filters.dayStatus ? { dayStatus: filters.dayStatus } : {}),
+          ...((filters.departmentId || search)
+            ? { employee: { ...(search ?? {}), ...(filters.departmentId ? { departmentId: filters.departmentId } : {}) } }
+            : {}),
           workDate: {
             gte: filters.from ? new Date(filters.from) : undefined,
-            lte: filters.to ? new Date(filters.to) : undefined,
+            lte: new Date(throughDate),
           },
         },
         include: {
@@ -398,9 +420,20 @@ export class AttendancePunchService {
       });
       const hasNextPage = records.length > limit;
       const page = records.slice(0, limit);
+      const leave =
+        context.accessMode === 'NATIVE'
+          ? await attendanceLeaveUnits(tx, context.organizationId, page)
+          : null;
       return {
         records: page.map((record) => ({
           ...toRecordDto(record),
+          ...(leave
+            ? {
+                leaveUnits:
+                  leave.get(`${record.employeeId}:${record.workDate.toISOString().slice(0, 10)}`) ??
+                  0,
+              }
+            : {}),
           externalEmployeeId: record.employee.externalId,
           employee: record.employee,
           punches: record.punches.map((punch) => toPunchDto(punch)),

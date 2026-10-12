@@ -1,9 +1,10 @@
 'use client';
+import { CursorPageControls } from '../common/cursor-page-controls';
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { useScreenTab } from '../../hooks/use-screen-tab';
 import { useMediaQuery, WIDE_LAYOUT_QUERY } from '../../hooks/use-media-query';
-import { Button, Input } from '@smarteam/ui';
+import { LoadingIndicator, Button, Input } from '@smarteam/ui';
 import { ChevronLeft, Search, Users } from 'lucide-react';
 import { useCompensation } from '../../hooks/use-compensation';
 import { useEmployees } from '../../hooks/use-workforce';
@@ -23,9 +24,12 @@ type Tab = 'employees' | 'catalog';
  * app would do it: the directory fills the screen, a tap opens one employee, and Back (the
  * link, or the device's own) returns to the list because the view is in the URL.
  */
-export function ScreenCompensation() {
+export function ScreenCompensation({
+  onConfigureStatutory,
+}: {
+  onConfigureStatutory?: () => void;
+}) {
   const compensation = useCompensation();
-  const employees = useEmployees();
   const [requestedTab, setTab] = useScreenTab<Tab>(
     'compensationTab',
     ['employees', 'catalog'],
@@ -52,6 +56,11 @@ export function ScreenCompensation() {
   );
   const tab = active;
   const [search, setSearch] = useState('');
+  const employees = useEmployees({ search, status: 'ACTIVE', enabled: tab === 'employees' });
+  const selectedIdentity = useEmployees({
+    ids: compensation.employeeId ? [compensation.employeeId] : [],
+    enabled: Boolean(compensation.employeeId),
+  });
   const [allottingRole, setAllottingRole] = useState(false);
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
   const [view, setView] = useScreenTab<'list' | 'detail'>(
@@ -67,10 +76,11 @@ export function ScreenCompensation() {
     () =>
       (employees.data ?? []).filter(
         (employee) =>
-          !query ||
-          `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(query) ||
-          employee.employeeNumber.toLowerCase().includes(query) ||
-          (employee.workEmail && employee.workEmail.toLowerCase().includes(query)),
+          employee.status === 'ACTIVE' &&
+          (!query ||
+            `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(query) ||
+            employee.employeeNumber.toLowerCase().includes(query) ||
+            (employee.workEmail && employee.workEmail.toLowerCase().includes(query))),
       ),
     [employees.data, query],
   );
@@ -83,14 +93,26 @@ export function ScreenCompensation() {
     }
   }, [compensation, rows, isWide]);
 
+  useEffect(() => {
+    const selected = (selectedIdentity.data ?? []).find(
+      (employee) => employee.id === compensation.employeeId,
+    );
+    if (selected && selected.status !== 'ACTIVE') compensation.selectEmployee(null);
+  }, [compensation, selectedIdentity.data]);
+
   const openEmployee = (employeeId: string) => {
     compensation.selectEmployee(employeeId);
     if (!isWide) setView('detail');
   };
 
   const selectedEmployee = useMemo(
-    () => (employees.data ?? []).find((e) => e.id === compensation.employeeId) ?? null,
-    [employees.data, compensation.employeeId],
+    () =>
+      (selectedIdentity.data ?? []).find(
+        (e) => e.id === compensation.employeeId && e.status === 'ACTIVE',
+      ) ??
+      rows.find((e) => e.id === compensation.employeeId && e.status === 'ACTIVE') ??
+      null,
+    [selectedIdentity.data, compensation.employeeId, rows],
   );
 
   return (
@@ -154,9 +176,7 @@ export function ScreenCompensation() {
               </div>
 
               {employees.loading && (
-                <p className="px-1 py-3 text-xs text-muted-foreground" role="status">
-                  Loading employee directory...
-                </p>
+                <LoadingIndicator variant="panel" label="Loading employee directory" className="px-1 py-3 text-xs text-muted-foreground" />
               )}
               {!employees.loading && !employees.canRead && (
                 <p className="px-1 py-3 text-xs text-muted-foreground" role="status">
@@ -226,6 +246,14 @@ export function ScreenCompensation() {
                   );
                 })}
               </ul>
+              <CursorPageControls
+                page={employees.paging.page}
+                count={rows.length}
+                nextCursor={employees.nextCursor}
+                busy={employees.loading || employees.refreshing}
+                previous={employees.paging.previous}
+                next={employees.paging.next}
+              />
             </aside>
           )}
 
@@ -247,6 +275,7 @@ export function ScreenCompensation() {
               <EmployeeCompensationPanel
                 compensation={compensation}
                 employee={selectedEmployee}
+                onConfigureStatutory={onConfigureStatutory}
                 key={compensation.employeeId ?? 'none'}
               />
             </section>

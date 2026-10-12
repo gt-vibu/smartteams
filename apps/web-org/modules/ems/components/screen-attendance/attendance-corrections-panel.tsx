@@ -1,37 +1,38 @@
 'use client';
 
-import { formatDate, LIMITS } from '@smarteam/contracts';
-import React, { useState } from 'react';
-import { Badge, Button, Label, Textarea } from '@smarteam/ui';
 import type { AttendanceCorrection } from '@smarteam/contracts';
+import { formatDate, LIMITS } from '@smarteam/contracts';
+import { Badge, Button, Label, Textarea } from '@smarteam/ui';
+import { useState } from 'react';
 import type { AttendanceAdminState } from '../../hooks/use-attendance-admin';
 import { statusLabel } from '../../lib/status-label';
 
 /**
  * The correction queue, and the approve/reject action.
  *
- * `decideCorrection` has always existed on the API, and `listCorrectionRequests` was reachable
- * over federation, but no screen surfaced either — a correction could be raised and then never
- * be seen or decided from inside the app.
- *
- * A decision needs a comment; the API rejects anything under two characters and writes it to the
- * audit trail, so the field is required here rather than sent as an empty string.
+ * Approvals execute immediately without requiring comments.
+ * Rejections require a clear reason recorded in the audit trail.
  */
 export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminState }) {
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [comment, setComment] = useState('');
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
   const [error, setError] = useState('');
 
-  const decide = async (correctionId: string, status: 'APPROVED' | 'REJECTED') => {
-    if (comment.trim().length < 2) {
-      setError('A comment is required, and is recorded in the audit trail.');
+  const approve = async (correctionId: string) => {
+    setError('');
+    await admin.decide(correctionId, 'APPROVED', '');
+  };
+
+  const reject = async (correctionId: string) => {
+    if (rejectionReason.trim().length < 2) {
+      setError('A reason is required when rejecting a correction.');
       return;
     }
     setError('');
-    const decided = await admin.decide(correctionId, status, comment.trim());
+    const decided = await admin.decide(correctionId, 'REJECTED', rejectionReason.trim());
     if (decided) {
-      setActiveId(null);
-      setComment('');
+      setRejectingId(null);
+      setRejectionReason('');
     }
   };
 
@@ -64,6 +65,7 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
 
         {rows.map((correction) => {
           const isPending = correction.status === 'PENDING';
+          const isRejecting = rejectingId === correction.id;
           return (
             <div className="px-4 py-3" key={correction.id}>
               <div className="flex items-start justify-between gap-3">
@@ -94,28 +96,63 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
                 </Badge>
               </div>
 
-              {isPending && admin.canDecide && (
-                <div className="mt-2">
-                  {activeId === correction.id ? (
-                    <div className="space-y-2 rounded-md border border-border p-3">
-                      <Label className="block" htmlFor={`decision-${correction.id}`}>
-                        Decision comment
-                      </Label>
-                      <Textarea
-                        maxLength={LIMITS.reason}
-                        disabled={admin.saving}
-                        id={`decision-${correction.id}`}
-                        onChange={(event) => setComment(event.target.value)}
-                        rows={2}
-                        value={comment}
-                      />
-                      <p className="text-[11px] font-semibold text-destructive" role="alert">
-                        {error || admin.saveError}
-                      </p>
+              {isPending &&
+                admin.canDecide &&
+                admin.inbox.some((item) => item.id === correction.id) && (
+                  <div className="mt-2">
+                    {isRejecting ? (
+                      <div className="space-y-2 rounded-md border border-destructive/30 bg-destructive/5 p-3">
+                        <Label
+                          className="block text-xs font-medium text-destructive"
+                          htmlFor={`rejection-${correction.id}`}
+                        >
+                          Reason for rejection (required)
+                        </Label>
+                        <Textarea
+                          maxLength={LIMITS.reason}
+                          disabled={admin.saving}
+                          id={`rejection-${correction.id}`}
+                          onChange={(event) => setRejectionReason(event.target.value)}
+                          placeholder="State the reason for rejection..."
+                          rows={2}
+                          value={rejectionReason}
+                          autoFocus
+                        />
+                        {(error || admin.saveError) && (
+                          <p className="text-[11px] font-semibold text-destructive" role="alert">
+                            {error || admin.saveError}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            disabled={admin.saving}
+                            onClick={() => void reject(correction.id)}
+                            size="sm"
+                            type="button"
+                            variant="destructive"
+                          >
+                            Confirm Rejection
+                          </Button>
+                          <Button
+                            disabled={admin.saving}
+                            onClick={() => {
+                              setRejectingId(null);
+                              setRejectionReason('');
+                              setError('');
+                            }}
+                            size="sm"
+                            type="button"
+                            variant="outline"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
                       <div className="flex items-center gap-2">
                         <Button
                           disabled={admin.saving}
-                          onClick={() => void decide(correction.id, 'APPROVED')}
+                          onClick={() => void approve(correction.id)}
                           size="sm"
                           type="button"
                         >
@@ -123,44 +160,21 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
                         </Button>
                         <Button
                           disabled={admin.saving}
-                          onClick={() => void decide(correction.id, 'REJECTED')}
+                          onClick={() => {
+                            setRejectingId(correction.id);
+                            setRejectionReason('');
+                            setError('');
+                          }}
                           size="sm"
                           type="button"
                           variant="destructive"
                         >
                           Reject
                         </Button>
-                        <Button
-                          disabled={admin.saving}
-                          onClick={() => {
-                            setActiveId(null);
-                            setComment('');
-                            setError('');
-                          }}
-                          size="sm"
-                          type="button"
-                          variant="outline"
-                        >
-                          Cancel
-                        </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <Button
-                      onClick={() => {
-                        setActiveId(correction.id);
-                        setComment('');
-                        setError('');
-                      }}
-                      size="sm"
-                      type="button"
-                      variant="outline"
-                    >
-                      Decide
-                    </Button>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
             </div>
           );
         })}

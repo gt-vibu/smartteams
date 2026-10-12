@@ -1,9 +1,9 @@
 'use client';
 
 import { formatDate } from '@smarteam/contracts';
-import { Checkbox } from '@smarteam/ui';
-import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
+import { Badge, Checkbox } from '@smarteam/ui';
 import type { ProjectDraftMap, RoleDraft, TeamDraft } from '../../services/assignment-changes';
+import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
 import { PicklistSelect } from './picklist-select';
 
 /**
@@ -51,8 +51,18 @@ export function TeamPicker({
                   onCheckedChange={(checked) => onToggle(membership.team.id, checked === true)}
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-xs font-semibold text-foreground">
-                    {membership.team.name}
+                  <span className="flex items-center gap-1.5 truncate">
+                    <span className="truncate text-xs font-semibold text-foreground">
+                      {membership.team.name}
+                    </span>
+                    {membership.isLead && (
+                      <Badge
+                        className="border-amber-500/20 bg-amber-500/10 text-[9px] text-amber-600 dark:text-amber-400"
+                        variant="outline"
+                      >
+                        Lead
+                      </Badge>
+                    )}
                   </span>
                   {membership.state === 'ENDED' && (
                     <span className="text-[10px] text-muted-foreground">
@@ -87,16 +97,12 @@ export function ProjectPicker({
   onToggle,
   canWrite,
   disabled,
-  roles,
-  onRole,
 }: {
   memberships: ProjectMembership[];
   draft: ProjectDraftMap;
   onToggle: (projectId: string, checked: boolean) => void;
   canWrite: boolean;
   disabled: boolean;
-  roles: RoleDraft;
-  onRole: (key: string, role: string) => void;
 }) {
   return (
     <section>
@@ -126,8 +132,18 @@ export function ProjectPicker({
                     disabled={!canWrite || disabled}
                     onCheckedChange={(checked) => onToggle(membership.project.id, checked === true)}
                   />
-                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
-                    {membership.project.name}
+                  <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate">
+                    <span className="truncate text-xs font-semibold text-foreground">
+                      {membership.project.name}
+                    </span>
+                    {membership.isLead && (
+                      <Badge
+                        className="border-amber-500/20 bg-amber-500/10 text-[9px] text-amber-600 dark:text-amber-400"
+                        variant="outline"
+                      >
+                        Lead
+                      </Badge>
+                    )}
                   </span>
                 </label>
 
@@ -135,18 +151,6 @@ export function ProjectPicker({
                   <p className="mt-1 pl-8 text-[10px] text-muted-foreground">
                     Was on this project until {formatDate(membership.endedOn)}
                   </p>
-                )}
-                {selected && membership.state !== 'ACTIVE' && (
-                  <div className="mt-2 pl-8">
-                    <PicklistSelect
-                      addLabel="+ Add a role"
-                      disabled={disabled}
-                      kind="project-roles"
-                      noneLabel="Project role (optional)"
-                      onChange={(role) => onRole(`project:${membership.project.id}`, role)}
-                      value={roles[`project:${membership.project.id}`] ?? ''}
-                    />
-                  </div>
                 )}
               </div>
             );

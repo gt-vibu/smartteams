@@ -1,4 +1,5 @@
 'use client';
+import { EmployeeCombobox } from '../common/employee-combobox';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -14,14 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import {
-  type DocumentShare,
-  employeeDisplayName,
-  formatDate,
-  type StoredDocument,
-} from '@smarteam/contracts';
+import { type DocumentShare, formatDate, type StoredDocument } from '@smarteam/contracts';
 import type { DocumentsState } from '../../hooks/use-documents';
-import { useEmployees, useTeams } from '../../hooks/use-workforce';
+import { useTeams } from '../../hooks/use-workforce';
 import { useRoles } from '../../hooks/use-roles';
 
 type Grantee = 'USER' | 'ROLE' | 'TEAM';
@@ -44,7 +40,6 @@ export function DocumentShareDialog({
   const [target, setTarget] = useState('');
   const [canDownload, setCanDownload] = useState(false);
   const [expiresOn, setExpiresOn] = useState('');
-  const employees = useEmployees();
   const teams = useTeams();
   const roles = useRoles();
   const fileId = document?.id ?? null;
@@ -69,10 +64,7 @@ export function DocumentShareDialog({
 
   const choices =
     grantee === 'USER'
-      ? (employees.data ?? []).map((employee) => ({
-          id: employee.id,
-          name: `${employeeDisplayName(employee)} · ${employee.employeeNumber}`,
-        }))
+      ? []
       : grantee === 'ROLE'
         ? roles.roles.map((role) => ({ id: role.id, name: role.name }))
         : (teams.data ?? []).map((team) => ({ id: team.id, name: team.name }));
@@ -98,7 +90,9 @@ export function DocumentShareDialog({
   return (
     <Dialog onOpenChange={(open) => !open && onClose()} open={document !== null}>
       <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-lg">
-        <DialogTitle>Share “{document?.name}”</DialogTitle>
+        <DialogTitle className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 bg-card px-5 pt-5 pb-3">
+          Share “{document?.name}”
+        </DialogTitle>
         <div className="mt-4 space-y-4">
           <div className="grid gap-3 sm:grid-cols-[140px_1fr]">
             <div>
@@ -124,18 +118,27 @@ export function DocumentShareDialog({
               <Label className="mb-1 block">
                 {grantee === 'USER' ? 'Person' : grantee === 'ROLE' ? 'Role' : 'Team'}
               </Label>
-              <SelectMenu onValueChange={setTarget} value={target}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose" />
-                </SelectTrigger>
-                <SelectContent>
-                  {choices.map((choice) => (
-                    <SelectItem key={choice.id} value={choice.id}>
-                      {choice.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
+              {grantee === 'USER' ? (
+                <EmployeeCombobox
+                  employees={[]}
+                  value={target}
+                  onChange={setTarget}
+                  disabled={documents.busy}
+                />
+              ) : (
+                <SelectMenu onValueChange={setTarget} value={target}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {choices.map((choice) => (
+                      <SelectItem key={choice.id} value={choice.id}>
+                        {choice.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectMenu>
+              )}
             </div>
           </div>
           <div className="grid items-end gap-3 sm:grid-cols-2">
@@ -165,7 +168,7 @@ export function DocumentShareDialog({
               {documents.error}
             </p>
           )}
-          <div className="flex justify-end">
+          <div className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 flex justify-end gap-2 bg-card px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <Button disabled={!target || documents.busy} onClick={() => void add()} type="button">
               Share
             </Button>

@@ -25,7 +25,7 @@ export function AttendanceSummaryFooter({
           { label: 'Present', value: days(stats.presentDays), color: 'border-l-emerald-500' },
           { label: 'Leave', value: days(stats.leaveDays), color: 'border-l-amber-500' },
           { label: 'Holidays', value: days(stats.holidayDays), color: 'border-l-cyan-500' },
-          { label: 'Weekend', value: days(stats.weekendDays), color: 'border-l-amber-400' },
+          { label: 'Weekly off', value: days(stats.weekendDays), color: 'border-l-amber-400' },
         ]
       : [
           { label: 'Worked', value: hm(stats.workedMinutes), color: 'border-l-emerald-500' },

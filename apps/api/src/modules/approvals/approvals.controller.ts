@@ -1,15 +1,20 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { ApproverSearchDto, ApproverSearchService } from './approver-search.service';
+import { ApprovalExistingAutomationService } from './approval-existing-automation.service';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { IsInt, Max, Min } from 'class-validator';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
+import { ApprovalAutomationPreviewService } from './approval-automation-preview.service';
+import { ApprovalFollowUpService } from './approval-follow-up.service';
 import {
   ApprovalPolicyDeactivationDto,
   ApprovalPolicyDto,
+  AutomationPreviewDto,
+  ExistingAutomationDto,
   UpdateApprovalPolicyDto,
 } from './approvals.dto';
 import { ApprovalsService } from './approvals.service';
-import { ApprovalFollowUpService } from './approval-follow-up.service';
 
 export class ApprovalFollowUpDto {
   /** 0 turns reminders off. */
@@ -22,10 +27,31 @@ export class ApprovalFollowUpDto {
 @UseGuards(NativeJwtGuard)
 export class ApprovalsController {
   constructor(
+    private readonly approverSearch: ApproverSearchService,
     private readonly approvals: ApprovalsService,
     private readonly contexts: DomainContextFactory,
     private readonly followUp: ApprovalFollowUpService,
+    private readonly existingAutomation: ApprovalExistingAutomationService,
+    private readonly automationPreview: ApprovalAutomationPreviewService,
   ) {}
+  @Post('automation-preview') previewAutomation(
+    @Param('organizationId') organizationId: string,
+    @Body() body: AutomationPreviewDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.automationPreview.preview(context, body));
+  }
+  @Post('automation-apply-existing') applyExisting(
+    @Param('organizationId') organizationId: string,
+    @Body() body: ExistingAutomationDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.existingAutomation.apply(context, body));
+  }
   @Get('follow-up') getFollowUp(
     @Param('organizationId') organizationId: string,
     @Req() request: Request & { user: NativeRequestUser },
@@ -44,6 +70,7 @@ export class ApprovalsController {
       .then((context) => this.followUp.set(context, body));
   }
   /** Who can be named on an approval step: active employees with a login. */
+  @Get('approver-search') searchApprovers(@Param('organizationId') organizationId: string, @Query() query: ApproverSearchDto, @Req() request: Request & { user: NativeRequestUser }) { return this.contexts.native(request.user.userId, organizationId).then(context => this.approverSearch.search(context, query)); }
   @Get('approver-candidates') approverCandidates(
     @Param('organizationId') organizationId: string,
     @Req() request: Request & { user: NativeRequestUser },

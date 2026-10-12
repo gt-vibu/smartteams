@@ -12,7 +12,7 @@ import type { HolidayConflict } from '@smarteam/contracts';
  * server did not return.
  */
 export type DataTopic =
-  'attendance' | 'holidays' | 'approvals' | 'payroll' | 'timesheets' | 'leave';
+  'workforce' | 'attendance' | 'holidays' | 'approvals' | 'payroll' | 'timesheets' | 'leave' | 'work-week';
 
 const EVENT = 'smarteam:data-changed';
 

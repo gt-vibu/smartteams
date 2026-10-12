@@ -1,12 +1,13 @@
+import type { DomainContext } from '../../common/context/domain-context';
+import { ConflictError } from '../../common/errors/domain-error';
+import type { PayrollAssignmentCriteria } from './payroll-assignment-rules';
 import { Prisma } from '../../generated/prisma/client';
-import { AccessMode } from '../../generated/prisma/enums';
 import type {
   PayFrequency,
   PayrollRoundingMode,
   SalarySlipMode,
 } from '../../generated/prisma/enums';
-import type { DomainContext } from '../../common/context/domain-context';
-import { ConflictError } from '../../common/errors/domain-error';
+import { AccessMode } from '../../generated/prisma/enums';
 
 export type PolicyInput = {
   id?: string;
@@ -19,12 +20,24 @@ export type PolicyInput = {
   basePercentage: number;
   baseMinimum: number;
   hraPercentage: number;
+  defaultGrossSalary?: number | null;
   pfDefault: boolean;
   esiDefault: boolean;
   ptDefault: boolean;
   statutoryJurisdiction?: string;
   roundingMode: PayrollRoundingMode;
   components?: PolicyComponentInput[];
+};
+
+export type PayrollAssignmentRuleInput = {
+  id?: string;
+  name: string;
+  payrollPolicyId: string;
+  criteria: PayrollAssignmentCriteria;
+  priority: number;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  enabled: boolean;
 };
 
 export type PolicyComponentInput = {
@@ -84,7 +97,7 @@ export type AdvanceInput = {
 export type AdvanceDecisionInput = {
   status: 'APPROVED' | 'REJECTED' | 'CANCELLED';
   approvedAmount?: number;
-  comment: string;
+  comment?: string;
 };
 export type PaymentInput = {
   paymentMethod: 'BANK_TRANSFER' | 'CASH' | 'UPI' | 'CHEQUE' | 'OTHER';
@@ -101,6 +114,7 @@ export function toPolicyData(input: PolicyInput, effectiveTo: Date | null) {
     basePercentage: new Prisma.Decimal(input.basePercentage),
     baseMinimum: new Prisma.Decimal(input.baseMinimum),
     hraPercentage: new Prisma.Decimal(input.hraPercentage),
+    defaultGrossSalary: input.defaultGrossSalary == null ? null : new Prisma.Decimal(input.defaultGrossSalary),
     pfDefault: input.pfDefault,
     esiDefault: input.esiDefault,
     ptDefault: input.ptDefault,
@@ -132,6 +146,7 @@ export function validatePolicy(input: PolicyInput) {
     !Number.isFinite(input.baseMinimum) ||
     !Number.isFinite(input.basePercentage) ||
     !Number.isFinite(input.hraPercentage) ||
+    (input.defaultGrossSalary != null && (!Number.isFinite(input.defaultGrossSalary) || input.defaultGrossSalary <= 0)) ||
     input.baseMinimum < 0 ||
     input.basePercentage < 0 ||
     input.basePercentage > 100 ||

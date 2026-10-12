@@ -11,6 +11,8 @@ import { NotificationDrawer } from './notification-drawer';
 import { EntityDetailDrawer } from '../common/entity-detail-drawer';
 import { useBackToClose } from '@smarteam/ui';
 import { NotificationsProvider, useNotifications } from '../../hooks/use-notifications';
+import { useAutoHideScrollbar } from '../../hooks/use-auto-hide-scrollbar';
+import { FeedbackToasts } from './feedback-toasts';
 
 interface EmsLayoutProps {
   children: React.ReactNode;
@@ -46,6 +48,7 @@ function EmsLayoutBody({
   const { markModuleRead, unreadByModule } = notifications;
   const unreadHere = unreadByModule[activeModule] ?? 0;
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  const mainCanvasRef = useAutoHideScrollbar<HTMLElement>();
 
   // Back closes the palette rather than the page behind it. Drawers and dialogs do this themselves.
   useBackToClose(isCommandPaletteOpen, () => setIsCommandPaletteOpen(false));
@@ -111,7 +114,8 @@ function EmsLayoutBody({
         {/* Dedicated Scrollable Main Content Canvas with Context Bar */}
         <main
           id="ems-main-canvas"
-          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col"
+          ref={mainCanvasRef}
+          className="scrollbar-auto-hide flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col"
         >
           {/* Context Breadcrumbs & Scope Indicator */}
           <ContextBar
@@ -164,6 +168,8 @@ function EmsLayoutBody({
         onClose={() => setIsNotificationDrawerOpen(false)}
         onSelectModule={onSelectModule}
       />
+
+      <FeedbackToasts />
 
       {/* 6. Entity Detail Drawer */}
       <EntityDetailDrawer

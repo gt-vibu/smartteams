@@ -1,30 +1,7 @@
 import type { Prisma } from '../../generated/prisma/client';
+import { EMPLOYEE_BASELINE_PERMISSION_KEYS } from '@smarteam/contracts';
 
-export const EMPLOYEE_SELF_SERVICE_PERMISSIONS = [
-  'organizations.read',
-  'employees.read',
-  'attendance.read',
-  'attendance.write',
-  'attendance.corrections.write',
-  'attendance.preferences.read',
-  'leave.types.read',
-  'leave.requests.read',
-  'leave.requests.write',
-  'leave.balances.read',
-  'timesheets.read',
-  'timesheets.write',
-  'timesheets.submit',
-  'payroll.payslips.read',
-  'payroll.employee-profile.read',
-  'payroll.preview.read',
-  'payroll.advances.read',
-  'payroll.advances.request',
-  'files.read',
-  'files.write',
-  'teams.read',
-  'projects.read',
-  'shifts.read',
-] as const;
+export const EMPLOYEE_SELF_SERVICE_PERMISSIONS = EMPLOYEE_BASELINE_PERMISSION_KEYS;
 
 /**
  * A line manager: their own records, plus the ability to decide what their reports send them.
@@ -78,13 +55,15 @@ export const HR_ADMIN_PERMISSIONS = [
 ] as const;
 
 /**
- * The three non-administrator roles every organization needs, seeded at creation.
+ * The standard non-administrator access profiles every organization needs, seeded at creation.
  *
  * Shared because it was not. Platform onboarding seeded these; self-service registration created
  * only `ORG_ADMIN`. A tenant that signed itself up therefore had exactly one role — the wildcard
  * one — so the onboarding form could not find an `EMPLOYEE` role to give a new joiner, reported
  * that it "could not read the Employee role", and quietly created employees with no login at all.
- * Two ways to make a tenant must not produce two different tenants.
+ * Two ways to make a tenant must not produce two different tenants. Manager remains a standard
+ * profile because organizations need a ready-made approver role; job title/team lead status alone
+ * still does not grant access.
  *
  * `ORG_ADMIN` stays with each caller: onboarding upserts it against an existing organization,
  * registration creates it fresh, and the wildcard permission it carries is handled differently in
@@ -114,7 +93,12 @@ export async function seedStandardRoles(
       'Self-service access to your own records',
       EMPLOYEE_SELF_SERVICE_PERMISSIONS,
     ],
-    ['MANAGER', 'Manager', 'Approves what their reports submit', MANAGER_PERMISSIONS],
+    [
+      'MANAGER',
+      'Manager',
+      'Employee self-service plus approval access for reports',
+      MANAGER_PERMISSIONS,
+    ],
     ['HR_ADMIN', 'HR Admin', 'People operations across the organization', HR_ADMIN_PERMISSIONS],
   ] as const) {
     const role = await tx.role.create({

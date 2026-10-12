@@ -98,8 +98,8 @@ export function ConfigureSalaryPolicyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg sm:max-h-[92vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-h-[92dvh] max-w-lg overflow-y-auto">
+        <DialogHeader className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 bg-card px-5 pb-3 pt-5">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <Sliders className="h-4 w-4" />
@@ -309,7 +309,7 @@ export function ConfigureSalaryPolicyDialog({
             </div>
           )}
 
-          <DialogFooter className="gap-2 pt-2">
+          <DialogFooter className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 gap-2 bg-card px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-3">
             <Button
               type="button"
               variant="outline"

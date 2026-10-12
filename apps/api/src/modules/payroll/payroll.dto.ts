@@ -1,20 +1,21 @@
+import { LIMITS } from '@smarteam/contracts';
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
   IsNumber,
   IsObject,
   IsOptional,
-  IsArray,
   IsString,
   IsUUID,
   Max,
+  MaxLength,
   Min,
   MinLength,
   ValidateNested,
 } from 'class-validator';
-import { LIMITS } from '@smarteam/contracts';
 import {
   IsAmount,
   IsCalendarDate,
@@ -22,6 +23,7 @@ import {
   IsText,
   yearsFromToday,
 } from '../../common/validation/field-rules';
+import type { PayrollAdjustmentType, PayrollRunStatus } from '../../generated/prisma/enums';
 import {
   PayFrequency,
   PayrollPaymentMethod,
@@ -117,6 +119,7 @@ export class PayrollPolicyDto {
   @IsNumber() @Min(0) @Max(100) basePercentage!: number;
   @IsNumber() @Min(0) baseMinimum!: number;
   @IsNumber() @Min(0) @Max(100) hraPercentage!: number;
+  @IsOptional() @IsNumber() @Min(1) defaultGrossSalary?: number;
   @IsBoolean() pfDefault!: boolean;
   @IsBoolean() esiDefault!: boolean;
   @IsBoolean() ptDefault!: boolean;
@@ -208,7 +211,7 @@ export class SalaryAdvanceDto {
 export class SalaryAdvanceDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED', 'CANCELLED']) status!: 'APPROVED' | 'REJECTED' | 'CANCELLED';
   @IsOptional() @IsNumber() @Min(0.01) approvedAmount?: number;
-  @IsString() @MinLength(3) comment!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
 }
 
 export class PayrollPaymentDto {
@@ -260,4 +263,3 @@ export class FederatedSalaryAdvanceDto {
   @IsString() @MinLength(3) reason!: string;
   @IsOptional() @IsString() externalId?: string;
 }
-import type { PayrollAdjustmentType, PayrollRunStatus } from '../../generated/prisma/enums';

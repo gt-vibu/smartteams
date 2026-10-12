@@ -27,6 +27,7 @@ export class FileUploadDto {
     'PAYROLL_EXPORT',
     'IMPORT',
     'OTHER',
+    'ORGANIZATION_BRANDING',
   ])
   purpose!: FilePurpose;
   @IsString() @MaxLength(255) originalName!: string;
@@ -48,6 +49,7 @@ export class FileQueryDto {
     'PAYROLL_EXPORT',
     'IMPORT',
     'OTHER',
+    'ORGANIZATION_BRANDING',
   ])
   purpose?: FilePurpose;
   @IsOptional() @IsUUID() employeeId?: string;

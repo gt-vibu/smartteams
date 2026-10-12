@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import type { Branch, Employee } from '@smarteam/contracts';
 import {
   Button,
@@ -16,7 +16,6 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
-import { activeByName } from '../../lib/pickable';
 import { EmployeeCombobox } from '../common/employee-combobox';
 import { EmployeePicker } from '../common/employee-picker';
 import { LIMITS, textProblem } from '@smarteam/contracts';
@@ -31,7 +30,7 @@ interface CreateTeamModalProps {
   saving: boolean;
   saveError: string | null;
   onCreate: (
-    input: { name: string; description?: string; branchId?: string; teamLeadEmployeeId?: string },
+    input: { id: string; name: string; description?: string; branchId?: string; teamLeadEmployeeId?: string },
     memberEmployeeIds: string[],
   ) => Promise<boolean>;
 }
@@ -43,8 +42,7 @@ const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLow
 /**
  * Creates a team from the organization's real employees and branches.
  *
- * The team is created first and members are added afterwards, which is how the API models it —
- * there is no single call that does both. Status is not offered: the API creates teams ACTIVE
+ * The team and its initial members are saved atomically. Status is not offered: the API creates teams ACTIVE
  * and archiving is a separate audited action with a reason.
  */
 export function CreateTeamModal({
@@ -64,10 +62,11 @@ export function CreateTeamModal({
   const [teamLeadEmployeeId, setTeamLeadEmployeeId] = useState(NONE);
   const [memberIds, setMemberIds] = useState<string[]>([]);
   const [error, setError] = useState('');
+  const [requestId, setRequestId] = useState<string | null>(null);
 
-  const sorted = useMemo(() => activeByName(employees), [employees]);
 
   const reset = () => {
+    setRequestId(null);
     setName('');
     setDescription('');
     setBranchId(NONE);
@@ -93,8 +92,11 @@ export function CreateTeamModal({
       return;
     }
     setError('');
+    const id = requestId ?? crypto.randomUUID();
+    if (!requestId) setRequestId(id);
     const created = await onCreate(
       {
+        id,
         name: name.trim(),
         ...(description.trim() ? { description: description.trim() } : {}),
         branchId,
@@ -111,8 +113,8 @@ export function CreateTeamModal({
   return (
     <Dialog
       onOpenChange={(open) => {
-        if (!open) {
-          reset();
+        if (!open && !saving) {
+          if (!requestId) reset();
           onClose();
         }
       }}
@@ -201,11 +203,6 @@ export function CreateTeamModal({
             <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-foreground">
               Members ({memberIds.length} selected)
             </span>
-            {sorted.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
-                No employees are recorded yet, so the team will be created empty.
-              </p>
-            ) : (
               <EmployeePicker
                 disabled={saving}
                 employees={employees}
@@ -213,7 +210,6 @@ export function CreateTeamModal({
                 onChange={setMemberIds}
                 selected={memberIds}
               />
-            )}
           </div>
         </div>
 
@@ -252,16 +248,26 @@ export function CreateTeamModal({
           </div>
         )}
 
+        {requestId && (
+          <p className="px-5 text-[11px] text-muted-foreground" role="status">
+            Retry keeps the same request ID and cannot create a second team. Check the team list before starting fresh.
+          </p>
+        )}
         <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
           <p className="text-[11px] font-semibold text-destructive" role="alert">
             {error || saveError}
           </p>
           <div className="flex items-center gap-2">
-            <Button disabled={saving} onClick={onClose} type="button" variant="outline">
+            {requestId && !saving && (
+              <Button disabled={saving} onClick={() => { reset(); onClose(); }} type="button" variant="outline">
+                I checked the list — start fresh
+              </Button>
+            )}
+            <Button disabled={saving} onClick={() => { if (!requestId) reset(); onClose(); }} type="button" variant="outline">
               Cancel
             </Button>
             <Button disabled={saving} onClick={() => void handleSubmit()} type="button">
-              {saving ? 'Creating...' : 'Create team'}
+              {saving ? 'Creating...' : requestId ? 'Retry create team' : 'Create team'}
             </Button>
           </div>
         </div>

@@ -4,7 +4,6 @@ import React from 'react';
 import { employmentTypeLabel, formatDate } from '@smarteam/contracts';
 import { ProfileState } from '../profile/profile-state';
 import { useEmployee } from '../../hooks/use-employee';
-import { MyResignationCard } from './my-resignation-card';
 import { EmployeeCustomFieldsSection } from '../common/employee-custom-fields-section';
 
 /**
@@ -87,7 +86,6 @@ export function OverviewProfileTab() {
 
       <EmployeeCustomFieldsSection employeeId={employee.id} />
 
-      <MyResignationCard />
     </div>
   );
 }

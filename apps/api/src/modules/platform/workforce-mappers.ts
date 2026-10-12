@@ -14,20 +14,41 @@ import type { Prisma } from '../../generated/prisma/client';
  * accident.
  */
 
-/** Every member carries a small summary of the person, so lists can name them. */
-type WithEmployeeInclude = {
-  members: {
-    include: {
-      employee: { select: { id: true; firstName: true; lastName: true; employeeNumber: true } };
+type TeamRow = Prisma.TeamGetPayload<{
+  include: {
+    members: {
+      include: {
+        employee: { select: { id: true; firstName: true; lastName: true; employeeNumber: true } };
+      };
     };
   };
-};
-
-type TeamRow = Prisma.TeamGetPayload<{ include: WithEmployeeInclude }>;
-type ProjectRow = Prisma.ProjectGetPayload<{ include: WithEmployeeInclude }>;
+}>;
+type ProjectRow = Prisma.ProjectGetPayload<{
+  include: {
+    members: {
+      include: {
+        employee: {
+          select: {
+            id: true;
+            firstName: true;
+            lastName: true;
+            employeeNumber: true;
+            employmentRecords: { select: { jobTitle: true } };
+          };
+        };
+      };
+    };
+  };
+}>;
 
 type WithEmployee = {
-  employee?: { id: string; firstName: string; lastName: string; employeeNumber: string } | null;
+  employee?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    employeeNumber: string;
+    employmentRecords?: { jobTitle: string | null }[];
+  } | null;
 };
 
 /** The person behind a membership row: their name and number, and nothing else about them. */
@@ -38,6 +59,9 @@ function summaryOf(member: WithEmployee) {
         firstName: member.employee.firstName,
         lastName: member.employee.lastName,
         employeeNumber: member.employee.employeeNumber,
+        ...(member.employee.employmentRecords?.[0]?.jobTitle
+          ? { jobTitle: member.employee.employmentRecords[0].jobTitle }
+          : {}),
       }
     : null;
 }

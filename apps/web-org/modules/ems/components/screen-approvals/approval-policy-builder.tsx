@@ -1,13 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Badge, Button } from '@smarteam/ui';
 import { approvalDomainLabel, type ApprovalDomain, type ApprovalPolicy } from '@smarteam/contracts';
+import { LoadingIndicator, Badge, Button } from '@smarteam/ui';
+import { useState } from 'react';
 import { useApprovalPolicies } from '../../hooks/use-approval-policies';
 import { useRoles } from '../../hooks/use-roles';
-import { useSession } from '../../hooks/auth-context';
-import { useAsyncResource } from '../../hooks/use-async-resource';
-import { approvalsRepository } from '../../repositories/approvals.repository';
 import { ApprovalPolicyDialog } from './approval-policy-dialog';
 
 /**
@@ -19,12 +16,6 @@ export function ApprovalPolicyBuilder() {
   const policies = useApprovalPolicies();
   const roles = useRoles();
   // Who approves each step, in words: the role's name, the person's manager, or a named user.
-  const { session } = useSession();
-  const people = useAsyncResource(
-    () => approvalsRepository.approverCandidates(session!.organizationId),
-    [session?.organizationId],
-    { enabled: Boolean(session?.organizationId) && policies.canWrite },
-  );
   const roleName = (id: string | null | undefined) =>
     roles.roles.find((role) => role.id === id)?.name ?? 'A role';
   const stepLabel = (step: ApprovalPolicy['steps'][number]) =>
@@ -34,8 +25,7 @@ export function ApprovalPolicyBuilder() {
         : 'Reporting manager'
       : step.approverType === 'ROLE'
         ? roleName(step.roleId)
-        : (people.data?.find((person) => person.userId === step.approverUserId)?.name ??
-          'A named person');
+        : (step.approverName ?? 'A named person');
   const [showRetired, setShowRetired] = useState(false);
   const [editing, setEditing] = useState<ApprovalPolicy | null>(null);
   const [creating, setCreating] = useState(false);
@@ -93,9 +83,7 @@ export function ApprovalPolicyBuilder() {
       )}
 
       {policies.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading approval policies...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading approval policies" className="py-10 text-center text-xs text-muted-foreground" />
       )}
 
       {!policies.loading && policies.error && (
@@ -160,6 +148,11 @@ export function ApprovalPolicyBuilder() {
                     <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                       <div className="flex flex-wrap gap-1.5">
                         {policy.isDefault && <Badge variant="sky">Default</Badge>}
+                        {policy.automation?.mode !== 'MANUAL' && policy.automation?.mode && (
+                          <Badge variant="secondary">
+                            {policy.automation.mode === 'AUTOMATIC' ? 'Automatic' : 'Conditional'}
+                          </Badge>
+                        )}
                         <Badge variant={policy.isActive ? 'success' : 'secondary'}>
                           {policy.isActive ? 'Active' : 'Inactive'}
                         </Badge>

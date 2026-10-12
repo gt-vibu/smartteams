@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import { formatDate } from '@smarteam/contracts';
 import {
+  LoadingIndicator,
   Badge,
   Button,
   DatePicker,
@@ -11,15 +12,15 @@ import {
   Label,
   Textarea,
 } from '@smarteam/ui';
-import { formatDate } from '@smarteam/contracts';
+import { useState } from 'react';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
+import { localDateKey } from '../../lib/local-date';
 import {
   RESIGNATION_LABEL,
   resignationsRepository,
   type Resignation,
 } from '../../repositories/resignations.repository';
-import { localDateKey } from '../../lib/local-date';
 
 const today = () => localDateKey();
 
@@ -73,9 +74,7 @@ export function ResignationsPanel() {
 
   if (list.loading)
     return (
-      <p className="py-8 text-center text-xs text-muted-foreground" role="status">
-        Loading resignations…
-      </p>
+      <LoadingIndicator variant="panel" label="Loading resignations" className="py-8 text-center text-xs text-muted-foreground" />
     );
   if (list.forbidden)
     return (
@@ -153,19 +152,22 @@ export function ResignationsPanel() {
                 </p>
               </div>
             )}
-            <div>
-              <Label className="mb-1 block" htmlFor="exit-comment">
-                {deciding?.accept ? 'Note to them (optional)' : 'Reason'}
-              </Label>
-              <Textarea
-                maxLength={1000}
-                disabled={busy}
-                id="exit-comment"
-                onChange={(event) => setComment(event.target.value)}
-                rows={3}
-                value={comment}
-              />
-            </div>
+            {!deciding?.accept && (
+              <div>
+                <Label className="mb-1 block" htmlFor="exit-comment">
+                  Reason for decline (required)
+                </Label>
+                <Textarea
+                  maxLength={1000}
+                  disabled={busy}
+                  id="exit-comment"
+                  onChange={(event) => setComment(event.target.value)}
+                  placeholder="State why the resignation is not accepted..."
+                  rows={3}
+                  value={comment}
+                />
+              </div>
+            )}
             {error && (
               <p className="text-[11px] font-semibold text-destructive" role="alert">
                 {error}

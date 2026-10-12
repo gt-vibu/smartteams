@@ -24,13 +24,16 @@ export type ResourceState<T> = {
  *
  * `enabled` defers the request until its inputs exist — typically the organization id, which is
  * only known once the session has been restored.
+ * `preservePreviousDataKey` keeps the current view visible during filter changes under the same
+ * tenant or employee identity; changing that key still clears the old result immediately.
  */
 export function useAsyncResource<T>(
   load: () => Promise<T>,
   deps: readonly unknown[],
-  options: { enabled?: boolean } = {},
+  options: { enabled?: boolean; preservePreviousDataKey?: string | null } = {},
 ): ResourceState<T> {
   const enabled = options.enabled ?? true;
+  const preservePreviousDataKey = options.preservePreviousDataKey ?? null;
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(enabled);
   const [refreshing, setRefreshing] = useState(false);
@@ -45,6 +48,9 @@ export function useAsyncResource<T>(
   // A's request was still in flight could end with A's answer on B's screen — a salary shown
   // against the wrong person.
   const latest = useRef(0);
+  const dataRef = useRef(data);
+  dataRef.current = data;
+  const previousDataKey = useRef<string | null>(null);
 
   const run = useCallback(async (isRefresh: boolean) => {
     const request = ++latest.current;
@@ -73,15 +79,35 @@ export function useAsyncResource<T>(
   // id and any filter the request depends on.
   useEffect(() => {
     if (!enabled) {
+      ++latest.current;
+      setData(null);
+      dataRef.current = null;
+      setError(null);
+      setForbidden(false);
       setLoading(false);
+      setRefreshing(false);
       return;
     }
-    // A change of what is being loaded (another employee, another filter) clears the old answer
-    // and shows loading, so nothing is ever displayed against the wrong subject. A plain refetch
-    // keeps the current data on screen while it refreshes.
-    setData(null);
-    void run(false);
-  }, [enabled, run, ...deps]);
+    // A caller may preserve data while changing filters within one identity (for example, one
+    // tenant's attendance period). A changed identity still clears immediately so private data
+    // from another employee or tenant is never shown under the new selection.
+    const mayPreserve = Boolean(
+      preservePreviousDataKey &&
+      preservePreviousDataKey === previousDataKey.current &&
+      dataRef.current !== null,
+    );
+    previousDataKey.current = preservePreviousDataKey;
+    if (mayPreserve) {
+      void run(true);
+    } else {
+      setData(null);
+      dataRef.current = null;
+      void run(false);
+    }
+    return () => {
+      ++latest.current;
+    };
+  }, [enabled, preservePreviousDataKey, run, ...deps]);
 
   // A resource that is off because its inputs are missing stays off: a data-changed signal used
   // to refetch it anyway, sending a request with a null id (`employeeId=null`) that the API refused.

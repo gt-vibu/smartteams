@@ -11,6 +11,7 @@ import { workspaceTitle } from '../../services/authorization.policy';
 const ORGANIZATION_MODULE_LABELS: Record<string, string> = {
   employees: 'Employees',
   onboarding: 'Onboarding',
+  'org-setup': 'Organization setup',
   'time-off': 'Leave',
   attendance: 'Attendance',
   timesheet: 'Timesheet',
@@ -27,13 +28,9 @@ const ORGANIZATION_MODULE_LABELS: Record<string, string> = {
 /** The Organization screen's sections, as its tab bar names them. */
 const ORGANIZATION_SECTIONS: Record<string, string> = {
   overview: 'Overview',
+  readiness: 'Employee readiness',
   people: 'People',
-  departments: 'Departments',
-  lists: 'Lists',
   reporting: 'Reporting',
-  branches: 'Branches',
-  access: 'Access',
-  profile: 'Profile',
 };
 
 const SECTION_IDS = Object.keys(ORGANIZATION_SECTIONS);

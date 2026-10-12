@@ -75,13 +75,7 @@ export function SalaryBreakdownCard({
   return (
     <div className="w-full min-w-0 overflow-hidden rounded-xl border border-border/70 bg-card shadow-2xs">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/70 px-4 py-3">
-        <div>
-          <h3 className="text-sm font-bold text-foreground">Salary breakdown</h3>
-          <p className="text-xs text-muted-foreground">
-            Annual CTC{' '}
-            <span className="font-semibold text-foreground">{formatMoney(ctc * 12)}</span>
-          </p>
-        </div>
+        <h3 className="text-sm font-bold text-foreground">Salary breakdown</h3>
         <div className="flex flex-wrap gap-2">
           {canConfigurePolicy && (
             <Button
@@ -110,12 +104,10 @@ export function SalaryBreakdownCard({
 
       {!jurisdiction && (
         <p
-          className="border-b border-amber-300/60 bg-amber-50 px-4 py-2 text-xs text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
+          className="border-b border-amber-300/60 bg-amber-50 px-4 py-1.5 text-[11px] text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
           role="status"
         >
-          PF and ESI use the national rates. Professional Tax is not calculated until the
-          company&apos;s state is set under &ldquo;Basic, HRA &amp; state&rdquo;, because its slabs
-          differ by state.
+          State not set · Professional Tax unavailable
         </p>
       )}
 
@@ -144,11 +136,6 @@ export function SalaryBreakdownCard({
           </tbody>
         </table>
       </div>
-      <p className="border-t border-border/60 px-4 py-2 text-[11px] text-muted-foreground">
-        EPF: 12% of Basic on wages up to ₹15,000. ESI: 0.75% employee and 3.25% employer while gross
-        is ₹21,000 or less. Professional Tax follows the state&apos;s slab. Income tax (TDS) is not
-        calculated here.
-      </p>
     </div>
   );
 }

@@ -1,9 +1,9 @@
+import type { DomainContext } from '../../common/context/domain-context';
 import { Prisma } from '../../generated/prisma/client';
 import { LeaveBalanceTransactionType } from '../../generated/prisma/enums';
-import type { DomainContext } from '../../common/context/domain-context';
 import { getEffectiveHolidayDates } from '../holidays/effective-holidays';
-import { dayKey, leavePeriod } from './leave-shared';
 import { entitlement, reconcileBalance, type AccrualLeaveType } from './leave-accrual';
+import { dayKey, leavePeriod } from './leave-shared';
 
 /**
  * Balance movements: opening a balance, releasing a reservation, writing the ledger, and counting
@@ -220,6 +220,31 @@ export async function workingDays(
   /** Count the off-days between the first and last leave day too. */
   sandwich = false,
 ) {
+  return (
+    await leaveCalendarDays(
+      tx,
+      organizationId,
+      branchId,
+      start,
+      end,
+      weekDays,
+      employeeId,
+      sandwich,
+    )
+  ).filter((day) => day.counted).length;
+}
+
+/** Shared by preview, reservation, and attendance sync so the displayed cost is authoritative. */
+export async function leaveCalendarDays(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  branchId: string | null,
+  start: Date,
+  end: Date,
+  weekDays: number[],
+  employeeId?: string | null,
+  sandwich = false,
+) {
   const excluded = await getEffectiveHolidayDates(tx, {
     organizationId,
     branchId,
@@ -228,14 +253,39 @@ export async function workingDays(
     end,
   });
 
-  const working: Date[] = [];
-  for (let cursor = new Date(start); cursor <= end; cursor.setUTCDate(cursor.getUTCDate() + 1))
-    if (weekDays.includes(cursor.getUTCDay() || 7) && !excluded.has(dayKey(cursor)))
-      working.push(new Date(cursor));
-  if (!sandwich || working.length < 2) return working.length;
-  // The sandwich rule: weekends and holidays enclosed by leave days are leave too. Off-days at
-  // either end of the range are not enclosed, so they still do not count.
-  const first = working[0]!;
-  const last = working[working.length - 1]!;
-  return Math.round((last.getTime() - first.getTime()) / 86_400_000) + 1;
+  const assignments = employeeId
+    ? await tx.employeeShiftAssignment.findMany({
+        where: {
+          organizationId,
+          employeeId,
+          startsOn: { lte: end },
+          OR: [{ endsOn: null }, { endsOn: { gte: start } }],
+          shift: { isActive: true },
+        },
+        orderBy: { startsOn: 'desc' },
+        include: { shift: true },
+      })
+    : [];
+  const days: Array<{ date: string; counted: boolean; reason: string }> = [];
+  for (let cursor = new Date(start); cursor <= end; cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+    const assignment = assignments.find(
+      (row) => row.startsOn <= cursor && (!row.endsOn || row.endsOn >= cursor),
+    );
+    const holiday = excluded.has(dayKey(cursor));
+    const off = !(assignment?.shift.daysOfWeek ?? weekDays).includes(cursor.getUTCDay() || 7);
+    days.push({
+      date: dayKey(cursor),
+      counted: !holiday && !off,
+      reason: holiday ? 'Holiday' : off ? 'Weekly off' : 'Working day',
+    });
+  }
+  if (sandwich) {
+    const first = days.findIndex((day) => day.counted);
+    let last = days.length - 1;
+    while (last >= 0 && !days[last]!.counted) last--;
+    for (let i = first + 1; first >= 0 && i < last; i++)
+      if (!days[i]!.counted)
+        days[i] = { ...days[i]!, counted: true, reason: 'Included by sandwich policy' };
+  }
+  return days;
 }

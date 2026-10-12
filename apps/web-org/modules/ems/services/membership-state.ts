@@ -18,6 +18,7 @@ export type TeamMembership = {
   /** The active member row's id, needed to end it. Null unless state is ACTIVE. */
   memberId: string | null;
   endedOn: string | null;
+  isLead: boolean;
 };
 
 export type ProjectMembership = {
@@ -25,6 +26,7 @@ export type ProjectMembership = {
   state: MembershipState;
   memberId: string | null;
   endedOn: string | null;
+  isLead: boolean;
 };
 
 function activeTeamMember(members: TeamMember[] | undefined, employeeId: string) {
@@ -42,13 +44,19 @@ function endedTeamMember(members: TeamMember[] | undefined, employeeId: string) 
 
 export function teamMembershipsFor(teams: Team[], employeeId: string): TeamMembership[] {
   return teams.map((team) => {
+    const isLead = team.teamLeadEmployeeId === employeeId;
     const active = activeTeamMember(team.members, employeeId);
-    if (active) return { team, state: 'ACTIVE', memberId: active.id, endedOn: null };
+    if (active) return { team, state: 'ACTIVE', memberId: active.id, endedOn: null, isLead };
+
+    if (isLead) {
+      return { team, state: 'ACTIVE', memberId: null, endedOn: null, isLead: true };
+    }
 
     const ended = endedTeamMember(team.members, employeeId);
-    if (ended) return { team, state: 'ENDED', memberId: null, endedOn: ended.leftAt ?? null };
+    if (ended)
+      return { team, state: 'ENDED', memberId: null, endedOn: ended.leftAt ?? null, isLead: false };
 
-    return { team, state: 'NOT_A_MEMBER', memberId: null, endedOn: null };
+    return { team, state: 'NOT_A_MEMBER', memberId: null, endedOn: null, isLead: false };
   });
 }
 
@@ -69,6 +77,7 @@ export function projectMembershipsFor(
   employeeId: string,
 ): ProjectMembership[] {
   return projects.map((project) => {
+    const isLead = project.projectLeadEmployeeId === employeeId;
     const active = activeProjectMember(project.members, employeeId);
     if (active) {
       return {
@@ -76,6 +85,17 @@ export function projectMembershipsFor(
         state: 'ACTIVE',
         memberId: active.id,
         endedOn: null,
+        isLead,
+      };
+    }
+
+    if (isLead) {
+      return {
+        project,
+        state: 'ACTIVE',
+        memberId: null,
+        endedOn: null,
+        isLead: true,
       };
     }
 
@@ -86,6 +106,7 @@ export function projectMembershipsFor(
         state: 'ENDED',
         memberId: null,
         endedOn: ended.endsOn ?? null,
+        isLead: false,
       };
     }
 
@@ -94,6 +115,7 @@ export function projectMembershipsFor(
       state: 'NOT_A_MEMBER',
       memberId: null,
       endedOn: null,
+      isLead: false,
     };
   });
 }

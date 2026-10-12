@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import { useScreenTab } from '../../hooks/use-screen-tab';
-import { Button, Input } from '@smarteam/ui';
+import { LoadingIndicator, Button, Input } from '@smarteam/ui';
+import { AlertCircle, ChevronRight, FolderKanban, Plus, UsersRound } from 'lucide-react';
 import { useProjectDirectory } from '../../hooks/use-project-directory';
 import type { ProjectView } from '../../services/team-directory';
 import { CreateProjectModal } from './create-project-modal';
 import { ProjectCard, ProjectTable } from './project-views';
 import { ProjectDetailDrawer } from './project-detail-drawer';
 import { PageShell } from '../layout/page-shell';
+import { ScreenHeader } from '../common/screen-header';
+import { useDebouncedValue } from '../../hooks/use-debounced-value';
 
 /**
  * Projects and allocations, read from and written to the API.
@@ -24,6 +27,7 @@ export function ScreenProjects() {
   const [scope, setScope] = useScreenTab<'all' | 'mine'>('projectScope', ['all', 'mine'], 'all');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [search, setSearch] = useState('');
+  const [metricFilter, setMetricFilter] = useState<'all' | 'allocated' | 'no-lead'>('all');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -31,8 +35,10 @@ export function ScreenProjects() {
   // view would be the same list under a misleading name.
   const source =
     scope === 'mine' || !directory.canReadAll ? directory.myProjects : directory.projects;
-  const query = search.trim().toLowerCase();
+  const query = useDebouncedValue(search.trim()).toLowerCase();
   const filtered = source.filter((view) => {
+    if (metricFilter === 'allocated' && view.activeMembers.length === 0) return false;
+    if (metricFilter === 'no-lead' && view.lead) return false;
     if (!query) return true;
     return (
       view.project.name.toLowerCase().includes(query) ||
@@ -41,14 +47,33 @@ export function ScreenProjects() {
       (view.project.description ?? '').toLowerCase().includes(query)
     );
   });
+  const activeMemberships = source.reduce((total, view) => total + view.activeMembers.length, 0);
+  const projectsWithoutLead = source.filter((view) => !view.lead).length;
 
   // Read from the live list so the drawer follows a refetch rather than holding a stale copy.
   const selected: ProjectView | null =
-    directory.projects.find((view) => view.project.id === selectedProjectId) ?? null;
+    source.find((view) => view.project.id === selectedProjectId) ??
+    directory.projects.find((view) => view.project.id === selectedProjectId) ??
+    directory.myProjects.find((view) => view.project.id === selectedProjectId) ??
+    null;
 
   return (
     <div className="relative flex w-full flex-col">
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-6">
+        <ScreenHeader
+          actions={
+            directory.canWrite && (
+              <Button onClick={() => setIsCreateOpen(true)}>
+                <Plus className="mr-1.5 size-4" />
+                New project
+              </Button>
+            )
+          }
+          icon={FolderKanban}
+          description="Plan work, assign people and track project ownership."
+          title="Projects"
+          tone="primary"
+        />
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:gap-3">
           <div className="flex items-center gap-4">
             {(directory.canReadAll ? (['all', 'mine'] as const) : ([] as const)).map((value) => (
@@ -101,20 +126,94 @@ export function ScreenProjects() {
                 Table
               </Button>
             </div>
-            {directory.canWrite && (
-              <Button onClick={() => setIsCreateOpen(true)} size="sm" type="button">
-                New project
-              </Button>
-            )}
           </div>
         </div>
       </div>
 
       <PageShell gap="none">
+        {!directory.loading && !directory.error && !directory.forbidden && (
+          <section
+            aria-label="Project summary"
+            className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3"
+          >
+            <button
+              aria-pressed={metricFilter === 'all'}
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'all' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter('all')}
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-emerald-500/10 text-emerald-700">
+                  <FolderKanban className="size-4" />
+                </span>
+                <span className="text-xs font-medium text-foreground">Projects</span>
+                <ChevronRight className="ml-auto size-3.5 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {source.length}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  {scope === 'mine' || !directory.canReadAll
+                    ? 'Projects you can access'
+                    : 'Organization projects'}
+                </span>
+              </span>
+            </button>
+            <button
+              aria-pressed={metricFilter === 'allocated'}
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'allocated' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter(metricFilter === 'allocated' ? 'all' : 'allocated')}
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-sky-500/10 text-sky-700">
+                  <UsersRound className="size-4" />
+                </span>
+                <span className="text-xs font-medium text-foreground">Active allocations</span>
+                <ChevronRight className="ml-auto size-3.5 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {activeMemberships}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  Memberships across listed projects
+                </span>
+              </span>
+            </button>
+            <button
+              aria-pressed={metricFilter === 'no-lead'}
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'no-lead' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter(metricFilter === 'no-lead' ? 'all' : 'no-lead')}
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-amber-500/10 text-amber-700">
+                  <AlertCircle className="size-4" />
+                </span>
+                <span className="truncate text-xs font-medium text-foreground">
+                  Projects without a lead
+                </span>
+                <ChevronRight className="ml-auto size-3.5 shrink-0 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {projectsWithoutLead}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  Click to review ownership
+                </span>
+              </span>
+            </button>
+          </section>
+        )}
         {directory.loading && (
-          <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-            Loading projects...
-          </p>
+          <LoadingIndicator
+            variant="panel"
+            label="Loading projects"
+            className="py-10 text-center text-xs text-muted-foreground"
+          />
         )}
 
         {!directory.loading && directory.forbidden && (

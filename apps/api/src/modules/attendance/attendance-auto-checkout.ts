@@ -1,4 +1,5 @@
 import { MISSING_CHECK_OUT_KEY } from './attendance-missing-checkout';
+import type { MissedCheckOutPolicy } from '@smarteam/contracts';
 
 /**
  * Closing a day the employee never checked out of.
@@ -16,10 +17,14 @@ export const AUTO_CLOSE_KEY = 'autoClosed';
 export const AUTO_CLOSE_REASON =
   'Closed automatically: no check-out was recorded for this day. Confirm the time worked.';
 
-export function autoCloseSnapshot(record: unknown, closeAt: Date) {
+export function autoCloseSnapshot(record: unknown, closeAt: Date, policy?: MissedCheckOutPolicy) {
   return {
     ...(record as Record<string, unknown>),
-    [MISSING_CHECK_OUT_KEY]: { occurredAt: closeAt.toISOString(), [AUTO_CLOSE_KEY]: true },
+    [MISSING_CHECK_OUT_KEY]: {
+      occurredAt: closeAt.toISOString(),
+      [AUTO_CLOSE_KEY]: true,
+      ...(policy ? { policyVersion: policy.version, policy } : {}),
+    },
   };
 }
 

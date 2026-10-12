@@ -5,6 +5,7 @@ import { hasPermission, type ShiftAssignment } from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { useAsyncResource } from './use-async-resource';
 import { shiftsRepository } from '../repositories/shifts.repository';
+import { useDataChanged } from '../lib/data-events';
 
 /**
  * Which shift an employee was on for a given day, from their assignment history.
@@ -13,7 +14,7 @@ import { shiftsRepository } from '../repositories/shifts.repository';
  * dates cover it. Nothing is assumed when no assignment does: `shiftOn` answers null and the
  * screen says the shift is not recorded.
  */
-export function useShiftHistory(employeeId: string | null) {
+export function useShiftSchedule(employeeId: string | null) {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const canRead = hasPermission(persona?.permissions ?? [], 'shifts.read');
@@ -30,14 +31,28 @@ export function useShiftHistory(employeeId: string | null) {
     [organizationId, employeeId],
     { enabled: Boolean(organizationId && employeeId) && canRead },
   );
+  useDataChanged(['workforce'], resource.refetch);
 
   const assignments = resource.data;
-  return useCallback(
-    (dateKey: string): string | null =>
+  const shiftOnDate = useCallback(
+    (dateKey: string): ShiftAssignment['shift'] | null =>
       assignments?.find(
         (assignment) =>
           assignment.startsOn <= dateKey && (!assignment.endsOn || assignment.endsOn >= dateKey),
-      )?.shift.name ?? null,
+      )?.shift ?? null,
     [assignments],
   );
+  return {
+    shiftOnDate,
+    ready: !canRead || !employeeId || (resource.data !== null && !resource.error),
+  };
+}
+
+export function useShiftOnDate(employeeId: string | null) {
+  return useShiftSchedule(employeeId).shiftOnDate;
+}
+
+export function useShiftHistory(employeeId: string | null) {
+  const shiftOnDate = useShiftOnDate(employeeId);
+  return useCallback((dateKey: string) => shiftOnDate(dateKey)?.name ?? null, [shiftOnDate]);
 }

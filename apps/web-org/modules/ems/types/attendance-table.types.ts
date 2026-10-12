@@ -9,7 +9,16 @@ export interface AttendanceTableRow {
   payableHours: string; // "08:00" or "-"
   overtime: string; // "00:48" or "-"
   status: string; // "Weekend, Present", "Present", "Onam(Restricted holiday)", "Weekend"
-  statusType: 'present' | 'weekend-present' | 'holiday' | 'holiday-checkin' | 'weekend' | 'empty';
+  statusType:
+    | 'present'
+    | 'weekend-present'
+    | 'holiday'
+    | 'holiday-checkin'
+    | 'weekend'
+    | 'empty'
+    | 'leave'
+    | 'half-day'
+    | 'absent';
   /** A check-in on the employee's approved optional holiday, shown by its review state. */
   holidayConflict?: HolidayConflictView;
   shift: string; // "General Shift"

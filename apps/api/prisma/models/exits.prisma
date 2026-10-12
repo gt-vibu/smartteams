@@ -1,21 +1,21 @@
 /// An employee's resignation, from the day they hand it in to the day they leave. Accepting it
 /// sets their last working day; the day after, they are off-boarded the ordinary way.
 model EmployeeResignation {
-  id                String            @id @default(uuid()) @db.Uuid
-  organizationId    String            @map("organization_id") @db.Uuid
-  employeeId        String            @map("employee_id") @db.Uuid
-  reason            String
+  id               String            @id @default(uuid()) @db.Uuid
+  organizationId   String            @map("organization_id") @db.Uuid
+  employeeId       String            @map("employee_id") @db.Uuid
+  reason           String
   /// The last day the employee asked for.
-  requestedLastDay  DateTime          @map("requested_last_day") @db.Date
+  requestedLastDay DateTime          @map("requested_last_day") @db.Date
   /// The last day agreed; set when accepted.
-  lastWorkingDay    DateTime?         @map("last_working_day") @db.Date
-  status            ResignationStatus @default(PENDING)
-  submittedAt       DateTime          @default(now()) @map("submitted_at") @db.Timestamptz(6)
-  decidedAt         DateTime?         @map("decided_at") @db.Timestamptz(6)
-  decidedByUserId   String?           @map("decided_by_user_id") @db.Uuid
-  decisionComment   String?           @map("decision_comment")
+  lastWorkingDay   DateTime?         @map("last_working_day") @db.Date
+  status           ResignationStatus @default(PENDING)
+  submittedAt      DateTime          @default(now()) @map("submitted_at") @db.Timestamptz(6)
+  decidedAt        DateTime?         @map("decided_at") @db.Timestamptz(6)
+  decidedByUserId  String?           @map("decided_by_user_id") @db.Uuid
+  decisionComment  String?           @map("decision_comment")
   /// When the person was off-boarded after their last day.
-  completedAt       DateTime?         @map("completed_at") @db.Timestamptz(6)
+  completedAt      DateTime?         @map("completed_at") @db.Timestamptz(6)
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Restrict)

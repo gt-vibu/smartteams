@@ -1,9 +1,13 @@
-import { IsDateString, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, ArrayMaxSize, ArrayUnique, ValidateNested, IsDateString, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { LIMITS } from '@smarteam/contracts';
 import { IsCode, IsText } from '../../common/validation/field-rules';
 import { IsEnum, ValidateIf } from 'class-validator';
 import { ProjectStatus } from '../../generated/prisma/enums';
 export class TeamDto {
+  /** Stable client-generated id lets a timed-out create be safely retried. */
+  @IsOptional() @IsUUID() id?: string;
+  @IsOptional() @IsArray() @ArrayMaxSize(1000) @ArrayUnique() @IsUUID('4', { each: true }) memberEmployeeIds?: string[];
   @IsText('Team name', LIMITS.title, 2) name!: string;
   @IsOptional() @IsText('Description', LIMITS.note, 0) description?: string;
   @IsOptional() @IsUUID() branchId?: string;
@@ -29,7 +33,14 @@ export class UpdateTeamDto {
 export class TeamDeactivationDto {
   @IsText('Reason', LIMITS.reason, 2) reason!: string;
 }
+export class InitialProjectMemberDto {
+  @IsUUID() employeeId!: string;
+  @IsOptional() @IsText('Project role', LIMITS.label) projectRole?: string;
+}
 export class ProjectDto {
+  /** Stable client-generated id lets a timed-out create be safely retried. */
+  @IsOptional() @IsUUID() id?: string;
+  @IsOptional() @IsArray() @ArrayMaxSize(1000) @ValidateNested({ each: true }) @Type(() => InitialProjectMemberDto) members?: InitialProjectMemberDto[];
   /** Left out to have one generated (PRJ-001 …). */
   @IsOptional() @IsCode('Project code') code?: string;
   @IsText('Project name', LIMITS.title, 2) name!: string;

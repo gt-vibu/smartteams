@@ -94,7 +94,7 @@ export function AccessManageDrawer({
         <div className="grid sm:max-h-[65vh] grid-cols-1 gap-0 overflow-y-auto sm:grid-cols-2">
           <div className="space-y-2 border-b border-border p-5 sm:border-b-0 sm:border-r">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              Roles
+              Access profiles
             </h3>
             {roles.map((role) => (
               <label
@@ -132,11 +132,11 @@ export function AccessManageDrawer({
               Effective permissions
             </h3>
             <p className="mb-2 text-[11px] text-muted-foreground">
-              What these roles allow together. To change what a role allows, use Edit permissions on
-              the Roles tab.
+              What these access profiles allow together. To change permissions, use Edit permissions
+              under Access & Permissions.
             </p>
             {effectivePermissions.size === 0 ? (
-              <p className="text-[11px] text-muted-foreground">No roles selected.</p>
+              <p className="text-[11px] text-muted-foreground">No access profiles selected.</p>
             ) : (
               grouped.map(([moduleName, keys]) => {
                 const held = keys.filter((key) => effectivePermissions.has(key));

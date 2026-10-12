@@ -147,7 +147,7 @@ export function EmsMobileBottomNav({
         aria-label="Sections"
         data-mobile-bottom-nav=""
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-stretch bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.3)]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex w-full items-stretch overflow-hidden bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-2px_12px_rgba(0,0,0,0.3)]"
       >
         {primaryItems.map((item) => (
           <NavTarget
@@ -156,7 +156,7 @@ export function EmsMobileBottomNav({
             isActive={activeModule === item.id}
             unread={hasUnread(item.id)}
             onSelect={handleSelect}
-            className="flex-1 gap-1 rounded-xl mx-1 my-1.5 px-0.5 py-1.5"
+            className="min-w-0 flex-1 gap-1 rounded-xl mx-0 my-1.5 px-0 py-1.5"
           />
         ))}
 
@@ -166,7 +166,7 @@ export function EmsMobileBottomNav({
             onClick={() => setIsMoreOpen(!isMoreOpen)}
             aria-expanded={isMoreOpen}
             aria-current={isOverflowActive ? 'page' : undefined}
-            className={`relative flex-1 flex flex-col items-center justify-center gap-1 rounded-xl mx-1 my-1.5 px-0.5 py-1.5 min-h-[52px] transition-colors cursor-pointer ${
+            className={`relative min-w-0 flex-1 flex flex-col items-center justify-center gap-1 rounded-xl mx-0 my-1.5 px-0 py-1.5 min-h-[52px] transition-colors cursor-pointer ${
               isOverflowActive || isMoreOpen ? ACTIVE : INACTIVE
             }`}
           >
@@ -219,13 +219,13 @@ function NavTarget({
       type="button"
       onClick={() => onSelect(item.id)}
       aria-current={isActive ? 'page' : undefined}
-      className={`relative flex flex-col items-center justify-center min-h-[52px] transition-colors cursor-pointer ${className} ${
+      className={`relative min-w-0 flex flex-col items-center justify-center min-h-[52px] transition-colors cursor-pointer ${className} ${
         isActive ? ACTIVE : INACTIVE
       }`}
     >
       {item.icon('h-6 w-6 shrink-0')}
       <span className="text-[11px] font-semibold leading-none text-center truncate max-w-full px-0.5">
-        {item.label}
+        {item.id === 'org-setup' ? 'Org setup' : item.label}
       </span>
       {unread && <UnreadDot className="right-[calc(50%-18px)] top-1.5" />}
     </button>

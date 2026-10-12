@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EMPLOYEE_BASELINE_PERMISSION_KEYS } from '@smarteam/contracts';
 import { RoleScope } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
@@ -35,9 +36,15 @@ export class RbacAdminService {
     },
   ) {
     requirePermission(context, 'rbac.write');
+    // A custom access profile starts from the same safe self-service foundation as Employee.
+    // Organization Admin can add capabilities explicitly; reporting and team leadership remain
+    // relationships and approval routing, not separate access profiles.
+    const permissionKeys = [
+      ...new Set([...EMPLOYEE_BASELINE_PERMISSION_KEYS, ...input.permissionKeys]),
+    ];
     // Holding `rbac.write` authorizes managing roles, not minting arbitrary authority — a role
     // can only be created carrying permissions the creator already holds. See `assertGrantable`.
-    this.rbac.assertGrantable(context, input.permissionKeys);
+    this.rbac.assertGrantable(context, permissionKeys);
     return this.database.run(context, async (tx) => {
       if (
         input.branchId &&
@@ -55,7 +62,7 @@ export class RbacAdminService {
           branchId: input.branchId,
           createdByUserId: context.actor.userId,
           permissions: {
-            create: input.permissionKeys.map((key) => ({
+            create: permissionKeys.map((key) => ({
               permission: {
                 connectOrCreate: { where: { key }, create: { key, description: key } },
               },

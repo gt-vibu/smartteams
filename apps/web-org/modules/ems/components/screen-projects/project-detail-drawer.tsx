@@ -124,14 +124,11 @@ export function ProjectDetailDrawer({
               canViewEmployee={canViewEmployee}
               canWrite={directory.canWrite && view.project.status !== 'ARCHIVED'}
               leadEmployeeId={view.lead?.employeeId}
+              emptyRoleLabel="No job title"
               members={view.activeMembers}
               onAdd={() => setIsAssignOpen(true)}
-              onChangeRole={(memberId, role) =>
-                directory.changeRole(view.project.id, memberId, role)
-              }
               onEnd={(memberId) => directory.endMember(view.project.id, memberId)}
               pastMembers={view.pastMembers}
-              roleKind="project-roles"
             />
 
             <GroupFilesSection
@@ -158,16 +155,13 @@ export function ProjectDetailDrawer({
           ...(view.lead ? [view.lead.employeeId] : []),
         ]}
         nameOf={(id) => nameOf(directory.employees, id)}
-        onAdd={(employeeId, projectRole) =>
+        onAdd={(employeeId) =>
           directory.addMember(view.project.id, {
             employeeId,
-            ...(projectRole ? { projectRole } : {}),
           })
         }
         onClose={() => setIsAssignOpen(false)}
         open={isAssignOpen}
-        roleKind="project-roles"
-        roleLabel="Project role"
         title={`Add members to ${view.project.name}`}
       />
 

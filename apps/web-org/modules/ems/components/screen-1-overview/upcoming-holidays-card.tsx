@@ -1,6 +1,6 @@
 import { formatDate } from '@smarteam/contracts';
 import React from 'react';
-import { Button } from '@smarteam/ui';
+import { LoadingIndicator, Button } from '@smarteam/ui';
 import type { Holiday } from '@smarteam/contracts';
 
 interface UpcomingHolidaysCardProps {
@@ -69,9 +69,7 @@ export function UpcomingHolidaysCard({
       )}
 
       {!unavailable && loading && (
-        <p className="text-[11px] text-muted-foreground" role="status">
-          Loading holidays...
-        </p>
+        <LoadingIndicator variant="inline" label="Loading holidays" className="text-[11px] text-muted-foreground" />
       )}
 
       {!unavailable && !loading && holidays.length === 0 && (

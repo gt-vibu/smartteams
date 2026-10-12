@@ -212,6 +212,9 @@ export function CompensationHeaderCard({
           </p>
         </div>
       </div>
+      <p className="text-[11px] leading-relaxed text-muted-foreground">
+        Current monthly estimate under the active salary and statutory rules. A payroll run can differ by period, attendance, overtime, adjustments, and advance recovery.
+      </p>
     </div>
   );
 }

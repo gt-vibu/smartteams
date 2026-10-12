@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Input } from '@smarteam/ui';
 import { formatDateRange, formatMoney } from '@smarteam/contracts';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
+import { useDebouncedValue } from '../../hooks/use-debounced-value';
 
 /**
  * What each employee was actually paid, from released payslips.
@@ -14,6 +15,7 @@ import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
  */
 export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState }) {
   const [search, setSearch] = useState('');
+  const query = useDebouncedValue(search.trim()).toLowerCase();
 
   if (admin.payslipsUnavailable) {
     return (
@@ -29,7 +31,6 @@ export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState })
     );
   }
 
-  const query = search.trim().toLowerCase();
   const rows = admin.payslips.filter(
     (slip) =>
       !query ||

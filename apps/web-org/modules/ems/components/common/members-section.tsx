@@ -35,16 +35,18 @@ export function MembersSection({
   onEnd,
   onAdd,
   leadEmployeeId,
+  emptyRoleLabel = 'No role',
 }: {
   /** The lead, when they also work as a member: marked, so the two roles read as one person's. */
   leadEmployeeId?: string | null;
+  emptyRoleLabel?: string;
   members: readonly MemberView[];
   pastMembers: readonly MemberView[];
-  roleKind: PicklistKind;
+  roleKind?: PicklistKind;
   canWrite: boolean;
   canViewEmployee: boolean;
   busy: boolean;
-  onChangeRole: (memberId: string, role: string) => Promise<boolean>;
+  onChangeRole?: (memberId: string, role: string) => Promise<boolean>;
   onEnd: (memberId: string) => Promise<boolean>;
   onAdd: () => void;
 }) {
@@ -84,13 +86,13 @@ export function MembersSection({
                       </span>
                     )}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">
-                    {member.role ?? 'No role'} · since {formatDate(member.since)}
+                  <span className="text-xs text-muted-foreground">
+                    {member.role ?? emptyRoleLabel} · since {formatDate(member.since)}
                     {member.until ? ` · until ${formatDate(member.until)}` : ''}
                   </span>
                 </span>
               </div>
-              {editing?.memberId === member.memberId ? (
+              {editing?.memberId === member.memberId && roleKind && onChangeRole ? (
                 <div className="mt-2 space-y-2">
                   <PicklistSelect
                     addLabel="+ Add a role"
@@ -136,7 +138,7 @@ export function MembersSection({
                       </Button>
                     )}
                     {/* Only a current membership's role can change; an ending one is history. */}
-                    {canWrite && !member.until && (
+                    {canWrite && !member.until && roleKind && onChangeRole && (
                       <Button
                         disabled={busy}
                         onClick={() =>
@@ -196,7 +198,7 @@ export function MembersSection({
                     {member.displayName}
                   </span>
                   <span className="shrink-0 text-muted-foreground">
-                    {member.role ?? 'No role'} · {formatDate(member.since)} to{' '}
+                    {member.role ?? emptyRoleLabel} · {formatDate(member.since)} to{' '}
                     {formatDate(member.until)}
                   </span>
                 </li>

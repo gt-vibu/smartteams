@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { Brand } from '@smarteam/ui';
 
 /**
  * The frame every signed-out screen shares: a centred card that scrolls with the keyboard up on a
@@ -24,6 +26,9 @@ export function AuthCard({
         <div className="absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
       </div>
       <main className="relative my-auto w-full max-w-sm">
+        <Link href="/" className="mb-5 flex justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring" aria-label="Smarteam home">
+          <Brand subtitle="People, time & pay" />
+        </Link>
         <div className="rounded-2xl border border-border bg-card p-6 shadow-lg">
           <h1 className="text-lg font-bold text-foreground">{title}</h1>
           {description && <p className="mt-1 text-xs text-muted-foreground">{description}</p>}

@@ -43,13 +43,19 @@ export function ScreenHeader({
       <div className={`flex min-w-0 gap-3 ${description ? 'items-start' : 'items-center'}`}>
         <span
           aria-hidden="true"
-          className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg ${TONES[tone]}`}
+          className={`grid size-10 shrink-0 place-items-center rounded-lg ${TONES[tone]}`}
         >
           <HeaderIcon className="h-[18px] w-[18px]" strokeWidth={1.75} />
         </span>
         <div className="min-w-0">
-          <h1 className="text-sm font-bold text-foreground">{title}</h1>
-          {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
+          <h1 className="text-xl font-semibold leading-tight tracking-[-0.025em] text-foreground sm:text-2xl">
+            {title}
+          </h1>
+          {description && (
+            <p className="mt-1 max-w-[60ch] text-sm leading-5 text-muted-foreground">
+              {description}
+            </p>
+          )}
         </div>
       </div>
       {actions}

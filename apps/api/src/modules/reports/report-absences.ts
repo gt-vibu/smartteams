@@ -1,3 +1,4 @@
+import { leaveUnitsOn } from '../leave/leave-units';
 import type { TenantTransaction } from '../../infrastructure/database/tenant-database.service';
 import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
 import { organizationToday } from '../employees/employee-branch-rules';
@@ -33,10 +34,10 @@ export async function unmarkedAbsences(
   const end = to < yesterday ? to : yesterday;
   if (end < from) return absences;
 
-  const [employees, holidays, records, leaves] = await Promise.all([
+  const [employees, holidays, records, leaves, shifts, optionalHolidays] = await Promise.all([
     tx.employee.findMany({
       where: { organizationId, status: 'ACTIVE' },
-      select: { id: true, dateOfJoining: true, primaryBranchId: true },
+      select: { id: true, dateOfJoining: true, dateOfLeaving: true, primaryBranchId: true },
     }),
     tx.holiday.findMany({
       where: {
@@ -49,7 +50,7 @@ export async function unmarkedAbsences(
     }),
     tx.attendanceRecord.findMany({
       where: { organizationId, workDate: { gte: from, lte: end } },
-      select: { employeeId: true, workDate: true },
+      select: { employeeId: true, workDate: true, dayStatus: true, workedMinutes: true },
     }),
     tx.leaveRequest.findMany({
       where: {
@@ -58,11 +59,59 @@ export async function unmarkedAbsences(
         startDate: { lte: end },
         endDate: { gte: from },
       },
-      select: { employeeId: true, startDate: true, endDate: true },
+      select: {
+        employeeId: true,
+        startDate: true,
+        endDate: true,
+        session: true,
+        chargedDates: true,
+      },
+    }),
+    tx.employeeShiftAssignment.findMany({
+      where: {
+        organizationId,
+        startsOn: { lte: end },
+        OR: [{ endsOn: null }, { endsOn: { gte: from } }],
+      },
+      orderBy: { startsOn: 'desc' },
+      select: {
+        employeeId: true,
+        startsOn: true,
+        endsOn: true,
+        shift: { select: { daysOfWeek: true } },
+      },
+    }),
+    tx.employeeHolidaySelection.findMany({
+      where: {
+        organizationId,
+        status: 'CONFIRMED',
+        holiday: { isActive: true, holidayDate: { gte: from, lte: end } },
+      },
+      select: { employeeId: true, holiday: { select: { holidayDate: true } } },
     }),
   ]);
 
-  const marked = new Set(records.map((record) => `${record.employeeId}:${key(record.workDate)}`));
+  // A half-day leave placeholder leaves the other half unaccounted for. Count that portion
+  // through the same finished-day/calendar rules as any other unmarked time.
+  const marked = new Set(
+    records
+      .filter((record) => record.dayStatus !== 'ON_LEAVE' || record.workedMinutes > 0)
+      .map((record) => `${record.employeeId}:${key(record.workDate)}`),
+  );
+  const byEmployee = <T extends { employeeId: string }>(rows: T[]) => {
+    const map = new Map<string, T[]>();
+    for (const row of rows) {
+      const group = map.get(row.employeeId) ?? [];
+      group.push(row);
+      map.set(row.employeeId, group);
+    }
+    return map;
+  };
+  const employeeLeaves = byEmployee(leaves);
+  const employeeShifts = byEmployee(shifts);
+  const optional = new Set(
+    optionalHolidays.map((item) => `${item.employeeId}:${key(item.holiday.holidayDate)}`),
+  );
   for (const employee of employees) {
     const joined = employee.dateOfJoining;
     const start = joined && joined > from ? joined : from;
@@ -71,14 +120,30 @@ export async function unmarkedAbsences(
         .filter((holiday) => !holiday.branchId || holiday.branchId === employee.primaryBranchId)
         .map((holiday) => key(holiday.holidayDate)),
     );
-    const onLeave = leaves.filter((leave) => leave.employeeId === employee.id);
+    const onLeave = employeeLeaves.get(employee.id) ?? [];
+    const schedules = employeeShifts.get(employee.id) ?? [];
+    const last =
+      employee.dateOfLeaving && employee.dateOfLeaving < end ? employee.dateOfLeaving : end;
     let count = 0;
-    for (let day = new Date(start); day <= end; day = new Date(day.getTime() + DAY_MS)) {
-      if (!settings.workWeekDays.includes(isoWeekday(day))) continue;
+    for (let day = new Date(start); day <= last; day = new Date(day.getTime() + DAY_MS)) {
+      const assignment = schedules.find(
+        (item) => item.startsOn <= day && (!item.endsOn || item.endsOn >= day),
+      );
+      if (!(assignment?.shift.daysOfWeek ?? settings.workWeekDays).includes(isoWeekday(day)))
+        continue;
       const dayKey = key(day);
-      if (holidayDays.has(dayKey) || marked.has(`${employee.id}:${dayKey}`)) continue;
-      if (onLeave.some((leave) => leave.startDate <= day && leave.endDate >= day)) continue;
-      count += 1;
+      if (
+        holidayDays.has(dayKey) ||
+        optional.has(`${employee.id}:${dayKey}`) ||
+        marked.has(`${employee.id}:${dayKey}`)
+      )
+        continue;
+      count +=
+        1 -
+        Math.min(
+          1,
+          onLeave.reduce((sum, leave) => sum + leaveUnitsOn(leave, day), 0),
+        );
     }
     if (count) absences.set(employee.id, count);
   }

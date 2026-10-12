@@ -67,6 +67,23 @@ export const timesheetSchema = z.object({
   version: z.number().optional(),
   entries: z.array(timesheetEntrySchema).optional(),
 });
+export const timesheetPageSchema = z.object({
+  timesheets: z.array(timesheetSchema),
+  nextCursor: z.string().optional(),
+  summary: z
+    .object({
+      statusCounts: z.object({
+        DRAFT: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        SUBMITTED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        APPROVED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        REJECTED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        LOCKED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+      }),
+      totalCount: z.number(),
+      totalMinutes: z.number(),
+    })
+    .optional(),
+});
 
 export const jobTypeSchema = z.object({
   id: z.string(),
@@ -88,6 +105,10 @@ function parseList<T>(schema: z.ZodType<T>, payload: unknown): T[] | null {
 }
 
 export const parseTimesheetList = (payload: unknown) => parseList(timesheetSchema, payload);
+export const parseTimesheetPage = (payload: unknown) => {
+  const result = timesheetPageSchema.safeParse(payload);
+  return result.success ? result.data : null;
+};
 export const parseJobTypeList = (payload: unknown) => parseList(jobTypeSchema, payload);
 
 /**

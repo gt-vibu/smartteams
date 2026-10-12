@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import {
+  LoadingIndicator,
   Badge,
   Button,
   Dialog,
@@ -72,9 +73,7 @@ export function ComponentCatalogPanel({ compensation }: { compensation: Compensa
       </div>
 
       {compensation.componentsLoading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading components...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading components" className="py-10 text-center text-xs text-muted-foreground" />
       )}
 
       {!compensation.componentsLoading && compensation.componentsError && (

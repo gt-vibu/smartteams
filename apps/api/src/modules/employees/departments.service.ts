@@ -67,7 +67,9 @@ export class DepartmentsService {
           members: {
             select: { id: true, firstName: true, lastName: true, employeeNumber: true },
             orderBy: { firstName: 'asc' },
+            take: 5,
           },
+          _count: { select: { members: true } },
         },
         orderBy: { name: 'asc' },
       });
@@ -81,6 +83,7 @@ export class DepartmentsService {
           : null,
         head: department.head ? person(department.head) : null,
         members: department.members.map(person),
+        memberCount: department._count.members,
       }));
     });
   }

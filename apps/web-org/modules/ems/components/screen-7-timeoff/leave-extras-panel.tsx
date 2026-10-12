@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import {
+  formatDate,
+  formatMinutes,
+  formatMoney,
+  type LeaveType,
+  LIMITS,
+} from '@smarteam/contracts';
 import {
   Badge,
   Button,
@@ -17,18 +23,12 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
-import {
-  formatDate,
-  formatMinutes,
-  formatMoney,
-  type LeaveType,
-  LIMITS,
-} from '@smarteam/contracts';
+import { useState } from 'react';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
 import { emitDataChanged } from '../../lib/data-events';
-import { leaveExtrasRepository } from '../../repositories/leave-extras.repository';
 import { localDateKeyIn } from '../../lib/local-date';
+import { leaveExtrasRepository } from '../../repositories/leave-extras.repository';
 
 const TONE = {
   PENDING: 'warning',
@@ -166,11 +166,23 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
     if (done) setAsking(null);
   };
 
+  const approveDirectly = async (kind: 'comp-off' | 'encash', id: string) => {
+    await run(() =>
+      kind === 'comp-off'
+        ? leaveExtrasRepository.decideCompOff(organizationId!, id, { approve: true })
+        : leaveExtrasRepository.decideEncashment(organizationId!, id, { approve: true }),
+    );
+  };
+
   const submitDecision = async () => {
     if (!deciding) return;
+    if (form.comment.trim().length < 3) {
+      setError('A reason is required to decline.');
+      return;
+    }
     const input = {
-      approve: deciding.approve,
-      ...(form.comment.trim() ? { comment: form.comment.trim() } : {}),
+      approve: false,
+      comment: form.comment.trim(),
     };
     const done = await run(() =>
       deciding.kind === 'comp-off'
@@ -240,22 +252,28 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
                 <span className="text-[11px] text-muted-foreground">{item.what}</span>
               </span>
               <span className="flex gap-2">
-                {[false, true].map((approve) => (
-                  <Button
-                    disabled={busy}
-                    key={String(approve)}
-                    onClick={() => {
-                      setForm({ ...form, comment: '' });
-                      setError('');
-                      setDeciding({ kind: item.kind, id: item.id, approve, who: item.who });
-                    }}
-                    size="sm"
-                    type="button"
-                    variant={approve ? 'default' : 'outline'}
-                  >
-                    {approve ? 'Approve' : 'Decline'}
-                  </Button>
-                ))}
+                <Button
+                  disabled={busy}
+                  onClick={() => void approveDirectly(item.kind, item.id)}
+                  size="sm"
+                  type="button"
+                  variant="default"
+                >
+                  Approve
+                </Button>
+                <Button
+                  disabled={busy}
+                  onClick={() => {
+                    setForm({ ...form, comment: '' });
+                    setError('');
+                    setDeciding({ kind: item.kind, id: item.id, approve: false, who: item.who });
+                  }}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                >
+                  Decline
+                </Button>
               </span>
             </li>
           ))}
@@ -387,18 +405,17 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
 
       <Dialog onOpenChange={(next) => !next && !busy && setDeciding(null)} open={deciding !== null}>
         <DialogContent className="sm:max-w-md">
-          <DialogTitle>
-            {deciding?.approve ? 'Approve' : 'Decline'} {deciding?.who}&apos;s request
-          </DialogTitle>
+          <DialogTitle>Decline {deciding?.who}&apos;s request</DialogTitle>
           <div className="mt-3 space-y-3">
             <Label className="block" htmlFor="extra-comment">
-              {deciding?.approve ? 'Note (optional)' : 'Reason'}
+              Reason for decline (required)
             </Label>
             <Textarea
               maxLength={LIMITS.reason}
               disabled={busy}
               id="extra-comment"
               onChange={(event) => setForm({ ...form, comment: event.target.value })}
+              placeholder="State the reason for declining..."
               rows={2}
               value={form.comment}
             />
@@ -417,12 +434,12 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
                 Cancel
               </Button>
               <Button
-                disabled={busy || (!deciding?.approve && form.comment.trim().length < 3)}
+                disabled={busy || form.comment.trim().length < 3}
                 onClick={() => void submitDecision()}
                 type="button"
-                variant={deciding?.approve ? 'default' : 'destructive'}
+                variant="destructive"
               >
-                {busy ? 'Saving…' : deciding?.approve ? 'Approve' : 'Decline'}
+                {busy ? 'Saving…' : 'Decline'}
               </Button>
             </div>
           </div>

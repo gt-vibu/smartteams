@@ -120,6 +120,15 @@ function canOpenPayroll(permissions: readonly string[]): boolean {
  */
 const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
   home: ['organizations.read'],
+  'org-setup': [
+    'branches.read',
+    'employees.write',
+    'projects.write',
+    'teams.write',
+    'members.read',
+    'rbac.read',
+    'organizations.read',
+  ],
   onboarding: ['employees.write'],
   employees: ['employees.read.all'],
   attendance: ['attendance.read.all'],
@@ -128,9 +137,10 @@ const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
   teams: ['teams.read'],
   projects: ['projects.read'],
   shifts: ['shifts.read'],
-  // Holidays are part of the organization record: reading is `organizations.read`, editing is
-  // `organizations.update`. Viewing the screen only requires the former.
-  holidays: ['organizations.read'],
+  // The admin workspace holiday page is for managing the tenant calendar. A person who can only
+  // read organization details must not get a page they cannot administer. Employee self-service
+  // holiday visibility remains separately available below.
+  holidays: ['organizations.update'],
   // Whoever decides requests needs the inbox even without reading the routing policies (HR).
   approvals: ['approval-policies.read', ...APPROVAL_DECISION_PERMISSIONS],
   files: ['files.read.all'],
@@ -142,6 +152,26 @@ const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
     'timesheets.read.all',
   ],
 };
+
+/** Admin pages whose main purpose is maintaining a directory or schedule, not read-only review. */
+const ADMIN_MANAGEMENT_MODULE_PERMISSIONS: Record<string, readonly [string, string]> = {
+  employees: ['employees.read.all', 'employees.write'],
+  teams: ['teams.read', 'teams.write'],
+  projects: ['projects.read', 'projects.write'],
+  shifts: ['shifts.read', 'shifts.write'],
+  holidays: ['organizations.read', 'organizations.update'],
+};
+
+const ADMIN_SETUP_WRITE_PERMISSIONS = [
+  'organizations.update',
+  'branches.write',
+  'employees.write',
+  'projects.write',
+  'teams.write',
+  'members.write',
+  'rbac.write',
+  'approval-policies.write',
+];
 
 /**
  * The permissions that mean "this person acts on the organization", not just on their own record.
@@ -187,6 +217,20 @@ function canOpenAdminModule(moduleName: string, permissions: readonly string[]):
   // out of a new screen by an omission here would be a bug, not a safeguard — they can grant
   // themselves any named permission anyway.
   if (can(permissions, '*')) return true;
+  // These admin screens are for maintaining organization records. Require both the data read and
+  // the corresponding write permission; read-only users should not get a management destination
+  // whose primary actions are unavailable. Other operational screens intentionally remain usable
+  // in read-only mode for review and reporting.
+  const managementPermissions = ADMIN_MANAGEMENT_MODULE_PERMISSIONS[moduleName];
+  if (managementPermissions)
+    return managementPermissions.every((permission) => can(permissions, permission));
+  // Setup is a collection of admin editors. A read-only organization or branch listing does not
+  // make the setup destination useful; each individual section still checks its own read/write
+  // permissions after this module-level gate.
+  if (moduleName === 'org-setup') return canAny(permissions, ADMIN_SETUP_WRITE_PERMISSIONS);
+  // The approvals screen is an action queue. Reading policy configuration alone does not grant
+  // access to any decision queue, so require at least one actual decision capability.
+  if (moduleName === 'approvals') return canAny(permissions, APPROVAL_DECISION_PERMISSIONS);
   // Organization payroll needs something organization-wide. The self-service keys every
   // employee holds (their own payslip, their own salary) opened it before, onto tabs that each
   // then refused.

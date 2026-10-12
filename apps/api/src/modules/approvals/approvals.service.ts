@@ -1,24 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import type { Prisma } from '../../generated/prisma/client';
-import { ApprovalDomain, ApproverType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import type { Prisma } from '../../generated/prisma/client';
+import { ApprovalDomain } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
-
-type PolicyInput = {
-  domain: ApprovalDomain;
-  code: string;
-  name: string;
-  isDefault?: boolean;
-  steps: Array<{
-    stepNumber: number;
-    approverType: ApproverType;
-    roleId?: string;
-    approverUserId?: string;
-    required?: boolean;
-  }>;
-};
+import { assertAutomationScope, validateAutomation } from './approval-automation';
+import { validateSteps, toDto, type PolicyInput } from './approval-policy-shared';
 
 @Injectable()
 export class ApprovalsService {
@@ -32,8 +20,16 @@ export class ApprovalsService {
     return this.database.run(context, (tx) =>
       tx.approvalPolicy
         .findMany({
-          where: { organizationId: context.organizationId },
-          include: { steps: { orderBy: { stepNumber: 'asc' } } },
+          where: {
+            organizationId: context.organizationId,
+            NOT: { code: { startsWith: 'SYS_REQ_' } },
+          },
+          include: {
+            steps: {
+              orderBy: { stepNumber: 'asc' },
+              include: { approverUser: { select: { displayName: true } } },
+            },
+          },
           orderBy: [{ domain: 'asc' }, { code: 'asc' }],
         })
         .then((policies) => policies.map(toDto)),
@@ -43,11 +39,19 @@ export class ApprovalsService {
   async create(context: DomainContext, input: PolicyInput) {
     requirePermission(context, 'approval-policies.write');
     validateSteps(input.steps);
+    if (input.code.trim().toUpperCase().startsWith('SYS_REQ_'))
+      throw new ConflictError('This code is reserved for individual request routing.');
+    const automation = validateAutomation(input.domain, input.automation);
     return this.database.run(context, async (tx) => {
-      const roles = input.steps.filter((step) => step.roleId).map((step) => step.roleId!);
-      const users = input.steps
-        .filter((step) => step.approverUserId)
-        .map((step) => step.approverUserId!);
+      await assertAutomationScope(tx, context.organizationId, automation);
+      const roles = [
+        ...new Set(input.steps.filter((step) => step.roleId).map((step) => step.roleId!)),
+      ];
+      const users = [
+        ...new Set(
+          input.steps.filter((step) => step.approverUserId).map((step) => step.approverUserId!),
+        ),
+      ];
       if (
         roles.length &&
         (await tx.role.count({
@@ -90,6 +94,7 @@ export class ApprovalsService {
           domain: input.domain,
           code: input.code.trim().toUpperCase(),
           name: input.name.trim(),
+          automation: jsonSnapshot(automation),
           isDefault: makeDefault,
           createdByUserId: context.actor.userId,
           steps: {
@@ -103,7 +108,12 @@ export class ApprovalsService {
             })),
           },
         },
-        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        include: {
+          steps: {
+            orderBy: { stepNumber: 'asc' },
+            include: { approverUser: { select: { displayName: true } } },
+          },
+        },
       });
       await this.audit.record(
         context,
@@ -126,17 +136,30 @@ export class ApprovalsService {
       code?: string;
       name?: string;
       isDefault?: boolean;
+      automation?: Record<string, unknown>;
       steps?: PolicyInput['steps'];
     },
   ) {
     requirePermission(context, 'approval-policies.write');
     if (input.steps) validateSteps(input.steps);
+    if (input.code?.trim().toUpperCase().startsWith('SYS_REQ_'))
+      throw new ConflictError('This code is reserved for individual request routing.');
     return this.database.run(context, async (tx) => {
       const before = await tx.approvalPolicy.findFirst({
         where: { id: policyId, organizationId: context.organizationId, isActive: true },
-        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        include: {
+          steps: {
+            orderBy: { stepNumber: 'asc' },
+            include: { approverUser: { select: { displayName: true } } },
+          },
+        },
       });
       if (!before) throw new NotFoundError('Approval policy');
+      await assertAutomationScope(
+        tx,
+        context.organizationId,
+        validateAutomation(before.domain, input.automation ?? before.automation),
+      );
       const otherDefaultCount = await tx.approvalPolicy.count({
         where: {
           organizationId: context.organizationId,
@@ -160,7 +183,16 @@ export class ApprovalsService {
           },
           data: { isDefault: false },
         });
-      if (input.steps) {
+      if (input.steps || input.automation) {
+        const effectiveSteps =
+          input.steps ??
+          before.steps.map((step) => ({
+            stepNumber: step.stepNumber,
+            approverType: step.approverType,
+            roleId: step.roleId ?? undefined,
+            approverUserId: step.approverUserId ?? undefined,
+            required: step.required,
+          }));
         const stepIds = before.steps.map((step) => step.id);
         const [attendance, leave, timesheet, payroll] = await Promise.all([
           tx.attendanceApproval.count({ where: { approvalPolicyStepId: { in: stepIds } } }),
@@ -168,10 +200,16 @@ export class ApprovalsService {
           tx.timesheetApproval.count({ where: { approvalPolicyStepId: { in: stepIds } } }),
           tx.payrollApproval.count({ where: { approvalPolicyStepId: { in: stepIds } } }),
         ]);
-        const roles = input.steps.filter((step) => step.roleId).map((step) => step.roleId!);
-        const users = input.steps
-          .filter((step) => step.approverUserId)
-          .map((step) => step.approverUserId!);
+        const roles = [
+          ...new Set(effectiveSteps.filter((step) => step.roleId).map((step) => step.roleId!)),
+        ];
+        const users = [
+          ...new Set(
+            effectiveSteps
+              .filter((step) => step.approverUserId)
+              .map((step) => step.approverUserId!),
+          ),
+        ];
         if (
           roles.length &&
           (await tx.role.count({
@@ -190,18 +228,38 @@ export class ApprovalsService {
           })) !== users.length
         )
           throw new NotFoundError('Approval user');
-        if (attendance + leave + timesheet + payroll > 0)
+        const [leaveRequests, corrections, timesheets, runs] = await Promise.all([
+          tx.leaveRequest.count({ where: { approvalPolicyId: before.id } }),
+          tx.attendanceCorrection.count({ where: { approvalPolicyId: before.id } }),
+          tx.timesheet.count({ where: { approvalPolicyId: before.id } }),
+          tx.payrollRun.count({ where: { approvalPolicyId: before.id } }),
+        ]);
+        if (
+          attendance +
+            leave +
+            timesheet +
+            payroll +
+            leaveRequests +
+            corrections +
+            timesheets +
+            runs >
+          0
+        )
           // Past decisions name these steps, so they stay exactly as they were: the policy moves
           // to a new version and the old one is retired. Requests already on their way finish
           // on the steps they started with; new ones follow the new steps.
-          return this.newVersion(tx, context, before, input, input.steps, makeDefault);
-        await tx.approvalPolicyStep.deleteMany({ where: { approvalPolicyId: before.id } });
+          return this.newVersion(tx, context, before, input, effectiveSteps, makeDefault);
+        if (input.steps)
+          await tx.approvalPolicyStep.deleteMany({ where: { approvalPolicyId: before.id } });
       }
       const after = await tx.approvalPolicy.update({
         where: { id: before.id },
         data: {
           code: input.code?.trim().toUpperCase(),
           name: input.name?.trim(),
+          automation: input.automation
+            ? jsonSnapshot(validateAutomation(before.domain, input.automation))
+            : undefined,
           isDefault: makeDefault,
           steps: input.steps
             ? {
@@ -216,7 +274,12 @@ export class ApprovalsService {
               }
             : undefined,
         },
-        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        include: {
+          steps: {
+            orderBy: { stepNumber: 'asc' },
+            include: { approverUser: { select: { displayName: true } } },
+          },
+        },
       });
       await this.audit.record(
         context,
@@ -236,8 +299,14 @@ export class ApprovalsService {
   private async newVersion(
     tx: Prisma.TransactionClient,
     context: DomainContext,
-    before: { id: string; domain: ApprovalDomain; code: string; name: string },
-    input: { code?: string; name?: string },
+    before: {
+      id: string;
+      domain: ApprovalDomain;
+      code: string;
+      name: string;
+      automation: Prisma.JsonValue;
+    },
+    input: { code?: string; name?: string; automation?: Record<string, unknown> },
     steps: PolicyInput['steps'],
     makeDefault: boolean,
   ) {
@@ -256,6 +325,9 @@ export class ApprovalsService {
         domain: before.domain,
         code: (input.code ?? before.code).trim().toUpperCase(),
         name: (input.name ?? before.name).trim(),
+        automation: jsonSnapshot(
+          validateAutomation(before.domain, input.automation ?? before.automation),
+        ),
         isDefault: makeDefault,
         createdByUserId: context.actor.userId,
         steps: {
@@ -269,7 +341,12 @@ export class ApprovalsService {
           })),
         },
       },
-      include: { steps: { orderBy: { stepNumber: 'asc' } } },
+      include: {
+        steps: {
+          orderBy: { stepNumber: 'asc' },
+          include: { approverUser: { select: { displayName: true } } },
+        },
+      },
     });
     await this.audit.record(
       context,
@@ -340,9 +417,18 @@ export class ApprovalsService {
     return this.database.run(context, async (tx) => {
       const before = await tx.approvalPolicy.findFirst({
         where: { id: policyId, organizationId: context.organizationId, isActive: false },
-        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        include: {
+          steps: {
+            orderBy: { stepNumber: 'asc' },
+            include: { approverUser: { select: { displayName: true } } },
+          },
+        },
       });
       if (!before) throw new NotFoundError('Inactive approval policy');
+      if (before.code.startsWith('SYS_REQ_'))
+        throw new ConflictError(
+          'Individual request routing cannot be activated as a shared policy.',
+        );
       const activeDefaultCount = await tx.approvalPolicy.count({
         where: {
           organizationId: context.organizationId,
@@ -365,7 +451,12 @@ export class ApprovalsService {
       const after = await tx.approvalPolicy.update({
         where: { id: before.id },
         data: { isActive: true, isDefault: makeDefault },
-        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        include: {
+          steps: {
+            orderBy: { stepNumber: 'asc' },
+            include: { approverUser: { select: { displayName: true } } },
+          },
+        },
       });
       await this.audit.record(
         context,
@@ -381,58 +472,4 @@ export class ApprovalsService {
       return toDto(after);
     });
   }
-}
-
-function validateSteps(steps: PolicyInput['steps']) {
-  if (!steps.length) throw new ConflictError('An approval policy requires at least one step');
-  const stepNumbers = steps.map((step) => step.stepNumber);
-  if (new Set(stepNumbers).size !== stepNumbers.length)
-    throw new ConflictError('Approval step numbers must be unique');
-  for (const step of steps) {
-    const hasRole = Boolean(step.roleId);
-    const hasUser = Boolean(step.approverUserId);
-    if (
-      (step.approverType === ApproverType.ROLE && (!hasRole || hasUser)) ||
-      (step.approverType === ApproverType.USER && (!hasUser || hasRole)) ||
-      // A manager step may name a backup role, for requesters with no manager to ask.
-      (step.approverType === ApproverType.MANAGER && hasUser)
-    )
-      throw new ConflictError('Approval step approver does not match its approver type');
-  }
-}
-
-function toDto(policy: {
-  id: string;
-  organizationId: string;
-  domain: ApprovalDomain;
-  code: string;
-  name: string;
-  isDefault: boolean;
-  isActive: boolean;
-  steps: Array<{
-    id: string;
-    stepNumber: number;
-    approverType: ApproverType;
-    roleId: string | null;
-    approverUserId: string | null;
-    required: boolean;
-  }>;
-}) {
-  return {
-    id: policy.id,
-    organizationId: policy.organizationId,
-    domain: policy.domain,
-    code: policy.code,
-    name: policy.name,
-    isDefault: policy.isDefault,
-    isActive: policy.isActive,
-    steps: policy.steps.map((step) => ({
-      id: step.id,
-      stepNumber: step.stepNumber,
-      approverType: step.approverType,
-      roleId: step.roleId,
-      approverUserId: step.approverUserId,
-      required: step.required,
-    })),
-  };
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Icon } from '@smarteam/ui';
+import { Button, Icon } from '@smarteam/ui';
 import {
   ApiClientError,
   logout,
@@ -17,17 +17,24 @@ export function AdminConsole() {
   const [session, setSession] = useState<AdminSession | null>(null);
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [restoreError, setRestoreError] = useState<string | null>(null);
+  const [restoreAttempt, setRestoreAttempt] = useState(0);
 
   // The session lives in HttpOnly cookies the browser cannot read, so it is restored by asking
   // the API who we are rather than by reading local storage.
   useEffect(() => {
     let active = true;
+    setMounted(false);
+    setRestoreError(null);
     readSession()
       .then((restored) => {
         if (active) setSession(restored);
       })
-      .catch(() => {
-        if (active) setSession(null);
+      .catch((caught: unknown) => {
+        if (active) {
+          setSession(null);
+          setRestoreError(caught instanceof Error ? caught.message : 'Connection failed.');
+        }
       })
       .finally(() => {
         if (active) setMounted(true);
@@ -35,7 +42,7 @@ export function AdminConsole() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [restoreAttempt]);
 
   const signIn = useCallback(async (email: string, password: string) => {
     setLoginBusy(true);
@@ -60,6 +67,16 @@ export function AdminConsole() {
   }, []);
 
   if (!mounted) return <LoadingScreen />;
+  if (restoreError)
+    return (
+      <main className="grid min-h-svh place-items-center bg-background p-6">
+        <div role="alert" className="max-w-md space-y-3 text-center">
+          <h1 className="text-xl font-semibold">Could not connect to your workspace</h1>
+          <p className="text-sm text-muted-foreground">{restoreError}</p>
+          <Button onClick={() => setRestoreAttempt((current) => current + 1)}>Try again</Button>
+        </div>
+      </main>
+    );
   if (!session) return <LoginScreen busy={loginBusy} error={loginError} onSubmit={signIn} />;
   return <IntegrationDashboard onLogout={signOut} session={session} />;
 }

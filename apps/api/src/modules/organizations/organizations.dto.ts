@@ -37,6 +37,8 @@ export class UpdateOrganizationDto {
   /** A real IANA zone: attendance days and automatic check-out are worked out in it. */
   @IsOptional() @IsTimeZone() timezone?: string;
   @IsOptional() @IsString() @Length(3, 3) currencyCode?: string;
+  @IsOptional() @ValidateIf((_, value) => value !== null) @IsUUID() logoFileId?: string | null;
+  @IsOptional() @ValidateIf((_, value) => value !== null) @IsUUID() coverFileId?: string | null;
 }
 
 export class SourceChangeDto {

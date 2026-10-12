@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { SegmentedTabs } from '@smarteam/ui';
+import { Button, SegmentedTabs } from '@smarteam/ui';
 import { employmentTypeLabel, formatDateRange, hasPermission } from '@smarteam/contracts';
 import { BarChart3 } from 'lucide-react';
 import { useSession } from '../../hooks/auth-context';
@@ -110,7 +110,7 @@ export function ScreenReports() {
 
   return (
     <PageShell>
-      <ScreenHeader icon={BarChart3} title="Reports" tone="primary" />
+      <ScreenHeader description="Explore workforce, attendance, leave and project trends." icon={BarChart3} title="Reports" tone="primary" />
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <SegmentedTabs
           aria-label="Report"
@@ -141,12 +141,15 @@ export function ScreenReports() {
           Preparing the report…
         </p>
       ) : data.error ? (
-        <p
+        <div
           className="rounded-lg border border-border bg-card p-6 text-center text-xs text-destructive"
           role="alert"
         >
           {data.error}
-        </p>
+          <Button className="ml-3" size="sm" variant="outline" onClick={() => void data.refetch()}>
+            Try again
+          </Button>
+        </div>
       ) : report === 'headcount' ? (
         <HeadcountView data={data.data?.payload as Headcount | null} />
       ) : report === 'attendance' ? (

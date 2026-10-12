@@ -79,11 +79,24 @@ export class PayrollStatutoryService {
         metadata: jsonSnapshot(input.metadata ?? {}),
       };
       await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo ?? undefined);
-      return existing
+      const saved = existing
         ? tx.payrollStatutoryRule.update({ where: { id: existing.id }, data })
         : tx.payrollStatutoryRule.create({
             data: { organizationId: context.organizationId, effectiveFrom, ...data },
           });
+      const result = await saved;
+      await this.audit.record(
+        context,
+        {
+          entityType: 'PAYROLL_STATUTORY_RULE',
+          entityId: result.id,
+          action: existing ? 'PAYROLL_STATUTORY_RULE_UPDATED' : 'PAYROLL_STATUTORY_RULE_CREATED',
+          ...(existing ? { beforeState: jsonSnapshot(existing) } : {}),
+          afterState: jsonSnapshot(result),
+        },
+        tx,
+      );
+      return result;
     });
   }
 

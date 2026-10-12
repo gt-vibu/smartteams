@@ -1,3 +1,4 @@
+import { leaveBalancePage, type BalancePageFilters } from './leave-balance-page';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { LeaveBalanceTransactionType } from '../../generated/prisma/enums';
@@ -25,6 +26,11 @@ export class LeaveBalancesService {
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
   ) {}
+
+  listPage(context: DomainContext, filters: BalancePageFilters) {
+    requirePermission(context, 'leave.balances.read');
+    return this.database.run(context, (tx) => leaveBalancePage(tx, context, filters));
+  }
 
   async listBalances(context: DomainContext, requestedEmployeeId?: string) {
     requirePermission(context, 'leave.balances.read');

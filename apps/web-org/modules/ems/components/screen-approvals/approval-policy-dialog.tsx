@@ -1,6 +1,14 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import {
+  LIMITS,
+  approvalAutomationSchema,
+  approvalDomainLabel,
+  codeProblem,
+  textProblem,
+  type ApprovalDomain,
+  type ApprovalPolicy,
+} from '@smarteam/contracts';
 import {
   Button,
   Dialog,
@@ -14,19 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import {
-  approvalDomainLabel,
-  type ApprovalDomain,
-  type ApprovalPolicy,
-  LIMITS,
-  codeProblem,
-  textProblem,
-} from '@smarteam/contracts';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { ApprovalPolicyState } from '../../hooks/use-approval-policies';
+import { preserveDialogForPicker } from '../../lib/search-picker-escape';
 import { useRoles } from '../../hooks/use-roles';
-import { useSession } from '../../hooks/auth-context';
-import { useAsyncResource } from '../../hooks/use-async-resource';
-import { approvalsRepository } from '../../repositories/approvals.repository';
+import { ApprovalAutomationFields } from './approval-automation-fields';
 import {
   ApprovalStepRow,
   draftsFrom,
@@ -53,14 +53,8 @@ export function ApprovalPolicyDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { session } = useSession();
-  const organizationId = session?.organizationId ?? null;
   const roles = useRoles();
-  const people = useAsyncResource(
-    () => approvalsRepository.approverCandidates(organizationId!),
-    [organizationId],
-    { enabled: open && Boolean(organizationId) },
-  );
+
   const roleId = (code: string) => roles.roles.find((role) => role.code === code)?.id ?? '';
   const adminRoleId = roleId('ORG_ADMIN');
 
@@ -69,6 +63,7 @@ export function ApprovalPolicyDialog({
   const [name, setName] = useState('');
   const [isDefault, setIsDefault] = useState(true);
   const [steps, setSteps] = useState<StepDraft[]>([emptyStep()]);
+  const [automation, setAutomation] = useState(() => approvalAutomationSchema.parse({}));
 
   useEffect(() => {
     if (!open) return;
@@ -77,6 +72,7 @@ export function ApprovalPolicyDialog({
     setName(policy?.name ?? '');
     setIsDefault(policy?.isDefault ?? true);
     setSteps(draftsFrom(policy, adminRoleId));
+    setAutomation(approvalAutomationSchema.parse(policy?.automation ?? {}));
   }, [open, policy, adminRoleId]);
 
   // Common chains in one click; each is only offered when the roles it needs exist.
@@ -120,6 +116,7 @@ export function ApprovalPolicyDialog({
           name: name.trim(),
           isDefault,
           steps: ready,
+          automation,
         })
       : await policies.createPolicy({
           domain,
@@ -127,20 +124,33 @@ export function ApprovalPolicyDialog({
           name: name.trim(),
           isDefault,
           steps: ready,
+          automation,
         });
     if (ok) onOpenChange(false);
   };
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
+      <DialogContent
+        onEscapeKeyDown={preserveDialogForPicker}
+        className="max-h-[90vh] overflow-y-auto sm:max-w-xl"
+      >
         <DialogTitle>{policy ? 'Edit approval policy' : 'New approval policy'}</DialogTitle>
         <form className="mt-4 space-y-4" onSubmit={submit}>
+          <ApprovalAutomationFields
+            domain={policy?.domain ?? domain}
+            value={automation}
+            onChange={setAutomation}
+            disabled={policies.saving}
+          />
           {!policy && (
             <div>
               <Label className="mb-1 block">Applies to</Label>
               <SelectMenu
-                onValueChange={(value) => setDomain(value as ApprovalDomain)}
+                onValueChange={(value) => {
+                  setDomain(value as ApprovalDomain);
+                  setAutomation(approvalAutomationSchema.parse({}));
+                }}
                 value={domain}
               >
                 <SelectTrigger>
@@ -224,7 +234,6 @@ export function ApprovalPolicyDialog({
                 onChange={(next) => setSteps(steps.map((s, i) => (i === index ? next : s)))}
                 onMove={(by) => move(index, by)}
                 onRemove={() => setSteps(steps.filter((_, i) => i !== index))}
-                people={people.data ?? []}
                 roles={roles.roles}
                 step={step}
               />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Settings } from 'lucide-react';
 
 /**
  * The icon set both navigations draw from.
@@ -40,10 +41,12 @@ export const navIcons = {
   building: outline(
     'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
   ),
-  /** A sun: time away from work. It replaced a cloud, which said nothing about leave. */
+  /** A gear: organization configuration, separate from its summary. */
+  settings: (className: string) => <Settings aria-hidden="true" className={className} strokeWidth={1.75} />,
+  /** A calendar with a check: approved or requested time away, distinct from holiday dates. */
   timeOff: outline([
-    'M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364l-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0l-1.06-1.06M6.696 6.696l-1.06-1.06',
-    'M16 12a4 4 0 11-8 0 4 4 0 018 0z',
+    'M8 3v3m8-3v3M4 9h16M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z',
+    'M9 15l2 2 4-4',
   ]),
   /** A calendar of dated days: the published holiday list. */
   holidays: outline(

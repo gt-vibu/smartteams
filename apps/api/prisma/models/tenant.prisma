@@ -8,97 +8,119 @@ model Organization {
   timezone      String             @default("UTC")
   currencyCode  String             @map("currency_code") @db.Char(3)
   locale        String             @default("en-IN")
+  logoFileId    String?            @map("logo_file_id") @db.Uuid
+  coverFileId   String?            @map("cover_file_id") @db.Uuid
   deactivatedAt DateTime?          @map("deactivated_at") @db.Timestamptz(6)
   createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
   version       Int                @default(1)
 
-  settings                  OrganizationSettings?
-  payrollPolicies           PayrollPolicy[]
-  payrollPolicyComponents   PayrollPolicyComponent[]
-  statutoryRules            PayrollStatutoryRule[]
-  employeePayrollPolicies   EmployeePayrollPolicy[]
-  salaryAdvances            SalaryAdvance[]
-  advanceRecoveries         SalaryAdvanceRecovery[]
-  payrollPayments           PayrollPayment[]
-  payrollCalendars          PayrollCalendar[]
-  branches                  Branch[]
-  sourceChanges             OrganizationSourceChange[]
-  users                     UserOrganization[]
-  sessions                  AuthSession[]
-  invitations               UserInvitation[]
-  employeeAccessCodes       EmployeeAccessCode[]
-  approvalPolicies          ApprovalPolicy[]
-  approvalPolicySteps       ApprovalPolicyStep[]
-  roles                     Role[]
-  userRoles                 UserRole[]
-  employees                 Employee[]
-  employeePersonalProfiles  EmployeePersonalProfile[]
-  employeeBankAccounts      EmployeeBankAccount[]
-  employeeReferences        EmployeeReference[]
-  employeeStatutoryProfiles EmployeeStatutoryProfile[]
-  employeeStatutoryRecords  EmployeeStatutoryRecord[]
-  emergencyContacts         EmployeeEmergencyContact[]
-  employeeBranchAssignments EmployeeBranchAssignment[]
-  employeeFieldOwnership    EmployeeFieldOwnership[]
-  employmentRecords         EmployeeEmploymentRecord[]
-  compensations             EmployeeCompensation[]
-  payComponents             PayComponent[]
-  employeePayComponents     EmployeePayComponent[]
-  teams                     Team[]
-  teamMembers               TeamMember[]
-  projects                  Project[]
-  projectMembers            ProjectMember[]
-  files                     FileObject[]
-  workLocations             WorkLocation[]
-  attendanceRecords         AttendanceRecord[]
-  attendancePunches         AttendancePunch[]
-  attendanceCorrections     AttendanceCorrection[]
-  attendanceApprovals       AttendanceApproval[]
-  holidays                  Holiday[]
-  holidaySelections         EmployeeHolidaySelection[]
-  attendanceHolidayReviews  AttendanceHolidayReview[]
-  employeeHolidayPolicies   EmployeeHolidayPolicy[]
-  leaveTypes                LeaveType[]
-  leavePolicyAssignments    LeavePolicyAssignment[]
-  leaveBalances             LeaveBalance[]
-  leaveBalanceTransactions  LeaveBalanceTransaction[]
-  leaveRequests             LeaveRequest[]
-  leaveApprovals            LeaveApproval[]
-  shifts                    Shift[]
-  shiftAssignments          EmployeeShiftAssignment[]
-  timesheetPeriods          TimesheetPeriod[]
-  timesheets                Timesheet[]
-  timesheetEntries          TimesheetEntry[]
-  timesheetApprovals        TimesheetApproval[]
-  payrollRuns               PayrollRun[]
-  payrollLineItems          PayrollLineItem[]
-  payrollLineItemComponents PayrollLineItemComponent[]
-  payrollAdjustments        PayrollAdjustment[]
-  payrollApprovals          PayrollApproval[]
-  payslips                  Payslip[]
-  federationGrants          FederationGrant[]
-  organizationCapabilities  OrganizationFederationCapability[]
-  externalIdMappings        ExternalIdMapping[]
-  idempotencyRecords        FederationIdempotencyRecord[]
-  requestRecords            FederationRequestRecord[]
-  webhookSubscriptions      WebhookSubscription[]
-  webhookDeliveries         WebhookDelivery[]
-  outboxEvents              OutboxEvent[]
-  auditLogs                 AuditLog[]
-  notifications             Notification[]
-  approvalDelegations  ApprovalDelegation[]
-  resignations         EmployeeResignation[]
-  compOffCredits       CompOffCredit[]
-  leaveEncashments     LeaveEncashment[]
-  customFieldDefinitions CustomFieldDefinition[]
-  homeFederationClients     FederationClient[]                 @relation("FederationClientHomeOrganization")
-  webauthnCredentials       WebauthnCredential[]
-  webauthnChallenges        WebauthnChallenge[]
+  settings                     OrganizationSettings?
+  payrollPolicies              PayrollPolicy[]
+  payrollPolicyComponents      PayrollPolicyComponent[]
+  payrollPolicyAssignmentRules PayrollPolicyAssignmentRule[]
+  statutoryRules               PayrollStatutoryRule[]
+  employeePayrollPolicies      EmployeePayrollPolicy[]
+  salaryAdvances               SalaryAdvance[]
+  advanceRecoveries            SalaryAdvanceRecovery[]
+  payrollPayments              PayrollPayment[]
+  payrollCalendars             PayrollCalendar[]
+  branches                     Branch[]
+  sourceChanges                OrganizationSourceChange[]
+  users                        UserOrganization[]
+  sessions                     AuthSession[]
+  invitations                  UserInvitation[]
+  employeeAccessCodes          EmployeeAccessCode[]
+  approvalPolicies             ApprovalPolicy[]
+  approvalPolicySteps          ApprovalPolicyStep[]
+  roles                        Role[]
+  userRoles                    UserRole[]
+  employees                    Employee[]
+  employeePersonalProfiles     EmployeePersonalProfile[]
+  employeeBankAccounts         EmployeeBankAccount[]
+  employeeReferences           EmployeeReference[]
+  employeeStatutoryProfiles    EmployeeStatutoryProfile[]
+  employeeStatutoryRecords     EmployeeStatutoryRecord[]
+  emergencyContacts            EmployeeEmergencyContact[]
+  employeeBranchAssignments    EmployeeBranchAssignment[]
+  employeeFieldOwnership       EmployeeFieldOwnership[]
+  employmentRecords            EmployeeEmploymentRecord[]
+  compensations                EmployeeCompensation[]
+  payComponents                PayComponent[]
+  employeePayComponents        EmployeePayComponent[]
+  teams                        Team[]
+  teamMembers                  TeamMember[]
+  projects                     Project[]
+  projectMembers               ProjectMember[]
+  files                        FileObject[]
+  workLocations                WorkLocation[]
+  attendanceRecords            AttendanceRecord[]
+  attendancePunches            AttendancePunch[]
+  attendanceCorrections        AttendanceCorrection[]
+  attendanceApprovals          AttendanceApproval[]
+  holidays                     Holiday[]
+  holidaySelections            EmployeeHolidaySelection[]
+  attendanceHolidayReviews     AttendanceHolidayReview[]
+  employeeHolidayPolicies      EmployeeHolidayPolicy[]
+  leaveTypes                   LeaveType[]
+  leavePolicyAssignments       LeavePolicyAssignment[]
+  leaveBalances                LeaveBalance[]
+  leaveBalanceTransactions     LeaveBalanceTransaction[]
+  leaveRequests                LeaveRequest[]
+  leaveApprovals               LeaveApproval[]
+  shifts                       Shift[]
+  shiftAssignments             EmployeeShiftAssignment[]
+  timesheetPeriods             TimesheetPeriod[]
+  timesheets                   Timesheet[]
+  timesheetEntries             TimesheetEntry[]
+  timesheetApprovals           TimesheetApproval[]
+  payrollRuns                  PayrollRun[]
+  payrollLineItems             PayrollLineItem[]
+  payrollLineItemComponents    PayrollLineItemComponent[]
+  payrollAdjustments           PayrollAdjustment[]
+  payrollApprovals             PayrollApproval[]
+  payslips                     Payslip[]
+  federationGrants             FederationGrant[]
+  organizationCapabilities     OrganizationFederationCapability[]
+  externalIdMappings           ExternalIdMapping[]
+  idempotencyRecords           FederationIdempotencyRecord[]
+  requestRecords               FederationRequestRecord[]
+  webhookSubscriptions         WebhookSubscription[]
+  webhookDeliveries            WebhookDelivery[]
+  outboxEvents                 OutboxEvent[]
+  auditLogs                    AuditLog[]
+  workflowDrafts               WorkflowDraft[]
+  notifications                Notification[]
+  approvalDelegations          ApprovalDelegation[]
+  resignations                 EmployeeResignation[]
+  compOffCredits               CompOffCredit[]
+  leaveEncashments             LeaveEncashment[]
+  customFieldDefinitions       CustomFieldDefinition[]
+  homeFederationClients        FederationClient[]                 @relation("FederationClientHomeOrganization")
+  webauthnCredentials          WebauthnCredential[]
+  webauthnChallenges           WebauthnChallenge[]
+  logoFile                     FileObject?                        @relation("OrganizationLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
+  coverFile                    FileObject?                        @relation("OrganizationCover", fields: [coverFileId], references: [id], onDelete: SetNull)
 
   @@unique([source, externalId])
   @@index([status])
   @@map("organizations")
+}
+
+model WorkflowDraft {
+  id               String       @id @default(uuid()) @db.Uuid
+  organizationId   String       @map("organization_id") @db.Uuid
+  ownerUserId      String       @map("owner_user_id") @db.Uuid
+  kind             String       @db.VarChar(64)
+  title            String       @db.VarChar(160)
+  payloadEncrypted String       @map("payload_encrypted") @db.Text
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, ownerUserId, kind])
+  @@index([organizationId, ownerUserId, updatedAt])
+  @@map("workflow_drafts")
 }
 
 model OrganizationSettings {
@@ -169,6 +191,7 @@ model ApprovalPolicy {
   domain          ApprovalDomain
   code            String
   name            String
+  automation      Json           @default("{}")
   isDefault       Boolean        @default(false) @map("is_default")
   isActive        Boolean        @default(true) @map("is_active")
   createdByUserId String?        @map("created_by_user_id") @db.Uuid

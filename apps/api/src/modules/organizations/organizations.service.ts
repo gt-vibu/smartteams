@@ -18,6 +18,7 @@ import { branchDto, toDto } from './organization-shared';
 import { OrganizationBranchesService } from './organization-branches.service';
 import { OrganizationLifecycleService } from './organization-lifecycle.service';
 import { OrganizationOnboardingService } from './organization-onboarding.service';
+import { StorageService } from '../../infrastructure/storage/storage.service';
 
 export {
   EMPLOYEE_SELF_SERVICE_PERMISSIONS,
@@ -53,9 +54,10 @@ export class OrganizationsService {
     private readonly outbox: OutboxService,
     passwords: PasswordService,
     invitations: PasswordInvitationService,
+    storage: StorageService,
   ) {
     this.branches = new OrganizationBranchesService(database, audit, outbox);
-    this.lifecycle = new OrganizationLifecycleService(database, audit, outbox);
+    this.lifecycle = new OrganizationLifecycleService(database, audit, outbox, storage);
     this.onboarding = new OrganizationOnboardingService(database, audit, passwords, invitations);
   }
 

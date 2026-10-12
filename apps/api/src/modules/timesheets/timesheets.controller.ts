@@ -27,6 +27,15 @@ export class TimesheetsController {
       .native(request.user.userId, organizationId)
       .then((context) => this.timesheets.list(context, query));
   }
+  @Get('admin-page') listAdminPage(
+    @Param('organizationId') organizationId: string,
+    @Query() query: TimesheetQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.timesheets.listPage(context, query),
+    );
+  }
   @Get('job-types') listJobTypes(
     @Param('organizationId') organizationId: string,
     @Req() request: Request & { user: NativeRequestUser },

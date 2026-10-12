@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Badge } from '@smarteam/ui';
+import { LoadingIndicator, Badge } from '@smarteam/ui';
 import type { EmployeeHolidaySelection } from '@smarteam/contracts';
 import { statusLabel } from '../../lib/status-label';
 
@@ -16,9 +16,7 @@ export function EmployeeSelectionsTable({
 }: EmployeeSelectionsTableProps) {
   if (loading) {
     return (
-      <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-        Loading employee selections...
-      </p>
+      <LoadingIndicator variant="panel" label="Loading employee selections" className="py-10 text-center text-xs text-muted-foreground" />
     );
   }
 

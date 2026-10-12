@@ -1,3 +1,4 @@
+import { assertPayrollReady } from './payroll-readiness';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import {
@@ -258,6 +259,11 @@ export class PayrollRunsService {
         throw new ConflictError(
           'Payroll inputs changed after this run was calculated; calculate it again before approving or releasing it',
         );
+      if (
+        context.accessMode === 'NATIVE' &&
+        (target === PayrollRunStatus.APPROVED || target === PayrollRunStatus.RELEASED)
+      )
+        await assertPayrollReady(tx, context.organizationId, run);
       const updated = await tx.payrollRun.update({
         where: { id: run.id },
         data: {

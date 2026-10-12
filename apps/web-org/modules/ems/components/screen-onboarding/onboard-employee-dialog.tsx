@@ -1,27 +1,22 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { Check } from 'lucide-react';
 import {
   Button,
-  DatePicker,
   Dialog,
   DialogContent,
   DialogTitle,
-  Input,
-  SelectContent,
-  SelectItem,
-  SelectMenu,
-  SelectTrigger,
-  SelectValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@smarteam/ui';
 import {
   aadhaarProblem,
   codeProblem,
   dateProblem,
   emailProblem,
-  EMPLOYMENT_TYPE_OPTIONS,
-  employeeDisplayName,
-  formatAadhaar,
   LIMITS,
   personNameProblem,
   type Branch,
@@ -30,13 +25,18 @@ import {
 import type { OnboardingInput } from '../../hooks/use-employee-onboarding';
 import { useDepartments } from '../../hooks/use-departments';
 import { DepartmentDialog } from '../organization/department-dialog';
-import { JobTitlePicker } from './job-title-picker';
-import { ShiftPicker } from '../common/shift-picker';
-import { Field, Fieldset } from './form-fields';
-import { activeByName, byName } from '../../lib/pickable';
 import { localDateKey } from '../../lib/local-date';
-import { PhoneField, phoneIsValid } from '../common/phone-field';
-import { CheckedInput, optionalProblem } from '../common/checked-input';
+import { phoneIsValid } from '../common/phone-field';
+import { optionalProblem } from '../common/checked-input';
+import { apiRequest } from '../../lib/api-client';
+import { orgPath } from '../../repositories/api-helpers';
+import { useSession } from '../../hooks/auth-context';
+import {
+  OnboardAccessFields,
+  OnboardEmploymentFields,
+  OnboardPersonFields,
+  type OnboardEmployeeForm,
+} from './onboard-employee-fields';
 
 const NEW_DEPARTMENT = '__new__';
 
@@ -49,9 +49,6 @@ const NEW_DEPARTMENT = '__new__';
  * Manager and branch are chosen from the tenant's own records rather than typed, so a value from
  * another organization cannot be entered in the first place — and the API rejects one anyway.
  */
-
-// The API's own list: `CONTRACT` was offered here and refused, so Contract hires always failed.
-const EMPLOYMENT_TYPES = EMPLOYMENT_TYPE_OPTIONS;
 
 type Props = {
   open: boolean;
@@ -70,10 +67,10 @@ type Props = {
   busy: boolean;
   /** Why the last attempt saved nothing, shown above the buttons. */
   error?: string | null;
-  onSubmit: (input: OnboardingInput) => void;
+  onSubmit: (input: OnboardingInput) => void | Promise<boolean>;
 };
 
-const EMPTY = {
+const EMPTY: OnboardEmployeeForm = {
   employeeNumber: '',
   firstName: '',
   lastName: '',
@@ -106,6 +103,11 @@ export function OnboardEmployeeDialog({
   onSubmit,
 }: Props) {
   const [form, setForm] = useState({ ...EMPTY });
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const [draftNotice, setDraftNotice] = useState<string | null>(null);
+  const [draftBusy, setDraftBusy] = useState(false);
+  const [tab, setTab] = useState<'person' | 'employment' | 'access'>('person');
+  const { session } = useSession();
   const departments = useDepartments();
   const [addingDepartment, setAddingDepartment] = useState(false);
   const department = departments.departments.find((entry) => entry.id === form.departmentId);
@@ -115,14 +117,39 @@ export function OnboardEmployeeDialog({
   // Cleared whenever the dialog closes, however it closes. The screen closes it itself after a
   // successful onboarding, which skipped the old reset and opened the next one pre-filled.
   useEffect(() => {
-    if (!open) setForm({ ...EMPTY });
-    else if (defaultBranchId)
-      setForm((current) =>
-        current.primaryBranchId ? current : { ...current, primaryBranchId: defaultBranchId },
-      );
-  }, [open, defaultBranchId]);
+    if (!open) {
+      setForm({ ...EMPTY });
+      setTab('person');
+    } else {
+      if (defaultBranchId)
+        setForm((current) =>
+          current.primaryBranchId ? current : { ...current, primaryBranchId: defaultBranchId },
+        );
+      const organizationId = session?.organizationId;
+      if (organizationId) {
+        void apiRequest(orgPath(organizationId, '/workflow-drafts?kind=EMPLOYEE_ONBOARDING'), {
+          method: 'GET',
+        })
+          .then((value) => {
+            const drafts = value as Array<{ id: string; payload: OnboardEmployeeForm }>;
+            if (drafts[0]?.payload) {
+              setDraftId(drafts[0].id);
+              setDraftNotice('A saved onboarding draft is ready to resume.');
+              setForm((current) =>
+                current.firstName || current.lastName
+                  ? current
+                  : { ...EMPTY, ...drafts[0]!.payload },
+              );
+            }
+          })
+          .catch(() =>
+            setDraftNotice('Saved draft could not be loaded. Check your connection and retry.'),
+          );
+      }
+    }
+  }, [open, defaultBranchId, session?.organizationId]);
 
-  const set = (key: keyof typeof EMPTY, value: string) =>
+  const set = (key: keyof OnboardEmployeeForm, value: string) =>
     setForm((current) => ({ ...current, [key]: value }));
 
   const accountEmail = form.workEmail.trim();
@@ -149,16 +176,27 @@ export function OnboardEmployeeDialog({
       latest: `${new Date().getFullYear() + 1}-12-31`,
     }),
   };
-  const complete =
+  const personComplete =
+    Boolean(form.firstName.trim() && form.lastName.trim() && form.aadhaarNumber.trim()) &&
+    problems.firstName === null &&
+    problems.lastName === null &&
+    problems.workEmail === null &&
+    problems.personalEmail === null &&
     aadhaarError === null &&
     phoneIsValid(form.phone) &&
-    Object.values(problems).every((problem) => problem === null) &&
     // Required whenever a login can be made: it is the address they sign in with.
     (!accountPossible || accountEmail.length > 0);
+  const employmentComplete =
+    Boolean(form.employmentType && form.dateOfJoining) &&
+    problems.employeeNumber === null &&
+    problems.dateOfJoining === null;
+  const accessComplete = !accountPossible || Boolean(roleId && accountEmail);
+  const complete = personComplete && employmentComplete && accessComplete;
+  const progress = personComplete ? (employmentComplete ? 100 : 50) : 0;
 
-  const submit = () => {
+  const submit = async () => {
     if (!complete || busy) return;
-    onSubmit({
+    const completed = await onSubmit({
       ...(autoNumber || !form.employeeNumber.trim()
         ? {}
         : { employeeNumber: form.employeeNumber.trim() }),
@@ -185,272 +223,210 @@ export function OnboardEmployeeDialog({
           }
         : {}),
     });
+    if (completed && draftId && session?.organizationId) {
+      // The completed employee record supersedes the unfinished form, so it is removed from
+      // the encrypted draft store instead of reappearing as stale onboarding input next time.
+      await apiRequest(orgPath(session.organizationId, `/workflow-drafts/${draftId}`), {
+        method: 'DELETE',
+      }).catch(() => undefined);
+      setDraftId(null);
+    }
+  };
+
+  const saveDraft = async () => {
+    const organizationId = session?.organizationId;
+    if (!organizationId || draftBusy) return;
+    setDraftBusy(true);
+    setDraftNotice(null);
+    try {
+      const saved = (await apiRequest(orgPath(organizationId, '/workflow-drafts'), {
+        method: 'POST',
+        body: {
+          kind: 'EMPLOYEE_ONBOARDING',
+          title:
+            `Onboarding: ${form.firstName.trim()} ${form.lastName.trim()}`.trim() ||
+            'Employee onboarding',
+          payload: form,
+        },
+      })) as { id: string };
+      setDraftId(saved.id);
+      setDraftNotice('Draft saved securely. You can close this form and resume later.');
+    } catch {
+      setDraftNotice('Draft was not saved. Check your connection and try again.');
+    } finally {
+      setDraftBusy(false);
+    }
   };
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-h-[90vh] overflow-y-auto sm:max-w-2xl">
-        <DialogTitle>Add employee</DialogTitle>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Leave anything you do not know yet blank &mdash; you can add it to their record later.
-        </p>
+      <DialogContent className="flex h-[min(92dvh,52rem)] max-h-[calc(100dvh-0.5rem)] w-full flex-col gap-0 overflow-hidden rounded-t-2xl p-0 sm:w-[95vw] sm:max-w-2xl sm:rounded-xl sm:max-h-[90vh]">
+        <header className="shrink-0 border-b border-border bg-card px-5 py-4 pr-12">
+          <DialogTitle>Add employee</DialogTitle>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Leave unknown details blank and add them later.
+          </p>
+          {draftNotice && (
+            <p className="mt-2 text-xs text-muted-foreground" role="status">
+              {draftNotice}
+              {draftId ? ' · Saved draft available' : ''}
+            </p>
+          )}
+        </header>
 
-        <div className="mt-5 space-y-5">
-          <Fieldset legend="Person">
-            <Field label="First name" required>
-              <CheckedInput
-                autoComplete="given-name"
-                maxLength={LIMITS.personName}
-                onChange={(value) => set('firstName', value)}
-                problem={problems.firstName}
-                value={form.firstName}
+        <Tabs
+          className="flex min-h-0 flex-1 flex-col"
+          onValueChange={(value) => setTab(value as typeof tab)}
+          value={tab}
+        >
+          <div className="mx-5 mt-3 shrink-0">
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="absolute left-[16.666%] right-[16.666%] top-4 h-0.5 bg-muted"
               />
-            </Field>
-            <Field label="Last name" required>
-              <CheckedInput
-                autoComplete="family-name"
-                maxLength={LIMITS.personName}
-                onChange={(value) => set('lastName', value)}
-                problem={problems.lastName}
-                value={form.lastName}
+              <div
+                aria-hidden="true"
+                className="absolute left-[16.666%] top-4 h-0.5 bg-primary transition-[width] duration-300"
+                style={{ width: `${progress * 0.66668}%` }}
               />
-            </Field>
-            <Field label="Work email" required={accountPossible}>
-              <CheckedInput
-                maxLength={LIMITS.email}
-                onChange={(value) => set('workEmail', value.trim())}
-                problem={problems.workEmail}
-                type="email"
-                value={form.workEmail}
+              <TabsList
+                aria-label="Employee onboarding progress"
+                className="relative grid h-auto w-full grid-cols-3 items-start rounded-none bg-transparent p-0"
+              >
+                <TabsTrigger
+                  className="group z-10 h-auto flex-col gap-1 rounded-none bg-transparent px-1 py-0 text-muted-foreground shadow-none hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  value="person"
+                >
+                  <StepMarker active={tab === 'person'} complete={personComplete} number="1" />
+                  <span className="text-xs font-semibold">Person</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  className="group z-10 h-auto flex-col gap-1 rounded-none bg-transparent px-1 py-0 text-muted-foreground shadow-none hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  disabled={!personComplete}
+                  value="employment"
+                >
+                  <StepMarker active={tab === 'employment'} complete={personComplete && employmentComplete} number="2" />
+                  <span className="text-xs font-semibold">Employment</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  className="group z-10 h-auto flex-col gap-1 rounded-none bg-transparent px-1 py-0 text-muted-foreground shadow-none hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  disabled={!personComplete || !employmentComplete}
+                  value="access"
+                >
+                  <StepMarker active={tab === 'access'} complete={false} number="3" />
+                  <span className="text-xs font-semibold">Access</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
+            <TabsContent className="mt-0" value="person">
+              <OnboardPersonFields
+                accountPossible={accountPossible}
+                aadhaarError={aadhaarError}
+                form={form}
+                problems={problems}
+                set={set}
+                showAadhaarError={showAadhaarError}
               />
-            </Field>
-            <Field label="Personal email">
-              <CheckedInput
-                maxLength={LIMITS.email}
-                onChange={(value) => set('personalEmail', value.trim())}
-                problem={problems.personalEmail}
-                type="email"
-                value={form.personalEmail}
-              />
-            </Field>
-            <Field label="Phone">
-              <PhoneField
-                id="onboard-phone"
-                onChange={(value) => set('phone', value)}
-                value={form.phone}
-              />
-            </Field>
-            <Field label="Aadhaar number" required>
-              <Input
-                aria-invalid={showAadhaarError || undefined}
-                inputMode="numeric"
-                // 12 digits and the two spaces formatAadhaar puts between the groups.
-                maxLength={14}
-                onChange={(e) => set('aadhaarNumber', formatAadhaar(e.target.value))}
-                placeholder="1234 5678 9012"
-                value={form.aadhaarNumber}
-              />
-              {showAadhaarError && (
-                <p className="mt-1 text-[11px] text-destructive">{aadhaarError}</p>
-              )}
-            </Field>
-          </Fieldset>
-
-          <Fieldset legend="Employment">
-            <Field label="Department">
-              <SelectMenu
-                onValueChange={(value) => {
+            </TabsContent>
+            <TabsContent className="mt-0" value="employment">
+              <OnboardEmploymentFields
+                autoNumber={autoNumber}
+                branches={branches}
+                departments={departments}
+                departmentName={department?.name}
+                employees={employees}
+                form={form}
+                jobTitles={jobTitles}
+                onDepartmentSelect={(value) => {
                   if (value === NEW_DEPARTMENT) setAddingDepartment(true);
                   else set('departmentId', value === 'none' ? '' : value);
                 }}
-                value={form.departmentId || 'none'}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="No department" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No department</SelectItem>
-                  {byName(departments.departments).map((entry) => (
-                    <SelectItem key={entry.id} value={entry.id}>
-                      {entry.name}
-                    </SelectItem>
-                  ))}
-                  {departments.canWrite && (
-                    <SelectItem value={NEW_DEPARTMENT}>+ New department</SelectItem>
-                  )}
-                </SelectContent>
-              </SelectMenu>
-            </Field>
-            <Field label="Employee ID">
-              {autoNumber ? (
-                <div className="flex h-9 items-center rounded-md border border-border bg-muted/40 px-3 text-sm">
-                  <span className="font-mono font-semibold text-foreground">{autoNumber}</span>
-                  <span className="ml-2 text-[11px] text-muted-foreground">
-                    from the {department?.name} series
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <CheckedInput
-                    maxLength={LIMITS.employeeNumber}
-                    onChange={(value) => set('employeeNumber', value.toUpperCase())}
-                    placeholder="Assigned automatically"
-                    problem={problems.employeeNumber}
-                    value={form.employeeNumber}
-                  />
-                  <p className="mt-1 text-[11px] text-muted-foreground">
-                    Leave empty and the next ID (EMP001, EMP002 …) is given automatically.
-                  </p>
-                </>
-              )}
-            </Field>
-            <Field label="Employment type" required>
-              <SelectMenu
-                onValueChange={(value) => set('employmentType', value)}
-                value={form.employmentType}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {EMPLOYMENT_TYPES.map((entry) => (
-                    <SelectItem key={entry.value} value={entry.value}>
-                      {entry.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
-            </Field>
-            <Field label="Joining date" required>
-              <DatePicker
-                onChange={(value) => set('dateOfJoining', value)}
-                value={form.dateOfJoining}
+                problems={problems}
+                set={set}
               />
-            </Field>
-            <Field label="Job title">
-              <JobTitlePicker onChange={(value) => set('jobTitle', value)} value={form.jobTitle} />
-            </Field>
-            <Field label="Branch">
-              <SelectMenu
-                onValueChange={(value) => set('primaryBranchId', value === 'none' ? '' : value)}
-                value={form.primaryBranchId || 'none'}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="No branch" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No branch</SelectItem>
-                  {branches.map((branch) => (
-                    <SelectItem key={branch.id} value={branch.id}>
-                      {branch.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
-            </Field>
-            <Field label="Shift">
-              <ShiftPicker
-                noneLabel="No shift yet"
-                onChange={(value) => set('shiftId', value)}
-                value={form.shiftId}
+            </TabsContent>
+            <TabsContent className="mt-0" value="access">
+              <OnboardAccessFields
+                accountEmail={accountEmail}
+                accountPossible={accountPossible}
+                canCreateAccount={canCreateAccount}
+                form={form}
+                roleId={roleId}
+                roles={roles}
+                set={set}
               />
-              {form.shiftId && (
-                <p className="mt-1 text-[11px] text-muted-foreground">
-                  Their shift from the joining date, until it is changed.
-                </p>
-              )}
-            </Field>
-            <Field label="Reports to">
-              <SelectMenu
-                onValueChange={(value) => set('managerEmployeeId', value === 'none' ? '' : value)}
-                value={form.managerEmployeeId || 'none'}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="No manager" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No manager</SelectItem>
-                  {activeByName(employees).map((employee) => (
-                    <SelectItem key={employee.id} value={employee.id}>
-                      {[
-                        employeeDisplayName(employee),
-                        jobTitles?.get(employee.id),
-                        employee.employeeNumber,
-                      ]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </SelectMenu>
-            </Field>
-          </Fieldset>
+            </TabsContent>
+          </div>
+        </Tabs>
 
-          <Fieldset legend="Access">
-            {accountPossible && roles.length > 0 && (
-              <Field label="Role">
-                <SelectMenu onValueChange={(value) => set('roleId', value)} value={roleId}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {roles.map((role) => (
-                      <SelectItem key={role.id} value={role.id}>
-                        {role.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectMenu>
-              </Field>
-            )}
-            <div className="sm:col-span-2">
-              {accountPossible ? (
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  A login is created with the{' '}
-                  {roles.find((role) => role.id === roleId)?.name ?? 'Employee'} role, and{' '}
-                  <span className="font-semibold text-foreground">
-                    {accountEmail || 'the work email above'}
-                  </span>{' '}
-                  is what they sign in with. You get their password on the next screen, once.
-                </p>
-              ) : (
-                <p
-                  className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
-                  role="alert"
+        <footer className="shrink-0 border-t border-border bg-card px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          {error && (
+            <p
+              className="mb-3 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+              role="alert"
+            >
+              <span className="font-semibold">Not saved. </span>
+              {error}
+            </p>
+          )}
+          <div className="flex items-center justify-between gap-3">
+            <p className="max-w-52 text-[11px] text-muted-foreground" aria-live="polite">
+              {tab === 'person' && !personComplete
+                ? 'Complete the required person details to continue.'
+                : tab === 'employment' && !employmentComplete
+                  ? 'Complete the required employment details to continue.'
+                  : tab === 'access' && !accessComplete
+                    ? 'Enter a valid work email and access profile to continue.'
+                    : tab === 'access'
+                      ? 'All required details are ready.'
+                      : 'Required details are complete.'}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                disabled={draftBusy || busy}
+                onClick={() => void saveDraft()}
+                type="button"
+                variant="outline"
+              >
+                {draftBusy ? 'Saving…' : 'Save as draft'}
+              </Button>
+              <Button
+                disabled={busy}
+                onClick={() => onOpenChange(false)}
+                type="button"
+                variant="outline"
+              >
+                Cancel
+              </Button>
+              {tab !== 'person' && (
+                <Button
+                  disabled={busy}
+                  onClick={() => setTab(tab === 'access' ? 'employment' : 'person')}
+                  type="button"
+                  variant="outline"
                 >
-                  {canCreateAccount
-                    ? 'This organization has no Employee role, so no login can be created. Add one under Organization → Access before onboarding, or this person will not be able to sign in.'
-                    : 'You do not have permission to create logins. The employee record will be created without one, and they will not be able to sign in until someone grants them access.'}
-                </p>
+                  Back
+                </Button>
+              )}
+              {tab === 'person' ? (
+                <Button disabled={!personComplete || busy} onClick={() => setTab('employment')} type="button">
+                  Continue
+                </Button>
+              ) : tab === 'employment' ? (
+                <Button disabled={!employmentComplete || busy} onClick={() => setTab('access')} type="button">
+                  Continue
+                </Button>
+              ) : (
+                <Button disabled={!complete || busy} onClick={submit} type="button">
+                  {busy ? 'Creating…' : 'Create employee'}
+                </Button>
               )}
             </div>
-          </Fieldset>
-        </div>
-
-        {error && (
-          <p
-            className="mt-5 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
-            role="alert"
-          >
-            <span className="font-semibold">Not saved. </span>
-            {error}
-          </p>
-        )}
-
-        <div className="mt-6 flex justify-end gap-2">
-          <Button
-            disabled={busy}
-            onClick={() => onOpenChange(false)}
-            type="button"
-            variant="outline"
-          >
-            Cancel
-          </Button>
-          <Button disabled={!complete || busy} onClick={submit} type="button">
-            {busy ? 'Creating...' : 'Create employee'}
-          </Button>
-        </div>
-        {/* The same dialog the Departments tab uses, so a quick-added department is a full one. */}
+          </div>
+        </footer>
         <DepartmentDialog
           department={null}
           departments={departments}
@@ -462,5 +438,30 @@ export function OnboardEmployeeDialog({
         />
       </DialogContent>
     </Dialog>
+  );
+}
+
+function StepMarker({
+  active,
+  complete,
+  number,
+}: {
+  active: boolean;
+  complete: boolean;
+  number: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`grid size-8 place-items-center rounded-full border-2 bg-card text-xs font-semibold transition-colors ${
+        complete
+          ? 'border-primary bg-primary text-primary-foreground'
+          : active
+            ? 'border-primary text-primary'
+            : 'border-border text-muted-foreground'
+      }`}
+    >
+      {complete ? <Check className="size-4" /> : number}
+    </span>
   );
 }

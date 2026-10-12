@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { LoadingIndicator } from '@smarteam/ui';
 import { EmsLayout } from './components/layout/ems-layout';
 import { Screen1Overview } from './components/screen-1-overview/screen-1-overview';
 import { Screen2Timeline } from './components/screen-2-attendance/screen-2-timeline';
@@ -14,6 +15,7 @@ import { ScreenPayroll } from './components/screen-payroll/screen-payroll';
 import { ScreenApprovals } from './components/screen-approvals/screen-approvals';
 import { ScreenFiles } from './components/screen-files/screen-files';
 import { OrganizationWorkspace } from './components/organization/organization-workspace';
+import { OrganizationSetupPage } from './components/organization/organization-setup-page';
 import { ScreenOnboarding } from './components/screen-onboarding/screen-onboarding';
 import { ScreenLeaveAdmin } from './components/screen-leave/screen-leave-admin';
 import { ScreenAttendanceAdmin } from './components/screen-attendance/screen-attendance-admin';
@@ -123,7 +125,10 @@ function EmsWorkspaceInner() {
           )}
 
           {effectiveModule === 'onboarding' && <ScreenOnboarding />}
-          {effectiveModule === 'employees' && <ScreenEmployees />}
+          {effectiveModule === 'org-setup' && <OrganizationSetupPage />}
+          {effectiveModule === 'employees' && (
+            <ScreenEmployees onNavigateModule={navigateToModule} />
+          )}
 
           {effectiveModule === 'time-off' && <ScreenLeaveAdmin />}
 
@@ -228,9 +233,5 @@ function WorkspaceUnreachable({ onRetry }: { onRetry: () => void }) {
 }
 
 function WorkspaceLoading() {
-  return (
-    <div className="flex h-dvh items-center justify-center bg-[#0B1120] text-sm text-muted-foreground">
-      Restoring your session…
-    </div>
-  );
+  return <LoadingIndicator variant="screen" label="Restoring your session" />;
 }

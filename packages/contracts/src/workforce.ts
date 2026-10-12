@@ -85,6 +85,7 @@ export const membershipEmployeeSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   employeeNumber: z.string(),
+  jobTitle: z.string().nullable().optional(),
 });
 
 export const teamMemberSchema = z.object({
@@ -348,6 +349,7 @@ export const employeeDirectoryEntrySchema = z.object({
   dateOfJoining: z.string().nullable(),
   primaryBranchId: z.string().uuid().nullable(),
   managerEmployeeId: z.string().uuid().nullable(),
+  directReportsCount: z.number().int().nonnegative().optional(),
   jobTitle: z.string().nullable(),
   department: z.string().nullable(),
   departmentId: z.string().uuid().nullable().optional(),

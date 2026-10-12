@@ -1,3 +1,6 @@
+import { EmployeeOperationsService } from './employee-operations.service';
+import { EmployeeOperationsController } from './employee-operations.controller';
+import { ShiftsModule } from '../shifts/shifts.module';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { EmployeesController } from './employees.controller';
@@ -22,6 +25,7 @@ import { EmployeeMilestonesService } from './employee-milestones.service';
 
 @Module({
   controllers: [
+    EmployeeOperationsController,
     EmployeesController,
     DepartmentsController,
     EmployeeBranchesController,
@@ -29,8 +33,9 @@ import { EmployeeMilestonesService } from './employee-milestones.service';
     EmployeeResignationsController,
     EmployeeExtrasController,
   ],
-  imports: [AuthModule, QueueModule],
+  imports: [ShiftsModule, AuthModule, QueueModule],
   providers: [
+    EmployeeOperationsService,
     EmployeesService,
     EmployeeRecordsService,
     EmployeeDetailService,

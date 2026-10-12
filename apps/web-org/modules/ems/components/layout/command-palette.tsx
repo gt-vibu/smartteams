@@ -28,11 +28,10 @@ export function CommandPalette({
   onSelectProject,
 }: CommandPaletteProps) {
   const { persona, workspaceContext, isAssignedToAnyTeam, canAccessModule } = useAuth();
-  const { data: employeeList } = useEmployees();
-  const employees = employeeList ?? [];
   const { data: projectList } = useProjects();
   const { isCheckedIn, checkIn, checkOut } = useAttendance();
   const [query, setQuery] = useState('');
+  const { data: employeeList } = useEmployees({ search: query, enabled: isOpen });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -75,7 +74,7 @@ export function CommandPalette({
     workspaceContext,
   });
 
-  const people: CommandItem[] = employees.map((employee) => ({
+  const people: CommandItem[] = (employeeList ?? []).map((employee) => ({
     id: employee.id,
     title: employeeDisplayName(employee),
     subtitle: employee.employeeNumber,

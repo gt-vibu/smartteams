@@ -1,6 +1,22 @@
-import { ApproverType } from '../../generated/prisma/enums';
-import type { Prisma } from '../../generated/prisma/client';
 import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-error';
+import type { Prisma } from '../../generated/prisma/client';
+import { ApproverType } from '../../generated/prisma/enums';
+
+/** Read-only inbox cache, created per transaction; decisions always resolve authority again. */
+export type ApprovalAuthorizationCache = Map<string, Promise<unknown>>;
+function inboxLookup<T>(
+  cache: ApprovalAuthorizationCache | undefined,
+  key: unknown[],
+  read: () => Promise<T>,
+): Promise<T> {
+  if (!cache) return read();
+  const encoded = JSON.stringify(key);
+  const existing = cache.get(encoded);
+  if (existing) return existing as Promise<T>;
+  const result = read();
+  cache.set(encoded, result);
+  return result;
+}
 
 export async function assertApprover(
   tx: Prisma.TransactionClient,
@@ -40,48 +56,61 @@ export async function canApprove(
   approverUserId: string | null,
   branchId?: string,
   requesterUserId?: string | null,
+  cache?: ApprovalAuthorizationCache,
 ) {
   if (requesterUserId && requesterUserId === userId) return false;
   // Whoever the caller is approving as: themselves, and anyone who has handed them their
   // approvals for today. Never the requester — a delegate does not approve their delegator's
   // own request on the delegator's behalf.
-  const principals = [userId, ...(await delegatorsOf(tx, organizationId, userId))].filter(
-    (principal) => principal !== requesterUserId,
-  );
+  const principals = [
+    userId,
+    ...(await inboxLookup(cache, ['delegators', organizationId, userId], () =>
+      delegatorsOf(tx, organizationId, userId),
+    )),
+  ].filter((principal) => principal !== requesterUserId);
   if (approverType === ApproverType.MANAGER) {
     // The reporting manager when there is one; otherwise the step's backup role, if it has one.
-    const manager = await activeManagerUserId(tx, organizationId, managerUserId, requesterUserId);
+    const manager =
+      managerUserId && managerUserId !== requesterUserId
+        ? await inboxLookup(cache, ['manager', organizationId, managerUserId], () =>
+            activeManagerUserId(tx, organizationId, managerUserId, requesterUserId),
+          )
+        : null;
     if (manager) return principals.includes(manager);
     if (!roleId) return false;
   } else if (approverType === ApproverType.USER) {
     const expectedUserId = approverUserId;
     if (!expectedUserId || !principals.includes(expectedUserId)) return false;
     return Boolean(
-      await tx.employee.findFirst({
-        where: {
-          organizationId,
-          userId: expectedUserId,
-          status: 'ACTIVE',
-          user: { is: { isActive: true } },
-        },
-        select: { id: true },
-      }),
+      await inboxLookup(cache, ['user', organizationId, expectedUserId], () =>
+        tx.employee.findFirst({
+          where: {
+            organizationId,
+            userId: expectedUserId,
+            status: 'ACTIVE',
+            user: { is: { isActive: true } },
+          },
+          select: { id: true },
+        }),
+      ),
     );
   }
   if (!roleId) return false;
   return Boolean(
-    await tx.userRole.findFirst({
-      where: {
-        userId: { in: principals },
-        organizationId,
-        roleId,
-        startsAt: { lte: new Date() },
-        OR: [{ endsAt: null }, { endsAt: { gt: new Date() } }],
-        AND: [{ OR: [{ branchId: null }, ...(branchId ? [{ branchId }] : [])] }],
-        user: { isActive: true },
-      },
-      select: { id: true },
-    }),
+    await inboxLookup(cache, ['role', organizationId, roleId, branchId, principals], () =>
+      tx.userRole.findFirst({
+        where: {
+          userId: { in: principals },
+          organizationId,
+          roleId,
+          startsAt: { lte: new Date() },
+          OR: [{ endsAt: null }, { endsAt: { gt: new Date() } }],
+          AND: [{ OR: [{ branchId: null }, ...(branchId ? [{ branchId }] : [])] }],
+          user: { isActive: true },
+        },
+        select: { id: true },
+      }),
+    ),
   );
 }
 

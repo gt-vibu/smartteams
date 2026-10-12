@@ -1,32 +1,32 @@
 import { Injectable } from '@nestjs/common';
+import {
+  requirePermission,
+  requireReason,
+  type DomainContext,
+} from '../../common/context/domain-context';
+import {
+  ConflictError,
+  ForbiddenDomainError,
+  NotFoundError,
+} from '../../common/errors/domain-error';
 import { Prisma } from '../../generated/prisma/client';
 import {
   AccessMode,
   PayrollPaymentStatus,
   SalaryAdvanceStatus,
 } from '../../generated/prisma/enums';
-import {
-  requirePermission,
-  requireReason,
-  type DomainContext,
-} from '../../common/context/domain-context';
-import { markPayrollStale } from './payroll-staleness';
-import {
-  ConflictError,
-  ForbiddenDomainError,
-  NotFoundError,
-} from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { canActForAllEmployees, resolveActingEmployeeId } from '../employees/employee-scope';
+import { notify, permissionHolders } from '../notifications/notify';
+import { advanceAllowance } from './payroll-advance-rules';
+import { pageArgs, toPage, type ListPage } from './payroll-list-page';
+import { employeeScope, resolveEmployeeId } from './payroll-policy-access';
 import {
   type AdvanceDecisionInput,
   type AdvanceInput,
   type PaymentInput,
 } from './payroll-policy.types';
-import { employeeScope, resolveEmployeeId } from './payroll-policy-access';
-import { pageArgs, toPage, type ListPage } from './payroll-list-page';
-import { canActForAllEmployees, resolveActingEmployeeId } from '../employees/employee-scope';
-import { advanceAllowance } from './payroll-advance-rules';
-import { notify, permissionHolders } from '../notifications/notify';
+import { markPayrollStale } from './payroll-staleness';
 
 /**
  * Salary advances and payment marking.
@@ -157,7 +157,9 @@ export class PayrollAdvancesService {
 
   async decideAdvance(context: DomainContext, advanceId: string, input: AdvanceDecisionInput) {
     requirePermission(context, 'payroll.advances.approve');
-    requireReason({ ...context, reason: input.comment }, 'Advance decisions require a reason');
+    if (input.status === 'REJECTED') {
+      requireReason({ ...context, reason: input.comment }, 'Advance rejections require a reason');
+    }
     return this.database.run(context, async (tx) => {
       // Two callers deciding at once both read REQUESTED and both pass the guard below, which for
       // a financial record means two approvals of the same advance. Locking first makes the second

@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { groupPermissionCatalogue, LIMITS, textProblem } from '@smarteam/contracts';
+import {
+  EMPLOYEE_BASELINE_PERMISSION_KEYS,
+  groupPermissionCatalogue,
+  LIMITS,
+  textProblem,
+} from '@smarteam/contracts';
 import { Button, Checkbox, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
 
 const GROUPS = groupPermissionCatalogue();
@@ -29,11 +34,13 @@ export function AccessCreateRoleDialog({
   onCreate: (input: { code: string; name: string; permissionKeys: string[] }) => Promise<boolean>;
 }) {
   const [name, setName] = useState('');
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<Set<string>>(
+    () => new Set(EMPLOYEE_BASELINE_PERMISSION_KEYS),
+  );
 
   const reset = () => {
     setName('');
-    setSelected(new Set());
+    setSelected(new Set(EMPLOYEE_BASELINE_PERMISSION_KEYS));
   };
 
   const handleCreate = async () => {
@@ -62,10 +69,15 @@ export function AccessCreateRoleDialog({
     >
       <DialogContent className="max-w-xl gap-0 p-0">
         <DialogTitle className="border-b border-border px-5 py-4 text-sm font-bold">
-          Create role
+          Create access profile
         </DialogTitle>
 
         <div className="space-y-4 border-b border-border p-5">
+          <p className="rounded-md border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
+            New profiles include standard employee self-service access. Add only the extra access
+            this group needs. Reporting manager and team lead responsibilities are assigned on the
+            employee or team record.
+          </p>
           <div className="space-y-1.5">
             <Label htmlFor="role-name">Name</Label>
             <Input
@@ -94,6 +106,9 @@ export function AccessCreateRoleDialog({
                   >
                     <Checkbox
                       checked={selected.has(entry.key)}
+                      disabled={EMPLOYEE_BASELINE_PERMISSION_KEYS.includes(
+                        entry.key as (typeof EMPLOYEE_BASELINE_PERMISSION_KEYS)[number],
+                      )}
                       onCheckedChange={(checked) =>
                         setSelected((prev) => {
                           const next = new Set(prev);
@@ -136,7 +151,7 @@ export function AccessCreateRoleDialog({
               onClick={() => void handleCreate()}
               type="button"
             >
-              {saving ? 'Creating...' : 'Create role'}
+              {saving ? 'Creating...' : 'Create access profile'}
             </Button>
           </div>
         </div>

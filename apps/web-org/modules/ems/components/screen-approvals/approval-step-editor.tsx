@@ -1,4 +1,5 @@
 'use client';
+import { ApproverPicker } from './approver-picker';
 
 import React from 'react';
 import {
@@ -10,7 +11,6 @@ import {
   SelectValue,
 } from '@smarteam/ui';
 import type { ApprovalPolicy } from '@smarteam/contracts';
-import type { ApproverCandidate } from '../../repositories/approvals.repository';
 
 /**
  * One approval step as the editor holds it.
@@ -61,7 +61,6 @@ export function ApprovalStepRow({
   index,
   count,
   roles,
-  people,
   disabled,
   onChange,
   onMove,
@@ -71,7 +70,6 @@ export function ApprovalStepRow({
   index: number;
   count: number;
   roles: readonly Option[];
-  people: readonly ApproverCandidate[];
   disabled: boolean;
   onChange: (next: StepDraft) => void;
   onMove: (by: -1 | 1) => void;
@@ -149,22 +147,12 @@ export function ApprovalStepRow({
         )}
 
         {step.kind === 'USER' && (
-          <SelectMenu
+          <ApproverPicker
             disabled={disabled}
-            onValueChange={(userId) => onChange({ ...step, userId })}
             value={step.userId}
-          >
-            <SelectTrigger aria-label={`Step ${index + 1} person`}>
-              <SelectValue placeholder="Choose a person" />
-            </SelectTrigger>
-            <SelectContent>
-              {people.map((person) => (
-                <SelectItem key={person.userId} value={person.userId}>
-                  {person.name} · {person.employeeNumber}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectMenu>
+            onChange={(userId) => onChange({ ...step, userId })}
+            label={`Step ${index + 1} person`}
+          />
         )}
 
         {step.kind === 'MANAGER' && (

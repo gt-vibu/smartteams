@@ -37,7 +37,7 @@ export function RequiredPasswordChangeScreen({
     try {
       await passwordRepository.change(current, password);
       // The response renewed this session. A reload lets every provider read the updated account.
-      window.location.assign('/');
+      window.location.assign('/tenant');
     } catch (caught) {
       setError(errorMessage(caught, 'Your password could not be changed.'));
       setBusy(false);

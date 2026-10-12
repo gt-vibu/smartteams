@@ -26,17 +26,26 @@ export const notificationsRepository = {
   },
 
   /** Whether the caller is also emailed. Each person decides only for themselves. */
-  async preferences(organizationId: string): Promise<{ email: boolean }> {
+  async preferences(
+    organizationId: string,
+  ): Promise<{ email: boolean; delivery?: 'IMMEDIATE' | 'DAILY_DIGEST' }> {
     const payload = (await apiRequest(`${base(organizationId)}/preferences`, {
       method: 'GET',
-    })) as { email?: unknown };
-    return { email: payload.email !== false };
+    })) as { email?: unknown; delivery?: unknown };
+    return {
+      email: payload.email !== false,
+      delivery: payload.delivery === 'DAILY_DIGEST' ? 'DAILY_DIGEST' : 'IMMEDIATE',
+    };
   },
 
-  async setEmail(organizationId: string, email: boolean): Promise<{ email: boolean }> {
+  async setEmail(
+    organizationId: string,
+    email: boolean,
+    delivery?: 'IMMEDIATE' | 'DAILY_DIGEST',
+  ): Promise<{ email: boolean }> {
     const payload = (await apiRequest(`${base(organizationId)}/preferences`, {
       method: 'PUT',
-      body: { email },
+      body: { email, ...(delivery ? { delivery } : {}) },
     })) as { email?: unknown };
     return { email: payload.email !== false };
   },

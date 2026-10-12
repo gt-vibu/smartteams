@@ -31,6 +31,7 @@ export function PicklistSelect({
   addLabel = '+ Add new',
   extra = [],
   disabled = false,
+  showAddOption = true,
 }: {
   kind: PicklistKind;
   value: string;
@@ -40,6 +41,7 @@ export function PicklistSelect({
   /** Names in use on records that are not in the list, so they still show. */
   extra?: string[];
   disabled?: boolean;
+  showAddOption?: boolean;
 }) {
   const list = usePicklist(kind);
   const [adding, setAdding] = useState(false);
@@ -132,7 +134,7 @@ export function PicklistSelect({
             {name}
           </SelectItem>
         ))}
-        {list.canAdd && <SelectItem value={NEW}>{addLabel}</SelectItem>}
+        {list.canAdd && showAddOption && <SelectItem value={NEW}>{addLabel}</SelectItem>}
       </SelectContent>
     </SelectMenu>
   );

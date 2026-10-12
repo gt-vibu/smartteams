@@ -1,3 +1,4 @@
+import { NotificationDigestService } from './notification-digest.service';
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, type OnModuleInit } from '@nestjs/common';
 import type { Queue } from 'bullmq';
@@ -12,6 +13,7 @@ export class NotificationMailProcessor extends WorkerHost implements OnModuleIni
 
   constructor(
     private readonly mail: NotificationMailService,
+    private readonly digests: NotificationDigestService,
     @InjectQueue('notification-mail') private readonly queue: Queue,
   ) {
     super();
@@ -28,7 +30,7 @@ export class NotificationMailProcessor extends WorkerHost implements OnModuleIni
   }
 
   async process() {
-    const sent = await this.mail.sendPending();
+    const sent = (await this.mail.sendPending()) + (await this.digests.sendPending());
     if (sent) this.logger.log(`Notification email: ${sent} queued`);
   }
 }

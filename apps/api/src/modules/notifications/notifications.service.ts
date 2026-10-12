@@ -78,21 +78,24 @@ export class NotificationsService {
     return this.database.run(context, async (tx) => {
       const user = await tx.user.findUniqueOrThrow({
         where: { id: userId },
-        select: { emailNotifications: true },
+        select: { emailNotifications: true, notificationDelivery: true },
       });
-      return { email: user.emailNotifications };
+      return { email: user.emailNotifications, delivery: user.notificationDelivery };
     });
   }
 
-  setPreferences(context: DomainContext, input: { email: boolean }) {
+  setPreferences(
+    context: DomainContext,
+    input: { email: boolean; delivery?: 'IMMEDIATE' | 'DAILY_DIGEST' },
+  ) {
     const userId = self(context);
     return this.database.run(context, async (tx) => {
       const user = await tx.user.update({
         where: { id: userId },
-        data: { emailNotifications: input.email },
-        select: { emailNotifications: true },
+        data: { emailNotifications: input.email, notificationDelivery: input.delivery },
+        select: { emailNotifications: true, notificationDelivery: true },
       });
-      return { email: user.emailNotifications };
+      return { email: user.emailNotifications, delivery: user.notificationDelivery };
     });
   }
 

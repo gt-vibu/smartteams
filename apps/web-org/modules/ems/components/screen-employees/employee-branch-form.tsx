@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
 import type { Branch } from '@smarteam/contracts';
 import {
   Button,
@@ -12,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
+import { useState } from 'react';
 
 export type BranchChange = 'add' | 'transfer';
 
@@ -40,7 +40,7 @@ export function BranchChangeForm({
   const [branchId, setBranchId] = useState('');
   const [from, setFrom] = useState(today());
   const [until, setUntil] = useState('');
-  const invalid = !branchId || !from || (until !== '' && until < from);
+  const invalid = !branchId || !from || (until !== '' && until < from) || branches.length === 0;
 
   return (
     <div className="space-y-2 rounded-md border border-border p-3">

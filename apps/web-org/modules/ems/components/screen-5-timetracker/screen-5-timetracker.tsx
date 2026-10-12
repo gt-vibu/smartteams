@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge, Button, SegmentedTabs } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button, SelectContent, SelectItem, SelectMenu, SelectTrigger, SelectValue } from '@smarteam/ui';
 import { formatWorkMinutes, formatDate } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
-import { periodLabel, toDayGroups } from '../../services/timesheet-view';
+import { periodLabel, summarize, toDayGroups } from '../../services/timesheet-view';
 import { LogTimeModal } from '../screen-6-logtime/logtime-modal';
 import { PageShell } from '../layout/page-shell';
-import { Briefcase, Clock, Plus } from 'lucide-react';
+import { Briefcase, CalendarDays, Clock, Plus } from 'lucide-react';
 import { statusLabel } from '../../lib/status-label';
 
 /**
@@ -23,6 +23,7 @@ export function Screen5TimeTracker() {
   const [periodId, setPeriodId] = useState<string | null>(null);
 
   const selected = timesheet.timesheets.find((sheet) => sheet.id === periodId) ?? timesheet.current;
+  const selectedSummary = React.useMemo(() => summarize(selected ? [selected] : []), [selected]);
   const groups = React.useMemo(() => toDayGroups(selected), [selected]);
 
   const tabs = timesheet.timesheets.slice(0, 10).map((sheet) => {
@@ -41,18 +42,27 @@ export function Screen5TimeTracker() {
   });
 
   return (
-    <PageShell>
+    <PageShell className="pb-28 md:pb-0">
       {/* Periods on the left, actions on the right on every width: Log Time holds the top-right
           corner, and the status actions wrap beneath it rather than under the periods. */}
-      <div className="flex items-start justify-between gap-2 border-b border-border pb-2">
+      <div className="flex items-center justify-between gap-2 border-b border-border pb-2">
         {tabs.length > 0 ? (
-          <div className="min-w-0 flex-1 overflow-x-auto">
-            <SegmentedTabs
-              aria-label="Timesheet periods"
-              items={tabs}
+          <div className="min-w-0 flex-1 sm:max-w-xs">
+            <SelectMenu
+              aria-label="Timesheet month"
               onValueChange={setPeriodId}
               value={selected?.id ?? ''}
-            />
+            >
+              <SelectTrigger className="h-10 gap-2 text-sm">
+                <CalendarDays aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+                <SelectValue placeholder="Choose a month" />
+              </SelectTrigger>
+              <SelectContent>
+                {tabs.map((period) => (
+                  <SelectItem key={period.id} value={period.id}>{period.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </SelectMenu>
           </div>
         ) : (
           <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 py-1">
@@ -81,7 +91,8 @@ export function Screen5TimeTracker() {
               onClick={() => void timesheet.submit(selected.id)}
               size="sm"
               type="button"
-              variant="outline"
+              className="hidden sm:inline-flex"
+              variant="default"
               title={selected.totalMinutes <= 0 ? 'Log time entries before submitting' : undefined}
             >
               {timesheet.saving ? 'Submitting…' : 'Submit'}
@@ -121,9 +132,7 @@ export function Screen5TimeTracker() {
       )}
 
       {timesheet.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading timesheets...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading timesheets" className="py-10 text-center text-xs text-muted-foreground" />
       )}
 
       {!timesheet.loading && timesheet.forbidden && (
@@ -161,10 +170,10 @@ export function Screen5TimeTracker() {
         <>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              ['Total', timesheet.summary.totalLabel],
-              ['Submitted', timesheet.summary.submittedLabel],
-              ['Approved', timesheet.summary.approvedLabel],
-              ['Not submitted', timesheet.summary.notSubmittedLabel],
+              ['Total', selectedSummary.totalLabel],
+              ['Submitted', selectedSummary.submittedLabel],
+              ['Approved', selectedSummary.approvedLabel],
+              ['Not submitted', selectedSummary.notSubmittedLabel],
             ].map(([label, value]) => (
               <div className="rounded-lg border border-border bg-card p-3.5" key={label}>
                 <p className="text-[11px] text-muted-foreground">{label}</p>
@@ -271,6 +280,19 @@ export function Screen5TimeTracker() {
             </div>
           )}
         </>
+      )}
+
+      {timesheet.canWrite && selected?.status === 'DRAFT' && (
+        <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-border bg-background/95 px-4 py-2 backdrop-blur sm:hidden">
+          <Button
+            className="w-full"
+            disabled={timesheet.saving || selected.totalMinutes <= 0}
+            onClick={() => void timesheet.submit(selected.id)}
+            type="button"
+          >
+            {timesheet.saving ? 'Submitting…' : 'Submit timesheet'}
+          </Button>
+        </div>
       )}
 
       <LogTimeModal

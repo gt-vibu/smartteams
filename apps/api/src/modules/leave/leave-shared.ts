@@ -111,6 +111,8 @@ export function toRequestDto(
     startDate: Date;
     endDate: Date;
     requestedDays: unknown;
+    session?: string;
+    cancellation?: unknown;
     status: string;
     version: number;
   },
@@ -124,6 +126,8 @@ export function toRequestDto(
     startDate: request.startDate,
     endDate: request.endDate,
     requestedDays: days,
+    ...(request.session ? { session: request.session } : {}),
+    ...(request.cancellation ? { cancellation: request.cancellation } : {}),
     status: request.status,
     version: request.version,
   };

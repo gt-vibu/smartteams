@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Input } from '@smarteam/ui';
+import { LoadingIndicator, Input } from '@smarteam/ui';
 import { formatDate, hasPermission, formatDateRange } from '@smarteam/contracts';
 import { currentMonthRange } from '../../hooks/use-attendance-admin';
 import { useSession } from '../../hooks/auth-context';
@@ -23,7 +23,7 @@ function hours(minutes: number): string {
 /** One employee's salary, using the same panel as Payroll → Compensation. */
 export function EmployeePayrollTab({ employeeId }: { employeeId: string }) {
   const compensation = useCompensation();
-  const employees = useEmployees();
+  const employees = useEmployees({ ids: [employeeId] });
   const { selectEmployee } = compensation;
   useEffect(() => selectEmployee(employeeId), [selectEmployee, employeeId]);
   const employee = (employees.data ?? []).find((entry) => entry.id === employeeId) ?? null;
@@ -70,9 +70,7 @@ export function EmployeeAttendanceTab({ employeeId }: { employeeId: string }) {
       {!canRead || attendance.forbidden ? (
         <p className={note}>You do not have permission to view attendance.</p>
       ) : attendance.loading ? (
-        <p className={note} role="status">
-          Loading attendance…
-        </p>
+        <LoadingIndicator variant="panel" label="Loading attendance" className={note} />
       ) : attendance.error ? (
         <p className={note} role="alert">
           {attendance.error}
@@ -127,9 +125,7 @@ export function EmployeeLeaveTab({ employeeId }: { employeeId: string }) {
   if (leave.forbidden) return <p className={note}>You do not have permission to view leave.</p>;
   if (leave.loading)
     return (
-      <p className={note} role="status">
-        Loading leave…
-      </p>
+      <LoadingIndicator variant="panel" label="Loading leave" className={note} />
     );
   if (leave.error)
     return (

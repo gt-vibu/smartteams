@@ -20,6 +20,8 @@ export class ApiError extends Error {
 
 export type RequestOptions = {
   method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
+  timeoutMs?: number;
+  responseType?: 'json' | 'text';
   body?: Record<string, unknown>;
   /** Extra headers, e.g. `if-match-version` for optimistically-concurrent updates. */
   headers?: Record<string, string>;
@@ -39,7 +41,7 @@ export async function apiRequest(path: string, options: RequestOptions): Promise
   // Reads are deduplicated while in flight; writes never are.
   if (options.method !== 'GET') return perform(path, options);
 
-  const key = `${path}|${JSON.stringify(options.headers ?? null)}`;
+  const key = `${path}|${options.responseType ?? 'json'}|${JSON.stringify(options.headers ?? null)}`;
   const existing = inFlightReads.get(key);
   if (existing) return existing;
 
@@ -48,6 +50,49 @@ export async function apiRequest(path: string, options: RequestOptions): Promise
   });
   inFlightReads.set(key, request);
   return request;
+}
+
+/** Downloads a response incrementally where the browser supports file streams. */
+export async function apiDownload(path: string, filename: string): Promise<void> {
+  type FileHandle = { createWritable: () => Promise<{ write: (chunk: Uint8Array) => Promise<void>; close: () => Promise<void> }> };
+  const picker = (window as Window & { showSaveFilePicker?: (options: { suggestedName: string }) => Promise<FileHandle> }).showSaveFilePicker;
+    // Open the picker synchronously from the click so browsers keep user activation. Resolve it
+    // before starting the export, avoiding an unhandled picker-cancellation rejection mid-stream.
+    let fileHandle: FileHandle | null = null;
+    if (picker) {
+      try {
+        fileHandle = await picker({ suggestedName: filename });
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        throw error;
+      }
+    }
+  let response = await send(path, { method: 'GET', timeoutMs: 120_000 });
+  if (response.status === 401 && isRefreshable(path) && await refreshSession())
+    response = await send(path, { method: 'GET', timeoutMs: 120_000 });
+  if (!response.ok) {
+    await read(response, path);
+    throw new ApiError('The export could not be downloaded.', response.status);
+  }
+  if (fileHandle) {
+    const writable = await fileHandle.createWritable();
+    const reader = response.body?.getReader();
+    if (reader) {
+      let result = await reader.read();
+      while (!result.done) {
+        await writable.write(result.value);
+        result = await reader.read();
+      }
+    }
+    await writable.close();
+    return;
+  }
+  const blobUrl = URL.createObjectURL(await response.blob());
+  const anchor = document.createElement('a');
+  anchor.href = blobUrl;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(blobUrl);
 }
 
 /**
@@ -75,20 +120,23 @@ async function perform(path: string, options: RequestOptions): Promise<unknown> 
     const refreshed = await refreshSession();
     if (refreshed) {
       const replayed = await send(path, options);
-      return read(replayed, path);
+      return read(replayed, path, options.responseType);
     }
   }
 
-  return read(response, path);
+  return read(response, path, options.responseType);
 }
 
 async function send(path: string, options: RequestOptions): Promise<Response> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? REQUEST_TIMEOUT_MS);
   try {
     return await fetch(`${API_BASE_URL}${path}`, {
       method: options.method,
       credentials: 'include',
+      // Workspace responses contain tenant and employee data. Keep them out of the browser's
+      // HTTP cache; in-flight GET deduplication above is request coalescing, not stale-data cache.
+      cache: 'no-store',
       headers: {
         Accept: 'application/json',
         ...(options.body ? { 'Content-Type': 'application/json' } : {}),
@@ -105,7 +153,12 @@ async function send(path: string, options: RequestOptions): Promise<Response> {
   }
 }
 
-async function read(response: Response, path: string): Promise<unknown> {
+async function read(
+  response: Response,
+  path: string,
+  responseType?: 'json' | 'text',
+): Promise<unknown> {
+  if (response.ok && responseType === 'text') return response.text();
   const payload: unknown = await response.json().catch(() => null);
   if (!response.ok)
     throw new ApiError(errorMessage(payload, response.status, path), response.status);

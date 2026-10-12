@@ -4,9 +4,7 @@ import React, { useMemo, useState } from 'react';
 import { Button, Input } from '@smarteam/ui';
 import {
   dateKey,
-  employeeDisplayName,
   entitlementOf,
-  type Employee,
   LIMITS,
 } from '@smarteam/contracts';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
@@ -18,30 +16,17 @@ import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-a
  * against the balance so the movement stays explainable months later.
  */
 export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
-  const [search, setSearch] = useState('');
   const [activeId, setActiveId] = useState<string | null>(null);
   const [amount, setAmount] = useState('1');
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
 
-  const employeesById = useMemo(
-    () => new Map<string, Employee>(admin.employees.map((e) => [e.id, e])),
-    [admin.employees],
-  );
   const typesById = useMemo(
     () => new Map(admin.types.map((type) => [type.id, type])),
     [admin.types],
   );
 
-  const query = search.trim().toLowerCase();
-  const rows = admin.balances.filter((balance) => {
-    if (!query) return true;
-    const employee = employeesById.get(balance.employeeId);
-    return (
-      (employee ? employeeDisplayName(employee).toLowerCase() : '').includes(query) ||
-      (employee?.employeeNumber ?? '').toLowerCase().includes(query)
-    );
-  });
+  const rows = admin.balances;
 
   const submit = async (balanceId: string) => {
     const balance = admin.balances.find((entry) => entry.id === balanceId);
@@ -74,14 +59,6 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
 
   return (
     <section className="space-y-3">
-      <Input
-        className="max-w-xs"
-        onChange={(event) => setSearch(event.target.value)}
-        aria-label="Search employee"
-        placeholder="Search employee"
-        value={search}
-      />
-
       {rows.length === 0 ? (
         <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
           <p className="text-sm font-semibold text-foreground">No balances</p>
@@ -105,17 +82,16 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
             </thead>
             <tbody>
               {rows.map((balance) => {
-                const employee = employeesById.get(balance.employeeId);
                 const type = typesById.get(balance.leaveTypeId);
                 return (
                   <React.Fragment key={balance.id}>
                     <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
                       <td data-cell="primary" className="px-4 py-2.5">
                         <span className="block font-semibold text-foreground">
-                          {employee ? employeeDisplayName(employee) : 'Not in the directory'}
+                          {balance.employeeName ?? 'Employee'}
                         </span>
                         <span className="text-[10px] text-muted-foreground">
-                          {employee?.employeeNumber ?? '--'}
+                          {balance.employeeNumber ?? '--'}
                         </span>
                       </td>
                       <td data-label="Type" className="px-4 py-2.5 text-foreground">

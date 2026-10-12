@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsDateString,
   IsEnum,
@@ -5,6 +6,8 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  IsInt,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -43,11 +46,18 @@ export class QuickCreateProjectDto {
 
 export class TimesheetDecisionDto {
   @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
-  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
   @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
 }
 
 export class TimesheetQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
   @IsOptional() @IsUUID() periodId?: string;
+  @IsOptional() @IsString() @MaxLength(100) search?: string;
+  @IsOptional() @IsUUID() departmentId?: string;
+  @IsOptional() @IsDateString() from?: string;
+  @IsOptional() @IsDateString() to?: string;
+  @IsOptional() @IsEnum(['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED']) status?: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED';
+  @IsOptional() @IsString() @MaxLength(256) cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(500) limit?: number;
 }

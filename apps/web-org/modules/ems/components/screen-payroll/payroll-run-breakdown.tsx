@@ -5,19 +5,18 @@ import { Button } from '@smarteam/ui';
 import { formatMoney, type Payslip } from '@smarteam/contracts';
 import { downloadPayslipPdf } from '../../lib/payslip-pdf';
 
-/** Paid means something was actually owed: a payslip with nothing on it is not a payment. */
-export const isPaid = (slip: Payslip) => slip.totals.netAmount > 0 || slip.totals.grossAmount > 0;
+/** A positive net amount is payable; it does not mean the bank payment has been completed. */
+export const hasNetPayableAmount = (slip: Payslip) => slip.totals.netAmount > 0;
 
 /**
- * Who a released run paid and how much, one row per payslip. Opening a row shows the lines that
- * make up that person's pay. Payslips with nothing on them — usually no salary set for the period
- * — are listed last and labelled, rather than counted as paid.
+ * What a released run calculated for each employee. Opening a row shows the lines that make up
+ * that person's pay. Payment confirmation is a separate workflow from releasing payslips.
  */
 export function PayrollRunBreakdown({ slips }: { slips: readonly Payslip[] }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const ordered = [...slips].sort(
     (a, b) =>
-      Number(isPaid(b)) - Number(isPaid(a)) ||
+      Number(hasNetPayableAmount(b)) - Number(hasNetPayableAmount(a)) ||
       (a.employeeName ?? a.employeeNumber ?? '').localeCompare(
         b.employeeName ?? b.employeeNumber ?? '',
       ),
@@ -44,7 +43,7 @@ export function PayrollRunBreakdown({ slips }: { slips: readonly Payslip[] }) {
         </thead>
         <tbody>
           {ordered.map((slip) => {
-            const paid = isPaid(slip);
+            const payable = hasNetPayableAmount(slip);
             const open = openId === slip.id;
             return (
               <React.Fragment key={slip.id}>
@@ -69,9 +68,9 @@ export function PayrollRunBreakdown({ slips }: { slips: readonly Payslip[] }) {
                         {slip.employeeNumber}
                       </span>
                     )}
-                    {!paid && (
+                    {!payable && (
                       <span className="ml-2 rounded-full border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                        Nothing to pay
+                        No net pay
                       </span>
                     )}
                   </td>
@@ -88,11 +87,10 @@ export function PayrollRunBreakdown({ slips }: { slips: readonly Payslip[] }) {
                 {open && (
                   <tr className="bg-muted/20">
                     <td className="px-4 py-2" colSpan={4}>
-                      {!paid ? (
+                      {!payable ? (
                         <p className="text-[11px] text-muted-foreground">
-                          Nothing was calculated for this period — usually because no salary is set
-                          for this employee. Set one under Compensation and recalculate the next
-                          run.
+                          No positive net amount was calculated for this period. Check salary,
+                          deductions, and unpaid time if this result is unexpected.
                         </p>
                       ) : (
                         <div className="space-y-2">

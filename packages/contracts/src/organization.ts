@@ -21,6 +21,8 @@ export const organizationSchema = z.object({
   timezone: z.string(),
   currencyCode: z.string(),
   locale: z.string(),
+  logoUrl: z.string().url().nullable().optional(),
+  coverUrl: z.string().url().nullable().optional(),
   version: z.number().optional(),
 });
 
@@ -32,4 +34,4 @@ export function parseOrganization(payload: unknown): Organization | null {
 }
 
 /** The only organization fields a tenant administrator may change. */
-export const EDITABLE_ORGANIZATION_FIELDS = ['name', 'timezone', 'currencyCode'] as const;
+export const EDITABLE_ORGANIZATION_FIELDS = ['name', 'timezone', 'currencyCode', 'logoFileId', 'coverFileId'] as const;

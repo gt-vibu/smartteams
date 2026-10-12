@@ -1,58 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
-import {
-  AttendanceDayStatus,
-  AttendancePunchSource,
-  AttendancePunchType,
-  AttendanceStatus,
-} from '../../generated/prisma/enums';
 import {
   requirePermission,
   requireReason,
   type DomainContext,
 } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
-import type { Prisma } from '../../generated/prisma/client';
+import { AttendanceDayStatus, AttendanceStatus } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
-import { assertMayActForEmployee } from '../employees/employee-scope';
+import { systemApprovalContext } from '../approvals/approval-automation';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
-import { assertApprover } from '../approvals/approval-authorization';
+import { assertMayActForEmployee } from '../employees/employee-scope';
+import { WorkingDayService } from '../shifts/working-day.service';
 import { createAttendanceCorrection } from './attendance-correction-create';
-import { markPayrollStale } from '../payroll/payroll-staleness';
+import { attendanceDate, nextPunchAfterOpenCheckIn } from './attendance-corrections-helpers';
+import { AttendanceDecisionsService } from './attendance-decisions.service';
+import { ForbiddenDomainError } from '../../common/errors/domain-error';
 import {
-  attendanceTotals,
-  correctionPunchUpdates,
-  dayStatusFromSnapshot,
-  snapshotDate,
-  snapshotRecord,
-} from './attendance-shared';
+  missedCheckOutDeadline,
+  readMissedCheckOutPolicy,
+} from './attendance-missed-checkout-policy';
 import {
   assertValidMissingCheckOut,
-  missingCheckOutFrom,
   MISSING_CHECK_OUT_KEY,
-  type PunchLike,
+  missingCheckOutFrom,
 } from './attendance-missing-checkout';
-import { expectedDayOn } from './attendance-shift-day';
-
-/** The employee's first punch after this day's open check-in, on any day. */
-async function nextPunchAfterOpenCheckIn(
-  tx: Prisma.TransactionClient,
-  record: { id: string; organizationId: string; employeeId: string; punches: PunchLike[] },
-): Promise<Date | undefined> {
-  const openAt = record.punches.at(-1)?.occurredAt;
-  if (!openAt) return undefined;
-  const next = await tx.attendancePunch.findFirst({
-    where: {
-      organizationId: record.organizationId,
-      employeeId: record.employeeId,
-      attendanceRecordId: { not: record.id },
-      occurredAt: { gt: openAt },
-    },
-    orderBy: { occurredAt: 'asc' },
-    select: { occurredAt: true },
-  });
-  return next?.occurredAt;
-}
+import { snapshotDate, snapshotRecord } from './attendance-shared';
 
 /**
  * Raising a correction request and deciding on it.
@@ -63,10 +35,16 @@ async function nextPunchAfterOpenCheckIn(
  */
 @Injectable()
 export class AttendanceCorrectionsService {
+  private readonly workingDays: WorkingDayService;
+  private readonly decisions: AttendanceDecisionsService;
+
   constructor(
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
-  ) {}
+  ) {
+    this.workingDays = new WorkingDayService(database);
+    this.decisions = new AttendanceDecisionsService(database, audit);
+  }
 
   async requestCorrection(
     context: DomainContext,
@@ -99,6 +77,14 @@ export class AttendanceCorrectionsService {
         record,
         input.reason,
         input.afterSnapshot ?? record,
+        (id, reason) =>
+          this.decisions.decideInTransaction(
+            tx,
+            systemApprovalContext(context),
+            id,
+            'APPROVED',
+            reason,
+          ),
       );
     });
   }
@@ -131,6 +117,24 @@ export class AttendanceCorrectionsService {
       if (correctedCheckOut && correctedCheckOut < correctedCheckIn)
         throw new ConflictError('Attendance check-out must be after check-in');
 
+      // Check working day evaluation
+      const dayEval = await this.workingDays.evaluateDay(
+        tx,
+        context.organizationId,
+        employeeId,
+        date,
+      );
+      if (dayEval.reason === 'BEFORE_JOINING' || dayEval.reason === 'AFTER_LEAVING') {
+        throw new ConflictError(
+          dayEval.detail ?? 'Attendance cannot be requested outside employment period',
+        );
+      }
+      if (!dayEval.isWorkingDay && (!input.reason || input.reason.trim().length < 10)) {
+        throw new ConflictError(
+          'Regularization on a non-working day requires a descriptive reason (minimum 10 characters)',
+        );
+      }
+
       const record = await tx.attendanceRecord.upsert({
         where: { employeeId_workDate: { employeeId, workDate: date } },
         create: {
@@ -160,13 +164,30 @@ export class AttendanceCorrectionsService {
         throw new ConflictError(
           'An attendance correction is already awaiting approval for this date',
         );
+      if (record.punches.length > 0)
+        throw new ConflictError(
+          'This date already has attendance punches. Submit a correction for the recorded attendance instead.',
+        );
 
-      return createAttendanceCorrection(tx, this.audit, context, record, input.reason, {
-        ...afterSnapshot,
-        correctedCheckIn: correctedCheckIn.toISOString(),
-        ...(correctedCheckOut ? { correctedCheckOut: correctedCheckOut.toISOString() } : {}),
-        dayStatus: AttendanceDayStatus.PRESENT,
-      });
+      return createAttendanceCorrection(
+        tx,
+        this.audit,
+        context,
+        record,
+        input.reason,
+        {
+          ...afterSnapshot,
+          correctedCheckIn: correctedCheckIn.toISOString(),
+          ...(correctedCheckOut ? { correctedCheckOut: correctedCheckOut.toISOString() } : {}),
+          dayStatus: AttendanceDayStatus.PRESENT,
+          // Distinguishes a regularization that creates the day's first punches from an edit
+          // to punches that already existed when the request was submitted.
+          missingAttendanceDay: true,
+          isNonWorkingDay: !dayEval.isWorkingDay,
+          nonWorkingDayReason: dayEval.reason,
+          nonWorkingDayDetail: dayEval.detail,
+        },
+      );
     });
   }
 
@@ -201,6 +222,28 @@ export class AttendanceCorrectionsService {
       if (!record) throw new NotFoundError('Attendance record');
       // Ownership off the row, exactly as the general correction does.
       await assertMayActForEmployee(tx, context, record.employeeId, 'attendance.read.all');
+      const settings = await tx.organizationSettings.findUniqueOrThrow({
+        where: { organizationId: context.organizationId },
+        select: {
+          metadata: true,
+          autoCheckOutMode: true,
+          autoCheckOutAt: true,
+          payrollDayOfMonth: true,
+        },
+      });
+      const missedPolicy = readMissedCheckOutPolicy(
+        settings.metadata,
+        settings.autoCheckOutMode,
+        settings.autoCheckOutAt,
+        record.workDate.toISOString().slice(0, 10),
+      );
+      if (
+        record.employee.userId === context.actor.userId &&
+        !missedPolicy.employeeCorrectionsAllowed
+      )
+        throw new ForbiddenDomainError(
+          'Employee correction requests are disabled by attendance policy',
+        );
       assertValidMissingCheckOut(
         record.punches,
         checkOut,
@@ -213,9 +256,23 @@ export class AttendanceCorrectionsService {
       });
       if (pending.some((correction) => missingCheckOutFrom(correction.afterSnapshot)))
         throw new ConflictError('A missing check-out for this day is already awaiting a decision');
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      const deadline = missedCheckOutDeadline(
+        record.workDate.toISOString().slice(0, 10),
+        organization.timezone,
+        missedPolicy,
+        settings.payrollDayOfMonth,
+      );
       return createAttendanceCorrection(tx, this.audit, context, record, input.reason, {
         ...(jsonSnapshot(record) as Record<string, unknown>),
-        [MISSING_CHECK_OUT_KEY]: { occurredAt: checkOut.toISOString() },
+        [MISSING_CHECK_OUT_KEY]: {
+          occurredAt: checkOut.toISOString(),
+          policyVersion: missedPolicy.version,
+          ...(new Date() > deadline ? { submittedAfterDeadline: true } : {}),
+        },
       });
     });
   }
@@ -230,295 +287,7 @@ export class AttendanceCorrectionsService {
    * against the day's punches like any other, and the correction records the time that was
    * actually applied.
    */
-  async decideCorrection(
-    context: DomainContext,
-    correctionId: string,
-    status: 'APPROVED' | 'REJECTED',
-    comment: string,
-    checkOutAt?: string,
-  ) {
-    requirePermission(context, 'attendance.corrections.decide');
-    requireReason(
-      { ...context, reason: comment },
-      'Attendance correction decisions require a comment',
-    );
-    return this.database.run(context, async (tx) => {
-      const correction = await tx.attendanceCorrection.findFirst({
-        where: {
-          id: correctionId,
-          organizationId: context.organizationId,
-          ...(context.branchId ? { attendanceRecord: { branchId: context.branchId } } : {}),
-        },
-        include: {
-          approvals: true,
-          approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
-          attendanceRecord: {
-            include: {
-              punches: { orderBy: { occurredAt: 'asc' } },
-              employee: { include: { manager: { select: { userId: true } } } },
-            },
-          },
-        },
-      });
-      if (!correction) throw new NotFoundError('Attendance correction');
-      if (correction.status !== 'PENDING')
-        throw new ConflictError('Attendance correction is already decided');
-      const approverUserId = context.actor.userId;
-      if (!approverUserId) throw new ConflictError('A human approver is required');
-      const pendingStep = correction.approvalPolicy?.steps.find(
-        (step) =>
-          !correction.approvals.some((approval) => approval.approvalPolicyStepId === step.id),
-      );
-      if (!pendingStep)
-        throw new ConflictError('Attendance correction has no pending approval step');
-      await assertApprover(
-        tx,
-        context.organizationId,
-        approverUserId,
-        correction.attendanceRecord.employee.manager?.userId,
-        pendingStep.approverType,
-        pendingStep.roleId,
-        pendingStep.approverUserId,
-        correction.attendanceRecord.branchId ?? context.branchId,
-        correction.attendanceRecord.employee.userId,
-      );
-      const replacedSnapshot = checkOutAt
-        ? replaceMissingCheckOut(correction, checkOutAt)
-        : undefined;
-      if (replacedSnapshot) correction.afterSnapshot = replacedSnapshot as Prisma.JsonValue;
-
-      const stepNumber = pendingStep.stepNumber;
-      const hasMoreSteps = Boolean(
-        correction.approvalPolicy?.steps.some((step) => step.stepNumber > stepNumber),
-      );
-      const finalStatus = status === 'REJECTED' || !hasMoreSteps ? status : 'PENDING';
-      const updated = await tx.attendanceCorrection.update({
-        where: { id: correction.id },
-        data: {
-          status: finalStatus,
-          ...(replacedSnapshot ? { afterSnapshot: jsonSnapshot(replacedSnapshot) } : {}),
-          approvals: {
-            create: {
-              organizationId: context.organizationId,
-              approverUserId,
-              approvalPolicyStepId: pendingStep.id,
-              status,
-              comment,
-              stepNumber,
-            },
-          },
-        },
-      });
-      let correctedRecord;
-      if (status === 'APPROVED' && !hasMoreSteps) {
-        const punchUpdates = correctionPunchUpdates(
-          correction.attendanceRecord.punches,
-          correction.afterSnapshot,
-        );
-        await Promise.all(
-          punchUpdates.map((update) =>
-            tx.attendancePunch.update({
-              where: { id: update.id },
-              data: { occurredAt: update.occurredAt },
-            }),
-          ),
-        );
-        const updatedTimes = new Map(punchUpdates.map((update) => [update.id, update.occurredAt]));
-        // A missing-check-out correction adds the day's OUT punch; the totals are then taken from
-        // the punches as they now stand. Every other correction keeps the moved-punch path.
-        const withAddedCheckOut = await this.addMissingCheckOut(
-          tx,
-          context,
-          correction,
-          approverUserId,
-        );
-        const correctedPunches =
-          withAddedCheckOut ??
-          correction.attendanceRecord.punches.map((punch) => ({
-            punchType: punch.punchType,
-            occurredAt: updatedTimes.get(punch.id) ?? punch.occurredAt,
-          }));
-        const settings = await tx.organizationSettings.findUniqueOrThrow({
-          where: { organizationId: context.organizationId },
-          select: { standardDayMinutes: true },
-        });
-        const expected =
-          context.accessMode === 'NATIVE'
-            ? await expectedDayOn(
-                tx,
-                context.organizationId,
-                correction.attendanceRecord.employeeId,
-                correction.attendanceRecord.branchId,
-                correction.attendanceRecord.workDate,
-                settings.standardDayMinutes,
-              )
-            : null;
-        const totals = attendanceTotals(
-          correctedPunches,
-          expected?.minutes ?? settings.standardDayMinutes,
-        );
-        const correctedDayStatus = dayStatusFromSnapshot(correction.afterSnapshot);
-        correctedRecord = await tx.attendanceRecord.update({
-          where: { id: correction.attendanceRecordId },
-          data: {
-            status: AttendanceStatus.CORRECTED,
-            correctionNote: correction.reason,
-            workedMinutes: totals.workedMinutes,
-            ...(expected ? { overtimeDayType: expected.dayType } : {}),
-            overtimeMinutes: totals.overtimeMinutes,
-            ...(correctedDayStatus ? { dayStatus: correctedDayStatus } : {}),
-            version: { increment: 1 },
-          },
-        });
-        await markPayrollStale(
-          tx,
-          context.organizationId,
-          correction.attendanceRecord.workDate,
-          correction.attendanceRecord.workDate,
-        );
-      }
-      await this.audit.record(
-        context,
-        {
-          entityType: 'ATTENDANCE_CORRECTION',
-          entityId: correction.id,
-          action: `ATTENDANCE_CORRECTION_${status}`,
-          beforeState: jsonSnapshot(correction),
-          afterState: jsonSnapshot({ correction: updated, attendanceRecord: correctedRecord }),
-          reason: comment,
-        },
-        tx,
-      );
-      const record = correction.attendanceRecord;
-      const requester = await requesterRouting(tx, context.organizationId, record.employeeId);
-      const on = describeDays(record.workDate, record.workDate);
-      if (finalStatus === 'PENDING') {
-        const next = correction.approvalPolicy?.steps.find((step) => step.stepNumber > stepNumber);
-        if (next)
-          await notify(tx, context, {
-            recipients: await stepApprovers(
-              tx,
-              context.organizationId,
-              next,
-              requester,
-              record.branchId ?? context.branchId,
-            ),
-            kind: 'ATTENDANCE_CORRECTION_PENDING',
-            title: 'Attendance correction awaiting your decision',
-            body: `${requester.name}'s correction for ${on} passed the previous approval step.`,
-            module: 'approvals',
-            entityType: 'ATTENDANCE_CORRECTION',
-            entityId: correction.id,
-          });
-      } else {
-        const approved = finalStatus === 'APPROVED';
-        await notify(tx, context, {
-          // The employee, and whoever raised it for them if that was someone else.
-          recipients: [requester.userId, correction.requestedByUserId],
-          kind: 'ATTENDANCE_CORRECTION_DECIDED',
-          title: approved ? 'Attendance correction approved' : 'Attendance correction rejected',
-          body: `The correction to ${on} was ${approved ? 'approved' : 'rejected'}: ${comment}`,
-          module: 'attendance',
-          entityType: 'ATTENDANCE_CORRECTION',
-          entityId: correction.id,
-        });
-      }
-      return updated;
-    });
+  decideCorrection(...args: Parameters<AttendanceDecisionsService['decideCorrection']>) {
+    return this.decisions.decideCorrection(...args);
   }
-
-  /**
-   * Adds the check-out a missing-check-out correction asks for, on its final approval.
-   *
-   * Returns the day's punches including the new one, or undefined when this is not such a
-   * correction. Honoured only for a correction raised by a person in the application; one raised by
-   * a federation client is left to the moved-punch path exactly as before.
-   *
-   * The record is locked and every check repeated against its punches as they are now, so a second
-   * approval, an administrator's punch, or an earlier correction cannot produce a second check-out.
-   */
-  private async addMissingCheckOut(
-    tx: Prisma.TransactionClient,
-    context: DomainContext,
-    correction: {
-      id: string;
-      attendanceRecordId: string;
-      requestedByClientId: string | null;
-      afterSnapshot: unknown;
-      attendanceRecord: { employeeId: string };
-    },
-    approverUserId: string,
-  ): Promise<PunchLike[] | undefined> {
-    if (correction.requestedByClientId) return undefined;
-    const checkOut = missingCheckOutFrom(correction.afterSnapshot);
-    if (!checkOut) return undefined;
-    await tx.$queryRaw`SELECT id FROM attendance_records WHERE id = ${correction.attendanceRecordId}::uuid FOR UPDATE`;
-    const punches = await tx.attendancePunch.findMany({
-      where: {
-        attendanceRecordId: correction.attendanceRecordId,
-        organizationId: context.organizationId,
-      },
-      orderBy: { occurredAt: 'asc' },
-      select: { punchType: true, occurredAt: true },
-    });
-    const employeeId = correction.attendanceRecord.employeeId;
-    assertValidMissingCheckOut(
-      punches,
-      checkOut,
-      new Date(),
-      await nextPunchAfterOpenCheckIn(tx, {
-        id: correction.attendanceRecordId,
-        organizationId: context.organizationId,
-        employeeId,
-        punches,
-      }),
-    );
-    await tx.attendancePunch.create({
-      data: {
-        organizationId: context.organizationId,
-        attendanceRecordId: correction.attendanceRecordId,
-        employeeId,
-        punchType: AttendancePunchType.OUT,
-        occurredAt: checkOut,
-        source: AttendancePunchSource.ADMIN_CORRECTION,
-        capturedByUserId: approverUserId,
-        metadata: { captureMode: 'CORRECTION', attendanceCorrectionId: correction.id },
-      },
-    });
-    return [...punches, { punchType: AttendancePunchType.OUT, occurredAt: checkOut }];
-  }
-}
-
-/**
- * The correction's snapshot with the approver's check-out time in place of the proposed one.
- *
- * Only for a correction that adds a check-out, and only for one raised inside the application:
- * a federation client's correction is decided exactly as before.
- */
-function replaceMissingCheckOut(
-  correction: { requestedByClientId: string | null; afterSnapshot: unknown },
-  checkOutAt: string,
-): Record<string, unknown> {
-  if (correction.requestedByClientId)
-    throw new ConflictError('This correction cannot have its check-out time replaced');
-  const proposed = missingCheckOutFrom(correction.afterSnapshot);
-  if (!proposed) throw new ConflictError('This correction does not add a check-out');
-  const replacement = new Date(checkOutAt);
-  if (Number.isNaN(replacement.getTime())) throw new ConflictError('The check-out time is invalid');
-  const snapshot = correction.afterSnapshot as Record<string, unknown>;
-  const existing = snapshot[MISSING_CHECK_OUT_KEY] as Record<string, unknown>;
-  return {
-    ...snapshot,
-    [MISSING_CHECK_OUT_KEY]: { ...existing, occurredAt: replacement.toISOString() },
-  };
-}
-
-function attendanceDate(value: string) {
-  const dateValue = value.slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue))
-    throw new ConflictError('Attendance work date must be a valid calendar date');
-  const date = new Date(`${dateValue}T00:00:00.000Z`);
-  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== dateValue)
-    throw new ConflictError('Attendance work date must be a valid calendar date');
-  return date;
 }

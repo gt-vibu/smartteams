@@ -66,8 +66,10 @@ export function CreateProjectModal({
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [error, setError] = useState('');
+  const [requestId, setRequestId] = useState<string | null>(null);
 
   const reset = () => {
+    setRequestId(null);
     setCode('');
     setName('');
     setDescription('');
@@ -100,7 +102,10 @@ export function CreateProjectModal({
       return;
     }
     setError('');
+    const id = requestId ?? crypto.randomUUID();
+    if (!requestId) setRequestId(id);
     const created = await onCreate({
+      id,
       ...(code.trim() ? { code: code.trim() } : {}),
       name: name.trim(),
       ...(description.trim() ? { description: description.trim() } : {}),
@@ -118,8 +123,8 @@ export function CreateProjectModal({
   return (
     <Dialog
       onOpenChange={(open) => {
-        if (!open) {
-          reset();
+        if (!open && !saving) {
+          if (!requestId) reset();
           onClose();
         }
       }}
@@ -274,16 +279,26 @@ export function CreateProjectModal({
           </p>
         </div>
 
+        {requestId && (
+          <p className="px-5 text-[11px] text-muted-foreground" role="status">
+            Retry keeps the same request ID and cannot create a second project. Check the project list before starting fresh.
+          </p>
+        )}
         <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
           <p className="text-[11px] font-semibold text-destructive" role="alert">
             {error || saveError}
           </p>
           <div className="flex items-center gap-2">
-            <Button disabled={saving} onClick={onClose} type="button" variant="outline">
+            {requestId && !saving && (
+              <Button disabled={saving} onClick={() => { reset(); onClose(); }} type="button" variant="outline">
+                I checked the list — start fresh
+              </Button>
+            )}
+            <Button disabled={saving} onClick={() => { if (!requestId) reset(); onClose(); }} type="button" variant="outline">
               Cancel
             </Button>
             <Button disabled={saving} onClick={() => void handleSubmit()} type="button">
-              {saving ? 'Creating...' : 'Create project'}
+              {saving ? 'Creating...' : requestId ? 'Retry create project' : 'Create project'}
             </Button>
           </div>
         </div>

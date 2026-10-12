@@ -13,18 +13,23 @@ import { CredentialConfirmationDialog } from './credential-confirmation-dialog';
 import { CompanyRow } from './company-row';
 import { CompaniesEmptyRow, CompaniesLoadingRow } from './companies-table-states';
 import { CompaniesStats } from './companies-stats';
+import { DeactivateCompanyDialog } from './deactivate-company-dialog';
 
 export function CompaniesDashboard() {
   const [companies, setCompanies] = useState<OrganizationSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [settledSearchTerm, setSettledSearchTerm] = useState('');
   const [showOnboardDialog, setShowOnboardDialog] = useState(false);
   const [onboardResult, setOnboardResult] = useState<OnboardOrganizationResult | null>(null);
-  const [deactivatingId, setDeactivatingId] = useState<string | null>(null);
+  const [deactivating, setDeactivating] = useState<OrganizationSummary | null>(null);
+  const [requestedPage, setPage] = useState(0);
 
   const fetchCompanies = async () => {
-    setLoading(true);
+    if (companies.length === 0) setLoading(true);
+    else setRefreshing(true);
     setError(null);
     try {
       const data = await listOrganizations();
@@ -33,6 +38,7 @@ export function CompaniesDashboard() {
       setError(caught instanceof Error ? caught.message : 'Failed to load companies.');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -40,26 +46,13 @@ export function CompaniesDashboard() {
     void fetchCompanies();
   }, []);
 
-  const handleDeactivate = async (company: OrganizationSummary) => {
-    const confirmReason = window.prompt(
-      `Are you sure you want to deactivate ${company.name}? Please provide a reason:`,
-      'Deactivated by Super Admin',
-    );
-    if (!confirmReason) return;
-
-    setDeactivatingId(company.id);
-    try {
-      await deactivateOrganization(company.id, confirmReason);
-      await fetchCompanies();
-    } catch (caught) {
-      alert(caught instanceof Error ? caught.message : 'Failed to deactivate organization.');
-    } finally {
-      setDeactivatingId(null);
-    }
-  };
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSettledSearchTerm(searchTerm.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [searchTerm]);
 
   const filteredCompanies = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
+    const term = settledSearchTerm.toLowerCase();
     if (!term) return companies;
     return companies.filter(
       (c) =>
@@ -68,7 +61,10 @@ export function CompaniesDashboard() {
         c.adminUser?.email.toLowerCase().includes(term) ||
         c.adminUser?.displayName.toLowerCase().includes(term),
     );
-  }, [companies, searchTerm]);
+  }, [companies, settledSearchTerm]);
+  const pages = Math.max(1, Math.ceil(filteredCompanies.length / 50));
+  const page = Math.min(requestedPage, pages - 1);
+  const visible = filteredCompanies.slice(page * 50, (page + 1) * 50);
 
   return (
     <section className="space-y-6">
@@ -82,13 +78,17 @@ export function CompaniesDashboard() {
 
         <div className="flex items-center gap-3">
           <Button
+            aria-label="Refresh companies"
             onClick={fetchCompanies}
             size="sm"
             type="button"
             variant="outline"
-            disabled={loading}
+            disabled={loading || refreshing}
           >
-            <Icon className={`size-4 ${loading ? 'animate-spin' : ''}`} name="refresh" />
+            <Icon
+              className={`size-4 ${loading || refreshing ? 'animate-spin' : ''}`}
+              name="refresh"
+            />
             <span className="hidden sm:inline">Refresh</span>
           </Button>
           <Button onClick={() => setShowOnboardDialog(true)} size="sm" type="button">
@@ -102,14 +102,21 @@ export function CompaniesDashboard() {
 
       <div className="w-full sm:w-96">
         <Input
-          onChange={(e) => setSearchTerm(e.target.value)}
+          aria-label="Search companies"
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(0);
+          }}
           placeholder="Search companies"
           value={searchTerm}
         />
       </div>
 
       {error && (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive flex items-center justify-between">
+        <div
+          role="alert"
+          className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-xs text-destructive flex items-center justify-between"
+        >
           <div className="flex items-center gap-2">
             <Icon className="size-4 shrink-0" name="warning" />
             <span>{error}</span>
@@ -144,12 +151,12 @@ export function CompaniesDashboard() {
                   onAdd={() => setShowOnboardDialog(true)}
                 />
               ) : (
-                filteredCompanies.map((company) => (
+                visible.map((company) => (
                   <CompanyRow
                     company={company}
-                    deactivating={deactivatingId === company.id}
+                    deactivating={false}
                     key={company.id}
-                    onDeactivate={handleDeactivate}
+                    onDeactivate={setDeactivating}
                   />
                 ))
               )}
@@ -157,6 +164,43 @@ export function CompaniesDashboard() {
           </table>
         </div>
       </Card>
+      <nav
+        aria-label="Company pages"
+        className="flex flex-wrap items-center justify-between gap-2 text-xs"
+      >
+        <span role="status">
+          Page {page + 1} of {pages} · {filteredCompanies.length} companies
+          {refreshing ? ' · Refreshing…' : ''}
+        </span>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={loading || page === 0}
+            onClick={() => setPage(page - 1)}
+          >
+            Previous companies
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={loading || page + 1 === pages}
+            onClick={() => setPage(page + 1)}
+          >
+            Next companies
+          </Button>
+        </div>
+      </nav>
+      {deactivating && (
+        <DeactivateCompanyDialog
+          company={deactivating}
+          onClose={() => setDeactivating(null)}
+          onConfirm={async (reason) => {
+            await deactivateOrganization(deactivating.id, reason);
+            await fetchCompanies();
+          }}
+        />
+      )}
 
       {/* Onboard Dialog */}
       {showOnboardDialog && (

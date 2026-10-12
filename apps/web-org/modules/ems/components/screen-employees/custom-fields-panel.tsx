@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Badge,
   Button,
@@ -56,6 +56,7 @@ export function CustomFieldsPanel() {
   const [optionsText, setOptionsText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   const open = (field: FieldDefinition | 'new') => {
     setEditing(field);
@@ -131,8 +132,17 @@ export function CustomFieldsPanel() {
       )}
 
       <Dialog onOpenChange={(next) => !next && !busy && setEditing(null)} open={editing !== null}>
-        <DialogContent className="sm:max-w-md">
-          <DialogTitle>{editing === 'new' ? 'Add a field' : 'Edit field'}</DialogTitle>
+        <DialogContent
+          className="sm:max-w-md"
+          onOpenAutoFocus={(event) => {
+            if (editing === 'new') return;
+            event.preventDefault();
+            titleRef.current?.focus();
+          }}
+        >
+          <DialogTitle ref={titleRef} tabIndex={editing === 'new' ? undefined : -1}>
+            {editing === 'new' ? 'Add a field' : 'Edit field'}
+          </DialogTitle>
           <div className="mt-3 space-y-3">
             <div>
               <Label className="mb-1 block" htmlFor="field-label">

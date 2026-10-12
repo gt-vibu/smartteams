@@ -16,11 +16,12 @@ export const MAIL_QUEUE = 'mail-delivery';
 export class MailService {
   constructor(@InjectQueue(MAIL_QUEUE) private readonly queue: Queue<MailMessage>) {}
 
-  async send(message: MailMessage): Promise<void> {
+  async send(message: MailMessage, deduplicationKey?: string): Promise<void> {
     await this.queue.add('send', message, {
+      ...(deduplicationKey ? { jobId: deduplicationKey } : {}),
       attempts: 5,
       backoff: { type: 'exponential', delay: 10_000 },
-      removeOnComplete: true,
+      removeOnComplete: deduplicationKey ? { age: 172800 } : true,
       removeOnFail: false,
     });
   }

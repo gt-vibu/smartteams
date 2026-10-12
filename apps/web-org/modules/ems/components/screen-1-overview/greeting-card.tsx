@@ -1,4 +1,5 @@
 import React from 'react';
+import { Brand } from '@smarteam/ui';
 import type { EmployeeProfile } from '../../types/employee.types';
 import { greetingFor } from '../../utils/formatters';
 
@@ -10,22 +11,9 @@ export function GreetingCard({ employee }: GreetingCardProps) {
   return (
     <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-border p-4 sm:p-5 shadow-xs flex items-center justify-between gap-3 w-full min-w-0">
       <div className="flex items-center gap-3 sm:gap-6 min-w-0 flex-1">
-        {/* Org Logo Mark */}
+        {/* Platform logo */}
         <div className="hidden sm:flex items-center gap-2 pr-4 sm:pr-6 border-r border-slate-200 dark:border-slate-700 shrink-0">
-          <div className="h-6 w-6 rounded bg-gradient-to-tr from-sky-500 to-indigo-500 flex items-center justify-center text-white shadow-xs">
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <span className="font-bold text-sm text-slate-900 dark:text-white tracking-tight">
-            smarteam
-          </span>
+          <Brand compact className="text-slate-900 dark:text-white [&>span:first-child]:size-6 [&>span:first-child]:rounded-md [&>span:first-child>svg]:size-3.5 [&>span:last-child>span]:text-xs" />
         </div>
 
         {/* Greeting Message */}

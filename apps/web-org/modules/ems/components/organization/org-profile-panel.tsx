@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import type { Organization } from '@smarteam/contracts';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 import {
+  LoadingIndicator,
   Button,
   Input,
   Label,
@@ -11,6 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
+import React, { useEffect, useState } from 'react';
+import type { OrganizationState } from '../../hooks/use-organization';
+import { useSession } from '../../hooks/auth-context';
+import { filesRepository } from '../../repositories/files.repository';
+import { TimezoneSelect } from '../common/timezone-select';
 
 /** The currencies offered. Display only for now: amounts are not converted. */
 const CURRENCIES = [
@@ -37,10 +44,6 @@ function withCurrent<T extends { label: string }>(
     ? options
     : [make(current), ...options];
 }
-import type { Organization } from '@smarteam/contracts';
-import { TimezoneSelect } from '../common/timezone-select';
-import type { OrganizationState } from '../../hooks/use-organization';
-import { LIMITS, textProblem } from '@smarteam/contracts';
 
 /**
  * The organization profile.
@@ -58,9 +61,7 @@ export function OrgProfilePanel({ organization: state }: { organization: Organiz
   }
   if (state.loading) {
     return (
-      <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-        Loading organization...
-      </p>
+      <LoadingIndicator variant="panel" label="Loading organization" className="py-10 text-center text-xs text-muted-foreground" />
     );
   }
   if (state.error || !organization) {
@@ -94,9 +95,34 @@ function ProfileForm({
   organization: Organization;
   state: OrganizationState;
 }) {
+  const { session } = useSession();
   const [name, setName] = useState(organization.name);
   const [timezone, setTimezone] = useState(organization.timezone);
   const [currencyCode, setCurrencyCode] = useState(organization.currencyCode);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState<'logo' | 'cover' | null>(null);
+
+  const uploadBrandImage = async (kind: 'logo' | 'cover', file?: File) => {
+    if (!file || !session?.organizationId) return;
+    setImageError(null);
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 8_000_000) {
+      setImageError('Choose a JPG, PNG or WebP image up to 8 MB.');
+      return;
+    }
+    setUploading(kind);
+    try {
+      const ticket = await filesRepository.beginUpload(session.organizationId, {
+        purpose: 'ORGANIZATION_BRANDING', originalName: file.name, contentType: file.type, byteSize: file.size,
+      });
+      await filesRepository.putBytes(ticket.uploadUrl, file);
+      const stored = await filesRepository.completeUpload(session.organizationId, ticket.fileId);
+      await state.updateOrganization(kind === 'logo' ? { logoFileId: stored.id } : { coverFileId: stored.id });
+    } catch (error) {
+      setImageError(error instanceof Error ? error.message : 'The image could not be uploaded.');
+    } finally {
+      setUploading(null);
+    }
+  };
 
   useEffect(() => {
     setName(organization.name);
@@ -129,6 +155,11 @@ function ProfileForm({
   return (
     <div className="space-y-4">
       <form className="space-y-3 rounded-lg border border-border bg-card p-4" onSubmit={submit}>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <BrandAssetPicker label="Company logo" imageUrl={organization.logoUrl} kind="logo" busy={uploading === 'logo'} disabled={state.saving || !state.can.updateOrganization} onPick={(file) => void uploadBrandImage('logo', file)} />
+          <BrandAssetPicker label="Organization banner" imageUrl={organization.coverUrl} kind="cover" busy={uploading === 'cover'} disabled={state.saving || !state.can.updateOrganization} onPick={(file) => void uploadBrandImage('cover', file)} />
+        </div>
+        {imageError && <p role="alert" className="text-xs text-destructive">{imageError}</p>}
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="sm:col-span-2">
             <Label className="mb-1 block" htmlFor="org-name">
@@ -217,11 +248,27 @@ function ProfileForm({
       </dl>
 
       <p className="text-[11px] text-muted-foreground">
-        Name, timezone and currency are the only organization fields the API accepts. Slug, status,
-        source and locale are set at onboarding and are not editable here.
+        Organization name, timezone, and currency can be updated by an administrator. Identifier,
+        status, source, and locale are established during organization setup and remain fixed.
       </p>
     </div>
   );
+}
+
+function BrandAssetPicker({
+  label, imageUrl, kind, busy, disabled, onPick,
+}: {
+  label: string; imageUrl?: string | null; kind: 'logo' | 'cover'; busy: boolean; disabled: boolean; onPick: (file?: File) => void;
+}) {
+  return <label className="block cursor-pointer rounded-lg border border-border p-3 transition hover:border-primary/40">
+    <span className="mb-2 block text-xs font-semibold text-foreground">{label}</span>
+    <span className={`relative flex overflow-hidden rounded-md bg-muted ${kind === 'logo' ? 'h-20 w-20 items-center justify-center' : 'h-20 w-full items-center justify-center'}`}>
+      {imageUrl ? <img src={imageUrl} alt={`${label} preview`} className={`h-full w-full ${kind === 'logo' ? 'object-contain' : 'object-cover'}`} /> : <span className="text-xs text-muted-foreground">No image added</span>}
+      {busy && <span className="absolute inset-0 grid place-items-center bg-background/75 text-xs">Uploading…</span>}
+    </span>
+    <span className="mt-2 block text-xs text-primary">{busy ? 'Uploading' : imageUrl ? 'Change image' : 'Add image'}</span>
+    <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled || busy} onChange={(event) => { onPick(event.currentTarget.files?.[0]); event.currentTarget.value = ''; }} />
+  </label>;
 }
 
 export function Unavailable({

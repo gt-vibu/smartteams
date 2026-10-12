@@ -13,9 +13,11 @@ import { entitlementOf, type LeaveBalance, type LeaveType } from '@smarteam/cont
 export function LeaveBalanceCards({
   balances,
   typesById,
+  onSelect,
 }: {
   balances: LeaveBalance[];
   typesById: Map<string, LeaveType>;
+  onSelect?: (leaveTypeId: string) => void;
 }) {
   if (balances.length === 0) return null;
 
@@ -26,7 +28,7 @@ export function LeaveBalanceCards({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
       {balances.map((balance) => {
         const type = balance.leaveType ?? typesById.get(balance.leaveTypeId);
         const entitled = entitlementOf(balance);
@@ -35,8 +37,8 @@ export function LeaveBalanceCards({
         // Unpaid leave has no allowance to run down: "0 of 0 available" read as none allowed.
         const unpaid = type?.paid === false && entitled === 0;
 
-        return (
-          <div className="rounded-lg border border-border bg-card p-4" key={balance.id}>
+        const contents = (
+          <>
             <div className="flex items-baseline justify-between gap-2">
               <span className="truncate text-xs font-semibold text-foreground">
                 {type?.name ?? 'Leave'}
@@ -82,6 +84,24 @@ export function LeaveBalanceCards({
                 </dd>
               </div>
             </dl>
+          </>
+        );
+        return onSelect ? (
+          <button
+            aria-label={`${type?.name ?? 'Leave'} balance. Open matching request history.`}
+            className="min-w-0 rounded-lg border border-border bg-card p-3 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4"
+            key={balance.id}
+            onClick={() => onSelect(balance.leaveTypeId)}
+            type="button"
+          >
+            {contents}
+          </button>
+        ) : (
+          <div
+            className="min-w-0 rounded-lg border border-border bg-card p-3 sm:p-4"
+            key={balance.id}
+          >
+            {contents}
           </div>
         );
       })}

@@ -5,7 +5,7 @@ export type ProjectDraft = { selected: boolean };
 
 export type TeamDraft = Record<string, boolean>;
 export type ProjectDraftMap = Record<string, ProjectDraft>;
-/** The role chosen for a new membership, keyed `team:<id>` or `project:<id>`. */
+/** Team responsibility chosen for a new team membership. */
 export type RoleDraft = Record<string, string>;
 
 /**
@@ -45,11 +45,9 @@ export function buildChanges(
     const draft = projectDraft[membership.project.id];
     const wanted = draft?.selected ?? membership.state === 'ACTIVE';
     if (wanted && membership.state !== 'ACTIVE') {
-      const projectRole = roles[`project:${membership.project.id}`];
       changes.push({
         kind: 'ADD_PROJECT',
         projectId: membership.project.id,
-        ...(projectRole ? { projectRole } : {}),
       });
     } else if (!wanted && membership.state === 'ACTIVE' && membership.memberId) {
       changes.push({

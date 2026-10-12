@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import {
+  LoadingIndicator,
   Badge,
   Button,
   DatePicker,
@@ -61,9 +62,7 @@ export function ProbationPanel() {
   const rows = list.data ?? [];
   if (list.loading)
     return (
-      <p className="py-8 text-center text-xs text-muted-foreground" role="status">
-        Loading…
-      </p>
+      <LoadingIndicator variant="panel" label="Preparing content" className="py-8 text-center text-xs text-muted-foreground" />
     );
   if (rows.length === 0)
     return (

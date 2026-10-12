@@ -21,7 +21,7 @@ function today(): string {
 export type AssignmentChange =
   | { kind: 'ADD_TEAM'; teamId: string; teamRole?: string }
   | { kind: 'END_TEAM'; teamId: string; memberId: string }
-  | { kind: 'ADD_PROJECT'; projectId: string; projectRole?: string }
+  | { kind: 'ADD_PROJECT'; projectId: string }
   | { kind: 'END_PROJECT'; projectId: string; memberId: string };
 
 /**
@@ -100,7 +100,6 @@ export function useAssignments(employeeId: string | null) {
               await membershipRepository.addProjectMember(organizationId, change.projectId, {
                 employeeId,
                 startsOn: today(),
-                ...(change.projectRole ? { projectRole: change.projectRole } : {}),
               });
               break;
             case 'END_PROJECT':

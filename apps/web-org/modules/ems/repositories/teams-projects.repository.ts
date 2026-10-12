@@ -14,6 +14,8 @@ import { expectShape, orgPath } from './api-helpers';
  */
 
 export type CreateTeamInput = {
+  id?: string;
+  memberEmployeeIds?: string[];
   name: string;
   description?: string;
   branchId?: string;
@@ -21,11 +23,13 @@ export type CreateTeamInput = {
 };
 
 /** As creating, but every field optional, and a `null` lead removes the current one. */
-export type UpdateTeamInput = Omit<Partial<CreateTeamInput>, 'teamLeadEmployeeId'> & {
+export type UpdateTeamInput = Omit<Partial<CreateTeamInput>, 'id' | 'teamLeadEmployeeId'> & {
   teamLeadEmployeeId?: string | null;
 };
 
 export type CreateProjectInput = {
+  id?: string;
+  members?: { employeeId: string }[];
   /** Left out to have one generated (PRJ-001 …). */
   code?: string;
   name: string;
@@ -37,7 +41,9 @@ export type CreateProjectInput = {
 };
 
 /** A change to a project. `projectLeadEmployeeId: null` leaves it without a lead. */
-export type UpdateProjectInput = Partial<Omit<CreateProjectInput, 'projectLeadEmployeeId'>> & {
+export type UpdateProjectInput = Partial<
+  Omit<CreateProjectInput, 'id' | 'projectLeadEmployeeId'>
+> & {
   status?: string;
   projectLeadEmployeeId?: string | null;
 };

@@ -7,7 +7,14 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { toProjectDto, toTeamDto } from './workforce-mappers';
 import { assertProjectLead } from './project-lead';
+import {
+  createInitialMembers,
+  validateInitialMembers,
+  type InitialMember,
+} from './initial-group-members';
 import { endLeadMembership } from './team-lead';
+import { findProjectRetry, findTeamRetry } from './teams-projects-idempotency';
+import { organizationToday } from '../employees/employee-branch-rules';
 
 @Injectable()
 export class TeamsProjectsService {
@@ -86,6 +93,7 @@ export class TeamsProjectsService {
       context.permissions.has('projects.write') ||
       context.accessMode === 'FEDERATION';
     return this.database.run(context, async (tx) => {
+      const today = await organizationToday(tx, context.organizationId);
       const self = seesAll
         ? null
         : await tx.employee.findFirst({
@@ -116,7 +124,18 @@ export class TeamsProjectsService {
             // may only read their own employee record, so the name cannot come from there.
             include: {
               employee: {
-                select: { id: true, firstName: true, lastName: true, employeeNumber: true },
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  employeeNumber: true,
+                  employmentRecords: {
+                    where: { effectiveTo: null, effectiveFrom: { lte: today } },
+                    orderBy: { effectiveFrom: 'desc' },
+                    take: 1,
+                    select: { jobTitle: true },
+                  },
+                },
               },
             },
           },
@@ -131,7 +150,14 @@ export class TeamsProjectsService {
 
   async createTeam(
     context: DomainContext,
-    input: { name: string; description?: string; branchId?: string; teamLeadEmployeeId?: string },
+    input: {
+      id?: string;
+      name: string;
+      description?: string;
+      branchId?: string;
+      teamLeadEmployeeId?: string;
+      memberEmployeeIds?: string[];
+    },
   ) {
     requirePermission(context, 'teams.write');
     // A team belongs somewhere. Partners send what their own systems hold, so the requirement is
@@ -140,6 +166,8 @@ export class TeamsProjectsService {
     if (context.accessMode === 'NATIVE' && !input.branchId)
       throw new ConflictError('Choose the branch this team belongs to');
     return this.database.run(context, async (tx) => {
+      const retry = await findTeamRetry(tx, context.organizationId, input);
+      if (retry) return retry;
       if (
         input.branchId &&
         !(await tx.branch.findFirst({
@@ -158,8 +186,11 @@ export class TeamsProjectsService {
         }))
       )
         throw new NotFoundError('Team lead employee');
+      const members = (input.memberEmployeeIds ?? []).map((employeeId) => ({ employeeId }));
+      await validateInitialMembers(tx, context, members, input.teamLeadEmployeeId);
       const team = await tx.team.create({
         data: {
+          ...(input.id ? { id: input.id } : {}),
           organizationId: context.organizationId,
           name: input.name.trim(),
           description: input.description,
@@ -177,6 +208,7 @@ export class TeamsProjectsService {
         },
         tx,
       );
+      await createInitialMembers(tx, context, this.audit, 'TEAM', team.id, members);
       return team;
     });
   }
@@ -185,6 +217,7 @@ export class TeamsProjectsService {
     context: DomainContext,
     teamId: string,
     input: {
+      id?: string;
       name?: string;
       description?: string;
       branchId?: string;
@@ -276,6 +309,7 @@ export class TeamsProjectsService {
   async createProject(
     context: DomainContext,
     input: {
+      id?: string;
       /** Optional: PRJ-001, PRJ-002 … is generated when left out. */
       code?: string;
       name: string;
@@ -285,6 +319,7 @@ export class TeamsProjectsService {
       endDate?: string;
       /** Optional: a project may be created before anyone leads it. */
       projectLeadEmployeeId?: string;
+      members?: InitialMember[];
     },
   ) {
     requirePermission(context, 'projects.write');
@@ -295,6 +330,8 @@ export class TeamsProjectsService {
     if (input.startDate && input.endDate && input.endDate < input.startDate)
       throw new ConflictError('Project end date must not precede start date');
     return this.database.run(context, async (tx) => {
+      const retry = await findProjectRetry(tx, context.organizationId, input);
+      if (retry) return retry;
       if (
         input.branchId &&
         !(await tx.branch.findFirst({
@@ -311,8 +348,10 @@ export class TeamsProjectsService {
         select: { name: true },
       });
       if (clash) throw new ConflictError(`Project code ${code} is already used by ${clash.name}`);
+      await validateInitialMembers(tx, context, input.members ?? [], input.projectLeadEmployeeId);
       const project = await tx.project.create({
         data: {
+          ...(input.id ? { id: input.id } : {}),
           organizationId: context.organizationId,
           code,
           name: input.name.trim(),
@@ -332,6 +371,15 @@ export class TeamsProjectsService {
           afterState: jsonSnapshot(project),
         },
         tx,
+      );
+      await createInitialMembers(
+        tx,
+        context,
+        this.audit,
+        'PROJECT',
+        project.id,
+        input.members ?? [],
+        input.startDate ? dateOnly(input.startDate) : undefined,
       );
       return project;
     });

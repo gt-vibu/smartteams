@@ -73,16 +73,31 @@ export function Calendar({
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
 
+  // Browsing to a month means the whole month is the active range by default.
+  // A subsequent day click starts a fresh single-day or custom-range selection.
+  const selectMonth = (date: Date) => {
+    if (!onRangeChange || disabled) return;
+    const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+    const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    const key = (value: Date) =>
+      `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`;
+    onRangeChange(key(monthStart), key(monthEnd));
+  };
+
   const handlePrevMonth = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setViewDate(new Date(year, month - 1, 1));
+    const nextMonth = new Date(year, month - 1, 1);
+    setViewDate(nextMonth);
+    selectMonth(nextMonth);
   };
 
   const handleNextMonth = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setViewDate(new Date(year, month + 1, 1));
+    const nextMonth = new Date(year, month + 1, 1);
+    setViewDate(nextMonth);
+    selectMonth(nextMonth);
   };
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
